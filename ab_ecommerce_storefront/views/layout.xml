@@ -59,6 +59,7 @@
                                 <t t-set="display_extra_link" t-value="'true'"/>
                                 <t t-set="display_detail" t-value="'true'"/>
                                 <t t-set="placeholder">What are you looking for?</t>
+                                <t t-set="default_style" t-value="True"/>
                                 <t t-set="_form_classes" t-value="'ab-storefront-search'"/>
                                 <t t-set="_input_classes" t-value="'form-control'"/>
                                 <t t-set="_submit_classes" t-value="'btn btn-primary'"/>
@@ -135,6 +136,7 @@
                                 <t t-set="display_extra_link" t-value="'true'"/>
                                 <t t-set="display_detail" t-value="'true'"/>
                                 <t t-set="placeholder">Search medicines and wellness products</t>
+                                <t t-set="default_style" t-value="True"/>
                                 <t t-set="_form_classes" t-value="'ab-storefront-search'"/>
                                 <t t-set="_input_classes" t-value="'form-control'"/>
                                 <t t-set="_submit_classes" t-value="'btn btn-primary'"/>

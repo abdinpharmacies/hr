@@ -4255,6 +4255,11 @@ body.ab-storefront-image-hero-open {
     box-shadow: inset 0 0 0 1px rgba($ab-green, .015);
     transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease, transform .16s ease;
 
+    > svg {
+        order: 2;
+        flex: 0 0 20px;
+    }
+
     &:focus-within {
         color: $ab-green-dark;
         border-color: rgba($ab-green, .52);
@@ -4271,10 +4276,13 @@ body.ab-storefront-image-hero-open {
         color: $ab-ink;
         border: 0;
         outline: 0;
+        order: 1;
         background: transparent;
         font-size: .98rem;
         font-weight: 700;
         direction: rtl;
+        text-align: right;
+        unicode-bidi: plaintext;
 
         &::placeholder {
             color: rgba($ab-muted, .78);
@@ -4282,7 +4290,7 @@ body.ab-storefront-image-hero-open {
         }
 
         &[type="tel"] {
-            direction: ltr;
+            direction: rtl;
             text-align: right;
         }
 
@@ -4299,6 +4307,7 @@ body.ab-storefront-image-hero-open {
 
 .ab-auth-password-toggle {
     display: inline-flex;
+    order: 3;
     width: 38px;
     height: 38px;
     flex: 0 0 38px;
@@ -5706,6 +5715,14 @@ html.ab-avatar-picker-open body {
     justify-content: space-between;
     gap: .85rem;
 
+    span {
+        display: block;
+        margin-bottom: .15rem;
+        color: $ab-green;
+        font-size: .74rem;
+        font-weight: 950;
+    }
+
     h3 {
         margin: 0;
         color: $ab-ink;
@@ -6035,6 +6052,39 @@ html.ab-avatar-picker-open body {
     }
 }
 
+.ab-account-address-empty {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: .65rem;
+    padding: clamp(1.15rem, 2.4vw, 1.6rem);
+    text-align: center;
+
+    > span {
+        width: 52px;
+        height: 52px;
+        margin-bottom: .1rem;
+    }
+
+    strong {
+        max-width: 420px;
+        color: $ab-ink;
+        font-size: clamp(.98rem, 1.6vw, 1.08rem);
+        line-height: 1.55;
+    }
+
+    p {
+        max-width: 390px;
+        line-height: 1.75;
+    }
+
+    .btn {
+        grid-column: auto;
+        justify-self: center;
+        margin-top: .15rem;
+        padding-inline: 1.15rem;
+    }
+}
+
 .ab-account-wishlist-panel {
     p {
         margin: 0;
@@ -6233,6 +6283,13 @@ html.ab-avatar-picker-open body {
         .btn {
             grid-column: auto;
             justify-self: stretch;
+        }
+    }
+
+    .ab-account-address-empty {
+        .btn {
+            justify-self: center;
+            width: auto;
         }
     }
 }
@@ -7182,10 +7239,10 @@ html.ab-avatar-picker-open body {
 
         .ab-storefront-mobile-search-row .ab-storefront-search {
             width: 100%;
-            border-color: #f0dcd8;
-            border-radius: .18rem;
-            background: #fff4f1;
-            box-shadow: none;
+            border-color: $ab-border;
+            border-radius: 1rem;
+            background: #f7faf8;
+            box-shadow: inset 0 0 0 1px rgba($ab-green, .02);
 
             .input-group {
                 align-items: stretch;
@@ -7195,20 +7252,20 @@ html.ab-avatar-picker-open body {
             .form-control {
                 min-height: 40px;
                 padding: .42rem .78rem;
-                color: $ab-muted;
-                border-radius: 0 .18rem .18rem 0;
-                background: #fff4f1;
+                color: $ab-ink;
+                border-radius: 0 1rem 1rem 0;
+                background: transparent;
                 font-size: .8rem;
                 font-weight: 700;
 
                 &::placeholder {
-                    color: #9b9290;
+                    color: $ab-muted;
                 }
             }
 
             .btn {
                 min-width: 42px;
-                border-radius: .18rem 0 0 .18rem;
+                border-radius: .9rem 0 0 .9rem;
                 background: $ab-green;
                 border-color: $ab-green;
                 color: #fff;
@@ -7222,11 +7279,11 @@ html.ab-avatar-picker-open body {
 
         html[dir="rtl"] & .ab-storefront-mobile-search-row .ab-storefront-search {
             .form-control {
-                border-radius: 0 .18rem .18rem 0;
+                border-radius: 0 1rem 1rem 0;
             }
 
             .btn {
-                border-radius: .18rem 0 0 .18rem;
+                border-radius: .9rem 0 0 .9rem;
             }
         }
 
@@ -7931,19 +7988,19 @@ html.ab-avatar-picker-open body {
         }
 
         .ab-storefront-mobile-search-row .ab-storefront-search {
-            border-color: #f0dcd8;
-            border-radius: .18rem;
-            background: #fff4f1;
+            border-color: $ab-border;
+            border-radius: 1rem;
+            background: #f7faf8;
 
             .form-control {
                 min-height: 40px;
-                background: #fff4f1;
+                background: transparent;
             }
 
             .btn {
                 min-width: 42px;
                 min-height: 40px;
-                border-radius: .18rem 0 0 .18rem;
+                border-radius: .9rem 0 0 .9rem;
                 background: $ab-green;
                 border-color: $ab-green;
                 color: #fff;

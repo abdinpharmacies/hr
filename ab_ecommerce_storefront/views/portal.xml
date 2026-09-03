@@ -79,7 +79,9 @@
                                 </a>
                             </div>
                             <div t-att-class="'ab-account-completion is-complete' if profile_completion == 100 else 'ab-account-completion'"
-                                 t-att-style="profile_completion_style">
+                                 t-att-style="profile_completion_style"
+                                 t-att-data-ab-profile-completion="profile_completion"
+                                 t-att-data-ab-avatar-complete="'1' if avatar_complete else '0'">
                                 <div class="ab-account-completion-copy">
                                     <strong><t t-out="profile_completion"/>% مكتمل</strong>
                                     <small>أكمل بياناتك لتجربة تسوق أسرع</small>
@@ -108,8 +110,10 @@
                                 </section>
                                 <section class="ab-account-profile-block" aria-labelledby="abAccountAddressesTitle">
                                     <div class="ab-account-subsection-head">
-                                        <h3 id="abAccountAddressesTitle">العناوين</h3>
-                                        <a href="/my/addresses" class="ab-account-inline-link">إدارة العناوين</a>
+                                        <div>
+                                            <span>إدارة العناوين</span>
+                                            <h3 id="abAccountAddressesTitle">العناوين</h3>
+                                        </div>
                                     </div>
                                     <div t-if="saved_addresses or has_address" class="ab-account-addresses ab-account-addresses-compact">
                                         <article t-if="has_address" class="ab-account-address-card">
@@ -143,11 +147,11 @@
                                             </p>
                                         </article>
                                     </div>
-                                    <div t-else="" class="ab-account-empty-state ab-account-empty-state-compact">
+                                    <div t-else="" class="ab-account-empty-state ab-account-empty-state-compact ab-account-address-empty">
                                         <span><svg viewBox="0 0 24 24"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
                                         <strong>أضف عنوانك لتسهيل طلباتك القادمة</strong>
                                         <p>احفظ عنوانك مرة واحدة لإتمام الشراء بشكل أسرع.</p>
-                                        <a href="/my/addresses" class="btn btn-primary">إضافة عنوان</a>
+                                        <a href="/my/address?address_type=delivery&amp;callback=/my/home" class="btn btn-primary">إضافة عنوان</a>
                                     </div>
                                 </section>
                             </div>
