@@ -2,32 +2,23 @@
 
 ## Recent relevant commit
 
-- Commit: `46b0a7416b433cf990951254936fae4166e72c90`
-- Author: emadco88
-- Date: 2026-09-01
-- Subject: `ab_odoo_sync_upload/ Use report connection settings and guide administrators through configuration`
-- Added report connection settings, administrator guidance, and upload configuration safeguards.
+- Commit: `dca01d86b6c006091d7054eb49e9a28a8c42e4f4`
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: 2026-09-02
+- Subject: `ab_odoo_sync_upload/ Capture stored compute flushes in upload hooks`
+- Added transaction-scoped capture for stored computed-field recompute scheduling and flush writes.
 
 Files changed:
 
-- `ab_odoo_sync_upload/__manifest__.py`
-- `ab_odoo_sync_upload/data/configuration_todo.xml`
-- `ab_odoo_sync_upload/data/system_parameters.xml`
-- `ab_odoo_sync_upload/i18n/ar.po`
-- `ab_odoo_sync_upload/i18n/ar_001.po`
-- `ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py`
-- `ab_odoo_sync_upload/views/configuration_views.xml`
+- `ab_odoo_sync_upload/changelog.d/2026-09-02-computed-field-capture.md`
+- `ab_odoo_sync_upload/models/ab_odoo_sync_orm_hook.py`
 
 ## Current changes before commit
 
-- Added transaction-scoped upload snapshot collection so overlapping ORM hooks create one pending upsert per source record.
-- Captured active upload-source records scheduled for stored computed-field recomputation through Odoo's recompute queue.
-- Added low-level stored-write capture as a persistence safety net for recompute and flush writes.
-- Kept archive snapshots prepared before unlink while delaying outbox creation until the collector flushes.
-- Bumped the module version to `19.0.1.2.0`.
+- Documented edge cases for a complete stored computed-field capture test suite.
+- Covered semantic recompute scheduling, low-level stored writes, collector deduplication, transactions, unlink/archive behavior, source configuration, payload serialization, safety, and performance regressions.
 
 Files changed:
 
-- `ab_odoo_sync_upload/__manifest__.py`
-- `ab_odoo_sync_upload/models/ab_odoo_sync_orm_hook.py`
+- `ab_odoo_sync_upload/doc/stored_computed_field_capture_test_edge_cases.md`
 - `ab_odoo_sync_upload/changelog.d/2026-09-02-computed-field-capture.md`
