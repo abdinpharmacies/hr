@@ -119,43 +119,6 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         }
 
     @api.model
-    def import_existing_managers(self):
-        try:
-            Employee = self.env['ab_hr_employee'].sudo()
-            Job = self.env['ab_hr_job'].sudo()
-        except KeyError:
-            return {'error': 'HR module not available'}
-        JOB_DEPT_MAP = {
-            'نائب مدير المخازن': 'inventory',
-            'مدير قسم حسابات الضرائب': 'tax_accounts',
-            'مدير قسم حسابات الموردين': 'suppliers',
-            'مدير قسم حسابات البنوك': 'bank_accounts',
-            'نائب مدير قطاع المشتريات والتجارية': 'purchase',
-        }
-        created = 0
-        for job_name, dept_code in JOB_DEPT_MAP.items():
-            jobs = Job.search([('name', '=', job_name)])
-            if not jobs:
-                continue
-            employees = Employee.search([('job_id', 'in', jobs.ids)])
-            for emp in employees:
-                existing = self.sudo().search([('employee_id', '=', emp.id)], limit=1)
-                if existing:
-                    if not existing.manager_department:
-                        existing.write({'manager_department': dept_code})
-                    continue
-                rec = self.sudo().create({
-                    'employee_id': emp.id,
-                    'telegram_chat_id': str(emp.id),
-                    'telegram_connected': False,
-                    'linked_at': fields.Datetime.now(),
-                    'manager_department': dept_code,
-                })
-                if rec:
-                    created += 1
-        return {'created': created}
-
-    @api.model
     def _cron_import_telegram_registrations(self):
         icp = self.env['ir.config_parameter'].sudo()
         bot_token = icp.get_param('supplier_claim.telegram_bot_token')
