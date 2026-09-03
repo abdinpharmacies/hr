@@ -88,3 +88,23 @@ schema.
 
 This keeps raw/report storage tolerant while still allowing strict validation
 for selected fields when the report server later applies or validates the data.
+
+## Rule number 4
+
+Automatic relation mapping is based on target model metadata, never a model
+name suffix.
+
+- Stored scalar fields with compatible types use `direct` mapping.
+- `Many2one` fields use `sync_many2one` by source ID.
+- `Many2many` fields use `sync_many2many` by source ID.
+- Related models containing both `db_serial` and `rec_id` are branch-scoped
+  sync models and resolve by `(db_serial, rec_id)`.
+- Related models without either identity field are business models and resolve
+  through the report identity registry using the source record ID.
+- `One2many` fields are ignored because their child records synchronize
+  independently.
+- Stable-key mapping is an explicit administrator choice and always requires
+  both relation key fields.
+
+Only compatible stored fields are enabled automatically. Computed fields
+without an inverse and incompatible field types remain disabled or unhandled.

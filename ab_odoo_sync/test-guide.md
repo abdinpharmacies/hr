@@ -44,8 +44,26 @@ Expected result:
 - `Source Model` and `Target Model` are the same technical model name.
 - `Apply Mode` is `Mirror Sync Model`.
 - Matching safe stored fields are loaded as enabled mappings.
-- The upload is `Pending`, `Queued`, or `Applied` depending on queue timing.
+- Matching `Many2one` and `Many2many` fields use source-ID relation mappings.
+- The upload is `Pending`, `Queued`, `Applied`, or `Partially Applied`
+  depending on queue timing and payload coverage.
 - No new target name with a `__sync` suffix is generated.
+
+## Test 1A: Partial Coverage And Reapplication
+
+1. Send a payload containing a field that does not exist on the passive report
+   model.
+2. Let the upload apply its compatible fields.
+3. Add an `Ignore` override for the missing field on the received upload.
+4. Click `Reapply Mapping`.
+
+Expected result:
+
+- The first apply creates or updates the target and finishes as
+  `Partially Applied`.
+- `Skipped Fields` contains the unhandled field.
+- After the enabled ignore override and reapplication, the same target row is
+  updated without duplication and the upload finishes as `Applied`.
 
 ## Test 2: Missing Report Model Is Accepted As Pending Mapping
 
