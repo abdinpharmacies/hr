@@ -47,12 +47,14 @@
                             class="btn-primary" display="always"/>
                     <button name="action_replay_failed" type="object" string="Replay Failed"
                             class="btn-secondary" display="always"/>
+                    <button name="action_reapply_with_current_mapping" type="object"
+                            string="Reapply Mapping" class="btn-secondary" display="always"/>
                     <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
                             class="btn-secondary" display="always"/>
                 </header>
                 <field name="received_at"/>
                 <field name="status" widget="badge"
-                       decoration-warning="status in ('pending', 'pending_mapping')"
+                       decoration-warning="status in ('pending', 'pending_mapping', 'partially_applied')"
                        decoration-info="status == 'queued'"
                        decoration-success="status == 'applied'"
                        decoration-danger="status == 'failed'"
@@ -75,15 +77,20 @@
         <field name="name">ab_odoo_sync_upload_record.form</field>
         <field name="model">ab_odoo_sync_upload_record</field>
         <field name="arch" type="xml">
-            <form create="0" edit="0" delete="0">
+            <form create="0" edit="1" delete="0">
                 <header>
                     <button name="action_queue_apply" type="object" string="Queue Apply"
                             class="btn-primary"
-                            invisible="status in ('applied', 'raw_only', 'not_sync')"/>
+                            invisible="status in ('applied', 'partially_applied', 'raw_only', 'not_sync')"/>
                     <button name="action_replay_failed" type="object" string="Replay Failed"
                             invisible="status != 'failed'"/>
+                    <button name="action_reapply_with_current_mapping" type="object"
+                            string="Reapply Mapping" class="btn-primary"/>
+                    <button name="action_reset_mapping_overrides" type="object"
+                            string="Reset Overrides" class="btn-secondary"
+                            invisible="not override_mapping_ids"/>
                     <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
-                            invisible="status not in ('pending_mapping', 'pending', 'queued', 'failed', 'raw_only')"/>
+                            invisible="status not in ('pending_mapping', 'pending', 'queued', 'failed', 'raw_only', 'partially_applied')"/>
                 </header>
                 <sheet>
                     <group>
@@ -101,12 +108,29 @@
                             <field name="target_model_name"/>
                             <field name="apply_profile_id"/>
                             <field name="attempt_count"/>
+                            <field name="apply_generation"/>
                         </group>
                     </group>
                     <group>
                         <field name="error_message"/>
                         <field name="skipped_fields_json" widget="ab_pretty_json"/>
                         <field name="payload_json" widget="ab_pretty_json"/>
+                    </group>
+                    <group string="Field Mapping Overrides">
+                        <field name="override_mapping_ids">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="sync_enabled"/>
+                                <field name="source_field_name"/>
+                                <field name="target_field_name"/>
+                                <field name="mapping_type"/>
+                                <field name="relation_source_key"
+                                       invisible="mapping_type not in ('stable_many2one', 'stable_many2many')"/>
+                                <field name="relation_target_key"
+                                       invisible="mapping_type not in ('stable_many2one', 'stable_many2many')"/>
+                                <field name="required"/>
+                            </list>
+                        </field>
                     </group>
                 </sheet>
             </form>
@@ -126,6 +150,8 @@
                         domain="[('status', 'in', ('pending_mapping', 'pending'))]"/>
                 <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
                 <filter name="applied" string="Applied" domain="[('status', '=', 'applied')]"/>
+                <filter name="partially_applied" string="Partially Applied"
+                        domain="[('status', '=', 'partially_applied')]"/>
             </search>
         </field>
     </record>
@@ -148,6 +174,7 @@
                 <field name="source_model_name"/>
                 <field name="target_model_name"/>
                 <field name="auto_apply"/>
+                <field name="auto_generated" optional="show"/>
                 <field name="active"/>
             </list>
         </field>
@@ -180,6 +207,7 @@
                             <field name="allow_placeholder_creation"
                                    invisible="apply_mode != 'business_model'"/>
                             <field name="auto_apply"/>
+                            <field name="auto_generated"/>
                         </group>
                     </group>
                     <field name="mapping_ids">
@@ -194,6 +222,7 @@
                             <field name="relation_target_key"
                                    invisible="mapping_type not in ('stable_many2one', 'stable_many2many')"/>
                             <field name="required"/>
+                            <field name="auto_generated" optional="hide"/>
                         </list>
                     </field>
                 </sheet>

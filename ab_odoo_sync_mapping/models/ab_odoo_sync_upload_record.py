@@ -67,6 +67,7 @@ class AbOdooSyncUploadRecord(models.Model):
             ("pending", "Pending"),
             ("queued", "Queued"),
             ("applied", "Applied"),
+            ("partially_applied", "Partially Applied"),
             ("failed", "Failed"),
             ("raw_only", "Raw Only"),
             ("not_sync", "Not Sync"),
@@ -74,6 +75,7 @@ class AbOdooSyncUploadRecord(models.Model):
         default="pending",
         required=True,
         index=True,
+        readonly=True,
     )
     skipped_fields_json = fields.Json(string="Skipped Fields", default=list, readonly=True)
     error_message = fields.Text(string="Error Message", readonly=True)
@@ -81,6 +83,18 @@ class AbOdooSyncUploadRecord(models.Model):
     queued_at = fields.Datetime(string="Queued At", readonly=True)
     applied_at = fields.Datetime(string="Applied At", readonly=True)
     attempt_count = fields.Integer(string="Attempt Count", default=0, readonly=True)
+    apply_generation = fields.Integer(
+        string="Apply Generation",
+        default=0,
+        readonly=True,
+        index=True,
+        help="Prevents an obsolete queued job from overwriting a newer manual reapplication.",
+    )
+    override_mapping_ids = fields.One2many(
+        "ab_odoo_sync_upload_field_override",
+        "upload_record_id",
+        string="Field Mapping Overrides",
+    )
     active = fields.Boolean(default=True, index=True)
 
     _uniq_upload_record = models.Constraint(
@@ -214,14 +228,34 @@ class AbOdooSyncUploadRecord(models.Model):
             vals["status"] = "pending"
         self.sudo().write(vals)
 
-    def _queue_identity_key(self):
+    def _queue_identity_key(self, apply_generation):
         self.ensure_one()
-        return f"ab_odoo_sync_upload_record_apply:{self.id}"
+        return f"ab_odoo_sync_upload_record_apply:{self.id}:{apply_generation}"
 
-    def _queue_apply_records(self):
+    def _queue_apply_records(self, force=False):
         queued_count = 0
         now = fields.Datetime.now()
         for record in self.sudo().exists():
+            profile = record.apply_profile_id
+            if not profile:
+                profile, pending_error = (
+                    self.env["ab_odoo_sync_service"]
+                    .sudo()
+                    ._ensure_same_name_passive_profile(
+                        record.model_name,
+                        payload=record.payload_json,
+                    )
+                )
+                if profile:
+                    record._set_profile_handling(profile)
+                else:
+                    record.write(
+                        {
+                            "status": "pending_mapping",
+                            "error_message": pending_error or False,
+                        }
+                    )
+                    continue
             profile = record.apply_profile_id
             if not profile:
                 record.write(
@@ -232,22 +266,37 @@ class AbOdooSyncUploadRecord(models.Model):
                 )
                 continue
             if profile.apply_mode in {"raw_only", "ignore"}:
+                if force:
+                    raise UserError(
+                        _(
+                            "Change apply profile %(profile)s to Mirror Sync Model or Business Model before reapplying."
+                        )
+                        % {"profile": profile.display_name}
+                    )
                 record._set_profile_handling(profile)
                 continue
-            if record.status in {"applied", "queued", "not_sync", "raw_only"}:
+            if not force and record.status in {
+                "applied",
+                "partially_applied",
+                "queued",
+                "not_sync",
+                "raw_only",
+            }:
                 continue
+            apply_generation = record.apply_generation + 1
             record.write(
                 {
                     "status": "queued",
                     "queued_at": now,
                     "error_message": False,
+                    "apply_generation": apply_generation,
                 }
             )
             record.with_delay(
-                identity_key=record._queue_identity_key(),
+                identity_key=record._queue_identity_key(apply_generation),
                 description=_("Apply uploaded sync record %(record_id)s") % {"record_id": record.id},
                 max_retries=0,
-            ).job_apply_to_target()
+            ).job_apply_to_target(apply_generation)
             queued_count += 1
         return queued_count
 
@@ -268,8 +317,63 @@ class AbOdooSyncUploadRecord(models.Model):
             "success" if queued_count else "warning",
         )
 
+    def action_reapply_with_current_mapping(self):
+        records = self.sudo().exists()
+        for record in records:
+            profile = record.apply_profile_id
+            if not profile:
+                profile, pending_error = (
+                    self.env["ab_odoo_sync_service"]
+                    .sudo()
+                    ._ensure_same_name_passive_profile(
+                        record.model_name,
+                        payload=record.payload_json,
+                    )
+                )
+                if profile:
+                    record._set_profile_handling(profile)
+                else:
+                    raise UserError(
+                        pending_error
+                        or _("No active apply profile exists for this upload.")
+                    )
+            if record.apply_profile_id.apply_mode in {"raw_only", "ignore"}:
+                raise UserError(
+                    _(
+                        "Change apply profile %(profile)s to Mirror Sync Model or Business Model before reapplying."
+                    )
+                    % {"profile": record.apply_profile_id.display_name}
+                )
+        queued_count = records._queue_apply_records(force=True)
+        return self._notification(
+            _("Odoo Sync Upload"),
+            _("Queued %(count)s upload record(s) for reapplication.")
+            % {"count": queued_count},
+            "success" if queued_count else "warning",
+        )
+
+    def action_reset_mapping_overrides(self):
+        overrides = self.mapped("override_mapping_ids")
+        count = len(overrides)
+        overrides.unlink()
+        return self._notification(
+            _("Odoo Sync Upload"),
+            _("Reset %(count)s field mapping override(s).") % {"count": count},
+            "success" if count else "warning",
+        )
+
     def action_mark_not_sync(self):
-        records = self.filtered(lambda rec: rec.status in {"pending_mapping", "pending", "queued", "failed", "raw_only"})
+        records = self.filtered(
+            lambda rec: rec.status
+            in {
+                "pending_mapping",
+                "pending",
+                "queued",
+                "failed",
+                "raw_only",
+                "partially_applied",
+            }
+        )
         records.sudo().write(
             {
                 "status": "not_sync",
@@ -369,11 +473,10 @@ class AbOdooSyncUploadRecord(models.Model):
                     target_model_name = rules.user_mirror_model()
                 else:
                     target_model_name = target_field.comodel_name
-                if rules.is_id_only_relation_model(source_relation_model):
-                    reference = {
-                        "model": source_relation_model,
-                        "id": source_rec_id,
-                    }
+                reference = {
+                    "model": source_relation_model,
+                    "id": source_rec_id,
+                }
                 profile = self.apply_profile_id
                 relation = self.env["ab_odoo_sync_identity"].sudo().get_or_create_business_record(
                     db_serial=self.db_serial,
@@ -614,18 +717,18 @@ class AbOdooSyncUploadRecord(models.Model):
             if profile.apply_mode == "mirror_sync" and field_name in target_model._fields:
                 vals[field_name] = value
 
-        active_mappings = profile.mapping_ids.filtered(
-            lambda mapping: mapping.sync_enabled and mapping.mapping_type != "ignore"
-        ).sorted("sequence")
-        if self.source_operation == "upsert" and not active_mappings:
-            raise ValueError(
-                _("Apply profile %(profile)s has no active field mappings.")
-                % {"profile": profile.name}
-            )
+        effective_mappings = self._effective_mappings()
+        enabled_mappings = [
+            mapping for mapping in effective_mappings if mapping.sync_enabled
+        ]
+        active_mappings = [
+            mapping for mapping in enabled_mappings if mapping.mapping_type != "ignore"
+        ]
 
-        mapped_source_fields = set()
+        handled_source_fields = {
+            mapping.source_field_name for mapping in enabled_mappings
+        }
         for mapping in active_mappings:
-            mapped_source_fields.add(mapping.source_field_name)
             if mapping.source_field_name not in payload_fields:
                 if mapping.required:
                     raise ValueError(
@@ -669,9 +772,23 @@ class AbOdooSyncUploadRecord(models.Model):
                 )
             vals["active"] = False
 
-        skipped_fields = sorted(set(payload_fields) - mapped_source_fields)
+        skipped_fields = sorted(
+            set(payload_fields) - handled_source_fields - {"id"}
+        )
 
         return vals, skipped_fields
+
+    def _effective_mappings(self):
+        self.ensure_one()
+        mappings_by_source = {}
+        for mapping in self.apply_profile_id.mapping_ids.sorted("sequence"):
+            mappings_by_source.setdefault(mapping.source_field_name, []).append(mapping)
+        for override in self.override_mapping_ids.sorted("sequence"):
+            mappings_by_source[override.source_field_name] = [override]
+        return sorted(
+            [mapping for mappings in mappings_by_source.values() for mapping in mappings],
+            key=lambda mapping: (mapping.sequence, mapping.source_field_name, mapping.id),
+        )
 
     def _apply_to_mirror_model(self, target_model, vals):
         self.ensure_one()
@@ -731,12 +848,19 @@ class AbOdooSyncUploadRecord(models.Model):
         identity_model.mark_resolved(self, target_model._name, target_res_id)
         return existing
 
-    def job_apply_to_target(self):
+    def job_apply_to_target(self, apply_generation=False):
         for record in self.sudo().exists():
-            record._apply_to_target()
+            record._apply_to_target(apply_generation=apply_generation)
 
-    def _apply_to_target(self):
+    def _apply_to_target(self, apply_generation=False):
         self.ensure_one()
+        locked = self.try_lock_for_update(allow_referencing=True, limit=1)
+        if not locked:
+            return
+        self = locked
+        self.invalidate_recordset(["apply_generation", "status"])
+        if apply_generation and self.apply_generation != apply_generation:
+            return
         if self.status == "not_sync":
             return
 
@@ -776,7 +900,7 @@ class AbOdooSyncUploadRecord(models.Model):
 
         self.write(
             {
-                "status": "applied",
+                "status": "partially_applied" if skipped_fields else "applied",
                 "attempt_count": self.attempt_count + 1,
                 "skipped_fields_json": skipped_fields,
                 "error_message": False,

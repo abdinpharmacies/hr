@@ -2,38 +2,47 @@
 
 ## Recent relevant commit
 
-- Commit: `7a0b9a6bca138eb3abd6d09328783ac781d74733`
+- Commit: `a9997ecd29e36a3f19d179f79551da7d6bcfef3e`
 - Author: Alhassan Hossny
-- Date: 2026-09-01
-- Subject: `ab_odoo_sync_mapping: queue report mapping from sync events`
-- Queued report-side apply feeders from profile and mapping changes so existing received uploads are picked up after configuration changes.
+- Date: 2026-09-02
+- Subject: `ab_odoo_sync_mapping: auto-map same-name passive report profiles`
+- Added automatic same-name passive profiles and safe stored-field mapping.
+
+Files changed:
+
+- `ab_odoo_sync_mapping/changelog.d/2026-09-02-same-name-passive-profiles.md`
+- `ab_odoo_sync_mapping/i18n/ar.po`
+- `ab_odoo_sync_mapping/i18n/ar_001.po`
+- `ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py`
+- `ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py`
+- `ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py`
+
+## Current changes before commit
+
+- Classify same-name scalar and relational fields from model or payload metadata
+  and enable only safely inferred mappings.
+- Resolve Many2one and Many2many references through `(db_serial, rec_id)` for
+  sync models and through source-ID identities for business models.
+- Evolve automatically generated profiles when later payload revisions introduce
+  new compatible fields, while preserving explicit profiles and mappings.
+- Apply mapped fields when payload fields are absent from the report model and
+  mark the upload as `Partially Applied` with the skipped-field list.
+- Treat enabled `Ignore` mappings as handled fields so intentionally omitted
+  payload fields can finish as fully applied.
+- Add administrator-owned per-upload field overrides and generation-safe manual
+  reapplication without creating duplicate target rows.
+- Add Arabic translations for the new mapping, status, and reapplication UI.
 
 Files changed:
 
 - `ab_odoo_sync_mapping/__manifest__.py`
-- `ab_odoo_sync_mapping/changelog.d/2026-08-26-mapping-runtime.md`
-- `ab_odoo_sync_mapping/data/crons.xml`
+- `ab_odoo_sync_mapping/changelog.d/2026-09-02-same-name-passive-profiles.md`
 - `ab_odoo_sync_mapping/i18n/ar.po`
 - `ab_odoo_sync_mapping/i18n/ar_001.po`
-- `ab_odoo_sync_mapping/migrations/19.0.1.2.0/post-migration.py`
+- `ab_odoo_sync_mapping/models/__init__.py`
 - `ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py`
 - `ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py`
+- `ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py`
 - `ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py`
+- `ab_odoo_sync_mapping/security/ir.model.access.csv`
 - `ab_odoo_sync_mapping/views/mapping_views.xml`
-
-## Current changes before commit
-
-- Default new received-upload targets and mirror profile targets to the same technical model name as the source.
-- Auto-create same-name passive `mirror_sync` profiles for valid passive report models and load enabled safe stored field mappings.
-- Keep report-owned master/reference models out of auto-mirroring and surface pending-mapping errors directing them to `business_model` profiles.
-- Enforce strict same-name passive metadata for `mirror_sync` profiles and repair stale non-applied upload targets through profile handling.
-- Default relation mappings to source-ID sync for passive sync models and ID-only reference models while leaving stable-key mappings for manual exceptions.
-- Add Arabic translations for new report-side validation and pending-mapping messages.
-
-Files changed:
-
-- `ab_odoo_sync_mapping/i18n/ar.po`
-- `ab_odoo_sync_mapping/i18n/ar_001.po`
-- `ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py`
-- `ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py`
-- `ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py`

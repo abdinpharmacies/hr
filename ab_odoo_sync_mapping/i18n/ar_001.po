@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-01 10:27+0000\n"
+"POT-Creation-Date: 2026-09-02 15:12+0000\n"
 "PO-Revision-Date: 2026-08-26 12:42+0000\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
@@ -48,6 +48,11 @@ msgid "AB Odoo Sync Service"
 msgstr "حالة حدث مزامنة أودو"
 
 #. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_upload_field_override
+msgid "AB Odoo Sync Upload Field Override"
+msgstr "تجاوز تعيين حقل رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_upload_record
 msgid "AB Odoo Sync Upload Record"
 msgstr "سجل رفع مزامنة أودو"
@@ -82,14 +87,14 @@ msgid "Applied At"
 msgstr "تم التطبيق في"
 
 #. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__apply_generation
+msgid "Apply Generation"
+msgstr "جيل التطبيق"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__apply_mode
 msgid "Apply Mode"
 msgstr "وضع التطبيق"
-
-#. module: ab_odoo_sync_mapping
-#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_apply_profile_form
-msgid "Queue Pending Uploads"
-msgstr "إضافة التحميلات المعلقة إلى قائمة الانتظار"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__apply_profile_id
@@ -104,9 +109,11 @@ msgstr "ملفات تعريف التطبيق"
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
-msgid "Apply profile %(profile)s has no active field mappings."
-msgstr "لا يحتوي ملف تعريف التطبيق %(profile)s على تعيينات حقول نشطة."
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Apply profile %(profile)s is inactive; activate it or configure another "
+"handling mode."
+msgstr "ملف تعريف التطبيق %(profile)s غير نشط؛ نشّطه أو اضبط وضع معالجة آخر."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -131,6 +138,12 @@ msgid "Attempt Count"
 msgstr "عدد المحاولات"
 
 #. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__auto_generated
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__auto_generated
+msgid "Automatically Generated"
+msgstr "تم إنشاؤه تلقائياً"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__auto_apply
 msgid "Automatically Queue Apply"
 msgstr "إضافة التطبيق إلى قائمة الانتظار"
@@ -139,6 +152,16 @@ msgstr "إضافة التطبيق إلى قائمة الانتظار"
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__business_model
 msgid "Business Model"
 msgstr "نموذج أعمال"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid ""
+"Change apply profile %(profile)s to Mirror Sync Model or Business Model "
+"before reapplying."
+msgstr ""
+"غيّر ملف تعريف التطبيق %(profile)s إلى نموذج مزامنة مرآة أو نموذج أعمال قبل "
+"إعادة التطبيق."
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_identity__state__conflict
@@ -151,7 +174,18 @@ msgid ""
 "Controls how the report server handles accepted branch uploads for this "
 "source model."
 msgstr ""
-"يتحكم في طريقة تعامل خادم التقارير مع الرفعات المقبولة من الفروع لهذا النموذج المصدر."
+"يتحكم في طريقة تعامل خادم التقارير مع الرفعات المقبولة من الفروع لهذا "
+"النموذج المصدر."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Could not auto-create same-name passive apply profile for %(model)s: "
+"%(error)s"
+msgstr ""
+"تعذر إنشاء ملف تطبيق تلقائي بنفس اسم نموذج التقارير الخامل %(model)s: "
+"%(error)s"
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -173,6 +207,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__create_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__create_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__create_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_uid
 msgid "Created by"
 msgstr "إنشاء"
@@ -182,6 +217,7 @@ msgstr "إنشاء"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__create_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__create_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__create_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_date
 msgid "Created on"
 msgstr "إنشاء"
@@ -205,6 +241,7 @@ msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيا
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__direct
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__direct
 msgid "Direct Value"
 msgstr "قيمة مباشرة"
 
@@ -214,6 +251,7 @@ msgstr "قيمة مباشرة"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
@@ -236,6 +274,7 @@ msgstr "المعرف الهدف المتوقع %(expected)s لكن الهوية 
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__required
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__required
 msgid ""
 "Fail the whole apply operation when this relation or value cannot be "
 "resolved."
@@ -246,6 +285,12 @@ msgstr "إفشال عملية التطبيق بالكامل عندما يتعذ�
 #: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_search
 msgid "Failed"
 msgstr "فشل"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__override_mapping_ids
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+msgid "Field Mapping Overrides"
+msgstr "تجاوزات تعيين الحقول"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__mapping_ids
@@ -259,6 +304,7 @@ msgstr "يجب أن يكون الحدث المصدر فريدا لكل رقم ق
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_target_key
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__relation_target_key
 msgid "Field searched on the report relation model."
 msgstr "الحقل الذي يتم البحث به في نموذج العلاقة على خادم التقارير."
 
@@ -268,6 +314,7 @@ msgstr "الحقل الذي يتم البحث به في نموذج العلاق�
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__id
 msgid "ID"
 msgstr "المعرّف"
@@ -275,8 +322,15 @@ msgstr "المعرّف"
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__ignore
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__ignore
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__ignore
 msgid "Ignore"
 msgstr "تجاهل"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
+msgid "Ignored fields cannot be required."
+msgstr "لا يمكن أن تكون الحقول المتجاهلة مطلوبة."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -295,6 +349,7 @@ msgstr "أبقِه معطلاً أثناء فحص الحمولات الخام و
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__write_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__write_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__write_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
@@ -304,6 +359,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__write_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__write_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__write_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
@@ -327,16 +383,23 @@ msgstr "تحميل الحقول المتطابقة"
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
 msgid ""
-"Loaded %(count)s matching field mapping(s). Enable only the fields that the "
-"report server should apply."
+"Loaded %(count)s matching field mapping(s). Safe compatible fields were "
+"enabled automatically."
 msgstr ""
-"تم تحميل %(count)s من تعيينات الحقول المتطابقة. فعّل فقط الحقول التي يجب أن "
-"يطبقها خادم التقارير."
+"تم تحميل %(count)s من تعيينات الحقول المتطابقة، وتفعيل الحقول الآمنة "
+"والمتوافقة تلقائياً."
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__mapping_type
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__mapping_type
 msgid "Mapping Type"
 msgstr "نوع التعيين"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
+msgid "Mapping type %(mapping)s requires a %(field_type)s target field."
+msgstr "يتطلب نوع التعيين %(mapping)s حقلاً هدفاً من النوع %(field_type)s."
 
 #. module: ab_odoo_sync_mapping
 #: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
@@ -356,6 +419,13 @@ msgid "Mirror Sync Model"
 msgstr "نموذج مزامنة مرآة"
 
 #. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Mirror Sync Model profiles must use the same source and target model."
+msgstr ""
+"يجب أن تستخدم ملفات تطبيق نموذج المزامنة المرآة نفس نموذج المصدر والهدف."
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__name
 msgid "Name"
@@ -366,6 +436,12 @@ msgstr "الاسم"
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
 msgid "No active apply profile exists for source model %(model)s."
 msgstr "لا يوجد ملف تعريف تطبيق نشط لنموذج المصدر %(model)s."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "No active apply profile exists for this upload."
+msgstr "لا يوجد ملف تعريف تطبيق نشط لهذا الرفع."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -402,6 +478,18 @@ msgid "Only one apply profile is allowed for each source model."
 msgstr "يُسمح بملف تعريف تطبيق واحد فقط لكل نموذج مصدر."
 
 #. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_field_override_uniq_upload_source_field
+msgid ""
+"Only one field override is allowed per received upload and source field."
+msgstr "يُسمح بتجاوز حقل واحد فقط لكل رفع مستلم وحقل مصدر."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__partially_applied
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_search
+msgid "Partially Applied"
+msgstr "مطبق جزئياً"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__payload_json
 msgid "Payload"
 msgstr "البيانات"
@@ -423,6 +511,13 @@ msgid "Placeholder"
 msgstr "سجل مؤقت"
 
 #. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__apply_generation
+msgid ""
+"Prevents an obsolete queued job from overwriting a newer manual "
+"reapplication."
+msgstr "يمنع مهمة قديمة في قائمة الانتظار من الكتابة فوق إعادة تطبيق يدوية أحدث."
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__profile_id
 msgid "Profile"
 msgstr "ملف التعريف"
@@ -434,16 +529,15 @@ msgid "Queue Apply"
 msgstr "إضافة التطبيق إلى قائمة الانتظار"
 
 #. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_apply_profile_form
+msgid "Queue Pending Uploads"
+msgstr "إضافة التحميلات المعلقة إلى قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
 msgid "Queue reporting upload records for %(profile)s"
 msgstr "إدراج سجلات رفع التقارير لـ %(profile)s في قائمة الانتظار"
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Queued pending upload feeder(s) for %(count)s profile(s)."
-msgstr "تمت إضافة مغذي التحميلات المعلقة إلى قائمة الانتظار لعدد %(count)s ملف تعريف."
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__queued
@@ -463,9 +557,22 @@ msgid "Queued %(count)s upload record(s) for apply."
 msgstr "تمت إضافة %(count)s سجل رفع للتطبيق إلى قائمة الانتظار."
 
 #. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Queued %(count)s upload record(s) for reapplication."
+msgstr "تمت إضافة %(count)s سجل رفع لإعادة التطبيق إلى قائمة الانتظار."
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__queued_at
 msgid "Queued At"
 msgstr "أضيف إلى قائمة الانتظار في"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Queued pending upload feeder(s) for %(count)s profile(s)."
+msgstr ""
+"تمت إضافة مغذي التحميلات المعلقة إلى قائمة الانتظار لعدد %(count)s ملف تعريف."
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__raw_only
@@ -474,9 +581,20 @@ msgid "Raw Only"
 msgstr "بيانات خام فقط"
 
 #. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_list
+msgid "Reapply Mapping"
+msgstr "إعادة تطبيق التعيين"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__received_at
 msgid "Received At"
 msgstr "تم الاستلام في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__upload_record_id
+msgid "Received Upload"
+msgstr "الرفع المستلم"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_upload_record
@@ -504,11 +622,13 @@ msgstr "تفتقد العلاقة %(field)s المفتاح الثابت %(key)s.
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_source_key
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__relation_source_key
 msgid "Relation Source Key"
 msgstr "مفتاح مصدر العلاقة"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_target_key
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__relation_target_key
 msgid "Relation Target Key"
 msgstr "مفتاح هدف العلاقة"
 
@@ -526,6 +646,7 @@ msgstr "يجب أن تكون بيانات الرفع كائن JSON."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
 msgid "Relational target field %(field)s requires a relation mapping type."
 msgstr "يتطلب حقل الهدف العلاقي %(field)s نوع تعيين للعلاقة."
@@ -553,7 +674,38 @@ msgid "Report Sync Configuration"
 msgstr "إعداد مزامنة التقارير"
 
 #. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Report model %(model)s cannot be auto-mapped because it is missing passive "
+"sync fields: %(fields)s"
+msgstr ""
+"لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه يفتقد حقول المزامنة "
+"الخاملة: %(fields)s"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Report model %(model)s cannot be auto-mapped because it lacks a unique "
+"constraint on db_serial and rec_id."
+msgstr ""
+"لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه لا يحتوي على قيد فريد "
+"على db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Report model %(model)s is not installed; install the passive report model or "
+"create an explicit apply profile."
+msgstr ""
+"نموذج التقارير %(model)s غير مثبت؛ ثبّت نموذج التقارير الخامل أو أنشئ ملف "
+"تطبيق صريحا."
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__required
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__required
 msgid "Required"
 msgstr "مطلوب"
 
@@ -570,12 +722,24 @@ msgid "Required source field %(field)s is missing from the payload."
 msgstr "حقل المصدر المطلوب %(field)s غير موجود في الحمولة."
 
 #. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Reset %(count)s field mapping override(s)."
+msgstr "تمت إعادة تعيين %(count)s من تجاوزات تعيين الحقول."
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+msgid "Reset Overrides"
+msgstr "إعادة تعيين التجاوزات"
+
+#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_identity__state__resolved
 msgid "Resolved"
 msgstr "تم حله"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_source_key
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__relation_source_key
 msgid ""
 "Scalar field included in the relation snapshot, such as eplus_serial or code."
 msgstr "حقل مفرد مضمن في لقطة العلاقة، مثل eplus_serial أو code."
@@ -583,6 +747,7 @@ msgstr "حقل مفرد مضمن في لقطة العلاقة، مثل eplus_ser
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__sequence
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__sequence
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__sequence
 msgid "Sequence"
 msgstr "التسلسل"
 
@@ -598,6 +763,7 @@ msgstr "الحقول المتجاوزة"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__source_field_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__source_field_name
 msgid "Source Field"
 msgstr "الموديل المصدر"
 
@@ -631,6 +797,12 @@ msgstr "معرف الحدث المصدر"
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
+msgid "Source field %(field)s does not exist in the received payload."
+msgstr "حقل المصدر %(field)s غير موجود في بيانات الرفع المستلمة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
 msgid "Source field %(field)s does not exist on %(model)s."
 msgstr "حقل المصدر %(field)s غير موجود في %(model)s."
@@ -646,12 +818,31 @@ msgstr ""
 #. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
 msgid ""
-"Source model %(model)s is protected by sync-rules.md and cannot be mirrored "
-"from branch uploads."
+"Source model %(model)s is protected by sync-rules.md and cannot be uploaded "
+"from branches."
 msgstr ""
-"نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن نسخه كمرآة من "
-"رفعات الفروع."
+"نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن رفعه من الفروع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Source model %(model)s is report-owned and must use Business Model apply "
+"mode."
+msgstr ""
+"نموذج المصدر %(model)s مملوك للتقارير ويجب أن يستخدم وضع تطبيق نموذج الأعمال."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid ""
+"Source model %(model)s is report-owned; create a Business Model apply "
+"profile instead of a Mirror Sync Model profile."
+msgstr ""
+"نموذج المصدر %(model)s مملوك للتقارير؛ أنشئ ملف تطبيق نموذج الأعمال بدلا من "
+"ملف نموذج المزامنة المرآة."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -676,17 +867,20 @@ msgstr "تطابقت العلاقة الثابتة %(field)s مع أكثر من 
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__stable_many2many
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__stable_many2many
 msgid "Stable-key Many2many"
 msgstr "Many2many بمفتاح ثابت"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__stable_many2one
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__stable_many2one
 msgid "Stable-key Many2one"
 msgstr "Many2one بمفتاح ثابت"
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
 msgid "Stable-key mappings require both relation key fields."
 msgstr "تتطلب تعيينات المفتاح الثابت حقلي مفتاح العلاقة كليهما."
 
@@ -702,6 +896,7 @@ msgstr "الحالة"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__sync_enabled
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__sync_enabled
 msgid "Sync Enabled"
 msgstr "حالات أحداث المزامنة"
 
@@ -713,11 +908,13 @@ msgstr "هويات المزامنة"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__sync_many2many
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__sync_many2many
 msgid "Sync Many2many by Source ID"
 msgstr "مزامنة Many2many بمعرّف المصدر"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__sync_many2one
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_field_override__mapping_type__sync_many2one
 msgid "Sync Many2one by Source ID"
 msgstr "مزامنة Many2one بمعرّف المصدر"
 
@@ -751,6 +948,7 @@ msgstr "سجلات رفع المزامنة سجلات تدقيق ولا يمكن
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__target_field_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__target_field_name
 msgid "Target Field"
 msgstr "الموديل الهدف"
 
@@ -769,6 +967,7 @@ msgstr "معرف السجل الهدف"
 #. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
 msgid "Target field %(field)s does not exist on %(model)s."
 msgstr "موديل المزامنة الهدف %(model)s غير موجود."
 
@@ -791,6 +990,7 @@ msgstr "النموذج الهدف %(model)s غير موجود."
 #. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
 msgid "Target model %(model)s is not installed."
 msgstr "النموذج الهدف %(model)s غير مثبت."
 
@@ -824,16 +1024,20 @@ msgstr ""
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Target sync model %(model)s must define a unique database constraint on "
+"db_serial and rec_id."
+msgstr ""
+"يجب أن يعرّف نموذج المزامنة الهدف %(model)s قيد قاعدة بيانات فريدا على "
+"db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
 msgid "Target sync model %(model)s must define db_serial and rec_id fields."
 msgstr ""
 "يجب أن يحتوي موديل المزامنة الهدف %(model)s على حقلي db_serial و rec_id."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Target sync model %(model)s must define a unique database constraint on db_serial and rec_id."
-msgstr "يجب أن يعرّف نموذج المزامنة الهدف %(model)s قيد قاعدة بيانات فريدا على db_serial و rec_id."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -844,6 +1048,15 @@ msgid ""
 msgstr ""
 "يجب ألا يعرّف نموذج المزامنة المستهدف %(model)s حقولاً إلزامية. استخدم تعيينات "
 "حقول ملف التطبيق لتحديد القيم المطلوبة بدلاً من ذلك: %(fields)s"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__auto_generated
+msgid ""
+"This profile was created from a received payload and may receive new safe "
+"matching fields automatically."
+msgstr ""
+"تم إنشاء ملف التعريف هذا من بيانات رفع مستلمة، وقد يستقبل حقولاً آمنة "
+"ومتطابقة جديدة تلقائياً."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python
@@ -952,50 +1165,9 @@ msgstr "يجب أن تكون source_operation هي upsert أو archive."
 msgid "source_revision must be a positive integer."
 msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
 
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Could not auto-create same-name passive apply profile for %(model)s: %(error)s"
-msgstr "تعذر إنشاء ملف تطبيق تلقائي بنفس اسم نموذج التقارير الخامل %(model)s: %(error)s"
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Mirror Sync Model profiles must use the same source and target model."
-msgstr "يجب أن تستخدم ملفات تطبيق نموذج المزامنة المرآة نفس نموذج المصدر والهدف."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Report model %(model)s cannot be auto-mapped because it is missing passive sync fields: %(fields)s"
-msgstr "لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه يفتقد حقول المزامنة الخاملة: %(fields)s"
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Report model %(model)s cannot be auto-mapped because it lacks a unique constraint on db_serial and rec_id."
-msgstr "لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه لا يحتوي على قيد فريد على db_serial و rec_id."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Report model %(model)s is not installed; install the passive report model or create an explicit apply profile."
-msgstr "نموذج التقارير %(model)s غير مثبت؛ ثبّت نموذج التقارير الخامل أو أنشئ ملف تطبيق صريحا."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches."
-msgstr "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن رفعه من الفروع."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Source model %(model)s is report-owned and must use Business Model apply mode."
-msgstr "نموذج المصدر %(model)s مملوك للتقارير ويجب أن يستخدم وضع تطبيق نموذج الأعمال."
-
-#. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Source model %(model)s is report-owned; create a Business Model apply profile instead of a Mirror Sync Model profile."
-msgstr "نموذج المصدر %(model)s مملوك للتقارير؛ أنشئ ملف تطبيق نموذج الأعمال بدلا من ملف نموذج المزامنة المرآة."
+#~ msgid ""
+#~ "Source model %(model)s is protected by sync-rules.md and cannot be "
+#~ "mirrored from branch uploads."
+#~ msgstr ""
+#~ "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن نسخه كمرآة من "
+#~ "رفعات الفروع."

@@ -35,7 +35,6 @@ class AbOdooSyncMappingService(models.AbstractModel):
             raise ValueError(_("records must be a JSON array."))
 
         upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
-        profile_model = self.env["ab_odoo_sync_apply_profile"].sudo()
         result = {
             "accepted": 0,
             "queued": 0,
@@ -58,12 +57,10 @@ class AbOdooSyncMappingService(models.AbstractModel):
                 payload_json = row.get("payload")
                 if not isinstance(payload_json, dict):
                     raise ValueError(_("payload must be a JSON object."))
-                profile = profile_model.get_for_source(model_name)
-                pending_mapping_error = False
-                if not profile:
-                    profile, pending_mapping_error = self._ensure_same_name_passive_profile(
-                        model_name
-                    )
+                profile, pending_mapping_error = self._ensure_same_name_passive_profile(
+                    model_name,
+                    payload=payload_json,
+                )
                 upload_record, changed = upload_model.upsert_from_upload(
                     db_serial=db_serial,
                     model_name=model_name,
@@ -106,11 +103,26 @@ class AbOdooSyncMappingService(models.AbstractModel):
         return result
 
     @api.model
-    def _ensure_same_name_passive_profile(self, model_name):
+    def _ensure_same_name_passive_profile(self, model_name, payload=False):
         Profile = self.env["ab_odoo_sync_apply_profile"].sudo()
         existing = Profile.get_for_source(model_name)
         if existing:
+            if existing.auto_generated:
+                existing._load_matching_fields(
+                    default_sync_enabled=True,
+                    stored_only=True,
+                    payload=payload,
+                )
             return existing, False
+
+        inactive = Profile.with_context(active_test=False).search(
+            [("source_model_name", "=", model_name)],
+            limit=1,
+        )
+        if inactive:
+            return False, _(
+                "Apply profile %(profile)s is inactive; activate it or configure another handling mode."
+            ) % {"profile": inactive.display_name}
 
         pending_error = self._same_name_passive_profile_error(model_name)
         if pending_error:
@@ -123,21 +135,16 @@ class AbOdooSyncMappingService(models.AbstractModel):
             "apply_mode": "mirror_sync",
             "auto_apply": True,
             "allow_placeholder_creation": True,
+            "auto_generated": True,
             "active": True,
         }
-        profile = Profile.with_context(active_test=False).search(
-            [("source_model_name", "=", model_name)],
-            limit=1,
-        )
         try:
             with self.env.cr.savepoint():
-                if profile:
-                    profile.write(profile_vals)
-                else:
-                    profile = Profile.create(profile_vals)
+                profile = Profile.create(profile_vals)
                 profile._load_matching_fields(
                     default_sync_enabled=True,
                     stored_only=True,
+                    payload=payload,
                 )
                 self._refresh_uploads_for_profile(profile)
         except Exception as ex:
@@ -248,6 +255,30 @@ class AbOdooSyncMappingService(models.AbstractModel):
 
     @api.model
     def cron_queue_upload_apply_records(self):
+        pending_profiles = {}
+        pending_uploads = self.env["ab_odoo_sync_upload_record"].sudo().search(
+            [
+                ("apply_profile_id", "=", False),
+                ("status", "=", "pending_mapping"),
+                ("active", "=", True),
+            ],
+            order="id",
+            limit=self.get_batch_size(),
+        )
+        for upload in pending_uploads:
+            if upload.model_name in pending_profiles:
+                profile, pending_error = pending_profiles[upload.model_name]
+            else:
+                profile, pending_error = self._ensure_same_name_passive_profile(
+                    upload.model_name,
+                    payload=upload.payload_json,
+                )
+                pending_profiles[upload.model_name] = (profile, pending_error)
+            if profile:
+                upload._set_profile_handling(profile)
+            elif pending_error and upload.error_message != pending_error:
+                upload.write({"error_message": pending_error})
+
         profiles = self.env["ab_odoo_sync_apply_profile"].sudo().search(
             [
                 ("active", "=", True),

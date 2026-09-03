@@ -68,6 +68,13 @@ class AbOdooSyncApplyProfile(models.Model):
         default=False,
         help="Keep disabled while inspecting raw payloads and selecting mappings.",
     )
+    auto_generated = fields.Boolean(
+        string="Automatically Generated",
+        default=False,
+        readonly=True,
+        index=True,
+        help="This profile was created from a received payload and may receive new safe matching fields automatically.",
+    )
     active = fields.Boolean(default=True, index=True)
 
     _uniq_source_model = models.Constraint(
@@ -218,6 +225,19 @@ class AbOdooSyncApplyProfile(models.Model):
 
     def _queue_auto_upload_apply_feeders(self):
         service = self.env["ab_odoo_sync_service"].sudo()
+        partial_uploads = self.env["ab_odoo_sync_upload_record"].sudo().search(
+            [
+                ("apply_profile_id", "in", self.ids),
+                ("status", "=", "partially_applied"),
+                ("active", "=", True),
+            ]
+        )
+        partial_uploads.write(
+            {
+                "status": "pending",
+                "error_message": False,
+            }
+        )
         queued = 0
         for profile in self.sudo():
             queued += service.queue_upload_apply_feeder(profile)
@@ -225,6 +245,7 @@ class AbOdooSyncApplyProfile(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        profile_ids = []
         for vals in vals_list:
             apply_mode = vals.get("apply_mode") or "mirror_sync"
             if not vals.get("target_model_name"):
@@ -232,7 +253,19 @@ class AbOdooSyncApplyProfile(models.Model):
                     vals.get("source_model_name"),
                     apply_mode,
                 )
-        profiles = super().create(vals_list)
+            existing = self.with_context(active_test=False).search(
+                [
+                    ("source_model_name", "=", vals.get("source_model_name")),
+                    ("auto_generated", "=", True),
+                ],
+                limit=1,
+            )
+            if existing and not vals.get("auto_generated"):
+                existing.write({**vals, "auto_generated": False})
+                profile_ids.append(existing.id)
+            else:
+                profile_ids.extend(super().create([vals]).ids)
+        profiles = self.browse(profile_ids)
         profiles._queue_auto_upload_apply_feeders()
         return profiles
 
@@ -271,77 +304,114 @@ class AbOdooSyncApplyProfile(models.Model):
     @api.model
     def _mapping_type_for_fields(self, source_field, target_field, apply_mode="mirror_sync"):
         if target_field.type == "one2many":
-            return "ignore"
+            return (
+                "ignore"
+                if getattr(source_field, "type", False) == "one2many"
+                else False
+            )
         rules = self.env["ab_odoo_sync_rules"].sudo()
         source_comodel = getattr(source_field, "comodel_name", False)
         if target_field.type == "many2one":
+            if getattr(source_field, "type", False) != "many2one":
+                return False
             if source_comodel == rules.user_source_model():
                 if target_field.comodel_name == rules.user_mirror_model():
                     return "sync_many2one"
-                return "ignore"
-            if (
-                apply_mode == "business_model"
-                or target_field.comodel_name == rules.user_mirror_model()
-                or target_field.comodel_name.endswith("__sync")
-                or rules.is_id_only_relation_model(source_comodel)
-                or self._has_mirror_sync_metadata(target_field.comodel_name)
-            ):
-                return "sync_many2one"
-            return "ignore"
+                return False
+            if source_comodel and source_comodel != target_field.comodel_name:
+                return False
+            return "sync_many2one"
         if target_field.type == "many2many":
+            if getattr(source_field, "type", False) != "many2many":
+                return False
             if source_comodel == rules.user_source_model():
                 if target_field.comodel_name == rules.user_mirror_model():
                     return "sync_many2many"
-                return "ignore"
-            if (
-                apply_mode == "business_model"
-                or target_field.comodel_name.endswith("__sync")
-                or rules.is_id_only_relation_model(source_comodel)
-                or self._has_mirror_sync_metadata(target_field.comodel_name)
-            ):
-                return "sync_many2many"
-            return "ignore"
+                return False
+            if source_comodel and source_comodel != target_field.comodel_name:
+                return False
+            return "sync_many2many"
         source_type = source_field.type if source_field else False
         if source_type == target_field.type:
             return "direct"
-        return "ignore"
+        return False
 
     @api.model
     def _is_auto_sync_safe_field(self, source_field, target_field, mapping_type):
+        if mapping_type == "ignore":
+            return target_field.type == "one2many"
         if mapping_type not in {"direct", "sync_many2one", "sync_many2many"}:
             return False
         if not getattr(source_field, "store", False) or not target_field.store:
             return False
         return not (target_field.compute and not target_field.inverse)
 
-    def _source_field_info(self):
-        self.ensure_one()
-        if self.source_model_name in self.env:
-            return {
-                field_name: field
-                for field_name, field in self.env[self.source_model_name]._fields.items()
-            }
-        upload = self.env["ab_odoo_sync_upload_record"].sudo().search(
-            [
-                ("model_name", "=", self.source_model_name),
-                ("payload_json", "!=", False),
-            ],
-            order="received_at desc, id desc",
-            limit=1,
-        )
-        payload = upload.payload_json or {}
+    @api.model
+    def _payload_source_field_info(self, payload, target_model=False):
+        payload = payload or {}
         field_types = payload.get("field_types") or {}
         fields_payload = payload.get("fields") or {}
-        return {
-            field_name: type(
+        result = {}
+        for field_name, value in fields_payload.items():
+            target_field = (
+                target_model._fields.get(field_name) if target_model else False
+            )
+            field_type = field_types.get(field_name) or (
+                target_field.type if target_field else False
+            )
+            comodel_name = False
+            if field_type == "many2one" and isinstance(value, dict):
+                comodel_name = value.get("model")
+            elif field_type == "many2many" and isinstance(value, list):
+                reference = next((item for item in value if isinstance(item, dict)), {})
+                comodel_name = reference.get("model")
+            if not comodel_name and target_field:
+                comodel_name = getattr(target_field, "comodel_name", False)
+            result[field_name] = type(
                 "PayloadField",
                 (),
-                {"type": field_types.get(field_name)},
+                {
+                    "type": field_type,
+                    "store": True,
+                    "comodel_name": comodel_name,
+                },
             )()
-            for field_name in fields_payload
-        }
+        return result
 
-    def _load_matching_fields(self, default_sync_enabled=False, stored_only=False):
+    def _source_field_info(self, payload=None):
+        self.ensure_one()
+        target_model = (
+            self.env[self.target_model_name]
+            if self.target_model_name in self.env
+            else False
+        )
+        if payload is not None:
+            payload_fields = self._payload_source_field_info(
+                payload,
+                target_model=target_model,
+            )
+            if payload_fields:
+                return payload_fields
+        if self.source_model_name in self.env:
+            return dict(self.env[self.source_model_name]._fields)
+        if payload is None:
+            upload = self.env["ab_odoo_sync_upload_record"].sudo().search(
+                [
+                    ("model_name", "=", self.source_model_name),
+                    ("payload_json", "!=", False),
+                ],
+                order="received_at desc, id desc",
+                limit=1,
+            )
+            payload = upload.payload_json or {}
+        return self._payload_source_field_info(payload, target_model=target_model)
+
+    def _load_matching_fields(
+        self,
+        default_sync_enabled=False,
+        stored_only=False,
+        payload=None,
+    ):
         Mapping = self.env["ab_odoo_sync_field_mapping"].sudo()
         created = 0
         for profile in self:
@@ -353,7 +423,7 @@ class AbOdooSyncApplyProfile(models.Model):
                     _("Install or upgrade target model %(model)s before loading field mappings.")
                     % {"model": profile.target_model_name}
                 )
-            source_fields = profile._source_field_info()
+            source_fields = profile._source_field_info(payload=payload)
             target_model = self.env[profile.target_model_name]
             existing_pairs = {
                 (mapping.source_field_name, mapping.target_field_name)
@@ -367,15 +437,17 @@ class AbOdooSyncApplyProfile(models.Model):
                 if pair in existing_pairs:
                     continue
                 source_field = source_fields[field_name]
-                if stored_only and (
-                    not getattr(source_field, "store", False) or not target_field.store
-                ):
-                    continue
                 mapping_type = self._mapping_type_for_fields(
                     source_field,
                     target_field,
                     profile.apply_mode,
                 )
+                if not mapping_type:
+                    continue
+                if stored_only and mapping_type != "ignore" and (
+                    not getattr(source_field, "store", False) or not target_field.store
+                ):
+                    continue
                 sync_enabled = default_sync_enabled and profile._is_auto_sync_safe_field(
                     source_field,
                     target_field,
@@ -388,6 +460,7 @@ class AbOdooSyncApplyProfile(models.Model):
                         "target_field_name": field_name,
                         "mapping_type": mapping_type,
                         "sync_enabled": sync_enabled,
+                        "auto_generated": bool(default_sync_enabled),
                     }
                 )
             if vals_list:
@@ -397,12 +470,12 @@ class AbOdooSyncApplyProfile(models.Model):
         return created
 
     def action_load_matching_fields(self):
-        created = self._load_matching_fields(default_sync_enabled=False)
+        created = self._load_matching_fields(default_sync_enabled=True)
         return self._notification(
             _("Odoo Sync Mapping"),
             _(
-                "Loaded %(count)s matching field mapping(s). Enable only the "
-                "fields that the report server should apply."
+                "Loaded %(count)s matching field mapping(s). Safe compatible "
+                "fields were enabled automatically."
             )
             % {"count": created},
             "success" if created else "warning",
@@ -479,6 +552,12 @@ class AbOdooSyncFieldMapping(models.Model):
         help="Fail the whole apply operation when this relation or value cannot be resolved.",
     )
     sync_enabled = fields.Boolean(string="Sync Enabled", default=False, index=True)
+    auto_generated = fields.Boolean(
+        string="Automatically Generated",
+        default=False,
+        readonly=True,
+        index=True,
+    )
 
     _uniq_profile_field_pair = models.Constraint(
         "UNIQUE(profile_id, source_field_name, target_field_name)",
@@ -511,6 +590,7 @@ class AbOdooSyncFieldMapping(models.Model):
                 "relation_target_key": spec.get("relation_target_key") or False,
                 "required": bool(spec.get("required", False)),
                 "sync_enabled": bool(spec.get("sync_enabled", True)),
+                "auto_generated": False,
             }
             mapping = self.sudo().search(
                 [
@@ -537,7 +617,23 @@ class AbOdooSyncFieldMapping(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        mappings = super().create(vals_list)
+        mapping_ids = []
+        for vals in vals_list:
+            existing = self.search(
+                [
+                    ("profile_id", "=", vals.get("profile_id")),
+                    ("source_field_name", "=", vals.get("source_field_name")),
+                    ("target_field_name", "=", vals.get("target_field_name")),
+                    ("auto_generated", "=", True),
+                ],
+                limit=1,
+            )
+            if existing and not vals.get("auto_generated"):
+                existing.write({**vals, "auto_generated": False})
+                mapping_ids.append(existing.id)
+            else:
+                mapping_ids.extend(super().create([vals]).ids)
+        mappings = self.browse(mapping_ids)
         self._queue_auto_upload_apply_feeders_for_profiles(mappings.mapped("profile_id"))
         return mappings
 
@@ -569,6 +665,8 @@ class AbOdooSyncFieldMapping(models.Model):
                 continue
             source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
             target_model = self.env[profile.target_model_name]
+            if mapping.mapping_type == "ignore":
+                continue
             if source_model and mapping.source_field_name not in source_model._fields:
                 raise ValidationError(
                     _("Source field %(field)s does not exist on %(model)s.")
