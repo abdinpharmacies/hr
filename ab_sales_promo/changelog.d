@@ -54,3 +54,25 @@ Files changed:
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/tests/test_ab_sales_specific_promo.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
+
+Recent relevant commit:
+
+- Commit: `f9ebc42b2b9c050ddde3f8a44bd3bcff364fb1d3`
+- Author: hager yasser
+- Date: 2026-08-16
+- Original subject: ab_sales_promo/fix: update promo compensation terminology for #1860
+- User-facing changes:
+  - Established the previous baseline for this module before the report-server passive cleanup.
+- Files changed:
+  - ab_sales_promo/changelog.d
+  - ab_sales_promo/i18n/ar.po
+  - ab_sales_promo/i18n/ar_001.po
+  - ab_sales_promo/models/ab_promo_program_compensation.py
+
+Current changes before commit:
+
+- User-facing changes:
+  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+- Files changed:
+  - ab_sales_promo/changelog.d
+  - ab_sales_promo/models/ab_sales_header_promo_inherit.py

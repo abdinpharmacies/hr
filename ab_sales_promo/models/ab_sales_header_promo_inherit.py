@@ -106,7 +106,7 @@ class AbSalesHeaderPromo(models.Model):
         return lines_count
 
     # Totals (untaxed math)
-    currency_id = fields.Many2one('res.currency', default=lambda s: s.env.company.currency_id.id, required=True)
+    currency_id = fields.Many2one('res.currency', default=lambda s: s.env.company.currency_id.id)
     amount_untaxed = fields.Monetary(compute='_compute_amounts', store=True)
     amount_tax = fields.Monetary(compute='_compute_amounts', store=True)
     amount_total = fields.Monetary(compute='_compute_amounts', store=True)
