@@ -12,10 +12,11 @@ _logger = logging.getLogger(__name__)
 
 class StockRecyclingLine(models.Model):
     _name = 'ab_stock_recycling_line'
+    _inherit = 'ab_odoo_sync_passive_mirror_mixin'
     _description = 'ab_stock_recycling_line'
-    header_id = fields.Many2one('ab_stock_recycling_header', required=True, ondelete='cascade', index=True)
-    store_id = fields.Many2one('ab_store', required=True, index=True)
-    item_id = fields.Many2one('ab_product', required=True, index=True)
+    header_id = fields.Many2one('ab_stock_recycling_header', ondelete='cascade', index=True)
+    store_id = fields.Many2one('ab_store', index=True)
+    item_id = fields.Many2one('ab_product', index=True)
     item_code = fields.Char(related='item_id.code')
     item_price = fields.Float(related='item_id.default_price', string='Price')
     qty = fields.Float(default=0, digits=(16, 1), index=True, help="Quantity Before Distribution")
@@ -31,7 +32,7 @@ class StockRecyclingLine(models.Model):
     distributed_qty = fields.Float(default=0, digits=(16, 1), readonly=True, index=True)
     over_need_qty = fields.Float(compute='_compute_over_need_qty',
                                  help="=Quantity Before Distribution - Distributed Quantity")
-    
+
     is_consumed = fields.Boolean(compute='_compute_is_consumed', search='_search_is_consumed')
 
     @api.depends('balance', 'over_need_qty')

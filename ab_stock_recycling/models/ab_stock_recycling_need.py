@@ -10,11 +10,12 @@ _logger = logging.getLogger(__name__)
 
 class StockNeed(models.Model):
     _name = 'ab_stock_recycling_need'
+    _inherit = 'ab_odoo_sync_passive_mirror_mixin'
     _description = 'ab_stock_recycling_need'
     _order = 'qty DESC'
 
-    store_id = fields.Many2one('ab_store', required=True, index=True)
-    item_id = fields.Many2one('ab_product', required=True, index=True)
+    store_id = fields.Many2one('ab_store', index=True)
+    item_id = fields.Many2one('ab_product', index=True)
     item_code = fields.Char(related='item_id.code')
     item_price = fields.Float(related='item_id.default_price', string='Item Price')
     item_cost = fields.Float(related='item_id.default_cost', string='Item Cost')
@@ -24,7 +25,7 @@ class StockNeed(models.Model):
     qty = fields.Float(default=0, digits=(16, 1))
     balance = fields.Float(default=0, digits=(16, 1))
     sales_qty = fields.Float(default=0, digits=(16, 1))
-    header_id = fields.Many2one('ab_stock_recycling_header', required=True, ondelete='cascade', index=True)
+    header_id = fields.Many2one('ab_stock_recycling_header', ondelete='cascade', index=True)
     given_qty = fields.Float(default=0, digits=(16, 1), readonly=True)
     total_price = fields.Float(compute='_compute_total_need_price')
 

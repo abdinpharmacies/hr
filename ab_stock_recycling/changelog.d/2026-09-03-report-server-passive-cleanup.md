@@ -1,0 +1,53 @@
+Recent relevant commit:
+
+- Commit: `3db5d596c9429ff082c3fe9b0466692b945f788f`
+- Author: emadco88
+- Date: 2026-07-28
+- Original subject: INIT commit pos19
+- User-facing changes:
+  - Established the previous baseline for this module before the report-server passive cleanup.
+- Files changed:
+  - ab_stock_recycling/__init__.py
+  - ab_stock_recycling/__manifest__.py
+  - ab_stock_recycling/controllers/__init__.py
+  - ab_stock_recycling/controllers/ab_stock_recycling_need_files.py
+  - ab_stock_recycling/controllers/zipped_excels_examples.py
+  - ab_stock_recycling/models/__init__.py
+  - ab_stock_recycling/models/ab_stock_recycling_dist.py
+  - ab_stock_recycling/models/ab_stock_recycling_excluded_item.py
+  - ab_stock_recycling/models/ab_stock_recycling_header.py
+  - ab_stock_recycling/models/ab_stock_recycling_line.py
+  - ab_stock_recycling/models/ab_stock_recycling_need.py
+  - ab_stock_recycling/models/ab_stock_recycling_overstock_sql.py
+  - ab_stock_recycling/models/ab_stock_recycling_to_cycle.py
+  - ab_stock_recycling/reports/__init__.py
+  - ab_stock_recycling/reports/export_xlsx.py
+  - ab_stock_recycling/reports/xlsx_overstock_no_need.xml
+  - ab_stock_recycling/security/ir.model.access.csv
+  - ab_stock_recycling/security/record_rules.xml
+  - ab_stock_recycling/security/security_groups.xml
+  - ab_stock_recycling/static/description/icon.png
+  - ab_stock_recycling/templates/ab_stock_recycling_excluded_item_report.xml
+  - ab_stock_recycling/views/00_menus.xml
+  - ab_stock_recycling/views/ab_stock_recycling_dist.xml
+  - ab_stock_recycling/views/ab_stock_recycling_excluded_item.xml
+  - ab_stock_recycling/views/ab_stock_recycling_header.xml
+  - ab_stock_recycling/views/ab_stock_recycling_line.xml
+  - ab_stock_recycling/views/ab_stock_recycling_need.xml
+  - ab_stock_recycling/views/ab_stock_recycling_to_cycle.xml
+  - ab_stock_recycling/views/abdin_eplus_ab_region.xml
+  - ab_stock_recycling/views/abdin_eplus_ab_supplier.xml
+
+Current changes before commit:
+
+- User-facing changes:
+  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
+  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+  - Declared new module dependencies required by the cleaned report-server model schema.
+- Files changed:
+  - ab_stock_recycling/changelog.d/2026-09-03-report-server-passive-cleanup.md
+  - ab_stock_recycling/__manifest__.py
+  - ab_stock_recycling/models/ab_stock_recycling_dist.py
+  - ab_stock_recycling/models/ab_stock_recycling_header.py
+  - ab_stock_recycling/models/ab_stock_recycling_line.py
+  - ab_stock_recycling/models/ab_stock_recycling_need.py

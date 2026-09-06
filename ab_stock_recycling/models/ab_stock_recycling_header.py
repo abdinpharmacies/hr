@@ -14,15 +14,15 @@ _logger = logging.getLogger(__name__)
 class StockRecycling(models.Model):
     _name = 'ab_stock_recycling_header'
     _description = 'ab_stock_recycling_header'
-    _inherit = ['ab_eplus_connect', 'ab_data_from_excel', 'abdin_et.extra_tools']
+    _inherit = ['ab_eplus_connect', 'ab_data_from_excel', 'abdin_et.extra_tools', 'ab_odoo_sync_passive_mirror_mixin']
     _rec_name = 'name'
     _order = 'id DESC'
 
-    name = fields.Char(required=True)
+    name = fields.Char()
     need_per_x_day = fields.Integer(compute='_compute_need_per_x_day')
     last_sales_x_days = fields.Integer(default=90)
-    start_date = fields.Date(default=lambda self: datetime.date.today() - datetime.timedelta(days=90), required=True)
-    end_date = fields.Date(default=lambda self: datetime.date.today(), required=True)
+    start_date = fields.Date(default=lambda self: datetime.date.today() - datetime.timedelta(days=90))
+    end_date = fields.Date(default=lambda self: datetime.date.today())
     from_excel = fields.Text()
     collection_count = fields.Integer(compute='_compute_counts')
     need_count = fields.Integer(compute='_compute_counts')
@@ -205,8 +205,8 @@ class StockRecycling(models.Model):
                     """)
 
                     sql = f"""
-                            SELECT store_id,item_id,isnull(qty_sales,0) - balance, qty_sales, balance 
-                            from {fn_balance_sales}({PLACEHOLDER},{PLACEHOLDER}) 
+                            SELECT store_id,item_id,isnull(qty_sales,0) - balance, qty_sales, balance
+                            from {fn_balance_sales}({PLACEHOLDER},{PLACEHOLDER})
                             where  (1=1)
                             {and_item_type_str} {and_store_ids_str} {and_excluded_items_str} {and_only_items_str}
                     """
@@ -420,10 +420,10 @@ class StockRecycling(models.Model):
                     """)
 
                     sql = f"""
-                            SELECT store_id,item_id,qty_sales - balance,qty_sales,balance 
-                            from {fn_balance_sales}({PLACEHOLDER},{PLACEHOLDER}) 
-                            where item_id in ({placeholders}) and  (isnull(qty_sales,0) - balance)>0 
-                            {and_store_ids_str} 
+                            SELECT store_id,item_id,qty_sales - balance,qty_sales,balance
+                            from {fn_balance_sales}({PLACEHOLDER},{PLACEHOLDER})
+                            where item_id in ({placeholders}) and  (isnull(qty_sales,0) - balance)>0
+                            {and_store_ids_str}
                     """
                     cr.execute(sql, (self.start_date.isoformat(), self.end_date.isoformat()) + items_tuple)
 
@@ -457,8 +457,8 @@ class StockRecycling(models.Model):
 
         self.btn_get_need_for_stock()
         self.btn_distribute_stock()
-        message = _(f"""  
-        <div class='h4 text-success'>Process completed successfully</div>  
+        message = _(f"""
+        <div class='h4 text-success'>Process completed successfully</div>
         <div class='h6 text-info w-50'>
             <table class='table table-striped'>
                 <tr>
@@ -481,8 +481,8 @@ class StockRecycling(models.Model):
     def btn_add_data_from_excel(self):
         number_of_lines = self._add_data_from_excel()
 
-        message = _(f"""<span class='h4 text-success'>{number_of_lines}</span> lines added  
-        <span class='h4 text-success'>successfully</span>  
+        message = _(f"""<span class='h4 text-success'>{number_of_lines}</span> lines added
+        <span class='h4 text-success'>successfully</span>
         by user <span class='h4 font-italic text-muted'>{self.env.user.name}</span>""")
         return self.ab_msg(message=message)
 

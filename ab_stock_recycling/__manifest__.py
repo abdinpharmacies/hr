@@ -17,7 +17,7 @@
     'category': 'Inventory/Inventory',
     'version': '19.0.1.0.0',
 
-    'depends': ['base', 'ab_eplus_connect', 'ab_data_from_excel', 'abdin_et', 'report_xlsx', 'ab_store',
+    'depends': ['base', 'ab_odoo_sync', 'ab_eplus_connect', 'ab_data_from_excel', 'abdin_et', 'report_xlsx', 'ab_store',
                 'ab_product'],
     'license': 'LGPL-3',
     'installable': True,
