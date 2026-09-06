@@ -12,6 +12,8 @@
                 </header>
                 <field name="model_name"/>
                 <field name="aggregate_parent_field" optional="show"/>
+                <field name="live_channel_id" optional="show"/>
+                <field name="historical_channel_id" optional="show"/>
                 <field name="active"/>
             </list>
         </field>
@@ -30,6 +32,8 @@
                     <group>
                         <field name="model_name"/>
                         <field name="aggregate_parent_field"/>
+                        <field name="live_channel_id"/>
+                        <field name="historical_channel_id"/>
                         <field name="active"/>
                     </group>
                     <div class="alert alert-info" role="alert">
@@ -69,6 +73,7 @@
                 <field name="model_name"/>
                 <field name="rec_id"/>
                 <field name="source_revision"/>
+                <field name="queue_channel" optional="show"/>
                 <field name="operation"/>
                 <field name="source_write_date" optional="show"/>
                 <field name="attempt_count" optional="show"/>
@@ -102,6 +107,7 @@
                         </group>
                         <group>
                             <field name="source_revision"/>
+                            <field name="queue_channel"/>
                             <field name="operation"/>
                             <field name="source_write_date"/>
                             <field name="attempt_count"/>
@@ -127,6 +133,7 @@
                 <field name="rec_id"/>
                 <field name="event_uuid"/>
                 <field name="status"/>
+                <field name="queue_channel"/>
                 <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
                 <filter name="sent" string="Sent" domain="[('status', '=', 'sent')]"/>
                 <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>

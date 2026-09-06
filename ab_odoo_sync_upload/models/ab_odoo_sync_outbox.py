@@ -4,6 +4,8 @@ from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
+_DEFAULT_UPLOAD_CHANNEL = "root"
+
 
 class AbOdooSyncOutbox(models.Model):
     _name = "ab_odoo_sync_outbox"
@@ -29,6 +31,13 @@ class AbOdooSyncOutbox(models.Model):
     )
     payload_json = fields.Json(string="Full Payload", default=dict, readonly=True)
     source_write_date = fields.Datetime(string="Source Write Date", readonly=True, index=True)
+    queue_channel = fields.Char(
+        string="Queue Channel",
+        default=_DEFAULT_UPLOAD_CHANNEL,
+        readonly=True,
+        index=True,
+        help="Queue channel selected when this outbox event was captured.",
+    )
     status = fields.Selection(
         selection=[
             ("pending", "Pending"),
@@ -54,6 +63,13 @@ class AbOdooSyncOutbox(models.Model):
     def prepare_record_snapshot(self, record):
         record.ensure_one()
         service = self.env["ab_odoo_sync_service"].sudo()
+        queue_channel = self.env.context.get("ab_odoo_sync_upload_queue_channel")
+        if not queue_channel:
+            queue_channel = (
+                self.env["ab_odoo_sync_upload_source"]
+                .sudo()
+                .get_live_queue_channel(record._name)
+            )
         payload = service.serialize_stored_record(record.sudo())
         return {
             "db_serial": service.get_db_serial(),
@@ -61,6 +77,7 @@ class AbOdooSyncOutbox(models.Model):
             "rec_id": record.id,
             "payload_json": payload,
             "source_write_date": record.write_date or fields.Datetime.now(),
+            "queue_channel": queue_channel or _DEFAULT_UPLOAD_CHANNEL,
         }
 
     @api.model
@@ -130,9 +147,14 @@ class AbOdooSyncOutbox(models.Model):
             )
 
         vals_list = []
+        queue_channel = (
+            self.env.context.get("ab_odoo_sync_upload_queue_channel")
+            or _DEFAULT_UPLOAD_CHANNEL
+        )
         for snapshot in snapshots or []:
             vals = dict(snapshot)
             vals["operation"] = operation
+            vals["queue_channel"] = vals.get("queue_channel") or queue_channel
             vals_list.append(vals)
         if not vals_list:
             return self.browse()
