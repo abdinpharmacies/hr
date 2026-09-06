@@ -1,0 +1,109 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_telegram_bot
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 00:00+0000\n"
+"PO-Revision-Date: 2026-09-03 00:00+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: ab_telegram_bot
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_telegram_bot
+msgid "Chat ID"
+msgstr "معرف المحادثة"
+
+#. module: ab_telegram_bot
+msgid "Cost Center"
+msgstr "مركز التكلفة"
+
+#. module: ab_telegram_bot
+msgid "Cost Center Telegram Account"
+msgstr "حساب تيليجرام لمركز التكلفة"
+
+#. module: ab_telegram_bot
+msgid "Cost center is required."
+msgstr "مركز التكلفة مطلوب."
+
+#. module: ab_telegram_bot
+msgid "Each Telegram chat can only be linked once."
+msgstr "يمكن ربط كل محادثة تيليجرام مرة واحدة فقط."
+
+#. module: ab_telegram_bot
+msgid "Employee Reference"
+msgstr "مرجع الموظف"
+
+#. module: ab_telegram_bot
+msgid "Employee Record ID"
+msgstr "معرف سجل الموظف"
+
+#. module: ab_telegram_bot
+msgid "Employee has no cost center."
+msgstr "الموظف ليس لديه مركز تكلفة."
+
+#. module: ab_telegram_bot
+msgid "Employee not found."
+msgstr "لم يتم العثور على الموظف."
+
+#. module: ab_telegram_bot
+msgid "HR module is not available."
+msgstr "وحدة الموارد البشرية غير متاحة."
+
+#. module: ab_telegram_bot
+msgid "Inactive"
+msgstr "غير نشط"
+
+#. module: ab_telegram_bot
+msgid "Linked At"
+msgstr "تاريخ الربط"
+
+#. module: ab_telegram_bot
+msgid "Legacy technical employee record ID captured when the account was linked."
+msgstr "معرف سجل الموظف التقني القديم الذي تم تسجيله عند ربط الحساب."
+
+#. module: ab_telegram_bot
+msgid "No active cost center was found for code: %s"
+msgstr "لم يتم العثور على مركز تكلفة نشط للكود: %s"
+
+#. module: ab_telegram_bot
+msgid "Optional external or business employee reference."
+msgstr "مرجع خارجي أو تجاري اختياري للموظف."
+
+#. module: ab_telegram_bot
+msgid "Telegram Accounts"
+msgstr "حسابات تيليجرام"
+
+#. module: ab_telegram_bot
+msgid "Telegram Bot"
+msgstr "بوت تيليجرام"
+
+#. module: ab_telegram_bot
+msgid "Telegram User ID"
+msgstr "معرف مستخدم تيليجرام"
+
+#. module: ab_telegram_bot
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_telegram_bot
+msgid "Telegram account linked to cost center %s."
+msgstr "تم ربط حساب تيليجرام بمركز التكلفة %s."
+
+#. module: ab_telegram_bot
+msgid "Telegram chat ID is required."
+msgstr "معرف محادثة تيليجرام مطلوب."
+
+#. module: ab_telegram_bot
+msgid "This Telegram chat ID is already linked to another cost center."
+msgstr "معرف محادثة تيليجرام هذا مرتبط بالفعل بمركز تكلفة آخر."
