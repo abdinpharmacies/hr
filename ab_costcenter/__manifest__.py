@@ -7,7 +7,7 @@
     'category': 'AbdinSupplyChain',
     'version': '19.0.1.0.0',
     'application': False,
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'ab_users'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

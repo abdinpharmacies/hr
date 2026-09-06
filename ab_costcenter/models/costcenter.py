@@ -21,7 +21,7 @@ class ClsCostCenters(models.Model):
     active = fields.Boolean(default=True)
     costcenter_space_sep = fields.Char(search='_search_costcenter_space_sep', compute='_compute_costcenter_space_sep', )
     mobile_phone = fields.Char('Work Mobile')
-    user_id = fields.Many2one('res.users', index=True)
+    user_id = fields.Many2one('ab_users', index=True)
     password = fields.Char(groups='base.group_system')
     work_email = fields.Char('Work Email')
     work_phone = fields.Char()
