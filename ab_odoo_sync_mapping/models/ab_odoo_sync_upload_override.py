@@ -11,14 +11,14 @@ class AbOdooSyncUploadFieldOverride(models.Model):
     upload_record_id = fields.Many2one(
         "ab_odoo_sync_upload_record",
         string="Received Upload",
-        required=True,
+
         index=True,
         ondelete="cascade",
     )
     sequence = fields.Integer(default=10)
     sync_enabled = fields.Boolean(string="Sync Enabled", default=True, index=True)
-    source_field_name = fields.Char(string="Source Field", required=True)
-    target_field_name = fields.Char(string="Target Field", required=True)
+    source_field_name = fields.Char(string="Source Field")
+    target_field_name = fields.Char(string="Target Field")
     mapping_type = fields.Selection(
         selection=[
             ("direct", "Direct Value"),
@@ -28,7 +28,7 @@ class AbOdooSyncUploadFieldOverride(models.Model):
             ("stable_many2many", "Stable-key Many2many"),
             ("ignore", "Ignore"),
         ],
-        required=True,
+
         default="direct",
     )
     relation_source_key = fields.Char(

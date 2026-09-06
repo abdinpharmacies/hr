@@ -53,8 +53,8 @@
                             class="btn-secondary" display="always"/>
                 </header>
                 <field name="received_at"/>
-                <field name="status" widget="badge"
-                       decoration-warning="status in ('pending', 'pending_mapping', 'partially_applied')"
+                <field name="status" widget="ab_odoo_sync_status_badge"
+                       decoration-warning="status in ('pending', 'pending_mapping')"
                        decoration-info="status == 'queued'"
                        decoration-success="status == 'applied'"
                        decoration-danger="status == 'failed'"
@@ -95,7 +95,12 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="status" widget="badge"/>
+                            <field name="status" widget="ab_odoo_sync_status_badge"
+                                   decoration-warning="status in ('pending', 'pending_mapping')"
+                                   decoration-info="status == 'queued'"
+                                   decoration-success="status == 'applied'"
+                                   decoration-danger="status == 'failed'"
+                                   decoration-muted="status in ('raw_only', 'not_sync')"/>
                             <field name="db_serial"/>
                             <field name="event_uuid"/>
                             <field name="model_name"/>

@@ -22,9 +22,7 @@ _TARGET_META_FIELDS = {
     "source_operation",
     "source_write_date",
     "synced_at",
-    "create_uid",
     "create_date",
-    "write_uid",
     "write_date",
     "display_name",
 }
@@ -35,9 +33,9 @@ class AbOdooSyncApplyProfile(models.Model):
     _description = "AB Odoo Sync Apply Profile"
     _order = "sequence, name"
 
-    name = fields.Char(required=True)
+    name = fields.Char()
     sequence = fields.Integer(default=10)
-    source_model_name = fields.Char(string="Source Model", required=True, index=True)
+    source_model_name = fields.Char(string="Source Model", index=True)
     apply_mode = fields.Selection(
         selection=[
             ("raw_only", "Raw Only"),
@@ -47,7 +45,7 @@ class AbOdooSyncApplyProfile(models.Model):
         ],
         string="Apply Mode",
         default="mirror_sync",
-        required=True,
+
         index=True,
         help="Controls how the report server handles accepted branch uploads for this source model.",
     )
@@ -521,13 +519,13 @@ class AbOdooSyncFieldMapping(models.Model):
 
     profile_id = fields.Many2one(
         "ab_odoo_sync_apply_profile",
-        required=True,
+
         ondelete="cascade",
         index=True,
     )
     sequence = fields.Integer(default=10)
-    source_field_name = fields.Char(string="Source Field", required=True)
-    target_field_name = fields.Char(string="Target Field", required=True)
+    source_field_name = fields.Char(string="Source Field")
+    target_field_name = fields.Char(string="Target Field")
     mapping_type = fields.Selection(
         selection=[
             ("direct", "Direct Value"),
@@ -537,7 +535,7 @@ class AbOdooSyncFieldMapping(models.Model):
             ("stable_many2many", "Stable-key Many2many"),
             ("ignore", "Ignore"),
         ],
-        required=True,
+
         default="direct",
     )
     relation_source_key = fields.Char(

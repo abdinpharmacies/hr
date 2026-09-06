@@ -8,8 +8,8 @@ class AbOdooSyncBranchRegistry(models.Model):
     _description = "AB Odoo Sync Branch Registration"
     _order = "db_serial"
 
-    name = fields.Char(required=True)
-    db_serial = fields.Integer(string="DB Serial", required=True, index=True)
+    name = fields.Char()
+    db_serial = fields.Integer(string="DB Serial", index=True)
     last_upload_at = fields.Datetime(string="Last Upload At", readonly=True)
     active = fields.Boolean(default=True, index=True)
 

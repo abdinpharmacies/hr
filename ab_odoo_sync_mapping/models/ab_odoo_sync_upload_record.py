@@ -38,20 +38,20 @@ class AbOdooSyncUploadRecord(models.Model):
     _description = "AB Odoo Sync Upload Record"
     _order = "received_at desc, id desc"
 
-    db_serial = fields.Integer(string="DB Serial", required=True, index=True, readonly=True)
-    event_uuid = fields.Char(string="Event UUID", required=True, index=True, readonly=True)
-    model_name = fields.Char(string="Source Model", required=True, index=True, readonly=True)
-    rec_id = fields.Integer(string="Source Record ID", required=True, index=True, readonly=True)
-    source_revision = fields.Integer(string="Source Revision", required=True, index=True, readonly=True)
+    db_serial = fields.Integer(string="DB Serial", index=True, readonly=True)
+    event_uuid = fields.Char(string="Event UUID", index=True, readonly=True)
+    model_name = fields.Char(string="Source Model", index=True, readonly=True)
+    rec_id = fields.Integer(string="Source Record ID", index=True, readonly=True)
+    source_revision = fields.Integer(string="Source Revision", index=True, readonly=True)
     source_operation = fields.Selection(
         string="Source Operation",
         selection=[("upsert", "Upsert"), ("archive", "Archive")],
-        required=True,
+
         readonly=True,
         index=True,
     )
     source_write_date = fields.Datetime(string="Source Write Date", readonly=True, index=True)
-    target_model_name = fields.Char(string="Target Model", required=True, index=True, readonly=True)
+    target_model_name = fields.Char(string="Target Model", index=True, readonly=True)
     apply_profile_id = fields.Many2one(
         "ab_odoo_sync_apply_profile",
         string="Apply Profile",
@@ -73,13 +73,13 @@ class AbOdooSyncUploadRecord(models.Model):
             ("not_sync", "Not Sync"),
         ],
         default="pending",
-        required=True,
+
         index=True,
         readonly=True,
     )
     skipped_fields_json = fields.Json(string="Skipped Fields", default=list, readonly=True)
     error_message = fields.Text(string="Error Message", readonly=True)
-    received_at = fields.Datetime(string="Received At", default=fields.Datetime.now, required=True, readonly=True)
+    received_at = fields.Datetime(string="Received At", default=fields.Datetime.now, readonly=True)
     queued_at = fields.Datetime(string="Queued At", readonly=True)
     applied_at = fields.Datetime(string="Applied At", readonly=True)
     attempt_count = fields.Integer(string="Attempt Count", default=0, readonly=True)

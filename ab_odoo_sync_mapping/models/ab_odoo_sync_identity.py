@@ -19,11 +19,11 @@ class AbOdooSyncIdentity(models.Model):
     _description = "AB Odoo Sync Identity"
     _order = "target_model_name, target_res_id, db_serial, source_model_name"
 
-    db_serial = fields.Integer(string="DB Serial", required=True, readonly=True, index=True)
-    source_model_name = fields.Char(string="Source Model", required=True, readonly=True, index=True)
-    source_rec_id = fields.Integer(string="Source Record ID", required=True, readonly=True, index=True)
-    target_model_name = fields.Char(string="Target Model", required=True, readonly=True, index=True)
-    target_res_id = fields.Integer(string="Target Record ID", required=True, readonly=True, index=True)
+    db_serial = fields.Integer(string="DB Serial", readonly=True, index=True)
+    source_model_name = fields.Char(string="Source Model", readonly=True, index=True)
+    source_rec_id = fields.Integer(string="Source Record ID", readonly=True, index=True)
+    target_model_name = fields.Char(string="Target Model", readonly=True, index=True)
+    target_res_id = fields.Integer(string="Target Record ID", readonly=True, index=True)
     state = fields.Selection(
         selection=[
             ("placeholder", "Placeholder"),
@@ -31,7 +31,7 @@ class AbOdooSyncIdentity(models.Model):
             ("conflict", "Conflict"),
         ],
         default="placeholder",
-        required=True,
+
         readonly=True,
         index=True,
     )

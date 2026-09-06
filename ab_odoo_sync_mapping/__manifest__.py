@@ -17,5 +17,11 @@
         "views/configuration_views.xml",
         "data/configuration_todo.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_odoo_sync_mapping/static/src/status_badge/status_badge.js",
+            "ab_odoo_sync_mapping/static/src/status_badge/status_badge.scss",
+        ],
+    },
     "installable": True,
 }
