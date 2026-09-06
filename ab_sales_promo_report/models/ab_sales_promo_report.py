@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 
 class AbSalesPromoReportLine(models.Model):
     _name = "ab_sales_promo_report_line"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales Promo Report Line"
     _order = "invoice_date desc, invoice_eplus_serial desc, product_code"
     _rec_name = "invoice_eplus_serial"
@@ -116,8 +117,8 @@ class AbSalesPromoReportWizard(models.TransientModel):
     _description = "Load Sales Promo Report"
     _inherit = "ab_eplus_connect"
 
-    date_from = fields.Date(required=True, default=lambda self: fields.Date.context_today(self))
-    date_to = fields.Date(required=True, default=lambda self: fields.Date.context_today(self))
+    date_from = fields.Date(default=lambda self: fields.Date.context_today(self))
+    date_to = fields.Date(default=lambda self: fields.Date.context_today(self))
     store_ids = fields.Many2many("ab_store", string="Stores")
     product_ids = fields.Many2many("ab_product", string="Products")
     promo_ids = fields.Many2many("ab_promo_program", string="Promos")

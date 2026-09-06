@@ -4,7 +4,7 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': False,
-    'depends': ['ab_sales_promo', 'ab_eplus_connect'],
+    'depends': ['ab_sales_promo', 'ab_eplus_connect', 'ab_odoo_sync'],
     'data': [
         'security/ir.model.access.csv',
         'security/record_rules.xml',
