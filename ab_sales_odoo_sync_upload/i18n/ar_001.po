@@ -1,0 +1,27 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_odoo_sync_upload
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-06 00:00+0000\n"
+"PO-Revision-Date: 2026-09-06 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.module.module,summary:ab_sales_odoo_sync_upload
+msgid "Sales and return source configuration for Odoo Sync Upload"
+msgstr "إعداد مصادر المبيعات والمرتجعات لرفع مزامنة أودو"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.module.module,shortdesc:ab_sales_odoo_sync_upload
+msgid "AB Sales Odoo Sync Upload"
+msgstr "رفع مزامنة أودو لمبيعات عبدين"

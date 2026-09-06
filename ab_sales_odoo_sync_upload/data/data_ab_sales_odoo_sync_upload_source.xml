@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <function model="ab_odoo_sync_upload_source"
+                  name="apply_upload_source_configuration">
+            <value eval="[
+                {
+                    'model_name': 'ab_sales_header',
+                    'active': True,
+                    'live_channel': 'root.sync_live',
+                    'historical_channel': 'root.sync_historical',
+                    'historical_upload_months': 6,
+                    'historical_upload_from': '2026-03-01 00:00:00',
+                },
+                {
+                    'model_name': 'ab_sales_line',
+                    'aggregate_parent_field': 'header_id',
+                    'active': True,
+                    'live_channel': 'root.sync_live',
+                    'historical_channel': 'root.sync_historical',
+                    'historical_upload_months': 6,
+                    'historical_upload_from': '2026-03-01 00:00:00',
+                },
+                {
+                    'model_name': 'ab_sales_return_header',
+                    'active': True,
+                    'live_channel': 'root.sync_live',
+                    'historical_channel': 'root.sync_historical',
+                    'historical_upload_months': 6,
+                    'historical_upload_from': '2026-03-01 00:00:00',
+                },
+                {
+                    'model_name': 'ab_sales_return_line',
+                    'aggregate_parent_field': 'header_id',
+                    'active': True,
+                    'live_channel': 'root.sync_live',
+                    'historical_channel': 'root.sync_historical',
+                    'historical_upload_months': 6,
+                    'historical_upload_from': '2026-03-01 00:00:00',
+                },
+            ]"/>
+            <value eval="True"/>
+        </function>
+    </data>
+</odoo>
