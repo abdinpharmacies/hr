@@ -237,11 +237,11 @@ class AbTelegramBot(models.AbstractModel):
         recipient = recipient.sudo().exists()
         if not recipient:
             return False
-        if recipient._name == "ab_hr_bot":
+        if recipient._name == "ab_partner_bot":
             return str(recipient.chat_id or "").strip() or False
-        link = self.env["ab_hr_bot"].sudo().get_chat_id_for_employee(recipient)
-        if link:
-            return link
+        chat_id = self.env["ab_partner_bot"].sudo().get_chat_id_for_record(recipient)
+        if chat_id:
+            return chat_id
         return False
 
     @api.model

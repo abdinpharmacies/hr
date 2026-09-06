@@ -1,2 +1,2 @@
-from . import ab_hr_bot
+from . import ab_partner_bot
 from . import telegram_service

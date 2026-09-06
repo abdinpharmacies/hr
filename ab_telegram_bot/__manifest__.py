@@ -8,10 +8,10 @@
     "website": "https://www.abdinpharmacies.com",
     "category": "Tools",
     "icon": "ab_telegram_bot/static/description/icon.png",
-    "depends": ["base"],
+    "depends": ["base", "ab_costcenter"],
     "data": [
         "security/ir.model.access.csv",
-        "views/ab_hr_bot_views.xml",
+        "views/ab_partner_bot_views.xml",
     ],
     "installable": True,
     "application": False,
