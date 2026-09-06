@@ -7,6 +7,7 @@ from odoo.tools import float_compare
 
 class AbTransferSmartProductLine(models.Model):
     _name = "ab_transfer_smart_product_line"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Smart Transfer Requested Product"
     _order = "sequence, product_id, id"
 
@@ -26,7 +27,7 @@ class AbTransferSmartProductLine(models.Model):
     product_id = fields.Many2one(
         "ab_product",
         string="Product",
-        required=True,
+
         ondelete="restrict",
     )
     product_code = fields.Char(
@@ -43,7 +44,7 @@ class AbTransferSmartProductLine(models.Model):
     qty = fields.Float(
         string="Quantity",
         default=1.0,
-        required=True,
+
         digits=(16, 3),
     )
 

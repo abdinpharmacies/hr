@@ -346,3 +346,31 @@ Files changed:
 - ab_transfer_smart/models/ab_transfer_header.py
 - ab_transfer_smart/models/ab_transfer_smart_line.py
 - ab_transfer_smart/tests/test_smart_transfer.py
+
+Recent relevant commit:
+
+- Commit: `23a16c734cfb82669aaab0fb1b93226c47f28600`
+- Author: Alhassan Hossny
+- Date: 2026-08-13
+- Original subject: ab_transfer_smart/Fix: Revert the Partial code search correctly returned exact store code or name
+- User-facing changes:
+  - Established the previous baseline for this module before the report-server passive cleanup.
+- Files changed:
+  - ab_transfer_smart/changelog.d
+  - ab_transfer_smart/views/ab_store_views.xml
+
+Current changes before commit:
+
+- User-facing changes:
+  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
+  - Replaced explicit report-side user relations with `ab_users` placeholders where this module declares user fields.
+  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+  - Declared new module dependencies required by the cleaned report-server model schema.
+- Files changed:
+  - ab_transfer_smart/__manifest__.py
+  - ab_transfer_smart/changelog.d
+  - ab_transfer_smart/models/ab_transfer_header.py
+  - ab_transfer_smart/models/ab_transfer_smart_cache.py
+  - ab_transfer_smart/models/ab_transfer_smart_line.py
+  - ab_transfer_smart/models/ab_transfer_smart_product_line.py
+  - ab_transfer_smart/models/ab_transfer_smart_wizard.py

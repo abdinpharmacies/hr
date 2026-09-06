@@ -6,6 +6,7 @@
     "category": "Inventory",
     "depends": [
         "ab_transfer",
+        "ab_odoo_sync",
         "ab_sales",
         "ab_eplus_connect",
         "report_xlsx",

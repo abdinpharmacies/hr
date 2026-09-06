@@ -48,7 +48,7 @@ class AbTransferSmartLine(models.Model):
         ],
         string="Source Type",
         default=SMART_LINE_SOURCE_DOMAIN,
-        required=True,
+
         copy=False,
         index=True,
     )

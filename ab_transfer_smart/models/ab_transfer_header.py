@@ -96,7 +96,7 @@ class AbTransferHeader(models.Model):
         ],
         string="Smart Stage",
         default=SMART_STAGE_PURCHASE_PREPARATION,
-        required=True,
+
         copy=False,
     )
 
@@ -149,7 +149,7 @@ class AbTransferHeader(models.Model):
     smart_days = fields.Integer(
         string="Smart Days",
         default=60,
-        required=True,
+
     )
     smart_stock_method = fields.Selection(
         selection=[
@@ -158,7 +158,7 @@ class AbTransferHeader(models.Model):
         ],
         string="Stock Calculation Method",
         default=SMART_STOCK_METHOD_WEIGHTED,
-        required=True,
+
         help=(
             "Weighted method: last month x 50%, previous month x 30%, "
             "third month x 20%, then divide by 30 and multiply by Smart Days. "

@@ -188,13 +188,13 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
     store_id = fields.Many2one(
         "ab_store",
         string="Store",
-        required=True,
+
         index=True,
         ondelete="cascade",
     )
     product_eplus_serial = fields.Integer(
         string="Product EPlus Serial",
-        required=True,
+
         index=True,
     )
     product_id = fields.Many2one(
@@ -219,7 +219,7 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
     )
     cache_date = fields.Date(
         string="Cache Date",
-        required=True,
+
         index=True,
         default=lambda self: self._get_cache_date(),
     )
@@ -365,13 +365,13 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
     store_id = fields.Many2one(
         "ab_store",
         string="Store",
-        required=True,
+
         index=True,
         ondelete="cascade",
     )
     product_eplus_serial = fields.Integer(
         string="Product EPlus Serial",
-        required=True,
+
         index=True,
     )
     product_id = fields.Many2one(
@@ -401,7 +401,7 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
     )
     cache_date = fields.Date(
         string="Cache Date",
-        required=True,
+
         index=True,
         default=lambda self: self._get_cache_date(),
     )
@@ -567,13 +567,13 @@ class AbTransferSmartSalesCache(AbTransferSmartCacheTools, models.Model):
     store_id = fields.Many2one(
         "ab_store",
         string="Store",
-        required=True,
+
         index=True,
         ondelete="cascade",
     )
     product_eplus_serial = fields.Integer(
         string="Product EPlus Serial",
-        required=True,
+
         index=True,
     )
     product_id = fields.Many2one(
@@ -613,7 +613,7 @@ class AbTransferSmartSalesCache(AbTransferSmartCacheTools, models.Model):
     )
     cache_date = fields.Date(
         string="Cache Date",
-        required=True,
+
         index=True,
         default=lambda self: self._get_cache_date(),
     )

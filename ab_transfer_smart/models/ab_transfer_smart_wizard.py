@@ -19,6 +19,7 @@ SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY = (
 
 class AbTransferSmartWizard(models.Model):
     _name = "ab_transfer_smart_wizard"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Smart Transfer Wizard"
     _order = "id desc"
     _rec_name = "display_name"
@@ -33,7 +34,7 @@ class AbTransferSmartWizard(models.Model):
             ("done", "Done"),
         ],
         default="draft",
-        required=True,
+
         copy=False,
     )
     active = fields.Boolean(
@@ -45,7 +46,7 @@ class AbTransferSmartWizard(models.Model):
         string="From Store",
         domain=lambda self: self._get_allowed_source_store_domain(),
         default=lambda self: self._default_from_store_id(),
-        required=True,
+
     )
     to_stores_id = fields.Many2many(
         "ab_store",
@@ -53,13 +54,13 @@ class AbTransferSmartWizard(models.Model):
         "wizard_id",
         "store_id",
         string="To Stores",
-        required=True,
+
     )
     user_id = fields.Many2one(
         "ab_costcenter",
         string="User",
         default=lambda self: self._default_user_id(),
-        required=True,
+
         readonly=True,
     )
     notes = fields.Char(
@@ -69,7 +70,7 @@ class AbTransferSmartWizard(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
     )
     target_product_ids = fields.Many2many(
         "ab_product",
@@ -103,7 +104,7 @@ class AbTransferSmartWizard(models.Model):
     smart_days = fields.Integer(
         string="Smart Days",
         default=45,
-        required=True,
+
     )
     smart_stock_method = fields.Selection(
         selection=[
@@ -112,7 +113,7 @@ class AbTransferSmartWizard(models.Model):
         ],
         string="Stock Calculation Method",
         default="weighted",
-        required=True,
+
     )
     dropout_coverage = fields.Integer(
         string="Dropout Coverage %",
@@ -122,7 +123,7 @@ class AbTransferSmartWizard(models.Model):
     items_per_header = fields.Integer(
         string="Items Per Header",
         default=40,
-        required=True,
+
         copy=False,
         help="Maximum generated smart item lines per transfer header.",
     )
@@ -141,7 +142,7 @@ class AbTransferSmartWizard(models.Model):
         readonly=True,
     )
     sales_cache_warning_accepted_by = fields.Many2one(
-        "res.users",
+        "ab_users",
         string="Warning Accepted By",
         copy=False,
         readonly=True,
@@ -347,7 +348,7 @@ class AbTransferSmartWizard(models.Model):
         self.ensure_one()
         self.write({
             "allow_incomplete_sales_cache": True,
-            "sales_cache_warning_accepted_by": self.env.user.id,
+            "sales_cache_warning_accepted_by": self.env["ab_users"].current_placeholder_id(),
             "sales_cache_warning_accepted_at": fields.Datetime.now(),
         })
         return self.action_generate_transfers()
@@ -934,7 +935,7 @@ class AbTransferSmartDuplicateImportConfirmation(models.TransientModel):
 
     smart_wizard_id = fields.Many2one(
         "ab_transfer_smart_wizard",
-        required=True,
+
         readonly=True,
         ondelete="cascade",
     )
@@ -943,7 +944,7 @@ class AbTransferSmartDuplicateImportConfirmation(models.TransientModel):
             ("detect", "Duplicate Detected"),
             ("sum", "Sum Quantities"),
         ],
-        required=True,
+
         default="detect",
     )
     message = fields.Char(compute="_compute_message")
@@ -992,7 +993,7 @@ class AbTransferSmartZeroStockWarning(models.TransientModel):
     source_store_id = fields.Many2one(
         "ab_store",
         string="Source Store",
-        required=True,
+
         readonly=True,
     )
     header_id = fields.Many2one(
