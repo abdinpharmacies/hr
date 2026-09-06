@@ -10,13 +10,13 @@ class AbProductDoctorPrescription(models.Model):
     name = fields.Char(compute="_compute_name", store=True)
     doctor_id = fields.Many2one(
         "ab_doctor",
-        required=True,
+
         index=True,
         ondelete="cascade",
     )
     product_id = fields.Many2one(
         "ab_product",
-        required=True,
+
         index=True,
         ondelete="restrict",
     )
