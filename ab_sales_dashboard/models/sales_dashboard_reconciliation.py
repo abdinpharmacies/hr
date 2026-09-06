@@ -17,9 +17,9 @@ class SalesDashboardReconciliationJob(models.Model):
     _description = "Sales Dashboard Coverage Reconciliation Job"
     _order = "create_date desc, id desc"
 
-    name = fields.Char(required=True, default="Sales Dashboard Reconciliation")
-    date_from = fields.Date(required=True)
-    date_to = fields.Date(required=True)
+    name = fields.Char(default="Sales Dashboard Reconciliation")
+    date_from = fields.Date()
+    date_to = fields.Date()
     store_ids = fields.Many2many(
         "ab_store",
         "ab_sales_dash_recon_job_store_rel",
@@ -37,7 +37,7 @@ class SalesDashboardReconciliationJob(models.Model):
         ("done", "Done"),
         ("failed", "Failed"),
         ("cancelled", "Cancelled"),
-    ], required=True, default="draft", readonly=True, index=True)
+    ], default="draft", readonly=True, index=True)
 
     total_branch_days = fields.Integer(readonly=True)
     covered_branch_days = fields.Integer(readonly=True)
@@ -53,7 +53,7 @@ class SalesDashboardReconciliationJob(models.Model):
     completed_at = fields.Datetime(readonly=True)
     last_error = fields.Text(readonly=True)
     last_processed_date = fields.Date(readonly=True)
-    created_by = fields.Many2one("res.users", required=True, readonly=True, default=lambda self: self.env.user)
+    created_by = fields.Many2one("ab_users", readonly=True, default=lambda self: self.env["ab_users"].current_placeholder_id())
     chunk_ids = fields.One2many("ab.sales.dashboard.reconciliation.chunk", "job_id", readonly=True)
 
     def action_analyze_coverage(self):
@@ -404,10 +404,10 @@ class SalesDashboardReconciliationChunk(models.Model):
     _description = "Sales Dashboard Coverage Reconciliation Chunk"
     _order = "job_id, sequence, id"
 
-    job_id = fields.Many2one("ab.sales.dashboard.reconciliation.job", required=True, readonly=True, ondelete="cascade", index=True)
-    sequence = fields.Integer(required=True, readonly=True, index=True)
-    date_from = fields.Date(required=True, readonly=True, index=True)
-    date_to = fields.Date(required=True, readonly=True, index=True)
+    job_id = fields.Many2one("ab.sales.dashboard.reconciliation.job", readonly=True, ondelete="cascade", index=True)
+    sequence = fields.Integer(readonly=True, index=True)
+    date_from = fields.Date(readonly=True, index=True)
+    date_to = fields.Date(readonly=True, index=True)
     store_ids = fields.Many2many(
         "ab_store",
         "ab_sales_dash_recon_chunk_store_rel",
@@ -424,7 +424,7 @@ class SalesDashboardReconciliationChunk(models.Model):
         ("done", "Done"),
         ("failed", "Failed"),
         ("cancelled", "Cancelled"),
-    ], required=True, default="pending", readonly=True, index=True)
+    ], default="pending", readonly=True, index=True)
     attempt_count = fields.Integer(readonly=True)
     started_at = fields.Datetime(readonly=True)
     completed_at = fields.Datetime(readonly=True)

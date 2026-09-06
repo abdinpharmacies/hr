@@ -38,12 +38,12 @@ class SalesDashboardReportTelemetry(models.Model):
     _description = "Sales Dashboard Reporting Telemetry"
     _order = "event_date desc, id desc"
 
-    event_date = fields.Date(required=True, readonly=True, default=fields.Date.context_today, index=True)
-    event_type = fields.Selection([(value, value.replace("_", " ").title()) for value in EVENT_TYPES], required=True, readonly=True, index=True)
-    report_mode = fields.Selection([(value, value.replace("_", " ").title()) for value in REPORT_MODES], required=True, readonly=True, index=True)
-    range_bucket = fields.Selection([(value, value.replace("_", " ").title()) for value in RANGE_BUCKETS], required=True, readonly=True, index=True)
-    store_scope_bucket = fields.Selection([(value, value.replace("_", " ").title()) for value in STORE_SCOPE_BUCKETS], required=True, readonly=True, index=True)
-    coverage_state = fields.Selection([(value, value.replace("_", " ").title()) for value in COVERAGE_STATES], required=True, readonly=True, index=True)
+    event_date = fields.Date(readonly=True, default=fields.Date.context_today, index=True)
+    event_type = fields.Selection([(value, value.replace("_", " ").title()) for value in EVENT_TYPES], readonly=True, index=True)
+    report_mode = fields.Selection([(value, value.replace("_", " ").title()) for value in REPORT_MODES], readonly=True, index=True)
+    range_bucket = fields.Selection([(value, value.replace("_", " ").title()) for value in RANGE_BUCKETS], readonly=True, index=True)
+    store_scope_bucket = fields.Selection([(value, value.replace("_", " ").title()) for value in STORE_SCOPE_BUCKETS], readonly=True, index=True)
+    coverage_state = fields.Selection([(value, value.replace("_", " ").title()) for value in COVERAGE_STATES], readonly=True, index=True)
     requested_days = fields.Integer(readonly=True, aggregator="avg")
     selected_store_count = fields.Integer(readonly=True, aggregator="avg")
     duration_ms = fields.Integer(readonly=True, aggregator="avg")
@@ -61,7 +61,7 @@ class SalesDashboardReportTelemetry(models.Model):
     user_section_available = fields.Boolean(readonly=True)
     item_section_available = fields.Boolean(readonly=True)
     customer_section_available = fields.Boolean(readonly=True)
-    created_at = fields.Datetime(required=True, readonly=True, default=fields.Datetime.now, index=True)
+    created_at = fields.Datetime(readonly=True, default=fields.Datetime.now, index=True)
 
     @api.model
     def _clamp_integer(self, value):

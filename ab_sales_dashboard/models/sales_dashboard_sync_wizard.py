@@ -14,11 +14,11 @@ class SalesDashboardSyncWizard(models.TransientModel):
 
     date_from = fields.Date(
         string="Date From",
-        required=True,
+
     )
     date_to = fields.Date(
         string="Date To",
-        required=True,
+
     )
     store_id = fields.Many2one(
         "ab_store",
@@ -97,7 +97,7 @@ class SalesDashboardSyncState(models.Model):
 
     sync_date = fields.Date(
         string="Sync Date",
-        required=True,
+
         index=True,
     )
     store_id = fields.Many2one(
@@ -108,7 +108,7 @@ class SalesDashboardSyncState(models.Model):
     )
     store_filter_key = fields.Char(
         string="Store Key",
-        required=True,
+
         readonly=True,
         index=True,
         default="all",
@@ -126,7 +126,7 @@ class SalesDashboardSyncState(models.Model):
         ],
         string="Status",
         default="pending",
-        required=True,
+
         index=True,
     )
     rows_synced = fields.Integer(

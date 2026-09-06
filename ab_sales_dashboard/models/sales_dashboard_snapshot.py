@@ -27,9 +27,9 @@ class SalesDashboardSnapshot(models.Model):
     _description = "Sales Dashboard Report"
     _order = "refresh_date desc, id desc"
 
-    name = fields.Char(required=True, readonly=True, default="Sales Dashboard")
-    date_from = fields.Date(required=True, readonly=True, index=True)
-    date_to = fields.Date(required=True, readonly=True, index=True)
+    name = fields.Char(readonly=True, default="Sales Dashboard")
+    date_from = fields.Date(readonly=True, index=True)
+    date_to = fields.Date(readonly=True, index=True)
     refresh_date = fields.Datetime(default=fields.Datetime.now, readonly=True, index=True)
     store_ids = fields.Many2many("ab_store", string="Stores", readonly=True)
     store_filter_key = fields.Char(readonly=True, index=True)
@@ -132,7 +132,7 @@ class SalesDashboardSnapshot(models.Model):
                 "store_filter_label": self.store_filter_label,
                 "store_ids": [(6, 0, self.store_ids.ids)],
                 "archived_at": fields.Datetime.now(),
-                "archived_by": self.env.user.id,
+                "archived_by": self.env["ab_users"].current_placeholder_id(),
                 "state": "archived",
                 "payload_json": payload,
                 "payload_hash": payload_hash,
@@ -2081,13 +2081,13 @@ class SalesDashboardCollectionLine(models.Model):
     _description = "Sales Dashboard Collection Line"
     _order = "total_sales desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", ondelete="cascade", index=True)
     category = fields.Selection([
         ("cash", "Cash"),
         ("delivery", "Delivery"),
         ("contract", "Contracts"),
         ("offer", "Offers"),
-    ], required=True, readonly=True)
+    ], readonly=True)
     invoice_count = fields.Integer(readonly=True)
     total_sales = fields.Float(readonly=True)
     pct_of_total = fields.Float(readonly=True)
@@ -2109,7 +2109,7 @@ class SalesDashboardUserLine(models.Model):
     _description = "Sales Dashboard User Line"
     _order = "total_sales desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", ondelete="cascade", index=True)
     employee_eplus_id = fields.Integer(readonly=True, index=True)
     employee_name = fields.Char(readonly=True)
     invoice_count = fields.Integer(readonly=True)
@@ -2133,7 +2133,7 @@ class SalesDashboardItemLine(models.Model):
     _description = "Sales Dashboard Item Line"
     _order = "sale_times desc, sold_qty desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", ondelete="cascade", index=True)
     eplus_item_id = fields.Integer(readonly=True, index=True)
     eplus_item_code = fields.Char(readonly=True, index=True)
     product_id = fields.Many2one("ab_product", readonly=True, index=True)
@@ -2162,7 +2162,7 @@ class SalesDashboardInvoiceLine(models.Model):
     _description = "Sales Dashboard Invoice Line"
     _order = "invoice_date desc, id desc"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", ondelete="cascade", index=True)
     invoice_no = fields.Char(readonly=True, index=True)
     invoice_date = fields.Datetime(readonly=True, index=True)
     customer_name = fields.Char(readonly=True)
@@ -2189,22 +2189,22 @@ class SalesDashboardReportArchive(models.Model):
     _description = "Archived Sales Dashboard Report"
     _order = "archived_at desc, id desc"
 
-    name = fields.Char(required=True, readonly=True)
-    archive_number = fields.Char(required=True, readonly=True, copy=False, index=True)
+    name = fields.Char(readonly=True)
+    archive_number = fields.Char(readonly=True, copy=False, index=True)
     snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", readonly=True, ondelete="restrict", index=True)
-    date_from = fields.Date(required=True, readonly=True, index=True)
-    date_to = fields.Date(required=True, readonly=True, index=True)
+    date_from = fields.Date(readonly=True, index=True)
+    date_to = fields.Date(readonly=True, index=True)
     store_filter_key = fields.Char(readonly=True, index=True)
     store_filter_label = fields.Char(readonly=True)
     store_ids = fields.Many2many("ab_store", string="Stores", readonly=True)
-    archived_at = fields.Datetime(required=True, readonly=True, index=True)
-    archived_by = fields.Many2one("res.users", required=True, readonly=True, index=True)
+    archived_at = fields.Datetime(readonly=True, index=True)
+    archived_by = fields.Many2one("ab_users", readonly=True, index=True)
     state = fields.Selection([
         ("archived", "Archived"),
         ("cancelled", "Cancelled"),
-    ], required=True, readonly=True, default="archived", index=True)
-    payload_json = fields.Json(required=True, readonly=True)
-    payload_hash = fields.Char(required=True, readonly=True, index=True)
+    ], readonly=True, default="archived", index=True)
+    payload_json = fields.Json(readonly=True)
+    payload_hash = fields.Char(readonly=True, index=True)
     payload_size_bytes = fields.Integer(readonly=True)
     source_snapshot_write_date = fields.Datetime(readonly=True)
 
@@ -2219,7 +2219,7 @@ class SalesDashboardReportArchive(models.Model):
             raise AccessError(_("Sales dashboard report archives must be created through the archive action."))
         sequence = self.env["ir.sequence"].sudo()
         now = fields.Datetime.now()
-        user_id = self.env.user.id
+        user_id = self.env["ab_users"].current_placeholder_id()
         for vals in vals_list:
             archive_number = vals.get("archive_number") or sequence.next_by_code("ab.sales.dashboard.report.archive") or "/"
             vals.setdefault("archive_number", archive_number)
@@ -2301,9 +2301,9 @@ class SalesDashboardDailyStoreFact(models.Model):
     _description = "Sales Dashboard Daily Store Fact"
     _order = "report_date desc, store_eplus_id"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
     total_sales = fields.Float(readonly=True)
     invoice_count = fields.Integer(readonly=True)
     medicine_sales = fields.Float(readonly=True)
@@ -2323,15 +2323,15 @@ class SalesDashboardDailyCollectionFact(models.Model):
     _description = "Sales Dashboard Daily Collection Fact"
     _order = "report_date desc, store_eplus_id, category"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
     category = fields.Selection([
         ("cash", "Cash"),
         ("delivery", "Delivery"),
         ("contract", "Contracts"),
         ("offer", "Offers"),
-    ], required=True, readonly=True, index=True)
+    ], readonly=True, index=True)
     invoice_count = fields.Integer(readonly=True)
     total_sales = fields.Float(readonly=True)
 
@@ -2346,10 +2346,10 @@ class SalesDashboardDailyUserFact(models.Model):
     _description = "Sales Dashboard Daily User Fact"
     _order = "report_date desc, store_eplus_id, total_sales desc, employee_eplus_id"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
-    employee_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
+    employee_eplus_id = fields.Integer(readonly=True, index=True)
     employee_name = fields.Char(readonly=True)
     invoice_count = fields.Integer(readonly=True)
     total_sales = fields.Float(readonly=True)
@@ -2366,17 +2366,17 @@ class SalesDashboardDailyItemFact(models.Model):
     _description = "Sales Dashboard Daily Item Fact"
     _order = "report_date desc, store_eplus_id, sales_amount desc, item_eplus_id"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
-    item_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
+    item_eplus_id = fields.Integer(readonly=True, index=True)
     item_code = fields.Char(readonly=True, index=True)
     product_id = fields.Many2one("ab_product", readonly=True, index=True)
     item_name = fields.Char(readonly=True)
     item_type = fields.Selection([
         ("medicine", "Medicine"),
         ("non_medicine", "Non-Medicine"),
-    ], required=True, readonly=True, default="medicine", index=True)
+    ], readonly=True, default="medicine", index=True)
     sold_qty = fields.Float(readonly=True)
     sales_amount = fields.Float(readonly=True)
     invoice_count = fields.Integer(readonly=True)
@@ -2394,19 +2394,19 @@ class SalesDashboardFactCoverage(models.Model):
     _description = "Sales Dashboard Fact Coverage"
     _order = "report_date desc, store_eplus_id, fact_type"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
     fact_type = fields.Selection([
         ("store", "Store"),
         ("collection", "Collection"),
         ("user", "User"),
         ("item", "Item"),
-    ], required=True, readonly=True, index=True)
+    ], readonly=True, index=True)
     sync_state = fields.Selection([
         ("synced", "Synced"),
         ("failed", "Failed"),
-    ], required=True, readonly=True, default="synced", index=True)
+    ], readonly=True, default="synced", index=True)
     synced_at = fields.Datetime(readonly=True, index=True)
 
     _uniq_fact_coverage = models.Constraint(
@@ -2474,13 +2474,13 @@ class SalesDashboardSyncCoverage(models.Model):
     _description = "Sales Dashboard Sync Coverage"
     _order = "report_date desc, store_eplus_id"
 
-    report_date = fields.Date(required=True, readonly=True, index=True)
+    report_date = fields.Date(readonly=True, index=True)
     store_id = fields.Many2one("ab_store", readonly=True, index=True)
-    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    store_eplus_id = fields.Integer(readonly=True, index=True)
     sync_state = fields.Selection([
         ("synced", "Synced"),
         ("failed", "Failed"),
-    ], required=True, readonly=True, default="synced", index=True)
+    ], readonly=True, default="synced", index=True)
     synced_at = fields.Datetime(readonly=True, index=True)
 
     _uniq_sync_coverage = models.Constraint(
