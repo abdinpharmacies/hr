@@ -61,10 +61,15 @@ class SupplierClaimManagerService(models.AbstractModel):
             manager = self._get_stored_manager(dept_code)
             if manager:
                 already_assigned_ids.add(manager.id)
-        links = self.env['ab_hr_bot'].sudo().search([])
-        linked_employee_ids = [link.employee_id for link in links if link.employee_id and link.chat_id]
+        links = self.env['ab_partner_bot'].sudo().search([
+            ('active', '=', True),
+            ('costcenter_id', '!=', False),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ])
+        linked_costcenter_ids = links.mapped('costcenter_id').ids
         employees = self.env['ab_hr_employee'].sudo().search([
-            ('id', 'in', linked_employee_ids or [0]),
+            ('costcenter_id', 'in', linked_costcenter_ids or [0]),
             ('id', 'not in', list(already_assigned_ids)),
         ])
         return [{
@@ -75,23 +80,28 @@ class SupplierClaimManagerService(models.AbstractModel):
 
     @api.model
     def get_telegram_connected_employees(self):
-        links = self.env['ab_hr_bot'].sudo().search([])
-        link_by_employee_id = {
-            link.employee_id: link
-            for link in links
-            if link.employee_id and link.chat_id
-        }
-        linked_employee_ids = list(link_by_employee_id)
+        links = self.env['ab_partner_bot'].sudo().search([
+            ('active', '=', True),
+            ('costcenter_id', '!=', False),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ], order='costcenter_id, linked_at desc, id desc')
+        link_by_costcenter_id = {}
+        for link in links:
+            link_by_costcenter_id.setdefault(link.costcenter_id.id, link)
+        linked_costcenter_ids = list(link_by_costcenter_id)
         employees = self.env['ab_hr_employee'].sudo().search([
-            ('id', 'in', linked_employee_ids or [0]),
+            ('costcenter_id', 'in', linked_costcenter_ids or [0]),
         ], order='name')
         results = []
         for employee in employees:
-            link = link_by_employee_id.get(employee.id)
-            linked_at = link.create_date if link else False
+            link = link_by_costcenter_id.get(employee.costcenter_id.id)
+            linked_at = link.linked_at if link else False
             results.append({
                 'id': employee.id,
                 'name': employee.name,
+                'costcenter_id': employee.costcenter_id.id if employee.costcenter_id else False,
+                'costcenter_code': employee.costcenter_id.code if employee.costcenter_id else '',
                 'department_name': employee.department_id.name if employee.department_id else '',
                 'department_id': employee.department_id.id if employee.department_id else False,
                 'telegram_username': self._get_employee_telegram_username(employee) or '',

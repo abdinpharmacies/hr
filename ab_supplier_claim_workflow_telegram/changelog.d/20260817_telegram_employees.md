@@ -13,7 +13,7 @@ Files changed:
 
 - Added an `Employees` Telegram Management tab.
 - Added automatic registration sync for employees linked to supplier claim workflow department groups.
-- Added `Employee at` department assignment while keeping Telegram connection details sourced from `ab_hr_bot`.
+- Added `Employee at` department assignment while keeping Telegram connection details sourced from `ab_partner_bot`.
 - Added Telegram notifications for newly registered supplier claims.
 - Sent new-claim Telegram notifications to all supplier-claim workflow users except reviewers and admins.
 - Added Telegram notifications when a supplier claim reaches a department's turn.

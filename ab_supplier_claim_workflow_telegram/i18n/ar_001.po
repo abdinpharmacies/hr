@@ -538,8 +538,8 @@ msgid "Employee at"
 msgstr "موظف في"
 
 #. module: ab_supplier_claim_workflow_telegram
-msgid "Employees assigned to supplier claim workflow groups. Telegram details are read from Telegram Bot links."
-msgstr "الموظفون المسندون إلى جروبات دورة مطالبات الموردين. يتم قراءة بيانات تيليجرام من روابط موديول تيليجرام بوت."
+msgid "Employees assigned to supplier claim workflow groups. Telegram details are read from the newest active cost-center Telegram account."
+msgstr "الموظفون المسندون إلى جروبات دورة مطالبات الموردين. يتم قراءة بيانات تيليجرام من أحدث حساب تيليجرام نشط لمركز التكلفة."
 
 #. module: ab_supplier_claim_workflow_telegram
 msgid "Remove Manager Role"
@@ -564,3 +564,11 @@ msgstr "📌 <b>بدأ دور قسمك في مطالبة المورد</b>"
 #. module: ab_supplier_claim_workflow_telegram
 msgid "This claim is now waiting for your department action."
 msgstr "هذه المطالبة الآن في انتظار إجراء قسمك."
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Cost Center"
+msgstr "مركز التكلفة"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Telegram Account"
+msgstr "حساب تيليجرام"
