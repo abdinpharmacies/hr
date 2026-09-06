@@ -11,10 +11,10 @@ class AbSalesCashierCloseWizard(models.TransientModel):
     _description = "Sales Cashier Close Wizard"
 
     user_id = fields.Many2one(
-        "res.users",
+        "ab_users",
         string="Current User",
         readonly=True,
-        default=lambda self: self.env.user.id,
+        default=lambda self: self.env["ab_users"].current_placeholder_id(),
     )
     close_time = fields.Datetime(
         string="Close Time",
@@ -24,16 +24,16 @@ class AbSalesCashierCloseWizard(models.TransientModel):
     store_id = fields.Many2one(
         "ab_store",
         string="Store",
-        required=True,
+
         readonly=True,
     )
     employee_id = fields.Many2one(
         "ab_hr_employee",
         string="Cashier Employee",
-        required=True,
+
         domain=lambda self: [
             "|",
-            ("user_id", "=", self.env.user.id),
+            ("user_id", "=", self.env["ab_users"].current_placeholder_id()),
             "&",
             ("user_id", "!=", False),
             ("costcenter_id.eplus_serial", "!=", False),
@@ -63,7 +63,7 @@ class AbSalesCashierCloseWizard(models.TransientModel):
     @api.model
     def _default_employee_id(self):
         employee = self.env["ab_hr_employee"].sudo().search(
-            [("user_id", "=", self.env.user.id)],
+            [("user_id", "=", self.env["ab_users"].current_placeholder_id())],
             limit=1,
         )
         return employee.id or False
@@ -176,10 +176,10 @@ class AbSalesCashierCloseWizardLine(models.TransientModel):
 
     wizard_id = fields.Many2one(
         "ab_sales_cashier_close_wizard",
-        required=True,
+
         ondelete="cascade",
     )
     wallet_id = fields.Integer(string="Wallet ID", readonly=True)
     wallet_name = fields.Char(string="Wallet", readonly=True)
     opening_balance = fields.Float(string="Opening Balance", readonly=True, digits=(16, 4))
-    net_balance = fields.Float(string="Net Balance", required=True, digits=(16, 4))
+    net_balance = fields.Float(string="Net Balance", digits=(16, 4))
