@@ -236,9 +236,9 @@ Step 3: Get chat IDs:
 
 https://api.telegram.org/bot8751357580:AAHRiqynnOv9PBzKzQRu0UNo-jj_ijAbFWA/getUpdates
 
-Step 4: Bind in Odoo (model ``ab_hr_bot``):
+Step 4: Bind in Odoo (model ``ab_partner_bot``):
 
-- Employee / Manager ID
+- Cost Center
 - chat_id
 
 Workflow
