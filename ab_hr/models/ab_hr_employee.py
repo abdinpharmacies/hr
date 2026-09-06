@@ -145,113 +145,11 @@ class Employees(models.Model):
 
     @api.depends('parent_id', 'department_id')
     def _compute_supervision_type(self):
-        curr_user = self.env.user
-        curr_ab_user = self.env['ab_users'].current_placeholder()
-        curr_ab_user_id = curr_ab_user.id or 0
-        curr_employees = self.search([('user_id', '=', curr_ab_user_id)])
-
-        is_reviewer = curr_user.has_group('ab_hr.group_ab_hr_payroll_reviewer')
-        is_co = curr_user.has_group('ab_hr.group_ab_hr_co')
-        is_recruiter = curr_user.has_group('ab_hr.group_ab_hr_recruiter')
-
-        children = False
-
         for rec in self:
-            # two levels up
-            direct_parent = rec.parent_id
-            indirect_parent = rec.parent_id.parent_id
-
-            if rec.user_id.id == curr_ab_user_id:
-                rec.supervision_type = 'myself'
-            elif direct_parent in curr_employees:
-                rec.supervision_type = 'direct'
-            elif indirect_parent in curr_employees:
-                rec.supervision_type = 'indirect'
-            elif is_reviewer or is_co or (
-                    is_recruiter and rec.job_id and curr_ab_user in rec.job_id.access_history_user_ids):
-                rec.supervision_type = 'other'
-            else:
-                if not children:
-                    children = self.search([('id', 'child_of', curr_employees.ids)])
-                if rec in children:
-                    rec.supervision_type = 'indirect_to_subordinate'
-                else:
-                    rec.supervision_type = False
+            rec.supervision_type = False
 
     def _search_supervision_type(self, operator, value):
-        valid_ops = ('=', '!=', 'in', 'not in')
-        if operator not in valid_ops:
-            return [('id', '=', 0)]
-
-        if operator in ('in', 'not in'):
-            requested = set(value or [])
-        else:
-            requested = {value} if value is not False else {False}
-
-        env = self.env
-        Employee = self
-        Job = env['ab_hr_job']
-        search_emp = Employee.search
-
-        curr_user = env.user
-        curr_ab_user_id = env['ab_users'].current_placeholder_id() or 0
-
-        curr_emp_ids = set(search_emp([('user_id', '=', curr_ab_user_id)]).ids)
-
-        ids_myself = set(curr_emp_ids)
-        ids_direct = set()
-        ids_indirect = set()
-        if curr_emp_ids:
-            ids_direct = set(search_emp([('parent_id', 'in', list(curr_emp_ids))]).ids)
-            ids_indirect = set(search_emp([('parent_id.parent_id', 'in', list(curr_emp_ids))]).ids)
-
-        is_reviewer = curr_user.has_group('ab_hr.group_ab_hr_payroll_reviewer')
-        is_co = curr_user.has_group('ab_hr.group_ab_hr_co')
-        is_recruiter = curr_user.has_group('ab_hr.group_ab_hr_recruiter')
-
-        ids_early = ids_myself | ids_direct | ids_indirect
-        ids_other = set()
-
-        all_emp_ids = set(search_emp([]).ids)  # do once if you’ll need it anyway
-
-        if is_reviewer or is_co:
-            ids_other = all_emp_ids - ids_early
-        elif is_recruiter:
-            job_ids = Job.search([('access_history_user_ids', 'in', curr_ab_user_id)]).ids
-            if job_ids:
-                ids_other = set(search_emp([('job_id', 'in', job_ids)]).ids) - ids_early
-
-        ids_indirect_to_subordinate = set()
-        if curr_emp_ids:
-            children_ids = set(search_emp([('id', 'child_of', list(curr_emp_ids))]).ids)
-            ids_indirect_to_subordinate = children_ids - ids_early - ids_other
-
-        buckets = {
-            'myself': ids_myself,
-            'direct': ids_direct,
-            'indirect': ids_indirect,
-            'other': ids_other,
-            'indirect_to_subordinate': ids_indirect_to_subordinate,
-        }
-
-        all_positive = set().union(*buckets.values())
-        ids_false = all_emp_ids - all_positive
-
-        def resolve_ids(req_set):
-            res = set()
-            for tag in req_set:
-                if tag is False:
-                    res |= ids_false
-                elif tag in buckets:
-                    res |= buckets[tag]
-            return res
-
-        target_ids = resolve_ids(requested)
-
-        if operator in ('=', 'in'):
-            return [('id', 'in', list(target_ids))] if target_ids else [('id', '=', 0)]
-        else:
-            return [] if not target_ids else [('id', 'not in', list(target_ids))]
+        return [(0, '=', 1)]
 
     def _check_edit_rights(self):
         if not self.env.user.has_group('ab_hr.group_ab_hr_co'):
