@@ -6,6 +6,6 @@ class AbSupplierDiscount(models.Model):
     _description = 'ab_supplier_discount'
 
     supplier_id = fields.Many2one('ab_costcenter')
-    start_day = fields.Integer(default=0, required=True)
-    discount = fields.Float(default=0, required=True, digits=(5, 2))
-    withdrawal_bracket = fields.Float(default=0, required=True, digits=(16, 2))
+    start_day = fields.Integer(default=0)
+    discount = fields.Float(default=0, digits=(5, 2))
+    withdrawal_bracket = fields.Float(default=0, digits=(16, 2))
