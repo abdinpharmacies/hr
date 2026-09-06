@@ -21,6 +21,13 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     employee_name = fields.Char(string='Employee Name', related='employee_id.name', store=False)
     user_id = fields.Many2one('res.users', string='Related User', related='employee_id.user_id', store=False)
     work_phone = fields.Char(string='Work Phone', related='employee_id.work_phone', store=False)
+    costcenter_id = fields.Many2one(
+        'ab_costcenter',
+        string='Cost Center',
+        related='employee_id.costcenter_id',
+        store=False,
+        readonly=True,
+    )
     department_id = fields.Many2one('ab_hr_department', string='Department', related='employee_id.department_id', store=False)
     superior_department_id = fields.Many2one(
         'ab_hr_department',
@@ -36,15 +43,23 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         search='_search_telegram_connected',
         compute_sudo=True,
     )
+    telegram_account_id = fields.Many2one(
+        'ab_partner_bot',
+        string='Telegram Account',
+        compute='_compute_telegram_account',
+        compute_sudo=True,
+    )
     telegram_chat_id = fields.Char(
         string='Telegram Chat ID',
         compute='_compute_telegram_link_fields',
+        search='_search_telegram_chat_id',
         readonly=True,
         compute_sudo=True,
     )
     telegram_username = fields.Char(
         string='Telegram Username',
         compute='_compute_telegram_link_fields',
+        search='_search_telegram_username',
         readonly=True,
         compute_sudo=True,
     )
@@ -147,11 +162,12 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         chat_id = str(message_data.get('telegram_chat_id') or '').strip()
         telegram_user_id = str(message_data.get('telegram_user_id') or '').strip()
         username = (message_data.get('username') or '').strip()
-        self.env['ab_hr_bot'].sudo().register_employee_chat(
+        self.env['ab_partner_bot'].sudo().register_employee_chat(
             employee.id,
             chat_id,
             telegram_username=username,
             employee_ref_id=employee.accid or employee.id,
+            telegram_user_id=telegram_user_id or chat_id,
         )
         employee.sudo().write({
             'telegram_chat_id': chat_id or False,
@@ -178,13 +194,18 @@ class AbSupplierClaimTelegramRegistration(models.Model):
 
     @api.model
     def _sync_telegram_bot_users(self):
-        links = self.env['ab_hr_bot'].sudo().search([
+        links = self.env['ab_partner_bot'].sudo().search([
+            ('active', '=', True),
+            ('costcenter_id', '!=', False),
             ('employee_id', '!=', False),
             ('chat_id', '!=', False),
             ('chat_id', '!=', ''),
         ])
-        employee_ids = [link.employee_id for link in links]
-        employees = self.env['ab_hr_employee'].sudo().browse(employee_ids).exists()
+        costcenter_ids = links.mapped('costcenter_id').ids
+        employees = self.env['ab_hr_employee'].sudo().search([
+            ('costcenter_id', 'in', costcenter_ids or [0]),
+            ('active', '=', True),
+        ])
         existing_employee_ids = set(self.sudo().search([
             ('employee_id', 'in', employees.ids or [0]),
         ]).mapped('employee_id').ids)
@@ -284,40 +305,66 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         for rec in self:
             rec.is_working = rec.employee_id.job_status == 'active'
 
-    @api.depends('employee_id')
+    @api.depends('employee_id', 'employee_id.costcenter_id')
+    def _compute_telegram_account(self):
+        costcenter_ids = self.mapped('employee_id.costcenter_id').ids
+        accounts = self.env['ab_partner_bot'].sudo().search([
+            ('costcenter_id', 'in', costcenter_ids or [0]),
+            ('active', '=', True),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ], order='costcenter_id, linked_at desc, id desc')
+        latest_by_costcenter = {}
+        for account in accounts:
+            latest_by_costcenter.setdefault(account.costcenter_id.id, account)
+        for rec in self:
+            rec.telegram_account_id = latest_by_costcenter.get(rec.employee_id.costcenter_id.id)
+
+    @api.depends('employee_id', 'employee_id.costcenter_id')
     def _compute_telegram_connected(self):
         for rec in self:
-            rec.telegram_connected = rec._employee_has_real_telegram_identity(rec.employee_id)
+            rec.telegram_connected = bool(rec.telegram_account_id)
 
-    @api.depends('employee_id')
+    @api.depends('employee_id', 'employee_id.costcenter_id')
     def _compute_telegram_link_fields(self):
         for rec in self:
-            link = rec._get_employee_telegram_link(rec.employee_id)
-            rec.telegram_chat_id = link.chat_id if link else False
-            rec.telegram_username = link.telegram_username if link else False
-            rec.linked_at = link.create_date if link else False
+            account = rec.telegram_account_id
+            rec.telegram_chat_id = account.chat_id if account else False
+            rec.telegram_username = account.telegram_username if account else False
+            rec.linked_at = account.linked_at if account else False
 
     @api.model
     def _search_telegram_connected(self, operator, value):
-        linked_employee_ids = set(
-            self.env['ab_hr_bot'].sudo().search([
-                ('chat_id', '!=', False),
-                ('chat_id', '!=', ''),
-            ]).mapped('employee_id')
-        )
+        costcenter_ids = self.env['ab_partner_bot'].sudo().search([
+            ('active', '=', True),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ]).mapped('costcenter_id').ids
         connected = operator not in ('!=', 'not in') if value else operator in ('!=', 'not in')
-        return [('employee_id', 'in' if connected else 'not in', list(linked_employee_ids) or [0])]
+        return [('employee_id.costcenter_id', 'in' if connected else 'not in', costcenter_ids or [0])]
+
+    @api.model
+    def _search_telegram_chat_id(self, operator, value):
+        return self._search_active_telegram_account_field('chat_id', operator, value)
+
+    @api.model
+    def _search_telegram_username(self, operator, value):
+        return self._search_active_telegram_account_field('telegram_username', operator, value)
+
+    @api.model
+    def _search_active_telegram_account_field(self, field_name, operator, value):
+        accounts = self.env['ab_partner_bot'].sudo().search([
+            ('active', '=', True),
+            (field_name, operator, value),
+        ])
+        return [('employee_id.costcenter_id', 'in', accounts.mapped('costcenter_id').ids or [0])]
 
     @api.model
     def _get_employee_telegram_link(self, employee):
         employee = employee.sudo().exists() if employee else employee
         if not employee:
-            return self.env['ab_hr_bot']
-        return self.env['ab_hr_bot'].sudo().search([
-            ('employee_id', '=', employee.id),
-            ('chat_id', '!=', False),
-            ('chat_id', '!=', ''),
-        ], limit=1)
+            return self.env['ab_partner_bot']
+        return self.env['ab_partner_bot'].sudo().get_account_for_employee(employee)
 
     @api.model
     def _get_employee_telegram_chat_id(self, employee):

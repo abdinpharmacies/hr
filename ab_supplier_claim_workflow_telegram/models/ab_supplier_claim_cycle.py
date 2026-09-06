@@ -168,7 +168,7 @@ class SupplierClaimCycle(models.Model):
             ])
             sent_chat_ids = set()
             for registration in registrations:
-                chat_id = Registration._get_employee_telegram_chat_id(registration.employee_id)
+                chat_id = registration.telegram_account_id.chat_id
                 if not chat_id or chat_id in sent_chat_ids:
                     continue
                 lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)
@@ -205,7 +205,7 @@ class SupplierClaimCycle(models.Model):
             ])
             sent_chat_ids = set()
             for registration in registrations:
-                chat_id = Registration._get_employee_telegram_chat_id(registration.employee_id)
+                chat_id = registration.telegram_account_id.chat_id
                 if not chat_id or chat_id in sent_chat_ids:
                     continue
                 lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)

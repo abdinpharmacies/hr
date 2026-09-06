@@ -25,7 +25,7 @@
         <field name="view_mode">list,form</field>
         <field name="domain">[('workflow_department', '!=', False)]</field>
         <field name="help" type="html">
-            <p>Employees assigned to supplier claim workflow groups. Telegram details are read from Telegram Bot links.</p>
+            <p>Employees assigned to supplier claim workflow groups. Telegram details are read from the newest active cost-center Telegram account.</p>
         </field>
     </record>
 
@@ -37,16 +37,18 @@
             <list string="Telegram Management" class="scc-list-view">
                 <field name="eplus_code" optional="show"/>
                 <field name="employee_id"/>
+                <field name="costcenter_id" optional="show"/>
                 <field name="work_phone" optional="show"/>
                 <field name="department_id" optional="hide"/>
                 <field name="job_id" optional="show"/>
                 <field name="is_working" optional="hide"/>
-                <field name="telegram_connected" optional="show"/>
-                <field name="telegram_username" optional="show"/>
-                <field name="telegram_chat_id" optional="hide"/>
+                <field name="telegram_connected" readonly="1" optional="show"/>
+                <field name="telegram_account_id" readonly="1" optional="show"/>
+                <field name="telegram_username" readonly="1" optional="show"/>
+                <field name="telegram_chat_id" readonly="1" optional="hide"/>
                 <field name="workflow_department" optional="show"/>
                 <field name="manager_department" optional="show"/>
-                <field name="linked_at" optional="hide"/>
+                <field name="linked_at" readonly="1" optional="hide"/>
                 <field name="superior_department_id" optional="hide"/>
             </list>
         </field>
@@ -86,9 +88,9 @@
                             <div class="scc-supplier-info">
                                 <div class="scc-supplier-info-icon">👤</div>
                                 <div>
-                                    <div class="scc-supplier-info-label o_translate_inline">User</div>
+                                    <div class="scc-supplier-info-label o_translate_inline">Cost Center</div>
                                     <div class="scc-supplier-info-value">
-                                        <field name="user_id" readonly="1"/>
+                                        <field name="costcenter_id" readonly="1"/>
                                     </div>
                                 </div>
                             </div>
@@ -149,19 +151,25 @@
                             <div class="scc-stage-field">
                                 <div class="scc-stage-field-label o_translate_inline">Telegram Connected</div>
                                 <div class="scc-stage-field-value">
-                                    <field name="telegram_connected"/>
+                                    <field name="telegram_connected" readonly="1"/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label o_translate_inline">Telegram Account</div>
+                                <div class="scc-stage-field-value">
+                                    <field name="telegram_account_id" readonly="1"/>
                                 </div>
                             </div>
                             <div class="scc-stage-field">
                                 <div class="scc-stage-field-label o_translate_inline">Chat ID</div>
                                 <div class="scc-stage-field-value">
-                                    <field name="telegram_chat_id"/>
+                                    <field name="telegram_chat_id" readonly="1"/>
                                 </div>
                             </div>
                             <div class="scc-stage-field">
                                 <div class="scc-stage-field-label o_translate_inline">Telegram Username</div>
                                 <div class="scc-stage-field-value">
-                                    <field name="telegram_username"/>
+                                    <field name="telegram_username" readonly="1"/>
                                 </div>
                             </div>
                             <div class="scc-stage-field">
@@ -214,6 +222,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="eplus_code"/>
+                <field name="costcenter_id"/>
                 <field name="telegram_chat_id"/>
                 <field name="telegram_username"/>
                 <field name="manager_department"/>
