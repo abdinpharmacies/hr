@@ -11,10 +11,10 @@ class AbReplicaDB(models.Model):
     _description = "Replica Database"
     _order = "name"
 
-    name = fields.Char(required=True)
+    name = fields.Char()
     db_serial = fields.Integer(
         string="DB Serial",
-        required=True,
+
         index=True,
         readonly=True,
         copy=False,
@@ -23,7 +23,7 @@ class AbReplicaDB(models.Model):
     return_allowed_days = fields.Integer(
         string="Return Allowed Days",
         default=14,
-        required=True,
+
     )
 
     allowed_sales_store_ids = fields.Many2many(
