@@ -5,7 +5,7 @@ class AbSalesHrRole(models.Model):
     _name = "ab_employee_access_sales_role"
     _description = "Sales HR POS Role"
 
-    name = fields.Char(required=True)
+    name = fields.Char()
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
     allow_pos_screen = fields.Boolean(default=True)
