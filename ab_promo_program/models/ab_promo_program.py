@@ -11,7 +11,7 @@ class AbPromoProgram(models.Model):
 
     _order = 'id desc'
 
-    name = fields.Char(required=True, index=True)
+    name = fields.Char(index=True)
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
 
@@ -93,7 +93,7 @@ class AbPromoProgram(models.Model):
         ('fixed_price', 'Fixed Price'),
         ('specific_products', 'On Specific Products'),
         ('incentives', 'Incentives'),
-    ], default='on_order', required=True)
+    ], default='on_order')
 
     fixed_price = fields.Float(default=0)
 

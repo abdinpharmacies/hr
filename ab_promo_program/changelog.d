@@ -43,3 +43,25 @@ Files changed:
 - ab_promo_program/models/ab_promo_program.py
 - ab_promo_program/models/ab_promo_program_wiz.py
 - ab_promo_program/views/ab_promo_program.xml
+
+Recent relevant commit:
+
+- Commit: `f816a4652a1bf6f960b7f94760512d16361a00ad`
+- Author: hager yasser
+- Date: 2026-08-16
+- Original subject: ab_promo_program/feat: update Promotion Wizard Excel columns with new fields
+- User-facing changes:
+  - Established the previous baseline for this module before the report-server passive cleanup.
+- Files changed:
+  - ab_promo_program/changelog.d
+  - ab_promo_program/i18n/ar.po
+  - ab_promo_program/i18n/ar_001.po
+  - ab_promo_program/models/ab_promo_program_wiz.py
+
+Current changes before commit:
+
+- User-facing changes:
+  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+- Files changed:
+  - ab_promo_program/changelog.d
+  - ab_promo_program/models/ab_promo_program.py
