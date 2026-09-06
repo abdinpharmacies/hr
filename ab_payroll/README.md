@@ -37,9 +37,9 @@ dependency without affecting payroll sheet management.
    telegram.bot.token
    ```
 
-3. Create an Employee Telegram Chat Mapping for every manager or employee who
-   should receive payroll files. Each mapping connects the HR employee record
-   ID to a Telegram chat ID.
+3. Create a Cost Center Telegram Account for every manager or employee who
+   should receive payroll files. Each mapping connects the employee's cost
+   center to a Telegram chat ID.
 
 Payroll distribution should not be used until the required employee or manager
 Telegram chat IDs are saved.
