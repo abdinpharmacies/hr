@@ -7,6 +7,7 @@ from odoo.tools.sql import column_exists, table_exists
 
 class AbTransferRequest(models.Model):
     _name = "ab_transfer_request"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Request"
     _order = "id desc"
     _rec_name = "display_name"
@@ -22,13 +23,13 @@ class AbTransferRequest(models.Model):
         string="From Store",
         domain=lambda self: self._get_allowed_source_store_domain(),
         default=lambda self: self._default_from_store_id(),
-        required=True,
+
     )
 
     to_store_id = fields.Many2one(
         "ab_store",
         string="Destination Branch",
-        required=True,
+
     )
 
     user_id = fields.Many2one(
@@ -50,7 +51,7 @@ class AbTransferRequest(models.Model):
         ],
         string="Status",
         default="draft",
-        required=True,
+
     )
 
     execution_state = fields.Selection(
@@ -60,7 +61,7 @@ class AbTransferRequest(models.Model):
         ],
         string="Execution State",
         default="pending",
-        required=True,
+
         copy=False,
     )
 
@@ -87,7 +88,7 @@ class AbTransferRequest(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
     )
 
     def _auto_init(self):
@@ -182,13 +183,14 @@ class AbTransferRequest(models.Model):
 
 class AbTransferRequestLine(models.Model):
     _name = "ab_transfer_request_line"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Request Line"
     _order = "id desc"
 
     request_id = fields.Many2one(
         "ab_transfer_request",
         string="Transfer Request",
-        required=True,
+
         ondelete="cascade",
     )
 
@@ -203,13 +205,13 @@ class AbTransferRequestLine(models.Model):
     product_id = fields.Many2one(
         "ab_product",
         string="Product",
-        required=True,
+
         domain=[("active", "=", True)],
     )
 
     requested_qty = fields.Float(
         string="Requested Quantity",
-        required=True,
+
         digits=(16, 3),
         default=1.0,
     )

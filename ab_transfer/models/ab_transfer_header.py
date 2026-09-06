@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 
 class AbTransferHeader(models.Model):
     _name = "ab_transfer_header"
-    _inherit = ["ab_eplus_connect"]
+    _inherit = ["ab_eplus_connect", "ab_odoo_sync_passive_mirror_mixin"]
     _description = "ab_transfer_header"
     _order = "id desc"
     _rec_name = "display_name"
@@ -30,14 +30,14 @@ class AbTransferHeader(models.Model):
         string="From Store",
         domain=lambda self: self._get_allowed_source_store_domain(),
         default=lambda self: self._default_from_store_id(),
-        required=True,
+
     )
     # stnh_f_Sto_id = from_store_id
 
     to_store_id = fields.Many2one(
         "ab_store",
         string="To Store",
-        required=True,
+
     )
     # stnh_t_Sto_id = to_store_id
 
@@ -45,7 +45,7 @@ class AbTransferHeader(models.Model):
         "ab_costcenter",
         string="User",
         default=lambda self: self._default_user_id(),
-        required=True,
+
         readonly=True,
     )
     # sec_insert_uid = user_id
@@ -69,7 +69,7 @@ class AbTransferHeader(models.Model):
         ],
         string="Status",
         default="prepending",
-        required=True,
+
         tracking=True,
     )
     # stnh_flag = selection (mapped later to SQL char value)
@@ -123,7 +123,7 @@ class AbTransferHeader(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
     )
 
     def _auto_init(self):

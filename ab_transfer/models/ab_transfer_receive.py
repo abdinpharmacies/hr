@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 class AbTransferReceiveHeader(models.Model):
     _name = "ab_transfer_receive_header"
-    _inherit = ["ab_eplus_connect"]
+    _inherit = ["ab_eplus_connect", "ab_odoo_sync_passive_mirror_mixin"]
     _description = "Transfer Receive Queue"
     _order = "sec_insert_date desc, transfer_serial desc"
     _rec_name = "display_name"
@@ -23,18 +23,18 @@ class AbTransferReceiveHeader(models.Model):
 
     transfer_serial = fields.Integer(
         string="Transfer Serial",
-        required=True,
+
         index=True,
         readonly=True,
     )
     from_store_sql_id = fields.Integer(
         string="From Store ID",
-        required=True,
+
         readonly=True,
     )
     to_store_sql_id = fields.Integer(
         string="To Store ID",
-        required=True,
+
         readonly=True,
     )
     from_store_id = fields.Many2one(
@@ -103,7 +103,7 @@ class AbTransferReceiveHeader(models.Model):
         ],
         string="Receive Status",
         default="pending",
-        required=True,
+
         readonly=True,
         index=True,
     )
@@ -121,7 +121,7 @@ class AbTransferReceiveHeader(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
         readonly=True,
     )
 
@@ -896,18 +896,19 @@ class AbTransferReceiveHeader(models.Model):
 
 class AbTransferReceiveLine(models.Model):
     _name = "ab_transfer_receive_line"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Receive Queue Line"
     _order = "id"
 
     header_id = fields.Many2one(
         "ab_transfer_receive_header",
         string="Receive Header",
-        required=True,
+
         ondelete="cascade",
     )
     transfer_serial = fields.Integer(
         string="Transfer Number",
-        required=True,
+
         readonly=True,
     )
     from_store_sql_id = fields.Integer(
@@ -928,7 +929,7 @@ class AbTransferReceiveLine(models.Model):
     )
     product_sql_id = fields.Integer(
         string="Product ID",
-        required=True,
+
         readonly=True,
     )
     product_id = fields.Many2one(
@@ -951,7 +952,7 @@ class AbTransferReceiveLine(models.Model):
     )
     class_id = fields.Integer(
         string="Class ID",
-        required=True,
+
         readonly=True,
     )
     transferred_qty = fields.Float(
@@ -983,7 +984,7 @@ class AbTransferReceiveLine(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
         readonly=True,
     )
 

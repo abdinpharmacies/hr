@@ -11,13 +11,14 @@ _logger = logging.getLogger(__name__)
 
 class AbTransferLine(models.Model):
     _name = "ab_transfer_line"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Line"
     _order = "id desc"
 
     header_id = fields.Many2one(
         "ab_transfer_header",
         string="Transfer Header",
-        required=True,
+
         ondelete="cascade",
     )
 
@@ -40,26 +41,26 @@ class AbTransferLine(models.Model):
     product_id = fields.Many2one(
         "ab_product",
         string="Product",
-        required=True,
+
     )
 
     product_code = fields.Char(related='product_id.code')
 
     class_id = fields.Integer(
         string="Class ID",
-        required=True,
+
     )
 
     qty = fields.Float(
         string="Quantity",
-        required=True,
+
         digits=(16, 3),
         default=1.0,
     )
 
     expiry_date = fields.Date(
         string="Expiry Date",
-        required=True,
+
     )
 
     user_id = fields.Many2one(
@@ -73,7 +74,7 @@ class AbTransferLine(models.Model):
     uom_id = fields.Many2one(
         "ab_product_uom",
         string="UOM",
-        required=True,
+
     )
 
     inventory_json = fields.Json(
@@ -135,7 +136,7 @@ class AbTransferLine(models.Model):
         "res.company",
         string="Company",
         default=lambda self: self.env.company,
-        required=True,
+
     )
 
     @api.depends("product_id", "header_id.from_store_id")

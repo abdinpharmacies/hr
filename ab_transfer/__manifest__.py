@@ -3,7 +3,7 @@
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
     'application': True,
-    'depends': ['base', 'ab_store', 'mail', 'ab_product', 'ab_hr', 'ab_eplus_connect', 'ab_widgets'],
+    'depends': ['base', 'ab_odoo_sync', 'ab_store', 'mail', 'ab_product', 'ab_hr', 'ab_eplus_connect', 'ab_widgets'],
     'category': 'AbdinSupplyChain',
     'data': [
         'security/ir.model.access.csv',
