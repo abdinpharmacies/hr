@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="channel_ab_odoo_sync_upload_live_sales" model="queue.job.channel">
-        <field name="name">live_sales</field>
+        <field name="name">sync_live</field>
         <field name="parent_id" ref="queue_job.channel_root"/>
     </record>
 
     <record id="channel_ab_odoo_sync_upload_historical_sales" model="queue.job.channel">
-        <field name="name">historical_sales</field>
+        <field name="name">sync_historical</field>
         <field name="parent_id" ref="queue_job.channel_root"/>
     </record>
 

@@ -666,3 +666,75 @@ msgstr "تم إلغاء الرفع التاريخي لـ %(count)s مصدر."
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
 msgid "Cannot change Source Model, Active, Historical Upload Past Months, or Historical Upload From while a historical upload is queued or running."
 msgstr "لا يمكن تغيير نموذج المصدر أو الحالة النشطة أو أشهر الرفع التاريخي السابقة أو تاريخ بداية الرفع التاريخي أثناء إدراج رفع تاريخي أو تشغيله."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Active upload source %(model)s must have live and historical queue channels."
+msgstr "يجب أن يحتوي مصدر الرفع النشط %(model)s على قناتي طابور مباشر وتاريخي."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Cannot change Source Model, Active, queue channels, Historical Upload Past Months, or Historical Upload From while a historical upload is queued or running."
+msgstr "لا يمكن تغيير نموذج المصدر أو الحالة النشطة أو قنوات الطابور أو أشهر الرفع التاريخي السابقة أو تاريخ بداية الرفع التاريخي أثناء إدراج رفع تاريخي أو تشغيله."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Duplicate upload source configuration for %(model)s."
+msgstr "توجد إعدادات مكررة لمصدر الرفع %(model)s."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_channel_id
+msgid "Historical Queue Channel"
+msgstr "قناة الطابور التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_channel_id
+msgid "Queue channel for manual historical upload scanning and sending. It does not start a backfill by itself."
+msgstr "قناة الطابور لفحص وإرسال الرفع التاريخي اليدوي. ولا تبدأ تعبئة تاريخية تلقائيًا."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__live_channel_id
+msgid "Queue channel for future create, update, and archive events. XML-controlled bridge modules may restore this value during upgrades."
+msgstr "قناة الطابور لأحداث الإنشاء والتحديث والأرشفة المستقبلية. قد تعيد وحدات الربط المضبوطة عبر XML هذه القيمة أثناء الترقيات."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Queue channel %(channel)s was not found."
+msgstr "لم يتم العثور على قناة الطابور %(channel)s."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Queue channel XML ID %(xmlid)s was not found."
+msgstr "لم يتم العثور على معرف XML لقناة الطابور %(xmlid)s."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__queue_channel
+msgid "Queue Channel"
+msgstr "قناة الطابور"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__queue_channel
+msgid "Queue channel selected when this outbox event was captured."
+msgstr "قناة الطابور التي تم اختيارها عند التقاط حدث سجل الرفع."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__live_channel_id
+msgid "Live Queue Channel"
+msgstr "قناة الطابور المباشر"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Upload source %(model)s must define a %(kind)s queue channel."
+msgstr "يجب أن يحدد مصدر الرفع %(model)s قناة طابور %(kind)s."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Upload source model name is required."
+msgstr "اسم نموذج مصدر الرفع مطلوب."

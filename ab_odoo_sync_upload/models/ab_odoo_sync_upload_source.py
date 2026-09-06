@@ -10,9 +10,9 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+_DEFAULT_UPLOAD_CHANNEL = "root"
 _HISTORICAL_RUNNING_STATES = {"queued", "running"}
 _HISTORICAL_TERMINAL_STATES = {"done", "failed", "cancelled"}
-_HISTORICAL_UPLOAD_CHANNEL = "root.historical_sales"
 
 
 class AbOdooSyncUploadSource(models.Model):
@@ -24,6 +24,24 @@ class AbOdooSyncUploadSource(models.Model):
     aggregate_parent_field = fields.Char(
         string="Aggregate Parent Field",
         help="Optional Many2one field whose parent must be re-snapshotted after this model changes.",
+    )
+    live_channel_id = fields.Many2one(
+        comodel_name="queue.job.channel",
+        string="Live Queue Channel",
+        default=lambda self: self._default_queue_channel(),
+        help=(
+            "Queue channel for future create, update, and archive events. "
+            "XML-controlled bridge modules may restore this value during upgrades."
+        ),
+    )
+    historical_channel_id = fields.Many2one(
+        comodel_name="queue.job.channel",
+        string="Historical Queue Channel",
+        default=lambda self: self._default_queue_channel(),
+        help=(
+            "Queue channel for manual historical upload scanning and sending. "
+            "It does not start a backfill by itself."
+        ),
     )
     historical_upload_months = fields.Integer(
         string="Historical Upload Past Months",
@@ -94,6 +112,18 @@ class AbOdooSyncUploadSource(models.Model):
         "Source model must be unique in upload sources.",
     )
 
+    @api.model
+    def _default_queue_channel(self):
+        return self.env.ref("queue_job.channel_root", raise_if_not_found=False)
+
+    @api.model
+    def _default_queue_channel_name(self):
+        return _DEFAULT_UPLOAD_CHANNEL
+
+    @api.model
+    def _channel_complete_name(self, channel):
+        return channel.complete_name or self._default_queue_channel_name()
+
     @ormcache("dbname", "model_name", cache="stable")
     def _is_upload_source_cached(self, dbname, model_name):
         if not model_name:
@@ -137,6 +167,19 @@ class AbOdooSyncUploadSource(models.Model):
         for record in self:
             if record.historical_upload_from and record.historical_upload_from > now:
                 raise ValidationError(_("Historical Upload From cannot be in the future."))
+
+    @api.constrains("active", "live_channel_id", "historical_channel_id")
+    def _check_active_queue_channels(self):
+        for record in self:
+            if record.active and (
+                not record.live_channel_id or not record.historical_channel_id
+            ):
+                raise ValidationError(
+                    _(
+                        "Active upload source %(model)s must have live and historical queue channels."
+                    )
+                    % {"model": record.model_name}
+                )
 
     @api.onchange("historical_upload_months")
     def _onchange_historical_upload_months(self):
@@ -186,6 +229,27 @@ class AbOdooSyncUploadSource(models.Model):
         if not source or not source.aggregate_parent_field:
             return False
         return records.mapped(source.aggregate_parent_field).exists()
+
+    @api.model
+    def get_live_queue_channel(self, model_name):
+        if not model_name:
+            return self._default_queue_channel_name()
+        source = self.with_context(active_test=False).sudo().search(
+            [
+                ("model_name", "=", model_name),
+                ("active", "=", True),
+            ],
+            limit=1,
+        )
+        if not source or not source.live_channel_id:
+            return self._default_queue_channel_name()
+        return source._channel_complete_name(source.live_channel_id)
+
+    def _get_historical_queue_channel(self):
+        self.ensure_one()
+        if not self.historical_channel_id:
+            return self._default_queue_channel_name()
+        return self._channel_complete_name(self.historical_channel_id)
 
     @api.model
     def _historical_upload_reset_values(self):
@@ -267,7 +331,7 @@ class AbOdooSyncUploadSource(models.Model):
             identity_key=self._historical_upload_identity_key(),
             description=_("Queue historical branch upload batch"),
             max_retries=0,
-            channel=_HISTORICAL_UPLOAD_CHANNEL,
+            channel=self._get_historical_queue_channel(),
         ).job_queue_historical_upload_batch()
         return True
 
@@ -328,6 +392,7 @@ class AbOdooSyncUploadSource(models.Model):
         Outbox = self.env["ab_odoo_sync_outbox"].with_context(
             skip_ab_odoo_sync_upload=True,
             defer_ab_odoo_sync_upload_sender=True,
+            ab_odoo_sync_upload_queue_channel=self._get_historical_queue_channel(),
         ).sudo()
         snapshots = Outbox.prepare_record_snapshots(records)
         snapshots, skipped_count = Outbox.filter_uncovered_upsert_snapshots(snapshots)
@@ -493,6 +558,8 @@ class AbOdooSyncUploadSource(models.Model):
             vals_list.append(
                 {
                     "model_name": model_name,
+                    "live_channel_id": self._default_queue_channel().id,
+                    "historical_channel_id": self._default_queue_channel().id,
                     "active": False,
                 }
             )
@@ -537,6 +604,167 @@ class AbOdooSyncUploadSource(models.Model):
         return True
 
     @api.model
+    def _resolve_upload_queue_channel(self, spec, key_prefix):
+        xmlid = (spec.get(f"{key_prefix}_channel_xmlid") or "").strip()
+        channel_name = (spec.get(f"{key_prefix}_channel") or "").strip()
+        if not xmlid and not channel_name:
+            raise ValidationError(
+                _("Upload source %(model)s must define a %(kind)s queue channel.")
+                % {
+                    "model": spec.get("model_name") or "",
+                    "kind": key_prefix.replace("_", " "),
+                }
+            )
+
+        channel = self.env["queue.job.channel"].sudo().browse()
+        if xmlid:
+            channel = self.env.ref(xmlid, raise_if_not_found=False)
+            if not channel or channel._name != "queue.job.channel":
+                raise ValidationError(
+                    _("Queue channel XML ID %(xmlid)s was not found.")
+                    % {"xmlid": xmlid}
+                )
+        else:
+            channel = self.env["queue.job.channel"].sudo().search(
+                [("complete_name", "=", channel_name)],
+                limit=1,
+            )
+            if not channel:
+                channel = self.env["queue.job.channel"].sudo().search(
+                    [("name", "=", channel_name)],
+                    limit=1,
+                )
+            if not channel:
+                raise ValidationError(
+                    _("Queue channel %(channel)s was not found.")
+                    % {"channel": channel_name}
+                )
+        return channel
+
+    @api.model
+    def _prepare_upload_source_configuration_values(self, source_specs):
+        prepared = []
+        seen_model_names = set()
+        now = fields.Datetime.now()
+        for spec in source_specs or []:
+            model_name = (spec.get("model_name") or "").strip()
+            if not model_name:
+                raise ValidationError(_("Upload source model name is required."))
+            if model_name in seen_model_names:
+                raise ValidationError(
+                    _("Duplicate upload source configuration for %(model)s.")
+                    % {"model": model_name}
+                )
+            seen_model_names.add(model_name)
+
+            if model_name not in self.env:
+                raise ValidationError(
+                    _("Source model %(model)s is not installed in this database.")
+                    % {"model": model_name}
+                )
+            if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(model_name):
+                raise ValidationError(
+                    _("Source model %(model)s is protected by sync-rules.md and cannot be a branch upload source.")
+                    % {"model": model_name}
+                )
+
+            aggregate_parent_field = (
+                spec.get("aggregate_parent_field") or ""
+            ).strip()
+            if aggregate_parent_field:
+                field = self.env[model_name]._fields.get(aggregate_parent_field)
+                if not field or field.type != "many2one":
+                    raise ValidationError(
+                        _("Aggregate parent field %(field)s must be a Many2one on %(model)s.")
+                        % {
+                            "field": aggregate_parent_field,
+                            "model": model_name,
+                        }
+                    )
+
+            historical_upload_months = spec.get("historical_upload_months", 0)
+            if (
+                not isinstance(historical_upload_months, int)
+                or historical_upload_months < 0
+            ):
+                raise ValidationError(
+                    _("Historical Upload Past Months cannot be negative.")
+                )
+
+            historical_upload_from = spec.get("historical_upload_from")
+            if historical_upload_from:
+                historical_upload_from = fields.Datetime.to_datetime(
+                    historical_upload_from
+                )
+                if historical_upload_from > now:
+                    raise ValidationError(
+                        _("Historical Upload From cannot be in the future.")
+                    )
+
+            prepared.append(
+                {
+                    "model_name": model_name,
+                    "aggregate_parent_field": aggregate_parent_field or False,
+                    "active": bool(spec.get("active", True)),
+                    "live_channel_id": self._resolve_upload_queue_channel(
+                        spec,
+                        "live",
+                    ).id,
+                    "historical_channel_id": self._resolve_upload_queue_channel(
+                        spec,
+                        "historical",
+                    ).id,
+                    "historical_upload_months": historical_upload_months,
+                    "historical_upload_from": (
+                        fields.Datetime.to_string(historical_upload_from)
+                        if historical_upload_from
+                        else False
+                    ),
+                }
+            )
+        return prepared
+
+    @api.model
+    def apply_upload_source_configuration(self, source_specs, deactivate_unlisted=True):
+        prepared_specs = self._prepare_upload_source_configuration_values(source_specs)
+        Source = self.with_context(active_test=False).sudo()
+        existing_by_model = {source.model_name: source for source in Source.search([])}
+        configured_model_names = {spec["model_name"] for spec in prepared_specs}
+
+        for spec in prepared_specs:
+            source = existing_by_model.get(spec["model_name"])
+            if not source:
+                Source.create(spec)
+                continue
+
+            values = {}
+            for field_name, value in spec.items():
+                current_value = source[field_name]
+                if hasattr(current_value, "id"):
+                    current_value = current_value.id
+                elif field_name == "historical_upload_from":
+                    current_value = (
+                        fields.Datetime.to_string(current_value)
+                        if current_value
+                        else False
+                    )
+                if current_value != value:
+                    values[field_name] = value
+            if values:
+                source.write(values)
+
+        if deactivate_unlisted:
+            unlisted_sources = Source.search(
+                [
+                    ("model_name", "not in", list(configured_model_names)),
+                    ("active", "=", True),
+                ]
+            )
+            if unlisted_sources:
+                unlisted_sources.write({"active": False})
+        return True
+
+    @api.model
     def _notification(self, title, message, notification_type):
         return {
             "type": "ir.actions.client",
@@ -564,6 +792,8 @@ class AbOdooSyncUploadSource(models.Model):
             blocked_fields = {
                 "model_name",
                 "active",
+                "live_channel_id",
+                "historical_channel_id",
                 "historical_upload_months",
                 "historical_upload_from",
             }
@@ -575,7 +805,7 @@ class AbOdooSyncUploadSource(models.Model):
                 if running_sources:
                     raise UserError(
                         _(
-                            "Cannot change Source Model, Active, Historical Upload Past Months, or Historical Upload From while a historical upload is queued or running."
+                            "Cannot change Source Model, Active, queue channels, Historical Upload Past Months, or Historical Upload From while a historical upload is queued or running."
                         )
                     )
 
