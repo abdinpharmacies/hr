@@ -8,7 +8,7 @@ class AbSalesChannel(models.Model):
     _description = "Sales Channel"
     _order = "sequence, name, id"
 
-    name = fields.Char(required=True, translate=True)
+    name = fields.Char(translate=True)
     code = fields.Char(index=True, copy=False)
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
