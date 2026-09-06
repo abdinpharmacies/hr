@@ -15,13 +15,13 @@ class AbAnnouncement(models.Model):
                    ('notice', 'Notice'),
                    ],
         default='decree',
-        required=True,
+
     )
 
-    subject = fields.Text(required=True)
+    subject = fields.Text()
     subject_body = fields.Html(default=lambda self: self._get_default_subject_body())
-    issuer = fields.Many2one('ab_hr_department', required=True)
-    release_date = fields.Date(required=True, index=True)
+    issuer = fields.Many2one('ab_hr_department')
+    release_date = fields.Date(index=True)
     announcement_type = fields.Selection(
         selection=[('policies_and_instructions', 'Policies And Instructions'),
                    ("employees_movements", "Employees' Movements"),
@@ -29,7 +29,7 @@ class AbAnnouncement(models.Model):
                    ('holidays', 'Holidays')
                    ],
         default="policies_and_instructions",
-        required=True,
+
     )
     announcement_link = fields.Char(compute='_compute_announcement_link', compute_sudo=True, store=False)
 
@@ -53,7 +53,7 @@ class AbAnnouncement(models.Model):
         for rec in self:
             # Get the human-readable label for announcement_type
             announcement_type_label = dict(rec._fields['announcement_type'].selection).get(rec.announcement_type, rec.announcement_type)
-            
+
             if rec.title == 'decree' and rec.number:
                 rec.display_name = f"{announcement_type_label} ({rec.number})"
             else:
