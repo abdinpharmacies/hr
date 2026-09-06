@@ -1,0 +1,61 @@
+Recent relevant commit:
+
+- Commit: `3db5d596c9429ff082c3fe9b0466692b945f788f`
+- Author: emadco88
+- Date: 2026-07-28
+- Original subject: INIT commit pos19
+- User-facing changes:
+  - Established the previous baseline for this module before the report-server passive cleanup.
+- Files changed:
+  - ab_employee_access_sales/__init__.py
+  - ab_employee_access_sales/__manifest__.py
+  - ab_employee_access_sales/models/__init__.py
+  - ab_employee_access_sales/models/ab_employee_access.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_operation_log.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_pos_session.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_role.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_shift.py
+  - ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py
+  - ab_employee_access_sales/models/ab_sales_header.py
+  - ab_employee_access_sales/models/ab_sales_pos_api.py
+  - ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py
+  - ab_employee_access_sales/models/ab_store.py
+  - ab_employee_access_sales/security/ir.model.access.csv
+  - ab_employee_access_sales/security/record_rules.xml
+  - ab_employee_access_sales/security/security_groups.xml
+  - ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier.scss
+  - ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier_patch.js
+  - ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier_templates.xml
+  - ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos.js
+  - ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos.scss
+  - ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js
+  - ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml
+  - ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return.scss
+  - ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js
+  - ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml
+  - ab_employee_access_sales/tests/__init__.py
+  - ab_employee_access_sales/tests/test_ab_employee_access_sales_api.py
+  - ab_employee_access_sales/views/ab_employee_access_sales_operation_log_views.xml
+  - ab_employee_access_sales/views/ab_employee_access_sales_pos_session_views.xml
+  - ab_employee_access_sales/views/ab_employee_access_sales_shift_views.xml
+  - ab_employee_access_sales/views/ab_sales_header_views.xml
+  - ab_employee_access_sales/views/ab_store_views.xml
+  - ab_employee_access_sales/views/menus.xml
+
+Current changes before commit:
+
+- User-facing changes:
+  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
+  - Replaced explicit report-side user relations with `ab_users` placeholders where this module declares user fields.
+  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+  - Declared new module dependencies required by the cleaned report-server model schema.
+- Files changed:
+  - ab_employee_access_sales/changelog.d/2026-09-03-report-server-passive-cleanup.md
+  - ab_employee_access_sales/__manifest__.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_operation_log.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_pos_session.py
+  - ab_employee_access_sales/models/ab_employee_access_sales_shift.py
+  - ab_employee_access_sales/models/ab_sales_header.py
+  - ab_employee_access_sales/models/ab_store.py

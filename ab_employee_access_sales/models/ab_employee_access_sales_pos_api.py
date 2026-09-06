@@ -22,11 +22,15 @@ class AbSalesHrPosApi(models.TransientModel):
         return ""
 
     @api.model
+    def _current_ab_user(self):
+        return self.env["ab_users"].current_placeholder()
+
+    @api.model
     def _allowed_service_store_domain(self):
         domain = [("allow_sale", "=", True)]
         if self.env.user.has_group("base.group_system"):
             return domain
-        domain.extend(["|", ("pos_service_user_id", "=", False), ("pos_service_user_id", "=", self.env.user.id)])
+        domain.extend(["|", ("pos_service_user_id", "=", False), ("pos_service_user_id", "=", self._current_ab_user().id)])
         return domain
 
     @api.model
@@ -61,7 +65,7 @@ class AbSalesHrPosApi(models.TransientModel):
         if self.env.user.has_group("base.group_system"):
             return True
         service_user = store.pos_service_user_id
-        if service_user and service_user.id != self.env.user.id:
+        if service_user and service_user != self._current_ab_user():
             raise UserError(_("Store %s is assigned to another service user.") % (store.display_name,))
         return True
 
@@ -165,6 +169,7 @@ class AbSalesHrPosApi(models.TransientModel):
 
     @api.model
     def pos_bootstrap(self, session_token=False, store_id=False, device_uid="", device_name=""):
+        current_ab_user = self._current_ab_user()
         stores = self.env["ab_store"].sudo().search(self._allowed_service_store_domain(), order="name")
         session_payload = False
         if session_token:
@@ -176,8 +181,8 @@ class AbSalesHrPosApi(models.TransientModel):
         return {
             "allowed_store_ids": stores.ids,
             "default_store_id": default_store.id if default_store else False,
-            "service_user_id": self.env.user.id,
-            "service_user_name": self.env.user.display_name,
+            "service_user_id": current_ab_user.id,
+            "service_user_name": current_ab_user.display_name or self.env.user.display_name,
             "require_employee_login": True,
             "session": session_payload,
             "device_uid": self._normalize_device_uid(device_uid),
@@ -240,13 +245,14 @@ class AbSalesHrPosApi(models.TransientModel):
 
         normalized_device_uid = self._normalize_device_uid(device_uid)
         normalized_device_name = self._normalize_device_name(device_name, store=store)
-        self._close_other_device_sessions(normalized_device_uid, self.env.user)
+        current_ab_user = self._current_ab_user()
+        self._close_other_device_sessions(normalized_device_uid, current_ab_user)
 
         session = self.env["ab_employee_access_sales_pos_session"].sudo().create({
             "employee_id": employee.id,
             "profile_id": profile.id,
             "role_id": profile.pos_role_id.id if profile.pos_role_id else False,
-            "service_user_id": self.env.user.id,
+            "service_user_id": current_ab_user.id,
             "store_id": store.id,
             "device_uid": normalized_device_uid,
             "device_name": normalized_device_name,

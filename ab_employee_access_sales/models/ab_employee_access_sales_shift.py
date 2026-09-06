@@ -3,26 +3,27 @@ from odoo import api, fields, models
 
 class AbSalesHrShift(models.Model):
     _name = "ab_employee_access_sales_shift"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales HR POS Shift"
     _order = "start_at desc, id desc"
 
     name = fields.Char(compute="_compute_name", store=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=True, index=True)
+    employee_id = fields.Many2one("ab_hr_employee", index=True)
     role_id = fields.Many2one("ab_employee_access_sales_role", index=True)
-    service_user_id = fields.Many2one("res.users", required=True, index=True)
-    store_id = fields.Many2one("ab_store", required=True, index=True)
+    service_user_id = fields.Many2one("ab_users", index=True)
+    store_id = fields.Many2one("ab_store", index=True)
     state = fields.Selection(
         [
             ("open", "Open"),
             ("closed", "Closed"),
         ],
         default="open",
-        required=True,
+
         index=True,
     )
-    device_uid = fields.Char(required=True, index=True)
+    device_uid = fields.Char(index=True)
     device_name = fields.Char()
-    start_at = fields.Datetime(required=True, default=fields.Datetime.now, index=True)
+    start_at = fields.Datetime(default=fields.Datetime.now, index=True)
     last_activity_at = fields.Datetime(default=fields.Datetime.now)
     end_at = fields.Datetime()
     close_reason = fields.Char()

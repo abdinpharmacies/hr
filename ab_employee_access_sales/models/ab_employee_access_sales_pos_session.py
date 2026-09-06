@@ -5,17 +5,18 @@ from odoo import api, fields, models
 
 class AbSalesHrPosSession(models.Model):
     _name = "ab_employee_access_sales_pos_session"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales HR POS Session"
     _order = "login_at desc, id desc"
 
     name = fields.Char(compute="_compute_name", store=True)
-    session_token = fields.Char(required=True, copy=False, index=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=True, index=True)
+    session_token = fields.Char(copy=False, index=True)
+    employee_id = fields.Many2one("ab_hr_employee", index=True)
     profile_id = fields.Many2one("ab_employee_access", index=True, ondelete="restrict")
     role_id = fields.Many2one("ab_employee_access_sales_role", index=True)
     shift_id = fields.Many2one("ab_employee_access_sales_shift", index=True, ondelete="set null")
-    service_user_id = fields.Many2one("res.users", required=True, index=True)
-    store_id = fields.Many2one("ab_store", required=True, index=True)
+    service_user_id = fields.Many2one("ab_users", index=True)
+    store_id = fields.Many2one("ab_store", index=True)
 
     state = fields.Selection(
         [
@@ -23,14 +24,14 @@ class AbSalesHrPosSession(models.Model):
             ("locked", "Locked"),
             ("closed", "Closed"),
         ],
-        required=True,
+
         default="active",
         index=True,
     )
-    device_uid = fields.Char(required=True, index=True)
+    device_uid = fields.Char(index=True)
     device_name = fields.Char()
     device_ip = fields.Char(index=True)
-    login_at = fields.Datetime(required=True, default=fields.Datetime.now, index=True)
+    login_at = fields.Datetime(default=fields.Datetime.now, index=True)
     last_activity_at = fields.Datetime(default=fields.Datetime.now)
     locked_at = fields.Datetime()
     logout_at = fields.Datetime()

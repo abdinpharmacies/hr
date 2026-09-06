@@ -5,7 +5,7 @@ class AbStore(models.Model):
     _inherit = "ab_store"
 
     pos_service_user_id = fields.Many2one(
-        "res.users",
+        "ab_users",
         string="POS Service User",
         domain=[("share", "=", False)],
         help="Shared Odoo user used by this branch/device instead of creating an Odoo account per employee.",

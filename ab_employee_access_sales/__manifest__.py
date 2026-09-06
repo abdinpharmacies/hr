@@ -6,6 +6,7 @@
     "summary": "Branch service-user POS with employee PIN, roles, shifts, and audit logs.",
     "depends": [
         "web",
+        "ab_odoo_sync",
         "ab_widgets",
         "ab_sales_cashier",
         "ab_employee_access",
