@@ -3,6 +3,7 @@ from odoo import fields, models
 
 class AbTestSyncMixin(models.AbstractModel):
     _name = "ab_test_sync_mixin"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "AB Sync Test Mirror Mixin"
 
     db_serial = fields.Integer(string="DB Serial", required=False, readonly=True, index=True)
@@ -23,6 +24,7 @@ class AbTestSyncMixin(models.AbstractModel):
 class AbTestCategorySync(models.Model):
     _name = "ab_test_category__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Category Mirror"
     _order = "db_serial, code, rec_id"
 
@@ -51,6 +53,7 @@ class AbTestCategorySync(models.Model):
 class AbTestTagSync(models.Model):
     _name = "ab_test_tag__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Tag Mirror"
     _order = "db_serial, code, rec_id"
 
@@ -67,6 +70,7 @@ class AbTestTagSync(models.Model):
 class AbTestHeaderSync(models.Model):
     _name = "ab_test_header__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Header Mirror"
     _order = "db_serial, rec_id desc"
 
@@ -118,6 +122,7 @@ class AbTestHeaderSync(models.Model):
 class AbTestLineSync(models.Model):
     _name = "ab_test_line__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Line Mirror"
     _order = "db_serial, header_id, sequence, rec_id"
 
@@ -155,6 +160,7 @@ class AbTestLineSync(models.Model):
 class AbTestDeleteCascadeParentSync(models.Model):
     _name = "ab_test_delete_cascade_parent__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Cascade Delete Parent Mirror"
     _order = "db_serial, code, rec_id"
 
@@ -175,6 +181,7 @@ class AbTestDeleteCascadeParentSync(models.Model):
 class AbTestDeleteCascadeChildSync(models.Model):
     _name = "ab_test_delete_cascade_child__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Cascade Delete Child Mirror"
     _order = "db_serial, parent_id, rec_id"
 
@@ -196,6 +203,7 @@ class AbTestDeleteCascadeChildSync(models.Model):
 class AbTestDeleteSetNullParentSync(models.Model):
     _name = "ab_test_delete_set_null_parent__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Set Null Delete Parent Mirror"
     _order = "db_serial, code, rec_id"
 
@@ -216,6 +224,7 @@ class AbTestDeleteSetNullParentSync(models.Model):
 class AbTestDeleteSetNullChildSync(models.Model):
     _name = "ab_test_delete_set_null_child__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Set Null Delete Child Mirror"
     _order = "db_serial, parent_id, rec_id"
 
@@ -237,6 +246,7 @@ class AbTestDeleteSetNullChildSync(models.Model):
 class AbTestDeleteRestrictParentSync(models.Model):
     _name = "ab_test_delete_restrict_parent__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Restrict Delete Parent Mirror"
     _order = "db_serial, code, rec_id"
 
@@ -257,6 +267,7 @@ class AbTestDeleteRestrictParentSync(models.Model):
 class AbTestDeleteRestrictChildSync(models.Model):
     _name = "ab_test_delete_restrict_child__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Restrict Delete Child Mirror"
     _order = "db_serial, parent_id, rec_id"
 

@@ -4,6 +4,7 @@ from odoo import fields, models
 class AbTestCustomerReferenceSync(models.Model):
     _name = "ab_test_customer_reference__sync"
     _inherit = "ab_test_sync_mixin"
+    _log_access = False
     _description = "AB Sync Test Customer Reference Mirror"
     _order = "db_serial, reference, rec_id"
 

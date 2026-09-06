@@ -8,6 +8,7 @@
     "developer": "Alhassan Hossny",
     "application": True,
     "depends": [
+        "ab_odoo_sync",
         "ab_odoo_sync_mapping",
         "ab_customer",
     ],
