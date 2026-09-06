@@ -13,14 +13,14 @@ class EmployeeHistory(models.Model):
     _order = 'action_date desc'
 
     employee_id = fields.Many2one('ab_hr_employee',
-                                  
+
                                   tracking=True,
                                   index=True)
     job_id = fields.Many2one('ab_hr_job_occupied', index=True)
     issue_date = fields.Date(related='job_id.issue_date')
 
     accid = fields.Char(related='employee_id.accid')
-    action_date = fields.Date(required=True,
+    action_date = fields.Date(
                               tracking=True, index=True)
     is_issue_as_action = fields.Boolean(compute='_compute_is_issue_as_action', compute_sudo=True,
                                         search='_search_is_issue_as_action')
@@ -40,7 +40,7 @@ class EmployeeHistory(models.Model):
             val = not val
         return [('id', 'in' if val else 'not in', ids)]
 
-    action_type = fields.Many2one('ab_hr_history_action_type', required=True,
+    action_type = fields.Many2one('ab_hr_history_action_type',
 
                                   tracking=True,
                                   index=True)
@@ -55,21 +55,21 @@ class EmployeeHistory(models.Model):
 
     old_workplace = fields.Many2one('ab_hr_department',
                                     string='Workplace',
-                                    required=True, store=True,
+                                    store=True,
                                     default=get_default_workplace,
 
                                     tracking=True)
 
     old_job_title = fields.Many2one('ab_hr_job',
                                     string='Job Title',
-                                    required=True, store=True,
+                                    store=True,
                                     default=get_default_job,
 
                                     tracking=True)
 
     territory = fields.Selection(selection=[('1', 'North'), ('2', 'South'), ('3', 'Both')],
                                  tracking=True,
-                                 required=True, string='Territory')
+                                 string='Territory')
     new_workplace = fields.Many2one('ab_hr_department',
 
                                     tracking=True,

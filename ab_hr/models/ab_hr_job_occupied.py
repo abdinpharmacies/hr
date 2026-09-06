@@ -10,14 +10,14 @@ class EmployeeJobs(models.Model):
     _rec_name = 'job_id'
     _inherit = ['mail.thread', 'mail.activity.mixin', 'abdin_et.extra_tools']
 
-    employee_id = fields.Many2one('ab_hr_employee', required=True, index=True, string='Employee', tracking=True)
+    employee_id = fields.Many2one('ab_hr_employee', index=True, string='Employee', tracking=True)
     accid = fields.Char(related='employee_id.accid', string="Code", tracking=True)
     internal_working_employee = fields.Boolean(related='employee_id.internal_working_employee', )
     is_working = fields.Boolean(related='employee_id.is_working', )
-    job_id = fields.Many2one('ab_hr_job', required=True, index=True, tracking=True, string="Job Title")
+    job_id = fields.Many2one('ab_hr_job', index=True, tracking=True, string="Job Title")
 
     action_date = fields.Date()
-    workplace = fields.Many2one('ab_hr_department', required=True, tracking=True)
+    workplace = fields.Many2one('ab_hr_department', tracking=True)
     job_status = fields.Selection([('active', 'Active'), ('inactive', 'Inactive')],
                                   store=True)
     hiring_date = fields.Date(tracking=True)

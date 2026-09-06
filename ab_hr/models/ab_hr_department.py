@@ -19,7 +19,7 @@ class Departments(models.Model):
                                 ondelete='restrict'
                                 )
 
-    name = fields.Char(required=True)
+    name = fields.Char()
     manager_id = fields.Many2one('ab_hr_employee',
                                  string='Department Manager',
                                  store=True)
@@ -39,7 +39,7 @@ class Departments(models.Model):
         "workplace")
 
     store_id = fields.Many2one('ab_store', index=True)
-    user_id = fields.Many2one('res.users', groups='base.group_system')
+    user_id = fields.Many2one('ab_users', groups='base.group_system')
 
     @api.model
     def _search_display_name(self, operator, value):

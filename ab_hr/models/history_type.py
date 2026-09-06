@@ -5,7 +5,7 @@ from .extra_functions import get_modified_name
 class ActionTypeHistory(models.Model):
     _name = 'ab_hr_history_action_type'
     _description = 'ab_hr_history_action_type'
-    name = fields.Char(required=True)
+    name = fields.Char()
     type = fields.Selection(selection=[('1', 'New Job'),
                                        ('2', 'Modify Job'),
                                        ('3', 'New Manpower'),

@@ -26,7 +26,7 @@ class HistoryReport(models.Model):
     job_title_id = fields.Many2one('ab_hr_job', string='Job Title')
 
     territory = fields.Selection(selection=[('1', 'North'), ('2', 'South'), ('3', 'Both')],
-                                 required=True, string='Territory')
+                                 string='Territory')
     workplace_region = fields.Many2one(related='workplace_id.workplace_region')
     parent_department_id = fields.Many2one(related='workplace_id.parent_id', string='Superior Department')
 
@@ -97,9 +97,9 @@ class HistoryReport(models.Model):
             hi.start_fir_date,
             hi.is_applied,
             CASE WHEN  hact.allowed_delay > 0
-                    AND (hi.job_id is Null 
-                        or job.issue_date IS NOT NULL 
-                        or job.termination_date IS NOT NULL 
+                    AND (hi.job_id is Null
+                        or job.issue_date IS NOT NULL
+                        or job.termination_date IS NOT NULL
                         or hact.manpower_effect_type='double_effect')
                 THEN CURRENT_DATE - (hi.action_date + hact.allowed_delay)
             ELSE 0
@@ -109,17 +109,17 @@ class HistoryReport(models.Model):
                 WHEN hact.manpower_effect_type='double_effect' THEN 'decrease'
                 ELSE  hact.manpower_effect_type
             END as manpower_effect,
-            CASE 
-                WHEN hact.manpower_effect_type in ('decrease','increase') 
+            CASE
+                WHEN hact.manpower_effect_type in ('decrease','increase')
                     AND job.id IS NOT NULL
-                    AND job.issue_date IS NULL 
-                    AND job.termination_date IS NULL 
+                    AND job.issue_date IS NULL
+                    AND job.termination_date IS NULL
                 THEN FALSE
                 WHEN hact.manpower_effect_type in ('decrease','double_effect')
                 THEN TRUE
                 ELSE FALSE
             END as default_urgent
-            
+
         FROM ab_hr_emp_history hi
         LEFT JOIN ab_hr_history_action_type hact on hact.id = hi.action_type
         LEFT JOIN ab_hr_job_occupied job on job.id = hi.job_id
@@ -142,7 +142,7 @@ class HistoryReport(models.Model):
             0 as delay_per_day,
             hi.active,
             'increase' as manpower_effect,
-            FALSE as default_urgent  
+            FALSE as default_urgent
         FROM ab_hr_emp_history hi
         LEFT JOIN ab_hr_history_action_type hact on hact.id = hi.action_type
         WHERE hact.manpower_effect_type = 'double_effect'

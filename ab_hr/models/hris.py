@@ -8,9 +8,9 @@ class EmployeeDocStatus(models.Model):
     _description = 'employee document status'
     _rec_name = 'employee_id'
 
-    employee_id = fields.Many2one('ab_hr_employee', required=True, ondelete='cascade', index=True)
+    employee_id = fields.Many2one('ab_hr_employee', ondelete='cascade', index=True)
     accid = fields.Char(related='employee_id.accid')
-    emp_doc_id = fields.Many2one('ab_hr_emp_doc', required=True, string='Document')
+    emp_doc_id = fields.Many2one('ab_hr_emp_doc', string='Document')
 
     status = fields.Selection(
         selection=[
@@ -18,7 +18,7 @@ class EmployeeDocStatus(models.Model):
             ('existing', 'Existing'),
             ('excluded', 'Excluded'),
             ('temp_excluded', 'Temporary Excluded')],
-        default='missing', required=True)
+        default='missing')
     attachment = fields.Binary()
     exclusion_reason_id = fields.Many2one('ab_hr_exclusion_reason')
 
@@ -54,7 +54,7 @@ class EmployeeDocStatus(models.Model):
 class EmploymentDocuments(models.Model):
     _name = 'ab_hr_emp_doc'
     _description = 'ab_hr_employment_document'
-    name = fields.Char(required=True)
+    name = fields.Char()
 
     @api.model
     def _search_display_name(self, operator, value):
@@ -65,7 +65,7 @@ class EmploymentDocuments(models.Model):
 class ExclusionReason(models.Model):
     _name = 'ab_hr_exclusion_reason'
     _description = 'ab_hr_exclusion_reason'
-    name = fields.Char(required=True)
+    name = fields.Char()
 
     @api.model
     def _search_display_name(self, operator, value):
@@ -77,7 +77,7 @@ class InsuranceInfo(models.Model):
     _name = 'ab_hr_insurance_info'
     _description = 'ab_hr_insurance_info'
 
-    employee_id = fields.Many2one('ab_hr_employee', required=True, index=True)
+    employee_id = fields.Many2one('ab_hr_employee', index=True)
     accid = fields.Char(related='employee_id.accid')
     insurance_status = fields.Boolean(store=True, )
     insurance_type = fields.Selection(selection=[('abdin', 'Abdin Pharmacies'), ('other', 'Other')])
@@ -115,7 +115,7 @@ class PaperEffect(models.Model):
     _name = 'ab_hr_paper_effect'
     _description = 'PaperEffect'
 
-    name = fields.Char(required=True, string="Notes")
+    name = fields.Char(string="Notes")
     due_month = fields.Date()
     attached_link = fields.Char()
     attached_file = fields.Binary()

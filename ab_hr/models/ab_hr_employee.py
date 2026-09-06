@@ -34,7 +34,7 @@ class Employees(models.Model):
 
     name = fields.Char(required=False)
     costcenter_id = fields.Many2one('ab_costcenter', index=True, )
-    user_id = fields.Many2one('res.users', string='Related User',
+    user_id = fields.Many2one('ab_users', string='Related User',
                               )
     cc_id = fields.Many2one('ab_costcenter')
 
@@ -43,7 +43,7 @@ class Employees(models.Model):
     barcode = fields.Char(string="Badge ID", help="ID used for employee identification.",
                           groups="base.group_user", copy=False)
     bc_id = fields.Integer(related='costcenter_id.bc_id', string='ePlus ID')
-    user_line_owner = fields.Many2one('res.users', domain=lambda self: [('account_auth_ids', '!=', False)], )
+    user_line_owner = fields.Many2one('ab_users')
     payment_name = fields.Char(groups='ab_hr.group_ab_hr_co,ab_hr.group_ab_hr_payroll_accountant')
     payment_no = fields.Char(groups='ab_hr.group_ab_hr_co,ab_hr.group_ab_hr_payroll_accountant')
 
@@ -146,7 +146,9 @@ class Employees(models.Model):
     @api.depends('parent_id', 'department_id')
     def _compute_supervision_type(self):
         curr_user = self.env.user
-        curr_employees = self.search([('user_id', '=', curr_user.id)])
+        curr_ab_user = self.env['ab_users'].current_placeholder()
+        curr_ab_user_id = curr_ab_user.id or 0
+        curr_employees = self.search([('user_id', '=', curr_ab_user_id)])
 
         is_reviewer = curr_user.has_group('ab_hr.group_ab_hr_payroll_reviewer')
         is_co = curr_user.has_group('ab_hr.group_ab_hr_co')
@@ -159,14 +161,14 @@ class Employees(models.Model):
             direct_parent = rec.parent_id
             indirect_parent = rec.parent_id.parent_id
 
-            if rec.user_id.id == curr_user.id:
+            if rec.user_id.id == curr_ab_user_id:
                 rec.supervision_type = 'myself'
             elif direct_parent in curr_employees:
                 rec.supervision_type = 'direct'
             elif indirect_parent in curr_employees:
                 rec.supervision_type = 'indirect'
             elif is_reviewer or is_co or (
-                    is_recruiter and rec.job_id and curr_user in rec.job_id.access_history_user_ids):
+                    is_recruiter and rec.job_id and curr_ab_user in rec.job_id.access_history_user_ids):
                 rec.supervision_type = 'other'
             else:
                 if not children:
@@ -192,8 +194,9 @@ class Employees(models.Model):
         search_emp = Employee.search
 
         curr_user = env.user
+        curr_ab_user_id = env['ab_users'].current_placeholder_id() or 0
 
-        curr_emp_ids = set(search_emp([('user_id', '=', curr_user.id)]).ids)
+        curr_emp_ids = set(search_emp([('user_id', '=', curr_ab_user_id)]).ids)
 
         ids_myself = set(curr_emp_ids)
         ids_direct = set()
@@ -214,7 +217,7 @@ class Employees(models.Model):
         if is_reviewer or is_co:
             ids_other = all_emp_ids - ids_early
         elif is_recruiter:
-            job_ids = Job.search([('access_history_user_ids', 'in', curr_user.id)]).ids
+            job_ids = Job.search([('access_history_user_ids', 'in', curr_ab_user_id)]).ids
             if job_ids:
                 ids_other = set(search_emp([('job_id', 'in', job_ids)]).ids) - ids_early
 

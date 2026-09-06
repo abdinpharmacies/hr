@@ -6,8 +6,8 @@ class Job(models.Model):
     _name = 'ab_hr_job'
     _description = 'ab_hr_job'
 
-    name = fields.Char(required=True)
-    access_history_user_ids = fields.Many2many('res.users', domain=[('share', '=', False)])
+    name = fields.Char()
+    access_history_user_ids = fields.Many2many('ab_users')
     internal_job = fields.Boolean(default=True, index=True)
     active = fields.Boolean(default=True)
 

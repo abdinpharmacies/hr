@@ -7,11 +7,11 @@ class ManPower(models.Model):
     _name = 'ab_hr_manpower'
     _description = 'Workplace Man Power'
 
-    workplace = fields.Many2one('ab_hr_department', required=True)
+    workplace = fields.Many2one('ab_hr_department')
     workplace_region = fields.Many2one(related='workplace.workplace_region')
-    job_title = fields.Many2one('ab_hr_job', required=True)
-    territory = fields.Selection(selection=[('1', 'North'), ('2', 'South'), ('3', 'Both')], required=True)
-    op_manpower = fields.Integer(required=True, string='Default Manpower')
+    job_title = fields.Many2one('ab_hr_job')
+    territory = fields.Selection(selection=[('1', 'North'), ('2', 'South'), ('3', 'Both')])
+    op_manpower = fields.Integer(string='Default Manpower')
 
     @api.depends('workplace.name', 'job_title.name')
     def _compute_display_name(self):
@@ -38,9 +38,10 @@ class ManpowerNeed(models.Model):
     urgent = fields.Char(compute='_compute_urgent', search='_search_urgent', string='Delay Per Days', compute_sudo=True)
 
     def _compute_can_access_history(self):
+        current_ab_user_id = self.env['ab_users'].current_placeholder_id()
         for rec in self:
             is_coordinator = self.env.user.has_group('ab_hr.group_ab_hr_co')
-            is_allowed_by_manager = (self.env.user.id in rec.job_title.access_history_user_ids.ids)
+            is_allowed_by_manager = (current_ab_user_id in rec.job_title.access_history_user_ids.ids)
             rec.can_access_history = is_coordinator or is_allowed_by_manager
 
     def _compute_urgent(self):
@@ -105,8 +106,8 @@ class ManpowerNeed(models.Model):
     -----------------------------------------------------
     -----------------------------------------------------
     CREATE OR REPLACE VIEW %s
-     AS    
-            SELECT 
+     AS
+            SELECT
                 man.id,
                 man.workplace,
                 man.job_title,
@@ -115,11 +116,11 @@ class ManpowerNeed(models.Model):
                 man.op_manpower,
                 (count(act.job_id) - coalesce(man.op_manpower,0)) as need_manpower
             FROM ab_hr_manpower man
-            LEFT JOIN ab_hr_job_occupied act 
-                ON act.workplace = man.workplace 
-                    and act.job_id = man.job_title 
+            LEFT JOIN ab_hr_job_occupied act
+                ON act.workplace = man.workplace
+                    and act.job_id = man.job_title
                     and act.territory = man.territory
-                    and act.termination_date  is null 
+                    and act.termination_date  is null
                     and act.issue_date is null
             GROUP BY  man.id,man.job_title,man.workplace,man.territory,man.op_manpower
 

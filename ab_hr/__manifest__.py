@@ -18,7 +18,7 @@
     'category': 'Abdin',
     'version': '19.0.1.0.0',
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'abdin_et', 'mail', 'ab_costcenter',
+    'depends': ['base', 'mail', 'abdin_et', 'mail', 'ab_users', 'ab_costcenter',
                 'ab_store'],
 
     # always loaded
