@@ -8,7 +8,7 @@
     "license": "LGPL-3",
     "category": "Tools",
     "version": "19.0.3.1.0",
-    "depends": ["base", "web"],
+    "depends": ["base", "web", "ab_users"],
     "data": [
         "data/system_parameters.xml",
         "views/menus.xml",
