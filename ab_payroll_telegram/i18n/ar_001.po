@@ -17,17 +17,17 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_payroll_telegram
-#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_bot__display_name
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_partner_bot__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
 #. module: ab_payroll_telegram
-#: model:ir.model,name:ab_payroll_telegram.model_ab_hr_bot
-msgid "Employee Telegram Chat Mapping"
-msgstr "ربط محادثة تيليجرام بالموظف"
+#: model:ir.model,name:ab_payroll_telegram.model_ab_partner_bot
+msgid "Cost Center Telegram Account"
+msgstr "حساب تيليجرام لمركز التكلفة"
 
 #. module: ab_payroll_telegram
-#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_bot__id
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_partner_bot__id
 msgid "ID"
 msgstr "المعرف"
 
