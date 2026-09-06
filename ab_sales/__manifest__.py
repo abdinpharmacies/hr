@@ -8,6 +8,7 @@
     "developer": "emadco88",
     "application": True,
     "depends": [
+        "ab_odoo_sync",
         "ab_users",
         "ab_hr",
         "ab_customer",

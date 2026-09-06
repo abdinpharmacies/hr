@@ -3,26 +3,13 @@ from odoo import api, fields, models
 
 class AbSalesMirrorMixin(models.AbstractModel):
     _name = "ab_sales_mirror_mixin"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "AB Sales Reporting Mirror Mixin"
 
     db_serial = fields.Integer(string="DB Serial", required=False, readonly=True, index=True)
     rec_id = fields.Integer(string="Source Record ID", required=False, readonly=True, index=True)
     source_revision = fields.Integer(string="Source Revision", readonly=True, index=True)
     event_uuid = fields.Char(string="Event UUID", readonly=True, index=True)
-    source_create_uid = fields.Many2one(
-        "ab_users",
-        string="Source Created By",
-        readonly=True,
-        ondelete="restrict",
-        index=True,
-    )
-    source_write_uid = fields.Many2one(
-        "ab_users",
-        string="Source Last Updated By",
-        readonly=True,
-        ondelete="restrict",
-        index=True,
-    )
     source_operation = fields.Selection(
         selection=[("upsert", "Upsert"), ("archive", "Archive")],
         string="Source Operation",
@@ -37,6 +24,7 @@ class AbSalesMirrorMixin(models.AbstractModel):
 class AbSalesHeaderMirror(models.Model):
     _name = "ab_sales_header"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Header Mirror"
     _order = "db_serial, eplus_serial desc, rec_id desc"
 
@@ -115,6 +103,7 @@ class AbSalesHeaderMirror(models.Model):
 class AbSalesLineMirror(models.Model):
     _name = "ab_sales_line"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Line Mirror"
     _order = "db_serial, header_id, rec_id"
     _rec_name = "product_id"
@@ -168,6 +157,7 @@ class AbSalesLineMirror(models.Model):
 class AbSalesReturnHeaderMirror(models.Model):
     _name = "ab_sales_return_header"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Return Header Mirror"
     _order = "db_serial, sales_return_id desc, rec_id desc"
 
@@ -210,6 +200,7 @@ class AbSalesReturnHeaderMirror(models.Model):
 class AbSalesReturnLineMirror(models.Model):
     _name = "ab_sales_return_line"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Return Line Mirror"
     _order = "db_serial, header_id, rec_id"
     _rec_name = "product_id"
@@ -253,6 +244,7 @@ class AbSalesReturnLineMirror(models.Model):
 class AbProductPricedMirror(models.Model):
     _name = "ab_product_priced"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Product Priced Mirror"
     _order = "db_serial, product_code, rec_id"
     _rec_name = "product_code"
@@ -271,6 +263,7 @@ class AbProductPricedMirror(models.Model):
 class AbProductMetadataMirror(models.Model):
     _name = "ab_product_metadata"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Product Metadata Mirror"
     _order = "db_serial, product_code, rec_id"
     _rec_name = "product_code"
@@ -289,6 +282,7 @@ class AbProductMetadataMirror(models.Model):
 class AbSalesInventoryMirror(models.Model):
     _name = "ab_sales_inventory"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Inventory Mirror"
     _order = "db_serial, store_id, product_eplus_serial, rec_id"
     _rec_name = "product_code"
@@ -309,6 +303,7 @@ class AbSalesInventoryMirror(models.Model):
 class AbSalesPerDayMirror(models.Model):
     _name = "ab_sales_per_day"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Per Day Mirror"
     _order = "db_serial, sale_date desc, store_id, product_eplus_serial"
 
@@ -328,6 +323,7 @@ class AbSalesPerDayMirror(models.Model):
 class AbSalesPerDaySyncStateMirror(models.Model):
     _name = "ab_sales_per_day_sync_state"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales Per Day Sync State Mirror"
     _order = "db_serial, sale_date desc, rec_id"
 
@@ -356,6 +352,7 @@ class AbSalesPerDaySyncStateMirror(models.Model):
 class AbProductRankMirror(models.Model):
     _name = "ab_product_rank"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Product Ranking Mirror"
     _order = "db_serial, score desc, order_count desc, qty_total desc, rec_id desc"
     _rec_name = "product_id"
@@ -383,6 +380,7 @@ class AbProductRankMirror(models.Model):
 class AbSalesPosSettingsMirror(models.Model):
     _name = "ab_sales_pos_settings"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales POS Settings Mirror"
     _order = "db_serial, rec_id desc"
 
@@ -400,6 +398,7 @@ class AbSalesPosSettingsMirror(models.Model):
 class AbSalesPosDraftCacheMirror(models.Model):
     _name = "ab_sales_pos_draft_cache"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales POS Draft Cache Mirror"
     _order = "db_serial, source_write_date desc, rec_id desc"
 
@@ -420,6 +419,7 @@ class AbSalesPosDraftCacheMirror(models.Model):
 class AbSalesPosReplicationTurnMirror(models.Model):
     _name = "ab_sales_pos_replication_turn"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Sales POS Replication Turn Mirror"
     _order = "db_serial, last_manual_run_at desc, rec_id desc"
 
@@ -436,6 +436,7 @@ class AbSalesPosReplicationTurnMirror(models.Model):
 class AbPrinterMirror(models.Model):
     _name = "ab_printer"
     _inherit = "ab_sales_mirror_mixin"
+    _log_access = False
     _description = "Branch Printer Configuration Mirror"
     _order = "db_serial, is_default desc, name asc, rec_id"
 
