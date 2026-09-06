@@ -17,11 +17,33 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: ab_sales_odoo_sync_upload
-#: model:ir.module.module,summary:ab_sales_odoo_sync_upload
+#: model:ir.module.module,summary:base.module_ab_sales_odoo_sync_upload
 msgid "Sales and return source configuration for Odoo Sync Upload"
 msgstr "إعداد مصادر المبيعات والمرتجعات لرفع مزامنة أودو"
 
 #. module: ab_sales_odoo_sync_upload
-#: model:ir.module.module,shortdesc:ab_sales_odoo_sync_upload
+#: model:ir.module.module,shortdesc:base.module_ab_sales_odoo_sync_upload
 msgid "AB Sales Odoo Sync Upload"
 msgstr "رفع مزامنة أودو لمبيعات عبدين"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.model,name:ab_sales_odoo_sync_upload.model_ab_odoo_sync_outbox
+msgid "AB Odoo Sync Upload Outbox"
+msgstr "صندوق الصادر لرفع مزامنة أودو"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.model,name:ab_sales_odoo_sync_upload.model_ab_odoo_sync_upload_source
+msgid "AB Odoo Sync Upload Source"
+msgstr "مصدر رفع مزامنة أودو"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_sales_odoo_sync_upload.field_ab_odoo_sync_outbox__display_name
+#: model:ir.model.fields,field_description:ab_sales_odoo_sync_upload.field_ab_odoo_sync_upload_source__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_sales_odoo_sync_upload.field_ab_odoo_sync_outbox__id
+#: model:ir.model.fields,field_description:ab_sales_odoo_sync_upload.field_ab_odoo_sync_upload_source__id
+msgid "ID"
+msgstr "المعرف"

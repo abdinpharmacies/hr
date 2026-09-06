@@ -7,7 +7,15 @@
     "author": "Abdin Pharmacies",
     "developer": "'hossam elsheikh'",
     "application": False,
-    "depends": ["ab_odoo_sync_upload", "ab_sales"],
+    "depends": [
+        "ab_odoo_sync_upload",
+        "ab_sales",
+        "ab_sales_lead",
+        "ab_sales_doctor",
+        "ab_transfer",
+        "ab_transfer_smart",
+        "ab_employee_access_sales",
+    ],
     "data": [
         "data/data_ab_sales_odoo_sync_upload_source.xml",
     ],
