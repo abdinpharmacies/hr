@@ -6,12 +6,12 @@ class AbTestCustomerReference(models.Model):
     _description = "AB Sync Test Customer Reference"
     _order = "reference, id"
 
-    name = fields.Char(required=True)
-    reference = fields.Char(required=True, index=True)
+    name = fields.Char()
+    reference = fields.Char(index=True)
     customer_id = fields.Many2one(
         "ab_customer",
         string="Customer",
-        required=True,
+
         ondelete="restrict",
         index=True,
     )

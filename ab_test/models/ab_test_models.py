@@ -8,8 +8,8 @@ class AbTestCategory(models.Model):
     _description = "AB Sync Test Category"
     _order = "code, name"
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char()
+    code = fields.Char(index=True)
     description = fields.Text()
     color = fields.Integer(default=0)
     active = fields.Boolean(default=True, index=True)
@@ -41,8 +41,8 @@ class AbTestTag(models.Model):
     _description = "AB Sync Test Tag"
     _order = "code, name"
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char()
+    code = fields.Char(index=True)
     color = fields.Integer(default=0)
     active = fields.Boolean(default=True, index=True)
 
@@ -149,12 +149,12 @@ class AbTestLine(models.Model):
 
     header_id = fields.Many2one(
         "ab_test_header",
-        required=True,
+
         ondelete="cascade",
         index=True,
     )
     sequence = fields.Integer(default=10)
-    name = fields.Char(required=True)
+    name = fields.Char()
     category_id = fields.Many2one(
         "ab_test_category",
         ondelete="restrict",
@@ -167,8 +167,8 @@ class AbTestLine(models.Model):
         "tag_id",
         string="Tags",
     )
-    quantity = fields.Float(default=1.0, required=True, digits=(16, 3))
-    unit_price = fields.Float(required=True, digits=(16, 3))
+    quantity = fields.Float(default=1.0, digits=(16, 3))
+    unit_price = fields.Float(digits=(16, 3))
     subtotal = fields.Float(compute="_compute_subtotal", store=True, digits=(16, 3))
     planned_date = fields.Date()
     attributes_json = fields.Json(string="Attributes JSON", default=dict)
@@ -191,8 +191,8 @@ class AbTestDeleteCascadeParent(models.Model):
     _description = "AB Sync Test Cascade Delete Parent"
     _order = "code, name"
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char()
+    code = fields.Char(index=True)
     active = fields.Boolean(default=True, index=True)
     child_ids = fields.One2many(
         "ab_test_delete_cascade_child",
@@ -214,11 +214,11 @@ class AbTestDeleteCascadeChild(models.Model):
     parent_id = fields.Many2one(
         "ab_test_delete_cascade_parent",
         string="Parent",
-        required=True,
+
         ondelete="cascade",
         index=True,
     )
-    name = fields.Char(required=True)
+    name = fields.Char()
     note = fields.Text()
     active = fields.Boolean(default=True, index=True)
 
@@ -228,8 +228,8 @@ class AbTestDeleteSetNullParent(models.Model):
     _description = "AB Sync Test Set Null Delete Parent"
     _order = "code, name"
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char()
+    code = fields.Char(index=True)
     active = fields.Boolean(default=True, index=True)
     child_ids = fields.One2many(
         "ab_test_delete_set_null_child",
@@ -254,7 +254,7 @@ class AbTestDeleteSetNullChild(models.Model):
         ondelete="set null",
         index=True,
     )
-    name = fields.Char(required=True)
+    name = fields.Char()
     note = fields.Text()
     active = fields.Boolean(default=True, index=True)
 
@@ -264,8 +264,8 @@ class AbTestDeleteRestrictParent(models.Model):
     _description = "AB Sync Test Restrict Delete Parent"
     _order = "code, name"
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char()
+    code = fields.Char(index=True)
     active = fields.Boolean(default=True, index=True)
     child_ids = fields.One2many(
         "ab_test_delete_restrict_child",
@@ -287,10 +287,10 @@ class AbTestDeleteRestrictChild(models.Model):
     parent_id = fields.Many2one(
         "ab_test_delete_restrict_parent",
         string="Parent",
-        required=True,
+
         ondelete="restrict",
         index=True,
     )
-    name = fields.Char(required=True)
+    name = fields.Char()
     note = fields.Text()
     active = fields.Boolean(default=True, index=True)
