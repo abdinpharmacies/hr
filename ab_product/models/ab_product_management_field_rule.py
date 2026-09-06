@@ -16,7 +16,7 @@ class AbProductManagementFieldRule(models.Model):
     })
     ACCESS_NAME_PREFIX = 'AB Product Field Rule Write:'
 
-    group_id = fields.Many2one('res.groups', required=True, index=True, ondelete='cascade')
+    group_id = fields.Many2one('res.groups', index=True, ondelete='cascade')
     field_ids = fields.Many2many(
         'ir.model.fields',
         'ab_product_management_field_rule_field_rel',
