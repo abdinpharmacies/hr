@@ -2,7 +2,8 @@ from odoo import fields, models
 
 
 class ProjectRole(models.Model):
-    _inherit = "project.role"
+    _name = "project.role"
+    _inherit = ["project.role", "ab_odoo_sync_passive_mirror_mixin"]
 
     name = fields.Char(required=False, translate=True)
     db_serial = fields.Integer(string="DB Serial", readonly=True, index=True)

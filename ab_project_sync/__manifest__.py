@@ -7,7 +7,7 @@
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "application": False,
-    "depends": ["project", "ab_odoo_sync_mapping"],
+    "depends": ["project", "ab_odoo_sync", "ab_odoo_sync_mapping"],
     "data": [],
     "installable": True,
 }
