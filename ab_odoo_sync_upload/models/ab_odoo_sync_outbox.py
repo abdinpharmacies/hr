@@ -12,18 +12,18 @@ class AbOdooSyncOutbox(models.Model):
 
     event_uuid = fields.Char(
         string="Event UUID",
-        required=True,
+
         readonly=True,
         index=True,
         default=lambda self: str(uuid.uuid4()),
     )
-    db_serial = fields.Integer(string="DB Serial", required=True, readonly=True, index=True)
-    model_name = fields.Char(string="Source Model", required=True, readonly=True, index=True)
-    rec_id = fields.Integer(string="Source Record ID", required=True, readonly=True, index=True)
+    db_serial = fields.Integer(string="DB Serial", readonly=True, index=True)
+    model_name = fields.Char(string="Source Model", readonly=True, index=True)
+    rec_id = fields.Integer(string="Source Record ID", readonly=True, index=True)
     source_revision = fields.Integer(string="Source Revision", readonly=True, index=True)
     operation = fields.Selection(
         selection=[("upsert", "Upsert"), ("archive", "Archive")],
-        required=True,
+
         readonly=True,
         index=True,
     )
@@ -37,7 +37,7 @@ class AbOdooSyncOutbox(models.Model):
             ("not_sync", "Not Sync"),
         ],
         default="pending",
-        required=True,
+
         index=True,
     )
     attempt_count = fields.Integer(string="Attempt Count", default=0, readonly=True)

@@ -9,7 +9,7 @@ class AbOdooSyncUploadSource(models.Model):
     _description = "AB Odoo Sync Upload Source"
     _order = "model_name"
 
-    model_name = fields.Char(string="Source Model", required=True, index=True)
+    model_name = fields.Char(string="Source Model", index=True)
     aggregate_parent_field = fields.Char(
         string="Aggregate Parent Field",
         help="Optional Many2one field whose parent must be re-snapshotted after this model changes.",
