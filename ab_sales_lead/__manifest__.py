@@ -4,7 +4,7 @@
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "application": False,
-    "depends": ["ab_sales"],
+    "depends": ["ab_sales", "ab_odoo_sync"],
     "data": [
         "security/ir.model.access.csv",
         "security/rules_sales_lead.xml",

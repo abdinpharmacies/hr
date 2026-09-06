@@ -8,6 +8,7 @@ from odoo.exceptions import ValidationError
 
 class AbSalesLead(models.Model):
     _name = "ab_sales_lead"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales Lead"
     _order = "create_date desc, id desc"
 
@@ -16,7 +17,7 @@ class AbSalesLead(models.Model):
             ("lost_sales", "Lost Sale"),
             ("special_order", "Special Order"),
         ],
-        required=True,
+
         default="lost_sales",
         index=True,
     )
@@ -28,7 +29,7 @@ class AbSalesLead(models.Model):
             ("closed", "Closed"),
             ("cancelled", "Cancelled"),
         ],
-        required=True,
+
         default="new",
         index=True,
     )
@@ -37,19 +38,18 @@ class AbSalesLead(models.Model):
             ("pos", "POS"),
             ("manual", "Manual"),
         ],
-        required=True,
+
         default="manual",
         index=True,
     )
 
-    product_id = fields.Many2one("ab_product", required=True, index=True, ondelete="restrict")
-    product_name = fields.Char(required=True, index=True)
+    product_id = fields.Many2one("ab_product", index=True, ondelete="restrict")
+    product_name = fields.Char(index=True)
     product_code = fields.Char(index=True)
     store_id = fields.Many2one("ab_store", index=True, ondelete="set null")
     user_id = fields.Many2one(
-        "res.users",
-        required=True,
-        default=lambda self: self.env.user,
+        "ab_users",
+        default=lambda self: self.env["ab_users"].current_placeholder_id(),
         index=True,
         ondelete="restrict",
     )
@@ -59,7 +59,7 @@ class AbSalesLead(models.Model):
     customer_phone = fields.Char(index=True)
     customer_address = fields.Char()
 
-    quantity = fields.Float(required=True, default=1.0)
+    quantity = fields.Float(default=1.0)
     default_price = fields.Float(digits=(16, 2))
     total_balance = fields.Float(string="Total Balance")
     pos_balance = fields.Float(string="POS Store Balance")
@@ -121,10 +121,10 @@ class AbSalesLead(models.Model):
                     vals["product_name"] = product.name or product.product_card_name or ""
                 if not vals.get("product_code"):
                     vals["product_code"] = product.code or ""
-                if not vals.get("default_price"):
-                    vals["default_price"] = product.default_price or 0.0
+            if not vals.get("default_price"):
+                vals["default_price"] = product.default_price or 0.0
             vals.setdefault("source", "manual")
-            vals.setdefault("user_id", self.env.uid)
+            vals.setdefault("user_id", self.env["ab_users"].current_placeholder_id())
         return super().create(vals_list)
 
     def action_set_in_review(self):
