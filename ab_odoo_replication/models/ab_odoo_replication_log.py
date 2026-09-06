@@ -6,7 +6,7 @@ class AbOdooReplicationLog(models.Model):
     _name = 'ab_odoo_replication_log'
     _description = 'ab_odoo_replication_log'
 
-    model_name = fields.Char(required=True, index=True)
+    model_name = fields.Char(index=True)
     last_write_date = fields.Datetime()
     last_id = fields.Integer()
     last_run = fields.Datetime()

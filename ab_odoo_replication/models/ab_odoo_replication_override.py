@@ -28,7 +28,7 @@ class AbOdooReplicationOverride(models.Model):
     _order = 'model_name'
 
     active = fields.Boolean(default=True)
-    model_name = fields.Char(required=True, index=True)
+    model_name = fields.Char(index=True)
     model_available = fields.Boolean(compute='_compute_model_available')
     disable_write = fields.Boolean(default=True)
     disable_create = fields.Boolean(default=True)
@@ -135,7 +135,7 @@ class AbOdooReplicationOverrideWriteRule(models.Model):
 
     override_id = fields.Many2one(
         comodel_name=OVERRIDE_MODEL_NAME,
-        required=True,
+
         index=True,
         ondelete='cascade',
     )
@@ -146,7 +146,7 @@ class AbOdooReplicationOverrideWriteRule(models.Model):
     )
     group_id = fields.Many2one(
         comodel_name='res.groups',
-        required=True,
+
         index=True,
         ondelete='cascade',
     )
@@ -156,7 +156,7 @@ class AbOdooReplicationOverrideWriteRule(models.Model):
         column1='rule_id',
         column2='field_id',
         string='Writable Fields',
-        required=True,
+
     )
     editable_fields = fields.Char(compute='_compute_editable_fields')
 
