@@ -1,13 +1,12 @@
 Current changes before commit:
 
-- Require an exact full store-code match in Fair Store quick search while retaining partial Arabic/name matching.
-- Prevent a partial code such as 17 from matching store code 176.
-- Keep the scoped Fair Store selectors, popup columns, and Select workflow unchanged.
+- Add the shared passive mirror mixin to `ab_transfer_smart_line` so the updated high-value passive list is fully covered.
+- Keep smart transfer caches and other low/no-value smart transfer artifacts outside this shared passive mixin pass.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
-- ab_transfer_smart/views/ab_store_views.xml
+- ab_transfer_smart/models/ab_transfer_smart_line.py
 
 
 commit caabf8b3452c922f76ff223d94571b72c3d023e5

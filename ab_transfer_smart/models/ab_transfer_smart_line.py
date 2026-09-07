@@ -21,7 +21,7 @@ EGYPT_TZ = ZoneInfo("Africa/Cairo")
 
 class AbTransferSmartLine(models.Model):
     _name = "ab_transfer_smart_line"
-    _inherit = "ab_transfer_line"
+    _inherit = ["ab_transfer_line", "ab_odoo_sync_passive_mirror_mixin"]
     _description = "Smart Transfer Line"
     _order = "smart_product_location, product_id, id"
 
