@@ -4,13 +4,23 @@ venv/
 *.pyc
 *.log
 *.db
-commands.py
+z_tools/commands.py
+z_tools/servers_*.csv
+z_tools/servers_*.ods
 00_loop_bconnect_servers/*.log
 # The file containing environment variables
 .env
-
+.aider.tags*
+.aider.chat*
+.aider.input*
+z_tools/.~lock*
+---ab_*/
 # Ignore IDE specific files
 .idea/
 .vscode/
 *.sw*
 
+.aider*
+
+commit_cherry_pick_report.toml
+commit_cherry_pick_report.txt
