@@ -101,6 +101,9 @@
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
                                 invisible="status != 'sign_check' or not can_current_user_act"/>
+                        <button name="action_open_skip_reviews" type="object" string="Skip Inventory &amp; Purchase"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status != 'secretarial'"/>
                         <button name="action_supplier_notified" type="object" string="Supplier Notified"
                                 class="btn-success"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -700,6 +703,7 @@
                                 <span class="o_translate_inline">Workflow Timeline</span>
                             </div>
                             <field name="timeline_display" nolabel="1"/>
+                            <field name="review_skip_reason" readonly="1" invisible="not review_skip_reason"/>
                         </div>
 
                         <!-- Escalation assignment -->

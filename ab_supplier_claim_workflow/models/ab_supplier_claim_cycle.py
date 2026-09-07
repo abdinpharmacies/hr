@@ -4,6 +4,8 @@ import io
 import re
 import secrets
 import urllib.parse
+from markupsafe import escape
+from .workflow_guard import WORKFLOW_WRITE_TOKEN
 
 from datetime import timedelta
 
@@ -185,11 +187,13 @@ class SupplierClaimCycle(models.Model):
     )
 
     inv_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred'), ('skipped', 'Skipped')],
         default='pending', string='Inventory Decision')
     pur_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred'), ('skipped', 'Skipped')],
         default='pending', string='Purchase Decision')
+    review_skip_reason = fields.Text(string='Inventory and Purchase Skip Reason', readonly=True, copy=False)
+
     sup_decision = fields.Selection(
         selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Suppliers Decision')
@@ -503,7 +507,7 @@ class SupplierClaimCycle(models.Model):
     def _ensure_tracking_token(self):
         for rec in self.sudo():
             if not rec.tracking_token:
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'tracking_token': rec._generate_tracking_token(),
                 })
         return True
@@ -524,7 +528,7 @@ class SupplierClaimCycle(models.Model):
         }
         if not self.tracking_first_accessed:
             vals['tracking_first_accessed'] = now
-        self.with_context(supplier_claim_internal_write=True).write(vals)
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write(vals)
         self.env['ab_supplier_claim_tracking_visit'].sudo().create({
             'claim_id': self.id,
             'visit_date': now,
@@ -539,7 +543,7 @@ class SupplierClaimCycle(models.Model):
             'tracking_last_seen': fields.Datetime.now(),
             'tracking_is_online': bool(online),
         }
-        self.with_context(supplier_claim_internal_write=True).write(vals)
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write(vals)
         return True
 
     @api.model
@@ -552,7 +556,7 @@ class SupplierClaimCycle(models.Model):
             token = self._generate_tracking_token()
             while token in seen_tokens:
                 token = self._generate_tracking_token()
-            claim.with_context(supplier_claim_internal_write=True).write({
+            claim.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                 'tracking_token': token,
             })
             seen_tokens.add(token)
@@ -735,9 +739,12 @@ class SupplierClaimCycle(models.Model):
             elif delayed:
                 state = 'delayed'
                 icon = '!'
+            if entry.get('is_skipped'):
+                state = 'skipped'
+                icon = '-'
             timeline.append({
                 'stage': stage,
-                'label': entry['label'],
+                'label': '%s (%s)' % (entry['label'], _('Skipped')) if entry.get('is_skipped') else entry['label'],
                 'state': state,
                 'icon': icon,
                 'is_current': bool(entry.get('is_current')),
@@ -893,7 +900,7 @@ class SupplierClaimCycle(models.Model):
                 continue
             delegates = rec._get_supplier_delegate_phone_candidates(create_missing=True)
             if delegates:
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'delegate_phone_ids': [(6, 0, delegates.ids)],
                 })
         return True
@@ -930,7 +937,7 @@ class SupplierClaimCycle(models.Model):
             return
         self.tax_amount = self.amount_of_check * (self.tax_percentage / 100)
         self.net_payable = self.amount_of_check - self.tax_amount
-        self.with_context(supplier_claim_internal_write=True).write({
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
             'tax_frozen': True,
             'tax_calculated_at': fields.Datetime.now(),
         })
@@ -1279,6 +1286,8 @@ class SupplierClaimCycle(models.Model):
         if not self._is_supplier_claim_secretarial() and not self._is_supplier_claim_admin():
             raise AccessError(_("Only Secretarial or Admin users can create supplier claims."))
         for vals in vals_list:
+            if vals.get('review_skip_reason') or any(vals.get(field) == 'skipped' for field in ('inv_decision', 'pur_decision')):
+                raise AccessError(_("Use the skip confirmation wizard to skip department reviews."))
             self._normalize_check_delivery_status_vals(vals)
             self._apply_supplier_previous_claim_defaults_to_vals(vals)
             if vals.get('supplier_id') and not vals.get('contact_phone'):
@@ -1351,7 +1360,7 @@ class SupplierClaimCycle(models.Model):
 
     def _check_department_note_write_access(self, vals):
         note_fields = set(vals) & set(NOTE_FIELD_MAP.values())
-        if not note_fields or self.env.context.get('supplier_claim_internal_write'):
+        if not note_fields or (self.env.context.get('supplier_claim_internal_write') is WORKFLOW_WRITE_TOKEN):
             return
         if self._is_supplier_claim_admin():
             return
@@ -1387,9 +1396,9 @@ class SupplierClaimCycle(models.Model):
         ):
             supplier = self.env['ab_costcenter'].browse(vals['supplier_id']) if vals['supplier_id'] else False
             vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
-        if self.env.context.get('supplier_claim_internal_write'):
+        if (self.env.context.get('supplier_claim_internal_write') is WORKFLOW_WRITE_TOKEN):
             return super().write(vals)
-        if 'status' in vals:
+        if set(vals) & {'status', 'department_decision', 'inv_decision', 'pur_decision', 'sup_decision', 'tax_decision', 'bank_decision', 'inv_finished', 'pur_finished', 'sup_finished', 'tax_finished', 'bank_finished', 'review_skip_reason'}:
             raise AccessError(_("Use workflow actions to move supplier claims between stages."))
         if not self._is_supplier_claim_admin() and not self._is_supplier_claim_secretarial():
             for rec in self:
@@ -1406,6 +1415,50 @@ class SupplierClaimCycle(models.Model):
                     raise AccessError(_("Only the current department can edit this supplier claim."))
         return super().write(vals)
 
+    def _check_can_skip_reviews(self):
+        self.ensure_one()
+        self.check_access('write')
+        if not (self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()):
+            raise AccessError(_("Only Supplier Claim Secretarial or Admin users can skip reviews."))
+        if self.status != 'secretarial' or self.review_skip_reason:
+            raise UserError(_("Reviews can only be skipped from the initial Secretarial stage."))
+        if self.has_blocking_issue:
+            raise UserError(_("Resolve the blocking issue before skipping reviews."))
+
+    def action_open_skip_reviews(self):
+        self._check_can_skip_reviews()
+        return {
+            'type': 'ir.actions.act_window', 'name': _('Skip Inventory & Purchase'),
+            'res_model': 'ab_supplier_claim_skip_wizard', 'view_mode': 'form',
+            'target': 'new', 'context': {'default_claim_id': self.id},
+        }
+
+    def _skip_inventory_purchase(self, reason):
+        self._check_can_skip_reviews()
+        reason = (reason or '').strip()
+        if not reason:
+            raise ValidationError(_("A skip reason is required."))
+        if not self.supplier_type or not self.num_of_invoice or not self.amount_of_check:
+            raise ValidationError(_("Enter the supplier type, invoice count, and cheque amount before starting the cycle."))
+        if not self.claim_document and not self.env['ir.attachment'].search_count([
+            ('res_model', '=', self._name), ('res_id', '=', self.id),
+        ], limit=1):
+            raise ValidationError(_("Upload the supplier claim document before starting the cycle."))
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
+            'status': 'suppliers', 'inv_decision': 'skipped', 'pur_decision': 'skipped',
+            'inv_finished': False, 'pur_finished': False, 'review_skip_reason': reason,
+            'sup_decision': 'pending', 'sup_finished': False,
+            'department_decision': 'pending', 'delay_reason': False,
+            'stage_escalated': False, 'escalation_missing_manager': False,
+            'assigned_escalation_user': False,
+        })
+        for stage in ('inventory', 'purchase'):
+            self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN)._create_stage_history(stage, 'skipped', reason)
+        self._create_stage_history('suppliers', 'pending')
+        self._notify_department_turn_started('suppliers')
+        self.message_post(body=_('Inventory and Purchase skipped: %s') % reason)
+        return {'type': 'ir.actions.act_window_close'}
+
     def action_accept(self):
         action = False
         for rec in self:
@@ -1414,13 +1467,13 @@ class SupplierClaimCycle(models.Model):
                 stage_key = rec._set_parallel_department_decision('accepted')
                 if rec.status == 'tax_accounts' and rec._requires_tax_accounts_stage():
                     rec._calculate_and_freeze_tax()
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     FINISHED_FIELD_MAP[stage_key]: True,
                 })
-                rec.sudo().with_context(supplier_claim_internal_write=True)._try_advance_from_parallel()
+                rec.sudo().with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN)._try_advance_from_parallel()
                 action = rec._action_open_supplier_claim_list()
             else:
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'department_decision': 'accepted',
                     'delay_reason': False,
                 })
@@ -1456,7 +1509,7 @@ class SupplierClaimCycle(models.Model):
                     }
                 rec._set_parallel_department_decision('rejected')
                 reason_field = REASON_FIELD_MAP[user_stage]
-                rec.with_context(supplier_claim_internal_write=True).write({reason_field: False})
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({reason_field: False})
             else:
                 if not rec.delay_reason:
                     return {
@@ -1471,7 +1524,7 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
-                rec.with_context(supplier_claim_internal_write=True).write({'department_decision': 'rejected'})
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({'department_decision': 'rejected'})
                 rec._create_stage_history(rec.status, 'rejected', rec.delay_reason)
                 rec._create_stage_history(rec.status, 'pending')
                 rec.message_post(
@@ -1605,14 +1658,14 @@ class SupplierClaimCycle(models.Model):
                     dept_reason = self[DEFER_REASON_FIELD_MAP[stage_key]] or ''
                 if decision == 'rejected':
                     vals[REASON_FIELD_MAP[stage_key]] = dept_reason
-                self.with_context(supplier_claim_internal_write=True).write(vals)
+                self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write(vals)
                 if decision == 'accepted':
                     self._create_stage_history(
                         stage_key,
                         decision,
                         self._append_department_notes_to_history(stage_key),
                     )
-                    self.with_context(supplier_claim_internal_write=True).write({
+                    self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                         'department_decision': self._get_parallel_overall_decision(),
                     })
                     self._notify_secretarial_department_accepted(stage_key)
@@ -1622,7 +1675,7 @@ class SupplierClaimCycle(models.Model):
                         decision,
                         self._append_department_notes_to_history(stage_key, dept_reason),
                     )
-                    self.with_context(supplier_claim_internal_write=True).write({
+                    self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                         'department_decision': self._get_parallel_overall_decision(),
                     })
                     self._create_stage_history(stage_key, 'pending')
@@ -1634,7 +1687,7 @@ class SupplierClaimCycle(models.Model):
                     )
                 elif decision == 'deferred':
                     expected_date = self[DEFER_EXPECTED_DATE_FIELD_MAP[stage_key]]
-                    self.with_context(supplier_claim_internal_write=True).write({
+                    self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                         'department_decision': self._get_parallel_overall_decision(),
                     })
                     self._create_stage_history(
@@ -1675,7 +1728,7 @@ class SupplierClaimCycle(models.Model):
             next_stage = 'sign_check'
         else:
             next_stage = 'sign_check'
-        self.with_context(supplier_claim_internal_write=True).write({
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
             'status': next_stage,
             'department_decision': 'pending',
             'delay_reason': False,
@@ -1696,6 +1749,8 @@ class SupplierClaimCycle(models.Model):
     def action_done(self):
         for rec in self:
             rec._check_can_act_current_stage()
+            if rec.status not in ('secretarial', 'sign_check'):
+                raise AccessError(_("Use workflow actions to move supplier claims between stages."))
             if rec.status == 'secretarial':
                 if not rec.supplier_type:
                     return {
@@ -1753,7 +1808,7 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'status': 'inventory',
                     'department_decision': 'pending',
                     'delay_reason': False,
@@ -1775,13 +1830,13 @@ class SupplierClaimCycle(models.Model):
                     'target': 'new',
                     'context': {'default_claim_id': rec.id},
                 }
-            rec._move_to_next_stage()
+
 
     def _reset_parallel_decisions(self):
         self.ensure_one()
-        self.with_context(supplier_claim_internal_write=True).write({
-            'inv_decision': 'pending',
-            'pur_decision': 'pending',
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
+            'inv_decision': 'skipped' if self.review_skip_reason else 'pending',
+            'pur_decision': 'skipped' if self.review_skip_reason else 'pending',
             'sup_decision': 'pending',
             'tax_decision': 'pending',
             'bank_decision': 'pending',
@@ -1814,7 +1869,7 @@ class SupplierClaimCycle(models.Model):
             rec._check_can_act_current_stage()
             if rec.status in DEPARTMENT_STAGES:
                 rec._reset_parallel_decisions()
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'status': 'sign_check',
                     'department_decision': 'pending',
                     'delay_reason': False,
@@ -1893,7 +1948,7 @@ class SupplierClaimCycle(models.Model):
                     },
                 }
             if rec.check_delivery_status in ('check_delivered', 'mixed') and not rec.sub_delivery_status:
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'sub_delivery_status': 'shipped',
                 })
             if rec.check_delivery_status not in ('cash', 'bank_transfer'):
@@ -1910,7 +1965,7 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
-            rec.with_context(supplier_claim_internal_write=True).write({
+            rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                 'supplier_notified': True,
                 'supplier_notified_by': self.env.user.id,
                 'supplier_notification_date': fields.Datetime.now(),
@@ -1926,7 +1981,7 @@ class SupplierClaimCycle(models.Model):
                 }
             )
             if rec.check_delivery_status in ('check_delivered', 'mixed'):
-                rec.with_context(supplier_claim_internal_write=True).write({
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'status': 'delivery',
                     'sub_delivery_status': 'shipped',
                     'department_decision': 'pending',
@@ -1964,7 +2019,7 @@ class SupplierClaimCycle(models.Model):
             message = _(
                 "Hello, please visit the office to collect your cheque for supplier claim %(claim)s."
             ) % {'claim': rec.name}
-            rec.with_context(supplier_claim_internal_write=True).write({
+            rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                 'whatsapp_message_sent': True,
                 'whatsapp_message_sent_by': self.env.user.id,
                 'whatsapp_message_sent_date': fields.Datetime.now(),
@@ -2006,7 +2061,7 @@ class SupplierClaimCycle(models.Model):
             if rec.check_delivery_status == 'shipped':
                 vals['check_delivery_status'] = 'ready'
             if vals:
-                rec.with_context(supplier_claim_internal_write=True).write(vals)
+                rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write(vals)
         return True
 
     def action_close_claim(self):
@@ -2049,6 +2104,11 @@ class SupplierClaimCycle(models.Model):
                 departments = [claim.status]
 
             for dept_key in departments:
+                decision = claim[dict(PARALLEL_DECISION_FIELDS)[dept_key]]
+                if decision == 'skipped' or (
+                    decision == 'accepted' and claim[FINISHED_FIELD_MAP[dept_key]]
+                ):
+                    continue
                 dept_history = self.env['ab_supplier_claim_stage_history'].search([
                     ('claim_id', '=', claim.id),
                     ('stage', '=', dept_key),
@@ -2217,7 +2277,7 @@ class SupplierClaimCycle(models.Model):
             raise UserError(_("This supplier claim is already closed."))
         if next_stage == 'closed' and not self.check_delivery_status:
             raise ValidationError(_("Cheque Delivery Status must be set before closing the claim."))
-        self.with_context(supplier_claim_internal_write=True).write({
+        self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
             'status': next_stage,
             'department_decision': 'accepted' if next_stage == 'closed' else 'pending',
             'delay_reason': False,
@@ -2406,6 +2466,9 @@ class SupplierClaimCycle(models.Model):
             stage_histories_all = histories.filtered(lambda h: h.stage == stage)
 
             last = stage_histories_all[-1] if stage_histories_all else self.env['ab_supplier_claim_stage_history']
+            skipped_history = stage_histories_all.filtered(lambda history: history.decision == 'skipped')
+            if skipped_history:
+                last = skipped_history[-1]
 
             if stage in DEPARTMENT_STAGES:
                 dept_df = current_dept_decisions.get(stage)
@@ -2433,6 +2496,12 @@ class SupplierClaimCycle(models.Model):
                 stage_notes = self._format_deferred_stage_history_note(stage)
             else:
                 stage_notes = self._get_display_history_notes(last.notes) if last else ''
+
+            is_skipped = bool(last and last.decision == 'skipped')
+            if is_skipped:
+                is_current = False
+                is_completed = False
+                stage_notes = str(escape(last.notes or ''))
 
             is_overdue = False
             if is_current and stage != 'closed' and last and last.action_date:
@@ -2478,6 +2547,7 @@ class SupplierClaimCycle(models.Model):
                 'label': self._get_translated_stage_label(stage),
                 'is_current': is_current,
                 'is_completed': is_completed,
+                'is_skipped': is_skipped,
                 'is_overdue': is_overdue,
                 'user_name': last.user_id.display_name if last and last.user_id else '',
                 'action_date': last.action_date.isoformat() if last and last.action_date else '',
@@ -2608,6 +2678,8 @@ class SupplierClaimCycle(models.Model):
                 icon = '🏛' if entry['stage'] == 'tax_accounts' and self._requires_tax_accounts_stage() else (
                     '✈' if (is_comp and entry['stage'] == 'closed') else (
                     '✓' if is_comp else ('●' if is_curr else '○')))
+                if entry.get('is_skipped'):
+                    icon = '&#8212;'
 
                 stage_class = 'scc-timeline-stage'
                 if entry['notes']:
@@ -2621,6 +2693,8 @@ class SupplierClaimCycle(models.Model):
                 L.append('</div>')
                 L.append('<div class="scc-timeline-label-col">')
                 L.append('<div class="%s">%s</div>' % (label_class, entry['label']))
+                if entry.get('is_skipped'):
+                    L.append('<div class="scc-timeline-notes">%s</div>' % escape(_('Skipped')))
                 if entry['notes']:
                     L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
                 if entry.get('show_defer_overdue_days'):

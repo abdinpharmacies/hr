@@ -3536,3 +3536,109 @@ msgstr "ملاحظات القسم: %(department_notes)s"
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid "Only %(department)s users with a pending decision, or Supplier Claim Admin users, can edit %(department)s notes."
 msgstr "يمكن فقط لمستخدمي %(department)s الذين لديهم قرار معلق، أو مسؤولي مطالبات الموردين، تعديل ملاحظات %(department)s."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "A skip reason is required."
+msgstr "يجب إدخال سبب التخطي."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_check_delivery_wizard.py:0
+msgid "Cheque confirmation is only available at Sign Check."
+msgstr "تأكيد الشيك متاح فقط في مرحلة توقيع الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_stage_history.py:0
+msgid "Completed skip history cannot be changed or deleted."
+msgstr "لا يمكن تعديل أو حذف سجل التخطي المكتمل."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_supplier_claim_skip_wizard
+msgid "Confirm Skip"
+msgstr "تأكيد التخطي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Enter the supplier type, invoice count, and cheque amount before starting "
+"the cycle."
+msgstr "أدخل نوع المورد وعدد الفواتير ومبلغ الشيك قبل بدء الدورة."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__review_skip_reason
+msgid "Inventory and Purchase Skip Reason"
+msgstr "سبب تخطي المخازن والمشتريات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#, python-format
+msgid "Inventory and Purchase skipped: %s"
+msgstr "تم تخطي المخازن والمشتريات: %s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only Supplier Claim Secretarial or Admin users can skip reviews."
+msgstr "يمكن فقط لسكرتارية مطالبات الموردين أو مسؤوليها تخطي المراجعات."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Resolve the blocking issue before skipping reviews."
+msgstr "يجب حل المشكلة المانعة قبل تخطي المراجعات."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Reviews can only be skipped from the initial Secretarial stage."
+msgstr "يمكن تخطي المراجعات فقط من مرحلة السكرتارية الأولية."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_supplier_claim_skip_wizard
+msgid "Skip Inventory & Purchase"
+msgstr "تخطي المخازن والمشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_skip_wizard
+msgid "Skip Inventory and Purchase Reviews"
+msgstr "تخطي مراجعات المخازن والمشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_skip_wizard__reason
+msgid "Skip Reason"
+msgstr "سبب التخطي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_stage_history.py:0
+msgid "Skip history can only be created by the skip workflow."
+msgstr "يمكن إنشاء سجل التخطي فقط من خلال إجراء التخطي."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__inv_decision__skipped
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__pur_decision__skipped
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__skipped
+msgid "Skipped"
+msgstr "تم التخطي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Use the skip confirmation wizard to skip department reviews."
+msgstr "استخدم معالج تأكيد التخطي لتخطي مراجعات الأقسام."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Upload the supplier claim document before starting the cycle."
+msgstr "ارفع مستند مطالبة المورد قبل بدء الدورة."

@@ -20,6 +20,7 @@
         'views/ab_supplier_claim_cycle.xml',
         'views/ab_supplier_type_wizard.xml',
         'views/ab_supplier_claim_defer_wizard.xml',
+        'views/ab_supplier_claim_skip_wizard.xml',
         'views/ab_claim_error_wizard.xml',
         'views/ab_check_delivery_wizard.xml',
         'views/ab_supplier_claim_issue.xml',
