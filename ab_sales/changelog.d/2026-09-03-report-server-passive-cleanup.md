@@ -126,14 +126,11 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Replaced explicit report-side user relations with `ab_users` placeholders where this module declares user fields.
-  - Removed redundant source user mirror fields from sales report mirrors; passive `create_uid` and `write_uid` now carry the branch user mapping directly.
-  - Removed the obsolete source user fields from the sales header mirror form.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Scoped the shared passive mirror mixin to the updated high-value sales passive models only.
+  - Kept `ab_sales_header`, `ab_sales_line`, sales return mirrors, and `ab_printer` on the shared passive metadata fields.
+  - Left low/no-value POS and dashboard mirror models on the local sales metadata mixin without the shared passive mixin.
+  - Made the Synced Sales action archive-aware so invoices synced with `active=False` can be found from the same menu.
 - Files changed:
   - ab_sales/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_sales/__manifest__.py
   - ab_sales/models/ab_sales_mirror_models.py
   - ab_sales/views/sales_mirror_views.xml

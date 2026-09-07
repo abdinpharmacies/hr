@@ -3,7 +3,6 @@ from odoo import api, fields, models
 
 class AbSalesMirrorMixin(models.AbstractModel):
     _name = "ab_sales_mirror_mixin"
-    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "AB Sales Reporting Mirror Mixin"
 
     db_serial = fields.Integer(string="DB Serial", required=False, readonly=True, index=True)
@@ -23,7 +22,7 @@ class AbSalesMirrorMixin(models.AbstractModel):
 
 class AbSalesHeaderMirror(models.Model):
     _name = "ab_sales_header"
-    _inherit = "ab_sales_mirror_mixin"
+    _inherit = ["ab_sales_mirror_mixin", "ab_odoo_sync_passive_mirror_mixin"]
     _log_access = False
     _description = "Branch Sales Header Mirror"
     _order = "db_serial, eplus_serial desc, rec_id desc"
@@ -102,7 +101,7 @@ class AbSalesHeaderMirror(models.Model):
 
 class AbSalesLineMirror(models.Model):
     _name = "ab_sales_line"
-    _inherit = "ab_sales_mirror_mixin"
+    _inherit = ["ab_sales_mirror_mixin", "ab_odoo_sync_passive_mirror_mixin"]
     _log_access = False
     _description = "Branch Sales Line Mirror"
     _order = "db_serial, header_id, rec_id"
@@ -156,7 +155,7 @@ class AbSalesLineMirror(models.Model):
 
 class AbSalesReturnHeaderMirror(models.Model):
     _name = "ab_sales_return_header"
-    _inherit = "ab_sales_mirror_mixin"
+    _inherit = ["ab_sales_mirror_mixin", "ab_odoo_sync_passive_mirror_mixin"]
     _log_access = False
     _description = "Branch Sales Return Header Mirror"
     _order = "db_serial, sales_return_id desc, rec_id desc"
@@ -199,7 +198,7 @@ class AbSalesReturnHeaderMirror(models.Model):
 
 class AbSalesReturnLineMirror(models.Model):
     _name = "ab_sales_return_line"
-    _inherit = "ab_sales_mirror_mixin"
+    _inherit = ["ab_sales_mirror_mixin", "ab_odoo_sync_passive_mirror_mixin"]
     _log_access = False
     _description = "Branch Sales Return Line Mirror"
     _order = "db_serial, header_id, rec_id"
@@ -435,7 +434,7 @@ class AbSalesPosReplicationTurnMirror(models.Model):
 
 class AbPrinterMirror(models.Model):
     _name = "ab_printer"
-    _inherit = "ab_sales_mirror_mixin"
+    _inherit = ["ab_sales_mirror_mixin", "ab_odoo_sync_passive_mirror_mixin"]
     _log_access = False
     _description = "Branch Printer Configuration Mirror"
     _order = "db_serial, is_default desc, name asc, rec_id"
