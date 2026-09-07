@@ -18,11 +18,8 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Declared the inherited project role model explicitly so registry verification is clean after adding passive sync inheritance.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Removed the shared passive mirror mixin from project roles because they are not in the updated high-value passive list.
+  - Kept the existing project role metadata fields and uniqueness constraint unchanged.
 - Files changed:
   - ab_project_sync/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_project_sync/__manifest__.py
   - ab_project_sync/models/project_role.py
