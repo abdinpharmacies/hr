@@ -99,23 +99,6 @@
                     'historical_upload_from': '2026-03-01 00:00:00',
                 },
                 {
-                    'model_name': 'ab_transfer_receive_header',
-                    'active': True,
-                    'live_channel': 'root.sync_live',
-                    'historical_channel': 'root.sync_historical',
-                    'historical_upload_months': 6,
-                    'historical_upload_from': '2026-03-01 00:00:00',
-                },
-                {
-                    'model_name': 'ab_transfer_receive_line',
-                    'aggregate_parent_field': 'header_id',
-                    'active': True,
-                    'live_channel': 'root.sync_live',
-                    'historical_channel': 'root.sync_historical',
-                    'historical_upload_months': 6,
-                    'historical_upload_from': '2026-03-01 00:00:00',
-                },
-                {
                     'model_name': 'ab_transfer_smart_wizard',
                     'active': True,
                     'live_channel': 'root.sync_live',

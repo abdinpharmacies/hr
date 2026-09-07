@@ -2,6 +2,22 @@
 
 ## Current changes before commit:
 
+- Removed `ab_transfer_receive_header` and `ab_transfer_receive_line` from the
+  authoritative XML sources to exclude recurring receive-refresh uploads.
+- Validated XML and confirmed all 18 remaining source specifications are unchanged.
+- No user-facing strings changed. No database upgrade was run for this edit.
+
+Files changed:
+
+- `ab_sales_odoo_sync_upload/data/data_ab_sales_odoo_sync_upload_source.xml`
+- `ab_sales_odoo_sync_upload/changelog.d/2026-09-06-sales-upload-configuration.md`
+
+## c8a394c5c60b5984b7b705151d691eb22bd2576e
+
+Author: Hossam Elsheikh
+Date: 2026-09-06 17:02:53 +0300
+Original commit subject: ab_sales_odoo_sync_upload/Added high value passive models  as active authoritative sources
+
 User-facing changes:
 
 - Expanded authoritative upload configuration from four to 20 high-value passive
