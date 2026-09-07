@@ -14,6 +14,14 @@ class AbTransferLine(models.Model):
     _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Line"
     _order = "id desc"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer line.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     header_id = fields.Many2one(
         "ab_transfer_header",
@@ -26,6 +34,7 @@ class AbTransferLine(models.Model):
         "ab_store",
         string="From Store",
         related="header_id.from_store_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )
@@ -34,6 +43,7 @@ class AbTransferLine(models.Model):
         "ab_store",
         string="To Store",
         related="header_id.to_store_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )
@@ -67,6 +77,7 @@ class AbTransferLine(models.Model):
         "ab_costcenter",
         string="User",
         related="header_id.user_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )
@@ -123,12 +134,14 @@ class AbTransferLine(models.Model):
 
     state = fields.Selection(
         related="header_id.selection",
+        compute_sudo=True,
         store=True,
         string="Status",
     )
 
     is_submitted = fields.Boolean(
         related="header_id.is_submitted",
+        compute_sudo=True,
         readonly=True,
     )
 

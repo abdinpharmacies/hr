@@ -11,6 +11,14 @@ class AbTransferRequest(models.Model):
     _description = "Transfer Request"
     _order = "id desc"
     _rec_name = "display_name"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer request.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     display_name = fields.Char(
         string="Name",
@@ -186,6 +194,14 @@ class AbTransferRequestLine(models.Model):
     _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Request Line"
     _order = "id desc"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer request line.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     request_id = fields.Many2one(
         "ab_transfer_request",
@@ -198,6 +214,7 @@ class AbTransferRequestLine(models.Model):
         "ab_store",
         string="Destination Branch",
         related="request_id.to_store_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )
@@ -220,6 +237,7 @@ class AbTransferRequestLine(models.Model):
         "ab_product_uom_category",
         string="UoM Category",
         related="product_id.uom_category_id",
+        compute_sudo=True,
         readonly=True,
     )
 
@@ -236,12 +254,14 @@ class AbTransferRequestLine(models.Model):
         "ab_costcenter",
         string="User",
         related="request_id.user_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )
 
     state = fields.Selection(
         related="request_id.state",
+        compute_sudo=True,
         store=True,
         string="Status",
     )
@@ -250,6 +270,7 @@ class AbTransferRequestLine(models.Model):
         "res.company",
         string="Company",
         related="request_id.company_id",
+        compute_sudo=True,
         store=True,
         readonly=True,
     )

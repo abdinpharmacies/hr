@@ -15,6 +15,14 @@ class AbTransferHeader(models.Model):
     _description = "ab_transfer_header"
     _order = "id desc"
     _rec_name = "display_name"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer header.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     display_name = fields.Char(
         string="Name",

@@ -14,6 +14,14 @@ class AbTransferReceiveHeader(models.Model):
     _description = "Transfer Receive Queue"
     _order = "sec_insert_date desc, transfer_serial desc"
     _rec_name = "display_name"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer receive header.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     display_name = fields.Char(
         string="Transfer",
@@ -245,8 +253,16 @@ class AbTransferReceiveHeader(models.Model):
         return self._get_branch_connection_store()
 
     @api.model
+    def _skip_receive_branch_filter(self):
+        return (
+            self.env.context.get("skip_receive_branch_filter")
+            or self.env.context.get("receive_sync")
+            or self.env.user.has_group("base.group_system")
+        )
+
+    @api.model
     def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
-        if not self.env.context.get("skip_receive_branch_filter"):
+        if not self._skip_receive_branch_filter():
             try:
                 branch_sql_ids = self._get_allowed_branch_sql_ids()
             except Exception:
@@ -260,7 +276,7 @@ class AbTransferReceiveHeader(models.Model):
         return super()._search(domain, offset=offset, limit=limit, order=order, **kwargs)
 
     def _check_current_branch_access(self):
-        if self.env.context.get("skip_receive_branch_filter"):
+        if self._skip_receive_branch_filter():
             return True
         branch_sql_ids = set(self._get_allowed_branch_sql_ids())
         forbidden = self.filtered(
@@ -899,6 +915,14 @@ class AbTransferReceiveLine(models.Model):
     _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Transfer Receive Queue Line"
     _order = "id"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per transfer receive line.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
 
     header_id = fields.Many2one(
         "ab_transfer_receive_header",
@@ -977,6 +1001,7 @@ class AbTransferReceiveLine(models.Model):
     )
     state = fields.Selection(
         related="header_id.state",
+        compute_sudo=True,
         readonly=True,
         store=True,
     )
@@ -1020,7 +1045,7 @@ class AbTransferReceiveLine(models.Model):
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
-        if not self.env.context.get("skip_receive_branch_filter"):
+        if not self.env["ab_transfer_receive_header"]._skip_receive_branch_filter():
             try:
                 branch_sql_ids = self.env["ab_transfer_receive_header"]._get_allowed_branch_sql_ids()
             except Exception:
@@ -1034,7 +1059,7 @@ class AbTransferReceiveLine(models.Model):
         return super()._search(domain, offset=offset, limit=limit, order=order, **kwargs)
 
     def _check_current_branch_access(self):
-        if self.env.context.get("skip_receive_branch_filter"):
+        if self.env["ab_transfer_receive_header"]._skip_receive_branch_filter():
             return True
         branch_sql_ids = set(self.env["ab_transfer_receive_header"]._get_allowed_branch_sql_ids())
         forbidden = self.filtered(

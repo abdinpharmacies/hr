@@ -1826,3 +1826,33 @@ msgstr "لا يوجد حقل معرف خارجي مضبوط للموديل %(mod
 #: code:addons/ab_transfer/models/ab_transfer_header.py:0
 msgid "يوجد نقص في بيانات السطر %s. الحقل المطلوب: %s"
 msgstr "يوجد نقص في بيانات السطر %s. الحقل المطلوب: %s"
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_header_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer header."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل رأس تحويل."
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_line_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer line."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل سطر تحويل."
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_request_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer request."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل طلب تحويل."
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_request_line_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer request line."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل سطر طلب تحويل."
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_receive_header_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer receive header."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل رأس استلام تحويل."
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_receive_line_uniq_sync_identity
+msgid "Source DB and record ID must be unique per transfer receive line."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل سطر استلام تحويل."

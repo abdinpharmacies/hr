@@ -1,24 +1,29 @@
 Recent relevant commit:
 
-- Commit: `13b0285c5faa88562ad0551372e3393f2a478470`
-- Author: Mohamed Fawzy
-- Date: 2026-08-09
-- Original subject: ab_transfer/fix:   Store_Trans_h.stnh_notes = 4   Odoo Transfer: Transfer 123 to be in same line
+- Commit: `caf816a`
+- Author: emadco88
+- Date: 2026-09-03
+- Original subject: ab_transfer: clean report sync fields
 - User-facing changes:
-  - Established the previous baseline for this module before the report-server passive cleanup.
+  - Cleaned transfer passive models for report-server sync fields and optional payload handling.
 - Files changed:
+  - ab_transfer/__manifest__.py
+  - ab_transfer/changelog.d/2026-09-03-report-server-passive-cleanup.md
   - ab_transfer/models/ab_transfer_header.py
-  - ab_transfer/tests/test_transfer_type_notes.py
+  - ab_transfer/models/ab_transfer_line.py
+  - ab_transfer/models/ab_transfer_receive.py
+  - ab_transfer/models/ab_transfer_request.py
 
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Disabled Odoo log access on the six high-value transfer passive models so `create_uid` and `write_uid` come from the passive `ab_users` mirror fields.
+  - Added unique `(db_serial, rec_id)` constraints to transfer passive models so upload apply can safely upsert by source identity.
+  - Added `active` archive flags to transfer passive models so archive upload events mark rows inactive instead of failing queue jobs.
 - Files changed:
   - ab_transfer/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_transfer/__manifest__.py
+  - ab_transfer/i18n/ar.po
+  - ab_transfer/i18n/ar_001.po
   - ab_transfer/models/ab_transfer_header.py
   - ab_transfer/models/ab_transfer_line.py
   - ab_transfer/models/ab_transfer_receive.py
