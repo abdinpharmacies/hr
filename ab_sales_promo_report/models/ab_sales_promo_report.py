@@ -14,7 +14,6 @@ _logger = logging.getLogger(__name__)
 
 class AbSalesPromoReportLine(models.Model):
     _name = "ab_sales_promo_report_line"
-    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales Promo Report Line"
     _order = "invoice_date desc, invoice_eplus_serial desc, product_code"
     _rec_name = "invoice_eplus_serial"

@@ -15,10 +15,7 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Removed the shared passive mirror mixin from sales promo report lines because report-generated artifacts are outside the updated high-value passive list.
 - Files changed:
   - ab_sales_promo_report/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_sales_promo_report/__manifest__.py
   - ab_sales_promo_report/models/ab_sales_promo_report.py
