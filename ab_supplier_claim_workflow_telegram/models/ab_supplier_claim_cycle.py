@@ -126,6 +126,12 @@ class SupplierClaimCycle(models.Model):
         self._send_claim_created_telegram_notifications()
         return result
 
+    @api.model
+    def _supplier_claim_telegram_notifications_enabled(self):
+        return self.env['ir.config_parameter'].sudo().get_param(
+            'supplier_claim.telegram_notifications_enabled', 'False'
+        ).strip().lower() == 'true'
+
     def _get_claim_created_telegram_recipient_users(self):
         included_group_xmlids = [
             'ab_supplier_claim_cycle.supplier_claim_group_user',
@@ -153,7 +159,7 @@ class SupplierClaimCycle(models.Model):
         return (users - excluded_users).filtered('active')
 
     def _send_claim_created_telegram_notifications(self):
-        if config['test_enable']:
+        if not self._supplier_claim_telegram_notifications_enabled() or config['test_enable']:
             return False
         Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
         TelegramBot = self.env['ab_telegram_bot'].sudo()
@@ -183,7 +189,7 @@ class SupplierClaimCycle(models.Model):
         return result
 
     def _send_department_turn_telegram_notifications(self, stage_key):
-        if config['test_enable']:
+        if not self._supplier_claim_telegram_notifications_enabled() or config['test_enable']:
             return False
         dept_code = {
             'inventory': 'inventory',
@@ -216,6 +222,8 @@ class SupplierClaimCycle(models.Model):
 
     def _send_external_escalation_notification(self, manager, stage_key=None):
         self.ensure_one()
+        if not self._supplier_claim_telegram_notifications_enabled():
+            return False
         employee = self.env['ab_hr_employee'].sudo().search([
             ('user_id', '=', manager.id),
         ], limit=1)
