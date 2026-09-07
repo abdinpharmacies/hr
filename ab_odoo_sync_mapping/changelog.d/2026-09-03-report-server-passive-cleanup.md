@@ -22,17 +22,21 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Gave the Received Uploads `Partially Applied` status a dedicated `#2775A7` badge color with white text instead of sharing the pending warning color.
-  - Updated sync mapping rules so source `create_uid` and `write_uid` can target `ab_users` mirror fields.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-- Files changed:
+  - Added the shared passive mirror mixin to `ab_odoo_sync_branch_registry` and `ab_odoo_sync_upload_field_override`.
+  - Kept sync plumbing models outside this mixin pass while covering the two high-value mapping models from the classification.
+  - Blocked enabled apply mappings and upload field overrides from targeting computed, related, non-stored, or otherwise unwritable fields.
+  - Allowed disabled stale mappings to remain archived without blocking cleanup writes.
+  - Added sync-apply context flags so relation lookups and target writes bypass transfer receive branch/write guards during controlled upload apply.
+  - Restored sudo on internal sync target and relation model access after selecting the active apply user, so read-only passive report ACLs do not block mirror creation.
+  - Added unique `(db_serial, rec_id)` constraints to the high-value mapping passive models.
+  - Added an `active` archive flag to upload field overrides for passive archive compatibility.
+  - Fast-pathed archive uploads to write only sync metadata and `active=False`, and to no-op when the mirror row is already absent.
+
+Files changed:
   - ab_odoo_sync_mapping/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_odoo_sync_mapping/__manifest__.py
+  - ab_odoo_sync_mapping/i18n/ar.po
+  - ab_odoo_sync_mapping/i18n/ar_001.po
   - ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py
   - ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py
-  - ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py
   - ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py
   - ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py
-  - ab_odoo_sync_mapping/static/src/status_badge/status_badge.js
-  - ab_odoo_sync_mapping/static/src/status_badge/status_badge.scss
-  - ab_odoo_sync_mapping/views/mapping_views.xml

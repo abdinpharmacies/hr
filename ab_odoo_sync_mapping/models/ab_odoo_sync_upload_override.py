@@ -5,6 +5,8 @@ from odoo.tools.translate import _
 
 class AbOdooSyncUploadFieldOverride(models.Model):
     _name = "ab_odoo_sync_upload_field_override"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
+    _log_access = False
     _description = "AB Odoo Sync Upload Field Override"
     _order = "sequence, source_field_name"
 
@@ -17,6 +19,7 @@ class AbOdooSyncUploadFieldOverride(models.Model):
     )
     sequence = fields.Integer(default=10)
     sync_enabled = fields.Boolean(string="Sync Enabled", default=True, index=True)
+    active = fields.Boolean(default=True, index=True)
     source_field_name = fields.Char(string="Source Field")
     target_field_name = fields.Char(string="Target Field")
     mapping_type = fields.Selection(
@@ -47,6 +50,10 @@ class AbOdooSyncUploadFieldOverride(models.Model):
         "UNIQUE(upload_record_id, source_field_name)",
         "Only one field override is allowed per received upload and source field.",
     )
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per upload field override.",
+    )
 
     @api.constrains(
         "upload_record_id",
@@ -56,6 +63,7 @@ class AbOdooSyncUploadFieldOverride(models.Model):
         "relation_source_key",
         "relation_target_key",
         "required",
+        "sync_enabled",
     )
     def _check_override(self):
         stable_types = {"stable_many2one", "stable_many2many"}
@@ -66,6 +74,8 @@ class AbOdooSyncUploadFieldOverride(models.Model):
             "stable_many2many": "many2many",
         }
         for override in self:
+            if not override.sync_enabled:
+                continue
             upload = override.upload_record_id
             payload_fields = upload._payload_fields()
             if override.source_field_name not in payload_fields:
@@ -87,6 +97,21 @@ class AbOdooSyncUploadFieldOverride(models.Model):
             if not target_field:
                 raise ValidationError(
                     _("Target field %(field)s does not exist on %(model)s.")
+                    % {
+                        "field": override.target_field_name,
+                        "model": upload.target_model_name,
+                    }
+                )
+            if (
+                override.sync_enabled
+                and override.mapping_type != "ignore"
+                and not self.env["ab_odoo_sync_apply_profile"]._is_writable_sync_target_field(target_field)
+            ):
+                raise ValidationError(
+                    _(
+                        "Target field %(field)s on %(model)s cannot be enabled for sync because it is computed, "
+                        "related, non-stored, or has no inverse."
+                    )
                     % {
                         "field": override.target_field_name,
                         "model": upload.target_model_name,
@@ -116,4 +141,3 @@ class AbOdooSyncUploadFieldOverride(models.Model):
                 raise ValidationError(
                     _("Stable-key mappings require both relation key fields.")
                 )
-

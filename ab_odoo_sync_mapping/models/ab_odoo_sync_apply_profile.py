@@ -342,7 +342,16 @@ class AbOdooSyncApplyProfile(models.Model):
             return False
         if not getattr(source_field, "store", False) or not target_field.store:
             return False
-        return not (target_field.compute and not target_field.inverse)
+        return self._is_writable_sync_target_field(target_field)
+
+    @api.model
+    def _is_writable_sync_target_field(self, target_field):
+        return bool(
+            target_field
+            and target_field.store
+            and not (target_field.compute and not target_field.inverse)
+            and not (target_field.related and not target_field.inverse)
+        )
 
     @api.model
     def _payload_source_field_info(self, payload, target_model=False):
@@ -654,12 +663,15 @@ class AbOdooSyncFieldMapping(models.Model):
         "mapping_type",
         "relation_source_key",
         "relation_target_key",
+        "sync_enabled",
     )
     def _check_mapping(self):
         stable_types = {"stable_many2one", "stable_many2many"}
         for mapping in self:
             profile = mapping.profile_id
             if profile.apply_mode not in {"mirror_sync", "business_model"}:
+                continue
+            if not mapping.sync_enabled:
                 continue
             source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
             target_model = self.env[profile.target_model_name]
@@ -683,6 +695,21 @@ class AbOdooSyncFieldMapping(models.Model):
                 )
             source_field = source_model._fields.get(mapping.source_field_name) if source_model else False
             target_field = target_model._fields[mapping.target_field_name]
+            if (
+                mapping.sync_enabled
+                and mapping.mapping_type != "ignore"
+                and not self.env["ab_odoo_sync_apply_profile"]._is_writable_sync_target_field(target_field)
+            ):
+                raise ValidationError(
+                    _(
+                        "Target field %(field)s on %(model)s cannot be enabled for sync because it is computed, "
+                        "related, non-stored, or has no inverse."
+                    )
+                    % {
+                        "field": mapping.target_field_name,
+                        "model": profile.target_model_name,
+                    }
+                )
             if (
                 source_field
                 and source_field.type == "many2one"

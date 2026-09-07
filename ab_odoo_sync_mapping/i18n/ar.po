@@ -1171,3 +1171,24 @@ msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
 #~ msgstr ""
 #~ "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن نسخه كمرآة من "
 #~ "رفعات الفروع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
+msgid ""
+"Target field %(field)s on %(model)s cannot be enabled for sync because it is "
+"computed, related, non-stored, or has no inverse."
+msgstr ""
+"لا يمكن تفعيل مزامنة الحقل الهدف %(field)s في %(model)s لأنه محسوب أو مرتبط "
+"أو غير مخزن أو لا يحتوي على دالة عكسية."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_branch_registry_uniq_sync_identity
+msgid "Source DB and record ID must be unique per branch registration."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل تسجيل فرع."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_field_override_uniq_sync_identity
+msgid "Source DB and record ID must be unique per upload field override."
+msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل تجاوز حقل رفع."

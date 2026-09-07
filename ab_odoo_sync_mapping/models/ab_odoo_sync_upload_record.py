@@ -232,6 +232,13 @@ class AbOdooSyncUploadRecord(models.Model):
         self.ensure_one()
         return f"ab_odoo_sync_upload_record_apply:{self.id}:{apply_generation}"
 
+    @api.model
+    def _sync_apply_user(self):
+        admin = self.env.ref("base.user_admin", raise_if_not_found=False)
+        if admin and admin.active:
+            return admin
+        return self.env.user
+
     def _queue_apply_records(self, force=False):
         queued_count = 0
         now = fields.Datetime.now()
@@ -292,7 +299,7 @@ class AbOdooSyncUploadRecord(models.Model):
                     "apply_generation": apply_generation,
                 }
             )
-            record.with_delay(
+            record.with_user(record._sync_apply_user()).with_delay(
                 identity_key=record._queue_identity_key(apply_generation),
                 description=_("Apply uploaded sync record %(record_id)s") % {"record_id": record.id},
                 max_retries=0,
@@ -409,7 +416,9 @@ class AbOdooSyncUploadRecord(models.Model):
             return self.env[self.target_model_name].with_context(
                 active_test=False,
                 skip_ab_odoo_sync_upload=True,
-            ).sudo()
+                skip_receive_branch_filter=True,
+                receive_sync=True,
+            ).with_user(self._sync_apply_user()).sudo()
         except KeyError as ex:
             raise ValueError(_("Target sync model %(model)s does not exist.") % {"model": self.target_model_name}) from ex
 
@@ -443,7 +452,9 @@ class AbOdooSyncUploadRecord(models.Model):
         relation_model = self.env[target_field.comodel_name].with_context(
             active_test=False,
             skip_ab_odoo_sync_upload=True,
-        ).sudo()
+            skip_receive_branch_filter=True,
+            receive_sync=True,
+        ).with_user(self._sync_apply_user()).sudo()
         if mapping.mapping_type in {"sync_many2one", "sync_many2many"}:
             source_rec_id = int(reference.get("id") or 0)
             if source_rec_id <= 0:
@@ -541,7 +552,7 @@ class AbOdooSyncUploadRecord(models.Model):
             reference,
         )
         try:
-            with self.env.cr.savepoint():
+            with self.env.cr.savepoint(flush=False):
                 return relation_model.create(vals)
         except Exception:
             relation = relation_model.search(
@@ -717,6 +728,15 @@ class AbOdooSyncUploadRecord(models.Model):
             if profile.apply_mode == "mirror_sync" and field_name in target_model._fields:
                 vals[field_name] = value
 
+        if self.source_operation == "archive":
+            if "active" not in target_model._fields:
+                raise ValueError(
+                    _("Target sync model %(model)s cannot archive records because it has no active field.")
+                    % {"model": self.target_model_name}
+                )
+            vals["active"] = False
+            return vals, sorted(set(payload_fields) - {"id", "active"})
+
         effective_mappings = self._effective_mappings()
         enabled_mappings = [
             mapping for mapping in effective_mappings if mapping.sync_enabled
@@ -739,6 +759,8 @@ class AbOdooSyncUploadRecord(models.Model):
 
             value = payload_fields[mapping.source_field_name]
             target_field = target_model._fields[mapping.target_field_name]
+            if not self.env["ab_odoo_sync_apply_profile"]._is_writable_sync_target_field(target_field):
+                continue
             if mapping.mapping_type == "direct":
                 if target_field.type in {"many2one", "one2many", "many2many"}:
                     raise ValueError(
@@ -763,14 +785,6 @@ class AbOdooSyncUploadRecord(models.Model):
                     for reference in value
                 ]
                 vals[mapping.target_field_name] = [(6, 0, relation_ids)]
-
-        if self.source_operation == "archive":
-            if "active" not in target_model._fields:
-                raise ValueError(
-                    _("Target sync model %(model)s cannot archive records because it has no active field.")
-                    % {"model": self.target_model_name}
-                )
-            vals["active"] = False
 
         skipped_fields = sorted(
             set(payload_fields) - handled_source_fields - {"id"}
@@ -802,8 +816,10 @@ class AbOdooSyncUploadRecord(models.Model):
         if existing:
             existing.write(vals)
             return existing
+        if self.source_operation == "archive":
+            return existing
         try:
-            with self.env.cr.savepoint():
+            with self.env.cr.savepoint(flush=False):
                 return target_model.create(vals)
         except Exception:
             existing = target_model.search(
@@ -863,9 +879,12 @@ class AbOdooSyncUploadRecord(models.Model):
             return
         if self.status == "not_sync":
             return
+        sync_user = self._sync_apply_user()
+        if sync_user and self.env.uid != sync_user.id:
+            self = self.with_user(sync_user)
 
         try:
-            with self.env.cr.savepoint():
+            with self.env.cr.savepoint(flush=False):
                 profile = self.apply_profile_id
                 if not profile:
                     self.write({"status": "pending_mapping", "error_message": False})
