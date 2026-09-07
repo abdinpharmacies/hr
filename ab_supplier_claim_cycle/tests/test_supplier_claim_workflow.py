@@ -1,4 +1,4 @@
-from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.exceptions import AccessError, ValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -64,23 +64,15 @@ class TestSupplierClaimWorkflow(TransactionCase):
 
     def _department_accept(self, claim, group):
         self._set_workflow_group(group)
-        claim.with_user(self.workflow_user).action_accept()
+        return claim.with_user(self.workflow_user).action_accept()
 
-    def _department_finish(self, claim, group):
-        self._set_workflow_group(group)
-        claim.with_user(self.workflow_user).action_finish()
-
-    def _department_accept_and_finish(self, claim, group):
-        self._department_accept(claim, group)
-        self._department_finish(claim, group)
-
-    def _all_departments_finish(self, claim):
+    def _all_departments_accept(self, claim):
         groups = [self.group_inventory, self.group_purchase, self.group_suppliers]
         if claim.supplier_type == 'withholding_tax':
             groups.append(self.group_tax_accounts)
         groups.append(self.group_bank_acc)
         for group in groups:
-            self._department_accept_and_finish(claim, group)
+            self._department_accept(claim, group)
 
     def test_secretarial_starts_cycle(self):
         claim = self._create_claim()
@@ -101,9 +93,9 @@ class TestSupplierClaimWorkflow(TransactionCase):
 
         self._department_accept(claim, self.group_purchase)
         self.assertEqual(claim.pur_decision, 'accepted')
-        self.assertEqual(claim.status, 'inventory')
+        self.assertEqual(claim.status, 'suppliers')
 
-    def test_accept_alone_does_not_advance(self):
+    def test_accept_advances_after_required_departments_accept(self):
         claim = self._create_claim()
         self._start_cycle(claim)
 
@@ -111,37 +103,31 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self._department_accept(claim, self.group_purchase)
         self._department_accept(claim, self.group_suppliers)
         self._department_accept(claim, self.group_bank_acc)
-        # All accepted but none finished — should NOT advance
-        self.assertEqual(claim.status, 'inventory')
-
-    def test_finish_requires_accept_first(self):
-        claim = self._create_claim()
-        self._start_cycle(claim)
-
-        self._set_workflow_group(self.group_inventory)
-        with self.assertRaises(UserError):
-            claim.with_user(self.workflow_user).action_finish()
-
-    def test_all_finish_advances_to_sign_check(self):
-        claim = self._create_claim()
-        self._start_cycle(claim)
-        self._all_departments_finish(claim)
         self.assertEqual(claim.status, 'sign_check')
 
-    def test_withholding_tax_supplier_requires_tax_accounts_finish(self):
+    def test_all_department_accepts_advance_to_sign_check(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+        self._all_departments_accept(claim)
+        self.assertEqual(claim.status, 'sign_check')
+
+    def test_withholding_tax_supplier_requires_tax_accounts_accept(self):
         self.supplier.with_context(replication=True).sudo().write({'supplier_type': 'withholding_tax'})
         claim = self._create_claim()
         self._start_cycle(claim)
 
-        for group in (self.group_inventory, self.group_purchase, self.group_suppliers, self.group_bank_acc):
-            self._department_accept_and_finish(claim, group)
+        for group in (self.group_inventory, self.group_purchase, self.group_suppliers):
+            self._department_accept(claim, group)
 
-        self.assertEqual(claim.status, 'inventory')
+        self.assertEqual(claim.status, 'tax_accounts')
         self.assertEqual(claim.tax_decision, 'pending')
 
-        self._department_accept_and_finish(claim, self.group_tax_accounts)
+        self._department_accept(claim, self.group_tax_accounts)
         self.assertEqual(claim.tax_decision, 'accepted')
         self.assertTrue(claim.tax_finished)
+
+        self.assertEqual(claim.status, 'bank_acc')
+        self._department_accept(claim, self.group_bank_acc)
         self.assertEqual(claim.status, 'sign_check')
 
     def test_non_withholding_supplier_skips_tax_accounts(self):
@@ -149,16 +135,16 @@ class TestSupplierClaimWorkflow(TransactionCase):
         claim = self._create_claim()
         self._start_cycle(claim)
 
-        self._all_departments_finish(claim)
+        self._all_departments_accept(claim)
 
         self.assertEqual(claim.status, 'sign_check')
         self.assertFalse(claim.stage_history_ids.filtered(lambda h: h.stage == 'tax_accounts'))
 
-    def test_department_finish_sets_finished_flag(self):
+    def test_department_accept_sets_finished_flag(self):
         claim = self._create_claim()
         self._start_cycle(claim)
 
-        self._department_accept_and_finish(claim, self.group_inventory)
+        self._department_accept(claim, self.group_inventory)
         self.assertTrue(claim.inv_finished)
         self.assertFalse(claim.pur_finished)
         self.assertEqual(claim.status, 'inventory')
@@ -215,7 +201,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
     def test_cheque_delivery_documents_required(self):
         claim = self._create_claim()
         self._start_cycle(claim)
-        self._all_departments_finish(claim)
+        self._all_departments_accept(claim)
         self.assertEqual(claim.status, 'sign_check')
 
         wizard = self.env['ab_check_delivery_wizard'].with_user(self.workflow_user).create({
