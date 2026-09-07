@@ -4,7 +4,7 @@
         <menuitem
                 id="menu_ab_employee_access_sales_root"
                 name="POS HR"
-                parent="ab_sales.config_sub_menu"
+                parent="ab_sales.sales_menu_root"
                 sequence="40"
                 groups="ab_employee_access_sales.group_ab_employee_access_sales_manager,ab_employee_access_sales.group_ab_employee_access_sales_auditor"
         />

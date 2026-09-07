@@ -6,7 +6,14 @@ class AbSalesHrOperationLog(models.Model):
     _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales HR POS Operation Log"
     _order = "operation_at desc, id desc"
+    _log_access = False
 
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per POS operation log.",
+    )
+
+    active = fields.Boolean(default=True, index=True)
     session_id = fields.Many2one("ab_employee_access_sales_pos_session", index=True, ondelete="set null")
     shift_id = fields.Many2one("ab_employee_access_sales_shift", index=True, ondelete="set null")
     store_id = fields.Many2one("ab_store", index=True, ondelete="set null")

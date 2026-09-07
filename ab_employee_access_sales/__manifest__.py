@@ -5,10 +5,9 @@
     "category": "AbdinSupplyChain",
     "summary": "Branch service-user POS with employee PIN, roles, shifts, and audit logs.",
     "depends": [
-        "web",
         "ab_odoo_sync",
         "ab_widgets",
-        "ab_sales_cashier",
+        "ab_sales",
         "ab_employee_access",
     ],
     "data": [
@@ -19,23 +18,9 @@
         "views/ab_employee_access_sales_shift_views.xml",
         "views/ab_employee_access_sales_pos_session_views.xml",
         "views/ab_employee_access_sales_operation_log_views.xml",
-        "views/ab_store_views.xml",
         "views/ab_sales_header_views.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "ab_employee_access_sales/static/src/cashier/**/*.js",
-            "ab_employee_access_sales/static/src/cashier/**/*.xml",
-            "ab_employee_access_sales/static/src/cashier/**/*.scss",
-            "ab_employee_access_sales/static/src/pos/**/*.js",
-            "ab_employee_access_sales/static/src/pos/**/*.xml",
-            "ab_employee_access_sales/static/src/pos/**/*.scss",
-            "ab_employee_access_sales/static/src/sales_return/**/*.js",
-            "ab_employee_access_sales/static/src/sales_return/**/*.xml",
-            "ab_employee_access_sales/static/src/sales_return/**/*.scss",
-        ],
-    },
     "installable": True,
-    "auto_install": True,
+    "auto_install": False,
     "application": False,
 }

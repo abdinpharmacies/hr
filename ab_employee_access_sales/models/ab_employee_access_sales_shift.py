@@ -6,8 +6,15 @@ class AbSalesHrShift(models.Model):
     _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "Sales HR POS Shift"
     _order = "start_at desc, id desc"
+    _log_access = False
+
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per POS shift.",
+    )
 
     name = fields.Char(compute="_compute_name", store=True)
+    active = fields.Boolean(default=True, index=True)
     employee_id = fields.Many2one("ab_hr_employee", index=True)
     role_id = fields.Many2one("ab_employee_access_sales_role", index=True)
     service_user_id = fields.Many2one("ab_users", index=True)
@@ -37,17 +44,3 @@ class AbSalesHrShift(models.Model):
             employee_name = rec.employee_id.display_name or rec.employee_id.name or "-"
             store_name = rec.store_id.display_name or rec.store_id.name or "-"
             rec.name = f"{employee_name} / {store_name} / {rec.start_at or ''}"
-
-    def mark_activity(self):
-        self.write({"last_activity_at": fields.Datetime.now()})
-        return True
-
-    def close_shift(self, reason="logout"):
-        open_shifts = self.filtered(lambda shift: shift.state == "open")
-        if open_shifts:
-            open_shifts.write({
-                "state": "closed",
-                "end_at": fields.Datetime.now(),
-                "close_reason": reason,
-            })
-        return True

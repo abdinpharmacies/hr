@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import fields, models
 
 
 class AbSalesHeader(models.Model):
@@ -13,12 +13,3 @@ class AbSalesHeader(models.Model):
     pos_hr_device_uid = fields.Char(copy=False, index=True, readonly=True)
     pos_hr_device_name = fields.Char(copy=False, readonly=True)
     pos_hr_device_ip = fields.Char(copy=False, index=True, readonly=True)
-
-    @api.model
-    def _get_eplus_emp_id(self, employee=False):
-        token = str(self.env.context.get("ab_return_session_token") or "").strip()
-        if token and not employee:
-            session = self.env["ab_employee_access_sales_pos_api"]._get_session(token, states=["active", "locked"], required=False)
-            if session and session.employee_id:
-                employee = session.employee_id
-        return super()._get_eplus_emp_id(employee=employee)
