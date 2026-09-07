@@ -3,6 +3,8 @@ from odoo import api, fields, models, _
 
 class AbProductDoctorPrescription(models.Model):
     _name = "ab_product_doctor_prescription"
+    _inherit = "ab_odoo_sync_passive_mirror_mixin"
+    _log_access = False
     _description = "Doctor Prescription Product"
     _order = "doctor_id, product_id"
     _rec_name = "name"

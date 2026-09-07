@@ -3,7 +3,7 @@
     "version": "19.0.1.0.0",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
-    "depends": ["ab_sales", "ab_odoo_connect", "ab_odoo_replication"],
+    "depends": ["ab_sales", "ab_odoo_sync", "ab_odoo_connect", "ab_odoo_replication"],
     "data": [
         "security/ir.model.access.csv",
         "data/ab_doctor_cron.xml",

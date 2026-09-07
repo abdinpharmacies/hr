@@ -13,7 +13,9 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
+  - Added the shared passive mirror mixin to `ab_product_doctor_prescription` because it is now classified as a high-value passive model.
+  - Declared the required `ab_odoo_sync` dependency for that mixin.
 - Files changed:
   - ab_sales_doctor/changelog.d/2026-09-03-report-server-passive-cleanup.md
+  - ab_sales_doctor/__manifest__.py
   - ab_sales_doctor/models/ab_product_doctor_prescription.py
