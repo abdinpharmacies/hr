@@ -9,6 +9,7 @@
             <field name="inherit_id" ref="ab_supplier_claim_cycle.invoice_view_tree"/>
             <field name="arch" type="xml">
                 <list position="attributes">
+                    <attribute name="default_order">write_date desc, id desc</attribute>
                     <attribute name="class">scc-list-view</attribute>
                     <attribute name="decoration-danger">status == 'closed' and department_decision == 'rejected'</attribute>
                     <attribute name="decoration-bf">status == 'secretarial'</attribute>
