@@ -93,9 +93,6 @@
                         <button name="action_defer" type="object" string="Defer" class="btn-warning"
                                 groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
-                        <button name="action_finish" type="object" string="Finish" class="btn-success"
-                                groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_workflow.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_finish"/>
                         <button name="action_done" type="object" string="Start the Cycle"
                                 class="btn-warning"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -112,10 +109,6 @@
                                 class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="(status not in ('supplier_notification', 'delivery')) or supplier_notified == False or not can_current_user_act"/>
-                        <button name="action_secretarial_force_next" type="object" string="Move to Next Stage"
-                                class="btn-info"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status in ('closed', 'secretarial') or not can_secretarial_override"/>
                         <button name="action_admin_force_next" type="object" string="Admin Force Next"
                                 class="btn-danger"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -147,7 +140,6 @@
 
                         <field name="can_current_user_edit" invisible="1"/>
                         <field name="can_current_user_act" invisible="1"/>
-                        <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="can_edit_inventory_notes" invisible="1"/>
                         <field name="can_edit_purchase_notes" invisible="1"/>

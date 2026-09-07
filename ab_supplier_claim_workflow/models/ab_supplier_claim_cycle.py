@@ -276,7 +276,6 @@ class SupplierClaimCycle(models.Model):
     can_current_user_act = fields.Boolean(compute='_compute_workflow_access')
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
     can_edit_documents = fields.Boolean(compute='_compute_workflow_access')
-    can_finish = fields.Boolean(compute='_compute_workflow_access')
     can_edit_inventory_notes = fields.Boolean(compute='_compute_department_note_access')
     can_edit_purchase_notes = fields.Boolean(compute='_compute_department_note_access')
     can_edit_suppliers_notes = fields.Boolean(compute='_compute_department_note_access')
@@ -1067,11 +1066,6 @@ class SupplierClaimCycle(models.Model):
         'sup_decision',
         'tax_decision',
         'bank_decision',
-        'inv_finished',
-        'pur_finished',
-        'sup_finished',
-        'tax_finished',
-        'bank_finished',
         'has_blocking_issue',
     )
     def _compute_workflow_access(self):
@@ -1080,7 +1074,6 @@ class SupplierClaimCycle(models.Model):
         stage_groups = self._get_stage_group_xmlids()
         for rec in self:
             can_handle = False
-            can_finish = False
             if rec.status != 'closed':
                 if rec.status in DEPARTMENT_STAGES:
                     for stage_key, decision_field in rec._get_parallel_decision_fields():
@@ -1089,19 +1082,11 @@ class SupplierClaimCycle(models.Model):
                             if rec[decision_field] != 'accepted':
                                 can_handle = True
                                 break
-                    for stage_key, decision_field in rec._get_parallel_decision_fields():
-                        group_xmlid = stage_groups.get(stage_key)
-                        if group_xmlid and self.env.user.has_group(group_xmlid):
-                            if rec[decision_field] == 'accepted' and not rec[FINISHED_FIELD_MAP[stage_key]]:
-                                can_finish = True
-                                break
                     if rec.has_blocking_issue and not is_admin and not is_secretarial:
                         can_handle = False
-                        can_finish = False
                 else:
                     can_handle = rec._user_can_handle_stage(rec.status, stage_groups)
             rec.can_current_user_act = can_handle
-            rec.can_finish = can_finish
             rec.can_secretarial_override = rec.status != 'closed' and (is_admin or is_secretarial)
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
             rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
@@ -1422,13 +1407,18 @@ class SupplierClaimCycle(models.Model):
         return super().write(vals)
 
     def action_accept(self):
+        action = False
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status in DEPARTMENT_STAGES:
-                rec._set_parallel_department_decision('accepted')
+                stage_key = rec._set_parallel_department_decision('accepted')
                 if rec.status == 'tax_accounts' and rec._requires_tax_accounts_stage():
                     rec._calculate_and_freeze_tax()
-                rec._try_advance_from_parallel()
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    FINISHED_FIELD_MAP[stage_key]: True,
+                })
+                rec.sudo().with_context(supplier_claim_internal_write=True)._try_advance_from_parallel()
+                action = rec._action_open_supplier_claim_list()
             else:
                 rec.with_context(supplier_claim_internal_write=True).write({
                     'department_decision': 'accepted',
@@ -1436,6 +1426,7 @@ class SupplierClaimCycle(models.Model):
                 })
                 rec._create_stage_history(rec.status, 'accepted')
                 rec._notify_secretarial_department_accepted()
+        return action
 
     def action_reject(self):
         for rec in self:
@@ -1568,32 +1559,6 @@ class SupplierClaimCycle(models.Model):
         })
         return values
 
-    def action_finish(self):
-        action = False
-        for rec in self:
-            rec._check_can_act_current_stage()
-            if rec.status not in DEPARTMENT_STAGES:
-                raise UserError(_("Finish is only available during department review stages."))
-            stage_groups = rec._get_stage_group_xmlids()
-            finished = False
-            for stage_key, decision_field in rec._get_parallel_decision_fields():
-                group_xmlid = stage_groups.get(stage_key)
-                if group_xmlid and self.env.user.has_group(group_xmlid):
-                    if rec[decision_field] == 'pending':
-                        raise UserError(_("You must Accept or Reject before finishing."))
-                    if rec[decision_field] == 'deferred':
-                        raise UserError(_("Deferred requests cannot be finished until they are accepted or rejected."))
-                    rec.with_context(supplier_claim_internal_write=True).write({
-                        FINISHED_FIELD_MAP[stage_key]: True,
-                    })
-                    finished = True
-                    break
-            if not finished:
-                raise AccessError(_("You are not authorized to finish this stage."))
-            rec.sudo().with_context(supplier_claim_internal_write=True)._try_advance_from_parallel()
-            action = rec._action_open_supplier_claim_list()
-        return action
-
     def _missing_info_action(self, message):
         return {
             'type': 'ir.actions.act_window',
@@ -1687,7 +1652,7 @@ class SupplierClaimCycle(models.Model):
                             'reason': dept_reason,
                         }
                     )
-                return
+                return stage_key
         raise AccessError(_("You are not authorized to act on this claim."))
 
     def _try_advance_from_parallel(self):
@@ -1811,24 +1776,6 @@ class SupplierClaimCycle(models.Model):
                     'context': {'default_claim_id': rec.id},
                 }
             rec._move_to_next_stage()
-
-    def action_secretarial_force_next(self):
-        if not self._is_supplier_claim_secretarial() and not self._is_supplier_claim_admin():
-            raise AccessError(_("Only Secretarial or Admin users can override the workflow."))
-        for rec in self:
-            if rec.status in DEPARTMENT_STAGES:
-                rec._reset_parallel_decisions()
-                rec.with_context(supplier_claim_internal_write=True).write({
-                    'status': 'sign_check',
-                    'department_decision': 'pending',
-                    'delay_reason': False,
-                    'stage_escalated': False,
-                    'escalation_missing_manager': False,
-                    'assigned_escalation_user': False,
-                })
-                rec._create_stage_history('sign_check', 'pending')
-            else:
-                rec._move_to_next_stage()
 
     def _reset_parallel_decisions(self):
         self.ensure_one()
