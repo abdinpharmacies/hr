@@ -1,4 +1,6 @@
 from odoo import _, api, fields, models
+from odoo.exceptions import AccessError
+from .workflow_guard import WORKFLOW_WRITE_TOKEN
 
 
 class SupplierClaimStageHistory(models.Model):
@@ -23,6 +25,7 @@ class SupplierClaimStageHistory(models.Model):
     decision = fields.Selection([
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
+        ('skipped', 'Skipped'),
         ('rejected', 'Rejected'),
         ('deferred', 'Deferred'),
         ('escalated', 'Escalated'),
@@ -31,3 +34,20 @@ class SupplierClaimStageHistory(models.Model):
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
     action_date = fields.Datetime(string='Action Date', default=fields.Datetime.now)
     notes = fields.Text(string='Notes')
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if any(vals.get('decision') == 'skipped' for vals in vals_list):
+            if self.env.context.get('supplier_claim_internal_write') is not WORKFLOW_WRITE_TOKEN:
+                raise AccessError(_("Skip history can only be created by the skip workflow."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get('decision') == 'skipped' or self.filtered(lambda record: record.decision == 'skipped'):
+            raise AccessError(_("Completed skip history cannot be changed or deleted."))
+        return super().write(vals)
+
+    def unlink(self):
+        if self.filtered(lambda record: record.decision == 'skipped'):
+            raise AccessError(_("Completed skip history cannot be changed or deleted."))
+        return super().unlink()

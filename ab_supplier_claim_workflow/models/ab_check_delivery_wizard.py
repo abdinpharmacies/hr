@@ -1,5 +1,6 @@
 from odoo import _, fields, models
 from odoo.exceptions import ValidationError
+from .workflow_guard import WORKFLOW_WRITE_TOKEN
 
 
 class CheckDeliveryWizard(models.TransientModel):
@@ -20,6 +21,9 @@ class CheckDeliveryWizard(models.TransientModel):
 
     def action_confirm(self):
         self.ensure_one()
+        self.claim_id._check_can_act_current_stage()
+        if self.claim_id.status != 'sign_check':
+            raise ValidationError(_('Cheque confirmation is only available at Sign Check.'))
         if not self.check_delivery_status:
             raise ValidationError(_('Cheque Delivery Status is required.'))
         vals = {
@@ -29,6 +33,6 @@ class CheckDeliveryWizard(models.TransientModel):
             vals['sub_delivery_status'] = 'shipped'
         else:
             vals['sub_delivery_status'] = False
-        self.claim_id.with_context(supplier_claim_internal_write=True).write(vals)
+        self.claim_id.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write(vals)
         self.claim_id._move_to_next_stage()
         return {'type': 'ir.actions.act_window_close'}
