@@ -15,11 +15,8 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Removed the shared passive mirror mixin from the local sync test mirror base because test models are outside the updated high-value passive list.
+  - Kept the test-specific mirror metadata fields declared locally for sync test coverage.
 - Files changed:
   - ab_test_sync/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_test_sync/__manifest__.py
-  - ab_test_sync/models/ab_test_customer_reference_sync.py
   - ab_test_sync/models/ab_test_sync_models.py

@@ -3,7 +3,6 @@ from odoo import fields, models
 
 class AbTestSyncMixin(models.AbstractModel):
     _name = "ab_test_sync_mixin"
-    _inherit = "ab_odoo_sync_passive_mirror_mixin"
     _description = "AB Sync Test Mirror Mixin"
 
     db_serial = fields.Integer(string="DB Serial", required=False, readonly=True, index=True)
