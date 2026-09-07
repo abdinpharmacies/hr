@@ -12,7 +12,6 @@ _logger = logging.getLogger(__name__)
 
 class StockRecyclingLine(models.Model):
     _name = 'ab_stock_recycling_line'
-    _inherit = 'ab_odoo_sync_passive_mirror_mixin'
     _description = 'ab_stock_recycling_line'
     header_id = fields.Many2one('ab_stock_recycling_header', ondelete='cascade', index=True)
     store_id = fields.Many2one('ab_store', index=True)

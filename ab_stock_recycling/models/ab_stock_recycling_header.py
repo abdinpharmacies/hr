@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class StockRecycling(models.Model):
     _name = 'ab_stock_recycling_header'
     _description = 'ab_stock_recycling_header'
-    _inherit = ['ab_eplus_connect', 'ab_data_from_excel', 'abdin_et.extra_tools', 'ab_odoo_sync_passive_mirror_mixin']
+    _inherit = ['ab_eplus_connect', 'ab_data_from_excel', 'abdin_et.extra_tools']
     _rec_name = 'name'
     _order = 'id DESC'
 

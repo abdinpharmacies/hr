@@ -3,7 +3,6 @@ from odoo import api, fields, models, _
 
 class StockDist(models.Model):
     _name = 'ab_stock_recycling_dist'
-    _inherit = 'ab_odoo_sync_passive_mirror_mixin'
     _description = 'ab_stock_recycling_dist'
 
     to_store_id = fields.Many2one('ab_store')

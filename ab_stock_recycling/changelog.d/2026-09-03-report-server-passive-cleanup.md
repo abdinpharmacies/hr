@@ -41,12 +41,10 @@ Recent relevant commit:
 Current changes before commit:
 
 - User-facing changes:
-  - Added passive sync metadata inheritance for classified high-value report facts where applicable.
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-  - Declared new module dependencies required by the cleaned report-server model schema.
+  - Removed the shared passive mirror mixin from stock recycling header, line, need, and distribution models.
+  - Kept stock recycling outside the high-value passive mixin coverage because it is not in the updated classification list.
 - Files changed:
   - ab_stock_recycling/changelog.d/2026-09-03-report-server-passive-cleanup.md
-  - ab_stock_recycling/__manifest__.py
   - ab_stock_recycling/models/ab_stock_recycling_dist.py
   - ab_stock_recycling/models/ab_stock_recycling_header.py
   - ab_stock_recycling/models/ab_stock_recycling_line.py

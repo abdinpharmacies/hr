@@ -10,7 +10,6 @@ _logger = logging.getLogger(__name__)
 
 class StockNeed(models.Model):
     _name = 'ab_stock_recycling_need'
-    _inherit = 'ab_odoo_sync_passive_mirror_mixin'
     _description = 'ab_stock_recycling_need'
     _order = 'qty DESC'
 
