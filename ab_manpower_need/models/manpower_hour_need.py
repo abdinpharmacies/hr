@@ -236,24 +236,9 @@ class ManpowerHourNeed(models.Model):
 
     def _get_actual_employees(self):
         self.ensure_one()
-        employees = self.env['ab_hr_job_occupied'].sudo().search(
+        return self.env['ab_hr_job_occupied'].sudo().search(
             self._get_actual_workforce_domain()
         ).mapped('employee_id')
-        if not self.workplace:
-            return employees
-
-        workplace = self.workplace.sudo()
-        if workplace.user_id:
-            employees |= workplace.user_id.ab_employee_ids.sudo()
-
-        employee_domain = [
-            ('department_id', '=', self.workplace.id),
-            ('termination_date', '=', False),
-            ('issue_date', '=', False),
-        ]
-        if self.job_title:
-            employee_domain.append(('job_id', '=', self.job_title.id))
-        return employees | self.env['ab_hr_employee'].sudo().search(employee_domain)
 
     def action_fetch_employees(self):
         self.ensure_one()
