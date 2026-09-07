@@ -20,6 +20,8 @@
 - Replace the incorrect `CONTRACT_100` fixture with the corrected source invoice and expected results.
 - Add JSON-backed technical POS employee session fixtures for databases that have `ab_employee_access_sales` installed.
 - Declare `ab_employee_access_sales` as an explicit dependency and force a POS HR session token before `pos_submit()`.
+- Update the replica fixture-create guard for the current replication override architecture.
+- Declare `ab_odoo_replication` as a direct dependency of the regression module.
 
 Files changed:
 
