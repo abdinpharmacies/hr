@@ -1,14 +1,15 @@
 {
     'name': 'Supplier Claim Workflow Telegram',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'license': 'LGPL-3',
     'category': 'AbdinClaimCycle',
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
     'application': False,
-    'depends': ['ab_supplier_claim_cycle', 'ab_telegram_bot'],
+    'depends': ['ab_supplier_claim_cycle', 'ab_telegram_bot', 'queue_job'],
     'data': [
         'security/ir.model.access.csv',
+        'data/queue_job_data.xml',
         'data/cron_telegram_updates.xml',
         'views/ab_supplier_claim_cycle_views.xml',
         'views/ab_supplier_claim_escalation_views.xml',

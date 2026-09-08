@@ -572,3 +572,22 @@ msgstr "مركز التكلفة"
 #. module: ab_supplier_claim_workflow_telegram
 msgid "Telegram Account"
 msgstr "حساب تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Claim Telegram delivery requires a running background job."
+msgstr ""
+"يتطلب إرسال إشعار تيليجرام لمطالبة المورد مهمة قيد التشغيل في الخلفية."
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Claim Telegram notification"
+msgstr "إشعار تيليجرام لمطالبة المورد"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "Telegram delivery failed; the background job will retry."
+msgstr "تعذر إرسال رسالة تيليجرام؛ ستعيد المهمة المحاولة في الخلفية."
