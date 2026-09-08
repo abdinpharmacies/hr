@@ -1,0 +1,23 @@
+<odoo>
+    <record id="ab_sales_return_branch_api_view" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.branch_api</field>
+        <field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_return_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sales_return_id']" position="after">
+                <field name="branch_return_id" groups="base.group_system" invisible="not branch_return_id"/>
+                <field name="branch_request_token" groups="base.group_system" invisible="not branch_return_id"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="ab_sales_rpc_log_operation_view" model="ir.ui.view">
+        <field name="name">ab_sales_callcenter_rpc_log.operation</field>
+        <field name="model">ab_sales_callcenter_rpc_log</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_callcenter_rpc_log_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="name" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

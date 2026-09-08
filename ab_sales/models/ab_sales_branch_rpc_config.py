@@ -8,7 +8,7 @@ from xmlrpc import client
 from cryptography.fernet import Fernet, InvalidToken
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import config
 
 
@@ -202,17 +202,26 @@ class AbSalesBranchRpcConfig(models.Model):
 
     def _execute_kw(self, model_name, method, args=None, kwargs=None):
         self.ensure_one()
-        uid, password = self._authenticate()
-        with self._socket_timeout():
-            return self._rpc_object_proxy().execute_kw(
-                self.rpc_db,
-                uid,
-                password,
-                model_name,
-                method,
-                args or [],
-                kwargs or {},
-            )
+        try:
+            uid, password = self._authenticate()
+            with self._socket_timeout():
+                return self._rpc_object_proxy().execute_kw(
+                    self.rpc_db,
+                    uid,
+                    password,
+                    model_name,
+                    method,
+                    args or [],
+                    kwargs or {},
+                )
+        except client.Fault as error:
+            # Odoo /xmlrpc/2 separates business/access messages from server tracebacks.
+            # Restore handled exceptions so the web client shows the branch message.
+            if error.faultCode == 4:
+                raise AccessError(error.faultString) from None
+            if error.faultCode in (2, 3):
+                raise UserError(error.faultString) from None
+            raise
 
     def _remote_store_domain(self):
         self.ensure_one()
@@ -225,46 +234,23 @@ class AbSalesBranchRpcConfig(models.Model):
     def action_test_connection(self):
         for record in self:
             try:
-                uid, password = record._authenticate()
-                with record._socket_timeout():
-                    object_proxy = record._rpc_object_proxy()
-                    access_allowed = object_proxy.execute_kw(
-                        record.rpc_db,
-                        uid,
-                        password,
-                        "res.users",
-                        "check_access_rights",
-                        ["read"],
-                        {"raise_exception": False},
-                    )
-                    if not access_allowed:
-                        raise UserError(_("Authenticated, but remote user does not have read access."))
-                    stores = object_proxy.execute_kw(
-                        record.rpc_db,
-                        uid,
-                        password,
-                        "ab_store",
-                        "search_read",
-                        [record._remote_store_domain()],
-                        {"fields": ["id", "name", "code", "eplus_serial"], "limit": 1},
-                    )
-                if not stores:
-                    raise UserError(_("Connection works, but matching branch store was not found on remote Odoo."))
-                remote_store = stores[0]
+                capabilities = record._execute_kw(
+                    'ab_branch_api', 'get_capabilities', [int(record.store_id.eplus_serial)])
+                if (capabilities.get('version') != 1
+                        or capabilities.get('store_serial') != record.store_id.eplus_serial):
+                    raise UserError(_("The branch API version or store does not match."))
                 record.write({
-                    "last_test_state": "success",
-                    "last_test_message": _("Connection succeeded. Remote store matched."),
-                    "last_tested_at": fields.Datetime.now(),
-                    "remote_store_id": int(remote_store.get("id") or 0),
-                    "remote_store_name": remote_store.get("name") or "",
+                    'last_test_state': 'success',
+                    'last_test_message': _("Connection succeeded. Remote store matched."),
+                    'last_tested_at': fields.Datetime.now(),
+                    'remote_store_id': int(capabilities.get('branch_store_id') or 0),
+                    'remote_store_name': capabilities.get('store_name') or '',
                 })
             except Exception as error:
                 record.write({
-                    "last_test_state": "error",
-                    "last_test_message": str(error),
-                    "last_tested_at": fields.Datetime.now(),
-                    "remote_store_id": 0,
-                    "remote_store_name": "",
+                    'last_test_state': 'error', 'last_test_message': str(error),
+                    'last_tested_at': fields.Datetime.now(),
+                    'remote_store_id': 0, 'remote_store_name': '',
                 })
                 raise
         return True

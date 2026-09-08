@@ -4,7 +4,7 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_eplus_connect',
+    'depends': ['base', 'ab_hr', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_eplus_connect',
                 'abdin_et', 'ab_widgets'],
     'data': [
         'data/ir_cron.xml',
@@ -30,6 +30,7 @@
         'views/ab_replica_db_inherit.xml',
         'views/ab_sales_branch_rpc_config_views.xml',
         'views/ab_sales_callcenter_rpc_log_views.xml',
+        'views/ab_sales_branch_api_views.xml',
         'views/ab_product_metadata_views.xml',
         'views/ab_product_inherit.xml',
         'views/ab_product_balance_wizard.xml',

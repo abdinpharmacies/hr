@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2026-04-28 14:52+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar_001\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -4170,3 +4171,102 @@ msgstr "تم الإرسال إلى فاتورة الفرع رقم %(id)s"
 #: code:addons/ab_sales/models/ab_sales_header.py:0
 msgid "Reused existing E-Plus invoice (sth_id=%s); skipped duplicate detail and stock writes."
 msgstr "تم استخدام فاتورة E-Plus موجودة مسبقًا (sth_id=%s)؛ وتم تجاوز تكرار كتابة التفاصيل والمخزون."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A stable branch reference is missing for %s."
+msgstr "لا يوجد مرجع ثابت للفرع للسجل %s."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A store with an E-Plus serial is required."
+msgstr "يلزم اختيار فرع له رقم مسلسل في إي بلس."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A valid record is required for branch submission."
+msgstr "يلزم سجل صالح للإرسال إلى الفرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__branch_request_token
+msgid "Branch Request Token"
+msgstr "رمز طلب الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__branch_return_id
+msgid "Branch Return ID"
+msgstr "معرف مرتجع الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Callcenter Return Submit"
+msgstr "إرسال مرتجع مركز الاتصال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Callcenter returns must use the branch API."
+msgstr "يجب إرسال مرتجعات مركز الاتصال عبر واجهة برمجة الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Clear the return lines before changing the invoice."
+msgstr "امسح بنود المرتجع قبل تغيير الفاتورة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Invalid product unit."
+msgstr "وحدة الصنف غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Return product is missing or ambiguous in callcenter."
+msgstr "صنف المرتجع غير موجود أو غير محدد بشكل فريد في مركز الاتصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Return product unit is missing in callcenter."
+msgstr "وحدة صنف المرتجع غير موجودة في مركز الاتصال."
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_branch_client
+msgid "Sales Branch API Client"
+msgstr "عميل واجهة برمجة مبيعات الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The branch API version or store does not match."
+msgstr "إصدار واجهة برمجة الفرع أو الفرع غير مطابق."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "The branch returned invalid stock data."
+msgstr "أرسل الفرع بيانات مخزون غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "The branch returned lines from another invoice or store."
+msgstr "أرسل الفرع بنوداً تخص فاتورة أو فرعاً آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "This store is not allowed."
+msgstr "هذا الفرع غير مسموح به."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Callcenter sales must be submitted through POS using the branch API."
+msgstr "يجب إرسال مبيعات مركز الاتصال من نقطة البيع عبر واجهة برمجة الفرع."

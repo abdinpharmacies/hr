@@ -36,3 +36,4 @@ access_ab_printer_see_store_ips,access_ab_printer_see_store_ips,model_ab_printer
 
 access_ab_product_metadata_sys,access_ab_product_metadata_sys,model_ab_product_metadata,base.group_system,1,1,1,0
 access_ab_product_metadata_user,access_ab_product_metadata_user,model_ab_product_metadata,base.group_user,1,0,0,0
+access_ab_sales_branch_client,Sales branch client,model_ab_sales_branch_client,base.group_user,1,0,0,0

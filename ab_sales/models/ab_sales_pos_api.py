@@ -982,10 +982,11 @@ class AbSalesPosApi(models.TransientModel):
         self.env.cr.commit()
 
         try:
+            client = self.env['ab_sales_branch_client']
+            config = client._config(config.store_id)
             response = config._execute_kw(
-                "ab_sales_pos_api",
-                "pos_submit_from_callcenter",
-                [payload, push_to_eplus],
+                'ab_branch_api', 'submit_sale',
+                [int(config.store_id.eplus_serial), token, client._sale_payload(payload), push_to_eplus],
             )
             if not isinstance(response, dict):
                 raise UserError(_("Branch RPC submit returned an invalid response."))
