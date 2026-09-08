@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_carousel_slide_view_list" model="ir.ui.view">
+        <field name="name">website.carousel.slide.list</field>
+        <field name="model">ab_website_carousel_slide</field>
+        <field name="arch" type="xml">
+            <list string="Homepage Carousel" default_order="sequence, id" class="ab_website_admin_content_view ab_website_admin_carousel_list" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="image_1920" widget="image" string="Image" optional="show"/>
+                <field name="name" string="Slide"/>
+                <field name="cta_text" string="CTA"/>
+                <field name="cta_style" string="CTA Style" optional="show"/>
+                <field name="cta_url" string="Destination" optional="show"/>
+                <field name="website_id" optional="show" groups="website.group_multi_website"/>
+                <field name="active" widget="boolean_toggle"/>
+                <button name="action_preview_homepage" type="object" string="Preview" icon="fa-external-link"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="website_carousel_slide_view_form" model="ir.ui.view">
+        <field name="name">website.carousel.slide.form</field>
+        <field name="model">ab_website_carousel_slide</field>
+        <field name="arch" type="xml">
+            <form string="Carousel Slide">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_preview_homepage" type="object" class="oe_stat_button" icon="fa-external-link">
+                            <span>Preview</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Inactive" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920'}"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Summer Offers"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="website_id" groups="website.group_multi_website" options="{'no_create': True}"/>
+                        </group>
+                        <group string="CTA">
+                            <field name="show_cta"/>
+                            <field name="cta_style" invisible="not show_cta"/>
+                            <field name="cta_text" invisible="not show_cta or cta_style != 'text'"/>
+                            <field name="cta_image_512" widget="image" invisible="not show_cta or cta_style != 'image'" options="{'preview_image': 'cta_image_512'}"/>
+                            <field name="cta_url" widget="url" invisible="not show_cta"/>
+                        </group>
+                    </group>
+                    <group string="CTA Position" invisible="not show_cta or cta_style == 'link'">
+                        <group>
+                            <field name="cta_position_x"/>
+                            <field name="cta_position_y"/>
+                            <field name="cta_width"/>
+                        </group>
+                        <group>
+                            <field name="cta_preview_html" widget="html" nolabel="1" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Content">
+                        <field name="title"/>
+                        <field name="subtitle"/>
+                    </group>
+                    <group string="Image">
+                        <field name="image_1920" widget="image" options="{'preview_image': 'image_1920'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="website_carousel_slide_view_search" model="ir.ui.view">
+        <field name="name">website.carousel.slide.search</field>
+        <field name="model">ab_website_carousel_slide</field>
+        <field name="arch" type="xml">
+            <search string="Homepage Carousel">
+                <field name="name" string="Slide"/>
+                <field name="cta_text" string="CTA"/>
+                <field name="cta_url" string="Destination"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <filter string="With CTA" name="with_cta" domain="[('show_cta', '=', True), ('cta_url', '!=', False)]"/>
+                <filter string="Website" name="groupby_website" context="{'group_by': 'website_id'}" groups="website.group_multi_website"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_website_carousel_slides" model="ir.actions.act_window">
+        <field name="name">Homepage Carousel</field>
+        <field name="res_model">ab_website_carousel_slide</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="website_carousel_slide_view_search"/>
+        <field name="help" type="html">
+            <div class="ab_website_admin_empty">
+                <h3>No carousel slides yet</h3>
+                <p>Create homepage slides with an image, sequence, and per-slide CTA destination.</p>
+            </div>
+        </field>
+    </record>
+
+    <menuitem id="menu_website_homepage_carousel"
+              name="Homepage Carousel"
+              parent="website.menu_website_global_configuration"
+              action="action_website_carousel_slides"
+              groups="website.group_website_designer"
+              sequence="35"/>
+
+    <record id="website_pages_list_view_modern_content" model="ir.ui.view">
+        <field name="name">website.page.list.modern.content</field>
+        <field name="model">website.page</field>
+        <field name="inherit_id" ref="website.website_pages_tree_view"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_website_admin_content_view ab_website_admin_pages_list" separator=" "/>
+                <attribute name="decoration-success">is_published</attribute>
+                <attribute name="decoration-muted">not is_published</attribute>
+            </xpath>
+            <field name="website_url" position="attributes">
+                <attribute name="string">URL</attribute>
+            </field>
+            <field name="website_indexed" position="attributes">
+                <attribute name="string">Indexed</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="is_in_menu" position="attributes">
+                <attribute name="string">Menu</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="is_seo_optimized" position="attributes">
+                <attribute name="string">SEO</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="is_published" position="attributes">
+                <attribute name="string">Status</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="view_write_date" position="attributes">
+                <attribute name="string">Updated</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="website_id" position="attributes">
+                <attribute name="string">Website</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <xpath expr="//field[@name='website_id']" position="after">
+                <button name="open_website_url" type="object" string="Preview" icon="fa-external-link"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_pages_kanban_view_modern_content" model="ir.ui.view">
+        <field name="name">website.page.kanban.modern.content</field>
+        <field name="model">website.page</field>
+        <field name="inherit_id" ref="website.website_pages_kanban_view"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="class" add="ab_website_admin_content_view ab_website_admin_pages_kanban" separator=" "/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_pages_search_view_modern_content" model="ir.ui.view">
+        <field name="name">website.page.search.modern.content</field>
+        <field name="model">website.page</field>
+        <field name="inherit_id" ref="website.website_pages_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='url']" position="after">
+                <field name="name" string="Page title"/>
+                <field name="website_id" string="Website" groups="website.group_multi_website"/>
+            </xpath>
+            <filter name="not_seo_optimized" position="after">
+                <separator/>
+                <filter string="In Main Menu" name="in_main_menu" domain="[('menu_ids', '!=', False)]"/>
+                <filter string="Hidden From Menu" name="hidden_from_menu" domain="[('menu_ids', '=', False)]"/>
+                <filter string="Indexed" name="indexed" domain="[('website_indexed', '=', True)]"/>
+                <filter string="Not Indexed" name="not_indexed" domain="[('website_indexed', '=', False)]"/>
+                <separator/>
+                <filter string="Website" name="groupby_website" context="{'group_by': 'website_id'}" groups="website.group_multi_website"/>
+                <filter string="Last Updated" name="groupby_updated" context="{'group_by': 'view_write_date'}"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="website.action_website_pages_list" model="ir.actions.act_window">
+        <field name="name">Pages</field>
+        <field name="res_model">website.page</field>
+        <field name="path">website-pages</field>
+        <field name="help" type="html">
+            <div class="ab_website_admin_empty">
+                <h3>No website pages yet</h3>
+                <p>Create a page to start building searchable, publishable content for the storefront.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="product_pages_list_view_modern_content" model="ir.ui.view">
+        <field name="name">product.template.page.list.modern.content</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_pages_tree_view"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_website_admin_content_view ab_website_admin_products_list" separator=" "/>
+                <attribute name="decoration-success">is_published</attribute>
+                <attribute name="decoration-muted">not is_published</attribute>
+            </xpath>
+            <field name="website_sequence" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </field>
+            <field name="name" position="before">
+                <field name="image_128" widget="image" string="Image" optional="show"/>
+            </field>
+            <field name="website_url" position="attributes">
+                <attribute name="string">URL</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="public_categ_ids" position="attributes">
+                <attribute name="string">Website Categories</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="is_published" position="attributes">
+                <attribute name="string">Status</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <field name="website_id" position="attributes">
+                <attribute name="string">Website</attribute>
+                <attribute name="optional">show</attribute>
+            </field>
+            <xpath expr="//field[@name='website_id']" position="after">
+                <field name="list_price" string="Price" optional="show"/>
+                <button name="open_website_url" type="object" string="Preview" icon="fa-external-link"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_pages_kanban_view_modern_content" model="ir.ui.view">
+        <field name="name">product.template.page.kanban.modern.content</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_pages_kanban_view"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="class" add="ab_website_admin_content_view ab_website_admin_products_kanban" separator=" "/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_search_view_modern_content" model="ir.ui.view">
+        <field name="name">product.template.search.modern.content</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="website_sale.product_template_search_view_website"/>
+        <field name="arch" type="xml">
+            <filter name="published" position="after">
+                <filter string="Unpublished" name="unpublished" domain="[('is_published', '=', False)]"/>
+                <filter string="Website Sale" name="website_sale" domain="[('sale_ok', '=', True)]"/>
+                <filter string="Not Website Sale" name="not_website_sale" domain="[('sale_ok', '=', False)]"/>
+            </filter>
+            <filter name="groupby_public_category" position="after">
+                <filter string="Website" name="groupby_website" context="{'group_by': 'website_id'}" groups="website.group_multi_website"/>
+            </filter>
+        </field>
+    </record>
+
+    <record id="website_sale.action_product_pages_list" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">product.template</field>
+        <field name="path">product-pages</field>
+        <field name="help" type="html">
+            <div class="ab_website_admin_empty">
+                <h3>No website products yet</h3>
+                <p>Create products that are ready to publish, categorize, and present on the storefront.</p>
+            </div>
+        </field>
+    </record>
+
+    <record id="technical_pages_list_view_modern_content" model="ir.ui.view">
+        <field name="name">website.technical.page.list.modern.content</field>
+        <field name="model">website.technical.page</field>
+        <field name="inherit_id" ref="website.website_technical_pages_list_view"/>
+        <field name="priority">120</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_website_admin_content_view ab_website_admin_technical_pages_list" separator=" "/>
+            </xpath>
+            <field name="name" position="attributes">
+                <attribute name="string">Technical Page</attribute>
+            </field>
+            <field name="website_url" position="attributes">
+                <attribute name="string">Route</attribute>
+            </field>
+            <field name="website_url" position="after">
+                <button name="open_website_url" type="object" string="Preview" icon="fa-external-link"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="technical_pages_search_view_modern_content" model="ir.ui.view">
+        <field name="name">website.technical.page.search.modern.content</field>
+        <field name="model">website.technical.page</field>
+        <field name="arch" type="xml">
+            <search string="Technical Pages">
+                <field name="name" string="Technical page"/>
+                <field name="website_url" string="Route"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="website.action_website_technical_pages" model="ir.actions.act_window">
+        <field name="name">Technical Pages</field>
+        <field name="res_model">website.technical.page</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="technical_pages_search_view_modern_content"/>
+        <field name="help" type="html">
+            <div class="ab_website_admin_empty ab_website_admin_empty_technical">
+                <h3>No technical pages found</h3>
+                <p>Technical pages are generated from website routes that Odoo exposes as editable content.</p>
+            </div>
+        </field>
+    </record>
+</odoo>

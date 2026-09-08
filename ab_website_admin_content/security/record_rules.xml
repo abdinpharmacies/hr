@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="website_carousel_slide_public_active_rule" model="ir.rule">
+        <field name="name">Homepage carousel slides: public active slides only</field>
+        <field name="model_id" ref="model_ab_website_carousel_slide"/>
+        <field name="domain_force">[('active', '=', True)]</field>
+        <field name="groups" eval="[(4, ref('base.group_public')), (4, ref('base.group_portal'))]"/>
+    </record>
+</odoo>

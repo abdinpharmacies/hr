@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_website_carousel_slide_designer,ab.website.carousel.slide.designer,model_ab_website_carousel_slide,website.group_website_designer,1,1,1,1
+access_ab_website_carousel_slide_public,ab.website.carousel.slide.public,model_ab_website_carousel_slide,base.group_public,1,0,0,0
+access_ab_website_carousel_slide_portal,ab.website.carousel.slide.portal,model_ab_website_carousel_slide,base.group_portal,1,0,0,0

@@ -1,0 +1,286 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_website_admin_content
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-03 00:00+0000\n"
+"PO-Revision-Date: 2026-09-03 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_website_admin_content
+msgid "Abdin Website Admin Content"
+msgstr "إدارة محتوى موقع عبدين"
+
+#. module: ab_website_admin_content
+msgid "Modern content-management UI for Website administration screens"
+msgstr "واجهة حديثة لإدارة محتوى شاشات إدارة الموقع"
+
+#. module: ab_website_admin_content
+msgid "Pages"
+msgstr "الصفحات"
+
+#. module: ab_website_admin_content
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_website_admin_content
+msgid "Technical Pages"
+msgstr "الصفحات التقنية"
+
+#. module: ab_website_admin_content
+msgid "URL"
+msgstr "الرابط"
+
+#. module: ab_website_admin_content
+msgid "Indexed"
+msgstr "مفهرسة"
+
+#. module: ab_website_admin_content
+msgid "Menu"
+msgstr "القائمة"
+
+#. module: ab_website_admin_content
+msgid "SEO"
+msgstr "تحسين محركات البحث"
+
+#. module: ab_website_admin_content
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_website_admin_content
+msgid "Updated"
+msgstr "آخر تحديث"
+
+#. module: ab_website_admin_content
+msgid "Website"
+msgstr "الموقع"
+
+#. module: ab_website_admin_content
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_website_admin_content
+msgid "Page title"
+msgstr "عنوان الصفحة"
+
+#. module: ab_website_admin_content
+msgid "In Main Menu"
+msgstr "ضمن القائمة الرئيسية"
+
+#. module: ab_website_admin_content
+msgid "Hidden From Menu"
+msgstr "مخفية من القائمة"
+
+#. module: ab_website_admin_content
+msgid "Not Indexed"
+msgstr "غير مفهرسة"
+
+#. module: ab_website_admin_content
+msgid "Last Updated"
+msgstr "آخر تحديث"
+
+#. module: ab_website_admin_content
+msgid "No website pages yet"
+msgstr "لا توجد صفحات موقع بعد"
+
+#. module: ab_website_admin_content
+msgid "Create a page to start building searchable, publishable content for the storefront."
+msgstr "أنشئ صفحة لبدء بناء محتوى قابل للبحث والنشر في واجهة المتجر."
+
+#. module: ab_website_admin_content
+msgid "Image"
+msgstr "الصورة"
+
+#. module: ab_website_admin_content
+msgid "Website Categories"
+msgstr "تصنيفات الموقع"
+
+#. module: ab_website_admin_content
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_website_admin_content
+msgid "Unpublished"
+msgstr "غير منشور"
+
+#. module: ab_website_admin_content
+msgid "Website Sale"
+msgstr "بيع على الموقع"
+
+#. module: ab_website_admin_content
+msgid "Not Website Sale"
+msgstr "غير مخصص للبيع على الموقع"
+
+#. module: ab_website_admin_content
+msgid "No website products yet"
+msgstr "لا توجد منتجات موقع بعد"
+
+#. module: ab_website_admin_content
+msgid "Create products that are ready to publish, categorize, and present on the storefront."
+msgstr "أنشئ منتجات جاهزة للنشر والتصنيف والعرض في واجهة المتجر."
+
+#. module: ab_website_admin_content
+msgid "Technical Page"
+msgstr "صفحة تقنية"
+
+#. module: ab_website_admin_content
+msgid "Route"
+msgstr "المسار"
+
+#. module: ab_website_admin_content
+msgid "Technical page"
+msgstr "صفحة تقنية"
+
+#. module: ab_website_admin_content
+msgid "No technical pages found"
+msgstr "لم يتم العثور على صفحات تقنية"
+
+#. module: ab_website_admin_content
+msgid "Technical pages are generated from website routes that Odoo exposes as editable content."
+msgstr "يتم إنشاء الصفحات التقنية من مسارات الموقع التي يعرضها أودو كمحتوى قابل للتحرير."
+
+#. module: ab_website_admin_content
+msgid "Homepage Carousel"
+msgstr "كاروسيل الصفحة الرئيسية"
+
+#. module: ab_website_admin_content
+msgid "Homepage Carousel Slide"
+msgstr "شريحة كاروسيل الصفحة الرئيسية"
+
+#. module: ab_website_admin_content
+msgid "Carousel Slide"
+msgstr "شريحة الكاروسيل"
+
+#. module: ab_website_admin_content
+msgid "Slide"
+msgstr "الشريحة"
+
+#. module: ab_website_admin_content
+msgid "Destination"
+msgstr "الوجهة"
+
+#. module: ab_website_admin_content
+msgid "Inactive"
+msgstr "غير نشطة"
+
+#. module: ab_website_admin_content
+msgid "Basic Information"
+msgstr "المعلومات الأساسية"
+
+#. module: ab_website_admin_content
+msgid "CTA"
+msgstr "زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+msgid "Show CTA"
+msgstr "إظهار زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+msgid "CTA Text"
+msgstr "نص زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+msgid "CTA URL"
+msgstr "رابط زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+msgid "Content"
+msgstr "المحتوى"
+
+#. module: ab_website_admin_content
+msgid "No carousel slides yet"
+msgstr "لا توجد شرائح كاروسيل بعد"
+
+#. module: ab_website_admin_content
+msgid "Create homepage slides with an image, sequence, and per-slide CTA destination."
+msgstr "أنشئ شرائح للصفحة الرئيسية بصورة وترتيب ووجهة زر مستقلة لكل شريحة."
+
+#. module: ab_website_admin_content
+msgid "Desktop Image"
+msgstr "صورة سطح المكتب"
+
+#. module: ab_website_admin_content
+msgid "Leave empty to show this slide on every website."
+msgstr "اتركه فارغًا لعرض هذه الشريحة على كل المواقع."
+
+#. module: ab_website_admin_content
+msgid "Summer Offers"
+msgstr "عروض الصيف"
+
+#. module: ab_website_admin_content
+msgid "With CTA"
+msgstr "بزر دعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_style
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+msgid "CTA Style"
+msgstr "نمط زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields.selection,name:ab_website_admin_content.selection__ab_website_carousel_slide__cta_style__text
+msgid "Text Button"
+msgstr "زر نصي"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields.selection,name:ab_website_admin_content.selection__ab_website_carousel_slide__cta_style__image
+msgid "Image Button"
+msgstr "زر بصورة"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields.selection,name:ab_website_admin_content.selection__ab_website_carousel_slide__cta_style__link
+msgid "Link"
+msgstr "رابط"
+
+#. module: ab_website_admin_content
+msgid "CTA Image"
+msgstr "صورة زر الدعوة لاتخاذ إجراء"
+
+#. module: ab_website_admin_content
+msgid "Optional clickable image rendered above the slide image."
+msgstr "صورة اختيارية قابلة للنقر تظهر فوق صورة الشريحة."
+
+#. module: ab_website_admin_content
+msgid "CTA X Position"
+msgstr "موضع زر الدعوة أفقيًا"
+
+#. module: ab_website_admin_content
+msgid "CTA Y Position"
+msgstr "موضع زر الدعوة رأسيًا"
+
+#. module: ab_website_admin_content
+msgid "CTA Width"
+msgstr "عرض زر الدعوة"
+
+#. module: ab_website_admin_content
+msgid "CTA Position"
+msgstr "موضع زر الدعوة"
+
+#. module: ab_website_admin_content
+msgid "CTA Position Preview"
+msgstr "معاينة موضع زر الدعوة"
+
+#. module: ab_website_admin_content
+msgid "Horizontal CTA position as a percentage of the slide width."
+msgstr "موضع زر الدعوة أفقيًا كنسبة من عرض الشريحة."
+
+#. module: ab_website_admin_content
+msgid "Vertical CTA position as a percentage of the slide height."
+msgstr "موضع زر الدعوة رأسيًا كنسبة من ارتفاع الشريحة."
+
+#. module: ab_website_admin_content
+msgid "CTA width in pixels. Text buttons use this as a minimum width."
+msgstr "عرض زر الدعوة بالبكسل. تستخدم الأزرار النصية هذه القيمة كحد أدنى للعرض."
+
+#. module: ab_website_admin_content
+msgid "Save the slide to preview CTA placement."
+msgstr "احفظ الشريحة لمعاينة موضع زر الدعوة."
