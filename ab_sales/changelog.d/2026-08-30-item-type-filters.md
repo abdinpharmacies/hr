@@ -14,7 +14,9 @@ Files changed:
 - ab_sales/tests/test_pos_price_badges.py
 - ab_sales/views/ab_product_inherit.xml
 
-## Current changes before commit
+## e455a15 - hager yasser - 2026-08-30
+
+Original commit subject: ab_sales/FEAT(#2418): Add doctor and item-type filters
 
 User-facing changes:
 - Added All, Medicine, and Non-medicine filters to the Bill Wizard without changing fixed 20-record pagination.
@@ -43,3 +45,14 @@ Files changed:
 - ab_sales/tests/test_item_type_filters.py
 - ab_sales/views/ab_product_inherit.xml
 - ab_sales/views/sales_header.xml
+
+## Current changes before commit:
+
+User-facing changes:
+- Calculate base bill Total Price from quantity times sell price, independently of discounted line net amounts.
+- Refresh totals when line sell prices or net amounts change.
+- Preserve the existing Net Amount and product-count calculations.
+
+Files changed:
+- ab_sales/models/ab_sales_header.py
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
