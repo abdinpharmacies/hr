@@ -93,6 +93,13 @@ class OdooReplication(models.AbstractModel):
     def replicate_model(self, model_name: str, limit=10000, commit=True, extra_fields=None,
                         replicate_all=False, extra_domain=None):
 
+        if model_name not in self.env.registry:
+            _logger.warning(
+                "Skipping replication for unavailable local model %s. Install its addon to enable it.",
+                model_name,
+            )
+            return
+
         RepLog = self.env['ab_odoo_replication_log'].sudo()
         # conn now
         conn = OdooConnectionSingleton(self.env)
