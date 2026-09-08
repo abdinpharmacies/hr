@@ -92,7 +92,6 @@
         <xpath expr="//a[@data-bs-target='#o_wsale_search_modal']/i" position="after">
             <span class="ab-storefront-mobile-shop-search-label">
                 <t t-if="search" t-out="search"/>
-                <t t-elif="request.env.lang in ('ar', 'ar_001')">ابحث عن دواء أو منتج عناية...</t>
                 <t t-else="">Search medicines and wellness products</t>
             </span>
             <i t-if="search" class="fa fa-times ab-storefront-mobile-shop-search-clear" aria-hidden="true"/>
@@ -120,9 +119,13 @@
               priority="90">
         <xpath expr="//aside[@id='o_wsale_offcanvas']" position="attributes">
             <attribute name="class" add="ab-storefront-filter-dialog" separator=" "/>
+            <attribute name="data-ab-filter-title">Filters</attribute>
         </xpath>
         <xpath expr="//aside[@id='o_wsale_offcanvas']/div[hasclass('offcanvas-body') and not(hasclass('border-top'))]" position="attributes">
             <attribute name="class" add="ab-storefront-filter-dialog-search" separator=" "/>
+        </xpath>
+        <xpath expr="//aside[@id='o_wsale_offcanvas']/div[hasclass('offcanvas-header')]" position="attributes">
+            <attribute name="data-ab-filter-title">Filters</attribute>
         </xpath>
         <xpath expr="//div[@id='o_wsale_offcanvas_content']/t[@t-call='website_sale.filter_products_price']" position="after">
             <div t-if="categories" class="accordion-item d-lg-none ab-storefront-side-categories-mobile">
@@ -133,7 +136,7 @@
                             data-bs-target="#ab_storefront_offcanvas_categories"
                             aria-expanded="false"
                             aria-controls="ab_storefront_offcanvas_categories">
-                        <b>كل الأقسام</b>
+                        <b>All categories</b>
                     </button>
                 </h2>
                 <div id="ab_storefront_offcanvas_categories"
@@ -152,7 +155,7 @@
             <button type="button"
                     class="btn btn-primary ab-storefront-filter-apply"
                     data-bs-dismiss="offcanvas">
-                حفظ
+                Save
             </button>
         </xpath>
     </template>

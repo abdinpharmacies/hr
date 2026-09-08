@@ -2,6 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 import { Interaction } from "@web/public/interaction";
 import { patch } from "@web/core/utils/patch";
 import { CartService } from "@website_sale/js/cart_service";
@@ -657,8 +658,8 @@ export class AbStorefrontScrollToTop extends Interaction {
         this.button = document.createElement("button");
         this.button.type = "button";
         this.button.className = "ab-storefront-scroll-top";
-        this.button.setAttribute("aria-label", "العودة إلى أعلى الصفحة");
-        this.button.setAttribute("title", "العودة إلى أعلى الصفحة");
+        this.button.setAttribute("aria-label", _t("Back to top"));
+        this.button.setAttribute("title", _t("Back to top"));
         this.button.innerHTML = '<i class="fa fa-chevron-up" aria-hidden="true"></i>';
         document.body.appendChild(this.button);
 
@@ -1005,11 +1006,10 @@ export class AbStorefrontWishlistToggle extends Interaction {
     }
 
     getWishlistTitle(isWishlisted) {
-        const isArabic = document.documentElement.lang?.startsWith("ar") || document.documentElement.dir === "rtl";
         if (isWishlisted) {
-            return isArabic ? "إزالة من المفضلة" : "Remove from wishlist";
+            return _t("Remove from wishlist");
         }
-        return isArabic ? "إضافة إلى المفضلة" : "Add to wishlist";
+        return _t("Add to wishlist");
     }
 }
 
@@ -1262,11 +1262,10 @@ export class AbStorefrontAddToCartFly extends Interaction {
         const toast = document.createElement("div");
         toast.className = `ab-storefront-action-toast ab-storefront-action-toast-${action}`;
 
-        const isArabic = document.documentElement.lang?.startsWith("ar") || document.documentElement.dir === "rtl";
         const labels = {
-            cart: isArabic ? "تمت الإضافة إلى السلة" : "Added to cart",
-            wishlist: isArabic ? "تمت الإضافة إلى المفضلة" : "Added to wishlist",
-            fallback: isArabic ? "تم حفظ المنتج" : "Product saved",
+            cart: _t("Added to cart"),
+            wishlist: _t("Added to wishlist"),
+            fallback: _t("Product saved"),
         };
 
         const media = document.createElement("span");

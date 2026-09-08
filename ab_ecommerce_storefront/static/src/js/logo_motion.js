@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { Interaction } from "@web/public/interaction";
 
 const DOUBLE_CLICK_DELAY = 430;
@@ -187,7 +188,6 @@ export class AbStorefrontCheckoutSuccessMotion extends Interaction {
     }
 
     showToast() {
-        const isArabic = document.documentElement.lang?.startsWith("ar") || document.documentElement.dir === "rtl";
         const toast = document.createElement("div");
         toast.className = "ab-storefront-action-toast ab-storefront-action-toast-cart";
 
@@ -212,9 +212,9 @@ export class AbStorefrontCheckoutSuccessMotion extends Interaction {
         const copy = document.createElement("span");
         copy.className = "ab-storefront-action-toast-copy";
         const heading = document.createElement("strong");
-        heading.textContent = isArabic ? "تم تأكيد الطلب" : "Checkout complete";
+        heading.textContent = _t("Checkout complete");
         const detail = document.createElement("small");
-        detail.textContent = isArabic ? "شكرا لطلبك من صيدليات عبدين" : "Thank you for ordering from Abdin Pharmacies";
+        detail.textContent = _t("Thank you for ordering from Abdin Pharmacies");
         copy.append(heading, detail);
 
         const check = document.createElement("span");

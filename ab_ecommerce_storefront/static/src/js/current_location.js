@@ -1,16 +1,32 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { Interaction } from "@web/public/interaction";
 
 const STORAGE_KEY = "ab_storefront_current_location";
-const DEFAULT_LABEL = "منطقتك الحالية";
-const FALLBACK_SET_LABEL = "تم تحديد المنطقة";
-const GEOLOCATION_UNAVAILABLE_LABEL = "خدمة الموقع غير متاحة";
-const LOADING_LABEL = "جاري تحديد المنطقة...";
-const PERMISSION_NEEDED_LABEL = "السماح بالموقع مطلوب";
+const DEFAULT_LABEL = _t("Your current area");
+const FALLBACK_SET_LABEL = _t("Area selected");
+const GEOLOCATION_UNAVAILABLE_LABEL = _t("Location service is unavailable");
+const LOADING_LABEL = _t("Detecting area...");
+const PERMISSION_NEEDED_LABEL = _t("Location permission is required");
 const REVERSE_GEOCODE_URL = "https://nominatim.openstreetmap.org/reverse";
 const RECENT_LOCATIONS_KEY = "ab_storefront_recent_locations";
+const REGION_LABELS = {
+    Egypt: _t("Egypt"),
+    Cairo: _t("Cairo"),
+    Giza: _t("Giza"),
+    Alexandria: _t("Alexandria"),
+    Qalyubia: _t("Qalyubia"),
+    Sharqia: _t("Sharqia"),
+    Dakahlia: _t("Dakahlia"),
+    Sohag: _t("Sohag"),
+    Assiut: _t("Assiut"),
+};
+
+function regionLabel(region) {
+    return REGION_LABELS[region] || region;
+}
 
 export class AbStorefrontCurrentLocation extends Interaction {
     static selector = "[data-ab-current-location]";
@@ -106,8 +122,8 @@ export class AbStorefrontCurrentLocation extends Interaction {
         this.button?.classList.remove("is-loading", "is-set", "is-error");
         this.button?.classList.add(stateClass);
         const displayText = stateClass === "is-set" && text
-            ? `توصيل إلى ${text}`
-            : text || DEFAULT_LABEL;
+            ? _t("Deliver to %s", regionLabel(text))
+            : regionLabel(text) || DEFAULT_LABEL;
         this.button?.setAttribute("aria-label", displayText);
         this.button?.setAttribute("title", displayText);
         if (this.label) {
@@ -127,7 +143,7 @@ export class AbStorefrontLocationPicker extends Interaction {
     static selector = "body.ab-storefront";
 
     setup() {
-        this.selectedRegion = "مصر";
+        this.selectedRegion = "Egypt";
         this.geoPayload = {};
         this.lastFocus = null;
         this.onOpen = this.onOpen.bind(this);
@@ -187,7 +203,7 @@ export class AbStorefrontLocationPicker extends Interaction {
         if (!stored) {
             return;
         }
-        this.selectedRegion = stored.governorate || stored.region || "مصر";
+        this.selectedRegion = stored.governorate || stored.region || "Egypt";
         this.geoPayload = {
             latitude: stored.latitude,
             longitude: stored.longitude,
@@ -249,7 +265,8 @@ export class AbStorefrontLocationPicker extends Interaction {
         const query = (this.searchInput?.value || "").trim().toLowerCase();
         this.panel.querySelectorAll(".ab-storefront-location-regions [data-ab-location-region]").forEach((button) => {
             const label = button.dataset.abLocationRegion || "";
-            button.classList.toggle("d-none", Boolean(query) && !label.toLowerCase().includes(query));
+            const searchText = `${label} ${regionLabel(label)}`.toLowerCase();
+            button.classList.toggle("d-none", Boolean(query) && !searchText.includes(query));
         });
     }
 
@@ -274,7 +291,7 @@ export class AbStorefrontLocationPicker extends Interaction {
             if (this.detailInput && data.display_name) {
                 this.detailInput.value = data.display_name;
             }
-            this.setAutoState("", "استخدم موقعي الحالي");
+            this.setAutoState("", _t("Use my current location"));
         } catch {
             this.setAutoState("is-error", PERMISSION_NEEDED_LABEL);
         }
@@ -302,7 +319,7 @@ export class AbStorefrontLocationPicker extends Interaction {
     }
 
     selectRegion(region) {
-        this.selectedRegion = region || "مصر";
+        this.selectedRegion = region || "Egypt";
         this.updateSelection();
     }
 
@@ -311,10 +328,10 @@ export class AbStorefrontLocationPicker extends Interaction {
             button.classList.toggle("is-selected", button.dataset.abLocationRegion === this.selectedRegion);
         });
         if (this.selectedLabel) {
-            this.selectedLabel.textContent = this.selectedRegion;
+            this.selectedLabel.textContent = regionLabel(this.selectedRegion);
         }
         if (this.submitButton) {
-            this.submitButton.textContent = `تحديد ${this.selectedRegion}`;
+            this.submitButton.textContent = _t("Select %s", regionLabel(this.selectedRegion));
         }
     }
 
@@ -325,7 +342,7 @@ export class AbStorefrontLocationPicker extends Interaction {
         }
         const label = this.autoButton?.querySelector("span");
         if (label) {
-            label.textContent = text || "استخدم موقعي الحالي";
+            label.textContent = text || _t("Use my current location");
         }
     }
 
@@ -390,11 +407,11 @@ export class AbStorefrontLocationPicker extends Interaction {
         this.recentSection.classList.toggle("d-none", !recent.length);
         this.recentList.replaceChildren(...recent.map((location) => {
             const button = document.createElement("button");
-            const region = location.governorate || location.region || "مصر";
+            const region = location.governorate || location.region || "Egypt";
             button.type = "button";
             button.className = "ab-storefront-location-recent-chip";
             button.dataset.abLocationRegion = region;
-            button.textContent = region;
+            button.textContent = regionLabel(region);
             return button;
         }));
     }

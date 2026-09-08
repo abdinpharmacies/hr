@@ -2688,6 +2688,179 @@ body.ab-storefront-location-picker-open {
     }
 }
 
+.ab-storefront-feedback {
+    background:
+        linear-gradient(180deg, rgba($ab-green-soft, .55), rgba(#fff, .9)),
+        $ab-background;
+}
+
+.ab-storefront-feedback-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, .9fr);
+    gap: clamp(1.25rem, 4vw, 3rem);
+    align-items: center;
+    padding: clamp(1.25rem, 4vw, 2.5rem);
+    border: 1px solid rgba($ab-green, .12);
+    border-radius: 1rem;
+    background: rgba(#fff, .92);
+    box-shadow: 0 14px 34px rgba(25, 71, 52, .07);
+
+    h2 {
+        max-width: 620px;
+        margin: .35rem 0 .65rem;
+        color: $ab-ink;
+        font-size: clamp(1.45rem, 2.8vw, 2.35rem);
+        font-weight: 900;
+        letter-spacing: 0;
+        line-height: 1.15;
+    }
+
+    p {
+        max-width: 680px;
+        margin: 0;
+        color: $ab-muted;
+        font-size: 1rem;
+        font-weight: 650;
+        line-height: 1.75;
+    }
+}
+
+.ab-storefront-feedback-metrics {
+    display: grid;
+    gap: .75rem;
+
+    div {
+        display: flex;
+        min-height: 74px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: .9rem 1rem;
+        border: 1px solid $ab-border;
+        border-radius: .8rem;
+        background: #f9fcfa;
+    }
+
+    strong {
+        color: $ab-green-dark;
+        font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+        font-weight: 900;
+        white-space: nowrap;
+    }
+
+    span {
+        color: $ab-muted;
+        font-size: .88rem;
+        font-weight: 800;
+        text-align: end;
+    }
+}
+
+.ab-storefront-why {
+    background: $ab-surface;
+}
+
+.ab-storefront-why-card,
+.ab-storefront-testimonial-card {
+    height: 100%;
+    padding: 1.15rem;
+    border: 1px solid $ab-border;
+    border-radius: .9rem;
+    background: #fff;
+    box-shadow: 0 8px 22px rgba(25, 71, 52, .05);
+}
+
+.ab-storefront-why-card {
+    display: grid;
+    gap: .65rem;
+
+    > span {
+        display: inline-flex;
+        width: 44px;
+        height: 44px;
+        align-items: center;
+        justify-content: center;
+        color: $ab-green-dark;
+        border: 1px solid rgba($ab-green, .14);
+        border-radius: .85rem;
+        background: $ab-green-soft;
+        font-size: 1.08rem;
+    }
+
+    strong {
+        color: $ab-ink;
+        font-size: 1.02rem;
+        font-weight: 900;
+    }
+
+    p {
+        margin: 0;
+        color: $ab-muted;
+        font-size: .92rem;
+        font-weight: 650;
+        line-height: 1.65;
+    }
+}
+
+.ab-storefront-testimonials {
+    background:
+        radial-gradient(circle at 12% 14%, rgba($ab-green, .07), transparent 24%),
+        #f8fbf9;
+}
+
+.ab-storefront-testimonial-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+
+    &::before {
+        width: 34px;
+        height: 34px;
+        color: $ab-orange;
+        content: "\f10d";
+        font-family: FontAwesome;
+        font-size: 1.15rem;
+        line-height: 1;
+    }
+
+    p {
+        margin: 0;
+        color: $ab-ink;
+        font-size: .98rem;
+        font-weight: 750;
+        line-height: 1.7;
+    }
+
+    strong {
+        color: $ab-muted;
+        font-size: .82rem;
+        font-weight: 900;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ab-storefront-feedback-panel {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ab-storefront-feedback-panel {
+        border-radius: .85rem;
+    }
+
+    .ab-storefront-feedback-metrics div {
+        align-items: flex-start;
+        flex-direction: column;
+        min-height: auto;
+
+        span {
+            text-align: inherit;
+        }
+    }
+}
+
 .ab-storefront-product-card {
     position: relative;
     height: 100%;
@@ -8278,7 +8451,7 @@ html.ab-avatar-picker-open body {
         .offcanvas-header::before {
             margin-inline-end: auto;
             color: $ab-ink;
-            content: "عوامل التصفية";
+            content: attr(data-ab-filter-title);
             font-size: 1rem;
             font-weight: 800;
         }

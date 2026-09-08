@@ -2,6 +2,7 @@
 
 import { Interaction } from "@web/public/interaction";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 
 const AVATAR_PATH = "/ab_ecommerce_storefront/static/src/img/avatars/";
 const DEFAULT_AVATAR = "avatar_none";
@@ -283,7 +284,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
             this.updateProfileCompletion(scope);
             scope.classList.add("is-avatar-saved");
             if (status) {
-                status.textContent = "تم حفظ الأفاتار";
+                status.textContent = _t("Avatar saved");
             }
             this.closePicker(picker, {animate: true});
             window.setTimeout(() => {
@@ -294,7 +295,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
             }, 3000);
         } catch {
             if (status) {
-                status.textContent = "تعذر حفظ الأفاتار. حاول مرة أخرى.";
+                status.textContent = _t("Could not save avatar. Please try again.");
             }
         }
     }

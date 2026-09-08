@@ -8,11 +8,11 @@
               t-att-data-ab-avatar-value="avatar_value">
             <img t-if="avatar_value == 'custom' and avatar_partner"
                  t-attf-src="/web/image/res.partner/#{avatar_partner.id}/image_128"
-                 t-att-alt="avatar_alt or 'الصورة الشخصية'"
+                 t-att-alt="avatar_alt or 'Profile photo'"
                  loading="lazy"/>
             <img t-else=""
                  t-attf-src="/ab_ecommerce_storefront/static/src/img/avatars/#{avatar_value}.svg"
-                 t-att-alt="avatar_alt or 'أفاتار الحساب'"
+                 t-att-alt="avatar_alt or 'Account avatar'"
                  loading="lazy"/>
         </span>
     </template>
@@ -31,15 +31,15 @@
                 <button type="button"
                         class="ab-avatar-picker-close"
                         data-ab-avatar-close=""
-                        aria-label="إغلاق">
+                        aria-label="Close">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
                 <header class="ab-avatar-picker-head">
-                    <span>صورتك الشخصية</span>
-                    <h2 id="abAvatarPickerTitle">اختر صورتك</h2>
-                    <p>ارفع صورة شخصية أو اختَر أفاتار جاهز.</p>
+                    <span>Your profile photo</span>
+                    <h2 id="abAvatarPickerTitle">Choose your photo</h2>
+                    <p>Upload a profile photo or choose a ready avatar.</p>
                 </header>
-                <div class="ab-avatar-picker-grid" role="radiogroup" aria-label="اختيار صورة الحساب">
+                <div class="ab-avatar-picker-grid" role="radiogroup" aria-label="Choose account image">
                     <label class="ab-avatar-option ab-avatar-upload-option">
                         <input type="file"
                                accept="image/png,image/jpeg,image/webp"
@@ -48,34 +48,34 @@
                             <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0 4 4m-4-4-4 4M5 20h14"/></svg>
                         </span>
                         <span>
-                            <strong>رفع صورة</strong>
-                            <small>PNG أو JPG أو WebP</small>
+                            <strong>Upload photo</strong>
+                            <small>PNG, JPG, or WebP</small>
                         </span>
                     </label>
                     <button type="button"
                             data-ab-avatar-option="avatar_none"
-                            aria-label="بدون صورة شخصية"
+                            aria-label="No profile photo"
                             t-att-aria-checked="'true' if avatar_current == 'avatar_none' else 'false'"
                             t-attf-class="ab-avatar-option ab-avatar-none-option #{'is-selected' if avatar_current == 'avatar_none' else ''}"
                             role="radio">
                         <t t-set="avatar_value" t-value="'avatar_none'"/>
                         <t t-set="avatar_size" t-value="'lg'"/>
-                        <t t-set="avatar_alt" t-value="'بدون صورة شخصية'"/>
+                        <t t-set="avatar_alt" t-value="'No profile photo'"/>
                         <t t-call="ab_ecommerce_storefront.avatar_image"/>
-                        <span>بدون صورة</span>
+                        <span>No photo</span>
                     </button>
                     <button t-foreach="range(1, 13)"
                             t-as="avatar_index"
                             type="button"
                             t-att-data-ab-avatar-option="'avatar_%02d' % avatar_index"
                             t-att-style="'--ab-avatar-index: %s' % avatar_index"
-                            t-att-aria-label="'أفاتار الحساب %s' % avatar_index"
+                            t-att-aria-label="'Account avatar %s' % avatar_index"
                             t-att-aria-checked="'true' if avatar_current == ('avatar_%02d' % avatar_index) else 'false'"
                             t-attf-class="ab-avatar-option #{'is-selected' if avatar_current == ('avatar_%02d' % avatar_index) else ''}"
                             role="radio">
                         <t t-set="avatar_value" t-value="'avatar_%02d' % avatar_index"/>
                         <t t-set="avatar_size" t-value="'lg'"/>
-                        <t t-set="avatar_alt" t-value="'أفاتار الحساب %s' % avatar_index"/>
+                        <t t-set="avatar_alt" t-value="'Account avatar %s' % avatar_index"/>
                         <t t-call="ab_ecommerce_storefront.avatar_image"/>
                         <span class="ab-avatar-option-check">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
@@ -83,8 +83,8 @@
                     </button>
                 </div>
                 <footer class="ab-avatar-picker-actions">
-                    <button type="button" class="btn ab-avatar-picker-cancel" data-ab-avatar-close="">إلغاء</button>
-                    <button type="button" class="btn ab-avatar-picker-confirm" data-ab-avatar-confirm="">تأكيد</button>
+                    <button type="button" class="btn ab-avatar-picker-cancel" data-ab-avatar-close="">Cancel</button>
+                    <button type="button" class="btn ab-avatar-picker-confirm" data-ab-avatar-confirm="">Confirm</button>
                 </footer>
             </section>
         </div>

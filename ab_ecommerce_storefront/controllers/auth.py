@@ -66,10 +66,10 @@ def _read_custom_avatar_upload(field_name="ab_storefront_avatar_upload"):
         request.httprequest.environ[cache_key] = False
         return False
     if upload.mimetype not in _CUSTOM_AVATAR_MIMETYPES:
-        raise UserError(_("برجاء رفع صورة بصيغة PNG أو JPG أو WebP."))
+        raise UserError(_("Please upload a PNG, JPG, or WebP image."))
     data = upload.read(_CUSTOM_AVATAR_MAX_BYTES + 1)
     if len(data) > _CUSTOM_AVATAR_MAX_BYTES:
-        raise UserError(_("حجم الصورة كبير. اختر صورة أقل من 3 ميجابايت."))
+        raise UserError(_("The image is too large. Choose an image under 3 MB."))
     encoded = base64.b64encode(data)
     request.httprequest.environ[cache_key] = encoded
     return encoded
@@ -85,12 +85,7 @@ class AbStorefrontAuth(AuthSignupHome):
         login = (value or "").strip()
         return bool(login and re.search(r"[A-Za-z@._-]", login))
 
-    def _is_storefront_lang_ar(self):
-        return request.env.lang in ("ar", "ar_001") or request.httprequest.path.startswith("/ar/")
-
     def _friendly_error(self, fallback=None):
-        if self._is_storefront_lang_ar():
-            return fallback or _("رقم الهاتف أو كلمة المرور غير صحيحة.")
         return fallback or _("The phone number or password is incorrect.")
 
     def _prepare_phone_login_params(self):
@@ -147,11 +142,11 @@ class AbStorefrontAuth(AuthSignupHome):
     def _prepare_signup_values(self, qcontext):
         phone = normalize_egyptian_phone(qcontext.get("phone") or qcontext.get("login"))
         if not phone:
-            raise UserError(_("رقم الهاتف مطلوب."))
+            raise UserError(_("Phone number is required."))
         if not is_valid_egyptian_mobile(phone):
-            raise UserError(_("برجاء إدخال رقم هاتف صحيح."))
+            raise UserError(_("Please enter a valid phone number."))
         if not validate_storefront_password(qcontext.get("password")):
-            raise UserError(_("استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص."))
+            raise UserError(_("Use at least 8 characters with uppercase, lowercase, number, and special symbol."))
         _read_custom_avatar_upload()
 
         qcontext["phone"] = phone
@@ -186,10 +181,10 @@ class AbStorefrontAuth(AuthSignupHome):
                 if User.sudo().with_context(active_test=False).search_count(
                     User._get_login_domain(qcontext.get("login")), limit=1
                 ):
-                    qcontext["error"] = _("هذا الرقم مستخدم بالفعل. جرّب تسجيل الدخول بدلًا من إنشاء حساب جديد.")
+                    qcontext["error"] = _("This phone number is already used. Try signing in instead of creating a new account.")
                 else:
                     _logger.warning("%s", e)
-                    qcontext["error"] = _("حدث خطأ غير متوقع. حاول مرة أخرى.")
+                    qcontext["error"] = _("An unexpected error occurred. Please try again.")
 
         elif "signup_email" in qcontext:
             user = request.env["res.users"].sudo().search([("email", "=", qcontext.get("signup_email")), ("state", "!=", "new")], limit=1)
@@ -241,16 +236,16 @@ class AbStorefrontAuth(AuthSignupHome):
             self._prepare_phone_login_params()
         response = super().web_auth_reset_password(*args, **kw)
         if hasattr(response, "qcontext") and response.qcontext.get("error"):
-            response.qcontext["error"] = _("لم نتمكن من إرسال رابط الاستعادة لهذا الرقم. تواصل معنا على 19036 للمساعدة.")
+            response.qcontext["error"] = _("We could not send a recovery link for this number. Contact us on 19036 for help.")
         elif hasattr(response, "qcontext") and response.qcontext.get("message"):
-            response.qcontext["message"] = _("إذا كان الرقم مسجلًا لدينا، ستصلك تعليمات استعادة الحساب.")
+            response.qcontext["message"] = _("If the number is registered with us, you will receive account recovery instructions.")
         return response
 
     @http.route("/ab_storefront/avatar/update", type="http", auth="user", website=True, methods=["POST"], csrf=True)
     def ab_storefront_avatar_update(self, **post):
         avatar = post.get("avatar")
         if avatar not in _AVATAR_KEYS:
-            return request.make_json_response({"ok": False, "error": _("اختيار الأيقونة غير صحيح.")}, status=400)
+            return request.make_json_response({"ok": False, "error": _("The selected avatar is invalid.")}, status=400)
         try:
             avatar_upload = _read_custom_avatar_upload("avatar_upload")
         except UserError as error:

@@ -94,7 +94,7 @@
                 <t t-set="ab_location_saved_addresses" t-value="ab_location_partner and ab_location_partner.child_ids.filtered(lambda address: address.type in ('delivery', 'other') and (address.city or address.state_id or address.country_id or address.street))[:1]"/>
                 <t t-set="ab_location_address" t-value="ab_location_saved_addresses and ab_location_saved_addresses[0] or ab_location_partner"/>
                 <t t-set="ab_location_name" t-value="ab_location_address and (ab_location_address.city or ab_location_address.state_id.name or ab_location_address.country_id.name or ab_location_address.street) or ''"/>
-                <t t-set="ab_location_label" t-value="'توصيل إلى %s' % ab_location_name if ab_location_name else 'منطقتك الحالية'"/>
+                <t t-set="ab_location_label" t-value="website._ab_storefront_location_label(ab_location_name)"/>
 
                 <div class="ab-storefront-announcement">
                     <div class="container d-flex align-items-center justify-content-between gap-3 py-2">
@@ -168,10 +168,10 @@
                             <li t-if="request.env.user._is_public()" class="nav-item">
                                 <a t-att-href="'/web/login?redirect=%s' % request.httprequest.path"
                                    class="ab-storefront-action ab-storefront-login-action btn"
-                                   aria-label="تسجيل الدخول"
-                                   title="تسجيل الدخول">
+                                   t-att-aria-label="ab_header_nav_labels['signin']"
+                                   t-att-title="ab_header_nav_labels['signin']">
                                     <i class="fa fa-user" aria-hidden="true"/>
-                                    <span>تسجيل الدخول</span>
+                                    <span t-out="ab_header_nav_labels['signin']"/>
                                 </a>
                             </li>
                             <t t-call="website_sale.header_cart_link">
@@ -186,7 +186,7 @@
                                    title="My account">
                                     <t t-set="avatar_value" t-value="request.env.user.partner_id.ab_storefront_avatar"/>
                                     <t t-set="avatar_size" t-value="'sm'"/>
-                                    <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+                                    <t t-set="avatar_alt" t-value="'Your account avatar'"/>
                                     <t t-call="ab_ecommerce_storefront.avatar_image"/>
                                 </a>
                             </li>
@@ -263,39 +263,39 @@
                         <header class="ab-storefront-location-picker-header">
                             <button class="ab-storefront-location-picker-close"
                                     type="button"
-                                    aria-label="إغلاق اختيار الموقع"
+                                    aria-label="Close location picker"
                                     data-ab-location-picker-close="">
                                 <i class="fa fa-times" aria-hidden="true"/>
                             </button>
-                            <h2 id="abStorefrontLocationPickerTitle">الموقع</h2>
+                            <h2 id="abStorefrontLocationPickerTitle">Location</h2>
                         </header>
 
                         <div class="ab-storefront-location-picker-body">
                             <div class="ab-storefront-location-search">
                                 <i class="fa fa-search" aria-hidden="true"/>
                                 <input type="search"
-                                       placeholder="ابحث عن المنطقة أو المدينة أو المحافظة"
-                                       aria-label="ابحث عن المنطقة أو المدينة أو المحافظة"
+                                       placeholder="Search for an area, city, or governorate"
+                                       aria-label="Search for an area, city, or governorate"
                                        data-ab-location-search=""/>
                             </div>
 
                             <button class="ab-storefront-location-country is-selected"
                                     type="button"
-                                    data-ab-location-region="مصر">
-                                مصر
+                                    data-ab-location-region="Egypt">
+                                Egypt
                             </button>
 
                             <button class="ab-storefront-location-auto"
                                     type="button"
                                     data-ab-location-auto="">
                                 <i class="fa fa-location-arrow" aria-hidden="true"/>
-                                <span>استخدم موقعي الحالي</span>
+                                <span>Use my current location</span>
                             </button>
 
                             <button class="ab-storefront-location-add"
                                     type="button"
                                     data-ab-location-add="">
-                                <span>إضافة عنوان جديد</span>
+                                <span>Add new address</span>
                                 <i class="fa fa-plus" aria-hidden="true"/>
                             </button>
 
@@ -303,33 +303,33 @@
                                      data-ab-location-recent-section="">
                                 <h3>
                                     <i class="fa fa-history" aria-hidden="true"/>
-                                    آخر المواقع
+                                    Recent locations
                                 </h3>
                                 <div class="ab-storefront-location-recent"
                                      data-ab-location-recent-list=""/>
                             </section>
 
                             <section class="ab-storefront-location-section">
-                                <h3>المناطق الشائعة</h3>
+                                <h3>Popular areas</h3>
                                 <div class="ab-storefront-location-regions"
                                      data-ab-location-regions="">
-                                    <button type="button" data-ab-location-region="القاهرة">القاهرة</button>
-                                    <button type="button" data-ab-location-region="الجيزة">الجيزة</button>
-                                    <button type="button" data-ab-location-region="الإسكندرية">الإسكندرية</button>
-                                    <button type="button" data-ab-location-region="القليوبية">القليوبية</button>
-                                    <button type="button" data-ab-location-region="الشرقية">الشرقية</button>
-                                    <button type="button" data-ab-location-region="الدقهلية">الدقهلية</button>
-                                    <button type="button" data-ab-location-region="سوهاج">سوهاج</button>
-                                    <button type="button" data-ab-location-region="أسيوط">أسيوط</button>
+                                    <button type="button" data-ab-location-region="Cairo">Cairo</button>
+                                    <button type="button" data-ab-location-region="Giza">Giza</button>
+                                    <button type="button" data-ab-location-region="Alexandria">Alexandria</button>
+                                    <button type="button" data-ab-location-region="Qalyubia">Qalyubia</button>
+                                    <button type="button" data-ab-location-region="Sharqia">Sharqia</button>
+                                    <button type="button" data-ab-location-region="Dakahlia">Dakahlia</button>
+                                    <button type="button" data-ab-location-region="Sohag">Sohag</button>
+                                    <button type="button" data-ab-location-region="Assiut">Assiut</button>
                                 </div>
                             </section>
 
                             <section class="ab-storefront-location-section">
                                 <label class="ab-storefront-location-detail-label"
-                                       for="abStorefrontLocationDetail">العنوان بالتفصيل</label>
+                                       for="abStorefrontLocationDetail">Detailed address</label>
                                 <textarea id="abStorefrontLocationDetail"
                                           rows="3"
-                                          placeholder="اكتب الشارع، رقم العمارة، الدور أو أقرب علامة مميزة"
+                                          placeholder="Write the street, building number, floor, or nearest landmark"
                                           data-ab-location-detail=""></textarea>
                             </section>
 
@@ -337,37 +337,37 @@
                                 <span class="ab-storefront-location-empty-icon">
                                     <i class="fa fa-map-marker" aria-hidden="true"/>
                                 </span>
-                                <strong>لا توجد عناوين محفوظة</strong>
-                                <p>أضف عنوانك لإتمام الطلب بسهولة أو استخدم موقعك الحالي.</p>
+                                <strong>No saved addresses</strong>
+                                <p>Add your address to complete orders easily or use your current location.</p>
                             </div>
                         </div>
 
                         <footer class="ab-storefront-location-picker-footer">
                             <div>
-                                <span>اختر المنطقة</span>
-                                <strong data-ab-location-selected="">مصر</strong>
+                                <span>Choose area</span>
+                                <strong data-ab-location-selected="">Egypt</strong>
                             </div>
                             <button class="ab-storefront-location-submit"
                                     type="button"
                                     data-ab-location-submit="">
-                                تحديد مصر
+                                Select Egypt
                             </button>
                         </footer>
                     </section>
                 </div>
 
                 <div class="ab-storefront-category-nav navbar navbar-expand-lg d-none d-lg-block">
-                    <nav class="container ab-storefront-primary-nav" aria-label="تنقل المتجر">
+                    <nav class="container ab-storefront-primary-nav" t-att-aria-label="ab_header_nav_labels['store']">
                         <a href="/"
                            t-attf-class="ab-storefront-home-link nav-link d-inline-flex align-items-center gap-1 text-nowrap #{'active' if ab_current_path in ['/', '/ar'] else ''}">
                             <i class="fa fa-home" aria-hidden="true"/>
-                            الرئيسية
+                            <span t-out="ab_header_nav_labels['home']"/>
                         </a>
                         <a t-att-href="ab_offers_href"
                            class="ab-storefront-offers-link nav-link d-inline-flex align-items-center gap-1 text-nowrap"
-                           aria-label="العروض والخصومات">
+                           t-att-aria-label="ab_header_nav_labels['offers_aria']">
                             <i class="fa fa-tag" aria-hidden="true"/>
-                            <span>العروض</span>
+                            <span t-out="ab_header_nav_labels['offers']"/>
                             <span t-if="ab_offers_badge" class="ab-storefront-offers-badge" t-out="ab_offers_badge"/>
                         </a>
                         <div class="dropdown ab-storefront-category-dropdown ab-storefront-category-dropdown--category">
@@ -419,7 +419,7 @@
                         <a t-att-href="ab_prescription_href"
                            class="ab-storefront-prescription-link text-decoration-none text-nowrap">
                             <i class="fa fa-file-text-o" aria-hidden="true"/>
-                            <span>اطلب بالروشتة</span>
+                            <span t-out="ab_header_nav_labels['prescription']"/>
                         </a>
                     </nav>
                 </div>
@@ -436,39 +436,39 @@
                     <div class="offcanvas-body">
                         <a href="/"
                            t-attf-class="ab-storefront-mobile-secondary-link #{'active' if ab_current_path in ['/', '/ar'] else ''}"
-                           aria-label="الرئيسية">
+                           t-att-aria-label="ab_header_nav_labels['home']">
                             <i class="fa fa-home" aria-hidden="true"/>
-                            <span>الرئيسية</span>
+                            <span t-out="ab_header_nav_labels['home']"/>
                         </a>
                         <a t-att-href="ab_offers_href"
                            class="ab-storefront-mobile-offers-link"
-                           aria-label="العروض والخصومات">
+                           t-att-aria-label="ab_header_nav_labels['offers_aria']">
                             <i class="fa fa-tag" aria-hidden="true"/>
-                            <span>العروض</span>
+                            <span t-out="ab_header_nav_labels['offers']"/>
                             <span t-if="ab_offers_badge" class="ab-storefront-offers-badge" t-out="ab_offers_badge"/>
                         </a>
                         <a t-att-href="ab_prescription_href" class="ab-storefront-mobile-primary-link">
                             <i class="fa fa-file-text-o" aria-hidden="true"/>
-                            اطلب بالروشتة
+                            <span t-out="ab_header_nav_labels['prescription']"/>
                         </a>
                         <a t-if="not request.env.user._is_public()"
                            href="/my/home"
                            class="ab-storefront-mobile-secondary-link">
                             <t t-set="avatar_value" t-value="request.env.user.partner_id.ab_storefront_avatar"/>
                             <t t-set="avatar_size" t-value="'xs'"/>
-                            <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+                            <t t-set="avatar_alt" t-value="'Your account avatar'"/>
                             <t t-call="ab_ecommerce_storefront.avatar_image"/>
-                            <span>حسابي</span>
+                            <span t-out="ab_header_nav_labels['account']"/>
                         </a>
                         <a t-if="request.env.user._is_public()"
                            t-att-href="'/web/login?redirect=%s' % request.httprequest.path"
                            class="ab-storefront-mobile-secondary-link">
                             <i class="fa fa-user" aria-hidden="true"/>
-                            <span>تسجيل الدخول</span>
+                            <span t-out="ab_header_nav_labels['signin']"/>
                         </a>
                         <a href="/shop/wishlist" class="ab-storefront-mobile-secondary-link">
                             <i class="fa fa-heart-o" aria-hidden="true"/>
-                            <span>المفضلة</span>
+                            <span t-out="ab_header_nav_labels['wishlist']"/>
                         </a>
                         <div class="ab-storefront-location ab-storefront-location--mobile-menu"
                              data-ab-current-location="true"

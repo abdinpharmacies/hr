@@ -2,6 +2,7 @@
 
 import { Interaction } from "@web/public/interaction";
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 
 const ARABIC_DIGITS = "٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹";
 const LATIN_DIGITS = "01234567890123456789";
@@ -12,11 +13,11 @@ const MOTION_MS = {
     success: 1180,
 };
 const PASSWORD_LEVELS = [
-    {key: "very-weak", label: "ضعيفة جدًا", hint: "ابدأ بكلمة أطول ومزيج أوضح من الأحرف"},
-    {key: "weak", label: "ضعيفة", hint: "أضف حرفًا كبيرًا ورقمًا أو رمزًا"},
-    {key: "medium", label: "متوسطة", hint: "اقتربت. أضف عنصرًا آخر لزيادة الأمان"},
-    {key: "good", label: "جيدة", hint: "كلمة جيدة. الرمز الخاص يجعلها أقوى"},
-    {key: "strong", label: "قوية", hint: "كلمة مرور قوية"},
+    {key: "very-weak", label: _t("Very weak"), hint: _t("Start with a longer password and a clearer mix of characters")},
+    {key: "weak", label: _t("Weak"), hint: _t("Add an uppercase letter, a number, or a symbol")},
+    {key: "medium", label: _t("Medium"), hint: _t("Almost there. Add one more element to increase security")},
+    {key: "good", label: _t("Good"), hint: _t("Good password. A special symbol makes it stronger")},
+    {key: "strong", label: _t("Strong"), hint: _t("Strong password")},
 ];
 const PASSWORD_RULES = [
     {key: "length", test: (value) => value.length >= 8},
@@ -366,7 +367,7 @@ export class AbStorefrontAuth extends Interaction {
         const shouldShow = input.type === "password";
         input.type = shouldShow ? "text" : "password";
         button.classList.toggle("is-visible", shouldShow);
-        button.setAttribute("aria-label", shouldShow ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
+        button.setAttribute("aria-label", shouldShow ? _t("Hide password") : _t("Show password"));
     }
 
     async onSubmit(ev) {
@@ -403,7 +404,7 @@ export class AbStorefrontAuth extends Interaction {
             button.disabled = true;
             button.dataset.originalText = button.textContent.trim();
             button.classList.add("is-loading");
-            button.textContent = button.dataset.loadingText || "جاري المتابعة...";
+            button.textContent = button.dataset.loadingText || _t("Continuing...");
         }
 
         try {
@@ -425,7 +426,7 @@ export class AbStorefrontAuth extends Interaction {
 
             await this.playSuccessSequence(response.url || form.querySelector("input[name='redirect']")?.value || "/shop");
         } catch {
-            this.showInlineFailure(form, "حدث خطأ غير متوقع. حاول مرة أخرى.");
+            this.showInlineFailure(form, _t("An unexpected error occurred. Please try again."));
         } finally {
             if (!this.el.classList.contains("is-auth-success")) {
                 this.isSubmitting = false;
@@ -442,9 +443,9 @@ export class AbStorefrontAuth extends Interaction {
         if (isLoginUsername) {
             error = "";
         } else if (!normalized) {
-            error = "رقم الهاتف مطلوب";
+            error = _t("Phone number is required");
         } else if (!EGYPT_MOBILE_RE.test(normalized)) {
-            error = "برجاء إدخال رقم هاتف صحيح";
+            error = _t("Please enter a valid phone number");
         }
 
         input.classList.toggle("is-invalid", Boolean(error));
@@ -472,7 +473,7 @@ export class AbStorefrontAuth extends Interaction {
                 continue;
             }
             if (!input.value.trim()) {
-                this.setFieldError(input, input.type === "password" ? "هذا الحقل مطلوب" : "برجاء إدخال هذا الحقل");
+                this.setFieldError(input, input.type === "password" ? _t("This field is required") : _t("Please fill in this field"));
                 return input;
             }
             this.clearFieldError(input);
@@ -484,12 +485,12 @@ export class AbStorefrontAuth extends Interaction {
             const strength = evaluatePassword(password.value);
             if (password.value && !strength.isStrong) {
                 this.updatePasswordExperience(password, {reveal: true});
-                this.setFieldError(password, "استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص");
+                this.setFieldError(password, _t("Use at least 8 characters with uppercase, lowercase, number, and special symbol"));
                 return password;
             }
         }
         if (password && confirm && password.value !== confirm.value) {
-            this.setFieldError(confirm, "كلمتا المرور غير متطابقتين");
+            this.setFieldError(confirm, _t("Passwords do not match"));
             this.updateConfirmExperience(form, {shakeOnMismatch: true});
             return confirm;
         }
@@ -528,12 +529,12 @@ export class AbStorefrontAuth extends Interaction {
         if (label && label.textContent !== strength.level.label) {
             label.classList.remove("is-changing");
             void label.offsetWidth;
-            label.textContent = strength.isStrong ? "كلمة مرور قوية" : strength.level.label;
+            label.textContent = strength.isStrong ? _t("Strong password") : strength.level.label;
             label.classList.add("is-changing");
         }
         const hint = helper.querySelector("[data-ab-password-hint]");
         if (hint) {
-            hint.textContent = strength.isStrong ? "كلمة مرور قوية" : strength.level.hint;
+            hint.textContent = strength.isStrong ? _t("Strong password") : strength.level.hint;
         }
     }
 
@@ -592,7 +593,7 @@ export class AbStorefrontAuth extends Interaction {
         }
         const matches = password.value === confirm.value;
         field.classList.add(matches ? "has-confirm-match" : "has-confirm-mismatch");
-        message.textContent = matches ? "كلمتا المرور متطابقتان" : "كلمتا المرور غير متطابقتين";
+        message.textContent = matches ? _t("Passwords match") : _t("Passwords do not match");
         if (!matches && options.shakeOnMismatch && field.dataset.abLastConfirmState !== "mismatch") {
             this.shakeField(field);
         }
@@ -651,7 +652,7 @@ export class AbStorefrontAuth extends Interaction {
             return;
         }
         const form = this.el.querySelector("[data-ab-auth-form]");
-        this.showInlineFailure(form, fallbackHtml ? "حدث خطأ غير متوقع. حاول مرة أخرى." : "تعذر الاتصال بالخادم. حاول مرة أخرى.");
+        this.showInlineFailure(form, fallbackHtml ? _t("An unexpected error occurred. Please try again.") : _t("Could not reach the server. Please try again."));
     }
 
     showInlineFailure(form, text) {
