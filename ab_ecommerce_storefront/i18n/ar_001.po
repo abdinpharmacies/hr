@@ -3336,3 +3336,38 @@ msgstr "العناية بالبشرة"
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "vitamins and minerals"
 msgstr "الفيتامينات والمعادن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "About Abdin"
+msgstr "عن عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Who We Are"
+msgstr "من نحن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Our Branches"
+msgstr "فروعنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Customer Service"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Track Order"
+msgstr "تتبع الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Return Policy"
+msgstr "سياسة الاسترجاع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Help"
+msgstr "المساعدة"

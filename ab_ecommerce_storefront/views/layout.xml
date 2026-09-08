@@ -527,7 +527,6 @@
 
         <xpath expr="//footer[@id='bottom']" position="replace">
             <footer t-if="not no_footer" id="bottom" data-anchor="true" class="ab-storefront-footer o_footer">
-                <t t-set="ab_footer_categories" t-value="website._ab_storefront_categories(limit=5)"/>
                 <div id="footer" class="container py-5">
                     <div class="row g-4 g-lg-5">
                         <div class="col-12 col-lg-4">
@@ -554,28 +553,22 @@
                             </div>
                         </div>
                         <div class="col-6 col-md-4 col-lg-2">
-                            <h2 class="h6">Shop</h2>
+                            <h2 class="h6">About Abdin</h2>
                             <ul class="list-unstyled">
-                                <li><a href="/shop">All products</a></li>
-                                <li t-foreach="ab_footer_categories" t-as="ab_category">
-                                    <a t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)">
-                                        <span t-out="website._ab_storefront_category_label(ab_category)"/>
-                                    </a>
-                                </li>
+                                <li><a href="/about-us">Who We Are</a></li>
+                                <li><a href="/branches">Our Branches</a></li>
                             </ul>
                         </div>
                         <div class="col-6 col-md-4 col-lg-2">
-                            <h2 class="h6">Customer care</h2>
+                            <h2 class="h6">Customer Service</h2>
                             <ul class="list-unstyled">
-                                <li><a href="/my/home">My account</a></li>
-                                <li><a href="/my/orders">My orders</a></li>
-                                <li><a href="/shop/wishlist">Wishlist</a></li>
                                 <li><a href="/contactus">Contact us</a></li>
-                                <li><a href="/privacy-policy">Privacy policy</a></li>
+                                <li><a href="/my/orders">Track Order</a></li>
+                                <li><a href="/return-policy">Return Policy</a></li>
                             </ul>
                         </div>
                         <div class="col-12 col-md-4 col-lg-4">
-                            <h2 class="h6">We are here to help</h2>
+                            <h2 class="h6">Help</h2>
                             <a href="tel:19036" class="ab-storefront-hotline text-decoration-none">
                                 <span class="ab-storefront-hotline-icon"><i class="fa fa-phone" aria-hidden="true"/></span>
                                 <span>

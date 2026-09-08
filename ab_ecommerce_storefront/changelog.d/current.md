@@ -49,6 +49,7 @@ Current changes before commit:
 - Expose the existing category navigation as a compact horizontally scrollable mobile row without hardcoded categories.
 - Keep the live wishlist action beside the cart in the compact sticky mobile header.
 - Stabilize sticky header state changes with a measured placeholder and hysteresis to avoid flicker near the scroll boundary.
+- Replace the duplicated footer Shop column with About Abdin, Customer Service, and Help link groups.
 - Improve narrow mobile cart and wishlist badge placement so non-zero counters are not clipped.
 - Add a floating customer support widget with WhatsApp, Messenger, and hotline actions using the requested contact destinations.
 - Keep the support widget responsive, RTL-ready, keyboard closable, and offset from mobile bottom controls.
