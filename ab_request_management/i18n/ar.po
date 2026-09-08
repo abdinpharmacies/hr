@@ -332,6 +332,8 @@ msgstr "لا يمكن أن يكون الموعد النهائي في الماض�
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_search
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__department_id
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
 msgid "Department"
 msgstr "القسم"
 
@@ -2909,6 +2911,7 @@ msgstr "أدخل كود الموظف أو رقم السجل التجاري."
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__employee_code
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__employee_id
 msgid "Employee Code"
 msgstr "كود الموظف"
 
@@ -3060,3 +3063,39 @@ msgstr "مرفق"
 #. module: ab_request_management
 msgid "New Request"
 msgstr "طلب جديد"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "<span class=\"ab-public-request-brand-name\">Complaint Management</span>"
+msgstr "<span class=\"ab-public-request-brand-name\">إدارة الشكاوى</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "Submitted Complaint Form"
+msgstr "نموذج الشكوى المقدمة"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "Employee Code <em>*</em>"
+msgstr "كود الموظف <em>*</em>"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__job_id
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "<option value=\"\">Select employee...</option>"
+msgstr "<option value=\"\">اختر الموظف...</option>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "<option value=\"\">Select job title...</option>"
+msgstr "<option value=\"\">اختر المسمى الوظيفي...</option>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form_hr_fields
+msgid "<option value=\"\">Select department...</option>"
+msgstr "<option value=\"\">اختر القسم...</option>"

@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
-from odoo import http
+from odoo import fields, http
 from odoo.exceptions import ValidationError
 from odoo.http import content_disposition, request
 from odoo.tools.translate import _
@@ -88,13 +88,24 @@ class AbRequestCustomerController(http.Controller):
             request_type_id = self._parse_positive_id(post.get("request_type_id"))
             requester_type = (post.get("requester_type") or "").strip()
             self._validate_public_selection(category_id, request_type_id)
+            employee = (
+                self._get_hr_selection("ab_hr_employee", post.get("employee_id"))
+                if requester_type == "employee" else False
+            )
+            job = self._get_hr_selection("ab_hr_job", post.get("job_id"))
+            department = self._get_hr_selection("ab_hr_department", post.get("department_id"))
             website_request = request.env["ab_request_website"].sudo().create(
                 {
                     "customer_name": post.get("customer_name"),
                     "customer_phone": post.get("customer_phone"),
                     "customer_email": post.get("customer_email"),
                     "requester_type": requester_type,
-                    "employee_code": post.get("employee_code") if requester_type == "employee" else False,
+                    # Keep the existing verification value and validation intact.
+                    "employee_code": (employee.accid if employee else post.get("employee_code"))
+                    if requester_type == "employee" else False,
+                    "employee_id": employee.id if employee else False,
+                    "job_id": job.id if job else False,
+                    "department_id": department.id if department else False,
                     "commercial_register_number": post.get("commercial_register_number")
                     if requester_type == "supplier"
                     else False,
@@ -189,6 +200,17 @@ class AbRequestCustomerController(http.Controller):
             {
                 "categories": public_categories,
                 "request_types": public_request_types,
+                # Publish only choice IDs/labels, never HR contact or identity fields.
+                "employees": request.env["ab_hr_employee"].sudo().search_read(
+                    fields.Domain("active", "=", True) & fields.Domain("accid", "!=", False),
+                    ["accid"], order="id",
+                ),
+                "jobs": request.env["ab_hr_job"].sudo().search_read(
+                    fields.Domain("active", "=", True), ["name"], order="name, id",
+                ),
+                "departments": request.env["ab_hr_department"].sudo().search_read(
+                    fields.Domain("active", "=", True), ["name"], order="name, id",
+                ),
                 "has_public_options": bool(public_categories and public_request_types),
                 "post": post or {},
                 "error": error,
@@ -438,6 +460,17 @@ class AbRequestCustomerController(http.Controller):
         if record_id <= 0:
             raise ValueError("Record identifiers must be positive.")
         return record_id
+
+    def _get_hr_selection(self, model_name, value):
+        if not value:
+            return False
+        domain = fields.Domain("id", "=", self._parse_positive_id(value)) & fields.Domain("active", "=", True)
+        if model_name == "ab_hr_employee":
+            domain &= fields.Domain("accid", "!=", False)
+        record = request.env[model_name].sudo().search(domain, limit=1)
+        if not record:
+            raise ValueError("Selected HR record is not available.")
+        return record
 
     @staticmethod
     def _validate_public_selection(category_id, request_type_id):

@@ -43,6 +43,9 @@ class AbRequestWebsite(models.Model):
         default="employee",
     )
     employee_code = fields.Char(string="Employee Code")
+    employee_id = fields.Many2one("ab_hr_employee", string="Employee Code", ondelete="restrict")
+    job_id = fields.Many2one("ab_hr_job", string="Job Title", ondelete="restrict")
+    department_id = fields.Many2one("ab_hr_department", string="Department", ondelete="restrict")
     commercial_register_number = fields.Char(string="Commercial Register Number")
     national_id = fields.Char(string="National ID")
     followup_ids = fields.One2many(

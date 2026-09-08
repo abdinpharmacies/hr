@@ -524,4 +524,48 @@
             </body>
         </html>
     </template>
+    <template id="customer_request_form_hr_fields" inherit_id="customer_request_form"
+              name="Complaint Form HR Fields">
+        <xpath expr="//span[@class='ab-public-request-brand-name']" position="replace">
+            <span class="ab-public-request-brand-name">Complaint Management</span>
+        </xpath>
+        <xpath expr="//div[@class='ab-public-request-form-heading']/div/h2" position="replace">
+            <h2>Submitted Complaint Form</h2>
+        </xpath>
+        <xpath expr="//label[@for='employee_code']" position="replace">
+            <label for="employee_code">Employee Code <em>*</em></label>
+        </xpath>
+        <xpath expr="//input[@id='employee_code']" position="replace">
+            <select id="employee_code" name="employee_id" class="core_ui_input core_ui_select"
+                    data-ab-requester-type-input="employee">
+                <option value="">Select employee...</option>
+                <option t-foreach="employees" t-as="employee"
+                        t-att-value="employee['id']"
+                        t-att-selected="str(employee['id']) == str(post.get('employee_id', ''))"
+                        t-out="employee['accid']"/>
+            </select>
+        </xpath>
+        <xpath expr="//div[@data-ab-employee-code-group]" position="after">
+            <div class="core_ui_form_group">
+                <label for="job_id">Job Title</label>
+                <select id="job_id" name="job_id" class="core_ui_input core_ui_select">
+                    <option value="">Select job title...</option>
+                    <option t-foreach="jobs" t-as="job"
+                            t-att-value="job['id']"
+                            t-att-selected="str(job['id']) == str(post.get('job_id', ''))"
+                            t-out="job['name']"/>
+                </select>
+            </div>
+            <div class="core_ui_form_group">
+                <label for="department_id">Department</label>
+                <select id="department_id" name="department_id" class="core_ui_input core_ui_select">
+                    <option value="">Select department...</option>
+                    <option t-foreach="departments" t-as="department"
+                            t-att-value="department['id']"
+                            t-att-selected="str(department['id']) == str(post.get('department_id', ''))"
+                            t-out="department['name']"/>
+                </select>
+            </div>
+        </xpath>
+    </template>
 </odoo>

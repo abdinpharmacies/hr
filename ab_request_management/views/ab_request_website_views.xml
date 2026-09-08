@@ -156,4 +156,20 @@
         <field name="search_view_id" ref="ab_request_website_view_search"/>
         <field name="context">{'search_default_filter_new': 1}</field>
     </record>
+    <record id="ab_request_website_view_form_hr_fields" model="ir.ui.view">
+        <field name="name">ab_request_website.form.hr.fields</field>
+        <field name="model">ab_request_website</field>
+        <field name="inherit_id" ref="ab_request_website_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_code']" position="attributes">
+                <attribute name="invisible">requester_type != 'employee' or employee_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='employee_code']" position="after">
+                <field name="employee_id" readonly="1" invisible="requester_type != 'employee'"
+                       options="{'no_open': True, 'no_create': True}"/>
+                <field name="job_id" readonly="1" options="{'no_open': True, 'no_create': True}"/>
+                <field name="department_id" readonly="1" options="{'no_open': True, 'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>
