@@ -1,10 +1,33 @@
 import logging
+import os
+from functools import wraps
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import config
+from odoo.addons.queue_job.exception import FailedJobError, RetryableJobError
+from odoo.addons.queue_job.job import Job
 
 _logger = logging.getLogger(__name__)
+
+
+def _isolate_telegram_notification(method):
+    @wraps(method)
+    def isolated(self, *args, **kwargs):
+        # Flush workflow changes outside the notification error boundary. Genuine
+        # workflow/database errors must still follow Odoo's normal handling.
+        self.env.cr.flush()
+        try:
+            with self.env.cr.savepoint():
+                return method(self, *args, **kwargs)
+        except Exception as exc:
+            # Do not log message bodies, chat IDs, or transport credentials.
+            _logger.error(
+                'Supplier Claim Telegram enqueue failed: method=%s claims=%s error=%s',
+                method.__name__, self.ids, type(exc).__name__,
+            )
+            return False
+    return isolated
 
 
 class SupplierClaimCycle(models.Model):
@@ -158,11 +181,11 @@ class SupplierClaimCycle(models.Model):
                 excluded_users |= group.sudo().user_ids
         return (users - excluded_users).filtered('active')
 
+    @_isolate_telegram_notification
     def _send_claim_created_telegram_notifications(self):
         if not self._supplier_claim_telegram_notifications_enabled() or config['test_enable']:
             return False
         Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
-        TelegramBot = self.env['ab_telegram_bot'].sudo()
         recipient_users = self._get_claim_created_telegram_recipient_users()
         if not recipient_users:
             return False
@@ -179,7 +202,7 @@ class SupplierClaimCycle(models.Model):
                     continue
                 lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)
                 text = claim.with_context(lang=lang)._build_claim_created_telegram_message()
-                TelegramBot.send_message(chat_id, text, parse_mode='HTML')
+                claim._enqueue_telegram_notification(chat_id, text)
                 sent_chat_ids.add(chat_id)
         return True
 
@@ -188,6 +211,7 @@ class SupplierClaimCycle(models.Model):
         self._send_department_turn_telegram_notifications(stage_key)
         return result
 
+    @_isolate_telegram_notification
     def _send_department_turn_telegram_notifications(self, stage_key):
         if not self._supplier_claim_telegram_notifications_enabled() or config['test_enable']:
             return False
@@ -202,7 +226,6 @@ class SupplierClaimCycle(models.Model):
             return False
 
         Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
-        TelegramBot = self.env['ab_telegram_bot'].sudo()
         for claim in self:
             registrations = Registration.search([
                 ('active', '=', True),
@@ -216,10 +239,11 @@ class SupplierClaimCycle(models.Model):
                     continue
                 lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)
                 text = claim.with_context(lang=lang)._build_department_turn_telegram_message(stage_key)
-                TelegramBot.send_message(chat_id, text, parse_mode='HTML')
+                claim._enqueue_telegram_notification(chat_id, text)
                 sent_chat_ids.add(chat_id)
         return True
 
+    @_isolate_telegram_notification
     def _send_external_escalation_notification(self, manager, stage_key=None):
         self.ensure_one()
         if not self._supplier_claim_telegram_notifications_enabled():
@@ -232,7 +256,52 @@ class SupplierClaimCycle(models.Model):
             _logger.info('Telegram skipped: no verified Telegram identity for user %s', manager.display_name)
             return False
         text = self.with_context(lang=self._get_telegram_recipient_lang(manager))._build_escalation_telegram_message(stage_key=stage_key)
-        return self.env['ab_telegram_bot'].sudo().send_message(chat_id, text, parse_mode='HTML')
+        return self._enqueue_telegram_notification(chat_id, text)
+
+    def _enqueue_telegram_notification(self, chat_id, text):
+        self.ensure_one()
+        # Job.store() only persists. Unlike with_delay(), it cannot execute inline
+        # through QUEUE_JOB__NO_DELAY or queue_job__no_delay. Never commit here:
+        # the runner must see the job only after the workflow transaction commits.
+        job = Job(
+            self._deliver_telegram_notification,
+            args=(str(chat_id), text),
+            channel='root.supplier_claim_telegram',
+            max_retries=5,
+            description=_('Supplier Claim Telegram notification'),
+        )
+        job.store()
+        return True
+
+    def _deliver_telegram_notification(self, chat_id, text):
+        self.ensure_one()
+        job_uuid = self.env.context.get('job_uuid')
+        job = self.env['queue.job'].sudo().search(
+            fields.Domain('uuid', '=', job_uuid), limit=1,
+        ) if job_uuid else self.env['queue.job']
+        # A context UUID alone is not evidence of worker execution. The runner
+        # persists STARTED and its PID before calling the registered method.
+        if not (
+            job
+            and job.state == 'started'
+            and job.worker_pid == os.getpid()
+            and job.model_name == self._name
+            and job.method_name == '_deliver_telegram_notification'
+            and job.records.ids == self.ids
+            and tuple(job.args) == (chat_id, text)
+        ):
+            raise FailedJobError(_('Supplier Claim Telegram delivery requires a running background job.'))
+        if not self._supplier_claim_telegram_notifications_enabled():
+            return False
+        try:
+            result = self.env['ab_telegram_bot'].sudo().send_message(
+                chat_id, text, parse_mode='HTML',
+            )
+        except OSError:
+            raise RetryableJobError(_('Telegram delivery failed; the background job will retry.')) from None
+        if not result or not result.get('sent'):
+            raise RetryableJobError(_('Telegram delivery failed; the background job will retry.'))
+        return result
 
     def _resolve_escalation_details(self, stage_key=None):
         parent = super()
