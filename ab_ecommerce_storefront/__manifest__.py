@@ -8,6 +8,7 @@
     "developer": "Alhassan Hossny",
     "depends": [
         "ab_website",
+        "ab_website_admin_content",
         "ab_website_sale_product",
         "website_sale_wishlist",
     ],

@@ -214,3 +214,13 @@ class Website(models.Model):
             "variants": variants_by_template,
             "wishlist_product_ids": wishlist_product_ids,
         }
+
+    def _ab_storefront_carousel_slides(self):
+        self.ensure_one()
+        domain = fields.Domain("active", "=", True)
+        domain &= fields.Domain("image_1920", "!=", False)
+        domain &= fields.Domain("website_id", "=", False) | fields.Domain("website_id", "=", self.id)
+        return self.env["ab_website_carousel_slide"].sudo().search(
+            domain,
+            order="sequence, id",
+        )
