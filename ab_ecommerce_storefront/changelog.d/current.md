@@ -79,6 +79,8 @@ Current changes before commit:
 - Honor the administrator's exact text CTA width, including compact widths, while wrapping long labels inside the button.
 - Preserve native vertical page scrolling while keeping horizontal carousel swipe behavior.
 - Add `ab_website_admin_content` as a storefront dependency so the homepage carousel model is available when the storefront renders.
+- Reorder the homepage so Offers appear before the service trust strip, then continue with Best Sellers, Feedback, Why Abdin, Testimonials, and CTA/Hotline.
+- Keep the existing category and promo content, merging promo cards into the CTA/Hotline area while adding Feedback, Why Abdin, and Testimonials after Best Sellers.
 
 Files changed:
 
@@ -107,7 +109,7 @@ Header refactor updates in this working tree:
 
 - Simplify the storefront header hierarchy to logo, native Odoo search, account, and native Odoo cart in the main shopping row.
 - Replace duplicated category dropdown plus horizontal category links with one dynamic category mega menu using existing Odoo website category routes.
-- Add an `اطلب بالروشتة` storefront CTA that points to the existing contact route because no dedicated prescription upload/order route exists in the local addons.
+- Add a Prescription Order storefront CTA that points to the existing contact route because no dedicated prescription upload/order route exists in the local addons.
 - Move lower-priority location, wishlist, language, and contact controls out of the main shopping row and into the utility/account/mobile menu surfaces.
 - Keep mobile on the native Odoo search snippet instead of the previous custom overlay search panel, preserving search form action and autocomplete attributes.
 - Refactor sticky behavior so CSS owns sticky positioning and JavaScript only toggles compact visual state.
@@ -126,11 +128,15 @@ Header refactor updates in this working tree:
 - Show the same Home, Offers, and Prescription Order navigation strip in the normal mobile and tablet header below 992px.
 - Restore the desktop-only Shop by Category dropdown in the storefront navigation using the pre-refactor menu structure.
 - Show the Shop by Category dropdown from 767px upward while keeping it hidden on narrower mobile screens.
+- Convert remaining storefront UI copy to English source strings and keep Arabic translations in both Arabic catalogs.
+- Add translation-safe location, authentication, avatar, search, navigation, empty-state, and filter dialog labels.
 - Normalize the Home and Shop by Category active colors to green backgrounds with white text and remove the extra search backing layer.
 - Smooth the header-to-sticky transition with scoped enter and exit morph animations that preserve the top-attached sticky shape.
 - Fix Shop by Category dropdown placement and state colors so the menu opens directly below the trigger and closed navigation items return to their non-active appearance.
 - Restrict the Shop by Category orange underline to hover only so it does not remain visible after closing the dropdown.
 - Split the storefront navigation discovery dropdown into Shop by Category and Shop by Need menus with pharmacy-specific links and Arabic translations.
+- Refresh the module POT and Arabic catalogs so Odoo 19 imports Python, QWeb, and JavaScript translations consistently at runtime.
+- Route dynamic header, location, category, and need labels through runtime language-aware translation helpers.
 
 Files changed for this header refactor:
 
@@ -138,6 +144,7 @@ Files changed for this header refactor:
 - `ab_ecommerce_storefront/models/website.py`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
 - `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
 

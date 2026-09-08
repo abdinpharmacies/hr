@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#  * ab_ecommerce_storefront
+# 	* ab_ecommerce_storefront
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-22 00:00+0000\n"
-"PO-Revision-Date: 2026-07-22 00:00+0000\n"
-"Last-Translator: Alhassan Hossny\n"
+"POT-Creation-Date: 2026-09-08 12:03+0000\n"
+"PO-Revision-Date: 2026-09-08 12:03+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
 "Language-Team: Arabic\n"
 "Language: ar_001\n"
 "MIME-Version: 1.0\n"
@@ -17,912 +17,921 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "% complete"
+msgstr "% مكتمل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "01XXXXXXXXX"
+msgstr "01XXXXXXXXX"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation_offcanvas
+msgid "<b>All categories</b>"
+msgstr "<b>كل الأقسام</b>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n                                                <span>Take prescription photo</span>"
+msgstr "<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n                                                <span>تصوير الروشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "<i class=\"fa fa-check-circle me-2\"/>Genuine products"
+msgstr "<i class=\"fa fa-check-circle me-2\"/>منتجات أصلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n                    <span><strong>Genuine products</strong><small>Carefully sourced</small></span>"
+msgstr "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n                    <span><strong>منتجات أصلية</strong><small>مختارة بعناية</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                            <span>Prescription requests</span>"
+msgstr "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                            <span>طلبات الروشتات</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                        <span>Order by prescription</span>"
+msgstr "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                        <span>اطلب بالروشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                    <strong>No prescription requests yet</strong>"
+msgstr "<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n                    <strong>لا توجد طلبات روشتات بعد</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<i class=\"fa fa-headphones\" aria-hidden=\"true\"/>\n                    <span><strong>Need assistance?</strong><small>Call 19036</small></span>"
+msgstr "<i class=\"fa fa-headphones\" aria-hidden=\"true\"/>\n                    <span><strong>تحتاج إلى مساعدة؟</strong><small>اتصل على 19036</small></span>"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<i class=\"fa fa-history\" aria-hidden=\"true\"/>\n                                    Recent locations"
+msgstr "<i class=\"fa fa-history\" aria-hidden=\"true\"/>\n                                    آخر المواقع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n                                                <span>Upload image</span>"
+msgstr "<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n                                                <span>رفع صورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/>\n                                <span>Use my current location</span>"
+msgstr "<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/>\n                                <span>استخدم موقعي الحالي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "<i class=\"fa fa-lock me-2\"/>Secure checkout"
+msgstr "<i class=\"fa fa-lock me-2\"/>دفع آمن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n                                    <span>Submit request</span>"
+msgstr "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n                                    <span>إرسال الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<i class=\"fa fa-phone me-1\" aria-hidden=\"true\"/>\n                                Hotline <span class=\"o_force_ltr\">19036</span>"
+msgstr "<i class=\"fa fa-phone me-1\" aria-hidden=\"true\"/>\n                                الخط الساخن <span class=\"o_force_ltr\">19036</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "<i class=\"fa fa-phone me-2\"/>Help on 19036"
+msgstr "<i class=\"fa fa-phone me-2\"/>مساعدة على 19036"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<i class=\"fa fa-plus\" aria-hidden=\"true\"/>\n                        <span>New request</span>"
+msgstr "<i class=\"fa fa-plus\" aria-hidden=\"true\"/>\n                        <span>طلب جديد</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n                                                <span>Change image</span>"
+msgstr "<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n                                                <span>تغيير الصورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n                                                <span>Remove image</span>"
+msgstr "<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n                                                <span>إزالة الصورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "<i class=\"fa fa-truck me-2\"/>Convenient delivery"
+msgstr "<i class=\"fa fa-truck me-2\"/>توصيل مريح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<i class=\"fa fa-truck\" aria-hidden=\"true\"/>\n                    <span><strong>Easy delivery</strong><small>Order with confidence</small></span>"
+msgstr "<i class=\"fa fa-truck\" aria-hidden=\"true\"/>\n                    <span><strong>توصيل سهل</strong><small>اطلب بثقة</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<small>Complete your information for a faster shopping experience</small>"
+msgstr "<small>أكمل بياناتك لتجربة تسوق أسرع</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<small>Notes are reviewed by the pharmacy team and do not automatically change prescription contents.</small>"
+msgstr "<small>يراجع فريق الصيدلية الملاحظات، ولا يتم تغيير محتوى الروشتة تلقائيا.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<small>Suggested strong password</small>\n                                <code data-ab-password-suggestion=\"\">--</code>"
+msgstr "<small>كلمة مرور قوية مقترحة</small>\n                                <code data-ab-password-suggestion=\"\">--</code>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span class=\"ab-account-action-icon\"><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n                                <strong>Prescription requests</strong>\n                                <small>Track prescriptions submitted for pharmacy review</small>"
+msgstr "<span class=\"ab-account-action-icon\"><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n                                <strong>طلبات الروشتات</strong>\n                                <small>Track prescriptions submitted for pharmacy review</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span class=\"ab-account-password-mask\">••••••••</span>"
+msgstr "<span class=\"ab-account-password-mask\">••••••••</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span class=\"ab-account-status-pill\">In progress</span>"
+msgstr "<span class=\"ab-account-status-pill\">قيد المتابعة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "<span class=\"ab-auth-form-mark\">Account recovery</span>"
+msgstr "<span class=\"ab-auth-form-mark\">استعادة الحساب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "<span class=\"ab-auth-form-mark\">Start an easier experience</span>"
+msgstr "<span class=\"ab-auth-form-mark\">ابدأ تجربة أسهل</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "<span class=\"ab-auth-form-mark\">Your Abdin Pharmacies account</span>"
+msgstr "<span class=\"ab-auth-form-mark\">حسابك في صيدليات عابدين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "<span class=\"ab-auth-kicker\">Abdin Pharmacies</span>"
+msgstr "<span class=\"ab-auth-kicker\">صيدليات عابدين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<span class=\"ab-prescription-kicker\">Pharmacy service</span>"
+msgstr "<span class=\"ab-prescription-kicker\">خدمة صيدلية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<span class=\"ab-prescription-upload-icon\">\n                                            <i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n                                        </span>\n                                        <strong>Upload or photograph the prescription</strong>"
+msgstr "<span class=\"ab-prescription-upload-icon\">\n                                            <i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n                                        </span>\n                                        <strong>ارفع أو صوّر الروشتة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-brand-fallback\">\n                                <strong>Abdin</strong>\n                                <small>Pharmacies</small>\n                            </span>"
+msgstr "<span class=\"ab-storefront-brand-fallback\">\n                                <strong>عابدين</strong>\n                                <small>صيدليات</small>\n                            </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "<span class=\"ab-storefront-card-add-text\" data-ab-card-add-label=\"\" title=\"Buy now\" aria-hidden=\"true\"/>"
+msgstr "<span class=\"ab-storefront-card-add-text\" data-ab-card-add-label=\"\" title=\"اشتري الآن\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-hotline-icon\"><i class=\"fa fa-phone\" aria-hidden=\"true\"/></span>\n                                <span>\n                                    <small>Call our hotline</small>\n                                    <strong class=\"o_force_ltr\">19036</strong>\n                                </span>"
+msgstr "<span class=\"ab-storefront-hotline-icon\"><i class=\"fa fa-phone\" aria-hidden=\"true\"/></span>\n                                <span>\n                                    <small>اتصل بالخط الساخن</small>\n                                    <strong class=\"o_force_ltr\">19036</strong>\n                                </span>"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Best Sellers</span>"
+msgstr "<span class=\"ab-storefront-kicker\">الأكثر مبيعًا</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">CTA / Hotline</span>"
+msgstr "<span class=\"ab-storefront-kicker\">دعوة للتواصل / الخط الساخن</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">Carefully matched</span>"
+msgstr "<span class=\"ab-storefront-kicker\">مختارة بعناية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Categories</span>"
+msgstr "<span class=\"ab-storefront-kicker\">الأقسام</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">Complete the routine</span>"
+msgstr "<span class=\"ab-storefront-kicker\">أكمل الروتين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Feedback</span>"
+msgstr "<span class=\"ab-storefront-kicker\">آراء العملاء</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Promotions</span>"
+msgstr "<span class=\"ab-storefront-kicker\">العروض</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Testimonials</span>"
+msgstr "<span class=\"ab-storefront-kicker\">آراء العملاء</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Why Abdin?</span>"
+msgstr "<span class=\"ab-storefront-kicker\">لماذا عابدين؟</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-location-empty-icon\">\n                                    <i class=\"fa fa-map-marker\" aria-hidden=\"true\"/>\n                                </span>\n                                <strong>No saved addresses</strong>"
+msgstr "<span class=\"ab-storefront-location-empty-icon\">\n                                    <i class=\"fa fa-map-marker\" aria-hidden=\"true\"/>\n                                </span>\n                                <strong>لا توجد عناوين محفوظة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
+msgid "<span class=\"ab-storefront-side-category-label\">\n                            <span class=\"ab-storefront-category-icon ab-storefront-category-icon-green\" aria-hidden=\"true\">\n                                <i class=\"fa fa-shopping-bag\"/>\n                            </span>\n                            <span>All products</span>\n                        </span>"
+msgstr "<span class=\"ab-storefront-side-category-label\">\n                            <span class=\"ab-storefront-category-icon ab-storefront-category-icon-green\" aria-hidden=\"true\">\n                                <i class=\"fa fa-shopping-bag\"/>\n                            </span>\n                            <span>كل المنتجات</span>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-comments\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>Messenger</strong>\n                            <small>Abdin Pharmacies</small>\n                        </span>"
+msgstr "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-comments\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>Messenger</strong>\n                            <small>صيدليات عابدين</small>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>Hotline</strong>\n                            <small class=\"o_force_ltr\">19036</small>\n                        </span>"
+msgstr "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>الخط الساخن</strong>\n                            <small class=\"o_force_ltr\">19036</small>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>WhatsApp</strong>\n                            <small class=\"o_force_ltr\">01030578926</small>\n                        </span>"
+msgstr "<span class=\"ab-storefront-support-item-icon\">\n                            <i class=\"fa fa-whatsapp\" aria-hidden=\"true\"/>\n                        </span>\n                        <span>\n                            <strong>WhatsApp</strong>\n                            <small class=\"o_force_ltr\">01030578926</small>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "<span class=\"ab-storefront-total-price-label\">Total</span>"
+msgstr "<span class=\"ab-storefront-total-price-label\">الإجمالي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span class=\"ab-storefront-trust-line d-flex align-items-center gap-2\">\n                            <i class=\"fa fa-shield\" aria-hidden=\"true\"/>\n                            <span>Trusted pharmacy care, delivered to your door</span>\n                        </span>"
+msgstr "<span class=\"ab-storefront-trust-line d-flex align-items-center gap-2\">\n                            <i class=\"fa fa-shield\" aria-hidden=\"true\"/>\n                            <span>رعاية صيدلية موثوقة تصل إلى بابك</span>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span data-ab-search-typewriter-label=\"\">Search products</span>\n                    <span data-ab-search-typewriter-prefix=\"\">Search for</span>\n                    <span data-ab-search-typewriter-phrase=\"\">Panadol</span>\n                    <span data-ab-search-typewriter-phrase=\"\">sunscreen</span>\n                    <span data-ab-search-typewriter-phrase=\"\">vitamin C</span>\n                    <span data-ab-search-typewriter-phrase=\"\">a blood pressure monitor</span>\n                    <span data-ab-search-typewriter-phrase=\"\">hair shampoo</span>\n                    <span data-ab-search-typewriter-phrase=\"\">baby diapers</span>\n                    <span data-ab-search-typewriter-phrase=\"\">skin care</span>"
+msgstr "<span data-ab-search-typewriter-label=\"\">بحث المنتجات</span>\n                    <span data-ab-search-typewriter-prefix=\"\">ابحث عن</span>\n                    <span data-ab-search-typewriter-phrase=\"\">بنادول</span>\n                    <span data-ab-search-typewriter-phrase=\"\">واقي شمس</span>\n                    <span data-ab-search-typewriter-phrase=\"\">فيتامين سي</span>\n                    <span data-ab-search-typewriter-phrase=\"\">جهاز ضغط</span>\n                    <span data-ab-search-typewriter-phrase=\"\">شامبو للشعر</span>\n                    <span data-ab-search-typewriter-phrase=\"\">حفاضات أطفال</span>\n                    <span data-ab-search-typewriter-phrase=\"\">العناية بالبشرة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span>\n                                        <small>Hotline 19036</small>\n                                        <strong>Need help? Our team is close to you</strong>\n                                        <span>Contact us</span>\n                                    </span>"
+msgstr "<span>\n                                        <small>الخط الساخن 19036</small>\n                                        <strong>تحتاج مساعدة؟ فريقنا قريب منك</strong>\n                                        <span>تواصل معنا</span>\n                                    </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span>\n                                        <small>Pharmacy Care</small>\n                                        <strong>Trusted pharmacy care, delivered to your door</strong>\n                                        <span>Shop now</span>\n                                    </span>"
+msgstr "<span>\n                                        <small>رعاية صيدلية</small>\n                                        <strong>رعاية صيدلية موثوقة تصل إلى بابك</strong>\n                                        <span>تسوق الآن</span>\n                                    </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "<span>\n                            <strong>Upload photo</strong>\n                            <small>PNG, JPG, or WebP</small>\n                        </span>"
+msgstr "<span>\n                            <strong>رفع صورة</strong>\n                            <small>PNG, JPG, or WebP</small>\n                        </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n                                <strong>No prescription requests yet</strong>"
+msgstr "<span><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n                                <strong>لا توجد طلبات روشتات بعد</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><i class=\"fa fa-medkit\" aria-hidden=\"true\"/></span>\n                                    <strong>Pharmacy expertise</strong>"
+msgstr "<span><i class=\"fa fa-medkit\" aria-hidden=\"true\"/></span>\n                                    <strong>خبرة صيدلية</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span><i class=\"fa fa-shield me-2\" aria-hidden=\"true\"/>Trusted Abdin product</span>\n                    <span><i class=\"fa fa-lock me-2\" aria-hidden=\"true\"/>Secure checkout</span>\n                    <span><i class=\"fa fa-phone me-2\" aria-hidden=\"true\"/>Pharmacy help: <span class=\"o_force_ltr\">19036</span></span>"
+msgstr "<span><i class=\"fa fa-shield me-2\" aria-hidden=\"true\"/>Trusted Abdin product</span>\n                    <span><i class=\"fa fa-lock me-2\" aria-hidden=\"true\"/>دفع آمن</span>\n                    <span><i class=\"fa fa-phone me-2\" aria-hidden=\"true\"/>Pharmacy help: <span class=\"o_force_ltr\">19036</span></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><i class=\"fa fa-shield\" aria-hidden=\"true\"/></span>\n                                    <strong>Protected shopping</strong>"
+msgstr "<span><i class=\"fa fa-shield\" aria-hidden=\"true\"/></span>\n                                    <strong>تسوق محمي</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><i class=\"fa fa-truck\" aria-hidden=\"true\"/></span>\n                                    <strong>Convenient delivery</strong>"
+msgstr "<span><i class=\"fa fa-truck\" aria-hidden=\"true\"/></span>\n                                    <strong>توصيل مريح</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><strong>Customer support</strong><small>Hotline 19036</small></span>"
+msgstr "<span><strong>دعم العملاء</strong><small>الخط الساخن 19036</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><strong>Fast delivery</strong><small>Comfortable ordering to your door</small></span>"
+msgstr "<span><strong>توصيل سريع</strong><small>طلب مريح حتى بابك</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><strong>Secure payment</strong><small>Protected shopping experience</small></span>"
+msgstr "<span><strong>دفع آمن</strong><small>تجربة شراء محمية</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span><strong>Trusted pharmacy care</strong><small>From Abdin Pharmacies</small></span>"
+msgstr "<span><strong>رعاية صيدلية موثوقة</strong><small>من صيدليات عابدين</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "<span>Account</span>"
+msgstr "<span>الحساب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span>Add new address</span>\n                                <i class=\"fa fa-plus\" aria-hidden=\"true\"/>"
+msgstr "<span>إضافة عنوان جديد</span>\n                                <i class=\"fa fa-plus\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Address management</span>"
+msgstr "<span>إدارة العناوين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>At least 8 characters</span>"
+msgstr "<span>8 أحرف على الأقل</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>At least one number</span>"
+msgstr "<span>رقم واحد على الأقل</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>At least one special symbol</span>"
+msgstr "<span>رمز خاص واحد على الأقل</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span>Choose area</span>\n                                <strong data-ab-location-selected=\"\">Egypt</strong>"
+msgstr "<span>اختر المنطقة</span>\n                                <strong data-ab-location-selected=\"\">مصر</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<span>Copyright © Abdin Pharmacies</span>\n                        <span>Healthcare with care, every day.</span>"
+msgstr "<span>حقوق النشر © صيدليات عابدين</span>\n                        <span>رعاية صحية باهتمام، كل يوم.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "<span>Genuine products</span>\n                            <span>Secure payment</span>\n                            <span>19036 support</span>"
+msgstr "<span>منتجات أصلية</span>\n                            <span>دفع آمن</span>\n                            <span>19036 support</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>Lowercase letter</span>"
+msgstr "<span>حرف صغير</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Main address</span>"
+msgstr "<span>العنوان الأساسي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>My account</span>"
+msgstr "<span>حسابي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>My addresses</span>"
+msgstr "<span>عناويني</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>My invoices</span>"
+msgstr "<span>فواتيري</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>My orders</span>"
+msgstr "<span>طلباتي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "<span>No photo</span>"
+msgstr "<span>بدون صورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>Password strength</span>\n                            <strong data-ab-password-label=\"\">Very weak</strong>"
+msgstr "<span>قوة كلمة المرور</span>\n                            <strong data-ab-password-label=\"\">ضعيفة جدًا</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Pharmacy service</span>"
+msgstr "<span>خدمة صيدلية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<span>Prescription request</span>"
+msgstr "<span>طلب روشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "<span>Shop now</span>"
+msgstr "<span>تسوق الآن</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Sign out</span>"
+msgstr "<span>تسجيل الخروج</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "<span>Uppercase letter</span>"
+msgstr "<span>حرف كبير</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Welcome back</span>"
+msgstr "<span>مرحبا بعودتك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Wishlist</span>"
+msgstr "<span>المفضلة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Your account</span>"
+msgstr "<span>حسابك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Your activity</span>"
+msgstr "<span>نشاطك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<span>Your picks</span>"
+msgstr "<span>اختياراتك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_details_avatar
+msgid "<span>Your profile photo</span>"
+msgstr "<span>صورتك الشخصية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "<span>or</span>"
+msgstr "<span>أو</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>19036</strong><span>Support hotline</span>"
+msgstr "<strong>19036</strong><span>خط الدعم</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>24/7</strong><span>Online ordering</span>"
+msgstr "<strong>24/7</strong><span>طلب أونلاين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "<strong>Abdin Pharmacies</strong>\n                    <span>Thoughtful healthcare, every day.</span>"
+msgstr "<strong>صيدليات عابدين</strong>\n                    <span>رعاية صحية باهتمام، كل يوم.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Add your address to make future orders easier</strong>"
+msgstr "<strong>أضف عنوانك لتسهيل طلباتك القادمة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Addresses</strong>\n                                <small>Add, remove, or edit your addresses</small>"
+msgstr "<strong>العناوين</strong>\n                                <small>Add, remove, or edit your addresses</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Confirmed</strong>"
+msgstr "<strong>مؤكد</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Contact and security</strong>\n                                <small>Configure your contact preferences</small>"
+msgstr "<strong>الاتصال والأمان</strong>\n                                <small>Configure your contact preferences</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "<strong>Contact us</strong>"
+msgstr "<strong>تواصل معنا</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Customer notes</strong>"
+msgstr "<strong>ملاحظات العميل</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Delivered</strong>"
+msgstr "<strong>تم التوصيل</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>Family care customer</strong>"
+msgstr "<strong>عميل عناية العائلة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>Online customer</strong>"
+msgstr "<strong>عميل أونلاين</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Out for delivery</strong>"
+msgstr "<strong>خرج للتوصيل</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Preparing</strong>"
+msgstr "<strong>قيد التحضير</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Prescription received</strong>"
+msgstr "<strong>تم استلام الروشتة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>Secure</strong><span>Checkout experience</span>"
+msgstr "<strong>آمن</strong><span>تجربة الدفع</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Under review</strong>"
+msgstr "<strong>قيد المراجعة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Waiting for Call Center confirmation</strong>"
+msgstr "<strong>بانتظار تأكيد خدمة العملاء</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>Wellness shopper</strong>"
+msgstr "<strong>متسوق عناية صحية</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>You have not placed any orders yet</strong>"
+msgstr "<strong>لم تقم بأي طلبات بعد</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Your Abdin Pharmacies account</strong>"
+msgstr "<strong>حسابك في صيدليات عابدين</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Your invoices</strong>\n                                <small>Track, download, or pay your invoices</small>"
+msgstr "<strong>فواتيرك</strong>\n                                <small>قم بمتابعة أو تنزيل أو دفع قيمة فواتيرك</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "<strong>Your orders</strong>\n                                <small>Track, view, or pay for your orders</small>"
+msgstr "<strong>طلباتك</strong>\n                                <small>قم بمتابعة أو عرض أو دفع قيمة طلباتك</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Your prescription request was received.</strong>\n                    <span>Our team will review it before confirmation.</span>"
+msgstr "<strong>تم استلام طلب الروشتة.</strong>\n                    <span>سيراجعه فريقنا قبل التأكيد.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "<strong>Your profile photo</strong>\n                        <span>Choose your avatar</span>"
+msgstr "<strong>صورتك الشخصية</strong>\n                        <span>اختر أفاتارك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Abdin Pharmacies"
 msgstr "صيدليات عابدين"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Trusted pharmacy care, delivered to your door"
-msgstr "رعاية صيدلية موثوقة تصل إلى بابك"
+msgid "Abdin Pharmacies home"
+msgstr "الصفحة الرئيسية لصيدليات عابدين"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Hotline"
-msgstr "الخط الساخن"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Abdin online pharmacy"
+msgstr "صيدلية عابدين أونلاين"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Contact us"
-msgstr "تواصل معنا"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__access_warning
+msgid "Access warning"
+msgstr "تحذير الوصول"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "What are you looking for?"
-msgstr "عمَّ تبحث؟"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Account navigation"
+msgstr "تنقل الحساب"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search medicines and wellness products"
-msgstr "ابحث عن الأدوية ومنتجات العناية الصحية"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Account shortcuts"
+msgstr "اختصارات الحساب"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Shop by category"
-msgstr "تسوق حسب القسم"
+#: model:product.template,name:ab_ecommerce_storefront.product_accu_chek_active
+msgid "Accu-Chek Active Blood Glucose Monitor"
+msgstr "جهاز قياس السكر أكيو-تشيك أكتيف"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Shop by Category"
-msgstr "التسوق حسب التصنيف"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Shop by Need"
-msgstr "التسوق حسب الاحتياج"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Skin Care"
-msgstr "العناية بالبشرة"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Dietary Supplements"
-msgstr "المكملات الغذائية"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Vitamins and Minerals"
-msgstr "الفيتامينات والمعادن"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Oral and Dental Care"
-msgstr "العناية بالفم والأسنان"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Medical Devices and Supplies"
-msgstr "الأجهزة والمستلزمات الطبية"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Mother and Baby Products"
-msgstr "منتجات الأم والرضيع"
-
-#. module: ab_ecommerce_storefront
+#. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "Acne treatment"
 msgstr "علاج حب الشباب"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Skin brightening and tone correction"
-msgstr "تفتيح وتوحيد لون البشرة"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Dry skin hydration"
-msgstr "ترطيب البشرة الجافة"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Active Requests"
+msgstr "الطلبات النشطة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Hair loss treatment"
-msgstr "علاج تساقط الشعر"
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_08
+msgid "Active Wellness"
+msgstr "العناية النشطة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Dandruff control"
-msgstr "مكافحة القشرة"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Sun protection"
-msgstr "الحماية من الشمس"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تمييز استثناء النشاط"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Anti-aging and wrinkle care"
-msgstr "مكافحة التجاعيد وعلامات التقدم في السن"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Immune support"
-msgstr "تقوية المناعة"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Energy and vitality"
-msgstr "زيادة الطاقة والنشاط"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Add address"
+msgstr "إضافة عنوان"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/website.py:0
-msgid "Sensitive skin care"
-msgstr "العناية بالبشرة الحساسة"
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Add an uppercase letter, a number, or a symbol"
+msgstr "أضف حرفًا كبيرًا أو رقمًا أو رمزًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Add internal staff notes. These notes are not shown to the customer."
+msgstr "أضف ملاحظات داخلية للفريق. هذه الملاحظات لا تظهر للعميل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Add to wishlist"
+msgstr "أضف إلى المفضلة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
-msgid "All products"
-msgstr "كل المنتجات"
+msgid "Add your address to complete orders easily or use your current location."
+msgstr "أضف عنوانك لإتمام الطلب بسهولة أو استخدم موقعك الحالي."
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_first_empty_message
+msgid "Add your first product to the cart"
+msgstr "أضف أول منتج لك في عربة التسوق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.wishlist_first_empty_message
+msgid "Add your first product to the wishlist"
+msgstr "أضف أول منتج لك في المفضلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+msgid "Added"
+msgstr "تمت الإضافة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Added to cart"
+msgstr "تمت الإضافة إلى السلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Added to wishlist"
+msgstr "تمت الإضافة إلى المفضلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+msgid "Adding..."
+msgstr "جارٍ الإضافة..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Addresses"
+msgstr "العناوين"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Alexandria"
+msgstr "الإسكندرية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
 msgid "All categories"
 msgstr "كل الأقسام"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
-msgid "Shop categories"
-msgstr "أقسام المتجر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Shop now"
-msgstr "تسوق الآن"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "All products"
+msgstr "كل المنتجات"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Categories"
-msgstr "الأقسام"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Explore"
-msgstr "استكشف"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Call hotline"
-msgstr "اتصل بالخط الساخن"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt."
-msgstr "رعاية صيدلية موثوقة ومستلزمات صحية من صيدليات عابدين تصل إليك بثقة في أنحاء مصر."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Shop"
-msgstr "المتجر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Customer care"
-msgstr "خدمة العملاء"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "My account"
-msgstr "حسابي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "My orders"
-msgstr "طلباتي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Wishlist"
-msgstr "المفضلة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Privacy policy"
-msgstr "سياسة الخصوصية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "We are here to help"
-msgstr "نحن هنا لمساعدتك"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Call our hotline"
-msgstr "اتصل بخطنا الساخن"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Copyright © Abdin Pharmacies"
-msgstr "حقوق النشر © صيدليات عابدين"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Healthcare with care, every day."
-msgstr "رعاية صحية باهتمام، كل يوم."
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Allergy Care"
+msgstr "العناية بالحساسية"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Care you can trust"
-msgstr "رعاية تستحق ثقتك"
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Almost there. Add one more element to increase security"
+msgstr "اقتربت. أضف عنصرًا آخر لزيادة الأمان"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Everything your family needs, from a pharmacy that cares."
-msgstr "كل ما تحتاجه أسرتك من صيدلية تهتم بك."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Already have an account?"
+msgstr "لديك حساب بالفعل؟"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Shop medicines, personal care, wellness essentials, and everyday healthcare products from Abdin Pharmacies."
-msgstr "تسوق الأدوية والعناية الشخصية ومستلزمات الصحة والمنتجات الصحية اليومية من صيدليات عابدين."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Ampoule"
+msgstr "أمبول"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Call"
-msgstr "اتصل"
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "An unexpected error occurred. Please try again."
+msgstr "حدث خطأ غير متوقع. حاول مرة أخرى."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Genuine products"
-msgstr "منتجات أصلية"
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_anise
+msgid "Anise herbal infusion supplied as 20 individually portioned tea bags."
+msgstr "مشروب عشبي باليانسون يحتوي على 20 كيسا منفصلا."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Secure checkout"
-msgstr "دفع آمن"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Anti-aging and wrinkle care"
+msgstr "مكافحة التجاعيد وعلامات التقدم في السن"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Pharmacy essentials"
-msgstr "أساسيات الصيدلية"
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Area selected"
+msgstr "تم تحديد المنطقة"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Wellness and care"
-msgstr "الصحة والعناية"
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Assiut"
+msgstr "أسيوط"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Convenient delivery"
-msgstr "توصيل مريح"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Trusted care"
-msgstr "رعاية موثوقة"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_avatar_completed
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_avatar_completed
+msgid "Avatar Choice Completed"
+msgstr "تم اختيار الأفاتار"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "From Abdin Pharmacies"
-msgstr "من صيدليات عابدين"
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/avatar_picker.js:0
+msgid "Avatar saved"
+msgstr "تم حفظ الأفاتار"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Easy delivery"
-msgstr "توصيل سهل"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Baby Accessories"
+msgstr "إكسسوارات الأطفال"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Convenient ordering"
-msgstr "طلب بكل سهولة"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_baby_care
+msgid "Baby Care"
+msgstr "العناية بالأطفال"
 
 #. module: ab_ecommerce_storefront
-msgid "Medicines"
-msgstr "الأدوية"
-
-#. module: ab_ecommerce_storefront
-msgid "Pain Relief"
-msgstr "مسكنات الألم"
-
-#. module: ab_ecommerce_storefront
-msgid "Digestive Health"
-msgstr "صحة الجهاز الهضمي"
-
-#. module: ab_ecommerce_storefront
-msgid "Respiratory Care"
-msgstr "الجهاز التنفسي"
-
-#. module: ab_ecommerce_storefront
-msgid "Allergy Care"
-msgstr "الحساسية"
-
-#. module: ab_ecommerce_storefront
-msgid "Brain & Nervous System"
-msgstr "المخ والجهاز العصبي"
-
-#. module: ab_ecommerce_storefront
-msgid "Heart & Circulation"
-msgstr "القلب والدورة الدموية"
-
-#. module: ab_ecommerce_storefront
-msgid "Hormones"
-msgstr "الهرمونات"
-
-#. module: ab_ecommerce_storefront
-msgid "Infections"
-msgstr "العدوى والمضادات"
-
-#. module: ab_ecommerce_storefront
-msgid "Kidney & Urinary Care"
-msgstr "الكلى والمسالك البولية"
-
-#. module: ab_ecommerce_storefront
-msgid "Eye Care Medicines"
-msgstr "أدوية العيون"
-
-#. module: ab_ecommerce_storefront
-msgid "Ear Care"
-msgstr "العناية بالأذن"
-
-#. module: ab_ecommerce_storefront
-msgid "Mouth & Throat"
-msgstr "الفم والحلق"
-
-#. module: ab_ecommerce_storefront
-msgid "Skin Medicines"
-msgstr "أدوية الجلد"
-
-#. module: ab_ecommerce_storefront
-msgid "Women's Health"
-msgstr "صحة المرأة"
-
-#. module: ab_ecommerce_storefront
-msgid "Men's Health"
-msgstr "صحة الرجل"
-
-#. module: ab_ecommerce_storefront
-msgid "Specialty Medicines"
-msgstr "أدوية متخصصة"
-
-#. module: ab_ecommerce_storefront
-msgid "Vitamins & Supplements"
-msgstr "الفيتامينات والمكملات"
-
-#. module: ab_ecommerce_storefront
-msgid "Multivitamins"
-msgstr "مالتي فيتامين"
-
-#. module: ab_ecommerce_storefront
-msgid "Minerals"
-msgstr "المعادن"
-
-#. module: ab_ecommerce_storefront
-msgid "Kids Vitamins"
-msgstr "فيتامينات الأطفال"
-
-#. module: ab_ecommerce_storefront
-msgid "Pregnancy Supplements"
-msgstr "مكملات الحمل والرضاعة"
-
-#. module: ab_ecommerce_storefront
-msgid "Omega & Eye Supplements"
-msgstr "أوميجا ومكملات العين"
-
-#. module: ab_ecommerce_storefront
-msgid "Beauty Supplements"
-msgstr "مكملات البشرة والشعر والأظافر"
-
-#. module: ab_ecommerce_storefront
-msgid "Weight Management"
-msgstr "إدارة الوزن"
-
-#. module: ab_ecommerce_storefront
-msgid "Herbal Products"
-msgstr "منتجات عشبية"
-
-#. module: ab_ecommerce_storefront
-msgid "Bath & Shower"
-msgstr "الاستحمام والدش"
-
-#. module: ab_ecommerce_storefront
-msgid "Oral Care"
-msgstr "العناية بالفم والأسنان"
-
-#. module: ab_ecommerce_storefront
-msgid "Deodorants"
-msgstr "مزيلات العرق"
-
-#. module: ab_ecommerce_storefront
-msgid "Feminine Care"
-msgstr "العناية النسائية"
-
-#. module: ab_ecommerce_storefront
-msgid "Men's Grooming"
-msgstr "عناية الرجل"
-
-#. module: ab_ecommerce_storefront
-msgid "Hair Removal"
-msgstr "إزالة الشعر"
-
-#. module: ab_ecommerce_storefront
-msgid "Hygiene & Household"
-msgstr "النظافة والمنزل"
-
-#. module: ab_ecommerce_storefront
-msgid "Health Devices & Supplies"
-msgstr "الأجهزة والمستلزمات الصحية"
-
-#. module: ab_ecommerce_storefront
-msgid "Diagnostics"
-msgstr "أجهزة وشرائط القياس"
-
-#. module: ab_ecommerce_storefront
-msgid "Patient Care"
-msgstr "رعاية المريض بالمنزل"
-
-#. module: ab_ecommerce_storefront
-msgid "Mobility Aids"
-msgstr "مساعدات الحركة"
-
-#. module: ab_ecommerce_storefront
-msgid "Orthopedics & Supports"
-msgstr "العظام والدعامات"
-
-#. module: ab_ecommerce_storefront
-msgid "Wound Care"
-msgstr "العناية بالجروح"
-
-#. module: ab_ecommerce_storefront
-msgid "Fitness & Sport"
-msgstr "اللياقة والرياضة"
-
-#. module: ab_ecommerce_storefront
-msgid "Beauty & Skin Care"
-msgstr "الجمال والعناية بالبشرة"
-
-#. module: ab_ecommerce_storefront
-msgid "Face Care"
-msgstr "العناية بالوجه"
-
-#. module: ab_ecommerce_storefront
-msgid "Body Care"
-msgstr "العناية بالجسم"
-
-#. module: ab_ecommerce_storefront
-msgid "Sun Care"
-msgstr "العناية من الشمس"
-
-#. module: ab_ecommerce_storefront
-msgid "Hair Care"
-msgstr "العناية بالشعر"
-
-#. module: ab_ecommerce_storefront
-msgid "Skin Treatment"
-msgstr "علاج مشاكل البشرة"
-
-#. module: ab_ecommerce_storefront
-msgid "Makeup & Nails"
-msgstr "المكياج والأظافر"
-
-#. module: ab_ecommerce_storefront
-msgid "Perfumes"
-msgstr "العطور"
-
-#. module: ab_ecommerce_storefront
-msgid "Mother & Baby"
-msgstr "الأم والطفل"
-
-#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "Baby Diapers & Wipes"
-msgstr "حفاضات ومناديل الطفل"
+msgstr "حفاضات ومناديل الأطفال"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "Baby Feeding"
-msgstr "تغذية وإرضاع الطفل"
+msgstr "تغذية الأطفال"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "Baby Nutrition"
 msgstr "تغذية الطفل"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "Baby Toiletries"
-msgstr "عناية واستحمام الطفل"
+msgstr "مستلزمات عناية الطفل"
 
 #. module: ab_ecommerce_storefront
-msgid "Baby Accessories"
-msgstr "إكسسوارات الطفل"
-
-#. module: ab_ecommerce_storefront
-msgid "Mom Care"
-msgstr "عناية الأم"
-
-#. module: ab_ecommerce_storefront
-msgid "Everyday Essentials"
-msgstr "الاحتياجات اليومية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Secure payment"
-msgstr "دفع آمن"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Protected checkout"
-msgstr "إتمام طلب محمي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Need help?"
-msgstr "تحتاج مساعدة؟"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Call 19036"
-msgstr "اتصل على 19036"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Find what you need"
-msgstr "اعثر على ما تحتاجه"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "View all products"
-msgstr "عرض كل المنتجات"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Everyday health"
-msgstr "صحة كل يوم"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Your healthcare essentials in one place"
-msgstr "كل احتياجاتك الصحية في مكان واحد"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Browse the complete range"
-msgstr "تصفح المجموعة الكاملة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Here when you need us"
-msgstr "معك عندما تحتاجنا"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Talk to Abdin Pharmacies"
-msgstr "تحدث مع صيدليات عابدين"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Contact our team"
-msgstr "تواصل مع فريقنا"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Selected for you"
-msgstr "مختارة لك"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Featured products"
-msgstr "منتجات مميزة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Shop all"
-msgstr "تسوق الكل"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Out of stock"
-msgstr "غير متوفر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Offer"
-msgstr "عرض"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Back to sign in"
+msgstr "العودة لتسجيل الدخول"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Add to cart"
-msgstr "أضف للسلة"
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Back to top"
+msgstr "العودة إلى أعلى الصفحة"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "View product"
-msgstr "عرض المنتج"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Bath & Shower"
+msgstr "الاستحمام والعناية بالجسم"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
-msgid "Total"
-msgstr "الإجمالي"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_beauty
+msgid "Beauty"
+msgstr "الجمال"
 
 #. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Adding..."
-msgstr "جارٍ الإضافة..."
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Beauty & Skin Care"
+msgstr "الجمال والعناية بالبشرة"
 
 #. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Added"
-msgstr "تمت الإضافة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Choose options"
-msgstr "اختر الخيارات"
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Could not add this product. Please try again."
-msgstr "تعذر إضافة هذا المنتج. حاول مرة أخرى."
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Could not update wishlist. Please try again."
-msgstr "تعذر تحديث المفضلة. حاول مرة أخرى."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Carefully matched"
-msgstr "مختارة بعناية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Related products"
-msgstr "منتجات مرتبطة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Explore nearby healthcare choices from the same shopping journey."
-msgstr "استكشف اختيارات صحية قريبة من نفس رحلة التسوق."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Complete the routine"
-msgstr "أكمل روتين العناية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Often bought with this product"
-msgstr "يشترى غالبًا مع هذا المنتج"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Useful add-ons customers commonly pair with this item."
-msgstr "إضافات مفيدة يختارها العملاء عادةً مع هذا المنتج."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Care that stays close to you."
-msgstr "رعاية تظل دائمًا قريبة منك."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Browse trusted products online or call our pharmacy team for help."
-msgstr "تصفح المنتجات الموثوقة عبر الإنترنت أو اتصل بفريق الصيدلية للمساعدة."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Browse products"
-msgstr "تصفح المنتجات"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Popular right now"
-msgstr "الأكثر رواجًا الآن"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Beauty Supplements"
+msgstr "مكملات الجمال"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Best sellers"
-msgstr "الأكثر مبيعًا"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "View all"
-msgstr "عرض الكل"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Save on your favorites"
-msgstr "وفّر على منتجاتك المفضلة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Offers"
-msgstr "العروض"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "View more"
-msgstr "عرض المزيد"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Fresh offers are coming soon."
-msgstr "عروض جديدة قادمة قريبًا."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Browse our pharmacy essentials while we prepare the next deals."
-msgstr "تصفح احتياجات الصيدلية بينما نجهز العروض القادمة."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Everyday wellness"
-msgstr "عافية كل يوم"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Simple choices for healthier, brighter days."
-msgstr "اختيارات بسيطة لأيام أكثر صحة وإشراقًا."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Discover personal care, vitamins, wellness, and family essentials selected for everyday life."
-msgstr "اكتشف منتجات العناية الشخصية والفيتامينات والعافية واحتياجات الأسرة المختارة للحياة اليومية."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Explore wellness"
-msgstr "اكتشف منتجات العافية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Convenient pharmacy care"
-msgstr "رعاية صيدلية مريحة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Trusted healthcare, delivered closer to you."
-msgstr "رعاية صحية موثوقة تصل إليك أينما كنت."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Order your healthcare essentials online and let Abdin Pharmacies take care of the rest."
-msgstr "اطلب احتياجاتك الصحية عبر الإنترنت ودع صيدليات عابدين تتولى الباقي."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Previous slide"
-msgstr "الشريحة السابقة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Next slide"
-msgstr "الشريحة التالية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Slide 1"
-msgstr "الشريحة 1"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Slide 2"
-msgstr "الشريحة 2"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Slide 3"
-msgstr "الشريحة 3"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Abdin online pharmacy"
-msgstr "صيدلية عابدين الإلكترونية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Browse category"
-msgstr "تصفح القسم"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Healthcare products for every day"
-msgstr "منتجات صحية لكل يوم"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Search medicines, personal care, wellness, and pharmacy essentials."
-msgstr "ابحث عن الأدوية والعناية الشخصية والصحة ومستلزمات الصيدلية."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
-msgid "Explore trusted products selected for your health and wellbeing."
-msgstr "استكشف منتجات موثوقة مختارة لصحتك وعافيتك."
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Trusted Abdin product"
-msgstr "منتج موثوق من عابدين"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Pharmacy help:"
-msgstr "مساعدة الصيدلية:"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Carefully sourced"
-msgstr "مختارة بعناية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Order with confidence"
-msgstr "اطلب بثقة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
-msgid "Need assistance?"
-msgstr "تحتاج إلى مساعدة؟"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_panadol_extra
-msgid "Panadol Extra Optizorb | 24 Tablets"
-msgstr "بانادول إكسترا أوبتيزورب | 24 قرصًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_panadol_extra
-msgid "Pack of 24 tablets. Use only as directed on the package and ask a pharmacist if needed."
-msgstr "عبوة من 24 قرصًا. يُستخدم فقط وفقًا لإرشادات العبوة مع استشارة الصيدلي عند الحاجة."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_brufen_400
-msgid "Brufen 400 mg | 30 Tablets"
-msgstr "بروفين 400 مجم | 30 قرصًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_brufen_400
-msgid "Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a pharmacist when needed."
-msgstr "إيبوبروفين 400 مجم في عبوة من 30 قرصًا. يُستخدم فقط وفقًا للإرشادات مع استشارة الصيدلي عند الحاجة."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_limitless_man_max
-msgid "Limitless Man Max | 30 Tablets"
-msgstr "ليمتلس مان ماكس | 30 قرصًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_man_max
-msgid "Daily multivitamin and mineral supplement for men, supplied as 30 tablets."
-msgstr "مكمل يومي متعدد الفيتامينات والمعادن للرجال، عبوة 30 قرصًا."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_limitless_woman_max
-msgid "Limitless Woman Max | 30 Tablets"
-msgstr "ليمتلس وومان ماكس | 30 قرصًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_woman_max
-msgid "Daily multivitamin and mineral supplement for women, supplied as 30 tablets."
-msgstr "مكمل يومي متعدد الفيتامينات والمعادن للسيدات، عبوة 30 قرصًا."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_evasline_hand_cream
-msgid "Evasline Hand Cream Passion | 60 g"
-msgstr "إيفازلاين كريم لليدين باشن | 60 جم"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_evasline_hand_cream
-msgid "Passion-scented hand cream in a convenient 60 g tube for everyday hand care."
-msgstr "كريم لليدين برائحة باشن في عبوة عملية 60 جم للعناية اليومية باليدين."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_sensodyne_original
-msgid "Sensodyne Original Toothpaste | 100 ml"
-msgstr "سنسوداين معجون أسنان أوريجينال | 100 مل"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_sensodyne_original
-msgid "Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube."
-msgstr "معجون أسنان يومي بطعم أوريجينال للأسنان الحساسة في عبوة 100 مل."
+msgstr "الأكثر مبيعا"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,name:ab_ecommerce_storefront.product_betadine_60ml
@@ -930,272 +939,51 @@ msgid "Betadine Antiseptic Solution | 60 ml"
 msgstr "بيتادين محلول مطهر | 60 مل"
 
 #. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_betadine_60ml
-msgid "Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package directions."
-msgstr "محلول مطهر بوفيدون-يود في عبوة 60 مل. اتبع إرشادات الاستخدام المدونة على العبوة."
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Body Care"
+msgstr "العناية بالجسم"
 
 #. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_dettol_50ml
-msgid "Dettol Antiseptic Liquid | 50 ml"
-msgstr "ديتول سائل مطهر | 50 مل"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_dettol_50ml
-msgid "Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as directed."
-msgstr "سائل مطهر مركز في عبوة صغيرة 50 مل. يُخفف ويُستخدم وفقًا للإرشادات."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_accu_chek_active
-msgid "Accu-Chek Active Blood Glucose Monitor"
-msgstr "أكيو-تشيك أكتيف جهاز قياس سكر الدم"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_accu_chek_active
-msgid "Compact blood glucose monitoring kit intended for convenient self-testing."
-msgstr "جهاز مدمج لمتابعة سكر الدم ومخصص للقياس الذاتي بسهولة."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_one_touch_select_plus
-msgid "OneTouch Select Plus Blood Glucose Monitor"
-msgstr "وان تاتش سيليكت بلس جهاز قياس سكر الدم"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_one_touch_select_plus
-msgid "Easy-to-read blood glucose monitoring kit with colour range guidance."
-msgstr "جهاز سهل القراءة لمتابعة سكر الدم مع إرشاد لوني للنطاق."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_eva_rose_water
-msgid "Eva Rose Water | 100 ml"
-msgstr "إيفا ماء ورد | 100 مل"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_rose_water
-msgid "Rose water for a refreshing addition to a daily beauty routine, in a 100 ml bottle."
-msgstr "ماء ورد لإضافة منعشة إلى روتين العناية اليومي في عبوة 100 مل."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_loreal_hyaluron_serum
-msgid "L'Oréal Hyaluron Expert Serum | 30 ml"
-msgstr "لوريال هيالورون إكسبرت سيروم | 30 مل"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_loreal_hyaluron_serum
-msgid "Hyaluronic acid face serum supplied in a 30 ml dropper bottle."
-msgstr "سيروم للوجه بحمض الهيالورونيك في عبوة قطارة 30 مل."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_eva_bebe_rash_cream
-msgid "Eva Clinic Bebe Diaper Rash Cream | 100 g"
-msgstr "إيفا كلينيك بيبي كريم طفح الحفاض | 100 جم"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_bebe_rash_cream
-msgid "Protective diaper-area care cream for babies in a 100 g tube."
-msgstr "كريم واقٍ للعناية بمنطقة الحفاض للأطفال في عبوة 100 جم."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_johnsons_no_more_tangles
-msgid "Johnson's No More Tangles Baby Shampoo | 500 ml"
-msgstr "جونسون نو مور تانجلز شامبو للأطفال | 500 مل"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_johnsons_no_more_tangles
-msgid "Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
-msgstr "شامبو لطيف للأطفال يساعد على فك التشابك في عبوة عائلية 500 مل."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_isis_anise
-msgid "ISIS Anise Herbal Tea | 20 Bags"
-msgstr "إيزيس يانسون أعشاب | 20 كيسًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_anise
-msgid "Anise herbal infusion supplied as 20 individually portioned tea bags."
-msgstr "مشروب أعشاب باليانسون في عبوة تحتوي على 20 كيسًا منفصلًا."
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,name:ab_ecommerce_storefront.product_isis_ginger_cinnamon
-msgid "ISIS Ginger & Cinnamon Herbal Tea | 12 Bags"
-msgstr "إيزيس زنجبيل وقرفة أعشاب | 12 كيسًا"
-
-#. module: ab_ecommerce_storefront
-#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_ginger_cinnamon
-msgid "Warming ginger and cinnamon herbal infusion supplied as 12 tea bags."
-msgstr "مشروب أعشاب دافئ بالزنجبيل والقرفة في عبوة 12 كيسًا."
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_medications
-msgid "Medications"
-msgstr "الأدوية"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_vitamins
-msgid "Vitamins"
-msgstr "الفيتامينات"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_personal_care
-msgid "Personal Care"
-msgstr "العناية الشخصية"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_first_aid
-msgid "First Aid"
-msgstr "الإسعافات الأولية"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_health_devices
-msgid "Health Devices"
-msgstr "الأجهزة الصحية"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_beauty
-msgid "Beauty"
-msgstr "الجمال والعناية"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_baby_care
-msgid "Baby Care"
-msgstr "العناية بالأطفال"
-
-#. module: ab_ecommerce_storefront
-#: model:product.public.category,name:ab_ecommerce_storefront.category_wellness
-msgid "Wellness"
-msgstr "الصحة والعافية"
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Add to wishlist"
-msgstr "أضف إلى المفضلة"
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Remove from wishlist"
-msgstr "إزالة من المفضلة"
-
-#. module: ab_ecommerce_storefront
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_seen_profile_onboarding
-msgid "Seen Storefront Profile Onboarding"
-msgstr "شاهد تهيئة ملف واجهة المتجر"
-
-#. module: ab_ecommerce_storefront
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_avatar_completed
-msgid "Avatar Choice Completed"
-msgstr "تم اختيار الأفاتار"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Ampoule"
-msgstr "أمبول"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
 msgid "Bottle"
 msgstr "زجاجة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
 msgid "Box"
 msgstr "علبة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Capsule"
-msgstr "كبسولة"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Brain & Nervous System"
+msgstr "المخ والجهاز العصبي"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Jar"
-msgstr "برطمان"
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_09
+msgid "Bright Care"
+msgstr "عناية مشرقة"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Pack"
-msgstr "عبوة"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Browse category"
+msgstr "تصفح القسم"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Piece"
-msgstr "قطعة"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse pharmacy essentials while we prepare the latest discounts."
+msgstr "تصفح أساسيات الصيدلية بينما نجهز أحدث الخصومات."
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Sachet"
-msgstr "كيس"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse products"
+msgstr "تصفح المنتجات"
 
 #. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Strip"
-msgstr "شريط"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Suppository"
-msgstr "لبوسة"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Tablet"
-msgstr "قرص"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Tube"
-msgstr "أنبوبة"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Unit"
-msgstr "وحدة"
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
-msgid "Vial"
-msgstr "فيال"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Pack information"
-msgstr "محتويات العبوة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Purchase unit"
-msgstr "وحدة الشراء"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Quantity"
-msgstr "الكمية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Decrease quantity"
-msgstr "تقليل الكمية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-msgid "Increase quantity"
-msgstr "زيادة الكمية"
+#: model:product.template,name:ab_ecommerce_storefront.product_brufen_400
+msgid "Brufen 400 mg | 30 Tablets"
+msgstr "بروفين 400 مجم | 30 قرص"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -1206,180 +994,10 @@ msgstr "اشتري الآن"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Added to cart"
-msgstr "تمت الإضافة إلى السلة"
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Added to wishlist"
-msgstr "تمت الإضافة إلى المفضلة"
-
-#. module: ab_ecommerce_storefront
-#. odoo-javascript
-#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
-msgid "Product saved"
-msgstr "تم حفظ المنتج"
-
-#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search products"
-msgstr "بحث في المنتجات"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for Panadol"
-msgstr "ابحث عن بنادول"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for sunscreen"
-msgstr "ابحث عن واقي شمس"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for vitamin C"
-msgstr "ابحث عن فيتامين سي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for a blood pressure monitor"
-msgstr "ابحث عن جهاز ضغط"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for hair shampoo"
-msgstr "ابحث عن شامبو للشعر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for baby diapers"
-msgstr "ابحث عن حفاضات أطفال"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for skin care"
-msgstr "ابحث عن العناية بالبشرة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search Abdin Pharmacies products"
-msgstr "بحث في منتجات صيدليات عابدين"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Search for"
-msgstr "ابحث عن"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Panadol"
-msgstr "بنادول"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "sunscreen"
-msgstr "واقي شمس"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "vitamin C"
-msgstr "فيتامين سي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "a blood pressure monitor"
-msgstr "جهاز ضغط"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "hair shampoo"
-msgstr "شامبو للشعر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "baby diapers"
-msgstr "حفاضات أطفال"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "skin care"
-msgstr "العناية بالبشرة"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid ""
-"<span data-ab-search-typewriter-label=\"\">Search products</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for Panadol</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for sunscreen</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for vitamin C</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for a blood pressure monitor</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for hair shampoo</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for baby diapers</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Search for skin care</span>"
-msgstr ""
-"<span data-ab-search-typewriter-label=\"\">بحث في المنتجات</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن بنادول</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن واقي شمس</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن فيتامين سي</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن جهاز ضغط</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن شامبو للشعر</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن حفاضات أطفال</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">ابحث عن العناية بالبشرة</span>"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid ""
-"<span data-ab-search-typewriter-label=\"\">Search products</span>\n"
-"                    <span data-ab-search-typewriter-prefix=\"\">Search for</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">Panadol</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">sunscreen</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">vitamin C</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">a blood pressure monitor</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">hair shampoo</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">baby diapers</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">skin care</span>"
-msgstr ""
-"<span data-ab-search-typewriter-label=\"\">بحث في المنتجات</span>\n"
-"                    <span data-ab-search-typewriter-prefix=\"\">ابحث عن</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">بنادول</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">واقي شمس</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">فيتامين سي</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">جهاز ضغط</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">شامبو للشعر</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">حفاضات أطفال</span>\n"
-"                    <span data-ab-search-typewriter-phrase=\"\">العناية بالبشرة</span>"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Customer support"
-msgstr "دعم العملاء"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Close customer support"
-msgstr "إغلاق دعم العملاء"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Open WhatsApp support"
-msgstr "فتح دعم واتساب"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "WhatsApp"
-msgstr "واتساب"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Open Messenger support"
-msgstr "فتح دعم ماسنجر"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Messenger"
-msgstr "ماسنجر"
+msgid "Cairo"
+msgstr "القاهرة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
@@ -1388,446 +1006,2333 @@ msgstr "اتصل بالخط الساخن 19036"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Call hotline <span class=\"o_force_ltr\">19036</span>"
+msgstr "اتصل بالخط الساخن <span class=\"o_force_ltr\">19036</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__cancelled
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Capsule"
+msgstr "كبسولة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_details_avatar
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Change avatar"
+msgstr "تغيير الأفاتار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Change password and sign-in settings"
+msgstr "تغيير كلمة المرور وإعدادات الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Check your messages"
+msgstr "راجع رسائلك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/logo_motion.js:0
+msgid "Checkout complete"
+msgstr "تم تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "Choose account image"
+msgstr "اختيار صورة الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Choose avatar"
+msgstr "اختيار أفاتار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Choose options"
+msgstr "اختر الخيارات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "Choose your photo"
+msgstr "اختر صورتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Clear product browsing, secure payment, and accessible customer support."
+msgstr "تصفح واضح للمنتجات، ودفع آمن، ودعم عملاء سهل الوصول."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Close customer support"
+msgstr "إغلاق دعم العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Close location picker"
+msgstr "إغلاق اختيار الموقع"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_accu_chek_active
+msgid "Compact blood glucose monitoring kit intended for convenient self-testing."
+msgstr "جهاز صغير لقياس سكر الدم مناسب للقياس المنزلي بسهولة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_dettol_50ml
+msgid "Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as directed."
+msgstr "سائل مطهر مركز في عبوة 50 مل. يخفف ويستخدم حسب الإرشادات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Confirm password"
+msgstr "تأكيد كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__confirmed
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Confirmed"
+msgstr "مؤكد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_res_partner
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact our team"
+msgstr "تواصل مع فريقنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Contact us"
+msgstr "تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Continue"
+msgstr "متابعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Continuing..."
+msgstr "جاري المتابعة..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+msgid "Could not add this product. Please try again."
+msgstr "تعذرت إضافة هذا المنتج. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Could not reach the server. Please try again."
+msgstr "تعذر الاتصال بالخادم. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/avatar_picker.js:0
+msgid "Could not save avatar. Please try again."
+msgstr "تعذر حفظ الأفاتار. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+msgid "Could not update wishlist. Please try again."
+msgstr "تعذر تحديث المفضلة. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,website_form_label:ab_ecommerce_storefront.model_res_partner
+msgid "Create a Customer"
+msgstr "إنشاء عميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Create a strong password to protect your account"
+msgstr "أنشئ كلمة مرور قوية لحماية حسابك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Create account"
+msgstr "إنشاء حساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "Create prescription request"
+msgstr "إنشاء طلب روشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Create your account for an easier and faster shopping experience"
+msgstr "أنشئ حسابك لتستمتع بتجربة تسوق أسهل وأسرع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Creation Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Current offers"
+msgstr "العروض الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__customer_note
+msgid "Customer Note"
+msgstr "ملاحظة العميل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__access_url
+msgid "Customer Portal URL"
+msgstr "رابط بوابة العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Customer care"
+msgstr "رعاية العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Customer instructions are shown here."
+msgstr "تظهر تعليمات العميل هنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Customer support"
+msgstr "دعم العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Customers use Abdin Pharmacies for quick access to medicine, wellness, beauty, baby care, and health devices with support when they need guidance."
+msgstr "يعتمد العملاء على صيدليات عابدين للوصول السريع إلى الأدوية والعناية الصحية والجمال ورعاية الأطفال والأجهزة الطبية مع دعم عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_05
+msgid "Daily Health"
+msgstr "الصحة اليومية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_man_max
+msgid "Daily multivitamin and mineral supplement for men, supplied as 30 tablets."
+msgstr "مكمل يومي متعدد الفيتامينات والمعادن للرجال، عبوة 30 قرصا."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_woman_max
+msgid "Daily multivitamin and mineral supplement for women, supplied as 30 tablets."
+msgstr "مكمل يومي متعدد الفيتامينات والمعادن للسيدات، عبوة 30 قرصا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Dakahlia"
+msgstr "الدقهلية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dandruff control"
+msgstr "مكافحة القشرة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Decrease quantity"
+msgstr "تقليل الكمية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Deliver to %s"
+msgstr "توصيل إلى %s"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__delivered
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Delivered"
+msgstr "تم التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Deodorants"
+msgstr "مزيلات العرق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Designed for daily pharmacy needs, from repeat essentials to urgent support."
+msgstr "مصمم لاحتياجات الصيدلية اليومية، من الأساسيات المتكررة إلى الدعم العاجل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Detailed address"
+msgstr "العنوان بالتفصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Detecting area..."
+msgstr "جاري تحديد المنطقة..."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_dettol_50ml
+msgid "Dettol Antiseptic Liquid | 50 ml"
+msgstr "ديتول سائل مطهر | 50 مل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Diagnostics"
+msgstr "أدوات التشخيص"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dietary Supplements"
+msgstr "المكملات الغذائية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Digestive Health"
+msgstr "صحة الجهاز الهضمي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ir_http__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_wishlist__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_website__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "Do not have an account?"
+msgstr "ليس لديك حساب؟"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dry skin hydration"
+msgstr "ترطيب البشرة الجافة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Ear Care"
+msgstr "العناية بالأذن"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_one_touch_select_plus
+msgid "Easy-to-read blood glucose monitoring kit with colour range guidance."
+msgstr "جهاز قياس سكر الدم سهل القراءة مع إرشاد بالألوان."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Edit address"
+msgstr "تعديل العنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Edit information"
+msgstr "تعديل البيانات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Edit main address"
+msgstr "تعديل العنوان الأساسي"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Egypt"
+msgstr "مصر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Energy and vitality"
+msgstr "زيادة الطاقة والنشاط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Enter your name"
+msgstr "اكتب اسمك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Enter your phone number to recover access to your account"
+msgstr "أدخل رقم هاتفك لاستعادة الوصول إلى حسابك"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_eva_bebe_rash_cream
+msgid "Eva Clinic Bebe Diaper Rash Cream | 100 g"
+msgstr "إيفا كلينك بيبي كريم التهابات الحفاض | 100 جم"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_eva_rose_water
+msgid "Eva Rose Water | 100 ml"
+msgstr "إيفا ماء ورد | 100 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_evasline_hand_cream
+msgid "Evasline Hand Cream Passion | 60 g"
+msgstr "إيفازلين كريم يد باشن | 60 جم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Everyday Essentials"
+msgstr "الاحتياجات اليومية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Everyday pharmacy shopping, made easier"
+msgstr "تسوق الصيدلية اليومي أصبح أسهل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Explore"
+msgstr "استكشف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Explore nearby healthcare choices from the same shopping journey."
+msgstr "استكشف اختيارات صحية قريبة ضمن نفس رحلة التسوق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Explore trusted products selected for your health and wellbeing."
+msgstr "استكشف منتجات موثوقة مختارة لصحتك وراحتك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Eye Care Medicines"
+msgstr "أدوية العناية بالعين"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Face Care"
+msgstr "العناية بالوجه"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Facebook"
+msgstr "فيسبوك"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_04
+msgid "Family Care"
+msgstr "عناية العائلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Feminine Care"
+msgstr "العناية النسائية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_first_aid
+msgid "First Aid"
+msgstr "الإسعافات الأولية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Fitness & Sport"
+msgstr "الرياضة واللياقة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Forgot password?"
+msgstr "نسيت كلمة المرور؟"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_01
+msgid "Friendly Pharmacist"
+msgstr "الصيدلي الودود"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_johnsons_no_more_tangles
+msgid "Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
+msgstr "شامبو أطفال لطيف لفك التشابك في عبوة عائلية 500 مل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Giza"
+msgstr "الجيزة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Good"
+msgstr "جيدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Good password. A special symbol makes it stronger"
+msgstr "كلمة جيدة. الرمز الخاص يجعلها أقوى"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ir_http
+msgid "HTTP Routing"
+msgstr "HTTP Routing"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hair Care"
+msgstr "العناية بالشعر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hair Removal"
+msgstr "إزالة الشعر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hair loss treatment"
+msgstr "علاج تساقط الشعر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_has_cart_history
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_has_cart_history
+msgid "Has Storefront Cart History"
+msgstr "لديه سجل عربة في المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_has_wishlist_history
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_has_wishlist_history
+msgid "Has Storefront Wishlist History"
+msgstr "لديه سجل مفضلة في المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_health_devices
+msgid "Health Devices"
+msgstr "الأجهزة الطبية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Health Devices & Supplies"
+msgstr "الأجهزة والمستلزمات الطبية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_02
+msgid "Healthcare Shopper"
+msgstr "متسوق الرعاية الصحية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Healthcare products for every day"
+msgstr "منتجات صحية لكل يوم"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_12
+msgid "Healthy Lifestyle"
+msgstr "نمط حياة صحي"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Heart & Circulation"
+msgstr "القلب والدورة الدموية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Herbal Products"
+msgstr "المنتجات العشبية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Hide password"
+msgstr "إخفاء كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Home"
+msgstr "الرئيسية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hormones"
+msgstr "الهرمونات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Hotline 19036"
+msgstr "الخط الساخن 19036"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_loreal_hyaluron_serum
+msgid "Hyaluronic acid face serum supplied in a 30 ml dropper bottle."
+msgstr "سيروم حمض الهيالورونيك للوجه في عبوة قطارة 30 مل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hygiene & Household"
+msgstr "النظافة والمنزل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ir_http__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_wishlist__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_website__id
+msgid "ID"
+msgstr "ID"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_isis_anise
+msgid "ISIS Anise Herbal Tea | 20 Bags"
+msgstr "إيزيس شاي أعشاب يانسون | 20 كيس"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_isis_ginger_cinnamon
+msgid "ISIS Ginger & Cinnamon Herbal Tea | 12 Bags"
+msgstr "إيزيس شاي أعشاب زنجبيل وقرفة | 12 كيس"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_brufen_400
+msgid "Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a pharmacist when needed."
+msgstr "إيبوبروفين 400 مجم في عبوة 30 قرصا. يستخدم حسب الإرشادات فقط واستشر الصيدلي عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى نشاط استثنائي."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "عند التحديد، توجد رسائل جديدة تحتاج انتباهك."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "عند التحديد، توجد رسائل بها خطأ في التسليم."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "If the number is registered with us, you will receive account recovery instructions."
+msgstr "إذا كان الرقم مسجلًا لدينا، ستصلك تعليمات استعادة الحساب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Immune support"
+msgstr "تقوية المناعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Increase quantity"
+msgstr "زيادة الكمية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Infections"
+msgstr "العدوى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Instagram"
+msgstr "إنستجرام"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__internal_note
+msgid "Internal Note"
+msgstr "ملاحظة داخلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Internal Notes"
+msgstr "ملاحظات داخلية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "JPG, PNG, or WebP up to"
+msgstr "JPG أو PNG أو WebP حتى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Jar"
+msgstr "برطمان"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_johnsons_no_more_tangles
+msgid "Johnson's No More Tangles Baby Shampoo | 500 ml"
+msgstr "جونسون شامبو أطفال نو مور تانجلز | 500 مل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Kidney & Urinary Care"
+msgstr "الكلى والمسالك البولية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Kids Vitamins"
+msgstr "فيتامينات الأطفال"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_loreal_hyaluron_serum
+msgid "L'Oréal Hyaluron Expert Serum | 30 ml"
+msgstr "لوريال هيالورون إكسبرت سيروم | 30 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_limitless_man_max
+msgid "Limitless Man Max | 30 Tablets"
+msgstr "ليمتلس مان ماكس | 30 قرص"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_limitless_woman_max
+msgid "Limitless Woman Max | 30 Tablets"
+msgstr "ليمتلس وومن ماكس | 30 قرص"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "LinkedIn"
+msgstr "لينكدإن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Location permission is required"
+msgstr "السماح بالموقع مطلوب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Location service is unavailable"
+msgstr "خدمة الموقع غير متاحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "Log in as superuser"
+msgstr "تسجيل الدخول كمستخدم فائق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "MB."
+msgstr "MB."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Makeup & Nails"
+msgstr "المكياج والأظافر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Medical Devices and Supplies"
+msgstr "الأجهزة والمستلزمات الطبية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_medications
+msgid "Medications"
+msgstr "الأدوية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_10
+msgid "Medicine Care"
+msgstr "عناية دوائية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Medicines"
+msgstr "الأدوية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Medium"
+msgstr "متوسطة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Men's Grooming"
+msgstr "العناية بالرجل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Men's Health"
+msgstr "صحة الرجل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Minerals"
+msgstr "المعادن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mobility Aids"
+msgstr "مساعدات الحركة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mom Care"
+msgstr "العناية بالأم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mother & Baby"
+msgstr "الأم والطفل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mother and Baby Products"
+msgstr "منتجات الأم والرضيع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mouth & Throat"
+msgstr "الفم والحلق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Multivitamins"
+msgstr "مالتي فيتامين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي النهائي"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "My account"
+msgstr "حسابي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "My orders"
+msgstr "طلباتي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Need pharmacy help?"
+msgstr "تحتاج مساعدة صيدلية؟"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__new
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "New offers are coming soon"
+msgstr "عروض جديدة قريبا"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "موعد النشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Next slide"
+msgstr "الشريحة التالية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_none
+msgid "No Profile Picture"
+msgstr "بدون صورة شخصية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "No profile photo"
+msgstr "بدون صورة شخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ تسليم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Offer"
+msgstr "عرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Offers"
+msgstr "العروض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Offers and discounts"
+msgstr "العروض والخصومات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Often bought with this product"
+msgstr "يتم شراؤها كثيرا مع هذا المنتج"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Omega & Eye Supplements"
+msgstr "أوميجا ومكملات العين"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_one_touch_select_plus
+msgid "OneTouch Select Plus Blood Glucose Monitor"
+msgstr "جهاز قياس السكر وان تاتش سيليكت بلس"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Open Messenger support"
+msgstr "فتح دعم ماسنجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Open WhatsApp support"
+msgstr "فتح دعم واتساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Open customer support"
 msgstr "فتح دعم العملاء"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Home"
-msgstr "الرئيسية"
+msgid "Open navigation"
+msgstr "فتح التنقل"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Account"
-msgstr "حسابي"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Open wishlist"
+msgstr "فتح المفضلة"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Offers and discounts"
-msgstr "العروض والخصومات"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Oral Care"
+msgstr "العناية بالفم"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Storefront navigation"
-msgstr "تنقل المتجر"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Oral and Dental Care"
+msgstr "العناية بالفم والأسنان"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Order"
+msgstr "طلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Order by prescription"
 msgstr "اطلب بالروشتة"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Your account avatar"
-msgstr "أفاتار حسابك"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Ordering daily pharmacy essentials is fast, clear, and easy to follow."
+msgstr "طلب أساسيات الصيدلية اليومية سريع وواضح وسهل المتابعة."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Sign in"
-msgstr "تسجيل الدخول"
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_sensodyne_original
+msgid "Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube."
+msgstr "معجون أسنان يومي للأسنان الحساسة بنكهة أصلية في عبوة 100 مل."
 
 #. module: ab_ecommerce_storefront
-msgid "Pharmacy service"
-msgstr "خدمة صيدلية"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Orthopedics & Supports"
+msgstr "دعامات ومستلزمات العظام"
 
 #. module: ab_ecommerce_storefront
-msgid "Take a photo of your prescription or upload an existing image, and we will help prepare your request."
-msgstr "صوّر الروشتة أو ارفع صورة موجودة وسنساعدك في تجهيز طلبك."
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription image"
-msgstr "صورة الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "Use a clear image that shows the full prescription."
-msgstr "استخدم صورة واضحة تظهر الروشتة بالكامل."
-
-#. module: ab_ecommerce_storefront
-msgid "Upload or photograph the prescription"
-msgstr "ارفع أو صوّر الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "JPG, PNG, or WebP up to"
-msgstr "JPG أو PNG أو WebP بحد أقصى"
-
-#. module: ab_ecommerce_storefront
-msgid "MB."
-msgstr "ميجابايت."
-
-#. module: ab_ecommerce_storefront
-msgid "Take prescription photo"
-msgstr "تصوير الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "Upload image"
-msgstr "رفع صورة"
-
-#. module: ab_ecommerce_storefront
-msgid "Selected prescription preview"
-msgstr "معاينة صورة الروشتة المحددة"
-
-#. module: ab_ecommerce_storefront
-msgid "Change image"
-msgstr "تغيير الصورة"
-
-#. module: ab_ecommerce_storefront
-msgid "Remove image"
-msgstr "حذف الصورة"
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription notes"
-msgstr "ملاحظات على الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "Write any extra instructions..."
-msgstr "اكتب أي ملاحظات أو تعليمات إضافية..."
-
-#. module: ab_ecommerce_storefront
-msgid "Notes are reviewed by the pharmacy team and do not automatically change prescription contents."
-msgstr "تتم مراجعة الملاحظات بواسطة فريق الصيدلية ولا تغيّر محتوى الروشتة تلقائيًا."
-
-#. module: ab_ecommerce_storefront
-msgid "Submit request"
-msgstr "إرسال الطلب"
-
-#. module: ab_ecommerce_storefront
-msgid "What happens next?"
-msgstr "ماذا يحدث بعد ذلك؟"
-
-#. module: ab_ecommerce_storefront
-msgid "We receive your prescription."
-msgstr "نستلم الروشتة الخاصة بك."
-
-#. module: ab_ecommerce_storefront
-msgid "The pharmacy team reviews it."
-msgstr "يقوم فريق الصيدلية بمراجعتها."
-
-#. module: ab_ecommerce_storefront
-msgid "The Call Center confirms the order details with you."
-msgstr "يتواصل معك فريق خدمة العملاء لتأكيد تفاصيل الطلب."
-
-#. module: ab_ecommerce_storefront
-msgid "The order is prepared and delivered."
-msgstr "يتم تجهيز الطلب وتوصيله."
-
-#. module: ab_ecommerce_storefront
-msgid "Recent prescription requests"
-msgstr "أحدث طلبات الروشتات"
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription requests"
-msgstr "طلبات الروشتات"
-
-#. module: ab_ecommerce_storefront
-msgid "View all requests"
-msgstr "عرض كل الطلبات"
-
-#. module: ab_ecommerce_storefront
-msgid "Upload a prescription and our pharmacy team will review it."
-msgstr "ارفع الروشتة وسيقوم فريق الصيدلية بمراجعتها."
-
-#. module: ab_ecommerce_storefront
-msgid "Track prescriptions submitted for pharmacy review"
-msgstr "تابع الروشتات المرسلة لمراجعة الصيدلية"
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription request"
-msgstr "طلب روشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription request status"
-msgstr "حالة طلب الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "No prescription requests yet"
-msgstr "لا توجد طلبات روشتات بعد"
-
-#. module: ab_ecommerce_storefront
-msgid "Your prescription requests will appear here after submission."
-msgstr "ستظهر طلبات الروشتات الخاصة بك هنا بعد الإرسال."
-
-#. module: ab_ecommerce_storefront
-msgid "Create prescription request"
-msgstr "إنشاء طلب روشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "Your prescription request was received."
-msgstr "تم استلام طلب الروشتة الخاص بك."
-
-#. module: ab_ecommerce_storefront
-msgid "Our team will review it before confirmation."
-msgstr "سيقوم فريقنا بمراجعته قبل التأكيد."
-
-#. module: ab_ecommerce_storefront
-msgid "New request"
-msgstr "طلب جديد"
-
-#. module: ab_ecommerce_storefront
-msgid "Customer notes"
-msgstr "ملاحظات العميل"
-
-#. module: ab_ecommerce_storefront
-msgid "View related order"
-msgstr "عرض الطلب المرتبط"
-
-#. module: ab_ecommerce_storefront
-msgid "Please upload a prescription image."
-msgstr "برجاء رفع صورة الروشتة."
-
-#. module: ab_ecommerce_storefront
-msgid "Please upload a JPG, PNG, or WebP image."
-msgstr "برجاء رفع صورة بصيغة JPG أو PNG أو WebP."
-
-#. module: ab_ecommerce_storefront
-msgid "The prescription image is too large. Please upload an image up to 8 MB."
-msgstr "صورة الروشتة كبيرة جدًا. برجاء رفع صورة لا تتجاوز 8 ميجابايت."
-
-#. module: ab_ecommerce_storefront
-msgid "The selected file is not a valid image."
-msgstr "الملف المحدد ليس صورة صالحة."
-
-#. module: ab_ecommerce_storefront
-msgid "Prescription received"
-msgstr "تم استلام الروشتة"
-
-#. module: ab_ecommerce_storefront
-msgid "We received the prescription image successfully."
-msgstr "تم استلام صورة الروشتة بنجاح."
-
-#. module: ab_ecommerce_storefront
-msgid "Under review"
-msgstr "جاري المراجعة"
-
-#. module: ab_ecommerce_storefront
-msgid "Our team is reviewing the prescription and preparing the next steps."
-msgstr "يقوم فريقنا بمراجعة الروشتة وتجهيز الخطوات التالية."
-
-#. module: ab_ecommerce_storefront
-msgid "Waiting for Call Center confirmation"
-msgstr "بانتظار تأكيد خدمة العملاء"
-
-#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
 msgid "Our Call Center team will contact you to confirm the order details."
 msgstr "سيتواصل معك فريق خدمة العملاء لتأكيد تفاصيل الطلب."
 
 #. module: ab_ecommerce_storefront
-msgid "Confirmed"
-msgstr "تم التأكيد"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Our team is ready to support your product choices and daily orders."
+msgstr "فريقنا جاهز لدعم اختياراتك من المنتجات وطلباتك اليومية."
 
 #. module: ab_ecommerce_storefront
-msgid "Your prescription request is confirmed and will move to preparation."
-msgstr "تم تأكيد طلب الروشتة وسيبدأ تجهيزه."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Our team is reviewing the prescription and preparing the next steps."
+msgstr "فريقنا يراجع الروشتة ويجهز الخطوات التالية."
 
 #. module: ab_ecommerce_storefront
-msgid "Preparing"
-msgstr "جاري التجهيز"
-
-#. module: ab_ecommerce_storefront
-msgid "We are preparing your request now."
-msgstr "نقوم الآن بتجهيز طلبك."
-
-#. module: ab_ecommerce_storefront
-msgid "Out for delivery"
-msgstr "خرج للتوصيل"
-
-#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__out_for_delivery
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Out for Delivery"
 msgstr "خرج للتوصيل"
 
 #. module: ab_ecommerce_storefront
-msgid "Your order is on its way to you."
-msgstr "طلبك في الطريق إليك."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Out for delivery"
+msgstr "خرج للتوصيل"
 
 #. module: ab_ecommerce_storefront
-msgid "Delivered"
-msgstr "تم التسليم"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Out of stock"
+msgstr "غير متوفر"
 
 #. module: ab_ecommerce_storefront
-msgid "Your request was delivered successfully."
-msgstr "تم تسليم طلبك بنجاح."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Pack"
+msgstr "عبوة"
 
 #. module: ab_ecommerce_storefront
-msgid "Cancelled"
-msgstr "ملغي"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Pack information"
+msgstr "معلومات العبوة"
 
 #. module: ab_ecommerce_storefront
-msgid "This prescription request was cancelled."
-msgstr "تم إلغاء طلب الروشتة."
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_panadol_extra
+msgid "Pack of 24 tablets. Use only as directed on the package and ask a pharmacist if needed."
+msgstr "عبوة 24 قرصا. يستخدم حسب إرشادات العبوة فقط واسأل الصيدلي عند الحاجة."
 
 #. module: ab_ecommerce_storefront
-msgid "Rejected"
-msgstr "مرفوض"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Pain Relief"
+msgstr "تسكين الألم"
 
 #. module: ab_ecommerce_storefront
-msgid "This prescription request could not be processed."
-msgstr "تعذر معالجة طلب الروشتة."
+#: model:product.template,name:ab_ecommerce_storefront.product_panadol_extra
+msgid "Panadol Extra Optizorb | 24 Tablets"
+msgstr "بنادول إكسترا أوبتيزورب | 24 قرص"
 
 #. module: ab_ecommerce_storefront
-msgid "Under Review"
-msgstr "جاري المراجعة"
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__partner_id
+msgid "Partner"
+msgstr "الشريك"
 
 #. module: ab_ecommerce_storefront
-msgid "Waiting for Call Center"
-msgstr "بانتظار خدمة العملاء"
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_evasline_hand_cream
+msgid "Passion-scented hand cream in a convenient 60 g tube for everyday hand care."
+msgstr "كريم يد برائحة باشن في عبوة 60 جم مناسبة للعناية اليومية."
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Password"
+msgstr "كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Password strength"
+msgstr "قوة كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Passwords do not match"
+msgstr "كلمتا المرور غير متطابقتان"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Passwords match"
+msgstr "كلمتا المرور متطابقتان"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Patient Care"
+msgstr "رعاية المرضى"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Perfumes"
+msgstr "العطور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_personal_care
+msgid "Personal Care"
+msgstr "العناية الشخصية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Personal information"
+msgstr "بياناتك الشخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_07
+msgid "Pharmacy Friend"
+msgstr "صديق الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Pharmacy-first eCommerce you can trust"
+msgstr "تجارة إلكترونية صيدلية تثق بها"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Phone number"
+msgstr "رقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Phone number is required"
+msgstr "رقم الهاتف مطلوب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Phone number is required."
+msgstr "رقم الهاتف مطلوب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "Phone number or password is incorrect."
+msgstr "رقم الهاتف أو كلمة المرور غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Piece"
+msgstr "قطعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Please enter a valid phone number"
+msgstr "برجاء إدخال رقم هاتف صحيح"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Please enter a valid phone number."
+msgstr "برجاء إدخال رقم هاتف صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Please fill in this field"
+msgstr "برجاء إدخال هذا الحقل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please upload a JPG, PNG, or WebP image."
+msgstr "برجاء رفع صورة بصيغة JPG أو PNG أو WebP."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Please upload a PNG, JPG, or WebP image."
+msgstr "برجاء رفع صورة بصيغة PNG أو JPG أو WebP."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please upload a prescription image."
+msgstr "برجاء رفع صورة الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Popular areas"
+msgstr "المناطق الشائعة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__access_url
+msgid "Portal Access URL"
+msgstr "رابط الوصول للبوابة"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_betadine_60ml
+msgid "Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package directions."
+msgstr "محلول مطهر بوفيدون-يود في عبوة 60 مل. اتبع إرشادات العبوة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Pregnancy Supplements"
+msgstr "مكملات الحمل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__preparing
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Preparing"
+msgstr "قيد التحضير"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Prescription"
+msgstr "روشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__prescription_filename
+msgid "Prescription Filename"
+msgstr "اسم ملف الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__prescription_image
+msgid "Prescription Image"
+msgstr "صورة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__prescription_mimetype
+msgid "Prescription Mimetype"
+msgstr "نوع ملف الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_prescription_order
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Prescription Order"
 msgstr "طلب روشتة"
 
 #. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_ab_prescription_order
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_ab_prescription_order_root
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
 msgid "Prescription Orders"
 msgstr "طلبات الروشتات"
 
 #. module: ab_ecommerce_storefront
-msgid "Customer Note"
-msgstr "ملاحظة العميل"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Prescription image"
+msgstr "صورة الروشتة"
 
 #. module: ab_ecommerce_storefront
-msgid "Internal Note"
-msgstr "ملاحظة داخلية"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Prescription notes"
+msgstr "ملاحظات الروشتة"
 
 #. module: ab_ecommerce_storefront
-msgid "Internal Notes"
-msgstr "ملاحظات داخلية"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Prescription received"
+msgstr "تم استلام الروشتة"
 
 #. module: ab_ecommerce_storefront
-msgid "Sale Order"
-msgstr "أمر البيع"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "Prescription request status"
+msgstr "حالة طلب الروشتة"
 
 #. module: ab_ecommerce_storefront
-msgid "Send to Call Center"
-msgstr "إرسال إلى خدمة العملاء"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "Prescription requests"
+msgstr "طلبات الروشتات"
 
 #. module: ab_ecommerce_storefront
-msgid "Start Review"
-msgstr "بدء المراجعة"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Previous slide"
+msgstr "الشريحة السابقة"
 
 #. module: ab_ecommerce_storefront
-msgid "Start Preparing"
-msgstr "بدء التجهيز"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Price information"
+msgstr "معلومات السعر"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Privacy policy"
+msgstr "سياسة الخصوصية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_product_template
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_product_wishlist
+msgid "Product Wishlist"
+msgstr "مفضلة المنتجات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Product saved"
+msgstr "تم حفظ المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Products are presented with a healthcare mindset, not as a generic marketplace catalog."
+msgstr "تُعرض المنتجات بمنظور صحي، وليس ككتالوج متجر عام."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_bebe_rash_cream
+msgid "Protective diaper-area care cream for babies in a 100 g tube."
+msgstr "كريم حماية لمنطقة الحفاض للأطفال في عبوة 100 جم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Purchase unit"
+msgstr "وحدة الشراء"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Qalyubia"
+msgstr "القليوبية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Recent orders"
+msgstr "أحدث الطلبات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Recent prescription requests"
+msgstr "طلبات الروشتات الأخيرة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Reject"
 msgstr "رفض"
 
 #. module: ab_ecommerce_storefront
-msgid "Cancel"
-msgstr "إلغاء"
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__rejected
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Rejected"
+msgstr "مرفوض"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Related products"
+msgstr "منتجات ذات صلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Remove from wishlist"
+msgstr "إزالة من المفضلة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_ab_prescription_order_requests
 msgid "Requests"
 msgstr "الطلبات"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-msgid ""
-"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
-"                                                <span>Take prescription photo</span>"
-msgstr ""
-"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
-"                                                <span>تصوير الروشتة</span>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Respiratory Care"
+msgstr "العناية بالجهاز التنفسي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_rose_water
+msgid "Rose water for a refreshing addition to a daily beauty routine, in a 100 ml bottle."
+msgstr "ماء ورد لإضافة منعشة إلى روتين الجمال اليومي في عبوة 100 مل."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "SMS Delivery error"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Sachet"
+msgstr "كيس"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__sale_order_id
+msgid "Sale Order"
+msgstr "Sale Order"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation_offcanvas
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Save your address once to complete checkout faster."
+msgstr "احفظ عنوانك مرة واحدة لإتمام الشراء بشكل أسرع."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Search for an area, city, or governorate"
+msgstr "ابحث عن المنطقة أو المدينة أو المحافظة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Search medicines and wellness products"
+msgstr "ابحث عن دواء أو منتج عناية..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Search medicines, personal care, wellness, and pharmacy essentials."
+msgstr "ابحث عن الأدوية والعناية الشخصية والرفاهية واحتياجات الصيدلية."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__access_token
+msgid "Security Token"
+msgstr "رمز الأمان"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_seen_profile_onboarding
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_seen_profile_onboarding
+msgid "Seen Storefront Profile Onboarding"
+msgstr "Seen Storefront Profile Onboarding"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Select %s"
+msgstr "تحديد %s"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Select Egypt"
+msgstr "تحديد مصر"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-msgid ""
-"<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n"
-"                                                <span>Upload image</span>"
-msgstr ""
-"<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n"
-"                                                <span>رفع صورة</span>"
+msgid "Selected prescription preview"
+msgstr "معاينة الروشتة المحددة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Send to Call Center"
+msgstr "إرسال إلى خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Sensitive skin care"
+msgstr "العناية بالبشرة الحساسة"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_sensodyne_original
+msgid "Sensodyne Original Toothpaste | 100 ml"
+msgstr "سنسوداين معجون أسنان أوريجينال | 100 مل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Sharqia"
+msgstr "الشرقية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Shop"
+msgstr "تسوق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Shop by Category"
+msgstr "التسوق حسب التصنيف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Shop by Need"
+msgstr "التسوق حسب الاحتياج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop by category"
+msgstr "تسوق حسب القسم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
+msgid "Shop categories"
+msgstr "أقسام المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop offers"
+msgstr "تسوق العروض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Show password"
+msgstr "إظهار كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Sign in"
+msgstr "تسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Sign in to Abdin Pharmacies"
+msgstr "تسجيل الدخول إلى صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Sign in to track your orders, save favorite products, and continue shopping easily."
+msgstr "ادخل لحسابك لتتابع طلباتك، تحفظ منتجاتك المفضلة، وتكمل تجربة التسوق بسهولة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "Sign in to your account to continue"
+msgstr "ادخل إلى حسابك للمتابعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin Care"
+msgstr "العناية بالبشرة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin Medicines"
+msgstr "أدوية الجلد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin Treatment"
+msgstr "علاجات البشرة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin brightening and tone correction"
+msgstr "تفتيح وتوحيد لون البشرة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Sohag"
+msgstr "سوهاج"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Specialty Medicines"
+msgstr "أدوية متخصصة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Start Preparing"
+msgstr "بدء التحضير"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Start Review"
+msgstr "بدء المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Start shopping"
+msgstr "ابدأ التسوق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Start shopping and your recent orders will appear here."
+msgstr "ابدأ التسوق وستظهر طلباتك الأخيرة هنا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Start with a longer password and a clearer mix of characters"
+msgstr "ابدأ بكلمة أطول ومزيج أوضح من الأحرف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__state_description
+msgid "State Description"
+msgstr "وصف الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__state_label
+msgid "State Label"
+msgstr "تسمية الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_state
+msgid "Status based on activities\nOverdue: Due date is already passed\nToday: Activity date is today\nPlanned: Future activities."
+msgstr "Status based on activities\nOverdue: Due date is already passed\nToday: Activity date is today\nPlanned: Future activities."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Store navigation"
+msgstr "تنقل المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_avatar
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_avatar
+msgid "Storefront Avatar"
+msgstr "أفاتار المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Strip"
+msgstr "Strip"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Strong"
+msgstr "قوية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Strong password"
+msgstr "كلمة مرور قوية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Suggest another"
+msgstr "اقتراح آخر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Sun Care"
+msgstr "العناية من الشمس"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Sun protection"
+msgstr "الحماية من الشمس"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_06
+msgid "Support Care"
+msgstr "رعاية الدعم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Suppository"
+msgstr "لبوس"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Tablet"
+msgstr "قرص"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-msgid ""
-"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
-"                                                <span>Change image</span>"
-msgstr ""
-"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
-"                                                <span>تغيير الصورة</span>"
+msgid "Take a photo of your prescription or upload an existing image, and we will help prepare your request."
+msgstr "صوّر الروشتة أو ارفع صورة موجودة، وسنساعدك في تجهيز طلبك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/logo_motion.js:0
+msgid "Thank you for ordering from Abdin Pharmacies"
+msgstr "شكرا لطلبك من صيدليات عابدين"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-msgid ""
-"<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n"
-"                                                <span>Remove image</span>"
-msgstr ""
-"<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n"
-"                                                <span>حذف الصورة</span>"
+msgid "The Call Center confirms the order details with you."
+msgstr "تؤكد خدمة العملاء تفاصيل الطلب معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "The hotline support makes it easier to choose the right product."
+msgstr "يسهّل دعم الخط الساخن اختيار المنتج المناسب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "The image is too large. Choose an image under 3 MB."
+msgstr "حجم الصورة كبير. اختر صورة أقل من 3 ميجابايت."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-msgid ""
-"<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n"
-"                                    <span>Submit request</span>"
-msgstr ""
-"<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n"
-"                                    <span>إرسال الطلب</span>"
+msgid "The order is prepared and delivered."
+msgstr "يتم تحضير الطلب وتوصيله."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The pharmacy team reviews it."
+msgstr "يراجعها فريق الصيدلية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "The phone number or password is incorrect."
+msgstr "رقم الهاتف أو كلمة المرور غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The prescription image is too large. Please upload an image up to 8 MB."
+msgstr "صورة الروشتة كبيرة جدا. برجاء رفع صورة حتى 8 ميجابايت."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "The selected avatar is invalid."
+msgstr "اختيار الأيقونة غير صحيح."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The selected file is not a valid image."
+msgstr "الملف المحدد ليس صورة صالحة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "The store feels organized across medicine, beauty, baby, and wellness needs."
+msgstr "المتجر منظم بين احتياجات الأدوية والجمال والأطفال والعناية الصحية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "This field is required"
+msgstr "هذا الحقل مطلوب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "This phone number is already used. Try signing in instead of creating a new account."
+msgstr "هذا الرقم مستخدم بالفعل. جرّب تسجيل الدخول بدلًا من إنشاء حساب جديد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "This prescription request could not be processed."
+msgstr "تعذرت معالجة طلب الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "This prescription request was cancelled."
+msgstr "تم إلغاء طلب الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_11
+msgid "Trusted Care"
+msgstr "رعاية موثوقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Trusted by pharmacy customers"
+msgstr "موثوق لدى عملاء الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt."
+msgstr "رعاية صيدلية موثوقة واحتياجات صحية أساسية من صيدليات عابدين، تصل إليك بثقة داخل مصر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Trusted pharmacy care, delivered to your door"
+msgstr "رعاية صيدلية موثوقة تصل إلى بابك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Tube"
+msgstr "أنبوب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي على السجل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Unable to submit the prescription request. Please try again."
+msgstr "تعذر إرسال طلب الروشتة. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__under_review
+msgid "Under Review"
+msgstr "قيد المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Under review"
+msgstr "قيد المراجعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/product_template.py:0
+msgid "Unit"
+msgstr "وحدة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Upload a prescription and our pharmacy team will review it."
+msgstr "ارفع الروشتة وسيقوم فريق الصيدلية بمراجعتها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+msgid "Upload a profile photo or choose a ready avatar."
+msgstr "ارفع صورة شخصية أو اختر أفاتار جاهزًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__custom
+msgid "Uploaded Profile Picture"
+msgstr "الصورة الشخصية المرفوعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Use a clear image that shows the full prescription."
+msgstr "استخدم صورة واضحة تظهر الروشتة بالكامل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Use a mix of letters, numbers, and symbols"
+msgstr "استخدم مزيجًا من الحروف والأرقام والرموز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Use at least 8 characters with uppercase, lowercase, number, and special symbol"
+msgstr "استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Use at least 8 characters with uppercase, lowercase, number, and special symbol."
+msgstr "استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
+msgid "Use it"
+msgstr "استخدمها"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Use my current location"
+msgstr "استخدم موقعي الحالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Useful add-ons customers commonly pair with this item."
+msgstr "إضافات مفيدة يطلبها العملاء عادة مع هذا المنتج."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_res_users
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Very weak"
+msgstr "ضعيفة جدًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_unit_label
+msgid "Vial"
+msgstr "فيال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "View all"
+msgstr "عرض الكل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "View all orders"
+msgstr "عرض كل الطلبات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "View all requests"
+msgstr "عرض كل الطلبات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "View product"
+msgstr "عرض المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "View related order"
+msgstr "عرض الطلب المرتبط"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_vitamins
+msgid "Vitamins"
+msgstr "فيتامينات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Vitamins & Supplements"
+msgstr "فيتامينات ومكملات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Vitamins and Minerals"
+msgstr "الفيتامينات والمعادن"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__waiting_call_center
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Waiting for Call Center"
+msgstr "بانتظار خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Waiting for Call Center confirmation"
+msgstr "بانتظار تأكيد خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_ginger_cinnamon
+msgid "Warming ginger and cinnamon herbal infusion supplied as 12 tea bags."
+msgstr "مشروب عشبي دافئ بالزنجبيل والقرفة يحتوي على 12 كيسا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "We are here to help"
+msgstr "نحن هنا لمساعدتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "We are preparing your request now."
+msgstr "نقوم بتحضير طلبك الآن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "We could not send a recovery link for this number. Contact us on 19036 for help."
+msgstr "لم نتمكن من إرسال رابط الاستعادة لهذا الرقم. تواصل معنا على 19036 للمساعدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "We receive your prescription."
+msgstr "نستلم الروشتة الخاصة بك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "We received the prescription image successfully."
+msgstr "تم استلام صورة الروشتة بنجاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Weak"
+msgstr "ضعيفة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_website
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Weight Management"
+msgstr "إدارة الوزن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model:product.public.category,name:ab_ecommerce_storefront.category_wellness
+msgid "Wellness"
+msgstr "العناية الصحية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__res_partner__ab_storefront_avatar__avatar_03
+msgid "Wellness Care"
+msgstr "عناية صحية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "What are you looking for?"
+msgstr "عمَّ تبحث؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "What happens next?"
+msgstr "ماذا يحدث بعد ذلك؟"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Wishlist"
+msgstr "المفضلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Women's Health"
+msgstr "صحة المرأة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Wound Care"
+msgstr "العناية بالجروح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Write any extra instructions..."
+msgstr "اكتب أي تعليمات إضافية..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Write the street, building number, floor, or nearest landmark"
+msgstr "اكتب الشارع، رقم العمارة، الدور أو أقرب علامة مميزة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "You have"
+msgstr "لديك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "You have not added any products to your wishlist yet."
+msgstr "لم تضف منتجات إلى المفضلة بعد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_first_empty_message
+msgid "Your cart is empty!"
+msgstr "عربة التسوق فارغة!"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+msgid "Your current area"
+msgstr "منطقتك الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your order is on its way to you."
+msgstr "طلبك في طريقه إليك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your prescription request is confirmed and will move to preparation."
+msgstr "تم تأكيد طلب الروشتة وسينتقل إلى التحضير."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
-msgid ""
-"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
-"                        <span>Order by prescription</span>"
-msgstr ""
-"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
-"                        <span>اطلب بالروشتة</span>"
+msgid "Your prescription requests will appear here after submission."
+msgstr "ستظهر طلبات الروشتات هنا بعد الإرسال."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Prescription received</strong>"
-msgstr "<strong>تم استلام الروشتة</strong>"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your request was delivered successfully."
+msgstr "تم توصيل طلبك بنجاح."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Under review</strong>"
-msgstr "<strong>جاري المراجعة</strong>"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.wishlist_first_empty_message
+msgid "Your wishlist is empty!"
+msgstr "قائمة المفضلة فارغة!"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Waiting for Call Center confirmation</strong>"
-msgstr "<strong>بانتظار تأكيد خدمة العملاء</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "baby care"
+msgstr "العناية بالأطفال"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Confirmed</strong>"
-msgstr "<strong>تم التأكيد</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "body care"
+msgstr "العناية بالجسم"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Preparing</strong>"
-msgstr "<strong>جاري التجهيز</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "dietary supplements"
+msgstr "المكملات الغذائية"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Out for delivery</strong>"
-msgstr "<strong>خرج للتوصيل</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "hair care"
+msgstr "العناية بالشعر"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Delivered</strong>"
-msgstr "<strong>تم التسليم</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "medical devices and supplies"
+msgstr "الأجهزة والمستلزمات الطبية"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
-msgid "<strong>Customer notes</strong>"
-msgstr "<strong>ملاحظات العميل</strong>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "mother and baby products"
+msgstr "منتجات الأم والرضيع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "oral and dental care"
+msgstr "العناية بالفم والأسنان"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "personal care"
+msgstr "العناية الشخصية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/prescription_order.py:0
+msgid "prescription"
+msgstr "روشتة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-msgid ""
-"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
-"                            <span>Prescription requests</span>"
-msgstr ""
-"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
-"                            <span>طلبات الروشتات</span>"
+msgid "saved products in your wishlist."
+msgstr "منتجات محفوظة في المفضلة."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
-msgid ""
-"<span class=\"ab-account-action-icon\"><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n"
-"                                <strong>Prescription requests</strong>\n"
-"                                <small>Track prescriptions submitted for pharmacy review</small>"
-msgstr ""
-"<span class=\"ab-account-action-icon\"><i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/></span>\n"
-"                                <strong>طلبات الروشتات</strong>\n"
-"                                <small>تابع الروشتات المرسلة لمراجعة الصيدلية</small>"
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "skin care"
+msgstr "العناية بالبشرة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "vitamins and minerals"
+msgstr "الفيتامينات والمعادن"
