@@ -121,6 +121,17 @@
         <xpath expr="//div[@name='product_price']" position="attributes">
             <attribute name="class" add="ab-storefront-product-price" separator=" "/>
         </xpath>
+        <xpath expr="//div[@name='product_price_container']" position="after">
+            <div class="ab-storefront-total-price"
+                 data-ab-animated-total-price="1"
+                 aria-live="polite">
+                <span class="ab-storefront-total-price-label">Total</span>
+                <span class="ab-storefront-total-price-value"
+                      data-ab-animated-total-price-value="1"
+                      t-out="combination_info['price']"
+                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+            </div>
+        </xpath>
     </template>
 
     <template id="product_cta" name="Abdin Product Call To Action" inherit_id="website_sale.cta_wrapper" priority="90">

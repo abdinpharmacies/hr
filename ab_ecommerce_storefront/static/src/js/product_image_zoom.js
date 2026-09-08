@@ -18,14 +18,25 @@ const SCROLL_TOP_SHOW_OFFSET = 520;
 const MOBILE_SEARCH_BREAKPOINT = 992;
 const MOBILE_SEARCH_STORAGE_KEY = "ab_storefront_recent_searches";
 
+function isAbStorefrontPage() {
+    return Boolean(document.querySelector(
+        ".ab-storefront-header, .ab-storefront-home, .ab-storefront-shop-page, .ab-storefront-product-page"
+    ));
+}
+
 patch(CartService.prototype, {
     _showCartNotification(props = {}, options = {}) {
-        if (!document.body?.classList.contains("ab-storefront")) {
+        if (!isAbStorefrontPage()) {
             return super._showCartNotification(props, options);
         }
 
         if (props.warning) {
             return super._showCartNotification(props, options);
+        }
+
+        if (window.abStorefrontSuppressNextCartMotion) {
+            window.abStorefrontSuppressNextCartMotion = false;
+            return;
         }
 
         if (props.lines?.length) {
@@ -37,6 +48,14 @@ patch(CartService.prototype, {
                 },
             }));
         }
+    },
+    _trackProducts(trackingInfo) {
+        if (!isAbStorefrontPage()) {
+            return super._trackProducts(trackingInfo);
+        }
+
+        const target = document.querySelector(".oe_website_sale") || document.body;
+        target.dispatchEvent(new CustomEvent("add_to_cart_event", { detail: trackingInfo }));
     },
 });
 
@@ -1138,14 +1157,28 @@ export class AbStorefrontAddToCartFly extends Interaction {
 
     getCartTarget() {
         const targets = [
-            ...document.querySelectorAll(".o_wsale_my_cart .ab-storefront-action, .o_wsale_my_cart a"),
+            ...document.querySelectorAll(
+                ".ab-storefront-actions .o_wsale_my_cart .ab-storefront-action,"
+                + " .ab-storefront-actions .o_wsale_my_cart a,"
+                + " .ab-storefront-actions a[href*='/shop/cart'],"
+                + " .o_wsale_my_cart .ab-storefront-action,"
+                + " .o_wsale_my_cart a,"
+                + " a[href*='/shop/cart']"
+            ),
         ];
         return targets.find((target) => this.hasVisibleRect(target)) || null;
     }
 
     getWishlistTarget() {
         const targets = [
-            ...document.querySelectorAll(".o_wsale_my_wish .ab-storefront-action, .o_wsale_my_wish a"),
+            ...document.querySelectorAll(
+                ".ab-storefront-actions .o_wsale_my_wish .ab-storefront-action,"
+                + " .ab-storefront-actions .o_wsale_my_wish a,"
+                + " .ab-storefront-actions a[href*='/shop/wishlist'],"
+                + " .o_wsale_my_wish .ab-storefront-action,"
+                + " .o_wsale_my_wish a,"
+                + " a[href*='/shop/wishlist']"
+            ),
         ];
         return targets.find((target) => this.hasVisibleRect(target)) || null;
     }
@@ -1237,15 +1270,25 @@ export class AbStorefrontAddToCartFly extends Interaction {
         };
 
         const media = document.createElement("span");
-        media.className = "ab-storefront-action-toast-media ab-storefront-toast-logo-motion";
+        media.className = "ab-storefront-action-toast-media";
+        if (action === "cart") {
+            media.classList.add("ab-storefront-cart-toast-motion");
+            media.append(
+                document.createElement("span"),
+                document.createElement("span"),
+                document.createElement("span")
+            );
+        } else {
+            media.classList.add("ab-storefront-toast-logo-motion");
+        }
         const logoSrc = this.getWebsiteLogoSrc();
-        if (logoSrc || imageSrc || image?.currentSrc) {
+        if (action !== "cart" && (logoSrc || imageSrc || image?.currentSrc)) {
             const toastImage = document.createElement("img");
             toastImage.src = logoSrc || imageSrc || image.currentSrc;
             toastImage.alt = "";
             toastImage.loading = "lazy";
             media.appendChild(toastImage);
-        } else {
+        } else if (action !== "cart") {
             const iconWrap = document.createElement("span");
             iconWrap.className = "ab-storefront-action-toast-icon";
             const icon = document.createElement("i");
