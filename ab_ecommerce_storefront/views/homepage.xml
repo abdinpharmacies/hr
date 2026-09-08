@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="home_product_card" name="Abdin Home Product Card">
-        <t t-set="ab_variant" t-value="ab_catalog['variants'].get(product.id)"/>
-        <t t-set="ab_price" t-value="ab_catalog['prices'].get(product.id, {})"/>
-        <t t-set="ab_is_wishlisted" t-value="ab_variant and ab_variant.id in ab_catalog['wishlist_product_ids']"/>
-        <t t-set="ab_is_sold_out" t-value="ab_variant and ab_variant._is_sold_out()"/>
-        <form class="oe_product_cart ab-storefront-product-card h-100 d-flex flex-column"
+        <t t-set="ab_card_variants" t-value="ab_catalog['variants']"/>
+        <t t-set="ab_card_prices" t-value="ab_catalog['prices']"/>
+        <t t-set="ab_card_wishlist_product_ids" t-value="ab_catalog['wishlist_product_ids']"/>
+        <t t-set="ab_card_is_wishlisted_override" t-value="ab_card_variants.get(product.id) and ab_card_variants[product.id].id in ab_card_wishlist_product_ids"/>
+        <t t-call="ab_ecommerce_storefront.product_card"/>
+    </template>
+
+    <template id="product_card" name="Abdin Storefront Product Card">
+        <t t-set="ab_card_variant" t-value="ab_card_variants.get(product.id)"/>
+        <t t-set="ab_card_price" t-value="ab_card_prices.get(product.id, {})"/>
+        <t t-set="ab_card_is_wishlisted" t-value="ab_card_is_wishlisted_override"/>
+        <t t-set="ab_card_is_sold_out" t-value="ab_card_variant and ab_card_variant._is_sold_out()"/>
+        <t t-set="ab_card_data" t-value="product._ab_storefront_card_data(ab_card_price)"/>
+        <t t-set="ab_card_options" t-value="ab_card_data['purchase_options']"/>
+        <t t-set="ab_card_default_option" t-value="ab_card_options[0]"/>
+        <t t-set="ab_card_discount"
+           t-value="ab_card_price.get('base_price', 0) and max(0, round((ab_card_price.get('base_price', 0) - ab_card_price.get('price_reduce', 0)) * 100 / ab_card_price.get('base_price', 0))) or 0"/>
+        <t t-set="ab_card_requires_configuration"
+           t-value="product.type == 'combo' or product.has_configurable_attributes or product.product_variant_count &gt; 1 or product.optional_product_ids"/>
+        <t t-set="ab_card_can_quick_add"
+           t-value="ab_card_variant and product._website_show_quick_add() and not ab_card_requires_configuration and not ab_card_is_sold_out and not website.prevent_zero_price_sale"/>
+        <form t-attf-class="oe_product_cart ab-storefront-product-card d-flex flex-column #{ab_card_can_quick_add and 'ab-storefront-product-card-available' or ''} #{ab_card_is_sold_out and 'ab-storefront-product-card-unavailable' or ''} #{ab_card_requires_configuration and 'ab-storefront-product-card-configurable' or ''}"
               role="article"
               t-att-aria-label="product.name">
             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-            <input t-if="ab_variant" type="hidden" name="product_id" t-att-value="ab_variant.id"/>
+            <input t-if="ab_card_variant" type="hidden" name="product_id" t-att-value="ab_card_variant.id"/>
             <input type="hidden" name="product_template_id" t-att-value="product.id"/>
             <input type="hidden" name="product_type" t-att-value="product.type"/>
+            <input type="hidden" name="uom_id" t-att-value="ab_card_default_option['uom_id']"/>
 
             <div class="ab-storefront-product-media">
                 <a t-att-href="product._get_product_url()" t-att-title="product.name">
@@ -21,19 +39,25 @@
                          height="420"
                          loading="lazy"/>
                 </a>
-                <button t-if="ab_variant"
+                <button t-if="ab_card_variant"
                         type="button"
-                        t-attf-class="ab-storefront-wishlist o_add_wishlist btn #{ab_is_wishlisted and 'o_in_wishlist'}"
+                        t-attf-class="ab-storefront-wishlist o_add_wishlist btn #{ab_card_is_wishlisted and 'o_in_wishlist'}"
                         t-att-data-product-template-id="product.id"
-                        t-att-data-product-product-id="ab_variant.id"
+                        t-att-data-product-product-id="ab_card_variant.id"
                         data-action="o_wishlist"
-                        t-att-title="ab_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
-                        aria-label="Add to wishlist">
-                    <i t-attf-class="fa #{ab_is_wishlisted and 'fa-heart' or 'fa-heart-o'}" aria-hidden="true"/>
+                        t-att-title="ab_card_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
+                        t-att-aria-label="ab_card_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
+                        t-att-aria-pressed="ab_card_is_wishlisted and 'true' or 'false'">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
+                    </svg>
                 </button>
-                <span t-if="ab_is_sold_out" class="ab-storefront-stock-badge">غير متوفر</span>
-                <span t-elif="ab_price.get('base_price', 0) &gt; ab_price.get('price_reduce', 0)"
-                      class="ab-storefront-offer-badge">عرض</span>
+                <span t-if="ab_card_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
+                <span t-elif="ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
+                      class="ab-storefront-offer-badge">
+                    <t t-if="ab_card_discount">-<t t-out="ab_card_discount"/>%</t>
+                    <t t-else="">Offer</t>
+                </span>
             </div>
 
             <div class="ab-storefront-product-body d-flex flex-column flex-grow-1">
@@ -45,97 +69,189 @@
                         <span t-field="product.name"/>
                     </a>
                 </h3>
-                <div class="ab-storefront-product-price mt-auto">
-                    <span t-if="ab_price.get('price_reduce') or not website.prevent_zero_price_sale"
-                          class="ab-storefront-sale-price"
-                          t-out="ab_price.get('price_reduce', 0)"
-                          t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                    <del t-if="ab_price.get('base_price', 0) &gt; ab_price.get('price_reduce', 0)"
-                         class="ab-storefront-base-price"
-                         t-out="ab_price['base_price']"
-                         t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                <div t-if="ab_card_data['pack_units']" class="ab-storefront-pack-info" aria-label="Pack information">
+                    <span t-foreach="ab_card_data['pack_units']" t-as="ab_pack_unit">
+                        <b t-out="ab_pack_unit['count']"/>
+                        <t t-call="ab_ecommerce_storefront.product_unit_label">
+                            <t t-set="ab_unit_code" t-value="ab_pack_unit['normalized_name']"/>
+                            <t t-set="ab_unit_fallback" t-value="ab_pack_unit['label']"/>
+                        </t>
+                    </span>
                 </div>
-                <button t-if="ab_variant and product._website_show_quick_add() and not ab_is_sold_out and not website.prevent_zero_price_sale"
-                        type="button"
-                        class="o_wsale_product_btn_primary a-submit btn btn-primary w-100 mt-3"
-                        data-show-quantity="false">
-                    <i class="fa fa-shopping-cart me-2" aria-hidden="true"/>
-                    أضف للسلة
-                </button>
-                <a t-else=""
-                   t-att-href="product._get_product_url()"
-                   class="btn btn-outline-primary w-100 mt-3">
-                    عرض المنتج
-                </a>
+                <fieldset t-if="len(ab_card_options) &gt; 1" class="ab-storefront-unit-picker">
+                    <legend>Purchase unit</legend>
+                    <div class="ab-storefront-unit-options">
+                        <button t-foreach="ab_card_options" t-as="ab_option"
+                                type="button"
+                                t-attf-class="ab-storefront-unit-option #{ab_option_index == 0 and 'is-selected' or ''}"
+                                t-att-data-unit-key="ab_option['key']"
+                                t-att-data-uom-id="ab_option['uom_id']"
+                                t-att-aria-pressed="ab_option_index == 0 and 'true' or 'false'">
+                            <t t-call="ab_ecommerce_storefront.product_unit_label">
+                                <t t-set="ab_unit_code" t-value="ab_option['unit_code']"/>
+                                <t t-set="ab_unit_fallback" t-value="ab_option['label']"/>
+                            </t>
+                        </button>
+                    </div>
+                </fieldset>
+                <div class="ab-storefront-product-purchase mt-auto">
+                    <div class="ab-storefront-product-price" aria-label="Price information">
+                        <div t-foreach="ab_card_options" t-as="ab_option"
+                             t-attf-class="ab-storefront-unit-price #{ab_option_index == 0 and 'is-selected' or ''}"
+                             t-att-data-unit-price="ab_option['key']">
+                            <span t-if="ab_option['price_reduce'] or not website.prevent_zero_price_sale"
+                                  class="ab-storefront-sale-price"
+                                  t-out="ab_option['price_reduce']"
+                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                            <del t-if="ab_option['base_price'] &gt; ab_option['price_reduce']"
+                                 class="ab-storefront-base-price"
+                                 t-out="ab_option['base_price']"
+                                 t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                        </div>
+                    </div>
+                    <div t-if="ab_card_can_quick_add" class="ab-storefront-card-quantity" aria-label="Quantity">
+                        <button type="button" data-ab-card-quantity="decrease" aria-label="Decrease quantity">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
+                        </button>
+                        <input type="number" name="add_qty" value="1" min="1" step="1" inputmode="numeric" aria-label="Quantity"/>
+                        <button type="button" data-ab-card-quantity="increase" aria-label="Increase quantity">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="ab-storefront-product-actions mt-3">
+                    <button t-if="ab_card_can_quick_add"
+                            type="button"
+                            class="ab-storefront-card-add btn btn-primary w-100"
+                            data-show-quantity="false"
+                            aria-label="Buy now"
+                            title="Buy now">
+                        <span class="ab-storefront-card-add-text" data-ab-card-add-label="" title="Buy now" aria-hidden="true"/>
+                        <span class="ab-storefront-card-add-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+                        </span>
+                    </button>
+                    <button t-elif="ab_card_is_sold_out"
+                            type="button"
+                            class="ab-storefront-card-state btn btn-outline-secondary w-100"
+                            disabled="disabled"
+                            aria-disabled="true">
+                        Out of stock
+                    </button>
+                    <a t-elif="ab_card_requires_configuration"
+                       t-att-href="product._get_product_url()"
+                       class="ab-storefront-card-configure btn btn-outline-primary w-100">
+                        Choose options
+                    </a>
+                    <a t-else=""
+                       t-att-href="product._get_product_url()"
+                       class="ab-storefront-card-view btn btn-outline-primary w-100">
+                        View product
+                    </a>
+                </div>
             </div>
         </form>
+    </template>
+
+    <template id="product_unit_label" name="Abdin Storefront Product Unit Label">
+        <t t-if="ab_unit_code == 'AMPOULE'">Ampoule</t>
+        <t t-elif="ab_unit_code == 'BOTTLE'">Bottle</t>
+        <t t-elif="ab_unit_code == 'BOX'">Box</t>
+        <t t-elif="ab_unit_code in ('CAP', 'CAPSULE')">Capsule</t>
+        <t t-elif="ab_unit_code == 'JAR'">Jar</t>
+        <t t-elif="ab_unit_code == 'PACK'">Pack</t>
+        <t t-elif="ab_unit_code in ('PCS', 'PIECE', 'UNIT')">Piece</t>
+        <t t-elif="ab_unit_code == 'SACHET'">Sachet</t>
+        <t t-elif="ab_unit_code == 'STRIP'">Strip</t>
+        <t t-elif="ab_unit_code in ('SUPP', 'SUPPOSITORY')">Suppository</t>
+        <t t-elif="ab_unit_code in ('TAB', 'TABLET')">Tablet</t>
+        <t t-elif="ab_unit_code == 'TUBE'">Tube</t>
+        <t t-elif="ab_unit_code == 'VIAL'">Vial</t>
+        <t t-else="" t-out="ab_unit_fallback"/>
     </template>
 
     <template id="homepage" name="Abdin eCommerce Homepage" inherit_id="website.homepage" priority="100">
         <xpath expr="//div[@id='wrap']" position="replace">
             <t t-set="ab_catalog" t-value="website._ab_storefront_home_catalog(product_limit=4, category_limit=8)"/>
+            <t t-set="ab_carousel_slides" t-value="website._ab_storefront_carousel_slides()"/>
             <div id="wrap" class="oe_structure ab-storefront-home">
-                <section class="s_carousel_wrapper p-0 ab-storefront-hero-slider"
+                <section t-if="ab_carousel_slides" class="s_carousel_wrapper p-0 ab-storefront-hero-slider"
                          data-vxml="001"
                          data-vcss="001"
                          data-snippet="s_carousel"
                          data-name="Abdin Banner Slider">
                     <div id="abStorefrontHeroCarousel"
-                         class="s_carousel s_carousel_default carousel slide carousel-fade"
+                         class="s_carousel s_carousel_default carousel slide"
                          data-bs-ride="carousel"
                          data-bs-interval="6500"
                          data-bs-pause="hover"
-                         data-bs-touch="true">
-                        <div class="carousel-indicators o_not_editable" contenteditable="false">
-                            <button type="button"
+                         data-bs-touch="false">
+                        <div t-if="len(ab_carousel_slides) &gt; 1" class="carousel-indicators o_not_editable" contenteditable="false">
+                            <button t-foreach="ab_carousel_slides" t-as="ab_slide"
+                                    type="button"
                                     data-bs-target="#abStorefrontHeroCarousel"
-                                    data-bs-slide-to="0"
-                                    class="active"
-                                    aria-current="true"
-                                    aria-label="Slide 1"/>
-                            <button type="button"
-                                    data-bs-target="#abStorefrontHeroCarousel"
-                                    data-bs-slide-to="1"
-                                    aria-label="Slide 2"/>
-                            <button type="button"
-                                    data-bs-target="#abStorefrontHeroCarousel"
-                                    data-bs-slide-to="2"
-                                    aria-label="Slide 3"/>
+                                    t-attf-data-bs-slide-to="#{ab_slide_index}"
+                                    t-att-class="ab_slide_index == 0 and 'active' or None"
+                                    t-att-aria-current="ab_slide_index == 0 and 'true' or None"
+                                    t-att-aria-label="'Slide %s' % (ab_slide_index + 1)"/>
                         </div>
 
                         <div class="carousel-inner">
-                            <div class="carousel-item active oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-primary"
-                                 style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_01.svg');"
-                                 data-name="Banner 1">
-                                <img class="ab-storefront-banner-art"
-                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_01.svg"
-                                     alt=""
-                                     aria-hidden="true"
-                                     loading="eager"/>
-                            </div>
-
-                            <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-wellness"
-                                 style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_02.svg');"
-                                 data-name="Banner 2">
-                                <img class="ab-storefront-banner-art"
-                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_02.svg"
-                                     alt=""
-                                     aria-hidden="true"
-                                     loading="lazy"/>
-                            </div>
-
-                            <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-delivery"
-                                 style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_03.svg');"
-                                 data-name="Banner 3">
-                                <img class="ab-storefront-banner-art"
-                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_03.svg"
-                                     alt=""
-                                     aria-hidden="true"
-                                     loading="lazy"/>
+                            <div t-foreach="ab_carousel_slides" t-as="ab_slide"
+                                 t-attf-class="carousel-item #{ab_slide_index == 0 and 'active' or ''} ab-storefront-banner"
+                                 t-att-data-name="ab_slide.name">
+                                <a t-if="ab_slide.show_cta and ab_slide.cta_style == 'link' and ab_slide.cta_url"
+                                   class="ab-storefront-banner-link"
+                                   t-att-href="ab_slide.cta_url"
+                                   draggable="false"
+                                   t-att-aria-label="ab_slide.cta_text or ab_slide.title or ab_slide.name">
+                                    <img class="ab-storefront-banner-art"
+                                         t-att-src="'/web/image/ab_website_carousel_slide/%s/image_1920' % ab_slide.id"
+                                         t-att-alt="ab_slide.title or ab_slide.name"
+                                         t-att-loading="ab_slide_index == 0 and 'eager' or 'lazy'"/>
+                                </a>
+                                <img t-else=""
+                                     class="ab-storefront-banner-art"
+                                     t-att-src="'/web/image/ab_website_carousel_slide/%s/image_1920' % ab_slide.id"
+                                     t-att-alt="ab_slide.title or ab_slide.name"
+                                     t-att-loading="ab_slide_index == 0 and 'eager' or 'lazy'"/>
+                                <div t-if="ab_slide.title or ab_slide.subtitle"
+                                     class="ab-storefront-banner-shade"/>
+                                <div t-if="ab_slide.title or ab_slide.subtitle"
+                                     class="ab-storefront-banner-layout">
+                                    <div class="container">
+                                        <div class="ab-storefront-banner-content">
+                                            <h1 t-if="ab_slide.title" t-out="ab_slide.title"/>
+                                            <p t-if="ab_slide.subtitle" t-out="ab_slide.subtitle"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div t-if="ab_slide.show_cta and ab_slide.cta_url and ((ab_slide.cta_style == 'text' and ab_slide.cta_text) or (ab_slide.cta_style == 'image' and ab_slide.cta_image_512))"
+                                     class="ab-storefront-banner-cta-layer o_not_editable"
+                                     dir="ltr"
+                                     t-att-data-ab-position-x="ab_slide.cta_position_x"
+                                     t-att-data-ab-position-y="ab_slide.cta_position_y"
+                                     t-att-style="'left:' + str(ab_slide.cta_position_x) + '%; right:auto; top:' + str(ab_slide.cta_position_y) + '%; --ab-carousel-cta-x:' + str(ab_slide.cta_position_x) + '%; --ab-carousel-cta-y:' + str(ab_slide.cta_position_y) + '%; --ab-carousel-cta-width:' + str(ab_slide.cta_width) + 'px;'"
+                                     contenteditable="false">
+                                    <a t-if="ab_slide.cta_style == 'text'"
+                                       class="btn btn-light ab-storefront-banner-text-cta"
+                                       dir="auto"
+                                       t-att-href="ab_slide.cta_url"
+                                       t-out="ab_slide.cta_text"/>
+                                    <a t-if="ab_slide.cta_style == 'image'"
+                                       class="ab-storefront-banner-image-cta"
+                                       t-att-href="ab_slide.cta_url"
+                                       t-att-aria-label="ab_slide.cta_text or ab_slide.title or ab_slide.name">
+                                        <img t-att-src="'/web/image/ab_website_carousel_slide/%s/cta_image_512' % ab_slide.id"
+                                             t-att-alt="ab_slide.cta_text or ab_slide.title or ab_slide.name"
+                                             loading="lazy"/>
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
-                        <button class="carousel-control-prev o_not_editable"
+                        <button t-if="len(ab_carousel_slides) &gt; 1"
+                                class="carousel-control-prev o_not_editable"
                                 type="button"
                                 data-bs-target="#abStorefrontHeroCarousel"
                                 data-bs-slide="prev"
@@ -143,7 +259,8 @@
                                 aria-label="Previous slide">
                             <span class="carousel-control-prev-icon" aria-hidden="true"/>
                         </button>
-                        <button class="carousel-control-next o_not_editable"
+                        <button t-if="len(ab_carousel_slides) &gt; 1"
+                                class="carousel-control-next o_not_editable"
                                 type="button"
                                 data-bs-target="#abStorefrontHeroCarousel"
                                 data-bs-slide="next"

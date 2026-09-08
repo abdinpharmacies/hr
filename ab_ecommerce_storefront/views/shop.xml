@@ -158,14 +158,25 @@
     </template>
 
     <template id="shop_product_card" name="Abdin Shop Product Card" inherit_id="website_sale.products_item" priority="90">
-        <xpath expr="//form" position="attributes">
-            <attribute name="class" add="ab-storefront-product-card" separator=" "/>
+        <xpath expr="//form" position="replace">
+            <t t-set="ab_shop_variant_id" t-value="product_variant and product_variant.id or product._get_first_possible_variant_id()"/>
+            <t t-set="ab_shop_variant" t-value="ab_shop_variant_id and request.env['product.product'].sudo().browse(ab_shop_variant_id)"/>
+            <t t-set="ab_card_variants" t-value="{product.id: ab_shop_variant}"/>
+            <t t-set="ab_card_prices" t-value="{product.id: get_product_prices(product)}"/>
+            <t t-set="ab_card_wishlist_product_ids"
+               t-value="request.env['product.wishlist'].current().product_id.ids"/>
+            <t t-set="ab_card_is_wishlisted_override"
+               t-value="ab_shop_variant and ab_shop_variant.id in ab_card_wishlist_product_ids"/>
+            <t t-call="ab_ecommerce_storefront.product_card"/>
         </xpath>
-        <xpath expr="//input[@name='csrf_token']/parent::div" position="attributes">
-            <attribute name="class" add="ab-storefront-product-media" separator=" "/>
-        </xpath>
-        <xpath expr="//div[hasclass('o_wsale_product_information')]" position="attributes">
-            <attribute name="class" add="ab-storefront-product-body" separator=" "/>
+    </template>
+
+    <template id="wishlist_product_card_price_context"
+              name="Abdin Wishlist Product Card Price Context"
+              inherit_id="website_sale_wishlist.product_wishlist"
+              priority="90">
+        <xpath expr="//t[@t-call='website_sale.products_item']" position="before">
+            <t t-set="get_product_prices" t-value="product._ab_storefront_sales_price"/>
         </xpath>
     </template>
 
