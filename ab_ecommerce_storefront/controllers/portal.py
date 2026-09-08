@@ -45,6 +45,21 @@ class AbStorefrontCustomerPortal(CustomerPortal):
         except AccessError:
             wishlist_count = 0
 
+        recent_prescriptions = request.env["ab.prescription.order"]
+        prescription_count = 0
+        try:
+            PrescriptionOrder = request.env["ab.prescription.order"]
+            prescription_domain = [("partner_id", "child_of", [partner.commercial_partner_id.id])]
+            prescription_count = PrescriptionOrder.search_count(prescription_domain)
+            recent_prescriptions = PrescriptionOrder.search(
+                prescription_domain,
+                order="create_date desc, id desc",
+                limit=3,
+            )
+        except AccessError:
+            recent_prescriptions = request.env["ab.prescription.order"]
+            prescription_count = 0
+
         values.update({
             "account_user": user,
             "account_partner": partner,
@@ -55,6 +70,8 @@ class AbStorefrontCustomerPortal(CustomerPortal):
             "profile_completion": profile_completion,
             "profile_completion_style": f"--ab-profile-completion: {profile_completion}%",
             "recent_orders": recent_orders,
+            "recent_prescriptions": recent_prescriptions,
+            "prescription_count": prescription_count,
             "saved_addresses": saved_addresses,
             "wishlist_count": wishlist_count,
         })

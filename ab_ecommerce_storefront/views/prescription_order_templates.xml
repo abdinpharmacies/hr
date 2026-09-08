@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="prescription_state_label" name="Prescription State Label">
+        <t t-if="state == 'new'">Prescription received</t>
+        <t t-elif="state == 'under_review'">Under review</t>
+        <t t-elif="state == 'waiting_call_center'">Waiting for Call Center confirmation</t>
+        <t t-elif="state == 'confirmed'">Confirmed</t>
+        <t t-elif="state == 'preparing'">Preparing</t>
+        <t t-elif="state == 'out_for_delivery'">Out for delivery</t>
+        <t t-elif="state == 'delivered'">Delivered</t>
+        <t t-elif="state == 'cancelled'">Cancelled</t>
+        <t t-elif="state == 'rejected'">Rejected</t>
+    </template>
+
+    <template id="prescription_state_description" name="Prescription State Description">
+        <t t-if="state == 'new'">We received the prescription image successfully.</t>
+        <t t-elif="state == 'under_review'">Our team is reviewing the prescription and preparing the next steps.</t>
+        <t t-elif="state == 'waiting_call_center'">Our Call Center team will contact you to confirm the order details.</t>
+        <t t-elif="state == 'confirmed'">Your prescription request is confirmed and will move to preparation.</t>
+        <t t-elif="state == 'preparing'">We are preparing your request now.</t>
+        <t t-elif="state == 'out_for_delivery'">Your order is on its way to you.</t>
+        <t t-elif="state == 'delivered'">Your request was delivered successfully.</t>
+        <t t-elif="state == 'cancelled'">This prescription request was cancelled.</t>
+        <t t-elif="state == 'rejected'">This prescription request could not be processed.</t>
+    </template>
+
+    <template id="prescription_order_page" name="Prescription Order Page">
+        <t t-call="website.layout">
+            <section class="ab-prescription-page" data-ab-prescription-page="">
+                <div class="container">
+                    <div class="ab-prescription-shell">
+                        <header class="ab-prescription-hero">
+                            <span class="ab-prescription-kicker">Pharmacy service</span>
+                            <h1>Order by prescription</h1>
+                            <p>Take a photo of your prescription or upload an existing image, and we will help prepare your request.</p>
+                        </header>
+
+                        <div class="ab-prescription-grid">
+                            <form class="ab-prescription-form"
+                                  action="/prescription-order/submit"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  data-ab-prescription-form=""
+                                  t-att-data-ab-prescription-max-size="prescription_max_upload_mb * 1024 * 1024">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <div t-if="error_code" class="alert alert-danger" role="alert">
+                                    <t t-if="error_code == 'missing_image'">Please upload a prescription image.</t>
+                                    <t t-elif="error_code == 'too_large'">The prescription image is too large. Please upload an image up to 8 MB.</t>
+                                    <t t-elif="error_code == 'bad_type'">Please upload a JPG, PNG, or WebP image.</t>
+                                    <t t-elif="error_code == 'invalid_image'">The selected file is not a valid image.</t>
+                                    <t t-else="">Unable to submit the prescription request. Please try again.</t>
+                                </div>
+                                <p class="ab-prescription-form-error d-none" data-ab-prescription-error="" role="alert"/>
+
+                                <section class="ab-prescription-upload" aria-labelledby="abPrescriptionUploadTitle">
+                                    <div class="ab-prescription-section-head">
+                                        <span><i class="fa fa-file-image-o" aria-hidden="true"/></span>
+                                        <div>
+                                            <h2 id="abPrescriptionUploadTitle">Prescription image</h2>
+                                            <p>Use a clear image that shows the full prescription.</p>
+                                        </div>
+                                    </div>
+
+                                    <input id="abPrescriptionCamera"
+                                           class="visually-hidden"
+                                           type="file"
+                                           name="prescription_image"
+                                           accept="image/jpeg,image/png,image/webp,image/*"
+                                           capture="environment"
+                                           data-ab-prescription-input="camera"/>
+                                    <input id="abPrescriptionFile"
+                                           class="visually-hidden"
+                                           type="file"
+                                           name="prescription_image"
+                                           accept="image/jpeg,image/png,image/webp,image/*"
+                                           data-ab-prescription-input="file"/>
+
+                                    <div class="ab-prescription-upload-empty" data-ab-prescription-empty="">
+                                        <span class="ab-prescription-upload-icon">
+                                            <i class="fa fa-camera" aria-hidden="true"/>
+                                        </span>
+                                        <strong>Upload or photograph the prescription</strong>
+                                        <small>JPG, PNG, or WebP up to <t t-out="prescription_max_upload_mb"/> MB.</small>
+                                        <div class="ab-prescription-upload-actions">
+                                            <label for="abPrescriptionCamera" class="btn btn-primary">
+                                                <i class="fa fa-camera" aria-hidden="true"/>
+                                                <span>Take prescription photo</span>
+                                            </label>
+                                            <label for="abPrescriptionFile" class="btn ab-prescription-secondary-btn">
+                                                <i class="fa fa-image" aria-hidden="true"/>
+                                                <span>Upload image</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="ab-prescription-preview d-none" data-ab-prescription-preview="">
+                                        <img alt="Selected prescription preview" data-ab-prescription-preview-image=""/>
+                                        <div class="ab-prescription-preview-actions">
+                                            <label for="abPrescriptionFile" class="btn ab-prescription-secondary-btn">
+                                                <i class="fa fa-refresh" aria-hidden="true"/>
+                                                <span>Change image</span>
+                                            </label>
+                                            <button type="button" class="btn ab-prescription-remove-btn" data-ab-prescription-remove="">
+                                                <i class="fa fa-trash-o" aria-hidden="true"/>
+                                                <span>Remove image</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="ab-prescription-notes" aria-labelledby="abPrescriptionNotesTitle">
+                                    <label for="abPrescriptionNote" id="abPrescriptionNotesTitle">Prescription notes</label>
+                                    <textarea id="abPrescriptionNote"
+                                              name="customer_note"
+                                              rows="5"
+                                              maxlength="2000"
+                                              placeholder="Write any extra instructions..."><t t-out="customer_note or ''"/></textarea>
+                                    <small>Notes are reviewed by the pharmacy team and do not automatically change prescription contents.</small>
+                                </section>
+
+                                <button type="submit" class="btn btn-primary ab-prescription-submit" data-ab-prescription-submit="" disabled="disabled">
+                                    <i class="fa fa-paper-plane-o" aria-hidden="true"/>
+                                    <span>Submit request</span>
+                                </button>
+                            </form>
+
+                            <aside class="ab-prescription-side">
+                                <section class="ab-prescription-status-card">
+                                    <h2>What happens next?</h2>
+                                    <ol>
+                                        <li>We receive your prescription.</li>
+                                        <li>The pharmacy team reviews it.</li>
+                                        <li>The Call Center confirms the order details with you.</li>
+                                        <li>The order is prepared and delivered.</li>
+                                    </ol>
+                                </section>
+
+                                <section t-if="recent_prescriptions" class="ab-prescription-status-card">
+                                    <div class="ab-prescription-side-head">
+                                        <h2>Recent prescription requests</h2>
+                                        <a href="/my/prescriptions">View all</a>
+                                    </div>
+                                    <a t-foreach="recent_prescriptions"
+                                       t-as="prescription"
+                                       t-att-href="prescription.get_portal_url()"
+                                       class="ab-prescription-mini-card">
+                                        <strong t-out="prescription.name"/>
+                                        <span>
+                                            <t t-set="state" t-value="prescription.state"/>
+                                            <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
+                                        </span>
+                                    </a>
+                                </section>
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+
+    <template id="portal_my_prescriptions" name="My Prescription Orders">
+        <t t-call="portal.portal_layout">
+            <section class="ab-prescription-portal">
+                <div class="ab-prescription-portal-head">
+                    <div>
+                        <span>Account</span>
+                        <h1>Prescription requests</h1>
+                    </div>
+                    <a href="/prescription-order" class="btn btn-primary">
+                        <i class="fa fa-file-text-o" aria-hidden="true"/>
+                        <span>Order by prescription</span>
+                    </a>
+                </div>
+
+                <div t-if="prescriptions" class="ab-prescription-list">
+                    <a t-foreach="prescriptions"
+                       t-as="prescription"
+                       t-att-href="prescription.get_portal_url()"
+                       class="ab-prescription-list-item">
+                        <div>
+                            <strong t-out="prescription.name"/>
+                            <small><span t-field="prescription.create_date"/></small>
+                        </div>
+                        <span class="ab-prescription-state-pill">
+                            <t t-set="state" t-value="prescription.state"/>
+                            <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
+                        </span>
+                    </a>
+                </div>
+                <div t-else="" class="ab-prescription-empty">
+                    <i class="fa fa-file-text-o" aria-hidden="true"/>
+                    <strong>No prescription requests yet</strong>
+                    <p>Your prescription requests will appear here after submission.</p>
+                    <a href="/prescription-order" class="btn btn-primary">Create prescription request</a>
+                </div>
+                <t t-call="portal.pager"/>
+            </section>
+        </t>
+    </template>
+
+    <template id="portal_my_prescription" name="Prescription Order Tracking">
+        <t t-call="portal.portal_layout">
+            <section class="ab-prescription-track">
+                <div t-if="submitted" class="alert alert-success" role="status">
+                    <strong>Your prescription request was received.</strong>
+                    <span>Our team will review it before confirmation.</span>
+                </div>
+
+                <header class="ab-prescription-track-head">
+                    <div>
+                        <span>Prescription request</span>
+                        <h1 t-out="prescription.name"/>
+                        <p>
+                            <t t-set="state" t-value="prescription.state"/>
+                            <t t-call="ab_ecommerce_storefront.prescription_state_description"/>
+                        </p>
+                    </div>
+                    <a href="/prescription-order" class="btn ab-prescription-secondary-btn">
+                        <i class="fa fa-plus" aria-hidden="true"/>
+                        <span>New request</span>
+                    </a>
+                </header>
+
+                <div class="ab-prescription-track-grid">
+                    <section class="ab-prescription-timeline" aria-label="Prescription request status">
+                        <t t-set="current_index" t-value="prescription_state_keys.index(prescription.state) if prescription.state in prescription_state_keys else 0"/>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 0 else ''} #{'is-current' if prescription.state == 'new' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="prescription.state != 'new'" class="fa fa-check" aria-hidden="true"/>
+                                <i t-else="" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Prescription received</strong>
+                                <p>We received the prescription image successfully.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 1 else ''} #{'is-current' if prescription.state == 'under_review' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="current_index &gt; 1" class="fa fa-check" aria-hidden="true"/>
+                                <i t-elif="prescription.state == 'under_review'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Under review</strong>
+                                <p>Our team is reviewing the prescription and preparing the next steps.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 2 else ''} #{'is-current' if prescription.state == 'waiting_call_center' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="current_index &gt; 2" class="fa fa-check" aria-hidden="true"/>
+                                <i t-elif="prescription.state == 'waiting_call_center'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Waiting for Call Center confirmation</strong>
+                                <p>Our Call Center team will contact you to confirm the order details.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 3 else ''} #{'is-current' if prescription.state == 'confirmed' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="current_index &gt; 3" class="fa fa-check" aria-hidden="true"/>
+                                <i t-elif="prescription.state == 'confirmed'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Confirmed</strong>
+                                <p>Your prescription request is confirmed and will move to preparation.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 4 else ''} #{'is-current' if prescription.state == 'preparing' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="current_index &gt; 4" class="fa fa-check" aria-hidden="true"/>
+                                <i t-elif="prescription.state == 'preparing'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Preparing</strong>
+                                <p>We are preparing your request now.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 5 else ''} #{'is-current' if prescription.state == 'out_for_delivery' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="current_index &gt; 5" class="fa fa-check" aria-hidden="true"/>
+                                <i t-elif="prescription.state == 'out_for_delivery'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Out for delivery</strong>
+                                <p>Your order is on its way to you.</p>
+                            </div>
+                        </article>
+                        <article t-attf-class="ab-prescription-step #{'is-current' if prescription.state == 'delivered' else ''}">
+                            <span class="ab-prescription-step-marker">
+                                <i t-if="prescription.state == 'delivered'" class="fa fa-circle" aria-hidden="true"/>
+                            </span>
+                            <div>
+                                <strong>Delivered</strong>
+                                <p>Your request was delivered successfully.</p>
+                            </div>
+                        </article>
+                        <article t-if="prescription.state in ('cancelled', 'rejected')" class="ab-prescription-step is-current is-exception">
+                            <span class="ab-prescription-step-marker"><i class="fa fa-times" aria-hidden="true"/></span>
+                            <div>
+                                <strong>
+                                    <t t-set="state" t-value="prescription.state"/>
+                                    <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
+                                </strong>
+                                <p>
+                                    <t t-set="state" t-value="prescription.state"/>
+                                    <t t-call="ab_ecommerce_storefront.prescription_state_description"/>
+                                </p>
+                            </div>
+                        </article>
+                    </section>
+
+                    <aside class="ab-prescription-track-card">
+                        <h2>Prescription image</h2>
+                        <img t-att-src="'/my/prescriptions/%s/image?access_token=%s' % (prescription.id, prescription.access_token)"
+                             alt="Prescription image"
+                             loading="lazy"/>
+                        <div t-if="prescription.customer_note" class="ab-prescription-customer-note">
+                            <strong>Customer notes</strong>
+                            <p t-out="prescription.customer_note"/>
+                        </div>
+                        <a t-if="prescription.sale_order_id"
+                           t-att-href="prescription.sale_order_id.get_portal_url()"
+                           class="btn btn-primary w-100">
+                            View related order
+                        </a>
+                    </aside>
+                </div>
+            </section>
+        </t>
+    </template>
+</odoo>

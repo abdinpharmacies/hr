@@ -26,6 +26,10 @@
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 7.5 12 4l6 3.5v9L12 20l-6-3.5Z"/><path d="M6 7.5 12 11l6-3.5M12 11v9"/></svg>
                             <span>طلباتي</span>
                         </a>
+                        <a href="/my/prescriptions" class="ab-account-nav-link">
+                            <i class="fa fa-file-text-o" aria-hidden="true"/>
+                            <span>Prescription requests</span>
+                        </a>
                         <a href="/my/invoices?filterby=invoices" class="ab-account-nav-link">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10a2 2 0 0 1 2 2v16l-3-2-2 2-2-2-2 2-2-2-3 2V5a2 2 0 0 1 2-2Z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
                             <span>فواتيري</span>
@@ -174,6 +178,38 @@
                         <section class="ab-account-panel">
                             <div class="ab-account-section-head">
                                 <div>
+                                    <span>Pharmacy service</span>
+                                    <h2>Prescription requests</h2>
+                                </div>
+                                <a href="/my/prescriptions" class="btn ab-account-panel-link">View all requests</a>
+                            </div>
+                            <div t-if="recent_prescriptions" class="ab-account-orders">
+                                <a t-foreach="recent_prescriptions" t-as="prescription" t-att-href="prescription.get_portal_url()" class="ab-account-order-card">
+                                    <div>
+                                        <strong t-out="prescription.name"/>
+                                        <span class="ab-account-status-pill">
+                                            <t t-set="state" t-value="prescription.state"/>
+                                            <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
+                                        </span>
+                                    </div>
+                                    <small><span t-field="prescription.create_date"/></small>
+                                    <p>
+                                        <t t-set="state" t-value="prescription.state"/>
+                                        <t t-call="ab_ecommerce_storefront.prescription_state_description"/>
+                                    </p>
+                                </a>
+                            </div>
+                            <div t-else="" class="ab-account-empty-state">
+                                <span><i class="fa fa-file-text-o" aria-hidden="true"/></span>
+                                <strong>No prescription requests yet</strong>
+                                <p>Upload a prescription and our pharmacy team will review it.</p>
+                                <a href="/prescription-order" class="btn btn-primary">Order by prescription</a>
+                            </div>
+                        </section>
+
+                        <section class="ab-account-panel">
+                            <div class="ab-account-section-head">
+                                <div>
                                     <span>نشاطك</span>
                                     <h2>أحدث الطلبات</h2>
                                 </div>
@@ -220,6 +256,12 @@
                                 <span class="ab-account-action-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10Z"/><path d="m9 12 2 2 4-5"/></svg></span>
                                 <strong>الاتصال والأمن</strong>
                                 <small>قم بتهيئة معايير اتصالك</small>
+                                <span class="ab-account-action-arrow"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></span>
+                            </a>
+                            <a href="/my/prescriptions" class="ab-account-action-card" style="--ab-account-card-index: 5">
+                                <span class="ab-account-action-icon"><i class="fa fa-file-text-o" aria-hidden="true"/></span>
+                                <strong>Prescription requests</strong>
+                                <small>Track prescriptions submitted for pharmacy review</small>
                                 <span class="ab-account-action-arrow"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></span>
                             </a>
                         </section>

@@ -3,3 +3,4 @@ from . import product_wishlist
 from . import res_partner
 from . import res_users
 from . import sale_order
+from . import prescription_order
