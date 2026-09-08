@@ -1,0 +1,34 @@
+<odoo>
+    <record id="access_list" model="ir.ui.view">
+        <field name="name">ab_branch_api_access.list</field>
+        <field name="model">ab_branch_api_access</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" delete="false">
+                <field name="active"/><field name="user_id"/><field name="store_id"/>
+                <field name="allow_post"/><field name="allow_cost"/>
+            </list>
+        </field>
+    </record>
+    <record id="operation_list" model="ir.ui.view">
+        <field name="name">ab_branch_api_operation.list</field>
+        <field name="model">ab_branch_api_operation</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false">
+                <field name="create_date"/><field name="token"/><field name="user_id"/>
+                <field name="store_id"/><field name="kind"/><field name="state"/>
+                <field name="record_id"/><field name="message"/>
+            </list>
+        </field>
+    </record>
+    <record id="access_action" model="ir.actions.act_window">
+        <field name="name">Branch API Access</field><field name="res_model">ab_branch_api_access</field>
+        <field name="view_mode">list</field>
+    </record>
+    <record id="operation_action" model="ir.actions.act_window">
+        <field name="name">Branch API Operations</field><field name="res_model">ab_branch_api_operation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="api_menu" name="Branch API" parent="ab_sales.config_sub_menu" groups="base.group_system"/>
+    <menuitem id="access_menu" name="Access" parent="api_menu" action="access_action"/>
+    <menuitem id="operation_menu" name="Operations" parent="api_menu" action="operation_action"/>
+</odoo>
