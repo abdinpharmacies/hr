@@ -77,6 +77,8 @@ class WebsiteCarouselSlide(models.Model):
         "cta_position_x",
         "cta_position_y",
         "cta_width",
+        "title",
+        "subtitle",
     )
     def _compute_cta_preview_html(self):
         for slide in self:
@@ -134,12 +136,36 @@ class WebsiteCarouselSlide(models.Model):
                         style,
                         escape(label),
                     )
+            copy_html = ""
+            if slide.title or slide.subtitle:
+                title_html = (
+                    "<strong data-ab-preview-title=''>%s</strong>" % escape(slide.title)
+                    if slide.title
+                    else ""
+                )
+                subtitle_html = (
+                    "<span data-ab-preview-subtitle=''>%s</span>" % escape(slide.subtitle)
+                    if slide.subtitle
+                    else ""
+                )
+                copy_html = (
+                    "<div class='ab_carousel_position_preview_shade'></div>"
+                    "<div class='ab_carousel_position_preview_copy' dir='auto'>%s%s</div>"
+                ) % (Markup(title_html), Markup(subtitle_html))
+            link_html = ""
+            if slide.show_cta and slide.cta_style == "link" and slide.cta_url:
+                link_html = (
+                    "<div class='ab_carousel_position_preview_full_link'>%s</div>"
+                    % escape(_("Entire banner is clickable"))
+                )
             slide.cta_preview_html = Markup(
                 "<div class='ab_carousel_position_preview' dir='ltr'>"
                 "<img src='%s' alt=''/>"
                 "%s"
+                "%s"
+                "%s"
                 "</div>"
-            ) % (image_src, Markup(cta_html))
+            ) % (image_src, Markup(copy_html), Markup(link_html), Markup(cta_html))
 
     def _get_preview_image_src(self, field_name):
         self.ensure_one()
@@ -220,8 +246,10 @@ class WebsiteCarouselSlide(models.Model):
 
     def action_preview_homepage(self):
         self.ensure_one()
+        website = self.website_id or self.env["website"].get_current_website()
+        preview_path = website.homepage_url or "/"
         return {
             "type": "ir.actions.act_url",
-            "url": self.website_id.website_url or "/",
+            "url": website.get_client_action_url(preview_path),
             "target": "new",
         }

@@ -5,12 +5,18 @@
     const PREVIEW_SELECTOR = ".ab_carousel_position_preview";
     const CTA_SELECTOR = ".ab_carousel_position_preview_cta";
     const RESIZE_HANDLE_SELECTOR = ".ab_carousel_position_resize_handle";
+    const MODE_BUTTON_SELECTOR = "[data-ab-preview-mode]";
     const MIN_CTA_WIDTH = 40;
     const MAX_CTA_WIDTH = 520;
 
     function findInput(preview, fieldName) {
         const root = preview.closest(".o_form_sheet, .o_form_view") || document;
-        return root.querySelector(`.o_field_widget[name="${fieldName}"] input, [name="${fieldName}"] input`);
+        return root.querySelector(
+            `.o_field_widget[name="${fieldName}"] input,`
+            + ` .o_field_widget[name="${fieldName}"] textarea,`
+            + ` [name="${fieldName}"] input,`
+            + ` [name="${fieldName}"] textarea`
+        );
     }
 
     function setInputValue(input, value) {
@@ -72,7 +78,12 @@
     function attachPreview(preview) {
         const cta = preview.querySelector(CTA_SELECTOR);
         const image = preview.querySelector(":scope > img");
-        if (!cta || !image || cta.dataset.abPositionReady === "1") {
+        if (!image) {
+            return;
+        }
+        attachPreviewCopy(preview);
+        attachPreviewModes(preview);
+        if (!cta || cta.dataset.abPositionReady === "1") {
             return;
         }
         cta.dataset.abPositionReady = "1";
@@ -181,7 +192,7 @@
             }
             dragging = true;
             pointerId = ev.pointerId;
-            cta.classList.add(interactionMode === "resize" ? "is-resizing" : "is-dragging");
+            cta.classList.add("is-selected", interactionMode === "resize" ? "is-resizing" : "is-dragging");
             if (interactionMode === "move") {
                 updateFromPointer(ev);
             }
@@ -243,6 +254,85 @@
         } else {
             window.addEventListener("resize", renderPosition);
         }
+    }
+
+    function ensureCopyLayer(preview) {
+        let copy = preview.querySelector(".ab_carousel_position_preview_copy");
+        if (copy) {
+            return copy;
+        }
+        const image = preview.querySelector(":scope > img");
+        if (!image) {
+            return null;
+        }
+        const shade = document.createElement("div");
+        shade.className = "ab_carousel_position_preview_shade";
+        copy = document.createElement("div");
+        copy.className = "ab_carousel_position_preview_copy";
+        copy.dir = "auto";
+        const title = document.createElement("strong");
+        title.dataset.abPreviewTitle = "";
+        const subtitle = document.createElement("span");
+        subtitle.dataset.abPreviewSubtitle = "";
+        copy.append(title, subtitle);
+        image.after(shade, copy);
+        return copy;
+    }
+
+    function attachPreviewCopy(preview) {
+        if (preview.dataset.abCopyReady === "1") {
+            return;
+        }
+        preview.dataset.abCopyReady = "1";
+        const titleInput = findInput(preview, "title");
+        const subtitleInput = findInput(preview, "subtitle");
+
+        function syncCopy() {
+            const titleValue = titleInput?.value?.trim() || "";
+            const subtitleValue = subtitleInput?.value?.trim() || "";
+            const copy = titleValue || subtitleValue
+                ? ensureCopyLayer(preview)
+                : preview.querySelector(".ab_carousel_position_preview_copy");
+            const shade = preview.querySelector(".ab_carousel_position_preview_shade");
+            if (!copy) {
+                return;
+            }
+            const title = copy.querySelector("[data-ab-preview-title]");
+            const subtitle = copy.querySelector("[data-ab-preview-subtitle]");
+            if (title) {
+                title.textContent = titleValue;
+                title.hidden = !titleValue;
+            }
+            if (subtitle) {
+                subtitle.textContent = subtitleValue;
+                subtitle.hidden = !subtitleValue;
+            }
+            copy.hidden = !titleValue && !subtitleValue;
+            if (shade) {
+                shade.hidden = copy.hidden;
+            }
+        }
+
+        titleInput?.addEventListener("input", syncCopy);
+        subtitleInput?.addEventListener("input", syncCopy);
+        syncCopy();
+    }
+
+    function attachPreviewModes(preview) {
+        const root = preview.closest(".ab_carousel_builder_stage");
+        if (!root || root.dataset.abPreviewModesReady === "1") {
+            return;
+        }
+        root.dataset.abPreviewModesReady = "1";
+        const buttons = Array.from(root.querySelectorAll(MODE_BUTTON_SELECTOR));
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const mode = button.dataset.abPreviewMode;
+                buttons.forEach((item) => item.classList.toggle("is-active", item === button));
+                preview.classList.toggle("is-mobile-preview", mode === "mobile");
+                preview.dispatchEvent(new Event("resize"));
+            });
+        });
     }
 
     function start() {

@@ -284,3 +284,143 @@ msgstr "عرض زر الدعوة بالبكسل. تستخدم الأزرار ا�
 #. module: ab_website_admin_content
 msgid "Save the slide to preview CTA placement."
 msgstr "احفظ الشريحة لمعاينة موضع زر الدعوة."
+
+#. module: ab_website_admin_content
+msgid "CTA ready"
+msgstr "زر الدعوة جاهز"
+
+#. module: ab_website_admin_content
+msgid "No CTA"
+msgstr "بدون زر دعوة"
+
+#. module: ab_website_admin_content
+msgid "Homepage Carousel Builder"
+msgstr "مصمم كاروسيل الصفحة الرئيسية"
+
+#. module: ab_website_admin_content
+msgid "Uses Odoo Save"
+msgstr "يستخدم حفظ أودو"
+
+#. module: ab_website_admin_content
+msgid "Preview storefront"
+msgstr "معاينة واجهة المتجر"
+
+#. module: ab_website_admin_content
+msgid "Publishing"
+msgstr "النشر"
+
+#. module: ab_website_admin_content
+msgid "Banner Image"
+msgstr "صورة البانر"
+
+#. module: ab_website_admin_content
+msgid "Hero artwork"
+msgstr "تصميم البانر الرئيسي"
+
+#. module: ab_website_admin_content
+msgid "Use the customer-facing homepage banner artwork."
+msgstr "استخدم تصميم البانر الذي يظهر للعملاء في الصفحة الرئيسية."
+
+#. module: ab_website_admin_content
+msgid "Live Preview"
+msgstr "معاينة مباشرة"
+
+#. module: ab_website_admin_content
+msgid "Drag the CTA directly on the banner"
+msgstr "اسحب زر الدعوة مباشرة على البانر"
+
+#. module: ab_website_admin_content
+msgid "Preview size"
+msgstr "حجم المعاينة"
+
+#. module: ab_website_admin_content
+msgid "Desktop"
+msgstr "سطح المكتب"
+
+#. module: ab_website_admin_content
+msgid "Mobile"
+msgstr "الجوال"
+
+#. module: ab_website_admin_content
+msgid "Click or drag the selected CTA to place it. Use the corner handles to resize."
+msgstr "انقر أو اسحب زر الدعوة المحدد لوضعه. استخدم مقابض الزوايا لتغيير الحجم."
+
+#. module: ab_website_admin_content
+msgid "Entire banner is clickable; no position controls are needed."
+msgstr "البانر بالكامل قابل للنقر؛ لا توجد حاجة لعناصر التحكم في الموضع."
+
+#. module: ab_website_admin_content
+msgid "Entire banner is clickable"
+msgstr "البانر بالكامل قابل للنقر"
+
+#. module: ab_website_admin_content
+msgid "Entire Banner"
+msgstr "البانر بالكامل"
+
+#. module: ab_website_admin_content
+msgid "Customer message"
+msgstr "رسالة العميل"
+
+#. module: ab_website_admin_content
+msgid "Headline"
+msgstr "العنوان الرئيسي"
+
+#. module: ab_website_admin_content
+msgid "Supporting text"
+msgstr "النص الداعم"
+
+#. module: ab_website_admin_content
+msgid "Summer Health Offers"
+msgstr "عروض الصحة الصيفية"
+
+#. module: ab_website_admin_content
+msgid "Discover the latest pharmacy offers and wellness picks."
+msgstr "اكتشف أحدث عروض الصيدلية واختيارات العناية الصحية."
+
+#. module: ab_website_admin_content
+msgid "Customer action"
+msgstr "إجراء العميل"
+
+#. module: ab_website_admin_content
+msgid "No CTA configured"
+msgstr "لم يتم إعداد زر دعوة"
+
+#. module: ab_website_admin_content
+msgid "Turn on Show CTA when this banner should lead customers somewhere."
+msgstr "فعّل إظهار زر الدعوة عندما يجب أن يقود هذا البانر العملاء إلى وجهة محددة."
+
+#. module: ab_website_admin_content
+msgid "Type"
+msgstr "النوع"
+
+#. module: ab_website_admin_content
+msgid "Button Text"
+msgstr "نص الزر"
+
+#. module: ab_website_admin_content
+msgid "Shop now"
+msgstr "تسوق الآن"
+
+#. module: ab_website_admin_content
+msgid "Advanced Settings"
+msgstr "الإعدادات المتقدمة"
+
+#. module: ab_website_admin_content
+msgid "Precision controls"
+msgstr "عناصر التحكم الدقيقة"
+
+#. module: ab_website_admin_content
+msgid "X Position"
+msgstr "الموضع الأفقي"
+
+#. module: ab_website_admin_content
+msgid "Y Position"
+msgstr "الموضع الرأسي"
+
+#. module: ab_website_admin_content
+msgid "Width"
+msgstr "العرض"
+
+#. module: ab_website_admin_content
+msgid "Create engaging homepage banners for offers, seasonal campaigns, new products, and pharmacy services."
+msgstr "أنشئ بانرات جذابة للصفحة الرئيسية للعروض والحملات الموسمية والمنتجات الجديدة وخدمات الصيدلية."

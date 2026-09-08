@@ -18,56 +18,182 @@
         </field>
     </record>
 
+    <record id="website_carousel_slide_view_kanban" model="ir.ui.view">
+        <field name="name">website.carousel.slide.kanban.builder</field>
+        <field name="model">ab_website_carousel_slide</field>
+        <field name="arch" type="xml">
+            <kanban string="Homepage Carousel"
+                    default_order="sequence, id"
+                    class="ab_website_admin_content_view ab_website_admin_carousel_kanban">
+                <field name="name"/>
+                <field name="active"/>
+                <field name="sequence"/>
+                <field name="image_1920"/>
+                <field name="show_cta"/>
+                <field name="cta_style"/>
+                <field name="cta_url"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="ab_carousel_slide_card">
+                            <div class="ab_carousel_slide_card_media">
+                                <field name="image_1920" widget="image" options="{'preview_image': 'image_1920'}"/>
+                            </div>
+                            <div class="ab_carousel_slide_card_body">
+                                <div>
+                                    <span class="ab_carousel_slide_card_order">
+                                        #<field name="sequence"/>
+                                    </span>
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="ab_carousel_slide_card_meta">
+                                    <span t-if="record.active.raw_value" class="ab_carousel_slide_status is-active">Active</span>
+                                    <span t-else="" class="ab_carousel_slide_status is-inactive">Inactive</span>
+                                    <span t-if="record.show_cta.raw_value and record.cta_url.raw_value" class="ab_carousel_slide_status is-cta">CTA ready</span>
+                                    <span t-else="" class="ab_carousel_slide_status">No CTA</span>
+                                </div>
+                                <div class="ab_carousel_slide_action">
+                                    <span>Customer action</span>
+                                    <strong t-if="!record.show_cta.raw_value">No CTA</strong>
+                                    <strong t-if="record.show_cta.raw_value and record.cta_style.raw_value == 'text'">Text Button</strong>
+                                    <strong t-if="record.show_cta.raw_value and record.cta_style.raw_value == 'image'">Image Button</strong>
+                                    <strong t-if="record.show_cta.raw_value and record.cta_style.raw_value == 'link'">Entire Banner</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="website_carousel_slide_view_form" model="ir.ui.view">
         <field name="name">website.carousel.slide.form</field>
         <field name="model">ab_website_carousel_slide</field>
         <field name="arch" type="xml">
-            <form string="Carousel Slide">
+            <form string="Carousel Slide" class="ab_carousel_builder_form">
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_preview_homepage" type="object" class="oe_stat_button" icon="fa-external-link">
-                            <span>Preview</span>
-                        </button>
-                    </div>
                     <widget name="web_ribbon" title="Inactive" bg_color="text-bg-secondary" invisible="active"/>
-                    <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1920'}"/>
-                    <div class="oe_title">
-                        <label for="name"/>
-                        <h1>
-                            <field name="name" placeholder="Summer Offers"/>
-                        </h1>
+                    <div class="ab_carousel_builder">
+                        <div class="ab_carousel_builder_topbar">
+                            <div>
+                                <span class="ab_carousel_builder_kicker">Homepage Carousel Builder</span>
+                                <div class="oe_title">
+                                    <label for="name"/>
+                                    <h1>
+                                        <field name="name" placeholder="Summer Offers"/>
+                                    </h1>
+                                </div>
+                            </div>
+                            <div class="ab_carousel_builder_actions">
+                                <span class="ab_carousel_save_hint">
+                                    <i class="fa fa-circle" aria-hidden="true"/>
+                                    Uses Odoo Save
+                                </span>
+                                <a href="/odoo/action-website.website_preview?path=%2F" target="_blank" class="btn btn-secondary">
+                                    <i class="fa fa-external-link" aria-hidden="true"/>
+                                    Preview storefront
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="ab_carousel_builder_workspace">
+                            <aside class="ab_carousel_builder_sidebar">
+                                <section class="ab_carousel_builder_panel ab_carousel_builder_panel_compact">
+                                    <div class="ab_carousel_panel_head">
+                                        <span>Slide</span>
+                                        <strong>Publishing</strong>
+                                    </div>
+                                    <div class="ab_carousel_status_grid">
+                                        <field name="active"/>
+                                        <field name="sequence"/>
+                                        <field name="website_id" groups="website.group_multi_website" options="{'no_create': True}"/>
+                                    </div>
+                                </section>
+                                <section class="ab_carousel_builder_panel ab_carousel_media_panel">
+                                    <div class="ab_carousel_panel_head">
+                                        <span>Banner Image</span>
+                                        <strong>Hero artwork</strong>
+                                    </div>
+                                    <p class="ab_carousel_panel_copy">Use the customer-facing homepage banner artwork.</p>
+                                    <div class="ab_carousel_media_upload">
+                                        <field name="image_1920" widget="image" options="{'preview_image': 'image_1920'}"/>
+                                    </div>
+                                </section>
+                            </aside>
+
+                            <main class="ab_carousel_builder_stage">
+                                <div class="ab_carousel_stage_head">
+                                    <div>
+                                        <span>Live Preview</span>
+                                        <strong>Drag the CTA directly on the banner</strong>
+                                    </div>
+                                    <!--
+                                    <div class="ab_carousel_preview_modes" role="group" aria-label="Preview size">
+                                        <button type="button" class="is-active" data-ab-preview-mode="desktop">Desktop</button>
+                                        <button type="button" data-ab-preview-mode="mobile">Mobile</button>
+                                    </div>
+                                    -->
+                                </div>
+                                <field name="cta_preview_html" widget="html" nolabel="1" readonly="1"/>
+                                <p class="ab_carousel_stage_help" invisible="not show_cta or cta_style == 'link'">
+                                    Click or drag the selected CTA to place it. Use the corner handles to resize.
+                                </p>
+                                <p class="ab_carousel_stage_help" invisible="not show_cta or cta_style != 'link'">
+                                    Entire banner is clickable; no position controls are needed.
+                                </p>
+                            </main>
+
+                            <aside class="ab_carousel_builder_settings">
+                                <section class="ab_carousel_builder_panel">
+                                    <div class="ab_carousel_panel_head">
+                                        <span>Content</span>
+                                        <strong>Customer message</strong>
+                                    </div>
+                                    <field name="title" string="Headline" placeholder="Summer Health Offers"/>
+                                    <field name="subtitle" string="Supporting text" placeholder="Discover the latest pharmacy offers and wellness picks."/>
+                                </section>
+
+                                <section class="ab_carousel_builder_panel">
+                                    <div class="ab_carousel_panel_head">
+                                        <span>CTA</span>
+                                        <strong>Customer action</strong>
+                                    </div>
+                                    <field name="show_cta"/>
+                                    <div class="ab_carousel_cta_empty" invisible="show_cta">
+                                        <i class="fa fa-link" aria-hidden="true"/>
+                                        <strong>No CTA configured</strong>
+                                        <span>Turn on Show CTA when this banner should lead customers somewhere.</span>
+                                    </div>
+                                    <div invisible="not show_cta">
+                                        <field name="cta_style" string="Type" widget="radio" options="{'horizontal': true}"/>
+                                        <div class="ab_carousel_cta_note" invisible="cta_style != 'link'">
+                                            <i class="fa fa-mouse-pointer" aria-hidden="true"/>
+                                            Entire banner is clickable.
+                                        </div>
+                                        <field name="cta_text" string="Button Text" placeholder="Shop now" invisible="cta_style != 'text'"/>
+                                        <div class="ab_carousel_media_upload ab_carousel_cta_image_upload" invisible="cta_style != 'image'">
+                                            <field name="cta_image_512" widget="image" string="CTA Image" options="{'preview_image': 'cta_image_512'}"/>
+                                        </div>
+                                        <field name="cta_url" string="Destination" widget="url" placeholder="/shop?category=offers"/>
+                                    </div>
+                                </section>
+
+                                <section class="ab_carousel_builder_panel ab_carousel_advanced_panel" invisible="not show_cta or cta_style == 'link'">
+                                    <details>
+                                        <summary>
+                                            <span>Advanced Settings</span>
+                                            <small>Precision controls</small>
+                                        </summary>
+                                        <div class="ab_carousel_precision_grid">
+                                            <field name="cta_position_x" string="X Position"/>
+                                            <field name="cta_position_y" string="Y Position"/>
+                                            <field name="cta_width" string="Width"/>
+                                        </div>
+                                    </details>
+                                </section>
+                            </aside>
+                        </div>
                     </div>
-                    <group>
-                        <group string="Basic Information">
-                            <field name="active"/>
-                            <field name="sequence"/>
-                            <field name="website_id" groups="website.group_multi_website" options="{'no_create': True}"/>
-                        </group>
-                        <group string="CTA">
-                            <field name="show_cta"/>
-                            <field name="cta_style" invisible="not show_cta"/>
-                            <field name="cta_text" invisible="not show_cta or cta_style != 'text'"/>
-                            <field name="cta_image_512" widget="image" invisible="not show_cta or cta_style != 'image'" options="{'preview_image': 'cta_image_512'}"/>
-                            <field name="cta_url" widget="url" invisible="not show_cta"/>
-                        </group>
-                    </group>
-                    <group string="CTA Position" invisible="not show_cta or cta_style == 'link'">
-                        <group>
-                            <field name="cta_position_x"/>
-                            <field name="cta_position_y"/>
-                            <field name="cta_width"/>
-                        </group>
-                        <group>
-                            <field name="cta_preview_html" widget="html" nolabel="1" readonly="1"/>
-                        </group>
-                    </group>
-                    <group string="Content">
-                        <field name="title"/>
-                        <field name="subtitle"/>
-                    </group>
-                    <group string="Image">
-                        <field name="image_1920" widget="image" options="{'preview_image': 'image_1920'}"/>
-                    </group>
                 </sheet>
             </form>
         </field>
@@ -92,12 +218,12 @@
     <record id="action_website_carousel_slides" model="ir.actions.act_window">
         <field name="name">Homepage Carousel</field>
         <field name="res_model">ab_website_carousel_slide</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="website_carousel_slide_view_search"/>
         <field name="help" type="html">
             <div class="ab_website_admin_empty">
                 <h3>No carousel slides yet</h3>
-                <p>Create homepage slides with an image, sequence, and per-slide CTA destination.</p>
+                <p>Create engaging homepage banners for offers, seasonal campaigns, new products, and pharmacy services.</p>
             </div>
         </field>
     </record>
