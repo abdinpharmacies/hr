@@ -51,6 +51,10 @@ function normalizeEgyptianPhone(value = "") {
     return phone;
 }
 
+function isUsernameLogin(value = "") {
+    return /[A-Za-z@._-]/.test(value.trim());
+}
+
 function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -381,11 +385,14 @@ export class AbStorefrontAuth extends Interaction {
 
         const phoneInput = form.querySelector("[data-ab-phone-input]");
         if (phoneInput) {
-            const normalized = normalizeEgyptianPhone(phoneInput.value);
-            phoneInput.value = normalized;
-            const hiddenLogin = form.querySelector("input[type='hidden'][name='login']");
-            if (hiddenLogin) {
-                hiddenLogin.value = normalized;
+            const isLoginUsername = form.matches(".oe_login_form") && isUsernameLogin(phoneInput.value);
+            if (!isLoginUsername) {
+                const normalized = normalizeEgyptianPhone(phoneInput.value);
+                phoneInput.value = normalized;
+                const hiddenLogin = form.querySelector("input[type='hidden'][name='login']");
+                if (hiddenLogin) {
+                    hiddenLogin.value = normalized;
+                }
             }
         }
 
@@ -428,10 +435,13 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     validatePhone(input, showMessage = false) {
+        const isLoginUsername = input.closest("form")?.matches(".oe_login_form") && isUsernameLogin(input.value);
         const normalized = normalizeEgyptianPhone(input.value);
         const message = this.getPhoneMessage(input);
         let error = "";
-        if (!normalized) {
+        if (isLoginUsername) {
+            error = "";
+        } else if (!normalized) {
             error = "رقم الهاتف مطلوب";
         } else if (!EGYPT_MOBILE_RE.test(normalized)) {
             error = "برجاء إدخال رقم هاتف صحيح";
