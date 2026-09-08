@@ -23,6 +23,11 @@
         return Carousel.getOrCreateInstance(el, { touch: false, interval: 6500, ride: "carousel" });
     }
 
+    function isRTL() {
+        return document.documentElement.dir === "rtl"
+            || document.documentElement.lang?.toLowerCase().startsWith("ar");
+    }
+
     function getContainedImageBox(container, image) {
         const box = {
             left: 0,
@@ -286,10 +291,11 @@
                 return false;
             }
             lock();
-            if (deltaX > 0) {
-                carousel.prev();
-            } else {
+            const shouldMoveNext = isRTL() ? deltaX > 0 : deltaX < 0;
+            if (shouldMoveNext) {
                 carousel.next();
+            } else {
+                carousel.prev();
             }
             return true;
         }

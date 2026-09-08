@@ -1,6 +1,7 @@
 from markupsafe import Markup
+from werkzeug.urls import url_encode
 
-from odoo import _lt, fields, models
+from odoo import _, _lt, fields, models
 
 
 _CATEGORY_LABELS = {
@@ -86,6 +87,92 @@ _CATEGORY_ICON_FALLBACKS = (
     ("fa-leaf", "blue"),
 )
 
+_HEADER_CATEGORY_MENU = (
+    {
+        "label": _lt("Skin Care"),
+        "label_ar": "العناية بالبشرة",
+        "aliases": ("skin care", "beauty & skin care", "face care", "beauty"),
+        "icon": "fa-heart",
+        "tone": "orange",
+    },
+    {
+        "label": _lt("Hair Care"),
+        "label_ar": "العناية بالشعر",
+        "aliases": ("hair care", "personal care"),
+        "icon": "fa-leaf",
+        "tone": "green",
+    },
+    {
+        "label": _lt("Body Care"),
+        "label_ar": "العناية بالجسم",
+        "aliases": ("body care", "bath & shower", "personal care"),
+        "icon": "fa-heart",
+        "tone": "orange",
+    },
+    {
+        "label": _lt("Dietary Supplements"),
+        "label_ar": "المكملات الغذائية",
+        "aliases": ("dietary supplements", "vitamins & supplements", "vitamins", "wellness"),
+        "icon": "fa-flask",
+        "tone": "orange",
+    },
+    {
+        "label": _lt("Vitamins and Minerals"),
+        "label_ar": "الفيتامينات والمعادن",
+        "aliases": ("vitamins and minerals", "vitamins & supplements", "vitamins", "minerals"),
+        "icon": "fa-plus-square",
+        "tone": "green",
+    },
+    {
+        "label": _lt("Baby Care"),
+        "label_ar": "العناية بالأطفال",
+        "aliases": ("baby care", "baby toiletries", "baby accessories"),
+        "icon": "fa-child",
+        "tone": "blue",
+    },
+    {
+        "label": _lt("Oral and Dental Care"),
+        "label_ar": "العناية بالفم والأسنان",
+        "aliases": ("oral and dental care", "oral care", "mouth & throat", "personal care"),
+        "icon": "fa-smile-o",
+        "tone": "blue",
+    },
+    {
+        "label": _lt("Personal Care"),
+        "label_ar": "العناية الشخصية",
+        "aliases": ("personal care", "hygiene & household"),
+        "icon": "fa-heart",
+        "tone": "orange",
+    },
+    {
+        "label": _lt("Medical Devices and Supplies"),
+        "label_ar": "الأجهزة والمستلزمات الطبية",
+        "aliases": ("medical devices and supplies", "health devices & supplies", "health devices"),
+        "icon": "fa-stethoscope",
+        "tone": "blue",
+    },
+    {
+        "label": _lt("Mother and Baby Products"),
+        "label_ar": "منتجات الأم والرضيع",
+        "aliases": ("mother and baby products", "mother & baby", "mom care", "baby care"),
+        "icon": "fa-child",
+        "tone": "blue",
+    },
+)
+
+_HEADER_NEED_MENU = (
+    (_lt("Acne treatment"), "علاج حب الشباب", "fa-medkit", "green"),
+    (_lt("Skin brightening and tone correction"), "تفتيح وتوحيد لون البشرة", "fa-sun-o", "orange"),
+    (_lt("Dry skin hydration"), "ترطيب البشرة الجافة", "fa-tint", "blue"),
+    (_lt("Hair loss treatment"), "علاج تساقط الشعر", "fa-leaf", "green"),
+    (_lt("Dandruff control"), "مكافحة القشرة", "fa-shield", "blue"),
+    (_lt("Sun protection"), "الحماية من الشمس", "fa-sun-o", "orange"),
+    (_lt("Anti-aging and wrinkle care"), "مكافحة التجاعيد وعلامات التقدم في السن", "fa-heart", "orange"),
+    (_lt("Immune support"), "تقوية المناعة", "fa-plus-square", "green"),
+    (_lt("Energy and vitality"), "زيادة الطاقة والنشاط", "fa-bolt", "orange"),
+    (_lt("Sensitive skin care"), "العناية بالبشرة الحساسة", "fa-heart-o", "blue"),
+)
+
 
 class Website(models.Model):
     _inherit = "website"
@@ -134,6 +221,69 @@ class Website(models.Model):
             order="sequence, name, id",
             limit=limit,
         )
+
+    def _ab_storefront_is_arabic(self):
+        return (self.env.lang or "").split("_", 1)[0] == "ar"
+
+    def _ab_storefront_header_nav_labels(self):
+        self.ensure_one()
+        if self._ab_storefront_is_arabic():
+            return {
+                "category": "التسوق حسب التصنيف",
+                "need": "التسوق حسب الاحتياج",
+            }
+        return {
+            "category": "Shop by Category",
+            "need": "Shop by Need",
+        }
+
+    def _ab_storefront_header_category_menu(self):
+        self.ensure_one()
+        domain = self.website_domain()
+        domain &= fields.Domain("has_published_products", "=", True)
+        categories = self.env["product.public.category"].with_context(bin_size=True).search(
+            domain,
+            order="sequence, name, id",
+        )
+        categories_by_name = {
+            self._ab_storefront_category_source_name(category).casefold(): category
+            for category in categories
+        }
+        items = []
+        is_arabic = self._ab_storefront_is_arabic()
+        for item in _HEADER_CATEGORY_MENU:
+            label = item["label_ar"] if is_arabic else _(str(item["label"]))
+            category = False
+            for alias in item["aliases"]:
+                category = categories_by_name.get(alias.casefold())
+                if category:
+                    break
+            href = (
+                "/shop/category/%s" % self.env["ir.http"]._slug(category)
+                if category
+                else "/shop?%s" % url_encode({"search": label})
+            )
+            items.append({
+                "label": label,
+                "href": href,
+                "icon": item["icon"],
+                "tone": item["tone"],
+            })
+        return items
+
+    def _ab_storefront_header_need_menu(self):
+        self.ensure_one()
+        return [
+            {
+                "label": label_ar if self._ab_storefront_is_arabic() else _(str(label)),
+                "href": "/shop?%s" % url_encode({
+                    "search": label_ar if self._ab_storefront_is_arabic() else _(str(label)),
+                }),
+                "icon": icon,
+                "tone": tone,
+            }
+            for label, label_ar, icon, tone in _HEADER_NEED_MENU
+        ]
 
     def _ab_storefront_is_first_cart_addition(self):
         self.ensure_one()

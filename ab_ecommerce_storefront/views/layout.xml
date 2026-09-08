@@ -83,6 +83,9 @@
         <xpath expr="//header[@id='top']" position="replace">
             <header t-if="not no_header" id="top" data-anchor="true" class="ab-storefront-header">
                 <t t-set="ab_header_categories" t-value="website._ab_storefront_categories(limit=7)"/>
+                <t t-set="ab_header_category_menu" t-value="website._ab_storefront_header_category_menu()"/>
+                <t t-set="ab_header_need_menu" t-value="website._ab_storefront_header_need_menu()"/>
+                <t t-set="ab_header_nav_labels" t-value="website._ab_storefront_header_nav_labels()"/>
                 <t t-set="ab_current_path" t-value="request.httprequest.path.rstrip('/') or '/'"/>
                 <t t-set="ab_offers_href" t-value="'/#ab-storefront-offers'"/>
                 <t t-set="ab_prescription_href" t-value="'/prescription-order'"/>
@@ -367,24 +370,49 @@
                             <span>العروض</span>
                             <span t-if="ab_offers_badge" class="ab-storefront-offers-badge" t-out="ab_offers_badge"/>
                         </a>
-                        <div class="dropdown ab-storefront-category-dropdown">
+                        <div class="dropdown ab-storefront-category-dropdown ab-storefront-category-dropdown--category">
                             <button class="ab-storefront-categories-toggle btn dropdown-toggle"
                                     type="button"
                                     data-bs-toggle="dropdown"
                                     data-bs-display="static"
                                     data-bs-offset="0,0"
-                                    aria-expanded="false">
+                                aria-expanded="false">
                                 <i class="fa fa-th-large me-2" aria-hidden="true"/>
-                                Shop by category
+                                <span t-out="ab_header_nav_labels['category']"/>
                             </button>
                             <div class="dropdown-menu ab-storefront-category-menu">
-                                <a href="/shop" class="dropdown-item fw-semibold">All products</a>
-                                <a t-foreach="ab_header_categories"
-                                   t-as="ab_category"
-                                   t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"
+                                <a t-foreach="ab_header_category_menu"
+                                   t-as="ab_menu_item"
+                                   t-att-href="ab_menu_item['href']"
                                    class="dropdown-item ab-storefront-category-menu-link">
-                                    <t t-call="ab_ecommerce_storefront.category_icon"/>
-                                    <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                                    <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
+                                          aria-hidden="true">
+                                        <i t-attf-class="fa #{ab_menu_item['icon']}"/>
+                                    </span>
+                                    <span t-out="ab_menu_item['label']"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="dropdown ab-storefront-category-dropdown ab-storefront-category-dropdown--need">
+                            <button class="ab-storefront-categories-toggle btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-display="static"
+                                    data-bs-offset="0,0"
+                                aria-expanded="false">
+                                <i class="fa fa-heartbeat me-2" aria-hidden="true"/>
+                                <span t-out="ab_header_nav_labels['need']"/>
+                            </button>
+                            <div class="dropdown-menu ab-storefront-category-menu">
+                                <a t-foreach="ab_header_need_menu"
+                                   t-as="ab_menu_item"
+                                   t-att-href="ab_menu_item['href']"
+                                   class="dropdown-item ab-storefront-category-menu-link">
+                                    <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
+                                          aria-hidden="true">
+                                        <i t-attf-class="fa #{ab_menu_item['icon']}"/>
+                                    </span>
+                                    <span t-out="ab_menu_item['label']"/>
                                 </a>
                             </div>
                         </div>
@@ -461,18 +489,30 @@
                                 <t t-set="_dropdown_menu_class" t-value="'dropdown-menu-end'"/>
                             </t>
                         </ul>
-                        <p class="ab-storefront-mobile-heading">الأقسام</p>
+                        <p class="ab-storefront-mobile-heading" t-out="ab_header_nav_labels['category']"/>
                         <nav class="nav flex-column mb-4">
-                            <a href="/shop" class="nav-link ab-storefront-mobile-category-link">
-                                <i class="fa fa-shopping-bag" aria-hidden="true"/>
-                                <span>كل المنتجات</span>
-                            </a>
-                            <a t-foreach="ab_header_categories"
-                               t-as="ab_category"
-                               t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"
+                            <a t-foreach="ab_header_category_menu"
+                               t-as="ab_menu_item"
+                               t-att-href="ab_menu_item['href']"
                                class="nav-link ab-storefront-mobile-category-link">
-                                <t t-call="ab_ecommerce_storefront.category_icon"/>
-                                <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                                <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
+                                      aria-hidden="true">
+                                    <i t-attf-class="fa #{ab_menu_item['icon']}"/>
+                                </span>
+                                <span t-out="ab_menu_item['label']"/>
+                            </a>
+                        </nav>
+                        <p class="ab-storefront-mobile-heading" t-out="ab_header_nav_labels['need']"/>
+                        <nav class="nav flex-column mb-4">
+                            <a t-foreach="ab_header_need_menu"
+                               t-as="ab_menu_item"
+                               t-att-href="ab_menu_item['href']"
+                               class="nav-link ab-storefront-mobile-category-link">
+                                <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
+                                      aria-hidden="true">
+                                    <i t-attf-class="fa #{ab_menu_item['icon']}"/>
+                                </span>
+                                <span t-out="ab_menu_item['label']"/>
                             </a>
                         </nav>
                         <div class="ab-storefront-mobile-contact mt-4">

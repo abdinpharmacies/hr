@@ -67,6 +67,7 @@ Current changes before commit:
 - Render one visible carousel indicator per active admin slide, including the first `data-bs-slide-to="0"` indicator.
 - Stabilize carousel pointer swipe and horizontal trackpad navigation with a scoped transition lock so swiping back and forth does not leave the carousel stuck.
 - Make desktop mouse drag and mobile horizontal swipe navigate in the same direction as the gesture while preserving natural vertical page scrolling.
+- Reverse the carousel drag decision on Arabic/RTL pages so right and left drags follow the storefront reading direction.
 - Apply per-slide admin CTA X/Y position and width values to the frontend CTA overlay.
 - Resolve each CTA position against the visible contained image and use physical centering in RTL layouts so backend placement remains identical across frontend screen sizes.
 - Keep frontend carousel CTA placement coordinates left-to-right so RTL pages match the backend placement preview.
@@ -88,6 +89,7 @@ Files changed:
 - `ab_ecommerce_storefront/models/website.py`
 - `ab_ecommerce_storefront/static/src/js/animated_price.js`
 - `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
+- `ab_ecommerce_storefront/static/src/js/hero_carousel.js`
 - `ab_ecommerce_storefront/static/src/js/support_widget.js`
 - `ab_ecommerce_storefront/static/src/js/product_card.js`
 - `ab_ecommerce_storefront/static/src/js/search_typewriter.js`
@@ -128,10 +130,12 @@ Header refactor updates in this working tree:
 - Smooth the header-to-sticky transition with scoped enter and exit morph animations that preserve the top-attached sticky shape.
 - Fix Shop by Category dropdown placement and state colors so the menu opens directly below the trigger and closed navigation items return to their non-active appearance.
 - Restrict the Shop by Category orange underline to hover only so it does not remain visible after closing the dropdown.
+- Split the storefront navigation discovery dropdown into Shop by Category and Shop by Need menus with pharmacy-specific links and Arabic translations.
 
 Files changed for this header refactor:
 
 - `ab_ecommerce_storefront/views/layout.xml`
+- `ab_ecommerce_storefront/models/website.py`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
 - `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
 - `ab_ecommerce_storefront/i18n/ar.po`

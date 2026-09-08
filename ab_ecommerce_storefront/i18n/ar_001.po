@@ -55,6 +55,96 @@ msgstr "تسوق حسب القسم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Shop by Category"
+msgstr "التسوق حسب التصنيف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Shop by Need"
+msgstr "التسوق حسب الاحتياج"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin Care"
+msgstr "العناية بالبشرة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dietary Supplements"
+msgstr "المكملات الغذائية"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Vitamins and Minerals"
+msgstr "الفيتامينات والمعادن"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Oral and Dental Care"
+msgstr "العناية بالفم والأسنان"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Medical Devices and Supplies"
+msgstr "الأجهزة والمستلزمات الطبية"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Mother and Baby Products"
+msgstr "منتجات الأم والرضيع"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Acne treatment"
+msgstr "علاج حب الشباب"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Skin brightening and tone correction"
+msgstr "تفتيح وتوحيد لون البشرة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dry skin hydration"
+msgstr "ترطيب البشرة الجافة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Hair loss treatment"
+msgstr "علاج تساقط الشعر"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Dandruff control"
+msgstr "مكافحة القشرة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Sun protection"
+msgstr "الحماية من الشمس"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Anti-aging and wrinkle care"
+msgstr "مكافحة التجاعيد وعلامات التقدم في السن"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Immune support"
+msgstr "تقوية المناعة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Energy and vitality"
+msgstr "زيادة الطاقة والنشاط"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Sensitive skin care"
+msgstr "العناية بالبشرة الحساسة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
 msgid "All products"
 msgstr "كل المنتجات"
@@ -967,7 +1057,7 @@ msgstr "الجمال والعناية"
 #. module: ab_ecommerce_storefront
 #: model:product.public.category,name:ab_ecommerce_storefront.category_baby_care
 msgid "Baby Care"
-msgstr "العناية بالطفل"
+msgstr "العناية بالأطفال"
 
 #. module: ab_ecommerce_storefront
 #: model:product.public.category,name:ab_ecommerce_storefront.category_wellness
