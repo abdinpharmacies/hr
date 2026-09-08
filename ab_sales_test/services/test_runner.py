@@ -2,10 +2,12 @@ import uuid
 from contextlib import contextmanager
 from unittest.mock import patch
 
-from odoo import fields
+from odoo import api, fields
+from odoo.addons.ab_odoo_replication.models.ab_odoo_replication_override import (
+    Base as AbOdooReplicationOverrideBase,
+)
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.translate import _
-from odoo.addons.ab_odoo_replication.models_inherit.models_inherit import AbOdooReplicationOnlyAllowed
 
 from .fake_eplus import FakeEplusConnection, UnsupportedFakeEplusSQL
 from .json_loader import SalesTestJSONLoader
@@ -374,17 +376,18 @@ class SalesTestRunner:
 
     @contextmanager
     def _replica_fixture_create_guard(self):
-        original_create = AbOdooReplicationOnlyAllowed.create
+        original_create = AbOdooReplicationOverrideBase.create
 
-        def fixture_create(recordset, values):
+        @api.model_create_multi
+        def fixture_create(recordset, vals_list):
             if (
                     recordset.env.context.get("ab_sales_test_fixture_create")
                     and recordset.env.context.get("replication")
             ):
-                return super(AbOdooReplicationOnlyAllowed, recordset).create(values)
-            return original_create(recordset, values)
+                return super(AbOdooReplicationOverrideBase, recordset).create(vals_list)
+            return original_create(recordset, vals_list)
 
-        with patch.object(AbOdooReplicationOnlyAllowed, "create", fixture_create):
+        with patch.object(AbOdooReplicationOverrideBase, "create", fixture_create):
             yield
 
     def _prepare_employee(self, scenario, prefix):

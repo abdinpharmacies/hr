@@ -95,7 +95,7 @@ SMART_SOURCE_RECEIVED_QTY_SQL = """
         ON h.stnh_id = Store_Trans.stnh_id
         AND h.stnh_f_Sto_id = Store_Trans.st_from_store
         AND h.stnh_t_Sto_id = Store_Trans.st_to_store
-    WHERE Store_Trans.sec_insert_date > ?
+    WHERE Store_Trans.sec_update_date > ?
         AND Store_Trans.st_to_store = ?
         AND h.stnh_flag = 'R'
     GROUP BY Item_Catalog.itm_id

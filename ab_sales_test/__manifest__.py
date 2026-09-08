@@ -13,6 +13,7 @@
         "ab_sales_doctor",
         "ab_hr",
         "ab_employee_access_sales",
+        "ab_odoo_replication",
     ],
     "data": [
         "security/ir.model.access.csv",
