@@ -46,7 +46,9 @@ Files changed:
 - ab_sales/views/ab_product_inherit.xml
 - ab_sales/views/sales_header.xml
 
-## Current changes before commit:
+## 0a157d1 - hager yasser - 2026-09-08
+
+Original commit subject: ab_sales/FEAT(#19590): Fix Contract Bill Gross Total(part2)
 
 User-facing changes:
 - Calculate base bill Total Price from quantity times sell price, independently of discounted line net amounts.
@@ -56,3 +58,25 @@ User-facing changes:
 Files changed:
 - ab_sales/models/ab_sales_header.py
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
+
+## Current changes before commit:
+
+User-facing changes:
+- Show the actual invoice salesperson and invoice type on a separate row below the branch in Bill Wizard details.
+- Prioritize Contract, then Promo, then Delivery; leave ordinary cash invoices unlabelled.
+- Translate the new labels in both Arabic catalogs, including Delivery as توصيل.
+- Add focused payload, contract relation/name, promotion, translation, and Bills-column regression coverage.
+
+Validation:
+- All six focused invoice-info tests passed after module loading, with no skips or errors.
+- Targeted Sales/Contracts upgrade, compilation, Arabic PO format checks, and whitespace checks passed.
+- Source audit confirms that existing payload values, search/loading methods, JavaScript, and dependencies are unchanged.
+- Full module run still reports 4 failures and 32 errors in existing replication/return tests.
+
+Files changed:
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py
+- ab_sales/static/src/bill_wizard/bill_wizard_action.xml
+- ab_sales/tests/test_bill_wizard_product_filter.py

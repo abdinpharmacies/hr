@@ -568,6 +568,8 @@ msgid "Connection to E-Plus failed."
 msgstr "فشل الاتصال بنظام E-Plus."
 
 #. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
 msgid "Contract"
@@ -802,10 +804,12 @@ msgid "Default Printer"
 msgstr "الطابعة الافتراضية"
 
 #. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
 msgid "Delivery"
-msgstr "طيار"
+msgstr "توصيل"
 
 #. module: ab_sales
 #. odoo-javascript
@@ -2511,6 +2515,8 @@ msgstr ""
 "%s"
 
 #. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
 msgid "Promo"
@@ -3870,3 +3876,15 @@ msgstr "جلب رصيد المنتج"
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_tree_view_inherit
 msgid "Get Store Balances"
 msgstr "جلب أرصدة الفروع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Salesperson:"
+msgstr "مندوب المبيعات:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Invoice Type:"
+msgstr "نوع الفاتورة:"

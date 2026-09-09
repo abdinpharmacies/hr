@@ -1227,6 +1227,17 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         }
 
     @api.model
+    def _bill_wizard_invoice_type_label(self, header):
+        if self._bill_wizard_header_contract_parts(header)[-1]:
+            return _("Contract")
+        promo_name, _discount_label, _discount_value = self._bill_wizard_receipt_promo_data(header)
+        if promo_name:
+            return _("Promo")
+        if getattr(header, "is_delivery", False):
+            return _("Delivery")
+        return ""
+
+    @api.model
     def _bill_wizard_header_payload(self, header, record_type="sale"):
         customer_name, customer_phone, customer_address = self._bill_wizard_header_customer_parts(
             header,
@@ -1250,7 +1261,10 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             notes = (header.description or "").strip()
             can_return = bool(header.eplus_serial and header.status in ("pending", "saved"))
             doc_type = "sale"
+        employee = getattr(header, "employee_id", False)
         return {
+            "employee_name": employee.display_name if employee else "",
+            "invoice_type": self._bill_wizard_invoice_type_label(header),
             "id": payload_id,
             "eplus_serial": eplus_serial,
             "status": header.status or "",
