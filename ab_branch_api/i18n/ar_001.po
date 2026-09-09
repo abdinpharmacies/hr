@@ -360,3 +360,93 @@ msgstr "المستخدم"
 #: model:ir.model,name:ab_branch_api.model_ab_sales_header
 msgid "ab_sales_header"
 msgstr "فواتير المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "A bearer credential is required."
+msgstr "يلزم استخدام بيانات اعتماد من نوع Bearer."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid ""
+"Choose an active non-administrator internal user with the Branch API User "
+"role."
+msgstr ""
+"اختر مستخدماً داخلياً نشطاً غير مسؤول، لديه دور مستخدم واجهة برمجة الفرع."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Configure the service user's business permissions first. Enabling "
+"programmatic key management applies to all eligible users in this database."
+msgstr ""
+"اضبط صلاحيات العمل لمستخدم الخدمة أولاً. يسري تفعيل إدارة المفاتيح برمجياً "
+"على جميع المستخدمين المؤهلين في قاعدة البيانات هذه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Confirm database-wide programmatic API key management."
+msgstr "أكد تفعيل إدارة مفاتيح API برمجياً على مستوى قاعدة البيانات."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Copy this key into the callcenter connection now. It is valid for 90 days "
+"and will not be displayed again after closing."
+msgstr ""
+"انسخ هذا المفتاح إلى اتصال الكول سنتر الآن. صلاحيته 90 يوماً ولن يظهر مرة "
+"أخرى بعد الإغلاق."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__database_name
+msgid "Database Name"
+msgstr "اسم قاعدة البيانات"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__enable_programmatic
+msgid "Enable database-wide programmatic API key management"
+msgstr "تفعيل إدارة مفاتيح API برمجياً على مستوى قاعدة البيانات"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Generate Credential"
+msgstr "إنشاء بيانات اعتماد"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_enrollment__generated_key
+msgid "Generated Key"
+msgstr "المفتاح المنشأ"
+
+#. module: ab_branch_api
+#: model:ir.actions.act_window,name:ab_branch_api.enrollment_action
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_enrollment
+#: model:ir.ui.menu,name:ab_branch_api.enrollment_menu
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid "Prepare Callcenter Connection"
+msgstr "إعداد اتصال الكول سنتر"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Settings administrator access is required."
+msgstr "يلزم امتلاك صلاحية مسؤول الإعدادات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "The credential does not belong to this integration user."
+msgstr "بيانات الاعتماد لا تخص مستخدم التكامل هذا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use a dedicated non-administrator integration user."
+msgstr "استخدم مستخدم تكامل مخصصاً لا يملك صلاحيات المسؤول."

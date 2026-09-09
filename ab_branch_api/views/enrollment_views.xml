@@ -1,0 +1,29 @@
+<odoo>
+    <record id="enrollment_form" model="ir.ui.view">
+        <field name="name">ab_branch_api_enrollment.form</field>
+        <field name="model">ab_branch_api_enrollment</field>
+        <field name="arch" type="xml">
+            <form string="Prepare Callcenter Connection">
+                <group invisible="generated_key">
+                    <field name="user_id"/><field name="store_id"/>
+                    <field name="allow_post"/><field name="allow_cost"/>
+                    <div class="alert alert-info" colspan="2">Configure the service user's business permissions first. Enabling programmatic key management applies to all eligible users in this database.</div>
+                    <field name="enable_programmatic"/>
+                </group>
+                <group invisible="not generated_key">
+                    <div class="alert alert-warning" colspan="2">Copy this key into the callcenter connection now. It is valid for 90 days and will not be displayed again after closing.</div>
+                    <field name="database_name"/><field name="generated_key"/>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object" string="Generate Credential" class="btn-primary" invisible="generated_key"/>
+                    <button special="cancel" string="Close"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="enrollment_action" model="ir.actions.act_window">
+        <field name="name">Prepare Callcenter Connection</field>
+        <field name="res_model">ab_branch_api_enrollment</field><field name="view_mode">form</field><field name="target">new</field>
+    </record>
+    <menuitem id="enrollment_menu" name="Prepare Callcenter Connection" parent="api_menu" action="enrollment_action" groups="base.group_system"/>
+</odoo>

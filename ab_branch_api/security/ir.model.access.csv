@@ -3,3 +3,4 @@ access_api_user,Branch API user,model_ab_branch_api,ab_branch_api.group_branch_a
 access_api_admin,Branch API administrator,model_ab_branch_api,base.group_system,1,0,0,0
 access_binding_admin,Branch API access administrator,model_ab_branch_api_access,base.group_system,1,1,1,0
 access_operation_admin,Branch API operation administrator,model_ab_branch_api_operation,base.group_system,1,0,0,0
+access_enrollment_admin,Branch enrollment administrator,model_ab_branch_api_enrollment,base.group_system,1,1,1,1
