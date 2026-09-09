@@ -39,6 +39,9 @@
             <field name="model">ab_sales_header</field>
             <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='store_id']" position="after">
+                    <field name="contract_id" string="Contract" optional="show"/>
+                </xpath>
                 <xpath expr="//field[@name='total_price']" position="after">
                     <field name="total_after_discount"/>
                 </xpath>

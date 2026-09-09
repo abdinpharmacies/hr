@@ -20,10 +20,3 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__total_after_discount
 msgid "Total After Discount"
 msgstr "الإجمالي بعد الخصم"
-
-#. module: ab_sales_contract
-#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__contract_id
-#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_id
-#: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_sales_header_view_tree_inherit_contract_total_after_discount
-msgid "Contract"
-msgstr "العقد"

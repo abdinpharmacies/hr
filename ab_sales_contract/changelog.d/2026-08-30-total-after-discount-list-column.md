@@ -44,7 +44,9 @@ Files changed:
 - ab_sales_contract/i18n/ar.po
 - ab_sales_contract/views/ab_sales_contract_views.xml
 
-## Current changes before commit:
+## e6a69cd - hager yasser - 2026-09-08
+
+Original commit subject: ab_sales_contract/FEAT(#19590): Fix Contract Bill Gross Total(part1)
 
 User-facing changes:
 - Corrected contract bill Total Price to show gross line amounts, with the existing quantity times sell price fallback.
@@ -59,3 +61,15 @@ Validation:
 Files changed:
 - ab_sales_contract/models/ab_sales_header_inherit.py
 - ab_sales_contract/changelog.d/2026-08-30-total-after-discount-list-column.md
+
+## Current changes before commit:
+
+User-facing changes:
+- Show the existing Contract field as an optional, visible Bills column.
+- Maintain the Contract column translation in both Arabic catalogs.
+
+Files changed:
+- ab_sales_contract/changelog.d/2026-08-30-total-after-discount-list-column.md
+- ab_sales_contract/i18n/ar.po
+- ab_sales_contract/i18n/ar_001.po
+- ab_sales_contract/views/ab_sales_contract_views.xml
