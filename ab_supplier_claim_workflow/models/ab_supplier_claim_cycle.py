@@ -1,4 +1,6 @@
 import logging
+import os
+from time import perf_counter
 import base64
 import io
 import re
@@ -12,6 +14,8 @@ from datetime import timedelta
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools import config
+from odoo.addons.queue_job.job import Job
+from odoo.addons.queue_job.exception import FailedJobError, RetryableJobError
 from odoo.tools.misc import format_datetime
 
 _logger = logging.getLogger(__name__)
@@ -1346,7 +1350,56 @@ class SupplierClaimCycle(models.Model):
         return True
 
     def _notify_department_turn_started(self, stage_key):
+        # Worker-only extension point; no notification provider in this module.
         return False
+
+    def _queue_department_turn_started(self, stage_key):
+        self.ensure_one()
+        started = perf_counter()
+        # Persist explicitly: with_delay() may run inline with queue_job__no_delay.
+        # Jobs become visible to workers only when Odoo commits the workflow.
+        job = Job(
+            self._process_department_turn_started,
+            args=(stage_key,),
+            channel='root.supplier_claim_notifications',
+            max_retries=5,
+            description='Supplier claim %s: %s notification' % (self.id, stage_key),
+        )
+        job.store()
+        _logger.info(
+            'Supplier claim notification queued claim=%s stage=%s job=%s elapsed_ms=%.2f',
+            self.id, stage_key, job.uuid, (perf_counter() - started) * 1000,
+        )
+        return True
+
+    def _process_department_turn_started(self, stage_key):
+        self.ensure_one()
+        job_uuid = self.env.context.get('job_uuid')
+        job = self.env['queue.job'].sudo().search(
+            fields.Domain('uuid', '=', job_uuid), limit=1,
+        ) if job_uuid else self.env['queue.job']
+        if not (
+            job and job.state == 'started' and job.worker_pid == os.getpid()
+            and job.model_name == self._name
+            and job.method_name == '_process_department_turn_started'
+            and job.records.ids == self.ids and tuple(job.args) == (stage_key,)
+        ):
+            raise FailedJobError('Department notifications require a running background job.')
+        try:
+            # Roll back partially queued deliveries before retrying the department.
+            with self.env.cr.savepoint():
+                result = self._notify_department_turn_started(stage_key)
+        except Exception as exc:
+            _logger.error(
+                'Supplier claim notification failed claim=%s stage=%s job=%s error=%s',
+                self.id, stage_key, job_uuid, type(exc).__name__,
+            )
+            raise RetryableJobError('Department notification failed; retry scheduled.') from None
+        _logger.info(
+            'Supplier claim notification processed claim=%s stage=%s job=%s result=%s',
+            self.id, stage_key, job_uuid, 'queued' if result else 'disabled or no recipients',
+        )
+        return result
 
     @api.model
     def _normalize_check_delivery_status_vals(self, vals):
@@ -1455,7 +1508,7 @@ class SupplierClaimCycle(models.Model):
         for stage in ('inventory', 'purchase'):
             self.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN)._create_stage_history(stage, 'skipped', reason)
         self._create_stage_history('suppliers', 'pending')
-        self._notify_department_turn_started('suppliers')
+        self._queue_department_turn_started('suppliers')
         self.message_post(body=_('Inventory and Purchase skipped: %s') % reason)
         return {'type': 'ir.actions.act_window_close'}
 
@@ -1737,7 +1790,7 @@ class SupplierClaimCycle(models.Model):
             'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
-        self._notify_department_turn_started(next_stage)
+        self._queue_department_turn_started(next_stage)
 
     def action_toggle_chatter(self):
         self.ensure_one()
@@ -1747,6 +1800,21 @@ class SupplierClaimCycle(models.Model):
         }
 
     def action_done(self):
+        started = perf_counter()
+        try:
+            self.check_access('write')
+            # Serialize starts before reading state. No waiting for another request,
+            # no direct SQL, and no manual commit: the lock lives with the workflow.
+            self.lock_for_update()
+            self.invalidate_recordset(['status'])
+            return self._action_done_locked()
+        finally:
+            _logger.info(
+                'Supplier claim action_done completed claims=%s elapsed_ms=%.2f',
+                self.ids, (perf_counter() - started) * 1000,
+            )
+
+    def _action_done_locked(self):
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status not in ('secretarial', 'sign_check'):
@@ -1792,7 +1860,7 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
-                if not rec.claim_document and not self.env['ir.attachment'].search_count([
+                if not rec.with_context(bin_size=True).claim_document and not self.env['ir.attachment'].search_count([
                     ('res_model', '=', self._name),
                     ('res_id', '=', rec.id),
                 ], limit=1):
@@ -1808,6 +1876,7 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
+                started = perf_counter()
                 rec.with_context(supplier_claim_internal_write=WORKFLOW_WRITE_TOKEN).write({
                     'status': 'inventory',
                     'department_decision': 'pending',
@@ -1816,10 +1885,29 @@ class SupplierClaimCycle(models.Model):
                     'escalation_missing_manager': False,
                     'assigned_escalation_user': False,
                 })
-                rec._create_stage_history('inventory', 'pending')
-                rec._create_stage_history('purchase', 'pending')
-                rec._notify_department_turn_started('inventory')
-                rec._notify_department_turn_started('purchase')
+                _logger.info(
+                    'Supplier claim status update claim=%s elapsed_ms=%.2f',
+                    rec.id, (perf_counter() - started) * 1000,
+                )
+                started = perf_counter()
+                action_date = fields.Datetime.now()
+                self.env['ab_supplier_claim_stage_history'].create([
+                    {
+                        'claim_id': rec.id,
+                        'stage': stage,
+                        'sequence': STAGE_ORDER[stage],
+                        'decision': 'pending',
+                        'user_id': self.env.uid,
+                        'action_date': action_date,
+                    }
+                    for stage in ('inventory', 'purchase')
+                ])
+                _logger.info(
+                    'Supplier claim stage histories created claim=%s elapsed_ms=%.2f',
+                    rec.id, (perf_counter() - started) * 1000,
+                )
+                rec._queue_department_turn_started('inventory')
+                rec._queue_department_turn_started('purchase')
                 return
             if rec.status == 'sign_check':
                 return {
@@ -2286,7 +2374,7 @@ class SupplierClaimCycle(models.Model):
             'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
-        self._notify_department_turn_started(next_stage)
+        self._queue_department_turn_started(next_stage)
 
     def _get_next_stage(self):
         self.ensure_one()
@@ -2627,8 +2715,15 @@ class SupplierClaimCycle(models.Model):
         'net_payable',
     )
     def _compute_timeline_display(self):
-        for rec in self:
-            rec.timeline_display = rec._render_timeline_html()
+        started = perf_counter()
+        try:
+            for rec in self:
+                rec.timeline_display = rec._render_timeline_html()
+        finally:
+            _logger.info(
+                'Supplier claim timeline computed claims=%s elapsed_ms=%.2f',
+                self.ids, (perf_counter() - started) * 1000,
+            )
 
     def _render_timeline_html(self):
         self.ensure_one()

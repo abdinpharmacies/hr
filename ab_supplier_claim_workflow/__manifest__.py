@@ -6,13 +6,14 @@
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
     'application': True,
-    'depends': ['ab_supplier_claim_cycle', 'ab_hr'],
+    'depends': ['ab_supplier_claim_cycle', 'ab_hr', 'queue_job'],
 
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
         'security/record_rules.xml',
         'data/sequence.xml',
+        'data/queue_job_data.xml',
         'data/remove_supplier_mapping_metadata.xml',
         'data/cron_escalation.xml',
         'data/portal_tracking.xml',
