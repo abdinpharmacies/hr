@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="channel_supplier_claim_notifications" model="queue.job.channel">
+        <field name="name">supplier_claim_notifications</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+    <record id="job_function_department_turn_started" model="queue.job.function">
+        <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+        <field name="method">_process_department_turn_started</field>
+        <field name="channel_id" ref="channel_supplier_claim_notifications"/>
+        <field name="retry_pattern" eval="{1: 60, 2: 300, 3: 900}"/>
+    </record>
+</odoo>

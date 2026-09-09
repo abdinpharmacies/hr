@@ -1,6 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
-import { onMounted, onRendered, onWillUnmount } from "@odoo/owl";
+import { onMounted, onRendered, onWillUnmount, useSubEnv } from "@odoo/owl";
 import { FormController } from "@web/views/form/form_controller";
 import { formView } from "@web/views/form/form_view";
 import { _t } from "@web/core/l10n/translation";
@@ -28,12 +28,50 @@ registry.category("actions").add("toggle_claim_chatter", (env, action) => {
 class ClaimFormController extends FormController {
     setup() {
         super.setup();
+        const onClickViewButton = this.env.onClickViewButton;
+        useSubEnv({
+            onClickViewButton: async (params) => {
+                if (params.clickParams.name !== "action_done") {
+                    return onClickViewButton(params);
+                }
+                if (this._cycleStartPending) {
+                    return;
+                }
+                this._cycleStartPending = true;
+                const started = performance.now();
+                try {
+                    return await onClickViewButton(params);
+                } finally {
+                    this._cycleStartPending = false;
+                    for (const button of this._cycleStartDisabledButtons || []) {
+                        button.removeAttribute("disabled");
+                    }
+                    this._cycleStartDisabledButtons = [];
+                    console.debug("Supplier claim action_done response completed", {
+                        claimId: this.model.root.resId,
+                        elapsedMs: performance.now() - started,
+                    });
+                }
+            },
+        });
         onMounted(() => {
             this._syncChatter();
             this._initTrackingCard();
             this._initWhatsAppFab();
         });
         onRendered(() => {
+            // Odoo disables existing buttons. Also cover buttons replaced by a render
+            // while saving/refreshing, and restore only those disabled here.
+            if (this._cycleStartPending) {
+                const buttons = this.rootRef.el?.querySelectorAll(
+                    'button[name="action_done"]:not([disabled])'
+                ) || [];
+                this._cycleStartDisabledButtons ||= [];
+                for (const button of buttons) {
+                    button.setAttribute("disabled", "1");
+                    this._cycleStartDisabledButtons.push(button);
+                }
+            }
             this._syncChatter();
             this._syncWhatsAppFab();
         });
