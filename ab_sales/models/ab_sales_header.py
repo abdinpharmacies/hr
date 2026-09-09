@@ -1650,10 +1650,10 @@ class AbdinSalesHeader(models.Model):
                 rec.invoice_address = ''
 
     # ---------------------- compute_totals (اللي سألت عليها) ---------------------- #
-    @api.depends('line_ids', 'store_id', 'line_ids.product_id', 'line_ids.qty')
+    @api.depends('line_ids', 'store_id', 'line_ids.product_id', 'line_ids.qty', 'line_ids.sell_price', 'line_ids.net_amount')
     def compute_totals(self):
         for header in self:
-            header.total_price = sum(line.net_amount for line in header.line_ids)
+            header.total_price = sum(line.qty * line.sell_price for line in header.line_ids)
 
             total_net_amount = sum(line.net_amount for line in header.line_ids)
             header.total_net_amount = total_net_amount

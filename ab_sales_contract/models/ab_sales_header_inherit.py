@@ -380,6 +380,10 @@ class AbSalesHeaderContract(models.Model):
         super().compute_totals()
         for header in self:
             if header.contract_id:
+                header.total_price = sum(
+                    float(line.ab_contract_gross_amount or (float(line.qty or 0.0) * float(line.sell_price or 0.0)))
+                    for line in header.line_ids
+                )
                 header.total_net_amount = float(header.cust_pay or 0.0)
 
     # -------------------------------------------------------------------------
