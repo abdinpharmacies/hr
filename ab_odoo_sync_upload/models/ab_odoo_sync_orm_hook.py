@@ -15,8 +15,6 @@ _ORIGINAL_ADD_TO_COMPUTE = None
 _PATCHED = False
 _COLLECTOR_KEY = "ab_odoo_sync_upload.pending_snapshots"
 _LOG_ACCESS_FIELDS = {"create_uid", "create_date", "write_uid", "write_date"}
-_UPLOAD_SOURCE_MODEL = "ab_odoo_sync_upload_source"
-_OUTBOX_MODEL = "ab_odoo_sync_outbox"
 
 
 def _is_sync_model(model_name):
@@ -32,10 +30,8 @@ def _should_capture_upload(model):
         return False
     if model._name in {"ir.model.data", "ir.module.module"}:
         return False
-    if _UPLOAD_SOURCE_MODEL not in model.env.registry.models:
-        return False
     return (
-        model.env[_UPLOAD_SOURCE_MODEL]
+        model.env["ab_odoo_sync_upload_source"]
         .sudo()
         .is_upload_source(model._name)
     )
@@ -94,18 +90,14 @@ def _mark_prepared_archive_snapshots(env, snapshots):
 
 
 def _capture_upload_snapshot_now(record, operation):
-    if _OUTBOX_MODEL not in record.env.registry.models:
-        return
-    Outbox = record.env[_OUTBOX_MODEL].with_context(
+    Outbox = record.env["ab_odoo_sync_outbox"].with_context(
         skip_ab_odoo_sync_upload=True,
     ).sudo()
     Outbox.capture_record(record, operation=operation)
 
 
 def _capture_prepared_snapshot_now(env, snapshot, operation):
-    if _OUTBOX_MODEL not in env.registry.models:
-        return
-    Outbox = env[_OUTBOX_MODEL].with_context(
+    Outbox = env["ab_odoo_sync_outbox"].with_context(
         skip_ab_odoo_sync_upload=True,
     ).sudo()
     Outbox.capture_prepared_snapshot(snapshot, operation=operation)
@@ -176,10 +168,8 @@ def _emit_prepared_upload_snapshots(env, snapshots, operation):
 def _get_upload_aggregate_parents(records):
     if not records:
         return False
-    if _UPLOAD_SOURCE_MODEL not in records.env.registry.models:
-        return False
     return (
-        records.env[_UPLOAD_SOURCE_MODEL]
+        records.env["ab_odoo_sync_upload_source"]
         .sudo()
         .get_aggregate_parents(records)
     )
@@ -226,12 +216,10 @@ def _get_unlink_dependency_index(env):
 def _get_upload_capture_models(records):
     if records.env.context.get("skip_ab_odoo_sync_upload"):
         return set()
-    if _UPLOAD_SOURCE_MODEL not in records.env.registry.models:
-        return set()
 
     excluded_models = {"ir.model.data", "ir.module.module"}
     configured_models = set(
-        records.env[_UPLOAD_SOURCE_MODEL]
+        records.env["ab_odoo_sync_upload_source"]
         .sudo()
         .search([("active", "=", True)])
         .mapped("model_name")
