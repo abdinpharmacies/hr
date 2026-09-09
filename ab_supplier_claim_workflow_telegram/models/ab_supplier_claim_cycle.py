@@ -208,10 +208,8 @@ class SupplierClaimCycle(models.Model):
 
     def _notify_department_turn_started(self, stage_key):
         result = super()._notify_department_turn_started(stage_key)
-        self._send_department_turn_telegram_notifications(stage_key)
-        return result
+        return self._send_department_turn_telegram_notifications(stage_key) or result
 
-    @_isolate_telegram_notification
     def _send_department_turn_telegram_notifications(self, stage_key):
         if not self._supplier_claim_telegram_notifications_enabled() or config['test_enable']:
             return False
@@ -298,9 +296,12 @@ class SupplierClaimCycle(models.Model):
                 chat_id, text, parse_mode='HTML',
             )
         except OSError:
+            _logger.warning('Supplier claim Telegram transport failed claim=%s job=%s', self.id, job_uuid)
             raise RetryableJobError(_('Telegram delivery failed; the background job will retry.')) from None
         if not result or not result.get('sent'):
+            _logger.warning('Supplier claim Telegram delivery failed claim=%s job=%s', self.id, job_uuid)
             raise RetryableJobError(_('Telegram delivery failed; the background job will retry.'))
+        _logger.info('Supplier claim Telegram delivered claim=%s job=%s', self.id, job_uuid)
         return result
 
     def _resolve_escalation_details(self, stage_key=None):
