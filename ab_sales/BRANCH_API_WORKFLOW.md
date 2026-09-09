@@ -1,226 +1,214 @@
-# Callcenter and Branch API: Process and Configuration
+# Callcenter and Branch API: JSON-2 Setup and Operations
 
-Implementation reference, checked against the workspaces on 2026-09-08.
-
-## 1. Architecture and scope
+## Architecture
 
 ```mermaid
 flowchart LR
-    User[Callcenter user] --> CC[Callcenter Odoo: ab_sales]
-    CC -->|XML-RPC| API[Branch Odoo: ab_branch_api]
-    API --> Logic[Existing branch sales and return logic]
-    Logic -->|SQL| EPlus[Branch E-Plus / B-Connect]
-    API -->|Stock reads through SQL connector| EPlus
+    CC[Callcenter Odoo] -->|HTTPS JSON-2, branch credential| API[Branch Odoo: ab_branch_api]
+    API --> Logic[Existing branch business logic]
+    Logic -->|SQL| EP[Branch E-Plus]
 ```
 
-XML-RPC connects **Odoo to Odoo**. Branch Odoo uses the existing SQL connector to communicate with E-Plus.
+Each branch runs its own Odoo server and database. Credentials belong to a service user in that branch database; callcenter operators do not need accounts in every branch. Store access remains explicit, including for administrators using other provider methods.
 
-| Operation | Current behavior |
-| --- | --- |
-| Callcenter POS sale submission | Sent to branch Odoo; the sale configuration controls immediate E-Plus posting. |
-| Return invoice loading and refund previews | Handled by branch Odoo using the original E-Plus invoice and branch business rules. |
-| Return posting | Sent to branch Odoo and immediately posted to E-Plus after validation. |
-| Live stock batches and POS balance refresh | Read from branch E-Plus through branch Odoo. |
-| POS catalogue search | Uses the existing callcenter catalogue. The provider separately exposes a product-search endpoint. |
-| Other branch operations, including transfers | Not implemented in this API version. |
+Stock comes from branch E-Plus `Item_Class_Store`, filtered by store and product. Branch Odoo is the intermediary. Product catalogue search in callcenter remains local; the provider also exposes a branch product search method. Transfers are not implemented.
 
-`Item_Class_Store` is an **E-Plus SQL Server table**, not an Odoo table. Branch Odoo reads its branch-filtered batch rows and returns structured inventory data. The new stock endpoint does not update Odoo inventory snapshots or product prices. Existing local catalogue/snapshot information remains separate from live stock reads.
+**This release uses JSON-2 only.** Old XML-RPC passwords are not reused as API keys. Existing connections require enrollment. Upgrade branches before switching the callcenter process; enroll every branch required for operations before cutover.
 
-Callcenter routing applies to Odoo users in `ab_sales.group_call_center`. Other users retain the existing local flow. Direct sale pushes and direct return SQL connections are blocked for callcenter users by the client adapter.
+## Workspaces and runtime
 
-## 2. Workspaces and local instances
+| Setting | Branch | Callcenter |
+|---|---|---|
+| Addons workspace | `/opt/odoo19/custom-addons` | `/opt/odoo19/worktrees/callcenter` |
+| Changed module | `ab_branch_api` | `ab_sales` |
+| Local database | `abdin_pos` | `callcenter19` |
+| Configuration | `/opt/odoo19/odoo19-pos.conf` | `/opt/odoo19/odoo19-callcenter.conf` |
+| Local HTTP / gevent ports | `4092` / `4093` | `5066` / `5067` |
 
-These are the development configuration values at the time of writing; verify them before running commands in another environment.
+Use the branch HTTP address, not its gevent port or E-Plus SQL address. For different servers, use a reachable HTTPS hostname. HTTP is permitted only for loopback development. TLS verification stays enabled and redirects are rejected.
 
-| Setting | Branch / pos19 workspace | callcenter19 workspace |
-| --- | --- | --- |
-| Addons directory | `/opt/odoo19/custom-addons` | `/opt/odoo19/worktrees/callcenter` |
-| Main change | New `ab_branch_api` module | Updated `ab_sales` |
-| Configuration file | `/opt/odoo19/odoo19-pos.conf` | `/opt/odoo19/odoo19-callcenter.conf` |
-| PostgreSQL database | `abdin_pos` | `callcenter19` |
-| HTTP port | `4092` | `5066` |
-| Gevent port | `4093` | `5067` |
-
-Keep the databases separate. HTTP and gevent must also use different ports when Odoo runs separate listeners. The **Branch Odoo URL** uses the HTTP port, not the gevent port or the E-Plus SQL Server address.
-
-## 3. Prepare the branch
-
-1. Install `ab_branch_api` on the **branch Odoo database**. It depends on `ab_sales` and `ab_hr`; keep the relevant contract, promotion, and employee extensions installed for the branch's business flows.
-2. Verify the branch's existing replica configuration, default sales store, E-Plus connection, and employee mappings. Installing the API does not configure E-Plus or synchronize master data.
-3. Confirm that the target store has the correct E-Plus serial and server configuration. The existing connection helper normally uses `store.ip1`; it retains the `192.168.1.150` override for the configured default sales store. Check that this matches the deployment.
-4. Choose the branch Odoo integration user. In Settings, grant **Branch API / API User**, together with the business access needed for sales, returns, products, and employee references. The API group alone does not grant all business permissions.
-5. As an administrator, open **Sales → Configurations → Branch API → Access** and add the binding below.
-
-| Field | Value or purpose |
-| --- | --- |
-| Active | Enabled. |
-| User | The branch integration user whose credentials callcenter will use. |
-| Store | The permitted branch store. |
-| Allow Posting | Enable to accept sale and return submissions. |
-| Allow Cost | Enable only if this integration user should receive cost information. |
-
-An explicit active user/store binding is required **even for a Settings administrator**. A user may have multiple explicit bindings if that access is intended. When cost access is disabled, stock/return responses mask cost as `0.0`; this is not evidence that the actual cost is zero.
-
-Configure group membership through Odoo Settings/security configuration, not through Python scripts. Creating the access binding does not add the user to the API group automatically.
-
-### Module installation or upgrade
-
-For a new branch installation:
+Targeted upgrades:
 
 ```bash
 /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin \
   -c /opt/odoo19/odoo19-pos.conf -d abdin_pos \
-  -i ab_branch_api --stop-after-init \
-  --workers=0 --max-cron-threads=0 \
-  --http-port=5069 --gevent-port=5072
-```
+  -u ab_branch_api --stop-after-init --no-http --max-cron-threads=0
 
-For an existing installation, replace `-i ab_branch_api` with `-u ab_branch_api`. These alternate ports isolate maintenance from the PyCharm instance; choose another unused pair if necessary.
-
-## 4. Prepare callcenter
-
-1. Upgrade `ab_sales` in the callcenter database using the callcenter configuration file and worktree.
-2. Verify that the callcenter configuration has a valid `decryption_key`. This key encrypts/decrypts the stored branch RPC password/API key and optional sync key. Keep it stable; changing it can make existing stored secrets unreadable. Never put real secrets in this document or Git.
-3. Give the intended callcenter Odoo users the **Abdin Sales / Call Center** role.
-4. With `ab_employee_access_sales` installed, configure employee POS sessions, permitted stores, and the employee role's return-screen permission. Call Center membership does not replace these checks. Existing store service-user restrictions still apply.
-5. As an administrator, open **Sales → Configurations → Branch RPC Configurations** and create one active configuration for each target store.
-
-| Field | What to enter |
-| --- | --- |
-| Store | The callcenter store representing the target branch. Its E-Plus serial must match the branch store. |
-| Branch Odoo URL | Reachable base URL of branch Odoo, without `/xmlrpc/2/object`. For the same-host development setup: `http://127.0.0.1:4092`. On another host/container, use an address reachable from the callcenter server; use HTTPS for deployed network access. |
-| Branch Database | The branch PostgreSQL database, such as `abdin_pos`, not `callcenter19` and not the E-Plus database name. |
-| RPC User | Login of the branch integration user configured in step 3. |
-| RPC Password/API Key | That user's branch Odoo password or supported API key. |
-| RPC Sync Key | Optional `x-sync-key` value, only when the branch deployment requires it. |
-| Connection Timeout | Socket timeout in seconds; default `15`. A timeout does not prove that posting failed. |
-| Push to E-Plus on Submit | Controls **sales only**. Returns always request immediate posting. |
-
-The configuration enforces one record per store. Reuse or reactivate the existing record rather than creating a duplicate for that store.
-
-Upgrade command:
-
-```bash
 /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin \
   -c /opt/odoo19/odoo19-callcenter.conf -d callcenter19 \
-  -u ab_sales --stop-after-init \
-  --workers=0 --max-cron-threads=0 \
-  --http-port=5070 --gevent-port=5073
+  -u ab_sales --stop-after-init --no-http --max-cron-threads=0
 ```
 
-Use targeted upgrades, never `-u base`. During the original setup, an older promotion schema also required a targeted `ab_promo_program` upgrade because a report expected `compensation_company_id`. This is a historical deployment issue, not a required upgrade for every installation.
+For a new branch, use `-i ab_branch_api` instead. Restart the affected Odoo processes afterward. Never use `-u base` for this feature.
 
-Restart both PyCharm-managed Odoo instances after applying code/upgrades. Maintenance commands do not reload the Python classes already held by those processes.
+## Prepare each branch once
 
-## 5. Test the connection and master-data mapping
+1. Install/upgrade Branch API. It declares the native `rpc` module dependency required for JSON-2.
+2. Verify existing E-Plus/replica configuration, the default sales store, and employee, contract, promotion, and product mappings. The API does not configure these business settings.
+3. Create or choose an active internal **service user**, without Settings administrator access. Assign **Branch API / API User** and the business roles needed for the intended operations through Odoo's user security screens. The API group alone does not grant all business ACLs.
+4. As an administrator, open **Sales → Configurations → Branch API → Prepare Callcenter Connection**.
+5. Select the service user and store. Enable **Allow Posting** for sale submission and return posting; enable **Allow Cost** only if required. Stock cost is masked otherwise.
+6. Acknowledge **Enable database-wide programmatic API key management**. This sets `base.enable_programmatic_api_keys`; it applies to all eligible users in that database, not only this connection. The API User group allows a maximum 90-day key lifetime. Odoo's native key-count limit remains in effect. [more info](#enable-database-wide-programmatic-api-key-management)
+7. Generate the credential. Copy it once into callcenter. The wizard does not save plaintext in its database record; the secret exists in the response/browser while the dialog is open. Odoo stores its hash.
 
-Click **Test Connection** on each callcenter Branch RPC Configuration. It authenticates to branch Odoo and calls `ab_branch_api.get_capabilities()` to verify API version `1`, the requested store, and access to that store.
 
-A successful test establishes access to the **branch Odoo API**. It does not prove E-Plus connectivity, posting permission, employee mapping, or that all business references exist. Verify those separately before a real transaction.
+The wizard creates or updates the selected **Branch API → Access** binding. Maintain other user/store bindings on that screen. Use a distinct service identity per independently managed connection; never use one chain-wide shared secret.
 
-Cross-database mapping uses:
+## Enroll in callcenter
 
-| Data | Reference |
-| --- | --- |
-| Store | E-Plus store serial (`sto_id`). |
-| Product and other supported master records | E-Plus serial or code; shared XML ID where applicable. |
-| Employee | Cost-center code when available. |
-| Product unit | Unit factor within the mapped product's unit category. |
-| Original return invoice | E-Plus invoice number (`sth_id`) within the selected store. |
-| Return line | Original detail ID (`std_id`) plus product serial; quantities travel in source-invoice units. |
-| Promotion or another record without a serial/code | A shared XML ID that resolves on the branch. |
+Open **Sales → Configurations → Branch Connections** as a Settings administrator.
 
-Do not assume the same numeric Odoo record ID refers to the same record in both databases. Missing or ambiguous references are rejected. The API does not automatically import missing products, employees, contracts, or promotions.
+| Field | Configuration |
+|---|---|
+| Store | Local store with the same E-Plus serial as the branch |
+| Branch Odoo URL | Branch HTTPS base URL, without `/json/2` or other paths |
+| Branch Database | Branch PostgreSQL database name |
+| API Key | One-time credential from the branch wizard |
+| Responsible Administrator | Active Settings administrator who receives connection activities |
+| Connection Timeout | Per-request timeout, 3–120 seconds |
+| Push to E-Plus on Submit | Controls immediate posting of sales; returns always post immediately |
+| Active | Enables use and scheduled management; disabling does not revoke the remote credential |
 
-For a non-posting check, load live stock/product details and confirm the selected store. Loading a return reads E-Plus data and can create a branch Odoo return draft/operation record, but does not post an E-Plus return. A genuine sale/return test changes stock and possibly financial records; use a designated test environment or an explicitly approved business transaction.
+Callcenter encrypts active, pending, and previous credentials using the existing `decryption_key` configuration. Keep that key stable and protected. Secret fields are administrator-only, masked in the UI, and excluded from export. Never put credentials in Git, screenshots, logs, or command-line arguments.
 
-## 6. Sale process
+Click **Test Connection**. Success verifies native bearer authentication, provider version, the store binding, the service user's identity, credential expiry, and programmatic key management. It records **Ready** and the verified integration login. A failed check persists its message and creates an administrator activity; inspect the form after the button completes.
 
-1. The callcenter employee creates a POS bill and selects a store.
-2. Existing employee-session and POS checks run.
-3. Callcenter records the submission attempt, converts references, and calls branch `submit_sale()` using the bill's request token.
-4. Branch Odoo validates access, resolves its own records, creates the branch sale, and runs the existing business logic.
-5. The configured push flag determines the outcome:
+A successful check does not prove E-Plus connectivity, stock availability, contract configuration, or posting readiness. Confirm those independently before a business transaction. Callcenter group access and employee session rules still apply locally.
 
-| Push flag | Result |
-| --- | --- |
-| Disabled | Branch Odoo creates a `prepending` invoice. This API call does not post it to E-Plus; branch staff use their existing workflow later. |
-| Enabled | Branch Odoo calls the existing E-Plus posting method. Successful posting returns an E-Plus invoice ID and normally leaves the branch invoice `pending`. |
+## Central monitoring and rotation
 
-The existing branch status synchronization marks the sale `saved` when E-Plus finalizes it (`sth_flag = 'C'`). An API operation marked **Done** means that the requested API action completed; it does not necessarily mean E-Plus has finalized the sale.
+The list shows health, last successful check, enrollment state, expiry, and rotation state. Select connections for **Check Connections** or **Rotate Credentials**; these bulk actions enqueue background jobs.
 
-Callcenter receives the remote invoice identifiers and records the RPC outcome. This submission path creates the invoice on branch Odoo, rather than creating a second local sale in callcenter.
+This workspace already uses **integration_queue_job**, which provides `queue.job` and `with_delay`. Do not install the separate `queue_job` addon alongside it: both own the same model tables and root channel.
 
-## 7. Return process
+The callcenter configuration must load the installed runner. The local configuration has been adjusted to:
 
-1. Open a return for the selected store and original E-Plus invoice. Opening from an existing Odoo sale requires that sale to have an E-Plus serial.
-2. Callcenter creates/reuses its local return and a stable request token, then asks branch Odoo to load the source invoice.
-3. Branch Odoo creates/reuses the corresponding return draft and reads invoice lines from E-Plus. Callcenter displays mapped products, units, and returnable quantities.
-4. The employee selects quantities. Refund previews run on branch Odoo, including installed contract/promotion repricing rules.
-5. Clicking **Push to E-Plus** sends source-line identities, quantities in source units, notes, and the available employee reference to the branch.
-6. Branch Odoo checks access, invoice ownership, finalized source status, return period, and quantities. It reuses the existing return-posting logic to update E-Plus stock, sales/return records, payments, and financial adjustments as applicable.
-7. Existing return extensions perform the replication work. The branch returns its return ID, E-Plus return ID, financial transaction ID, and totals; callcenter updates its local return to `saved` after success.
+```ini
+[options]
+server_wide_modules = web,integration_queue_job
 
-A pending source sale cannot be returned. The sale **Push to E-Plus on Submit** setting does not defer return posting. A local return cannot simply switch to another invoice while reusing a token already tied to its branch return; create a separate return for a different invoice.
+[queue_job]
+channels = root:7,root.sync_live:2,root.sync_historical:1,root.branch_connections:4
+```
 
-## 8. Logs, timeouts, and reconciliation
+Preserve other required server-wide modules and existing channels on each deployment. The added channel can run four management jobs; database advisory locks also cap management execution at four concurrent jobs per callcenter database and serialize jobs per connection. The root capacity must accommodate the existing work plus the desired management capacity. A single-process runner may use less capacity.
 
-Use both views when investigating an operation:
+- Health scheduler: every **15 minutes**, checks provider capabilities and credentials only.
+- Rotation scheduler: daily, considers keys with **30 days or less remaining** and unfinished rotations.
+- Key lifetime: **90 days**.
+- Overlap: at least **24 hours** after a replacement passes verification. Retirement runs at the next rotation job after that threshold.
+- Administrator activities flag failed checks, approaching expiry, interrupted generation, and management failures. Activities are deduplicated per connection and closed when the warning clears.
 
-- **Callcenter:** Sales → Configurations → Call-Center RPC Logs. Check the operation name, store, request token, remote identifiers, status, and error.
-- **Branch:** Sales → Configurations → Branch API → Operations. Check the token, operation kind, state, branch record ID, result, and message.
-- **Callcenter return form, administrator:** Branch Return ID and Branch Request Token are shown after a branch return ID is known.
+| Rotation state | Meaning |
+|---|---|
+| Idle | No replacement is pending |
+| Generating | Durable marker written before remote key generation |
+| Verification Pending | Replacement stored encrypted; the old key remains active until verification succeeds |
+| Overlap | New key is active; old key retained temporarily |
+| Needs Review | Generation response was uncertain or the worker stopped during generation; automatic generation is blocked |
 
-| Branch operation state | Meaning and next action |
-| --- | --- |
-| Draft | Preparation/read stage; API posting has not been reserved. |
-| Processing | Request was durably reserved before external posting. If it remains here after a failure, investigate; do not assume it is safe to repost. |
-| Done | Requested action completed. Repeating the same token and payload returns its stored result. |
-| Needs Reconciliation | The external outcome is uncertain. Automatic reposting is blocked. Inspect E-Plus and branch records first. |
+The replacement must authenticate as the same integration user and pass the same store checks. The old key is revoked only after another successful check with the replacement. Failed retirement retains the previous key for retry. Scheduled jobs never retry business sale or return submission.
 
-A completed token cannot be reused with a different payload. Do not change the token, RPC identity, or create a replacement request to bypass an uncertain result.
+For **Needs Review**, inspect the branch user's API keys using the recorded Rotation Name, reconcile any generated key, then enroll a fresh credential through the wizard. An expired or revoked active key also requires fresh enrollment. Do not repeatedly create keys to work around a branch outage.
 
-The existing return posting, repricing, and replication steps do not all share one SQL commit. E-Plus may already contain the return when a later replication step fails. The API retains available partial identifiers and blocks replay; it does not automatically repair or reset uncertain operations. A return reservation can also block another API return for the same invoice until the outcome is reconciled.
+**Revoke Credential** is an explicit form action available when rotation is idle. It revokes the current remote key and disables the local connection after success. If the branch cannot be reached, revocation is not marked complete. For emergency access removal, disable the connection locally and revoke credentials at the branch. During an unfinished rotation, reconcile all associated keys at the branch first.
 
-If the response was lost after the operation completed, retrying the **unchanged** request can recover the stored result. If it is Processing or Needs Reconciliation, an administrator must investigate the branch/E-Plus state before deciding any further business action. The provider's `get_operation_status()` is scoped to the authenticated API user and requested store.
+## Sale, stock, and return workflow
 
-## 9. Troubleshooting
+### Sales
 
-| Symptom | Check |
-| --- | --- |
-| No active branch RPC configuration | Correct callcenter database, selected store, and active configuration. |
-| Branch API access required | Branch integration user's API User role or Settings access. |
-| Branch operation not allowed | Active user/store binding; Allow Posting for submissions. |
-| Unknown provider/model or version mismatch | Correct branch addons path, `ab_branch_api` installation/upgrade, database, and process restart. |
-| Secret cannot be decrypted | The callcenter `decryption_key` must match the key used to store the secret. Restore the intended key or re-enter the credential through configuration. |
-| E-Plus server not configured or unavailable | Branch store/server settings and SQL connectivity from the branch Odoo host. |
-| Missing/ambiguous reference or unit | Matching master-data identifiers, shared XML IDs, employee cost-center codes, and product unit factors. |
-| Employee login or return-screen access error | Callcenter employee session, role permission, allowed stores, and store service-user assignment. |
-| Source invoice still pending | Finalize the source sale through the existing branch/E-Plus workflow first. |
-| Different data for the same token | Inspect the original operation; do not force a new token to bypass the protection. |
-| Return saved but replication failed | Reconcile using the recorded transaction IDs; do not repeat the stock return blindly. |
+1. The employee builds the bill in callcenter. Live stock requests go through the selected branch.
+2. Callcenter converts local records into stable external references and submits the existing request token.
+3. Branch Odoo validates access, resolves its own records, creates the sale, and runs its existing pricing and promotion logic. Computed contract display values (`company_pay`, `cust_pay`, `contract_name`) are omitted from the request; the contract reference and discount input remain.
+4. With immediate posting disabled, the branch sale stays `prepending`. With posting enabled, existing branch logic writes to E-Plus and returns the invoice ID, normally with `pending` status.
+5. Existing branch synchronization marks the invoice `saved` when E-Plus finalizes it. API operation **Done** does not itself mean the invoice is finalized.
 
-## 10. Provider interface and source references
+### Returns
 
-All provider methods are on the branch model `ab_branch_api`, accessed through the configured Odoo XML-RPC endpoints. They are not direct E-Plus RPC methods.
+1. Enter the original E-Plus invoice ID in callcenter and load lines through the branch API.
+2. Branch Odoo checks ownership and creates/reuses its return draft. Return previews and installed contract/promotion repricing run on the branch.
+3. Callcenter submits selected original-line quantities and the available employee reference using a stable return token.
+4. Branch Odoo requires the original invoice to be finalized, checks the return period and quantities, and runs its existing E-Plus return, financial, and replication logic.
+5. Successful responses update callcenter with the branch return ID, E-Plus return ID, financial ID, and totals.
 
-| Method | Purpose |
-| --- | --- |
-| `get_capabilities(store_serial)` | Version, branch identity, posting capability, and supported methods. |
-| `search_products(store_serial, query='', limit=60, offset=0)` | Query branch Odoo products; return stable identifiers and names. |
-| `get_stock_lines(store_serial, product_serials)` | Return `{'data': [...]}` with live stock batches; maximum 200 product serials per request. |
-| `submit_sale(store_serial, token, payload, push_to_eplus=True)` | Create the branch sale and optionally post it. |
-| `get_return_invoice(store_serial, invoice, token, selections=False)` | Load/reuse a branch return and optionally apply selections for a preview. |
-| `submit_return(store_serial, invoice, token, lines, notes='', employee_ref=False)` | Validate and post a return. |
-| `get_operation_status(store_serial, token)` | Retrieve the caller's stored operation outcome. |
+The sale immediate-posting option does not defer returns. Loading a return may create an Odoo draft but does not post an E-Plus return. Callcenter users cannot bypass the API with direct sale/return SQL connections.
 
-Stock rows include batch `source_id`, product/store E-Plus serials, `qty`, `qty_in_small_unit`, `price`, `cost`, and `exp_date`. The callcenter adapter maps local product/store IDs for `inventory_json` after validating the response.
+### Mapping and retry safety
 
-Relevant sources:
+Match stores/products/customers using E-Plus identifiers, supported codes, or shared XML IDs. Employees use cost-center codes; units use product category and factor. Promotions without stable external serials require shared XML IDs. Numeric Odoo IDs are never cross-database identities.
 
-- [Callcenter adapter](models/ab_sales_branch_api_client.py)
-- [RPC configuration and connection test](models/ab_sales_branch_rpc_config.py)
-- [POS sale submission](models/ab_sales_pos_api.py)
-- [Administrator views](views/ab_sales_branch_api_views.xml)
-- Branch provider: `/opt/odoo19/custom-addons/ab_branch_api/models/branch_api.py`
-- [Implementation changelog](changelog.d/2026-09-07-branch-api-client.md)
+The existing branch sales helper includes a default-store server override for `192.168.1.150`; verify that existing business configuration before deployment.
+
+Business operation states and request tokens are independent of credential rotation:
+
+- Completed unchanged requests return the stored result.
+- Changed payloads cannot reuse completed tokens.
+- Processing or uncertain E-Plus outcomes require reconciliation before any further posting.
+- SQL and Odoo PostgreSQL do not form one atomic transaction. Partial E-Plus identifiers are retained for investigation.
+- Do not create a new token or switch integration users to bypass an uncertain business operation.
+
+Inspect **Branch API → Operations** on the branch and **Callcenter RPC Logs** in callcenter. The retained log/model technical names do not indicate XML-RPC transport. Administrator return forms show the branch return ID and token.
+
+## JSON-2 interface
+
+All requests use native Odoo bearer authentication:
+
+```text
+POST /json/2/ab_branch_api/<method>
+Authorization: bearer <secret>
+X-Odoo-Database: <branch database>
+Content-Type: application/json
+```
+
+Arguments are named JSON properties, for example `{"store_serial": 29}`. Do not send XML-RPC positional argument envelopes.
+
+Business methods remain `get_capabilities`, `search_products`, `get_stock_lines`, `submit_sale`, `get_return_invoice`, `submit_return`, and `get_operation_status`. `get_connection_status(store_serial)` adds the authenticated user's identity and credential metadata. `revoke_credential(store_serial, key)` safely retires the current user's credential and tolerates an already invalid old key.
+
+Rotation uses native `/json/2/res.users.apikeys/generate` with `key`, `scope`, `name`, and `expiration_date`. Metadata is scoped to the authenticated user; branch storage never exposes key hashes. Normal branch validation/access messages appear as Odoo messages; unexpected responses are sanitized.
+
+## Deployment automation guide
+
+The wizard is the default enrollment path. For a future deployment tool managing many servers:
+
+1. Inventory each branch's HTTPS URL, PostgreSQL database, store serial, service-user login, and administrator owner. Keep secrets outside this inventory.
+2. Deploy and target-upgrade `ab_branch_api`; configure TLS and the existing E-Plus business settings.
+3. Provision users and roles through approved Odoo security administration. Do not add Python hooks or ad-hoc group-membership writes to the addon.
+4. Run the enrollment workflow in the authenticated branch administration context. Its model is `ab_branch_api_enrollment`, and `action_generate()` returns the one-time credential in the action context. An unattended tool needs its own securely bootstrapped administrative access; it cannot use a nonexistent service credential to enroll itself.
+5. Transfer the returned credential through a secret manager or protected in-memory channel. Do not print the action response, place the secret in shell arguments, or save it in plaintext files.
+6. Configure the callcenter record through Odoo ORM/admin access, using the write-only `api_key` input, then run `action_test_connection()` and require Ready plus a successful test.
+7. Verify the installed queue runner, both scheduled actions, and a successful management job before enabling business use. Record only non-secret verification results.
+8. For interrupted enrollment, inspect branch keys and the central state before retrying. Remove only obsolete credentials using Odoo's supported key controls; never alter business records to repair enrollment.
+
+No deployment platform, chain-wide credential, or automatic trust bootstrap is bundled with this module.
+
+
+## Enable database-wide programmatic API key management
+That checkbox enables Odoo’s automatic API-key creation and revocation, which callcenter needs to renew its credentials without someone visiting each branch.
+
+  For example, when a branch key has 30 days remaining:
+
+  1. Callcenter authenticates using the current key.
+  2. It asks branch Odoo to generate a replacement for the same integration user.
+  3. It verifies the replacement and starts using it.
+  4. After the overlap period, it revokes the old key.
+
+  “Database-wide” describes who can use that feature. The setting belongs to the entire branch Odoo database. Other eligible users with valid credentials can also use Odoo’s programmatic key-
+  management methods. It is not restricted to ab_branch_api.
+
+  It does not automatically grant users access to Branch API, other stores, or sales posting. Those still require the API role, an explicit user/store binding, and the appropriate business
+  permissions. Each of your 60 branch databases has its own setting.
+
+  The two limits serve different purposes:
+
+   Limit              Meaning
+  ━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   90-day lifetime    Our integration group permits keys lasting up to 90 days, and enrollment/rotation requests that lifetime. Another higher-privilege group could permit longer durations.
+  ─────────────────  ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Key-count limit    The installed Odoo code defaults to 10 unexpired keys per user for programmatic creation, configurable through base.programmatic_api_keys_limit. This prevents unlimited key
+                      accumulation.
+
+  Normally, our connection uses one key, temporarily two during rotation, so it stays comfortably below that count limit.
+
+  The acknowledgment makes this broader database setting explicit. If you do not want other eligible users to gain programmatic key management, we should change the design to restrict renewal to the
+  dedicated integration users instead of enabling this global switch.
+

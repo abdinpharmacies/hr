@@ -1,11 +1,11 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
     'depends': ['base', 'ab_hr', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_eplus_connect',
-                'abdin_et', 'ab_widgets'],
+                'abdin_et', 'ab_widgets', 'integration_queue_job', 'mail'],
     'data': [
         'data/ir_cron.xml',
         'security/groups_sales.xml',
@@ -29,6 +29,7 @@
         'views/ab_sales_per_day.xml',
         'views/ab_replica_db_inherit.xml',
         'views/ab_sales_branch_rpc_config_views.xml',
+        'data/branch_connection_jobs.xml',
         'views/ab_sales_callcenter_rpc_log_views.xml',
         'views/ab_sales_branch_api_views.xml',
         'views/ab_product_metadata_views.xml',

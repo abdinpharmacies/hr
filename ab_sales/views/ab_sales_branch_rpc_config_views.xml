@@ -5,7 +5,11 @@
             <field name="name">ab_sales_branch_rpc_config.list</field>
             <field name="model">ab_sales_branch_rpc_config</field>
             <field name="arch" type="xml">
-                <list string="Branch RPC Configurations">
+                <list string="Branch Connections" decoration-danger="last_test_state == 'error'" decoration-warning="rotation_state == 'review'">
+                    <header><button name="action_check_connections" type="object" string="Check Connections"/>
+                    <button name="action_rotate_credentials" type="object" string="Rotate Credentials"/></header>
+                    <field name="enrollment_state"/><field name="rotation_state"/>
+                    <field name="expires_at"/><field name="last_success_at"/>
                     <field name="active" optional="hide"/>
                     <field name="store_id"/>
                     <field name="store_code"/>
@@ -24,9 +28,11 @@
             <field name="name">ab_sales_branch_rpc_config.form</field>
             <field name="model">ab_sales_branch_rpc_config</field>
             <field name="arch" type="xml">
-                <form string="Branch RPC Configuration">
+                <form string="Branch Connection">
                     <header>
                         <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                    <button name="action_rotate_credentials" string="Rotate Credential" type="object"/>
+                        <button name="action_revoke_credential" string="Revoke Credential" type="object" confirm="Revoke this branch credential and disable the connection?"/>
                     </header>
                     <sheet>
                         <group>
@@ -41,20 +47,25 @@
                                 <field name="rpc_url" placeholder="https://branch.example.com"/>
                                 <field name="rpc_db"/>
                                 <field name="rpc_user"/>
-                                <field name="rpc_password" password="True"/>
-                                <field name="rpc_sync_key" password="True"/>
+                                <field name="api_key" password="True" groups="base.group_system"/>
+                                <field name="administrator_id"/>
                                 <field name="connection_timeout"/>
                                 <field name="push_to_eplus_on_submit"/>
                             </group>
                         </group>
-                        <group string="Last Test">
+                        <group string="Credential Lifecycle">
+                            <field name="enrollment_state"/><field name="rotation_state"/>
+                            <field name="expires_at"/><field name="retire_at"/><field name="rotation_name"/>
+                            <field name="management_message"/><field name="can_post"/>
+                        </group>
+                        <group string="Last Test"><field name="last_success_at"/>
                             <field name="last_test_state"/>
                             <field name="last_tested_at"/>
                             <field name="remote_store_id"/>
                             <field name="remote_store_name"/>
                             <field name="last_test_message"/>
                         </group>
-                    </sheet>
+                    </sheet><chatter/>
                 </form>
             </field>
         </record>
@@ -63,7 +74,7 @@
             <field name="name">ab_sales_branch_rpc_config.search</field>
             <field name="model">ab_sales_branch_rpc_config</field>
             <field name="arch" type="xml">
-                <search string="Branch RPC Configurations">
+                <search string="Branch Connections">
                     <field name="store_id"/>
                     <field name="rpc_url"/>
                     <filter name="active" string="Active" domain="[('active', '=', True)]"/>
@@ -74,7 +85,7 @@
         </record>
 
         <record id="ab_sales_branch_rpc_config_action" model="ir.actions.act_window">
-            <field name="name">Branch RPC Configurations</field>
+            <field name="name">Branch Connections</field>
             <field name="res_model">ab_sales_branch_rpc_config</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_sales_branch_rpc_config_view_search"/>
@@ -82,7 +93,7 @@
         </record>
 
         <menuitem id="ab_sales_branch_rpc_config_menu"
-                  name="Branch RPC Configurations"
+                  name="Branch Connections"
                   parent="config_sub_menu"
                   action="ab_sales_branch_rpc_config_action"
                   sequence="420"

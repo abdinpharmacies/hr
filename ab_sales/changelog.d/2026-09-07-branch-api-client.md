@@ -10,7 +10,7 @@ Files changed:
 - ab_sales/models/ab_sales_pos_api.py
 - ab_sales/changelog.d/2026-08-26-eplus-detail-idempotency.md
 
-Current changes before commit:
+Changes included in commit 04ead10b2aefe53d014ccdfb54b36f23b853fe86:
 
 Author: hossam elsheikh
 Date: 2026-09-08

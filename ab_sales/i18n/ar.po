@@ -476,3 +476,655 @@ msgstr "هذا الفرع غير مسموح به."
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 msgid "Callcenter sales must be submitted through POS using the branch API."
 msgstr "يجب إرسال مبيعات مركز الاتصال من نقطة البيع عبر واجهة برمجة الفرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__api_key
+msgid "API Key"
+msgstr "مفتاح API"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__active
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_metadata_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تمييز استثناء النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_state
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_state
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_type_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__alert_activity_id
+msgid "Alert Activity"
+msgstr "نشاط التنبيه"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__api_key_encrypted
+msgid "Api Key Encrypted"
+msgstr "مفتاح API المشفر"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Branch Connection"
+msgstr "اتصال الفرع"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_branch_rpc_config_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_branch_rpc_config_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
+msgid "Branch Connections"
+msgstr "اتصالات الفروع"
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.branch_connection_health_cron_ir_actions_server
+msgid "Branch Connections: Check Health"
+msgstr "اتصالات الفروع: فحص الاتصال"
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.branch_connection_rotation_cron_ir_actions_server
+msgid "Branch Connections: Rotate Credentials"
+msgstr "اتصالات الفروع: تجديد بيانات الاعتماد"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Branch connection needs attention"
+msgstr "اتصال الفرع يحتاج إلى مراجعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Branch identity, expiry, or programmatic key management is not configured "
+"correctly."
+msgstr ""
+"هوية الفرع أو الصلاحية أو إدارة المفاتيح برمجياً غير مضبوطة بشكل صحيح."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__can_post
+msgid "Can Post"
+msgstr "يمكنه الترحيل"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
+msgid "Check Connections"
+msgstr "فحص الاتصالات"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Choose an active Settings administrator."
+msgstr "اختر مسؤول إعدادات نشطاً."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__store_code
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_code
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__product_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Complete credential rotation before changing the destination."
+msgstr "أكمل تجديد بيانات الاعتماد قبل تغيير وجهة الاتصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Complete credential rotation before replacing the enrollment key."
+msgstr "أكمل تجديد بيانات الاعتماد قبل استبدال مفتاح التسجيل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Complete or reconcile rotation before revoking this connection."
+msgstr "أكمل تجديد بيانات الاعتماد أو سوّ حالته قبل إلغاء هذا الاتصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Connection verified."
+msgstr "تم التحقق من الاتصال."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Credential Lifecycle"
+msgstr "دورة حياة بيانات الاعتماد"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Credential generation could not be confirmed. Review branch keys before "
+"enrolling again."
+msgstr ""
+"تعذر تأكيد إنشاء بيانات الاعتماد. راجع مفاتيح الفرع قبل التسجيل مجدداً."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Credential generation was interrupted. Review branch keys before enrolling "
+"again."
+msgstr "توقف إنشاء بيانات الاعتماد. راجع مفاتيح الفرع قبل التسجيل مجدداً."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Credentials cannot be exported."
+msgstr "لا يمكن تصدير بيانات الاعتماد."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_replica_db__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_client__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Enroll a branch API credential first."
+msgstr "سجّل بيانات اعتماد واجهة الفرع أولاً."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__enrollment_state__required
+msgid "Enrollment Required"
+msgstr "يلزم التسجيل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__enrollment_state
+msgid "Enrollment State"
+msgstr "حالة التسجيل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__store_eplus_serial
+msgid "Eplus Serial"
+msgstr "معرّف إي بلس"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__expires_at
+msgid "Expires At"
+msgstr "انتهاء الصلاحية"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__activity_type_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_type_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font awesome مثل fa-tasks"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__rotation_state__generating
+msgid "Generating"
+msgstr "جارٍ الإنشاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_replica_db__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_client__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__activity_exception_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط استثنائي."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__rotation_state__idle
+msgid "Idle"
+msgstr "جاهز"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__last_success_at
+msgid "Last Success At"
+msgstr "آخر اتصال ناجح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_uid
+msgid "Last Updated by"
+msgstr "آخر تعديل بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تعديل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__management_message
+msgid "Management Message"
+msgstr "رسالة الإدارة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__name
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__rotation_state__review
+msgid "Needs Review"
+msgstr "يحتاج إلى مراجعة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_summary
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_summary
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_type_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__rotation_state__overlap
+msgid "Overlap"
+msgstr "فترة تداخل المفاتيح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__pending_key_encrypted
+msgid "Pending Key Encrypted"
+msgstr "المفتاح المعلق المشفر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__previous_key_encrypted
+msgid "Previous Key Encrypted"
+msgstr "المفتاح السابق المشفر"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__enrollment_state__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__remote_user_id
+msgid "Remote User"
+msgstr "المستخدم البعيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__administrator_id
+msgid "Responsible Administrator"
+msgstr "المسؤول المكلف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__activity_user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__retire_at
+msgid "Retire At"
+msgstr "موعد إلغاء المفتاح السابق"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Review the connection health, credential expiry, and rotation status."
+msgstr "راجع حالة الاتصال وانتهاء صلاحية بيانات الاعتماد وحالة التجديد."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Revoke Credential"
+msgstr "إلغاء بيانات الاعتماد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Revoke this branch credential and disable the connection?"
+msgstr "هل تريد إلغاء بيانات اعتماد هذا الفرع وتعطيل الاتصال؟"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__enrollment_state__revoked
+msgid "Revoked"
+msgstr "ملغى"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Rotate Credential"
+msgstr "تجديد بيانات الاعتماد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
+msgid "Rotate Credentials"
+msgstr "تجديد بيانات الاعتماد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rotation_name
+msgid "Rotation Name"
+msgstr "اسم عملية التجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rotation_state
+msgid "Rotation State"
+msgstr "حالة التجديد"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Settings administrator access is required."
+msgstr "يلزم امتلاك صلاحية مسؤول الإعدادات."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__activity_state
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_state
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة حسب الأنشطة\n"
+"متأخر: تجاوز تاريخ الاستحقاق\n"
+"اليوم: موعد النشاط اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__sto_eplus_serial
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__store_id
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_per_day_view_search
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"The branch connection failed. Check its network address and availability."
+msgstr "فشل الاتصال بالفرع. تحقق من عنوان الشبكة وإمكانية الوصول إليه."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The branch did not return a replacement credential."
+msgstr "لم يُرجع الفرع بيانات اعتماد بديلة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The branch rejected the credential or its permissions."
+msgstr "رفض الفرع بيانات الاعتماد أو صلاحياتها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The branch returned an invalid JSON response."
+msgstr "أرجع الفرع استجابة JSON غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The branch returned an unexpected response (HTTP %s)."
+msgstr "أرجع الفرع استجابة غير متوقعة (HTTP %s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "The replacement credential belongs to a different integration user."
+msgstr "بيانات الاعتماد البديلة تخص مستخدم تكامل آخر."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__activity_exception_decoration
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_decoration
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي في السجل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Unsupported branch API operation."
+msgstr "عملية واجهة الفرع غير مدعومة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Use HTTPS for branch connections; HTTP is allowed only on loopback "
+"addresses."
+msgstr ""
+"استخدم HTTPS لاتصالات الفروع؛ يُسمح بـ HTTP فقط لعناوين الجهاز المحلي."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__rotation_state__pending
+msgid "Verification Pending"
+msgstr "بانتظار التحقق"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_user
+msgid "Verified Integration User"
+msgstr "مستخدم التكامل المتحقق منه"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Verify and activate the branch connection before using it."
+msgstr "تحقق من اتصال الفرع وفعّله قبل استخدامه."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "https://branch.example.com"
+msgstr "https://branch.example.com"
