@@ -2,7 +2,7 @@
 <odoo>
     <template id="layout" name="Abdin eCommerce Layout" inherit_id="website.layout" priority="120">
         <xpath expr="//body" position="attributes">
-            <attribute name="class" add="ab-storefront" separator=" "/>
+            <attribute name="t-att-class">((body_classname + ' ') if body_classname else '') + 'ab-storefront'</attribute>
         </xpath>
 
         <xpath expr="//body" position="inside">

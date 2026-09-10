@@ -22,7 +22,7 @@ body.ab-storefront {
     --ab-border: #{$ab-border};
     color: $ab-ink;
     background: $ab-background;
-    font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", sans-serif;
+    font-family: var(--ab-font-family-current);
 
     .btn-primary {
         --btn-bg: #{$ab-green};
@@ -32,7 +32,7 @@ body.ab-storefront {
         --btn-active-bg: #{$ab-green-dark};
         --btn-active-border-color: #{$ab-green-dark};
         border-radius: .75rem;
-        font-weight: 700;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     .btn-outline-primary {
@@ -41,7 +41,7 @@ body.ab-storefront {
         --btn-hover-bg: #{$ab-green};
         --btn-hover-border-color: #{$ab-green};
         border-radius: .75rem;
-        font-weight: 700;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     a {
@@ -192,7 +192,7 @@ body.ab-storefront {
     justify-content: center;
     border: 1px solid transparent;
     border-radius: .7rem;
-    font-size: 1rem;
+    font-size: var(--ab-font-size-100);
 
     &.ab-storefront-category-icon-green {
         color: $ab-green-dark;
@@ -226,7 +226,7 @@ body.ab-storefront {
         overflow: hidden;
         color: #fff;
         background: linear-gradient(90deg, $ab-green-dark, $ab-green);
-        font-size: .82rem;
+        font-size: var(--ab-font-size-082);
         opacity: 1;
         transition: max-height .2s ease, opacity .16s ease;
     }
@@ -343,7 +343,7 @@ body.ab-storefront {
 
     .ab-storefront-brand-fallback {
         display: none;
-        line-height: 1;
+        line-height: var(--ab-line-height-100);
 
         strong,
         small {
@@ -436,8 +436,8 @@ body.ab-storefront {
                 .h6 {
                     overflow: hidden;
                     color: $ab-ink;
-                    font-size: .92rem;
-                    line-height: 1.35;
+                    font-size: var(--ab-font-size-092);
+                    line-height: var(--ab-line-height-135);
                     text-overflow: ellipsis;
                     white-space: nowrap;
                 }
@@ -446,8 +446,8 @@ body.ab-storefront {
                     display: -webkit-box;
                     overflow: hidden;
                     color: $ab-muted;
-                    font-size: .78rem;
-                    line-height: 1.45;
+                    font-size: var(--ab-font-size-078);
+                    line-height: var(--ab-line-height-145);
                     -webkit-box-orient: vertical;
                     -webkit-line-clamp: 2;
                 }
@@ -457,7 +457,7 @@ body.ab-storefront {
                 margin-inline-start: auto !important;
                 text-align: end;
                 color: $ab-green-dark;
-                font-size: .86rem;
+                font-size: var(--ab-font-size-086);
             }
         }
     }
@@ -482,7 +482,7 @@ body.ab-storefront {
         border: 1px solid rgba($ab-green, .22);
         border-radius: 1rem;
         background: $ab-green-soft;
-        font-weight: 700;
+        font-weight: var(--ab-font-weight-bold);
         white-space: nowrap;
         transition: color .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
 
@@ -545,7 +545,7 @@ body.ab-storefront {
             .fa-stack {
                 width: auto;
                 height: auto;
-                line-height: 1;
+                line-height: var(--ab-line-height-100);
             }
 
             .ab-storefront-avatar {
@@ -563,8 +563,8 @@ body.ab-storefront {
                 padding: 0 .32rem;
                 color: #fff;
                 background: $ab-orange !important;
-                font-size: .64rem;
-                line-height: 1;
+                font-size: var(--ab-font-size-064);
+                line-height: var(--ab-line-height-100);
                 transform: translate(14%, -14%);
             }
         }
@@ -583,13 +583,13 @@ body.ab-storefront {
             gap: .45rem;
             padding-inline: .8rem;
             border-radius: 999px;
-            font-size: .84rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-084);
+            font-weight: var(--ab-font-weight-bold);
             text-decoration: none;
             white-space: nowrap;
 
             span {
-                line-height: 1;
+                line-height: var(--ab-line-height-100);
             }
         }
 
@@ -646,7 +646,7 @@ body.ab-storefront {
             border-inline-end: 1px solid rgba(#fff, .22);
             border-radius: 0;
             background: #14895a;
-            font-weight: 700;
+            font-weight: var(--ab-font-weight-bold);
             transition: background-color .18s ease;
 
             &::before {
@@ -717,8 +717,8 @@ body.ab-storefront {
             align-items: center;
             padding: .9rem .8rem;
             color: $ab-ink;
-            font-size: .9rem;
-            font-weight: 600;
+            font-size: var(--ab-font-size-090);
+            font-weight: var(--ab-font-weight-semi-bold);
             white-space: nowrap;
 
             &::after {
@@ -745,7 +745,7 @@ body.ab-storefront {
             &.active {
                 color: #fff;
                 background: $ab-green;
-                font-weight: 700;
+                font-weight: var(--ab-font-weight-bold);
 
                 &:hover {
                     color: #fff;
@@ -756,8 +756,8 @@ body.ab-storefront {
 
         .ab-storefront-home-link {
             color: $ab-ink;
-            font-size: 1rem;
-            font-weight: 700;
+            font-size: var(--ab-font-size-100);
+            font-weight: var(--ab-font-weight-bold);
 
             i {
                 color: inherit;
@@ -774,8 +774,8 @@ body.ab-storefront {
             min-width: auto;
             color: $ab-ink;
             border-radius: .7rem;
-            font-size: .94rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-094);
+            font-weight: var(--ab-font-weight-bold);
             transition:
                 color .2s cubic-bezier(.4, 0, .2, 1),
                 background-color .2s cubic-bezier(.4, 0, .2, 1),
@@ -783,7 +783,7 @@ body.ab-storefront {
 
             i {
                 color: $ab-orange;
-                font-size: .9rem;
+                font-size: var(--ab-font-size-090);
                 transform-origin: center;
                 transition:
                     color .2s cubic-bezier(.4, 0, .2, 1),
@@ -809,7 +809,7 @@ body.ab-storefront {
             }
 
             &.active {
-                font-weight: 900;
+                font-weight: var(--ab-font-weight-bold);
 
                 &::after {
                     transform: scaleX(1);
@@ -828,15 +828,15 @@ body.ab-storefront {
             color: #fff;
             border-radius: 999px;
             background: $ab-orange;
-            font-size: .62rem;
-            font-weight: 900;
-            line-height: 1;
+            font-size: var(--ab-font-size-062);
+            font-weight: var(--ab-font-weight-bold);
+            line-height: var(--ab-line-height-100);
         }
 
         .ab-storefront-shop-link {
             color: $ab-orange;
-            font-size: .9rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-090);
+            font-weight: var(--ab-font-weight-bold);
         }
     }
 
@@ -979,7 +979,7 @@ body.ab-storefront {
         border-radius: .8rem;
         background: $ab-green;
         text-decoration: none;
-        font-weight: 700;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     .ab-storefront-mobile-secondary-link,
@@ -994,7 +994,7 @@ body.ab-storefront {
         border-radius: .8rem;
         background: $ab-surface;
         text-decoration: none;
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
         transition:
             color .2s cubic-bezier(.4, 0, .2, 1),
             border-color .2s cubic-bezier(.4, 0, .2, 1),
@@ -1062,25 +1062,25 @@ body.ab-storefront {
         color: #fff;
         border-radius: 999px;
         background: $ab-orange;
-        font-size: .62rem;
-        font-weight: 900;
-        line-height: 1;
+        font-size: var(--ab-font-size-062);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-100);
     }
 
     .ab-storefront-mobile-heading {
         margin-bottom: .45rem;
         color: $ab-muted;
-        font-size: .72rem;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        text-transform: var(--ab-text-transform-label);
     }
 
     .nav-link {
         padding: .72rem .25rem;
         color: $ab-ink;
         border-bottom: 1px solid $ab-border;
-        font-weight: 600;
+        font-weight: var(--ab-font-weight-semi-bold);
     }
 
     .ab-storefront-mobile-category-link {
@@ -1172,8 +1172,8 @@ body.ab-storefront-location-picker-open {
     h2 {
         margin: 0;
         color: #2268d8;
-        font-size: 1.2rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-120);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -1187,7 +1187,7 @@ body.ab-storefront-location-picker-open {
     border: 0;
     border-radius: 50%;
     background: transparent;
-    font-size: 1.35rem;
+    font-size: var(--ab-font-size-135);
     transition: color .18s cubic-bezier(.4, 0, .2, 1), background-color .18s cubic-bezier(.4, 0, .2, 1);
 
     &:hover,
@@ -1217,7 +1217,7 @@ body.ab-storefront-location-picker-open {
 
     i {
         color: #7c8790;
-        font-size: 1.15rem;
+        font-size: var(--ab-font-size-115);
     }
 
     input {
@@ -1226,12 +1226,12 @@ body.ab-storefront-location-picker-open {
         border: 0;
         outline: 0;
         background: transparent;
-        font-size: 1rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
 
         &::placeholder {
             color: #98a0a8;
-            font-weight: 600;
+            font-weight: var(--ab-font-weight-semi-bold);
         }
     }
 
@@ -1253,7 +1253,7 @@ body.ab-storefront-location-picker-open {
     border: 1px solid rgba($ab-green-dark, .1);
     border-radius: .52rem;
     background: #fff;
-    font-weight: 800;
+    font-weight: var(--ab-font-weight-bold);
     transition: color .18s cubic-bezier(.4, 0, .2, 1), border-color .18s cubic-bezier(.4, 0, .2, 1), background-color .18s cubic-bezier(.4, 0, .2, 1);
 
     &.is-selected,
@@ -1275,11 +1275,11 @@ body.ab-storefront-location-picker-open {
     color: #5da8e8;
     border: 0;
     background: transparent;
-    font-size: 1rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-100);
+    font-weight: var(--ab-font-weight-bold);
 
     i {
-        font-size: 1rem;
+        font-size: var(--ab-font-size-100);
     }
 
     &:hover,
@@ -1311,11 +1311,11 @@ body.ab-storefront-location-picker-open {
     border: 1px solid rgba(34, 104, 216, .12);
     border-radius: .65rem;
     background: #fff;
-    font-weight: 900;
+    font-weight: var(--ab-font-weight-bold);
     transition: color .18s cubic-bezier(.4, 0, .2, 1), border-color .18s cubic-bezier(.4, 0, .2, 1), background-color .18s cubic-bezier(.4, 0, .2, 1);
 
     i {
-        font-size: 1rem;
+        font-size: var(--ab-font-size-100);
     }
 
     &:hover,
@@ -1337,8 +1337,8 @@ body.ab-storefront-location-picker-open {
         gap: .55rem;
         margin-bottom: .9rem;
         color: $ab-ink;
-        font-size: 1.05rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-105);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -1362,14 +1362,14 @@ body.ab-storefront-location-picker-open {
         border-bottom: 1px solid rgba($ab-green-dark, .08);
         background: transparent;
         text-align: start;
-        font-size: 1rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
 
         &::after {
             color: #8a9590;
             content: "\f104";
-            font-family: FontAwesome;
-            font-size: 1.25rem;
+            font-family: var(--ab-font-family-icons);
+            font-size: var(--ab-font-size-125);
             text-align: end;
         }
 
@@ -1401,11 +1401,11 @@ body.ab-storefront-location-picker-open {
     background: #fff;
     resize: vertical;
     font: inherit;
-    font-weight: 700;
+    font-weight: var(--ab-font-weight-bold);
 
     &::placeholder {
         color: #98a0a8;
-        font-weight: 600;
+        font-weight: var(--ab-font-weight-semi-bold);
     }
 
     &:focus {
@@ -1430,14 +1430,14 @@ body.ab-storefront-location-picker-open {
 
     span {
         color: $ab-muted;
-        font-size: .78rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-078);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     strong {
         color: $ab-ink;
-        font-size: 1rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -1463,20 +1463,20 @@ body.ab-storefront-location-picker-open {
             radial-gradient(circle at 50% 38%, #ff5a5f 0 17px, transparent 18px),
             linear-gradient(145deg, #dff1ff, #f5fbff);
         box-shadow: inset 0 -12px 0 rgba(38, 116, 168, .1);
-        font-size: 1.6rem;
+        font-size: var(--ab-font-size-160);
     }
 
     strong {
         color: $ab-ink;
-        font-size: .95rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-095);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         max-width: 260px;
         margin: 0;
-        font-size: .78rem;
-        line-height: 1.65;
+        font-size: var(--ab-font-size-078);
+        line-height: var(--ab-line-height-165);
     }
 }
 
@@ -1486,7 +1486,7 @@ body.ab-storefront-location-picker-open {
     border: 0;
     border-radius: .55rem;
     background: $ab-orange;
-    font-weight: 900;
+    font-weight: var(--ab-font-weight-bold);
     transition: background-color .18s cubic-bezier(.4, 0, .2, 1), transform .18s cubic-bezier(.4, 0, .2, 1);
 
     &:hover,
@@ -1528,7 +1528,7 @@ body.ab-storefront-location-picker-open {
         padding: .7rem 1rem .55rem;
 
         h2 {
-            font-size: .82rem;
+            font-size: var(--ab-font-size-082);
         }
 
         .ab-storefront-location-picker-close {
@@ -1536,7 +1536,7 @@ body.ab-storefront-location-picker-open {
             inset-inline-start: .45rem;
             width: 34px;
             height: 34px;
-            font-size: 1.1rem;
+            font-size: var(--ab-font-size-110);
         }
     }
 
@@ -1552,15 +1552,15 @@ body.ab-storefront-location-picker-open {
         border-radius: .55rem;
 
         input {
-            font-size: .82rem;
-            font-weight: 700;
+            font-size: var(--ab-font-size-082);
+            font-weight: var(--ab-font-weight-bold);
         }
     }
 
     .ab-storefront-location-auto,
     .ab-storefront-location-country,
     .ab-storefront-location-section h3 {
-        font-size: .86rem;
+        font-size: var(--ab-font-size-086);
     }
 
     .ab-storefront-location-add {
@@ -1568,7 +1568,7 @@ body.ab-storefront-location-picker-open {
         margin-bottom: .75rem;
         padding: .55rem .75rem;
         border-radius: .55rem;
-        font-size: .82rem;
+        font-size: var(--ab-font-size-082);
     }
 
     .ab-storefront-location-section {
@@ -1577,7 +1577,7 @@ body.ab-storefront-location-picker-open {
 
     .ab-storefront-location-regions button {
         min-height: 46px;
-        font-size: .86rem;
+        font-size: var(--ab-font-size-086);
     }
 
     .ab-storefront-location-empty {
@@ -1640,7 +1640,7 @@ body.ab-storefront-location-picker-open {
         border: 0;
         border-radius: 50%;
         background: transparent;
-        font-size: 1.55rem;
+        font-size: var(--ab-font-size-155);
         transition:
             color .18s cubic-bezier(.4, 0, .2, 1),
             background-color .18s cubic-bezier(.4, 0, .2, 1),
@@ -1669,7 +1669,7 @@ body.ab-storefront-location-picker-open {
 
         > i {
             color: rgba(#fff, .66);
-            font-size: 1.2rem;
+            font-size: var(--ab-font-size-120);
         }
 
         input {
@@ -1678,12 +1678,12 @@ body.ab-storefront-location-picker-open {
             border: 0;
             outline: 0;
             background: transparent;
-            font-size: 1rem;
-            font-weight: 700;
+            font-size: var(--ab-font-size-100);
+            font-weight: var(--ab-font-weight-bold);
 
             &::placeholder {
                 color: rgba(#fff, .52);
-                font-weight: 600;
+                font-weight: var(--ab-font-weight-semi-bold);
             }
         }
 
@@ -1700,9 +1700,9 @@ body.ab-storefront-location-picker-open {
         h2 {
             margin-bottom: 1rem;
             color: #fff;
-            font-size: 1.06rem;
-            font-weight: 900;
-            letter-spacing: 0;
+            font-size: var(--ab-font-size-106);
+            font-weight: var(--ab-font-weight-bold);
+            letter-spacing: var(--ab-letter-spacing);
         }
     }
 
@@ -1728,20 +1728,20 @@ body.ab-storefront-location-picker-open {
         span {
             overflow: hidden;
             color: #fff;
-            font-size: .98rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-098);
+            font-weight: var(--ab-font-weight-bold);
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
         i:first-child {
             color: rgba(#fff, .64);
-            font-size: 1.05rem;
+            font-size: var(--ab-font-size-105);
         }
 
         i:last-child {
             color: rgba(#fff, .52);
-            font-size: 1.25rem;
+            font-size: var(--ab-font-size-125);
             transition: transform .18s cubic-bezier(.4, 0, .2, 1);
         }
 
@@ -1773,8 +1773,8 @@ body.ab-storefront-location-picker-open {
         border-radius: .52rem;
         background: rgba(#fff, .1);
         text-decoration: none;
-        font-size: .94rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-094);
+        font-weight: var(--ab-font-weight-bold);
         transition:
             color .18s cubic-bezier(.4, 0, .2, 1),
             border-color .18s cubic-bezier(.4, 0, .2, 1),
@@ -1814,10 +1814,10 @@ body.ab-storefront-location-picker-open {
     display: inline-flex;
     align-items: center;
     color: $ab-green;
-    font-size: .78rem;
-    font-weight: 800;
-    letter-spacing: .09em;
-    text-transform: uppercase;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
+    letter-spacing: var(--ab-letter-spacing);
+    text-transform: var(--ab-text-transform-label);
 }
 
 .ab-storefront-hero-slider {
@@ -1910,18 +1910,18 @@ body.ab-storefront-location-picker-open {
         h2 {
             margin: 1rem 0 1.15rem;
             color: #fff;
-            font-size: clamp(2.35rem, 4.7vw, 4.6rem);
-            font-weight: 800;
-            letter-spacing: -.045em;
-            line-height: 1.05;
+            font-size: var(--ab-font-size-fluid-235-47-460);
+            font-weight: var(--ab-font-weight-bold);
+            letter-spacing: var(--ab-letter-spacing);
+            line-height: var(--ab-line-height-105);
         }
 
         p {
             max-width: 650px;
             margin-bottom: 1.75rem;
             color: rgba(#fff, .9);
-            font-size: clamp(1rem, 1.45vw, 1.2rem);
-            line-height: 1.75;
+            font-size: var(--ab-font-size-fluid-100-145-120);
+            line-height: var(--ab-line-height-175);
         }
 
         .btn {
@@ -1929,7 +1929,7 @@ body.ab-storefront-location-picker-open {
             border-width: 2px;
             border-radius: .85rem;
             box-shadow: 0 12px 30px rgba(2, 30, 18, .16);
-            font-weight: 800;
+            font-weight: var(--ab-font-weight-bold);
         }
 
         .btn-light {
@@ -1941,8 +1941,8 @@ body.ab-storefront-location-picker-open {
                 display: inline-block;
                 margin-inline-start: .65rem;
                 content: "\f061";
-                font-family: FontAwesome;
-                font-size: .82em;
+                font-family: var(--ab-font-family-icons);
+                font-size: var(--ab-font-size-relative-082);
             }
         }
     }
@@ -1974,9 +1974,9 @@ body.ab-storefront-location-picker-open {
         border-color: #fff;
         background: #fff;
         box-shadow: 0 12px 30px rgba(2, 30, 18, .16);
-        font-size: clamp(.68rem, 1.5vw, 1rem);
-        font-weight: 800;
-        line-height: 1.25;
+        font-size: var(--ab-font-size-fluid-068-15-100);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-125);
         overflow-wrap: anywhere;
         text-align: center;
         unicode-bidi: plaintext;
@@ -1986,8 +1986,8 @@ body.ab-storefront-location-picker-open {
             display: inline-block;
             margin-inline-start: .65rem;
             content: "\f061";
-            font-family: FontAwesome;
-            font-size: .82em;
+            font-family: var(--ab-font-family-icons);
+            font-size: var(--ab-font-size-relative-082);
         }
     }
 
@@ -2025,16 +2025,16 @@ body.ab-storefront-location-picker-open {
         background: rgba(#fff, .12);
         box-shadow: inset 0 1px 0 rgba(#fff, .12);
         backdrop-filter: blur(8px);
-        font-size: .76rem;
-        font-weight: 800;
-        letter-spacing: .08em;
-        text-transform: uppercase;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        text-transform: var(--ab-text-transform-label);
 
         &::before {
             margin-inline-end: .55rem;
             content: "\f21e";
-            font-family: FontAwesome;
-            font-size: 1.05em;
+            font-family: var(--ab-font-family-icons);
+            font-size: var(--ab-font-size-relative-105);
         }
     }
 
@@ -2201,13 +2201,13 @@ body.ab-storefront-location-picker-open {
         }
 
         strong {
-            font-size: .92rem;
+            font-size: var(--ab-font-size-092);
         }
 
         small {
             margin-top: .2rem;
             color: $ab-muted;
-            font-size: .75rem;
+            font-size: var(--ab-font-size-075);
         }
     }
 
@@ -2219,15 +2219,15 @@ body.ab-storefront-location-picker-open {
 .ab-storefront-section {
     h2 {
         color: $ab-ink;
-        font-size: clamp(1.65rem, 3vw, 2.35rem);
-        font-weight: 800;
-        letter-spacing: -.025em;
+        font-size: var(--ab-font-size-fluid-165-30-235);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
     }
 
     .ab-storefront-view-all {
         color: $ab-green;
-        font-size: .9rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-090);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     .ab-storefront-view-all-button {
@@ -2242,8 +2242,8 @@ body.ab-storefront-location-picker-open {
         &::after {
             margin-inline-start: .5rem;
             content: "\f061";
-            font-family: FontAwesome;
-            font-size: .85em;
+            font-family: var(--ab-font-family-icons);
+            font-size: var(--ab-font-size-relative-085);
         }
 
         &:hover {
@@ -2269,7 +2269,7 @@ body.ab-storefront-location-picker-open {
         height: 2.55rem;
         flex-basis: 2.55rem;
         border-radius: .75rem;
-        font-size: 1.08rem;
+        font-size: var(--ab-font-size-108);
     }
 
     .o_wsale_filmstrip_item.active .ab-storefront-category-icon {
@@ -2356,7 +2356,7 @@ body.ab-storefront-location-picker-open {
             border-color: rgba(#fff, .32);
             background: rgba(#fff, .16);
             box-shadow: 0 18px 40px rgba(0, 0, 0, .12);
-            font-size: 3rem;
+            font-size: var(--ab-font-size-300);
         }
     }
 
@@ -2380,15 +2380,15 @@ body.ab-storefront-location-picker-open {
         overflow: hidden;
         margin-bottom: .55rem;
         color: #fff;
-        font-size: 1.05rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-105);
+        font-weight: var(--ab-font-weight-bold);
         text-overflow: ellipsis;
         text-shadow: 0 3px 14px rgba(0, 0, 0, .3);
         white-space: nowrap;
     }
 
     &:first-child strong {
-        font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+        font-size: var(--ab-font-size-fluid-150-25-225);
     }
 
     .ab-storefront-category-action {
@@ -2400,14 +2400,14 @@ body.ab-storefront-location-picker-open {
         border-radius: 999px;
         background: rgba(#fff, .12);
         backdrop-filter: blur(6px);
-        font-size: .7rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-070);
+        font-weight: var(--ab-font-weight-bold);
         transition: color .2s ease, background-color .2s ease;
 
         &::after {
             margin-inline-start: .45rem;
             content: "\f061";
-            font-family: FontAwesome;
+            font-family: var(--ab-font-family-icons);
         }
     }
 
@@ -2498,9 +2498,9 @@ body.ab-storefront-location-picker-open {
     border: 1px solid rgba($ab-green-dark, .08);
     border-radius: 999px;
     background: rgba(#fff, .72);
-    font-size: .65rem;
-    font-weight: 900;
-    letter-spacing: .04em;
+    font-size: var(--ab-font-size-065);
+    font-weight: var(--ab-font-weight-bold);
+    letter-spacing: var(--ab-letter-spacing);
 }
 
 .ab-storefront-partner-copy {
@@ -2510,21 +2510,21 @@ body.ab-storefront-location-picker-open {
 
     small {
         color: $ab-muted;
-        font-size: .72rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     strong {
         color: $ab-ink;
-        font-size: clamp(1.15rem, 2vw, 1.55rem);
-        font-weight: 900;
-        line-height: 1.35;
+        font-size: var(--ab-font-size-fluid-115-20-155);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-135);
     }
 
     span {
         color: $ab-green-dark;
-        font-size: .82rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -2599,22 +2599,22 @@ body.ab-storefront-location-picker-open {
     small {
         margin-bottom: .45rem;
         opacity: .82;
-        font-size: .76rem;
-        font-weight: 700;
-        letter-spacing: .07em;
-        text-transform: uppercase;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        text-transform: var(--ab-text-transform-label);
     }
 
     strong {
         max-width: 520px;
         margin-bottom: 1rem;
-        font-size: clamp(1.35rem, 2.5vw, 2rem);
-        line-height: 1.25;
+        font-size: var(--ab-font-size-fluid-135-25-200);
+        line-height: var(--ab-line-height-125);
     }
 
     span span {
-        font-size: .85rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-085);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -2673,8 +2673,8 @@ body.ab-storefront-location-picker-open {
             display: block;
             margin-bottom: .35rem;
             color: $ab-ink;
-            font-size: 1.15rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-115);
+            font-weight: var(--ab-font-weight-bold);
         }
 
         p {
@@ -2709,19 +2709,19 @@ body.ab-storefront-location-picker-open {
         max-width: 620px;
         margin: .35rem 0 .65rem;
         color: $ab-ink;
-        font-size: clamp(1.45rem, 2.8vw, 2.35rem);
-        font-weight: 900;
-        letter-spacing: 0;
-        line-height: 1.15;
+        font-size: var(--ab-font-size-fluid-145-28-235);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        line-height: var(--ab-line-height-115);
     }
 
     p {
         max-width: 680px;
         margin: 0;
         color: $ab-muted;
-        font-size: 1rem;
-        font-weight: 650;
-        line-height: 1.75;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-semi-bold);
+        line-height: var(--ab-line-height-175);
     }
 }
 
@@ -2743,15 +2743,15 @@ body.ab-storefront-location-picker-open {
 
     strong {
         color: $ab-green-dark;
-        font-size: clamp(1.05rem, 1.7vw, 1.35rem);
-        font-weight: 900;
+        font-size: var(--ab-font-size-fluid-105-17-135);
+        font-weight: var(--ab-font-weight-bold);
         white-space: nowrap;
     }
 
     span {
         color: $ab-muted;
-        font-size: .88rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-088);
+        font-weight: var(--ab-font-weight-bold);
         text-align: end;
     }
 }
@@ -2784,21 +2784,21 @@ body.ab-storefront-location-picker-open {
         border: 1px solid rgba($ab-green, .14);
         border-radius: .85rem;
         background: $ab-green-soft;
-        font-size: 1.08rem;
+        font-size: var(--ab-font-size-108);
     }
 
     strong {
         color: $ab-ink;
-        font-size: 1.02rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-102);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         margin: 0;
         color: $ab-muted;
-        font-size: .92rem;
-        font-weight: 650;
-        line-height: 1.65;
+        font-size: var(--ab-font-size-092);
+        font-weight: var(--ab-font-weight-semi-bold);
+        line-height: var(--ab-line-height-165);
     }
 }
 
@@ -2819,23 +2819,23 @@ body.ab-storefront-location-picker-open {
         height: 34px;
         color: $ab-orange;
         content: "\f10d";
-        font-family: FontAwesome;
-        font-size: 1.15rem;
-        line-height: 1;
+        font-family: var(--ab-font-family-icons);
+        font-size: var(--ab-font-size-115);
+        line-height: var(--ab-line-height-100);
     }
 
     p {
         margin: 0;
         color: $ab-ink;
-        font-size: .98rem;
-        font-weight: 750;
-        line-height: 1.7;
+        font-size: var(--ab-font-size-098);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-170);
     }
 
     strong {
         color: $ab-muted;
-        font-size: .82rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -2998,8 +2998,8 @@ body.ab-storefront-location-picker-open {
         color: #fff;
         border-radius: 5px;
         background: $ab-muted;
-        font-size: .7rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-070);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     .ab-storefront-offer-badge {
@@ -3020,8 +3020,8 @@ body.ab-storefront-location-picker-open {
     .ab-storefront-product-category {
         overflow: hidden;
         color: $ab-muted;
-        font-size: .72rem;
-        font-weight: 600;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-semi-bold);
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -3033,9 +3033,9 @@ body.ab-storefront-location-picker-open {
         overflow: hidden;
         margin: 0;
         color: $ab-ink;
-        font-size: .96rem;
-        font-weight: 700;
-        line-height: 1.4;
+        font-size: var(--ab-font-size-096);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-140);
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 2;
 
@@ -3048,14 +3048,14 @@ body.ab-storefront-location-picker-open {
     .product_price > span:not(.text-muted),
     .product_price .fw-bold {
         color: $ab-green-dark;
-        font-size: 1.05rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-105);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     .ab-storefront-base-price {
         margin-inline-start: .5rem;
         color: $ab-muted;
-        font-size: .78rem;
+        font-size: var(--ab-font-size-078);
     }
 
     .ab-storefront-pack-info {
@@ -3065,8 +3065,8 @@ body.ab-storefront-location-picker-open {
         align-items: center;
         gap: .25rem .5rem;
         color: $ab-muted;
-        font-size: .69rem;
-        line-height: 1.4;
+        font-size: var(--ab-font-size-069);
+        line-height: var(--ab-line-height-140);
 
         span {
             display: inline-flex;
@@ -3085,7 +3085,7 @@ body.ab-storefront-location-picker-open {
 
         b {
             color: $ab-ink;
-            font-weight: 800;
+            font-weight: var(--ab-font-weight-bold);
         }
     }
 
@@ -3099,8 +3099,8 @@ body.ab-storefront-location-picker-open {
             width: auto;
             margin: 0 0 .3rem;
             color: $ab-muted;
-            font-size: .68rem;
-            font-weight: 700;
+            font-size: var(--ab-font-size-068);
+            font-weight: var(--ab-font-weight-bold);
         }
     }
 
@@ -3125,8 +3125,8 @@ body.ab-storefront-location-picker-open {
         border: 1px solid $ab-border;
         border-radius: 6px;
         background: #fff;
-        font-size: .7rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-070);
+        font-weight: var(--ab-font-weight-bold);
         transition: color .15s ease, border-color .15s ease, background-color .15s ease, transform .15s ease;
 
         &:hover,
@@ -3210,8 +3210,8 @@ body.ab-storefront-location-picker-open {
         input {
             appearance: textfield;
             border-inline: 1px solid $ab-border;
-            font-size: .76rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-076);
+            font-weight: var(--ab-font-weight-bold);
 
             &::-webkit-inner-spin-button,
             &::-webkit-outer-spin-button {
@@ -3226,7 +3226,7 @@ body.ab-storefront-location-picker-open {
         align-items: center;
         justify-content: center;
         min-height: 42px;
-        font-size: .82rem;
+        font-size: var(--ab-font-size-082);
     }
 
     .o_wsale_product_sub {
@@ -3477,8 +3477,8 @@ body.ab-storefront-location-picker-open {
 
     h2 {
         color: #fff;
-        font-size: clamp(1.8rem, 4vw, 2.7rem);
-        font-weight: 800;
+        font-size: var(--ab-font-size-fluid-180-40-270);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
@@ -3487,7 +3487,7 @@ body.ab-storefront-location-picker-open {
 
     .btn {
         border-radius: .75rem;
-        font-weight: 700;
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -3503,8 +3503,8 @@ body.ab-storefront-location-picker-open {
 
     h1 {
         color: #fff;
-        font-size: clamp(1.9rem, 4vw, 3rem);
-        font-weight: 800;
+        font-size: var(--ab-font-size-fluid-190-40-300);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
@@ -3699,7 +3699,7 @@ body.ab-storefront-location-picker-open {
 
         &.is-path {
             color: $ab-green-dark;
-            font-weight: 700;
+            font-weight: var(--ab-font-weight-bold);
         }
 
         &.active {
@@ -3733,7 +3733,7 @@ body.ab-storefront-location-picker-open {
             height: 1.8rem;
             flex-basis: 1.8rem;
             border-radius: .55rem;
-            font-size: .8rem;
+            font-size: var(--ab-font-size-080);
 
             i {
                 opacity: 1;
@@ -3800,16 +3800,16 @@ body.ab-storefront-location-picker-open {
     color: $ab-green-dark;
     border-top: 1px solid $ab-border;
     background: $ab-green-soft;
-    font-size: .88rem;
-    font-weight: 700;
+    font-size: var(--ab-font-size-088);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-storefront-product-assurance-top {
     color: $ab-green-dark;
     border-bottom: 1px solid $ab-border;
     background: $ab-green-soft;
-    font-size: .8rem;
-    font-weight: 700;
+    font-size: var(--ab-font-size-080);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-storefront-product-detail,
@@ -3885,17 +3885,17 @@ body.ab-storefront-location-picker-open {
 
     .ab-storefront-product-title {
         color: $ab-ink;
-        font-size: clamp(1.75rem, 3.3vw, 2.7rem) !important;
-        font-weight: 800;
-        letter-spacing: -.025em;
-        line-height: 1.2;
+        font-size: var(--ab-font-size-fluid-175-33-270) !important;
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        line-height: var(--ab-line-height-120);
     }
 
     .ab-storefront-product-price {
         .oe_price {
             color: $ab-green-dark;
-            font-size: clamp(1.55rem, 3vw, 2.15rem);
-            font-weight: 800;
+            font-size: var(--ab-font-size-fluid-155-30-215);
+            font-weight: var(--ab-font-weight-bold);
         }
     }
 
@@ -3916,10 +3916,10 @@ body.ab-storefront-location-picker-open {
 
     .ab-storefront-total-price-label {
         color: $ab-muted;
-        font-size: .78rem;
-        font-weight: 800;
-        letter-spacing: .02em;
-        text-transform: uppercase;
+        font-size: var(--ab-font-size-078);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        text-transform: var(--ab-text-transform-label);
     }
 
     .ab-storefront-total-price-value {
@@ -3929,9 +3929,9 @@ body.ab-storefront-location-picker-open {
         gap: .16rem;
         color: $ab-green-dark;
         direction: ltr !important;
-        font-variant-numeric: tabular-nums;
-        font-weight: 900;
-        line-height: 1;
+        font-variant-numeric: var(--ab-font-variant-numeric-tabular);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-100);
         unicode-bidi: isolate !important;
         white-space: nowrap;
 
@@ -3958,7 +3958,7 @@ body.ab-storefront-location-picker-open {
         align-items: center;
         justify-content: center;
         direction: ltr !important;
-        line-height: 1;
+        line-height: var(--ab-line-height-100);
         unicode-bidi: isolate !important;
     }
 
@@ -3992,7 +3992,7 @@ body.ab-storefront-location-picker-open {
         flex: 0 0 1em;
         align-items: center;
         justify-content: center;
-        line-height: 1;
+        line-height: var(--ab-line-height-100);
     }
 
     .ab-storefront-total-price-digit-new {
@@ -4020,7 +4020,7 @@ body.ab-storefront-location-picker-open {
         .quantity {
             position: relative;
             z-index: 1;
-            font-weight: 700;
+            font-weight: var(--ab-font-weight-bold);
             transform: translateX(0);
             will-change: transform;
         }
@@ -4377,8 +4377,8 @@ body.ab-storefront-image-hero-open {
         transform .14s cubic-bezier(.16, 1, .3, 1);
 
     i {
-        font-size: 1.35rem;
-        line-height: 1;
+        font-size: var(--ab-font-size-135);
+        line-height: var(--ab-line-height-100);
     }
 }
 
@@ -4523,8 +4523,8 @@ body.ab-storefront-image-hero-open {
 
     strong {
         min-width: 0;
-        font-size: .92rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-092);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -4586,8 +4586,8 @@ body.ab-storefront-image-hero-open {
 
     strong {
         margin-bottom: .12rem;
-        font-size: .92rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-092);
+        font-weight: var(--ab-font-weight-bold);
         opacity: 0;
         transform: translateX(-8px);
         transition:
@@ -4597,8 +4597,8 @@ body.ab-storefront-image-hero-open {
 
     small {
         color: $ab-muted;
-        font-size: .78rem;
-        line-height: 1.25;
+        font-size: var(--ab-font-size-078);
+        line-height: var(--ab-line-height-125);
         opacity: 0;
         transform: translateX(-8px);
         transition:
@@ -4627,8 +4627,8 @@ body.ab-storefront-image-hero-open {
     transition: transform .32s cubic-bezier(.16, 1, .3, 1);
 
     i {
-        font-size: 1.18rem;
-        line-height: 1;
+        font-size: var(--ab-font-size-118);
+        line-height: var(--ab-line-height-100);
     }
 }
 
@@ -4835,16 +4835,16 @@ html[dir="rtl"] {
 
     strong {
         color: $ab-ink;
-        font-size: .9rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-090);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         overflow: hidden;
         margin-top: .12rem;
         color: $ab-muted;
-        font-size: .74rem;
-        line-height: 1.35;
+        font-size: var(--ab-font-size-074);
+        line-height: var(--ab-line-height-135);
         text-overflow: ellipsis;
         white-space: nowrap;
     }
@@ -5330,8 +5330,8 @@ html[dir="rtl"] {
     border-radius: 50%;
     background: rgba(7, 24, 18, .52);
     box-shadow: 0 16px 38px rgba(0, 0, 0, .2);
-    font-size: 2rem;
-    line-height: 1;
+    font-size: var(--ab-font-size-200);
+    line-height: var(--ab-line-height-100);
     cursor: pointer;
     opacity: 0;
     transform: translateY(-8px) scale(.92);
@@ -5369,7 +5369,7 @@ html[dir="rtl"] {
 
         > i {
             color: $ab-green;
-            font-size: 1.15rem;
+            font-size: var(--ab-font-size-115);
         }
     }
 
@@ -5379,13 +5379,13 @@ html[dir="rtl"] {
     }
 
     strong {
-        font-size: .72rem;
+        font-size: var(--ab-font-size-072);
     }
 
     small {
         margin-top: .1rem;
         color: $ab-muted;
-        font-size: .62rem;
+        font-size: var(--ab-font-size-062);
     }
 }
 
@@ -5417,17 +5417,17 @@ html[dir="rtl"] {
     h2 {
         margin: 0;
         color: $ab-ink;
-        font-size: clamp(1.35rem, 2.4vw, 2rem);
-        font-weight: 800;
-        letter-spacing: 0;
+        font-size: var(--ab-font-size-fluid-135-24-200);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
     }
 
     p {
         max-width: 620px;
         margin: 0;
         color: $ab-muted;
-        font-size: .95rem;
-        line-height: 1.7;
+        font-size: var(--ab-font-size-095);
+        line-height: var(--ab-line-height-170);
     }
 }
 
@@ -5490,13 +5490,13 @@ html[dir="rtl"] {
 
     p {
         color: #fff !important;
-        line-height: 1.8;
+        line-height: var(--ab-line-height-180);
     }
 
     h2 {
         margin-bottom: 1.15rem;
         color: #fff !important;
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     ul li {
@@ -5543,7 +5543,7 @@ html[dir="rtl"] {
             justify-content: center;
             border-radius: 50%;
             background: $ab-orange;
-            font-size: 1.2rem;
+            font-size: var(--ab-font-size-120);
         }
 
         small,
@@ -5553,12 +5553,12 @@ html[dir="rtl"] {
 
         small {
             color: #fff !important;
-            font-size: .72rem;
+            font-size: var(--ab-font-size-072);
         }
 
         strong {
             margin-top: .1rem;
-            font-size: 1.55rem;
+            font-size: var(--ab-font-size-155);
         }
     }
 
@@ -5566,7 +5566,7 @@ html[dir="rtl"] {
         color: #fff !important;
         border-top: 1px solid rgba(#fff, .25);
         background: rgba(#000, .18);
-        font-size: .76rem;
+        font-size: var(--ab-font-size-076);
     }
 }
 
@@ -5578,7 +5578,7 @@ html[dir="rtl"] {
         radial-gradient(circle at 18% 12%, rgba($ab-orange, .16), transparent 28%),
         radial-gradient(circle at 82% 22%, rgba($ab-blue, .13), transparent 30%),
         linear-gradient(180deg, #f8fbf9 0%, $ab-background 100%);
-    font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", sans-serif;
+    font-family: var(--ab-font-family-current);
 
     svg {
         width: 1.15rem;
@@ -5630,8 +5630,8 @@ html[dir="rtl"] {
     border-radius: .8rem;
     background: #fff;
     box-shadow: 0 10px 24px rgba(25, 53, 43, .07);
-    font-size: .88rem;
-    font-weight: 800;
+    font-size: var(--ab-font-size-088);
+    font-weight: var(--ab-font-weight-bold);
     text-decoration: none;
     transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 
@@ -5697,9 +5697,9 @@ html[dir="rtl"] {
         max-width: 11ch;
         margin: .85rem 0 1rem;
         color: #fff;
-        font-size: clamp(2.25rem, 5vw, 4.35rem);
-        font-weight: 900;
-        line-height: 1.05;
+        font-size: var(--ab-font-size-fluid-225-50-435);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-105);
     }
 
     p {
@@ -5707,8 +5707,8 @@ html[dir="rtl"] {
         max-width: 34rem;
         margin: 0;
         color: rgba(#fff, .82);
-        font-size: 1.03rem;
-        line-height: 1.8;
+        font-size: var(--ab-font-size-103);
+        line-height: var(--ab-line-height-180);
     }
 }
 
@@ -5717,8 +5717,8 @@ html[dir="rtl"] {
     display: inline-flex;
     align-items: center;
     color: $ab-green-dark;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-auth-kicker {
@@ -5741,8 +5741,8 @@ html[dir="rtl"] {
         border-radius: .75rem;
         background: rgba(#fff, .11);
         color: #fff;
-        font-size: .82rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
         text-align: center;
     }
 }
@@ -5821,16 +5821,16 @@ html[dir="rtl"] {
     h2 {
         margin: .45rem 0 .35rem;
         color: $ab-ink;
-        font-size: clamp(1.7rem, 4vw, 2.25rem);
-        font-weight: 900;
-        line-height: 1.2;
+        font-size: var(--ab-font-size-fluid-170-40-225);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-120);
     }
 
     p {
         margin: 0;
         color: $ab-muted;
-        font-size: .94rem;
-        line-height: 1.7;
+        font-size: var(--ab-font-size-094);
+        line-height: var(--ab-line-height-170);
     }
 }
 
@@ -5839,8 +5839,8 @@ html[dir="rtl"] {
         display: block;
         margin-bottom: .45rem;
         color: $ab-ink;
-        font-size: .88rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-088);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -5852,8 +5852,8 @@ html[dir="rtl"] {
 
     a {
         color: $ab-green;
-        font-size: .82rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
         text-decoration: none;
 
         &:hover,
@@ -5900,15 +5900,15 @@ html[dir="rtl"] {
         outline: 0;
         order: 1;
         background: transparent;
-        font-size: .98rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-098);
+        font-weight: var(--ab-font-weight-bold);
         direction: rtl;
         text-align: right;
         unicode-bidi: plaintext;
 
         &::placeholder {
             color: rgba($ab-muted, .78);
-            font-weight: 600;
+            font-weight: var(--ab-font-weight-semi-bold);
         }
 
         &[type="tel"] {
@@ -5955,8 +5955,8 @@ html[dir="rtl"] {
     min-height: 1.1rem;
     margin: .38rem 0 0;
     color: #b13a2e;
-    font-size: .8rem;
-    font-weight: 700;
+    font-size: var(--ab-font-size-080);
+    font-weight: var(--ab-font-weight-bold);
     opacity: 0;
     transform: translateY(-4px);
     transition: opacity .18s ease, transform .18s ease;
@@ -6029,9 +6029,9 @@ html[dir="rtl"] {
 .ab-auth-password-hint {
     margin: 0;
     color: $ab-muted;
-    font-size: .78rem;
-    font-weight: 800;
-    line-height: 1.6;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
+    line-height: var(--ab-line-height-160);
 }
 
 .ab-auth-password-live {
@@ -6047,14 +6047,14 @@ html[dir="rtl"] {
 
     span {
         color: $ab-ink;
-        font-size: .78rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-078);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     strong {
         color: var(--ab-password-strength-color, $ab-green);
-        font-size: .82rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
         transition: color .22s ease, opacity .2s ease, transform .2s ease;
 
         &.is-changing {
@@ -6102,9 +6102,9 @@ html[dir="rtl"] {
         align-items: center;
         gap: .45rem;
         color: $ab-muted;
-        font-size: .76rem;
-        font-weight: 800;
-        line-height: 1.35;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-135);
         transition: color .2s ease, transform .2s ease;
 
         &.is-met {
@@ -6184,16 +6184,16 @@ html[dir="rtl"] {
     small {
         margin-bottom: .18rem;
         color: $ab-muted;
-        font-size: .68rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-068);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     code {
         overflow: hidden;
         color: $ab-ink;
-        font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", sans-serif;
-        font-size: .86rem;
-        font-weight: 900;
+        font-family: var(--ab-font-family-current);
+        font-size: var(--ab-font-size-086);
+        font-weight: var(--ab-font-weight-bold);
         direction: ltr;
         text-align: start;
         text-overflow: ellipsis;
@@ -6210,8 +6210,8 @@ html[dir="rtl"] {
         min-height: 34px;
         padding: .42rem .6rem;
         border-radius: .6rem;
-        font-size: .72rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -6231,8 +6231,8 @@ html[dir="rtl"] {
     min-height: 1.1rem;
     margin: .38rem 0 0;
     color: $ab-muted;
-    font-size: .78rem;
-    font-weight: 800;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
     opacity: 0;
     transform: translateY(-4px);
     transition: opacity .18s ease, color .18s ease, transform .18s ease;
@@ -6347,17 +6347,17 @@ html.ab-avatar-picker-open body {
 
     strong {
         color: $ab-ink;
-        font-size: .92rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-092);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     span,
     p,
     small {
         color: $ab-muted;
-        font-size: .78rem;
-        font-weight: 700;
-        line-height: 1.6;
+        font-size: var(--ab-font-size-078);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-160);
     }
 }
 
@@ -6369,8 +6369,8 @@ html.ab-avatar-picker-open body {
     border: 1px solid rgba($ab-green, .22);
     border-radius: .72rem;
     background: #fff;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
     transition: color .2s ease, background-color .2s ease, transform .2s ease, box-shadow .2s ease;
 
     &:hover,
@@ -6490,22 +6490,22 @@ html.ab-avatar-picker-open body {
 
     span {
         color: $ab-green;
-        font-size: .76rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     h2 {
         margin: .2rem 0;
         color: $ab-ink;
-        font-size: clamp(1.35rem, 3vw, 1.8rem);
-        font-weight: 900;
+        font-size: var(--ab-font-size-fluid-135-30-180);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         margin: 0;
         color: $ab-muted;
-        font-size: .86rem;
-        line-height: 1.65;
+        font-size: var(--ab-font-size-086);
+        line-height: var(--ab-line-height-165);
     }
 }
 
@@ -6537,15 +6537,15 @@ html.ab-avatar-picker-open body {
 
     strong,
     > span {
-        font-size: .86rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-086);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         margin-top: 0;
         color: $ab-muted;
-        font-size: .72rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -6575,8 +6575,8 @@ html.ab-avatar-picker-open body {
     flex-direction: column;
     gap: .35rem;
     color: $ab-ink;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-avatar-option {
@@ -6658,7 +6658,7 @@ html.ab-avatar-picker-open body {
         min-height: 42px;
         padding: .65rem 1rem;
         border-radius: .75rem;
-        font-weight: 900;
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -6684,8 +6684,8 @@ html.ab-avatar-picker-open body {
     h2 {
         margin: .15rem 0;
         color: $ab-ink;
-        font-size: clamp(1.25rem, 3vw, 1.75rem);
-        font-weight: 900;
+        font-size: var(--ab-font-size-fluid-125-30-175);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
@@ -6728,8 +6728,8 @@ html.ab-avatar-picker-open body {
     color: $ab-ink;
     border-radius: .85rem;
     text-decoration: none;
-    font-size: .88rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-088);
+    font-weight: var(--ab-font-weight-bold);
     transition: color .2s ease, background-color .2s ease, transform .2s ease;
 
     svg {
@@ -6821,8 +6821,8 @@ html.ab-avatar-picker-open body {
         border-radius: 999px;
         background: rgba(#fff, .96);
         box-shadow: 0 12px 24px rgba($ab-green-dark, .16);
-        font-size: .72rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
         opacity: 0;
         pointer-events: none;
         transform: translateX(-50%) translateY(10px) scale(.82);
@@ -6910,18 +6910,18 @@ html.ab-avatar-picker-open body {
     span {
         display: block;
         color: rgba(#fff, .78);
-        font-size: .7rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-070);
+        font-weight: var(--ab-font-weight-bold);
         white-space: normal;
     }
 
     h1 {
         margin: .05rem 0 .1rem;
         color: #fff;
-        font-size: clamp(1.05rem, 1.8vw, 1.32rem);
-        font-weight: 950;
-        letter-spacing: 0;
-        line-height: 1.25;
+        font-size: var(--ab-font-size-fluid-105-18-132);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
+        line-height: var(--ab-line-height-125);
         overflow-wrap: normal;
         word-break: normal;
         white-space: normal;
@@ -6932,8 +6932,8 @@ html.ab-avatar-picker-open body {
         margin: 0;
         direction: ltr;
         color: rgba(#fff, .84);
-        font-size: .8rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-080);
+        font-weight: var(--ab-font-weight-bold);
         white-space: nowrap;
     }
 
@@ -6941,8 +6941,8 @@ html.ab-avatar-picker-open body {
         display: block;
         margin-top: .18rem;
         color: rgba(#fff, .94);
-        font-size: .72rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
         white-space: normal;
     }
 }
@@ -6952,8 +6952,8 @@ html.ab-avatar-picker-open body {
     min-height: 36px;
     padding: .45rem .8rem;
     border-radius: .72rem;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-account-hero-button {
@@ -7024,15 +7024,15 @@ html.ab-avatar-picker-open body {
     transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
 
     strong {
-        font-size: 1rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         color: $ab-muted;
-        font-size: .78rem;
-        font-weight: 700;
-        line-height: 1.65;
+        font-size: var(--ab-font-size-078);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-165);
     }
 
     &:hover,
@@ -7111,15 +7111,15 @@ html.ab-avatar-picker-open body {
     span {
         display: block;
         color: $ab-green;
-        font-size: .75rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-075);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     h2 {
         margin: .1rem 0 0;
         color: $ab-ink;
-        font-size: clamp(1.1rem, 2.2vw, 1.35rem);
-        font-weight: 950;
+        font-size: var(--ab-font-size-fluid-110-22-135);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -7144,7 +7144,7 @@ html.ab-avatar-picker-open body {
     height: 38px;
     padding: 0;
     border-radius: .85rem;
-    line-height: 1;
+    line-height: var(--ab-line-height-100);
 
     svg {
         display: block;
@@ -7295,12 +7295,12 @@ html.ab-avatar-picker-open body {
 
     strong {
         color: $ab-green-dark;
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         color: $ab-muted;
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -7341,15 +7341,15 @@ html.ab-avatar-picker-open body {
         display: block;
         margin-bottom: .15rem;
         color: $ab-green;
-        font-size: .74rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-074);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     h3 {
         margin: 0;
         color: $ab-ink;
-        font-size: 1rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -7359,8 +7359,8 @@ html.ab-avatar-picker-open body {
     justify-content: center;
     color: $ab-green-dark;
     text-decoration: none;
-    font-size: .78rem;
-    font-weight: 900;
+    font-size: var(--ab-font-size-078);
+    font-weight: var(--ab-font-weight-bold);
 
     &:hover,
     &:focus-visible {
@@ -7374,9 +7374,9 @@ html.ab-avatar-picker-open body {
     min-width: 0;
     text-align: inherit;
     color: $ab-ink;
-    font-size: 1rem;
-    font-weight: 950;
-    letter-spacing: .08em;
+    font-size: var(--ab-font-size-100);
+    font-weight: var(--ab-font-weight-bold);
+    letter-spacing: var(--ab-letter-spacing);
 }
 
 .ab-account-password-value {
@@ -7401,14 +7401,14 @@ html.ab-avatar-picker-open body {
 
     dt {
         color: $ab-muted;
-        font-size: .82rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     dd {
         margin: 0;
         color: $ab-ink;
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
         text-align: end;
 
         .ab-account-inline-link {
@@ -7462,13 +7462,13 @@ html.ab-avatar-picker-open body {
     }
 
     strong {
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         color: $ab-muted;
-        font-size: .76rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     &:hover,
@@ -7498,20 +7498,20 @@ html.ab-avatar-picker-open body {
     }
 
     strong {
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
         color: $ab-muted;
-        font-size: .76rem;
-        font-weight: 800;
+        font-size: var(--ab-font-size-076);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         margin: .25rem 0 0;
         color: $ab-green-dark;
-        font-size: 1rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     &:hover,
@@ -7531,8 +7531,8 @@ html.ab-avatar-picker-open body {
     color: $ab-green-dark;
     border-radius: 999px;
     background: $ab-green-soft;
-    font-size: .68rem;
-    font-weight: 950;
+    font-size: var(--ab-font-size-068);
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-account-addresses {
@@ -7549,23 +7549,23 @@ html.ab-avatar-picker-open body {
 
     span {
         color: $ab-green;
-        font-size: .74rem;
-        font-weight: 950;
+        font-size: var(--ab-font-size-074);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     strong {
         display: block;
         margin: .2rem 0;
         color: $ab-ink;
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         margin: 0;
         color: $ab-muted;
-        font-size: .8rem;
-        font-weight: 750;
-        line-height: 1.55;
+        font-size: var(--ab-font-size-080);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-155);
     }
 }
 
@@ -7594,8 +7594,8 @@ html.ab-avatar-picker-open body {
         display: block;
         width: auto;
         margin: 0;
-        font-size: .82rem;
-        line-height: 1;
+        font-size: var(--ab-font-size-082);
+        line-height: var(--ab-line-height-100);
     }
 
     &:hover,
@@ -7639,16 +7639,16 @@ html.ab-avatar-picker-open body {
 
     strong {
         color: $ab-ink;
-        font-weight: 950;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         max-width: 360px;
         margin: 0;
         color: $ab-muted;
-        font-size: .84rem;
-        font-weight: 750;
-        line-height: 1.75;
+        font-size: var(--ab-font-size-084);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-175);
     }
 }
 
@@ -7690,13 +7690,13 @@ html.ab-avatar-picker-open body {
     strong {
         max-width: 420px;
         color: $ab-ink;
-        font-size: clamp(.98rem, 1.6vw, 1.08rem);
-        line-height: 1.55;
+        font-size: var(--ab-font-size-fluid-098-16-108);
+        line-height: var(--ab-line-height-155);
     }
 
     p {
         max-width: 390px;
-        line-height: 1.75;
+        line-height: var(--ab-line-height-175);
     }
 
     .btn {
@@ -7711,8 +7711,8 @@ html.ab-avatar-picker-open body {
     p {
         margin: 0;
         color: $ab-muted;
-        font-weight: 800;
-        line-height: 1.75;
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-175);
 
         strong {
             color: $ab-green-dark;
@@ -7810,7 +7810,7 @@ html.ab-avatar-picker-open body {
             position: static;
             min-height: 30px;
             padding: .3rem .64rem;
-            font-size: .72rem;
+            font-size: var(--ab-font-size-072);
         }
 
         [data-ab-avatar-status] {
@@ -7841,16 +7841,16 @@ html.ab-avatar-picker-open body {
         text-align: center;
 
         span {
-            font-size: .66rem;
+            font-size: var(--ab-font-size-066);
         }
 
         h1 {
-            font-size: .96rem;
+            font-size: var(--ab-font-size-096);
         }
 
         p,
         strong {
-            font-size: .68rem;
+            font-size: var(--ab-font-size-068);
         }
     }
 
@@ -8037,9 +8037,9 @@ html.ab-avatar-picker-open body {
     margin: .15rem 0 0;
     padding: .85rem .95rem;
     border-radius: .85rem;
-    font-size: .88rem;
-    font-weight: 800;
-    line-height: 1.55;
+    font-size: var(--ab-font-size-088);
+    font-weight: var(--ab-font-weight-bold);
+    line-height: var(--ab-line-height-155);
 }
 
 .ab-auth-alert-error {
@@ -8063,8 +8063,8 @@ html.ab-avatar-picker-open body {
     p {
         margin: 0;
         color: $ab-muted;
-        font-size: .88rem;
-        font-weight: 700;
+        font-size: var(--ab-font-size-088);
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -8075,7 +8075,7 @@ html.ab-avatar-picker-open body {
     align-items: center;
     justify-content: center;
     border-radius: .9rem;
-    font-weight: 900;
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-auth-primary {
@@ -8194,8 +8194,8 @@ html.ab-avatar-picker-open body {
     align-items: center;
     gap: .75rem;
     color: $ab-muted;
-    font-size: .8rem;
-    font-weight: 800;
+    font-size: var(--ab-font-size-080);
+    font-weight: var(--ab-font-weight-bold);
 
     &::before,
     &::after {
@@ -8213,7 +8213,7 @@ html.ab-avatar-picker-open body {
     gap: .75rem;
     margin-top: clamp(1.5rem, 4vw, 2.5rem);
     color: $ab-muted;
-    font-size: .86rem;
+    font-size: var(--ab-font-size-086);
 
     strong {
         color: $ab-ink;
@@ -8221,7 +8221,7 @@ html.ab-avatar-picker-open body {
 
     a {
         color: $ab-green-dark;
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
         text-decoration: none;
     }
 }
@@ -8260,7 +8260,7 @@ html.ab-avatar-picker-open body {
     .ab-auth-store-link {
         min-height: 40px;
         padding: .55rem .72rem;
-        font-size: .8rem;
+        font-size: var(--ab-font-size-080);
     }
 
     .ab-auth-card {
@@ -8274,7 +8274,7 @@ html.ab-avatar-picker-open body {
     }
 
     .ab-auth-form-head h2 {
-        font-size: 1.65rem;
+        font-size: var(--ab-font-size-165);
     }
 
     .ab-auth-input,
@@ -8412,7 +8412,7 @@ html.ab-avatar-picker-open body {
             min-height: 50px;
             gap: .46rem;
             padding-inline: .7rem;
-            font-size: .88rem;
+            font-size: var(--ab-font-size-088);
         }
 
         .navbar-nav {
@@ -8435,8 +8435,8 @@ html.ab-avatar-picker-open body {
             flex: 0 0 auto;
             min-height: 50px;
             padding: .78rem .62rem;
-            font-size: .84rem;
-            letter-spacing: 0;
+            font-size: var(--ab-font-size-084);
+            letter-spacing: var(--ab-letter-spacing);
         }
 
         .ab-storefront-home-link,
@@ -8444,7 +8444,7 @@ html.ab-avatar-picker-open body {
         .ab-storefront-shop-link {
             flex: 0 0 auto;
             padding-inline: .42rem;
-            font-size: .86rem;
+            font-size: var(--ab-font-size-086);
         }
     }
 }
@@ -8479,7 +8479,7 @@ html.ab-avatar-picker-open body {
             .form-control {
                 min-height: 44px;
                 padding-inline: .85rem;
-                font-size: .86rem;
+                font-size: var(--ab-font-size-086);
             }
 
             .btn {
@@ -8493,7 +8493,7 @@ html.ab-avatar-picker-open body {
             min-width: 0;
             padding-inline: .7rem;
             border-radius: .85rem;
-            font-size: .82rem;
+            font-size: var(--ab-font-size-082);
 
             span {
                 overflow: hidden;
@@ -8519,7 +8519,7 @@ html.ab-avatar-picker-open body {
                 flex: 0 0 auto;
                 gap: .34rem;
                 padding-inline: .65rem;
-                font-size: .78rem;
+                font-size: var(--ab-font-size-078);
             }
 
             .ab-storefront-language-item {
@@ -8539,7 +8539,7 @@ html.ab-avatar-picker-open body {
                 min-height: 48px;
                 gap: .42rem;
                 padding-inline: .65rem;
-                font-size: .86rem;
+                font-size: var(--ab-font-size-086);
             }
 
             .navbar-nav {
@@ -8569,8 +8569,8 @@ html.ab-avatar-picker-open body {
                 flex: 0 0 auto;
                 min-height: 48px;
                 padding: .75rem .6rem;
-                font-size: .79rem;
-                letter-spacing: 0;
+                font-size: var(--ab-font-size-079);
+                letter-spacing: var(--ab-letter-spacing);
             }
 
             .ab-storefront-home-link,
@@ -8578,7 +8578,7 @@ html.ab-avatar-picker-open body {
             .ab-storefront-shop-link {
                 flex: 0 0 auto;
                 padding-inline: .35rem;
-                font-size: .82rem;
+                font-size: var(--ab-font-size-082);
             }
         }
     }
@@ -8591,7 +8591,7 @@ html.ab-avatar-picker-open body {
 
             .nav-link {
                 padding-inline: .5rem;
-                font-size: .78rem;
+                font-size: var(--ab-font-size-078);
             }
         }
     }
@@ -8613,7 +8613,7 @@ html.ab-avatar-picker-open body {
 
             h1,
             h2 {
-                font-size: clamp(2.2rem, 4.6vw, 3.8rem);
+                font-size: var(--ab-font-size-fluid-220-46-380);
             }
         }
     }
@@ -8676,8 +8676,8 @@ html.ab-avatar-picker-open body {
             margin-inline-end: auto;
             color: $ab-ink;
             content: attr(data-ab-filter-title);
-            font-size: 1rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-100);
+            font-weight: var(--ab-font-weight-bold);
         }
 
         > .offcanvas-body:not(.ab-storefront-filter-dialog-actions) {
@@ -8726,7 +8726,7 @@ html.ab-avatar-picker-open body {
                 justify-content: center;
                 margin: 0 !important;
                 border-radius: .8rem;
-                font-weight: 800;
+                font-weight: var(--ab-font-weight-bold);
             }
         }
 
@@ -8819,8 +8819,8 @@ html.ab-avatar-picker-open body {
                 justify-content: center;
                 padding: 0 .25rem;
                 border: 2px solid #fff;
-                font-size: .56rem;
-                line-height: 1;
+                font-size: var(--ab-font-size-056);
+                line-height: var(--ab-line-height-100);
                 transform: none;
             }
         }
@@ -8837,7 +8837,7 @@ html.ab-avatar-picker-open body {
             height: 38px;
             gap: .32rem;
             padding-inline: .7rem;
-            font-size: .76rem;
+            font-size: var(--ab-font-size-076);
             border-radius: 999px;
         }
 
@@ -8882,8 +8882,8 @@ html.ab-avatar-picker-open body {
                 color: $ab-ink;
                 border-radius: 0 1rem 1rem 0;
                 background: transparent;
-                font-size: .8rem;
-                font-weight: 700;
+                font-size: var(--ab-font-size-080);
+                font-weight: var(--ab-font-weight-bold);
 
                 &::placeholder {
                     color: $ab-muted;
@@ -8938,17 +8938,17 @@ html.ab-avatar-picker-open body {
             border-radius: .35rem;
             background: transparent;
             box-shadow: none;
-            font-size: .78rem;
-            font-weight: 800;
-            line-height: 1;
+            font-size: var(--ab-font-size-078);
+            font-weight: var(--ab-font-weight-bold);
+            line-height: var(--ab-line-height-100);
 
             &::after {
                 display: inline-block;
                 color: #2f3f4f;
                 content: "\f107";
-                font-family: FontAwesome;
-                font-size: .78rem;
-                line-height: 1;
+                font-family: var(--ab-font-family-icons);
+                font-size: var(--ab-font-size-078);
+                line-height: var(--ab-line-height-100);
             }
 
             &:hover,
@@ -8964,7 +8964,7 @@ html.ab-avatar-picker-open body {
 
             i {
                 color: #2f3f4f;
-                font-size: .82rem;
+                font-size: var(--ab-font-size-082);
             }
         }
 
@@ -9023,9 +9023,9 @@ html.ab-avatar-picker-open body {
                 align-items: center;
                 padding: .55rem .72rem;
                 border-radius: 999px;
-                font-size: .78rem;
-                font-weight: 800;
-                line-height: 1;
+                font-size: var(--ab-font-size-078);
+                font-weight: var(--ab-font-weight-bold);
+                line-height: var(--ab-line-height-100);
                 white-space: nowrap;
             }
 
@@ -9086,7 +9086,7 @@ html.ab-avatar-picker-open body {
 
                 .form-control {
                     min-height: 36px;
-                    font-size: .78rem;
+                    font-size: var(--ab-font-size-078);
                 }
 
                 .btn {
@@ -9180,7 +9180,7 @@ html.ab-avatar-picker-open body {
 
 @media (max-width: 767.98px) {
     .ab-storefront-header .ab-storefront-announcement {
-        font-size: .72rem;
+        font-size: var(--ab-font-size-072);
     }
 
     .ab-storefront-hero-slider {
@@ -9216,27 +9216,27 @@ html.ab-avatar-picker-open body {
             h1,
             h2 {
                 margin-block: .8rem;
-                font-size: clamp(1.85rem, 7vw, 2.65rem);
-                letter-spacing: -.025em;
-                line-height: 1.08;
+                font-size: var(--ab-font-size-fluid-185-70-265);
+                letter-spacing: var(--ab-letter-spacing);
+                line-height: var(--ab-line-height-108);
             }
 
             p {
                 margin-bottom: 1.25rem;
-                font-size: .94rem;
-                line-height: 1.55;
+                font-size: var(--ab-font-size-094);
+                line-height: var(--ab-line-height-155);
             }
 
             .btn {
                 min-width: 0;
                 padding: .7rem 1rem;
-                font-size: .86rem;
+                font-size: var(--ab-font-size-086);
             }
         }
 
         .ab-storefront-banner-kicker {
             padding: .45rem .7rem;
-            font-size: .66rem;
+            font-size: var(--ab-font-size-066);
         }
 
         .carousel-control-prev,
@@ -9278,7 +9278,7 @@ html.ab-avatar-picker-open body {
             width: 58px;
             height: 58px;
             flex-basis: 58px;
-            font-size: 1.5rem;
+            font-size: var(--ab-font-size-150);
         }
     }
 
@@ -9333,12 +9333,12 @@ html.ab-avatar-picker-open body {
 
         .ab-storefront-product-name,
         .o_wsale_products_item_title {
-            font-size: .82rem;
+            font-size: var(--ab-font-size-082);
         }
 
         .btn {
             padding-inline: .5rem;
-            font-size: .72rem;
+            font-size: var(--ab-font-size-072);
         }
 
         .ab-storefront-unit-option {
@@ -9354,7 +9354,7 @@ html.ab-avatar-picker-open body {
         margin-bottom: .9rem;
 
         p {
-            font-size: .84rem;
+            font-size: var(--ab-font-size-084);
         }
     }
 
@@ -9467,7 +9467,7 @@ html.ab-avatar-picker-open body {
         }
 
         .ab-storefront-pack-info {
-            font-size: .64rem;
+            font-size: var(--ab-font-size-064);
         }
     }
 
@@ -9501,15 +9501,15 @@ html.ab-avatar-picker-open body {
                 border-radius: .85rem;
                 background: linear-gradient(180deg, #fff, #fbfefd);
                 box-shadow: 0 10px 26px rgba(25, 53, 43, .08);
-                font-weight: 700;
-                line-height: 1.2;
+                font-weight: var(--ab-font-weight-bold);
+                line-height: var(--ab-line-height-120);
                 text-align: start;
 
                 .oi,
                 .fa {
                     flex: 0 0 auto;
                     color: $ab-green-dark;
-                    font-size: 1rem;
+                    font-size: var(--ab-font-size-100);
                 }
 
                 .ab-storefront-mobile-shop-search-label {
@@ -9518,8 +9518,8 @@ html.ab-avatar-picker-open body {
                     min-width: 0;
                     flex: 1 1 auto;
                     color: $ab-muted;
-                    font-size: .92rem;
-                    font-weight: 600;
+                    font-size: var(--ab-font-size-092);
+                    font-weight: var(--ab-font-weight-semi-bold);
                     text-overflow: ellipsis;
                     white-space: nowrap;
                 }
@@ -9528,7 +9528,7 @@ html.ab-avatar-picker-open body {
                     display: inline-flex;
                     margin-inline-start: auto;
                     color: rgba($ab-ink, .72);
-                    font-size: .95rem;
+                    font-size: var(--ab-font-size-095);
                 }
 
                 &:hover,
@@ -9573,11 +9573,11 @@ html.ab-avatar-picker-open body {
             }
 
             strong {
-                font-size: .82rem;
+                font-size: var(--ab-font-size-082);
             }
 
             small {
-                font-size: .68rem;
+                font-size: var(--ab-font-size-068);
             }
         }
     }
@@ -9615,7 +9615,7 @@ html.ab-avatar-picker-open body {
     .ab-storefront-sponsored-label {
         inset-block-start: .45rem;
         inset-inline-start: .55rem;
-        font-size: .56rem;
+        font-size: var(--ab-font-size-056);
     }
 
     .ab-storefront-partner-copy {
@@ -9623,15 +9623,15 @@ html.ab-avatar-picker-open body {
         padding-block-start: 1rem;
 
         small {
-            font-size: .58rem;
+            font-size: var(--ab-font-size-058);
         }
 
         strong {
-            font-size: .9rem;
+            font-size: var(--ab-font-size-090);
         }
 
         span {
-            font-size: .68rem;
+            font-size: var(--ab-font-size-068);
         }
     }
 
@@ -9706,8 +9706,8 @@ html.ab-avatar-picker-open body {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                font-size: .56rem;
-                line-height: 1;
+                font-size: var(--ab-font-size-056);
+                line-height: var(--ab-line-height-100);
                 transform: none;
             }
         }
@@ -9766,11 +9766,11 @@ html.ab-avatar-picker-open body {
         border-radius: 1rem;
 
         strong {
-            font-size: .82rem;
+            font-size: var(--ab-font-size-082);
         }
 
         &:first-child strong {
-            font-size: 1.35rem;
+            font-size: var(--ab-font-size-135);
         }
 
         .ab-storefront-category-content {
@@ -9779,7 +9779,7 @@ html.ab-avatar-picker-open body {
 
         .ab-storefront-category-action {
             padding: .3rem .55rem;
-            font-size: .62rem;
+            font-size: var(--ab-font-size-062);
         }
     }
 
@@ -9850,14 +9850,14 @@ html.ab-avatar-picker-open body {
         background: linear-gradient(90deg, var(--ab-header-green-deep), var(--ab-header-green));
         border-bottom: 0;
         color: #fff;
-        font-size: .84rem;
+        font-size: var(--ab-font-size-084);
 
         .ab-storefront-trust-line {
             min-width: 0;
         }
 
         .ab-storefront-utility-actions {
-            font-size: .8rem;
+            font-size: var(--ab-font-size-080);
         }
     }
 
@@ -9972,7 +9972,7 @@ html.ab-avatar-picker-open body {
     border: 0;
     background: transparent;
     box-shadow: none;
-    font-size: .95rem;
+    font-size: var(--ab-font-size-095);
 }
 
 .ab-storefront-search-wrap .ab-storefront-search .btn {
@@ -10023,7 +10023,7 @@ html.ab-avatar-picker-open body {
     min-width: 118px;
     padding-inline: 1rem;
     background: #f8fcfa;
-    font-weight: 700;
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-storefront-account-toggle::after {
@@ -10045,7 +10045,7 @@ html.ab-avatar-picker-open body {
         min-height: 42px;
         border-radius: 10px;
         color: #123b31;
-        font-weight: 600;
+        font-weight: var(--ab-font-weight-semi-bold);
         text-align: inherit;
         white-space: normal;
     }
@@ -10071,7 +10071,7 @@ html.ab-avatar-picker-open body {
         border-radius: 999px;
         background: #fff;
         color: #194338;
-        font-size: .8rem;
+        font-size: var(--ab-font-size-080);
     }
 
     .ab-storefront-location-label {
@@ -10103,7 +10103,7 @@ html.ab-avatar-picker-open body {
     border-radius: 999px;
     padding: .5rem .95rem;
     color: #173d33;
-    font-weight: 750;
+    font-weight: var(--ab-font-weight-bold);
 }
 
 .ab-storefront-primary-nav .nav-link:hover,
@@ -10173,7 +10173,7 @@ html.ab-avatar-picker-open body {
     border-radius: 12px;
     background: #fbfefd;
     color: #123b31;
-    font-weight: 750;
+    font-weight: var(--ab-font-weight-bold);
     text-decoration: none;
 
     &:hover,
@@ -10203,7 +10203,7 @@ html.ab-avatar-picker-open body {
     border-radius: 999px;
     background: #f6faf8;
     color: #496a61;
-    font-size: .78rem;
+    font-size: var(--ab-font-size-078);
     text-decoration: none;
 }
 
@@ -10242,7 +10242,7 @@ html.ab-avatar-picker-open body {
         border-radius: 12px;
         background: #fff;
         color: #123b31;
-        font-weight: 750;
+        font-weight: var(--ab-font-weight-bold);
         text-decoration: none;
     }
 
@@ -10255,9 +10255,9 @@ html.ab-avatar-picker-open body {
     .ab-storefront-mobile-heading {
         margin: 1rem 0 .2rem;
         color: #526d65;
-        font-size: .82rem;
-        font-weight: 800;
-        text-transform: uppercase;
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
+        text-transform: var(--ab-text-transform-label);
     }
 
     .ab-storefront-location-trigger {
@@ -10604,7 +10604,7 @@ html.ab-avatar-picker-open body {
 
         .ab-storefront-search-wrap .ab-storefront-search .form-control {
             min-height: 42px;
-            font-size: .92rem;
+            font-size: var(--ab-font-size-092);
         }
 
         .ab-storefront-search-wrap .ab-storefront-search .btn {
@@ -10656,7 +10656,7 @@ html.ab-avatar-picker-open body {
             min-height: 34px;
             padding: .38rem .72rem;
             background: rgba(255, 255, 255, .52);
-            font-size: .86rem;
+            font-size: var(--ab-font-size-086);
             box-shadow: none;
         }
     }
@@ -10738,7 +10738,7 @@ html.ab-avatar-picker-open body {
             .ab-storefront-prescription-link {
                 min-height: 32px;
                 padding: .34rem .62rem;
-                font-size: .8rem;
+                font-size: var(--ab-font-size-080);
             }
 
             .ab-storefront-search-wrap .ab-storefront-search .input-group,
@@ -10792,7 +10792,7 @@ html.ab-avatar-picker-open body {
             border-bottom: 0;
             background: linear-gradient(90deg, var(--ab-header-green-deep), var(--ab-header-green));
             color: #fff;
-            font-size: .82rem;
+            font-size: var(--ab-font-size-082);
             opacity: 1;
             overflow: visible;
             pointer-events: auto;
@@ -10907,7 +10907,7 @@ html.ab-avatar-picker-open body {
             border-radius: 1rem;
             background: #eaf7f1;
             color: var(--ab-header-green-deep);
-            font-weight: 700;
+            font-weight: var(--ab-font-weight-bold);
             white-space: nowrap;
         }
 
@@ -10935,8 +10935,8 @@ html.ab-avatar-picker-open body {
             gap: .45rem;
             padding-inline: .8rem;
             border-radius: 999px;
-            font-size: .84rem;
-            font-weight: 800;
+            font-size: var(--ab-font-size-084);
+            font-weight: var(--ab-font-weight-bold);
         }
 
         .ab-storefront-cart-action .badge {
@@ -10968,7 +10968,7 @@ html.ab-avatar-picker-open body {
             border-inline-end: 1px solid rgba(255, 255, 255, .22);
             background: #14895a;
             color: #fff;
-            font-weight: 700;
+            font-weight: var(--ab-font-weight-bold);
         }
 
         .ab-storefront-primary-nav .nav-link,
@@ -10977,8 +10977,8 @@ html.ab-avatar-picker-open body {
             padding: .9rem .8rem;
             background: transparent;
             color: #173d33;
-            font-size: .9rem;
-            font-weight: 600;
+            font-size: var(--ab-font-size-090);
+            font-weight: var(--ab-font-weight-semi-bold);
         }
 
         .ab-storefront-prescription-link {
@@ -11070,7 +11070,7 @@ html.ab-avatar-picker-open body {
             gap: .32rem;
             padding-inline: .7rem;
             border-radius: 999px;
-            font-size: .76rem;
+            font-size: var(--ab-font-size-076);
         }
 
         .ab-storefront-mobile-search-row {
@@ -11105,8 +11105,8 @@ html.ab-avatar-picker-open body {
             padding: .42rem .78rem;
             border-radius: 0 1rem 1rem 0;
             background: transparent;
-            font-size: .8rem;
-            font-weight: 700;
+            font-size: var(--ab-font-size-080);
+            font-weight: var(--ab-font-weight-bold);
         }
 
         .ab-storefront-mobile-search-row .ab-storefront-search .btn {
@@ -11134,9 +11134,9 @@ html.ab-avatar-picker-open body {
             background: transparent;
             box-shadow: none;
             color: #2f3f4f;
-            font-size: .78rem;
-            font-weight: 800;
-            line-height: 1;
+            font-size: var(--ab-font-size-078);
+            font-weight: var(--ab-font-weight-bold);
+            line-height: var(--ab-line-height-100);
         }
 
         .ab-storefront-location-label {
@@ -11183,9 +11183,9 @@ html.ab-avatar-picker-open body {
             align-items: center;
             padding: .38rem .72rem;
             border-radius: 999px;
-            font-size: .8rem;
-            font-weight: 800;
-            line-height: 1;
+            font-size: var(--ab-font-size-080);
+            font-weight: var(--ab-font-weight-bold);
+            line-height: var(--ab-line-height-100);
             white-space: nowrap;
         }
 
@@ -11341,7 +11341,7 @@ html.ab-avatar-picker-open body {
         color: #fff;
         border: 1px solid #007f4f;
         background: #007f4f;
-        font-size: .8rem;
+        font-size: var(--ab-font-size-080);
     }
 
     .ab-storefront-header .ab-storefront-category-nav .ab-storefront-category-dropdown:not(.show) .ab-storefront-categories-toggle[aria-expanded="false"],
@@ -11437,21 +11437,21 @@ html.ab-avatar-picker-open body {
         display: inline-flex;
         margin-bottom: .8rem;
         color: var(--ab-prescription-green);
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     h1 {
         margin: 0 0 .75rem;
-        font-size: clamp(2rem, 4vw, 3.8rem);
-        font-weight: 900;
-        letter-spacing: 0;
+        font-size: var(--ab-font-size-fluid-200-40-380);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
     }
 
     p {
         margin: 0;
         color: #5d746b;
-        font-size: 1.08rem;
-        line-height: 1.75;
+        font-size: var(--ab-font-size-108);
+        line-height: var(--ab-line-height-175);
     }
 }
 
@@ -11511,8 +11511,8 @@ html.ab-avatar-picker-open body {
 
     h2 {
         margin: 0 0 .25rem;
-        font-size: 1.2rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-120);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
@@ -11543,13 +11543,13 @@ html.ab-avatar-picker-open body {
     border-radius: 999px;
     color: #fff;
     background: var(--ab-prescription-green);
-    font-size: 1.6rem;
+    font-size: var(--ab-font-size-160);
 }
 
 .ab-prescription-upload-empty {
     strong {
-        font-size: 1.12rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-112);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     small {
@@ -11570,7 +11570,7 @@ html.ab-avatar-picker-open body {
         gap: .45rem;
         min-height: 44px;
         border-radius: 8px;
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
     }
 }
 
@@ -11609,7 +11609,7 @@ html.ab-avatar-picker-open body {
     gap: .45rem;
 
     label {
-        font-weight: 900;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     textarea {
@@ -11639,7 +11639,7 @@ html.ab-avatar-picker-open body {
     gap: .5rem;
     min-height: 48px;
     border-radius: 8px;
-    font-weight: 900;
+    font-weight: var(--ab-font-weight-bold);
 
     &:disabled {
         opacity: .56;
@@ -11657,15 +11657,15 @@ html.ab-avatar-picker-open body {
 
     h2 {
         margin: 0 0 .8rem;
-        font-size: 1.05rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-105);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     ol {
         margin: 0;
         padding-inline-start: 1.25rem;
         color: #516a61;
-        line-height: 1.8;
+        line-height: var(--ab-line-height-180);
     }
 }
 
@@ -11677,7 +11677,7 @@ html.ab-avatar-picker-open body {
 
     a {
         color: var(--ab-prescription-green);
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
         text-decoration: none;
     }
 }
@@ -11703,8 +11703,8 @@ html.ab-avatar-picker-open body {
     border-radius: 999px;
     color: var(--ab-prescription-green);
     background: var(--ab-prescription-soft);
-    font-size: .82rem;
-    font-weight: 800;
+    font-size: var(--ab-font-size-082);
+    font-weight: var(--ab-font-weight-bold);
     white-space: nowrap;
 }
 
@@ -11723,14 +11723,14 @@ html.ab-avatar-picker-open body {
 
     span {
         color: var(--ab-prescription-green);
-        font-weight: 800;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     h1 {
         margin: .2rem 0 0;
-        font-size: clamp(1.7rem, 3vw, 2.5rem);
-        font-weight: 900;
-        letter-spacing: 0;
+        font-size: var(--ab-font-size-fluid-170-30-250);
+        font-weight: var(--ab-font-weight-bold);
+        letter-spacing: var(--ab-letter-spacing);
     }
 }
 
@@ -11767,12 +11767,12 @@ html.ab-avatar-picker-open body {
 
     i {
         color: var(--ab-prescription-green);
-        font-size: 2rem;
+        font-size: var(--ab-font-size-200);
     }
 
     strong {
-        font-size: 1.2rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-120);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
@@ -11805,13 +11805,13 @@ html.ab-avatar-picker-open body {
     strong {
         display: block;
         margin-bottom: .25rem;
-        font-weight: 900;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {
         margin: 0;
         color: #667a72;
-        line-height: 1.65;
+        line-height: var(--ab-line-height-165);
     }
 
     &.is-complete {
@@ -11849,8 +11849,8 @@ html.ab-avatar-picker-open body {
 
     h2 {
         margin: 0;
-        font-size: 1rem;
-        font-weight: 900;
+        font-size: var(--ab-font-size-100);
+        font-weight: var(--ab-font-weight-bold);
     }
 
     img {
@@ -11872,7 +11872,7 @@ html.ab-avatar-picker-open body {
     strong {
         display: block;
         margin-bottom: .3rem;
-        font-weight: 900;
+        font-weight: var(--ab-font-weight-bold);
     }
 
     p {

@@ -153,11 +153,14 @@ Header refactor updates in this working tree:
 - Split the storefront navigation discovery dropdown into Shop by Category and Shop by Need menus with pharmacy-specific links and Arabic translations.
 - Refresh the module POT and Arabic catalogs so Odoo 19 imports Python, QWeb, and JavaScript translations consistently at runtime.
 - Route dynamic header, location, category, and need labels through runtime language-aware translation helpers.
+- Clear storefront product search autocomplete results immediately when the customer empties the search field.
 
 Files changed for this header refactor:
 
+- `ab_ecommerce_storefront/__manifest__.py`
 - `ab_ecommerce_storefront/views/layout.xml`
 - `ab_ecommerce_storefront/models/website.py`
+- `ab_ecommerce_storefront/static/src/js/search_autocomplete_clear.js`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
 - `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
