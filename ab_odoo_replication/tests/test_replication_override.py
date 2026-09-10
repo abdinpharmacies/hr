@@ -377,6 +377,7 @@ class TestForceIdReplication(TransactionCase):
         share.fld__type_rel_dict = {
             'id': ('integer', None),
             'name': ('char', None),
+            'city': ('char', None),
             'active': ('boolean', None),
         }
         return previous
@@ -412,7 +413,7 @@ class TestForceIdReplication(TransactionCase):
                 'name': 'Forced ID Partner',
                 'active': True,
             })
-            operation, local_id, values, replay_write = change
+            operation, local_id, values, replay_write, changed_values = change
 
             with patch.object(
                 type(self.Partner),
@@ -420,13 +421,20 @@ class TestForceIdReplication(TransactionCase):
                 autospec=True,
             ) as hook:
                 self.Replication._finalize_force_id_batch(self.Partner, {
-                    'create': {local_id: values},
+                    'create': {
+                        local_id: {
+                            'values': values,
+                            'replay_write': replay_write,
+                            'changed_values': changed_values,
+                        },
+                    },
                     'write': {},
                 })
 
             self.assertEqual(operation, 'create')
             self.assertEqual(local_id, forced_id)
             self.assertTrue(replay_write)
+            self.assertEqual(changed_values, values)
             self.assertEqual(self.Partner.browse(forced_id).name, 'Forced ID Partner')
             self.assertTrue(self.Partner.browse(forced_id).write_date)
             hook.assert_called_once()
@@ -454,16 +462,19 @@ class TestForceIdReplication(TransactionCase):
         partner = self.Partner.create({'name': 'Before replication'})
         previous = self._configure_partner_replication()
         try:
-            operation, local_id, values, replay_write = self.Replication._replicate_main_fields({
-                'name': 'After replication',
-                'id': partner.id,
-            })
+            operation, local_id, values, replay_write, changed_values = (
+                self.Replication._replicate_main_fields({
+                    'name': 'After replication',
+                    'id': partner.id,
+                })
+            )
             self.Replication._finalize_force_id_batch(self.Partner, {
                 'create': {},
                 'write': {
                     local_id: {
                         'values': values,
                         'replay_write': replay_write,
+                        'changed_values': changed_values,
                     },
                 },
             })
@@ -471,6 +482,53 @@ class TestForceIdReplication(TransactionCase):
             self.assertEqual(operation, 'write')
             self.assertEqual(local_id, partner.id)
             self.assertFalse(replay_write)
+            self.assertEqual(changed_values, {'name': 'After replication'})
             self.assertEqual(partner.name, 'After replication')
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_exact_copy_identical_update_skips_orm_write_values(self):
+        partner = self.Partner.create({'name': 'Unchanged replication'})
+        previous = self._configure_partner_replication()
+        try:
+            with patch.object(type(partner), 'write', autospec=True) as write:
+                operation, local_id, values, replay_write, changed_values = (
+                    self.Replication._replicate_main_fields({
+                        'id': partner.id,
+                        'name': partner.name,
+                        'active': partner.active,
+                    })
+                )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(values['name'], partner.name)
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_exact_copy_update_writes_only_different_values(self):
+        partner = self.Partner.create({
+            'name': 'Partially changed replication',
+            'city': 'Cairo',
+        })
+        previous = self._configure_partner_replication()
+        try:
+            operation, local_id, values, replay_write, changed_values = (
+                self.Replication._replicate_main_fields({
+                    'id': partner.id,
+                    'name': partner.name,
+                    'city': 'Giza',
+                })
+            )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertEqual(changed_values, {'city': 'Giza'})
+            self.assertEqual(values['name'], partner.name)
+            self.assertEqual(partner.city, 'Giza')
         finally:
             self._restore_replication_share(previous)
