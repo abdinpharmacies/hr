@@ -2,6 +2,23 @@
 <odoo>
     <data>
 
+        <record id="invoice_view_search" model="ir.ui.view">
+            <field name="name">supplier.claim.cycle.search</field>
+            <field name="model">ab_supplier_claim_cycle</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Supplier"
+                           filter_domain="['|', ('supplier_id.name', 'ilike', self), ('supplier_id.code', '=ilike', self)]"/>
+                    <field name="supplier_claim_number" string="Supplier Reference"
+                           filter_domain="[('supplier_claim_number', 'ilike', self)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_supplier_claim_cycle.invoice_action" model="ir.actions.act_window">
+            <field name="search_view_id" ref="invoice_view_search"/>
+        </record>
+
         <!-- Inherited list view -->
         <record id="invoice_view_tree" model="ir.ui.view">
             <field name="name">supplier.claim.cycle.list</field>
@@ -102,9 +119,6 @@
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
                                 invisible="status != 'sign_check' or not can_current_user_act"/>
-                        <button name="action_open_skip_reviews" type="object" string="Skip Inventory &amp; Purchase"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'secretarial'"/>
                         <button name="action_supplier_notified" type="object" string="Supplier Notified"
                                 class="btn-success"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"

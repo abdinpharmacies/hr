@@ -1976,6 +1976,7 @@ msgstr "القسم الأعلى"
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__partner_id
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__supplier_id
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__supplier_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_search
 msgid "Supplier"
 msgstr "المورد"
 
@@ -3642,3 +3643,13 @@ msgstr "استخدم معالج تأكيد التخطي لتخطي مراجعا�
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid "Upload the supplier claim document before starting the cycle."
 msgstr "ارفع مستند مطالبة المورد قبل بدء الدورة."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_search
+msgid "Supplier Ref / Number"
+msgstr "مرجع / رقم المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_search
+msgid "Supplier Reference"
+msgstr "مرجع المورد"
