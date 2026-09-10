@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cart_buy_now_guidance" inherit_id="website_sale.cart" name="Buy Now Cart Guidance">
+        <xpath expr="//t[@t-call='website_sale.cart_lines']" position="before">
+            <div t-if="request.params.get('ab_buy_now') == '1'"
+                 class="ab-storefront-cart-guidance"
+                 role="status">
+                <span class="ab-storefront-cart-guidance-icon" aria-hidden="true">
+                    <i class="fa fa-shopping-cart"/>
+                </span>
+                <div>
+                    <strong>Review your cart before checkout</strong>
+                    <p>Buy now opens your current cart without adding another product. Checkout includes every item shown here.</p>
+                    <p>Remove anything you do not want, or move it to Favorites to save it for later.</p>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="cart_line_move_to_wishlist" inherit_id="website_sale_wishlist.product_cart_lines" name="Move Cart Lines to Favorites">
+        <xpath expr="//a[hasclass('o_add_wishlist') and hasclass('js_delete_product')]" position="replace">
+            <a href="#"
+               class="o_add_wishlist js_delete_product ab-storefront-cart-move-wishlist small"
+               t-att-data-product-template-id="line.product_id.product_tmpl_id.id"
+               t-att-data-product-product-id="line.product_id.id"
+               data-action="o_wishlist"
+               aria-label="Move to Favorites"
+               title="Move to Favorites">
+                Move to Favorites
+            </a>
+        </xpath>
+        <xpath expr="//button[hasclass('o_add_wishlist') and hasclass('js_delete_product')]" position="replace">
+            <button class="o_add_wishlist js_delete_product ab-storefront-cart-move-wishlist btn btn-link d-inline-flex d-md-none px-2"
+                    t-att-data-product-template-id="line.product_id.product_tmpl_id.id"
+                    t-att-data-product-product-id="line.product_id.id"
+                    data-action="o_wishlist"
+                    aria-label="Move to Favorites"
+                    title="Move to Favorites">
+                <i class="fa fa-fw fa-heart-o" aria-hidden="true"/>
+                <span>Move to Favorites</span>
+            </button>
+        </xpath>
+    </template>
+</odoo>

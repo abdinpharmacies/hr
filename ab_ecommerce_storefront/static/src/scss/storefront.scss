@@ -3263,39 +3263,59 @@ body.ab-storefront-location-picker-open {
         gap: .5rem;
     }
 
-    .ab-storefront-card-add {
-        position: relative;
-        display: grid !important;
+    .ab-storefront-card-purchase-buttons {
+        display: grid;
         width: 100%;
-        min-height: 48px;
-        aspect-ratio: auto;
-        overflow: hidden;
+        grid-template-columns: minmax(0, 1fr) 44px;
+        gap: .5rem;
+    }
+
+    .ab-storefront-card-buy-now,
+    .ab-storefront-card-add {
+        display: inline-flex !important;
+        height: 44px;
+        min-width: 0;
+        align-items: center;
+        justify-content: center;
         margin: 0;
-        grid-template-columns: minmax(0, 1fr) 48px;
-        gap: .55rem;
-        padding: 0;
+        border-radius: 7px;
+        transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .ab-storefront-card-buy-now {
+        padding: 0 .9rem;
         color: #fff;
         border: 0;
-        border-radius: 8px;
-        background: transparent;
-        box-shadow: none;
-        transition: color .18s ease, background-color .18s ease, border-color .18s ease, transform .18s ease;
+        background: $ab-green;
+        box-shadow: 0 9px 20px rgba($ab-green, .17);
+        font-size: var(--ab-font-size-082);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-100);
+        text-decoration: none;
+        white-space: nowrap;
 
         &:hover,
         &:focus-visible {
-            background: transparent;
+            color: #fff;
+            background: $ab-green-dark;
+            box-shadow: 0 11px 22px rgba($ab-green-dark, .2);
+        }
+    }
 
-            .ab-storefront-card-add-text {
-                background: $ab-green-dark;
-                box-shadow: 0 13px 25px rgba($ab-green-dark, .22);
-            }
+    .ab-storefront-card-add {
+        width: 44px;
+        padding: 0;
+        color: $ab-green;
+        border: 1px solid rgba($ab-green, .2);
+        background: #fff;
+        box-shadow: 0 8px 18px rgba(25, 71, 52, .07);
 
-            .ab-storefront-card-add-icon {
-                color: $ab-green-dark;
-                border-color: rgba($ab-green-dark, .28);
-                background: $ab-green-soft;
-                box-shadow: 0 12px 24px rgba(25, 71, 52, .12);
-            }
+        &:hover,
+        &:focus-visible {
+            color: $ab-green-dark;
+            border-color: rgba($ab-green-dark, .3);
+            background: $ab-green-soft;
+            box-shadow: 0 10px 20px rgba(25, 71, 52, .11);
         }
 
         &.is-loading {
@@ -3304,57 +3324,24 @@ body.ab-storefront-location-picker-open {
         }
 
         &.is-success {
-            .ab-storefront-card-add-text {
-                background: $ab-green-lift;
-            }
-
-            .ab-storefront-card-add-icon {
-                color: $ab-green-lift;
-                border-color: rgba($ab-green-lift, .35);
-            }
+            color: $ab-green-lift;
+            border-color: rgba($ab-green-lift, .35);
+            background: #f0fbf5;
         }
 
         &.is-error {
-            .ab-storefront-card-add-text {
-                background: $ab-orange;
-            }
-
-            .ab-storefront-card-add-icon {
-                color: $ab-orange;
-                border-color: rgba($ab-orange, .35);
-            }
+            color: $ab-orange;
+            border-color: rgba($ab-orange, .35);
         }
 
         &:disabled {
             transform: none;
         }
 
-        .ab-storefront-card-add-text,
         .ab-storefront-card-add-icon {
             display: inline-flex;
-            min-width: 0;
-            height: 48px;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            transition: color .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-        }
-
-        .ab-storefront-card-add-text {
-            padding: 0 .95rem;
-            background: $ab-green;
-            box-shadow: 0 10px 22px rgba($ab-green, .18);
-            font-size: .83rem;
-            font-weight: 800;
-            line-height: 1;
-            white-space: nowrap;
-        }
-
-        .ab-storefront-card-add-icon {
-            color: $ab-green;
-            border: 1px solid rgba($ab-green, .16);
-            background: #fff;
-            box-shadow: 0 9px 20px rgba(25, 71, 52, .07);
         }
 
         svg {
@@ -3367,9 +3354,6 @@ body.ab-storefront-location-picker-open {
             stroke-width: 1.8;
         }
 
-        [data-ab-card-add-label]::before {
-            content: attr(title);
-        }
     }
 
     .ab-storefront-card-state {
@@ -3381,9 +3365,85 @@ body.ab-storefront-location-picker-open {
 
     .ab-storefront-card-message {
         color: #9a4b16;
-        font-size: .72rem;
-        font-weight: 700;
-        line-height: 1.45;
+        font-size: var(--ab-font-size-072);
+        font-weight: var(--ab-font-weight-bold);
+        line-height: var(--ab-line-height-145);
+    }
+}
+
+.ab-storefront-cart-guidance {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: .85rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem;
+    color: $ab-ink;
+    border: 1px solid rgba($ab-green, .18);
+    border-inline-start: 4px solid $ab-green;
+    border-radius: 7px;
+    background: #f5fbf8;
+
+    .ab-storefront-cart-guidance-icon {
+        display: inline-flex;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        color: $ab-green;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 5px 14px rgba(25, 71, 52, .09);
+    }
+
+    strong {
+        display: block;
+        margin-bottom: .25rem;
+        font-size: var(--ab-font-size-095);
+    }
+
+    p {
+        margin: 0;
+        color: $ab-muted;
+        font-size: var(--ab-font-size-082);
+        line-height: var(--ab-line-height-155);
+
+        + p {
+            margin-top: .2rem;
+        }
+    }
+}
+
+.ab-storefront-cart-move-wishlist {
+    display: inline-flex !important;
+    align-items: center;
+    gap: .35rem;
+    color: $ab-green;
+    font-weight: var(--ab-font-weight-bold);
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        color: $ab-green-dark;
+        text-decoration: underline;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ab-storefront-cart-guidance {
+        grid-template-columns: 34px minmax(0, 1fr);
+        gap: .7rem;
+        padding: .8rem;
+
+        .ab-storefront-cart-guidance-icon {
+            width: 34px;
+            height: 34px;
+        }
+    }
+
+    .ab-storefront-cart-move-wishlist {
+        gap: .2rem;
+        font-size: var(--ab-font-size-068);
+        line-height: var(--ab-line-height-120);
     }
 }
 

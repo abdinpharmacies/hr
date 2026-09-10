@@ -129,7 +129,7 @@ export class AbStorefrontProductCard extends Interaction {
             return;
         }
 
-        button.dataset.abReadyLabel = this.getButtonLabel(button) || _t("Buy now");
+        button.dataset.abReadyLabel = this.getButtonLabel(button) || _t("Add to cart");
         this.setButtonState(button, "loading", _t("Adding..."));
         try {
             window.abStorefrontSuppressNextCartMotion = true;
@@ -219,7 +219,7 @@ export class AbStorefrontProductCard extends Interaction {
         const labelEl = button.querySelector("[data-ab-card-add-label]");
         if (labelEl) {
             labelEl.title = label;
-            labelEl.replaceChildren();
+            labelEl.textContent = label;
         }
     }
 
@@ -228,7 +228,7 @@ export class AbStorefrontProductCard extends Interaction {
     }
 
     getReadyLabel(button) {
-        return button.dataset.abReadyLabel || _t("Buy now");
+        return button.dataset.abReadyLabel || _t("Add to cart");
     }
 
     showMessage(button, message) {

@@ -87,11 +87,18 @@ Current changes before commit:
 - Add `ab_website_admin_content` as a storefront dependency so the homepage carousel model is available when the storefront renders.
 - Reorder the homepage so Offers appear before the service trust strip, then continue with Best Sellers, Feedback, Why Abdin, Testimonials, and CTA/Hotline.
 - Keep the existing category and promo content, merging promo cards into the CTA/Hotline area while adding Feedback, Why Abdin, and Testimonials after Best Sellers.
+- Split product-card purchase actions so `Buy now` opens the existing cart without adding the displayed product, while the cart icon remains the only quick-add control.
+- Show contextual cart guidance only for customers arriving through `Buy now`, explaining that checkout includes every current cart line.
+- Reuse Odoo's native cart wishlist action to move unwanted products to Favorites and remove them from the active cart without a duplicate cart workflow.
+- Relabel the native cart action as `Move to Favorites` on desktop and mobile, with matching Arabic translations.
+- Resize the product-card `Buy now` and cart icon controls to a stable 44px height, keeping the icon button square across responsive widths.
 
 Files changed:
 
 - `ab_ecommerce_storefront/__manifest__.py`
 - `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/shop.py`
 - `ab_ecommerce_storefront/models/ir_http.py`
 - `ab_ecommerce_storefront/models/product_template.py`
 - `ab_ecommerce_storefront/models/website.py`
@@ -101,12 +108,15 @@ Files changed:
 - `ab_ecommerce_storefront/static/src/js/support_widget.js`
 - `ab_ecommerce_storefront/static/src/js/product_card.js`
 - `ab_ecommerce_storefront/static/src/js/search_typewriter.js`
+- `ab_ecommerce_storefront/static/src/js/shop_category_accordion.js`
 - `ab_ecommerce_storefront/static/src/js/product_image_zoom.js`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/cart.xml`
 - `ab_ecommerce_storefront/views/layout.xml`
 - `ab_ecommerce_storefront/views/homepage.xml`
 - `ab_ecommerce_storefront/views/product.xml`
 - `ab_ecommerce_storefront/views/shop.xml`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
 - `ab_ecommerce_storefront/changelog.d/current.md`

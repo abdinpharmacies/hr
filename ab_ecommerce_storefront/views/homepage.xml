@@ -129,17 +129,23 @@
                     </div>
                 </div>
                 <div class="ab-storefront-product-actions mt-3">
-                    <button t-if="ab_card_can_quick_add"
-                            type="button"
-                            class="ab-storefront-card-add btn btn-primary w-100"
-                            data-show-quantity="false"
-                            aria-label="Buy now"
-                            title="Buy now">
-                        <span class="ab-storefront-card-add-text" data-ab-card-add-label="" title="Buy now" aria-hidden="true"/>
-                        <span class="ab-storefront-card-add-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24"><path d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
-                        </span>
-                    </button>
+                    <div t-if="ab_card_can_quick_add" class="ab-storefront-card-purchase-buttons">
+                        <a href="/shop/cart?ab_buy_now=1"
+                           class="ab-storefront-card-buy-now btn btn-primary"
+                           data-ab-buy-now="true">
+                            Buy now
+                        </a>
+                        <button type="button"
+                                class="ab-storefront-card-add btn"
+                                data-show-quantity="false"
+                                aria-label="Add to cart"
+                                title="Add to cart">
+                            <span class="visually-hidden" data-ab-card-add-label="" title="Add to cart">Add to cart</span>
+                            <span class="ab-storefront-card-add-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M3 4h2l2.3 10.2a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+                            </span>
+                        </button>
+                    </div>
                     <button t-elif="ab_card_is_sold_out"
                             type="button"
                             class="ab-storefront-card-state btn btn-outline-secondary w-100"
