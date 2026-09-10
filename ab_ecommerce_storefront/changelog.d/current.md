@@ -229,3 +229,14 @@ Files changed:
 - `ab_ecommerce_storefront/static/src/js/price_range_guard.js`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
 - `ab_ecommerce_storefront/views/homepage.xml`
+
+Current translation changes before commit:
+
+- Add Arabic translations for the split product-card cart action and cart Favorites workflow.
+- Refresh the storefront POT entries for the new cart guidance and action labels.
+
+Files changed:
+
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`

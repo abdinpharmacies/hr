@@ -3569,3 +3569,48 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "vitamins and minerals"
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid ""
+"<span class=\"visually-hidden\" data-ab-card-add-label=\"\" title=\"Add to "
+"cart\">Add to cart</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Add to cart"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_buy_now_guidance
+msgid "<strong>Review your cart before checkout</strong>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_buy_now_guidance
+msgid ""
+"Buy now opens your current cart without adding another product. Checkout "
+"includes every item shown here."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_buy_now_guidance
+msgid ""
+"Remove anything you do not want, or move it to Favorites to save it for "
+"later."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_line_move_to_wishlist
+msgid ""
+"<i class=\"fa fa-fw fa-heart-o\" aria-hidden=\"true\"/>\n"
+"                <span>Move to Favorites</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_line_move_to_wishlist
+msgid "Move to Favorites"
+msgstr ""
