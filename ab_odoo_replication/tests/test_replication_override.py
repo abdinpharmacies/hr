@@ -352,3 +352,125 @@ class TestReplicationOverride(TransactionCase):
 
         self.assertIsNone(result)
         self.assertIn('Skipping replication for unavailable local model', logs.output[0])
+
+
+class TestForceIdReplication(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Replication = cls.env['ab_odoo_replication']
+        cls.Partner = cls.env['res.partner'].sudo().with_context(active_test=False)
+
+    def _configure_partner_replication(self):
+        share = self.Replication.ReplShare
+        previous = {
+            'model_name': share.model_name,
+            'table_name': share.table_name,
+            'has_main_rec_id': share.has_main_rec_id,
+            'missing_many2one_flds': share.missing_many2one_flds,
+            'fld__type_rel_dict': share.fld__type_rel_dict,
+        }
+        share.model_name = 'res.partner'
+        share.table_name = 'res_partner'
+        share.has_main_rec_id = False
+        share.missing_many2one_flds = []
+        share.fld__type_rel_dict = {
+            'id': ('integer', None),
+            'name': ('char', None),
+            'active': ('boolean', None),
+        }
+        return previous
+
+    def _restore_replication_share(self, previous):
+        for field_name, value in previous.items():
+            setattr(self.Replication.ReplShare, field_name, value)
+
+    def test_refresh_force_id_record_discards_cached_values(self):
+        partner = self.Partner.create({'name': 'Before forced SQL update'})
+        self.assertEqual(partner.name, 'Before forced SQL update')
+
+        self.env.cr.execute(SQL(
+            'UPDATE res_partner SET name = %s WHERE id = %s',
+            'After forced SQL update',
+            partner.id,
+        ))
+        refreshed = self.Replication._refresh_force_id_record(
+            self.Partner,
+            partner.id,
+            changed_fields=['name'],
+        )
+
+        self.assertEqual(refreshed.name, 'After forced SQL update')
+
+    def test_exact_copy_insert_returns_forced_id_and_runs_batch_hook(self):
+        self.env.cr.execute('SELECT COALESCE(MAX(id), 0) + 1 FROM res_partner')
+        forced_id = self.env.cr.fetchone()[0]
+        previous = self._configure_partner_replication()
+        try:
+            change = self.Replication._replicate_main_fields({
+                'id': forced_id,
+                'name': 'Forced ID Partner',
+                'active': True,
+            })
+            operation, local_id, values, replay_write = change
+
+            with patch.object(
+                type(self.Partner),
+                '_after_force_id_replication',
+                autospec=True,
+            ) as hook:
+                self.Replication._finalize_force_id_batch(self.Partner, {
+                    'create': {local_id: values},
+                    'write': {},
+                })
+
+            self.assertEqual(operation, 'create')
+            self.assertEqual(local_id, forced_id)
+            self.assertTrue(replay_write)
+            self.assertEqual(self.Partner.browse(forced_id).name, 'Forced ID Partner')
+            self.assertTrue(self.Partner.browse(forced_id).write_date)
+            hook.assert_called_once()
+            self.assertEqual(hook.call_args.args[1], 'create')
+            self.assertEqual(hook.call_args.args[2][forced_id]['name'], 'Forced ID Partner')
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_replay_values_exclude_orm_managed_fields(self):
+        replay_values = self.Replication._get_force_id_replay_values(
+            self.Partner,
+            {
+                'id': 999,
+                'name': 'Replay Name',
+                'create_date': '2025-01-01 00:00:00',
+                'write_date': '2025-01-02 00:00:00',
+                'display_name': 'Computed Name',
+                'child_ids': [],
+            },
+        )
+
+        self.assertEqual(replay_values, {'name': 'Replay Name'})
+
+    def test_exact_copy_update_does_not_depend_on_id_dictionary_order(self):
+        partner = self.Partner.create({'name': 'Before replication'})
+        previous = self._configure_partner_replication()
+        try:
+            operation, local_id, values, replay_write = self.Replication._replicate_main_fields({
+                'name': 'After replication',
+                'id': partner.id,
+            })
+            self.Replication._finalize_force_id_batch(self.Partner, {
+                'create': {},
+                'write': {
+                    local_id: {
+                        'values': values,
+                        'replay_write': replay_write,
+                    },
+                },
+            })
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertEqual(partner.name, 'After replication')
+        finally:
+            self._restore_replication_share(previous)
