@@ -62,6 +62,8 @@ Current changes before commit:
 - Remove the extra closing spin so the support toggle rotates directly back to the chat state.
 - Match desktop home and category navigation colors to the softer mobile chip style instead of white-on-green.
 - Smooth the sticky header transition with a subtle drop-in motion from above when entering scroll state.
+- Convert shop category/subcategory navigation into expandable accordion groups on desktop and mobile filter panels.
+- Remove the desktop shop filter rail's internal scroll while keeping the mobile and tablet filter panel behavior unchanged below 992px.
 - Remove header navigation inner scrolling from 767px upward so the category dropdown opens outside the nav row instead of inside a clipped overflow area.
 - Restore the desktop category toggle to its closed chip colors after closing the dropdown by separating closed, focus, and open states.
 - Restore the category toggle orange underline as a hover-only affordance, with the menu opening directly below the trigger.

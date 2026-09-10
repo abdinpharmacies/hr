@@ -4,18 +4,39 @@
         <t t-set="ab_children" t-value="c.child_id"/>
         <t t-set="ab_children"
            t-value="ab_children.filtered('has_published_products')"/>
+        <t t-set="ab_is_active" t-value="category and c.id == category.id"/>
+        <t t-set="ab_is_path" t-value="category and c.id in category.parents_and_self.ids"/>
+        <t t-set="ab_category_tree_id_prefix"
+           t-value="ab_category_tree_id_prefix or 'shop'"/>
+        <t t-set="ab_collapse_id"
+           t-value="'ab_storefront_category_%s_%s' % (ab_category_tree_id_prefix, c.id)"/>
         <li class="ab-storefront-side-category-item">
-            <a t-att-href="keep('%s/category/%s' % (shop_path, request.env['ir.http']._slug(c)))"
-               t-attf-class="ab-storefront-side-category-link #{'active' if category and c.id == category.id else ''} #{'is-path' if category and c.id in category.parents_and_self.ids else ''}"
-               t-att-aria-current="'page' if category and c.id == category.id else None">
+            <button t-if="ab_children"
+                    type="button"
+                    t-attf-class="ab-storefront-side-category-link ab-storefront-side-category-toggle #{'active' if ab_is_active else ''} #{'is-path' if ab_is_path else ''} #{'' if ab_is_path else 'collapsed'}"
+                    t-att-data-ab-category-target="'#%s' % ab_collapse_id"
+                    t-att-aria-expanded="'true' if ab_is_path else 'false'"
+                    t-att-aria-controls="ab_collapse_id">
                 <span class="ab-storefront-side-category-label">
                     <t t-set="ab_category" t-value="c"/>
                     <t t-call="ab_ecommerce_storefront.category_icon"/>
                     <span t-out="website._ab_storefront_category_label(c)"/>
                 </span>
-                <i t-if="ab_children" class="fa fa-angle-right" aria-hidden="true"/>
+                <i class="fa fa-angle-down ab-storefront-side-category-chevron" aria-hidden="true"/>
+            </button>
+            <a t-else=""
+               t-att-href="keep('%s/category/%s' % (shop_path, request.env['ir.http']._slug(c)))"
+               t-attf-class="ab-storefront-side-category-link #{'active' if ab_is_active else ''} #{'is-path' if ab_is_path else ''}"
+               t-att-aria-current="'page' if ab_is_active else None">
+                <span class="ab-storefront-side-category-label">
+                    <t t-set="ab_category" t-value="c"/>
+                    <t t-call="ab_ecommerce_storefront.category_icon"/>
+                    <span t-out="website._ab_storefront_category_label(c)"/>
+                </span>
             </a>
-            <ul t-if="ab_children" class="ab-storefront-side-category-children list-unstyled">
+            <ul t-if="ab_children"
+                t-att-id="ab_collapse_id"
+                t-attf-class="ab-storefront-side-category-children collapse #{'show' if ab_is_path else ''} list-unstyled">
                 <t t-foreach="ab_children" t-as="c">
                     <t t-call="ab_ecommerce_storefront.shop_category_navigation_item"/>
                 </t>
@@ -97,7 +118,10 @@
             <i t-if="search" class="fa fa-times ab-storefront-mobile-shop-search-clear" aria-hidden="true"/>
         </xpath>
         <xpath expr="//aside[@id='products_grid_before']//t[@t-if='show_price_filter' and @t-call='website_sale.filter_products_price']" position="after">
-            <t t-if="categories" t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+            <t t-if="categories">
+                <t t-set="ab_category_tree_id_prefix" t-value="'desktop'"/>
+                <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+            </t>
         </xpath>
         <xpath expr="//div[@id='o_wsale_container']" position="after">
             <section class="ab-storefront-shop-assurance">
@@ -143,6 +167,7 @@
                      class="accordion-collapse collapse"
                      aria-labelledby="ab_storefront_offcanvas_categories_header">
                     <div class="accordion-body py-3">
+                        <t t-set="ab_category_tree_id_prefix" t-value="'mobile'"/>
                         <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
                     </div>
                 </div>
