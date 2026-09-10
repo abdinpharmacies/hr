@@ -22,6 +22,9 @@ Current changes before commit:
 - Remove the duplicated light input layer from the storefront search bar while keeping the custom search container stroke and Odoo search behavior.
 - Refine the no-address account empty state into a centered vertical card and send the CTA directly to the add-address form.
 - Consolidate homepage, shop, category, search, wishlist, and recommendation tiles into one reusable storefront product-card template.
+- Use the best available product image size on storefront cards and fall back to the grayscale website logo instead of Odoo's default missing-image placeholder.
+- Clamp the shop price slider to the current highest available price after category, brand, and attribute filters are applied.
+- Keep the selected price slider track highlighted in orange from the left side, including Arabic and RTL storefront pages.
 - Present deduplicated Abdin package levels as customer-facing pack information without exposing internal large, medium, and small unit fields.
 - Enable alternate unit selection only when descriptive Abdin packaging has a verified matching native Odoo sale UoM and conversion ratio.
 - Add data-driven quick-add, unavailable, configurable, discounted, quantity, loading, success, error, and wishlist states.
@@ -193,3 +196,21 @@ Files changed for this prescription order feature:
 - `ab_ecommerce_storefront/views/portal.xml`
 - `ab_ecommerce_storefront/views/prescription_order_templates.xml`
 - `ab_ecommerce_storefront/views/prescription_order_views.xml`
+
+Current changes before commit:
+
+- Use the existing branded grayscale product placeholder when a storefront product has no `image_512` or `image_1920`.
+- Keep real product images untouched and only render the fallback image for products without an uploaded product image.
+- Limit the shop price slider maximum to the highest currently available product price after applying the other active filters.
+- Clamp selected min/max prices back into the available filtered range.
+- Force the selected price slider track to render from the left side using the storefront orange accent.
+- Prevent the price slider min and max handles from crossing over each other while dragging.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/shop.py`
+- `ab_ecommerce_storefront/static/src/js/price_range_guard.js`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/views/homepage.xml`

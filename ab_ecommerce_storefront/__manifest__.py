@@ -43,6 +43,7 @@
             "ab_ecommerce_storefront/static/src/js/search_typewriter.js",
             "ab_ecommerce_storefront/static/src/js/prescription_order.js",
             "ab_ecommerce_storefront/static/src/js/product_card.js",
+            "ab_ecommerce_storefront/static/src/js/price_range_guard.js",
             "ab_ecommerce_storefront/static/src/js/animated_price.js",
             "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",
             "ab_ecommerce_storefront/static/src/scss/storefront.scss",

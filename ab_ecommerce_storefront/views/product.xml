@@ -142,4 +142,59 @@
             <attribute name="class" add="btn-lg" separator=" "/>
         </xpath>
     </template>
+
+    <template id="product_image_fallback" name="Abdin Product Image Fallback" inherit_id="website_sale.shop_product_image" priority="95">
+        <xpath expr="//span[@name='o_img_with_max_suggested_width']" position="replace">
+            <span
+                t-if="(product_image._name == 'product.image' and product_image.image_1920) or (product_image._name != 'product.image' and product_image._ab_storefront_has_real_image())"
+                t-field="product_image.image_1920"
+                name="o_img_with_max_suggested_width"
+                class="o_product_detail_img_wrapper d-flex align-items-start justify-content-center h-100 w-100 oe_unmovable"
+                t-options="{
+                    'widget': 'image',
+                    'preview_image': 'image_1024',
+                    'class': 'oe_unmovable product_detail_img h-100 w-100',
+                    'alt-field': 'name',
+                    'zoom': product_image.can_image_1024_be_zoomed and 'image_1920',
+                }"
+            />
+            <span
+                t-else=""
+                name="o_img_with_max_suggested_width"
+                class="o_product_detail_img_wrapper ab-storefront-product-detail-fallback d-flex align-items-center justify-content-center h-100 w-100 oe_unmovable"
+            >
+                <img src="/ab_website_sale_product/static/src/img/placeholders/product_placeholder.jpeg"
+                     class="oe_unmovable product_detail_img"
+                     t-att-alt="product_image.name or product.name"/>
+            </span>
+        </xpath>
+        <xpath expr="//div[@t-field='product_image.image_1920']" position="replace">
+            <div
+                t-if="(product_image._name == 'product.image' and product_image.image_1920) or (product_image._name != 'product.image' and product_image._ab_storefront_has_real_image())"
+                t-field="product_image.image_1920"
+                t-att-class="image_classes + ' o_product_detail_img_wrapper oe_unmovable'"
+                t-attf-style="{{
+                    image_natural_index and ('--o-wsale-grid-product-img-natural-order: ' + str(image_natural_index)) or false
+                }}"
+                t-options="{
+                    'widget': 'image',
+                    'preview_image': 'image_1024',
+                    'class': 'oe_unmovable product_detail_img w-100 h-100',
+                    'alt-field': 'name',
+                    'zoom': product_image.can_image_1024_be_zoomed and 'image_1920',
+                }"
+            />
+            <div
+                t-else=""
+                t-att-class="image_classes + ' o_product_detail_img_wrapper ab-storefront-product-detail-fallback oe_unmovable'"
+                t-attf-style="{{
+                    image_natural_index and ('--o-wsale-grid-product-img-natural-order: ' + str(image_natural_index)) or false
+                }}"
+            >
+                <img src="/ab_website_sale_product/static/src/img/placeholders/product_placeholder.jpeg"
+                     class="oe_unmovable product_detail_img w-100 h-100"
+                     t-att-alt="product_image.name or product.name"/>
+            </div>
+        </xpath>
+    </template>
 </odoo>

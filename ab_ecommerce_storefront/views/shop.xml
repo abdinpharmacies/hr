@@ -188,4 +188,15 @@
             <attribute name="class" add="w-100" separator=" "/>
         </xpath>
     </template>
+
+    <template id="price_range_histogram" name="Abdin Price Range Histogram" inherit_id="website_sale.filter_products_price" priority="95">
+        <xpath expr="//input[@type='range']" position="before">
+            <div t-if="ab_price_histogram" class="ab-storefront-price-meter" aria-hidden="true">
+                <span t-foreach="ab_price_histogram"
+                      t-as="ab_price_bucket"
+                      t-attf-class="ab-storefront-price-meter-bar #{not ab_price_bucket and 'is-empty' or ''}"
+                      t-att-style="'--ab-price-bar-height: ' + str(ab_price_bucket) + '%;'"/>
+            </div>
+        </xpath>
+    </template>
 </odoo>

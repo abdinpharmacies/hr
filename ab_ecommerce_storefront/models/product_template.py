@@ -25,9 +25,37 @@ _UNIT_LABELS = {
     "VIAL": "Vial",
 }
 
+_AB_STOREFRONT_PLACEHOLDER_CHECKSUM = "85838e6e327fcf3ff85efa8cd978fe725ec5d53a"
+_AB_PRODUCT_TEMPLATE_IMAGE_FIELDS = (
+    "image_1920",
+    "image_1024",
+    "image_512",
+    "image_256",
+    "image_128",
+)
+_AB_PRODUCT_VARIANT_IMAGE_FIELDS = (
+    "image_variant_1920",
+    "image_variant_1024",
+    "image_variant_512",
+    "image_variant_256",
+    "image_variant_128",
+)
+
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
+
+    def _ab_storefront_has_real_image(self):
+        self.ensure_one()
+        image_attachment = self.env["ir.attachment"].sudo().search([
+            ("res_model", "=", self._name),
+            ("res_id", "=", self.id),
+            ("res_field", "in", _AB_PRODUCT_TEMPLATE_IMAGE_FIELDS),
+        ], limit=1)
+        return bool(
+            image_attachment
+            and image_attachment.checksum != _AB_STOREFRONT_PLACEHOLDER_CHECKSUM
+        )
 
     def _ab_storefront_sales_price(self, product=None):
         """Provide website prices where a tile caller has no batch price helper."""
@@ -140,3 +168,18 @@ class ProductTemplate(models.Model):
                 "base_price": template.uom_id._compute_price(base_price, matching_uom),
             })
         return result
+
+
+class ProductProduct(models.Model):
+    _inherit = "product.product"
+
+    def _ab_storefront_has_real_image(self):
+        self.ensure_one()
+        image_attachment = self.env["ir.attachment"].sudo().search([
+            ("res_model", "=", self._name),
+            ("res_id", "=", self.id),
+            ("res_field", "in", _AB_PRODUCT_VARIANT_IMAGE_FIELDS),
+        ], limit=1)
+        if image_attachment:
+            return image_attachment.checksum != _AB_STOREFRONT_PLACEHOLDER_CHECKSUM
+        return self.product_tmpl_id._ab_storefront_has_real_image()

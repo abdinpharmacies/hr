@@ -22,6 +22,7 @@
            t-value="product.type == 'combo' or product.has_configurable_attributes or product.product_variant_count &gt; 1 or product.optional_product_ids"/>
         <t t-set="ab_card_can_quick_add"
            t-value="ab_card_variant and product._website_show_quick_add() and not ab_card_requires_configuration and not ab_card_is_sold_out and not website.prevent_zero_price_sale"/>
+        <t t-set="ab_card_image_field" t-value="product._ab_storefront_has_real_image() and (product.image_512 and 'image_512' or product.image_1920 and 'image_1920') or False"/>
         <form t-attf-class="oe_product_cart ab-storefront-product-card d-flex flex-column #{ab_card_can_quick_add and 'ab-storefront-product-card-available' or ''} #{ab_card_is_sold_out and 'ab-storefront-product-card-unavailable' or ''} #{ab_card_requires_configuration and 'ab-storefront-product-card-configurable' or ''}"
               role="article"
               t-att-aria-label="product.name">
@@ -33,11 +34,19 @@
 
             <div class="ab-storefront-product-media">
                 <a t-att-href="product._get_product_url()" t-att-title="product.name">
-                    <img t-att-src="website.image_url(product, 'image_512')"
+                    <img t-if="ab_card_image_field"
+                         t-att-src="website.image_url(product, ab_card_image_field)"
                          t-att-alt="product.name"
                          width="420"
                          height="420"
                          loading="lazy"/>
+                    <span t-else="" class="ab-storefront-product-image-fallback" aria-hidden="true">
+                        <img src="/ab_website_sale_product/static/src/img/placeholders/product_placeholder.jpeg"
+                             alt=""
+                             width="420"
+                             height="420"
+                             loading="lazy"/>
+                    </span>
                 </a>
                 <button t-if="ab_card_variant"
                         type="button"
