@@ -137,12 +137,17 @@
     }
 
     function initPriceRangeGuard() {
-        applyRangeDirection();
+        const priceRangeOption = document.querySelector("#o_wsale_price_range_option");
+        if (!priceRangeOption) {
+            return;
+        }
+
+        applyRangeDirection(priceRangeOption);
         document.addEventListener("input", onRangeInput, true);
         document.addEventListener("newRangeValue", onNewRangeValue, true);
 
-        const observer = new MutationObserver(() => applyRangeDirection());
-        observer.observe(document.body, {
+        const observer = new MutationObserver(() => applyRangeDirection(priceRangeOption));
+        observer.observe(priceRangeOption, {
             childList: true,
             subtree: true,
         });

@@ -12,6 +12,7 @@ export class AbStorefrontProductCard extends Interaction {
     static selector = ".ab-storefront-product-card";
     dynamicContent = {
         ".ab-storefront-card-add": { "t-on-click.prevent": this.onAddToCart },
+        ".ab-storefront-card-buy-now": { "t-on-click.prevent": this.onBuyNow },
         "[data-ab-card-quantity]": { "t-on-click.prevent": this.onChangeQuantity },
         ".ab-storefront-unit-option": { "t-on-click.prevent": this.onSelectUnit },
     };
@@ -116,47 +117,87 @@ export class AbStorefrontProductCard extends Interaction {
         });
     }
 
+    async addProduct(button, options = {}) {
+        const {
+            loadingLabel = _t("Adding..."),
+            successLabel = _t("Added"),
+            readyLabel = _t("Add to cart"),
+            isBuyNow = false,
+            redirectToCart = false,
+            showSuccessFeedback = true,
+        } = options;
+
+        const form = button.closest("form.oe_product_cart");
+        const product = this.getProductData(form);
+        if (!product) {
+            this.showMessage(button, _t("Could not add this product. Please try again."));
+            return 0;
+        }
+
+        button.dataset.abReadyLabel = this.getButtonLabel(button) || readyLabel;
+        this.setButtonState(button, "loading", loadingLabel);
+        try {
+            window.abStorefrontSuppressNextCartMotion = true;
+            const quantity = await this.waitFor(this.services["cart"].add(product, {
+                isBuyNow,
+                isConfigured: false,
+                redirectToCart,
+                showQuantity: false,
+            }));
+            window.abStorefrontSuppressNextCartMotion = false;
+            if (!quantity) {
+                this.setButtonState(button, "ready", this.getReadyLabel(button));
+                return 0;
+            }
+            this.clearMessage(button);
+            if (showSuccessFeedback) {
+                this.setButtonState(button, "success", successLabel);
+                this.showActionFeedback(button, "cart");
+                window.setTimeout(() => {
+                    if (button.isConnected && button.classList.contains("is-success")) {
+                        this.setButtonState(button, "ready", this.getReadyLabel(button));
+                    }
+                }, 1400);
+            }
+            return quantity;
+        } catch {
+            window.abStorefrontSuppressNextCartMotion = false;
+            this.setButtonState(button, "error", this.getReadyLabel(button));
+            this.showMessage(button, _t("Could not add this product. Please try again."));
+            return 0;
+        }
+    }
+
     async onAddToCart(ev) {
         const button = ev.currentTarget;
         if (button.disabled || button.classList.contains("is-loading")) {
             return;
         }
 
-        const form = button.closest("form.oe_product_cart");
-        const product = this.getProductData(form);
-        if (!product) {
-            this.showMessage(button, _t("Could not add this product. Please try again."));
+        await this.addProduct(button, {
+            loadingLabel: _t("Adding..."),
+            successLabel: _t("Added"),
+            readyLabel: _t("Add to cart"),
+            isBuyNow: false,
+            redirectToCart: false,
+            showSuccessFeedback: true,
+        });
+    }
+
+    async onBuyNow(ev) {
+        const button = ev.currentTarget;
+        if (button.disabled || button.classList.contains("is-loading")) {
             return;
         }
 
-        button.dataset.abReadyLabel = this.getButtonLabel(button) || _t("Add to cart");
-        this.setButtonState(button, "loading", _t("Adding..."));
-        try {
-            window.abStorefrontSuppressNextCartMotion = true;
-            const quantity = await this.waitFor(this.services["cart"].add(product, {
-                isBuyNow: false,
-                isConfigured: false,
-                redirectToCart: false,
-                showQuantity: false,
-            }));
-            window.abStorefrontSuppressNextCartMotion = false;
-            if (!quantity) {
-                this.setButtonState(button, "ready", this.getReadyLabel(button));
-                return;
-            }
-            this.clearMessage(button);
-            this.setButtonState(button, "success", _t("Added"));
-            this.showActionFeedback(button, "cart");
-            window.setTimeout(() => {
-                if (button.isConnected && button.classList.contains("is-success")) {
-                    this.setButtonState(button, "ready", this.getReadyLabel(button));
-                }
-            }, 1400);
-        } catch {
-            window.abStorefrontSuppressNextCartMotion = false;
-            this.setButtonState(button, "error", this.getReadyLabel(button));
-            this.showMessage(button, _t("Could not add this product. Please try again."));
-        }
+        await this.addProduct(button, {
+            loadingLabel: _t("Adding..."),
+            successLabel: _t("Added"),
+            readyLabel: _t("Buy now"),
+            isBuyNow: true,
+            redirectToCart: true,
+            showSuccessFeedback: false,
+        });
     }
 
     onChangeQuantity(ev) {
