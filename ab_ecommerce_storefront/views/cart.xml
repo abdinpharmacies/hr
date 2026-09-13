@@ -106,8 +106,201 @@
     </template>
 
     <template id="address_signin_abdin_skin" inherit_id="website_sale.address" name="Abdin Checkout Address Sign In Skin">
+        <xpath expr="//div[hasclass('o_customer_address_fill')]" position="attributes">
+            <attribute name="class" add="ab-storefront-address-form-shell" separator=" "/>
+        </xpath>
+        <xpath expr="//form[@name='address_form']" position="attributes">
+            <attribute name="class" add="ab-storefront-address-form" separator=" "/>
+        </xpath>
+        <xpath expr="//t[@t-if='not is_anonymous_cart']/h4" position="replace">
+            <header class="ab-storefront-address-form-head">
+                <span>Checkout details</span>
+                <h4>
+                    <t t-if="partner_sudo">Update delivery information</t>
+                    <t t-else="">Add delivery information</t>
+                </h4>
+            </header>
+        </xpath>
+        <xpath expr="//t[@t-if='is_anonymous_cart']/div[hasclass('d-flex')]" position="replace">
+            <header class="ab-storefront-address-form-head ab-storefront-address-form-head-guest">
+                <div>
+                    <span>Checkout details</span>
+                    <h4>Complete your order</h4>
+                </div>
+                <div
+                    t-if="website.account_on_checkout != 'disabled'"
+                    class="o_address_signin ab-storefront-address-signin-row"
+                >
+                    <span>Already have an account?</span>
+                    <a
+                        role="button"
+                        href="/web/login?redirect=/shop/checkout"
+                        class="btn btn-primary ms-2"
+                    >
+                        Sign in
+                    </a>
+                </div>
+            </header>
+        </xpath>
         <xpath expr="//div[hasclass('o_address_signin')]/a[hasclass('btn-primary')]" position="attributes">
             <attribute name="class" add="ab-storefront-address-signin" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="address_form_fields_abdin_checkout" inherit_id="website_sale.address_form_fields" name="Abdin Simplified Checkout Address Fields" priority="100">
+        <xpath expr="//div[@id='div_name']" position="before">
+            <section class="ab-storefront-address-section ab-storefront-address-section-customer">
+                <div class="ab-storefront-address-section-head">
+                    <span class="ab-storefront-address-step">1</span>
+                    <div>
+                        <h5>معلومات العميل</h5>
+                        <p>بيانات التواصل الأساسية لتأكيد الطلب.</p>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//div[@id='div_name']" position="replace">
+            <div id="div_name" class="col-12 mb-3 ab-storefront-checkout-field">
+                <label class="col-form-label" for="o_name">الاسم الكامل</label>
+                <input
+                    id="o_name"
+                    type="text"
+                    name="name"
+                    t-att-value="partner_sudo.name"
+                    class="form-control"
+                    autocomplete="name"
+                    placeholder="اكتب الاسم الكامل"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_email']" position="replace">
+            <div id="div_email" class="col-lg-6 mb-3 ab-storefront-checkout-field">
+                <label class="col-form-label label-optional" for="o_email">البريد الإلكتروني</label>
+                <input
+                    id="o_email"
+                    type="email"
+                    name="email"
+                    t-att-value="partner_sudo.email"
+                    class="form-control"
+                    autocomplete="email"
+                    placeholder="example@email.com"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_phone']" position="replace">
+            <div id="div_phone" class="col-lg-6 mb-3 ab-storefront-checkout-field">
+                <label class="col-form-label" for="o_phone">رقم الموبايل</label>
+                <input
+                    id="o_phone"
+                    type="tel"
+                    name="phone"
+                    t-att-value="partner_sudo.phone"
+                    class="form-control"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    placeholder="010xxxxxxxx"
+                />
+            </div>
+            <section class="ab-storefront-address-section ab-storefront-address-section-delivery">
+                <div class="ab-storefront-address-section-head">
+                    <span class="ab-storefront-address-step">2</span>
+                    <div>
+                        <h5>عنوان التوصيل</h5>
+                        <p>اكتب بيانات كافية تساعد المندوب يوصل بسرعة.</p>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//t[@name='b2b_fields']" position="replace"/>
+        <xpath expr="//div[@id='div_street']" position="replace">
+            <div id="div_street" class="col-12 mb-3 ab-storefront-checkout-field">
+                <label class="col-form-label" for="o_street">العنوان بالتفصيل</label>
+                <textarea
+                    name="street"
+                    id="o_street"
+                    class="form-control ab-storefront-detailed-address"
+                    rows="4"
+                    autocomplete="street-address"
+                    placeholder="الشارع، رقم المبنى، الدور، الشقة، وأي علامة مميزة"
+                ><t t-out="((partner_sudo.street or '') + (('\n' + partner_sudo.street2) if partner_sudo.street and partner_sudo.street2 else (partner_sudo.street2 or '')))"/></textarea>
+                <small class="form-text">مثال: الشارع، رقم العمارة، الدور، الشقة، وبجوار أي مكان معروف.</small>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_street2']" position="replace">
+            <div id="div_street2" class="d-none">
+                <input id="o_street2" type="hidden" name="street2" value=""/>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_city']" position="replace">
+            <div id="div_city" class="col-lg-6 mb-3 ab-storefront-checkout-field">
+                <label class="col-form-label" for="o_city">المدينة</label>
+                <input
+                    id="o_city"
+                    type="text"
+                    name="city"
+                    class="form-control"
+                    t-att-value="partner_sudo.city"
+                    autocomplete="address-level2"
+                    placeholder="اكتب المدينة أو المنطقة"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_zip']" position="replace">
+            <div id="div_zip" class="d-none">
+                <input
+                    id="o_zip"
+                    type="hidden"
+                    name="zip"
+                    t-att-value="partner_sudo.zip"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//t[@t-if='not zip_before_city']/div[@id='div_zip']" position="replace">
+            <div id="div_zip_after_city" class="d-none">
+                <input
+                    id="o_zip"
+                    type="hidden"
+                    name="zip"
+                    t-att-value="partner_sudo.zip"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_country']" position="replace">
+            <div id="div_country" class="d-none">
+                <input
+                    id="o_country_id"
+                    type="hidden"
+                    name="country_id"
+                    t-att-value="country.id if country else partner_sudo.country_id.id"
+                />
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='div_state']" position="replace">
+            <div
+                id="div_state"
+                class="col-lg-6 mb-3 ab-storefront-checkout-field"
+                t-att-style="not country_states and 'display: none'"
+            >
+                <label class="col-form-label label-optional" for="o_state_id">المحافظة</label>
+                <select
+                    id="o_state_id"
+                    name="state_id"
+                    class="form-select"
+                    autocomplete="address-level1"
+                >
+                    <option value="">اختار المحافظة</option>
+                    <option
+                        t-foreach="country_states"
+                        t-as="s"
+                        t-att-value="s.id"
+                        t-att-selected="s.id == (int(state_id) if state_id else partner_sudo.state_id.id)"
+                        t-out="s.name"
+                    />
+                </select>
+            </div>
+        </xpath>
+        <xpath expr="//input[@name='required_fields']" position="replace">
+            <input type="hidden" name="required_fields" t-att-value="'name,phone,street,city'"/>
         </xpath>
     </template>
 

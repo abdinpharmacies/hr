@@ -8,6 +8,25 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 class AbEcommerceStorefrontShop(WebsiteSale):
     """Storefront shop refinements that keep Odoo's native /shop behavior."""
 
+    def _get_default_country(self, order_sudo=False, **kwargs):
+        country = super()._get_default_country(order_sudo=order_sudo, **kwargs)
+        return country or request.website.company_id.country_id
+
+    def _get_mandatory_address_fields(self, country_sudo):
+        fields = super()._get_mandatory_address_fields(country_sudo)
+        fields.discard("zip")
+        return fields
+
+    def _get_mandatory_billing_address_fields(self, country_sudo):
+        fields = super()._get_mandatory_billing_address_fields(country_sudo)
+        fields.discard("email")
+        return fields
+
+    def _get_mandatory_delivery_address_fields(self, country_sudo):
+        fields = super()._get_mandatory_delivery_address_fields(country_sudo)
+        fields.discard("email")
+        return fields
+
     def _get_additional_shop_values(self, values, **kwargs):
         result = super()._get_additional_shop_values(values, **kwargs)
         result.update(self._ab_storefront_price_range_values(values))

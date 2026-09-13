@@ -82,6 +82,7 @@
 
         <xpath expr="//header[@id='top']" position="replace">
             <header t-if="not no_header" id="top" data-anchor="true" class="ab-storefront-header">
+                <ul class="top_menu d-none" aria-hidden="true"/>
                 <t t-set="ab_header_categories" t-value="website._ab_storefront_categories(limit=7)"/>
                 <t t-set="ab_header_category_menu" t-value="website._ab_storefront_header_category_menu()"/>
                 <t t-set="ab_header_need_menu" t-value="website._ab_storefront_header_need_menu()"/>
