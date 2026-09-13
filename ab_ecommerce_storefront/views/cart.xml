@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="checkout_layout_abdin_cart_skin" inherit_id="website_sale.checkout_layout" name="Abdin Checkout Layout Skin">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="ab-storefront-checkout-flow" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_website_sale_checkout_container')]" position="attributes">
+            <attribute name="class" add="ab-storefront-checkout-container" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_wsale_shorter_cart_summary')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-summary-column" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="cart_header_abdin" inherit_id="website_sale.cart" name="Abdin Cart Header">
+        <xpath expr="//div[@id='shop_cart']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-page" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='shop_cart']/div[hasclass('d-flex') and hasclass('align-items-center')][1]" position="replace">
+            <section class="ab-storefront-cart-toolbar">
+                <div class="ab-storefront-cart-reorder">
+                    <t t-call="website_sale.quick_reorder_button"/>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
     <template id="cart_buy_now_guidance" inherit_id="website_sale.cart" name="Buy Now Cart Guidance">
         <xpath expr="//t[@t-call='website_sale.cart_lines']" position="before">
             <div t-if="request.params.get('ab_buy_now') == '1'"
@@ -10,34 +35,200 @@
                 </span>
                 <div>
                     <strong>Review your cart before checkout</strong>
-                    <p>Buy now opens your current cart without adding another product. Checkout includes every item shown here.</p>
+                    <p>Buy now adds the selected product to your cart first. Checkout includes every item shown here.</p>
                     <p>Remove anything you do not want, or move it to Favorites to save it for later.</p>
                 </div>
             </div>
         </xpath>
     </template>
 
+    <template id="cart_lines_abdin_skin" inherit_id="website_sale.cart_lines" name="Abdin Cart Lines Skin">
+        <xpath expr="//div[hasclass('js_cart_lines') and @t-if='not website_sale_order or not website_sale_order.website_order_line']" position="replace">
+            <div
+                t-if="not website_sale_order or not website_sale_order.website_order_line"
+                class="js_cart_lines ab-storefront-empty-cart"
+            >
+                <div class="ab-storefront-empty-cart-icon" aria-hidden="true">
+                    <i class="fa fa-shopping-basket"/>
+                </div>
+                <h2>Your cart is empty</h2>
+                <p>Start adding the pharmacy products you need to your cart.</p>
+                <a href="/shop" class="btn btn-primary ab-storefront-empty-cart-cta">
+                    Start shopping
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='cart_products']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-items" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_cart_product')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_cart_product')]/div[hasclass('o_cart_product_image')]" position="before">
+            <label class="ab-storefront-cart-line-select">
+                <input type="checkbox"
+                       class="ab-storefront-cart-line-checkbox"
+                       checked="checked"
+                       t-att-data-line-id="line.id"
+                       t-att-data-product-id="line.product_id.id"
+                       t-att-aria-label="'Select %s for checkout' % line.name_short"/>
+                <span aria-hidden="true"/>
+            </label>
+        </xpath>
+        <xpath expr="//div[hasclass('o_cart_product_image')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item-image" separator=" "/>
+        </xpath>
+        <xpath expr="//h6[@t-out='line._get_line_header()']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item-title" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@t-if='combination_name or line.product_template_id._has_multiple_uoms()']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item-meta" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='o_wsale_cart_line_button_container']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item-actions" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='o_wsale_cart_line_button_container_mobile']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-item-actions-mobile" separator=" "/>
+        </xpath>
+        <xpath expr="//a[hasclass('js_delete_product')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-remove" separator=" "/>
+        </xpath>
+        <xpath expr="//button[hasclass('js_delete_product')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-remove" separator=" "/>
+            <attribute name="aria-label">Remove from cart</attribute>
+        </xpath>
+    </template>
+
+    <template id="cart_navigation_actions_abdin_skin" inherit_id="website_sale.shorter_cart_summary" name="Abdin Cart Navigation Actions Skin">
+        <xpath expr="//t[@t-call='website_sale.navigation_buttons']" position="before">
+            <t t-set="_container_classes" t-valuef="ab-storefront-cart-actions o_cta_navigation_container"/>
+        </xpath>
+    </template>
+
+    <template id="address_signin_abdin_skin" inherit_id="website_sale.address" name="Abdin Checkout Address Sign In Skin">
+        <xpath expr="//div[hasclass('o_address_signin')]/a[hasclass('btn-primary')]" position="attributes">
+            <attribute name="class" add="ab-storefront-address-signin" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="address_navigation_button_abdin_skin" inherit_id="website_sale.navigation_buttons" name="Abdin Checkout Address Navigation Button Skin">
+        <xpath expr="//a[@name='website_sale_main_button']/span[@t-field='next_website_checkout_step.main_button_label']" position="replace">
+            <span>
+                <t t-if="request.httprequest.path == '/shop/address'">Confirm Address</t>
+                <t t-else="" t-out="next_website_checkout_step.main_button_label"/>
+            </span>
+        </xpath>
+        <xpath expr="//a[@name='website_sale_main_button']/i[hasclass('fa-angle-right')]" position="replace">
+            <i t-if="request.httprequest.path != '/shop/address'" class="fa fa-angle-right ms-2 fw-light"/>
+        </xpath>
+    </template>
+
+    <template id="cart_quantity_abdin_skin" inherit_id="website_sale.cart_lines_quantity" name="Abdin Cart Quantity Skin">
+        <xpath expr="//div[contains(@t-attf-class, 'css_quantity')]" position="attributes">
+            <attribute name="t-attf-class" add="ab-storefront-cart-quantity" separator=" "/>
+        </xpath>
+        <xpath expr="//input[hasclass('js_quantity')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-quantity-input" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="cart_line_price_abdin_skin" inherit_id="website_sale.cart_lines_price" name="Abdin Cart Line Price Skin">
+        <xpath expr="//h6[@name='website_sale_cart_line_price']" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-line-price" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="cart_summary_abdin_skin" inherit_id="website_sale.shorter_cart_summary" name="Abdin Cart Summary Skin">
+        <xpath expr="//div[hasclass('o_total_card')]" position="attributes">
+            <attribute name="class" add="ab-storefront-order-summary-card" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="total_abdin_skin" inherit_id="website_sale.total" name="Abdin Cart Totals Skin">
+        <xpath expr="//div[contains(@t-attf-class, 'o_cart_total')]" position="attributes">
+            <attribute name="t-attf-class" add="ab-storefront-cart-total" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="coupon_form_abdin_skin" inherit_id="website_sale.coupon_form" name="Abdin Coupon Form Skin">
+        <xpath expr="//form[@name='coupon_code']" position="attributes">
+            <attribute name="class" add="ab-storefront-coupon-form" separator=" "/>
+        </xpath>
+        <xpath expr="//form[@name='coupon_code']/div[hasclass('input-group')]" position="before">
+            <label class="ab-storefront-coupon-label" for="ab_storefront_coupon_code">
+                كود الخصم
+            </label>
+        </xpath>
+        <xpath expr="//div[hasclass('input-group')]" position="attributes">
+            <attribute name="class" add="ab-storefront-coupon-control" separator=" "/>
+        </xpath>
+        <xpath expr="//input[@name='promo']" position="attributes">
+            <attribute name="id">ab_storefront_coupon_code</attribute>
+            <attribute name="placeholder">أدخل كود الخصم</attribute>
+            <attribute name="aria-label">كود الخصم</attribute>
+        </xpath>
+        <xpath expr="//form[@name='coupon_code']" position="after">
+            <a href="/shop" class="ab-storefront-cart-continue-under-coupon">
+                الاستمرار في التسوق
+            </a>
+        </xpath>
+    </template>
+
+    <template id="quick_reorder_abdin_skin" inherit_id="website_sale.quick_reorder_button" name="Abdin Quick Reorder Skin">
+        <xpath expr="//t[@t-set='quick_reorder_button_title']" position="replace">
+            <t t-set="quick_reorder_button_title">
+                <t t-if="request.website.is_public_user()">Login to reorder</t>
+                <t t-elif="not order_history">No previous products available for reorder.</t>
+            </t>
+        </xpath>
+        <xpath expr="//button[@id='quick_reorder_button']" position="replace">
+            <button
+                id="quick_reorder_button"
+                type="button"
+                class="btn btn-sm btn-link ab-storefront-quick-reorder"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#quick_reorder_sidebar"
+                aria-controls="quick_reorder_sidebar"
+                t-att-disabled="not order_history"
+            >
+                <i class="fa fa-rotate-left me-2"/>
+                <span>Quick reorder</span>
+            </button>
+        </xpath>
+    </template>
+
+    <template id="quick_reorder_sidebar_abdin_skin" inherit_id="website_sale.quick_reorder_sidebar" name="Abdin Quick Reorder Sidebar Skin">
+        <xpath expr="//div[@id='quick_reorder_sidebar']" position="attributes">
+            <attribute name="class" add="ab-storefront-quick-reorder-sidebar" separator=" "/>
+        </xpath>
+    </template>
+
     <template id="cart_line_move_to_wishlist" inherit_id="website_sale_wishlist.product_cart_lines" name="Move Cart Lines to Favorites">
         <xpath expr="//a[hasclass('o_add_wishlist') and hasclass('js_delete_product')]" position="replace">
+            <t t-set="ab_line_in_wishlist" t-value="line.product_id._is_in_wishlist()"/>
             <a href="#"
-               class="o_add_wishlist js_delete_product ab-storefront-cart-move-wishlist small"
+               t-attf-class="ab-storefront-cart-move-wishlist small #{ab_line_in_wishlist and 'o_in_wishlist' or ''}"
                t-att-data-product-template-id="line.product_id.product_tmpl_id.id"
                t-att-data-product-product-id="line.product_id.id"
-               data-action="o_wishlist"
-               aria-label="Move to Favorites"
-               title="Move to Favorites">
-                Move to Favorites
+               t-att-aria-pressed="'true' if ab_line_in_wishlist else 'false'"
+               t-att-aria-label="'In Favorites' if ab_line_in_wishlist else 'Add to Favorites'"
+               t-att-title="'In Favorites' if ab_line_in_wishlist else 'Add to Favorites'">
+                <i class="fa fa-fw fa-heart-o" aria-hidden="true"/>
+                <span class="ab-storefront-cart-wishlist-label">
+                    <t t-if="ab_line_in_wishlist">Added to Favorite</t>
+                    <t t-else="">Add to Favorite</t>
+                </span>
             </a>
         </xpath>
         <xpath expr="//button[hasclass('o_add_wishlist') and hasclass('js_delete_product')]" position="replace">
-            <button class="o_add_wishlist js_delete_product ab-storefront-cart-move-wishlist btn btn-link d-inline-flex d-md-none px-2"
+            <t t-set="ab_line_in_wishlist" t-value="line.product_id._is_in_wishlist()"/>
+            <button t-attf-class="ab-storefront-cart-move-wishlist btn btn-link d-inline-block d-md-none px-2 #{ab_line_in_wishlist and 'o_in_wishlist' or ''}"
                     t-att-data-product-template-id="line.product_id.product_tmpl_id.id"
                     t-att-data-product-product-id="line.product_id.id"
-                    data-action="o_wishlist"
-                    aria-label="Move to Favorites"
-                    title="Move to Favorites">
+                    t-att-aria-pressed="'true' if ab_line_in_wishlist else 'false'"
+                    t-att-aria-label="'In Favorites' if ab_line_in_wishlist else 'Add to Favorites'"
+                    t-att-title="'In Favorites' if ab_line_in_wishlist else 'Add to Favorites'">
                 <i class="fa fa-fw fa-heart-o" aria-hidden="true"/>
-                <span>Move to Favorites</span>
             </button>
         </xpath>
     </template>
