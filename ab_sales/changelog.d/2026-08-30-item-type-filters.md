@@ -62,21 +62,22 @@ Files changed:
 ## Current changes before commit:
 
 User-facing changes:
-- Show the actual invoice salesperson and invoice type on a separate row below the branch in Bill Wizard details.
-- Prioritize Contract, then Promo, then Delivery; leave ordinary cash invoices unlabelled.
-- Translate the new labels in both Arabic catalogs, including Delivery as توصيل.
-- Add focused payload, contract relation/name, promotion, translation, and Bills-column regression coverage.
+- Added a Remove All control below New Bill in the POS cached-bills sidebar.
+- Clear all cached prepending POS bills for the current browser/user/employee cache without creating a replacement bill.
+- Reset selected bill state, bill-dependent inputs, customer insight state, product search results, and pending POS refresh timers after bulk removal.
+- Persist the empty draft cache to browser storage and the employee-scoped server cache immediately.
+- Added Arabic translation entries for the new Remove All label.
 
 Validation:
-- All six focused invoice-info tests passed after module loading, with no skips or errors.
-- Targeted Sales/Contracts upgrade, compilation, Arabic PO format checks, and whitespace checks passed.
-- Source audit confirms that existing payload values, search/loading methods, JavaScript, and dependencies are unchanged.
-- Full module run still reports 4 failures and 32 errors in existing replication/return tests.
+- JavaScript syntax check passed for the POS action file.
+- XML parse check passed for the POS OWL template.
+- Arabic PO format checks passed for both language catalogs.
+- Whitespace diff check passed for the module changes.
 
 Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 - ab_sales/i18n/ar.po
 - ab_sales/i18n/ar_001.po
-- ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py
-- ab_sales/static/src/bill_wizard/bill_wizard_action.xml
-- ab_sales/tests/test_bill_wizard_product_filter.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.scss
+- ab_sales/static/src/pos/pos_action.xml

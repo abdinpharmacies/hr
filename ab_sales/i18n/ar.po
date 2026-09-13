@@ -89,3 +89,9 @@ msgstr "مندوب المبيعات:"
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 msgid "Invoice Type:"
 msgstr "نوع الفاتورة:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Remove All"
+msgstr "حذف الكل"

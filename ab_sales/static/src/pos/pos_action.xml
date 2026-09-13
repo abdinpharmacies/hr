@@ -60,6 +60,16 @@
                         <span class="o_ab_sales_pos_new_icon ab_pos_sidebar_btn_new_bill_icon"
                               aria-hidden="true">+</span>
                     </button>
+                    <button t-if="state.bills.length"
+                            class="btn btn-outline-danger o_ab_sales_pos_remove_all_btn ab_pos_sidebar_btn_remove_all"
+                            type="button"
+                            title="Remove All"
+                            aria-label="Remove All"
+                            t-on-click="removeAllBills">
+                        <i class="fa fa-trash o_ab_sales_pos_remove_all_icon ab_pos_sidebar_btn_remove_all_icon"
+                           aria-hidden="true"/>
+                        <span class="o_ab_sales_pos_remove_all_text ab_pos_sidebar_btn_remove_all_text">Remove All</span>
+                    </button>
                 </div>
 
                 <div class="o_ab_sales_pos_list ab_pos_bill_list">

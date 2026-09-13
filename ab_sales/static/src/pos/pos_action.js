@@ -1038,6 +1038,7 @@ class AbSalesPosAction extends Component {
         this.selectBill = this.selectBill.bind(this);
         this.removeBill = this.removeBill.bind(this);
         this.removeCurrentBill = this.removeCurrentBill.bind(this);
+        this.removeAllBills = this.removeAllBills.bind(this);
         this.openNewBillDialog = this.openNewBillDialog.bind(this);
         this.openCustomerLookup = this.openCustomerLookup.bind(this);
         this.applyCustomerLookup = this.applyCustomerLookup.bind(this);
@@ -2041,6 +2042,58 @@ class AbSalesPosAction extends Component {
             return;
         }
         this.removeBill(this.currentBill.id);
+    }
+
+    removeAllBills() {
+        if (!this.state.bills.length) {
+            return;
+        }
+        if (this._productSearchTimer) {
+            clearTimeout(this._productSearchTimer);
+            this._productSearchTimer = null;
+        }
+        if (this._promoTimer) {
+            clearTimeout(this._promoTimer);
+            this._promoTimer = null;
+        }
+        if (this._posBalanceTimer) {
+            clearTimeout(this._posBalanceTimer);
+            this._posBalanceTimer = null;
+        }
+        if (this._linePosBalanceTimer) {
+            clearTimeout(this._linePosBalanceTimer);
+            this._linePosBalanceTimer = null;
+        }
+        this._promoRequestId += 1;
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        this._storeStatusRequestId += 1;
+        this._customerInsightsRequestId += 1;
+
+        this.state.bills = [];
+        this.state.selectedId = null;
+        this.state.storeQuery = "";
+        this.state.storeResults = [];
+        this.state.productQuery = "";
+        this.state.productResults = [];
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        this.state.customerQuery = "";
+        this.state.customerResults = [];
+        this.state.customerInsights = null;
+        this.state.loadingCustomerInsights = false;
+        this.state.storeOnline = null;
+        this.state.showStoreDetails = false;
+        this.state.showCustomerDetails = false;
+        this.state.showBillDetails = false;
+
+        this._writeLocalCache();
+        if (this._cacheSaveTimer) {
+            clearTimeout(this._cacheSaveTimer);
+            this._cacheSaveTimer = null;
+        }
+        this._saveCacheToServer();
     }
 
     updateHeaderField(field, value) {
