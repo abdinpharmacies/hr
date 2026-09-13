@@ -160,11 +160,6 @@
                         </div>
 
                         <ul class="ab-storefront-actions navbar-nav flex-row align-items-center order-lg-2">
-                            <t t-call="website_sale_wishlist.header_wishlist_link">
-                                <t t-set="_icon" t-value="True"/>
-                                <t t-set="_link_class" t-value="'ab-storefront-action ab-storefront-wishlist-action btn position-relative'"/>
-                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
-                            </t>
                             <li t-if="request.env.user._is_public()" class="nav-item">
                                 <a t-att-href="'/web/login?redirect=%s' % request.httprequest.path"
                                    class="ab-storefront-action ab-storefront-login-action btn"
@@ -174,11 +169,6 @@
                                     <span t-out="ab_header_nav_labels['signin']"/>
                                 </a>
                             </li>
-                            <t t-call="website_sale.header_cart_link">
-                                <t t-set="_icon" t-value="True"/>
-                                <t t-set="_link_class" t-value="'ab-storefront-action ab-storefront-cart-action btn position-relative'"/>
-                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
-                            </t>
                             <li t-if="not request.env.user._is_public()" class="nav-item">
                                 <a href="/my/home"
                                    class="ab-storefront-action btn"
@@ -190,6 +180,16 @@
                                     <t t-call="ab_ecommerce_storefront.avatar_image"/>
                                 </a>
                             </li>
+                            <t t-call="website_sale_wishlist.header_wishlist_link">
+                                <t t-set="_icon" t-value="True"/>
+                                <t t-set="_link_class" t-value="'ab-storefront-action ab-storefront-wishlist-action btn position-relative'"/>
+                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
+                            </t>
+                            <t t-call="website_sale.header_cart_link">
+                                <t t-set="_icon" t-value="True"/>
+                                <t t-set="_link_class" t-value="'ab-storefront-action ab-storefront-cart-action btn position-relative'"/>
+                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
+                            </t>
                             <t t-call="website.placeholder_header_language_selector">
                                 <t t-set="_item_class" t-value="'nav-item d-none d-md-block ab-storefront-language-item'"/>
                                 <t t-set="_btn_class" t-value="'ab-storefront-language btn'"/>
