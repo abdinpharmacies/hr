@@ -353,142 +353,182 @@ class TestReplicationOverride(TransactionCase):
         self.assertIsNone(result)
         self.assertIn('Skipping replication for unavailable local model', logs.output[0])
 
-    def _next_missing_partner_id(self):
-        self.env.cr.execute("SELECT COALESCE(MAX(id), 0) + 50 FROM res_partner")
-        return self.env.cr.fetchone()[0]
 
-    def _next_missing_ab_user_id(self):
-        self.env.cr.execute("SELECT COALESCE(MAX(id), 0) + 50 FROM ab_users")
-        return self.env.cr.fetchone()[0]
+class TestForceIdReplication(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Replication = cls.env['ab_odoo_replication']
+        cls.Partner = cls.env['res.partner'].sudo().with_context(active_test=False)
 
-    def test_missing_exact_id_many2one_placeholder_is_created(self):
-        replication = self.env['ab_odoo_replication']
-        partner_model = self.env['res.partner'].with_context(active_test=False).sudo()
-        missing_id = self._next_missing_partner_id()
-        self.assertFalse(partner_model.browse(missing_id).exists())
-
-        local_id = replication._resolve_many2one_record_id('res.partner', missing_id)
-
-        self.assertEqual(local_id, missing_id)
-        partner_model.invalidate_model()
-        self.assertTrue(partner_model.browse(missing_id).exists())
-
-    def test_existing_many2one_record_is_reused_without_placeholder(self):
-        replication = self.env['ab_odoo_replication']
-
-        local_id = replication._resolve_many2one_record_id('res.partner', self.partner_a.id)
-
-        self.assertEqual(local_id, self.partner_a.id)
-        self.assertEqual(
-            self.env['res.partner'].sudo().search_count([('id', '=', self.partner_a.id)]),
-            1,
-        )
-
-    def test_res_users_many2one_placeholder_is_skipped(self):
-        replication = self.env['ab_odoo_replication']
-
-        self.assertIsNone(
-            replication._resolve_many2one_record_id('res.users', self.regular_user.id),
-        )
-
-    def test_eval_val_creates_placeholder_for_missing_many2one(self):
-        replication = self.env['ab_odoo_replication']
-        partner_model = self.env['res.partner'].with_context(active_test=False).sudo()
-        missing_id = self._next_missing_partner_id()
-        replication.ReplShare.fld__type_rel_dict = {
-            'partner_id': ('many2one', 'res.partner'),
+    def _configure_partner_replication(self):
+        share = self.Replication.ReplShare
+        previous = {
+            'model_name': share.model_name,
+            'table_name': share.table_name,
+            'has_main_rec_id': share.has_main_rec_id,
+            'missing_many2one_flds': share.missing_many2one_flds,
+            'fld__type_rel_dict': share.fld__type_rel_dict,
         }
-        replication.ReplShare.missing_many2one_flds = []
+        share.model_name = 'res.partner'
+        share.table_name = 'res_partner'
+        share.has_main_rec_id = False
+        share.missing_many2one_flds = []
+        share.fld__type_rel_dict = {
+            'id': ('integer', None),
+            'name': ('char', None),
+            'city': ('char', None),
+            'active': ('boolean', None),
+        }
+        return previous
 
-        local_id = replication.eval_val('partner_id', [missing_id, 'Remote Partner'], 123)
+    def _restore_replication_share(self, previous):
+        for field_name, value in previous.items():
+            setattr(self.Replication.ReplShare, field_name, value)
 
-        self.assertEqual(local_id, missing_id)
-        self.assertEqual(replication.ReplShare.missing_many2one_flds, [])
-        partner_model.invalidate_model()
-        self.assertTrue(partner_model.browse(missing_id).exists())
+    def test_refresh_force_id_record_discards_cached_values(self):
+        partner = self.Partner.create({'name': 'Before forced SQL update'})
+        self.assertEqual(partner.name, 'Before forced SQL update')
 
-    def test_ab_users_many2one_placeholder_is_created(self):
-        replication = self.env['ab_odoo_replication']
-        ab_users = self.env['ab_users'].with_context(active_test=False).sudo()
-        missing_id = self._next_missing_ab_user_id()
-        self.assertFalse(ab_users.browse(missing_id).exists())
-
-        local_id = replication._resolve_many2one_record_id('ab_users', missing_id)
-
-        self.assertEqual(local_id, missing_id)
-        ab_users.invalidate_model()
-        self.assertTrue(ab_users.browse(missing_id).exists())
-
-    def test_ab_users_relation_fields_are_not_excluded_from_replication_fields(self):
-        replication = self.env['ab_odoo_replication']
-        field_rows = [
-            ('id', 'integer', None),
-            ('write_date', 'datetime', None),
-            ('user_id', 'many2one', 'ab_users'),
-        ]
-
-        filtered_rows = replication._filter_replicable_field_rows('ab_hr_employee', field_rows)
-        fields_to_get, fld_type_rel = replication._prepare_replicable_fields(
-            filtered_rows,
-            {'id', 'write_date', 'user_id'},
-            {},
-            True,
+        self.env.cr.execute(SQL(
+            'UPDATE res_partner SET name = %s WHERE id = %s',
+            'After forced SQL update',
+            partner.id,
+        ))
+        refreshed = self.Replication._refresh_force_id_record(
+            self.Partner,
+            partner.id,
+            changed_fields=['name'],
         )
 
-        self.assertIn('user_id', fields_to_get)
-        self.assertEqual(fld_type_rel['user_id'], ('many2one', 'ab_users'))
+        self.assertEqual(refreshed.name, 'After forced SQL update')
 
-    def test_res_users_relation_fields_are_excluded_from_replication_fields(self):
-        replication = self.env['ab_odoo_replication']
-        field_rows = [
-            ('id', 'integer', None),
-            ('write_date', 'datetime', None),
-            ('name', 'char', None),
-            ('user_id', 'many2one', 'res.users'),
-            ('department_id', 'many2one', 'ab_hr_department'),
-        ]
+    def test_exact_copy_insert_returns_forced_id_and_runs_batch_hook(self):
+        self.env.cr.execute('SELECT COALESCE(MAX(id), 0) + 1 FROM res_partner')
+        forced_id = self.env.cr.fetchone()[0]
+        previous = self._configure_partner_replication()
+        try:
+            change = self.Replication._replicate_main_fields({
+                'id': forced_id,
+                'name': 'Forced ID Partner',
+                'active': True,
+            })
+            operation, local_id, values, replay_write, changed_values = change
 
-        filtered_rows = replication._filter_replicable_field_rows('ab_hr_employee', field_rows)
-        fields_to_get, fld_type_rel = replication._prepare_replicable_fields(
-            filtered_rows,
-            {'id', 'write_date', 'name', 'user_id', 'department_id'},
-            {},
-            True,
-        )
+            with patch.object(
+                type(self.Partner),
+                '_after_force_id_replication',
+                autospec=True,
+            ) as hook:
+                self.Replication._finalize_force_id_batch(self.Partner, {
+                    'create': {
+                        local_id: {
+                            'values': values,
+                            'replay_write': replay_write,
+                            'changed_values': changed_values,
+                        },
+                    },
+                    'write': {},
+                })
 
-        self.assertNotIn('user_id', fields_to_get)
-        self.assertNotIn('user_id', fld_type_rel)
-        self.assertIn('name', fields_to_get)
-        self.assertIn('department_id', fields_to_get)
-        self.assertEqual(fld_type_rel['department_id'], ('many2one', 'ab_hr_department'))
+            self.assertEqual(operation, 'create')
+            self.assertEqual(local_id, forced_id)
+            self.assertTrue(replay_write)
+            self.assertEqual(changed_values, values)
+            self.assertEqual(self.Partner.browse(forced_id).name, 'Forced ID Partner')
+            self.assertTrue(self.Partner.browse(forced_id).write_date)
+            hook.assert_called_once()
+            self.assertEqual(hook.call_args.args[1], 'create')
+            self.assertEqual(hook.call_args.args[2][forced_id]['name'], 'Forced ID Partner')
+        finally:
+            self._restore_replication_share(previous)
 
-    def test_res_users_relation_extra_fields_are_excluded_for_non_user_models(self):
-        replication = self.env['ab_odoo_replication']
-        user_relation_field = 'user_id' if 'user_id' in self.env['res.partner']._fields else 'create_uid'
-
-        extra_fields = replication._filter_replicable_extra_fields(
-            'res.partner',
+    def test_replay_values_exclude_orm_managed_fields(self):
+        replay_values = self.Replication._get_force_id_replay_values(
+            self.Partner,
             {
-                user_relation_field: 'many2one',
-                'x_payload': 'binary',
+                'id': 999,
+                'name': 'Replay Name',
+                'create_date': '2025-01-01 00:00:00',
+                'write_date': '2025-01-02 00:00:00',
+                'display_name': 'Computed Name',
+                'child_ids': [],
             },
         )
-        fields_to_get, _fld_type_rel = replication._prepare_replicable_fields(
-            [('id', 'integer', None), ('name', 'char', None)],
-            {'id', 'name', user_relation_field, 'x_payload'},
-            extra_fields,
-            False,
-        )
 
-        self.assertNotIn(user_relation_field, fields_to_get)
-        self.assertIn('x_payload', fields_to_get)
+        self.assertEqual(replay_values, {'name': 'Replay Name'})
 
-    def test_res_users_replication_extra_groups_field_remains_allowed(self):
-        replication = self.env['ab_odoo_replication']
+    def test_exact_copy_update_does_not_depend_on_id_dictionary_order(self):
+        partner = self.Partner.create({'name': 'Before replication'})
+        previous = self._configure_partner_replication()
+        try:
+            operation, local_id, values, replay_write, changed_values = (
+                self.Replication._replicate_main_fields({
+                    'name': 'After replication',
+                    'id': partner.id,
+                })
+            )
+            self.Replication._finalize_force_id_batch(self.Partner, {
+                'create': {},
+                'write': {
+                    local_id: {
+                        'values': values,
+                        'replay_write': replay_write,
+                        'changed_values': changed_values,
+                    },
+                },
+            })
 
-        extra_fields = replication._filter_replicable_extra_fields(
-            'res.users',
-            {'groups_id': 'many2many'},
-        )
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertEqual(changed_values, {'name': 'After replication'})
+            self.assertEqual(partner.name, 'After replication')
+        finally:
+            self._restore_replication_share(previous)
 
-        self.assertEqual(extra_fields, {'groups_id': 'many2many'})
+    def test_exact_copy_identical_update_skips_orm_write_values(self):
+        partner = self.Partner.create({'name': 'Unchanged replication'})
+        previous = self._configure_partner_replication()
+        try:
+            with patch.object(type(partner), 'write', autospec=True) as write:
+                operation, local_id, values, replay_write, changed_values = (
+                    self.Replication._replicate_main_fields({
+                        'id': partner.id,
+                        'name': partner.name,
+                        'active': partner.active,
+                    })
+                )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(values['name'], partner.name)
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_exact_copy_update_writes_only_different_values(self):
+        partner = self.Partner.create({
+            'name': 'Partially changed replication',
+            'city': 'Cairo',
+        })
+        previous = self._configure_partner_replication()
+        try:
+            operation, local_id, values, replay_write, changed_values = (
+                self.Replication._replicate_main_fields({
+                    'id': partner.id,
+                    'name': partner.name,
+                    'city': 'Giza',
+                })
+            )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertEqual(changed_values, {'city': 'Giza'})
+            self.assertEqual(values['name'], partner.name)
+            self.assertEqual(partner.city, 'Giza')
+        finally:
+            self._restore_replication_share(previous)

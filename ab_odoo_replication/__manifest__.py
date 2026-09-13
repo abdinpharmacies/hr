@@ -14,10 +14,10 @@
 
     'license': 'LGPL-3',
     'category': 'Abdin',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.3.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'ab_odoo_connect'],
+    'depends': ['base', 'ab_odoo_connect', 'ab_users'],
 
     # always loaded
     'data': [
