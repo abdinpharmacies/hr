@@ -7,6 +7,7 @@ import {_t} from "@web/core/l10n/translation";
 import {useService} from "@web/core/utils/hooks";
 import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
 import {session} from "@web/session";
+import {user} from "@web/core/user";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
 import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
@@ -563,18 +564,20 @@ class AbSalesPosCustomerLookupDialog extends Component {
     }
 
     _getRpcErrorMessage(err, fallback) {
-        const fallbackMessage = fallback || "Request failed.";
+        const fallbackMessage = fallback || _t("Request failed.");
         if (!err) {
             return fallbackMessage;
         }
         const data = err.data || err?.response?.data || {};
-        const rpcArgs = data?.["arguments"];
-        return (
-            data?.message ||
-            (Array.isArray(rpcArgs) && rpcArgs[0]) ||
-            err.message ||
-            fallbackMessage
-        );
+        // Show business errors, never a technical server exception or traceback.
+        if (data.name && !["odoo.exceptions.UserError", "odoo.exceptions.ValidationError",
+            "odoo.exceptions.AccessError", "odoo.exceptions.AccessDenied"].includes(data.name)) {
+            return fallbackMessage;
+        }
+        const rpcArgs = data.arguments;
+        const message = data.message || (Array.isArray(rpcArgs) && rpcArgs[0]) || err.message;
+        return typeof message === "string" && message !== "Odoo Server Error"
+            ? message : fallbackMessage;
     }
 
     onNameInput(ev) {
@@ -976,6 +979,8 @@ class AbSalesPosAction extends Component {
             customerInsights: null,
             loadingCustomerInsights: false,
             storeOnline: null,
+            branchApiStatus: false,
+            storeStatusError: "",
             showStoreDetails: false,
             showCustomerDetails: false,
             showBillDetails: false,
@@ -1151,6 +1156,7 @@ class AbSalesPosAction extends Component {
         }
 
         onWillStart(async () => {
+            this.state.branchApiStatus = await user.hasGroup("ab_sales.group_call_center");
             await this.loadStores();
             await this.loadPrinterSettings();
             await this.loadCache();
@@ -1480,7 +1486,7 @@ class AbSalesPosAction extends Component {
             this._applyPosUiSettings(result?.settings || payload, true);
             this.notification.add("Settings saved.", {type: "success"});
         } catch (err) {
-            this.notification.add(err?.message || "Failed to save settings.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to save settings.")), {type: "danger"});
         } finally {
             this.state.posSettingsSaving = false;
         }
@@ -1780,7 +1786,7 @@ class AbSalesPosAction extends Component {
                 onAddAll: (payload) => this.addLastInvoiceItems(payload),
             });
         } catch (err) {
-            this.notification.add(err?.message || "Failed to load invoices.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load invoices.")), {type: "danger"});
         }
     }
 
@@ -2381,7 +2387,7 @@ class AbSalesPosAction extends Component {
             bill.header.bill_customer_address = bill.header.invoice_address || "";
             bill.header.customer_mode = "current";
         } catch (err) {
-            this.notification.add(err?.message || "Failed to load customer.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load customer.")), {type: "danger"});
         }
         bill.updated_at = new Date().toISOString();
         this.persistCache();
@@ -2469,7 +2475,7 @@ class AbSalesPosAction extends Component {
                 "address",
             ]);
         } catch (err) {
-            this.notification.add(err?.message || "Failed to search customers.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to search customers.")), {type: "danger"});
         } finally {
             this.state.loadingCustomers = false;
         }
@@ -2625,7 +2631,7 @@ class AbSalesPosAction extends Component {
             this.state.qtyBufferProductId = null;
             this.schedulePosBalanceRefresh(this.state.productResults, storeId);
         } catch (err) {
-            this.notification.add(err?.message || "Failed to search products.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to search products.")), {type: "danger"});
         } finally {
             this.state.loadingProducts = false;
         }
@@ -2753,25 +2759,27 @@ class AbSalesPosAction extends Component {
     }
 
     refreshStoreStatus(storeId) {
-        if (!storeId) {
-            this.state.storeOnline = null;
-            return;
-        }
         const requestId = ++this._storeStatusRequestId;
         this.state.storeOnline = null;
+        this.state.storeStatusError = "";
+        if (!storeId) {
+            return;
+        }
         this.orm
             .call("ab_sales_ui_api", "pos_store_status", [], {store_id: storeId})
             .then((status) => {
                 if (requestId !== this._storeStatusRequestId) {
                     return;
                 }
-                this.state.storeOnline = !!status;
+                this.state.storeOnline = status === true;
             })
-            .catch(() => {
+            .catch((err) => {
                 if (requestId !== this._storeStatusRequestId) {
                     return;
                 }
                 this.state.storeOnline = false;
+                this.state.storeStatusError = this._getRpcErrorMessage(err, _t("Could not check the branch connection."));
+                this.notification.add(this.state.storeStatusError, {type: "warning"});
             });
     }
 
@@ -3192,7 +3200,7 @@ class AbSalesPosAction extends Component {
                 this.addProductAndFocus(products[0], 1);
             }
         } catch (err) {
-            this.notification.add(err?.message || "Barcode scan failed.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Barcode scan failed.")), {type: "danger"});
         } finally {
             this.state.loadingProducts = false;
         }
@@ -3255,7 +3263,7 @@ class AbSalesPosAction extends Component {
                 }
             }
         } catch (err) {
-            this.notification.add(err?.message || "Failed to save barcode links.", {type: "danger"});
+            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to save barcode links.")), {type: "danger"});
         }
     }
 
@@ -3637,12 +3645,12 @@ class AbSalesPosAction extends Component {
                 target.total_net_amount = target.total_price || 0;
             }
         } catch (err) {
-            const message = err?.message || "";
+            const message = this._getRpcErrorMessage(err, _t("Failed to load promotions."));
             if (message.includes("does not exist")) {
                 this._promoDisabled = true;
                 this._resetPromotions(target);
             } else {
-                this.notification.add(message || "Failed to load promotions.", {type: "warning"});
+                this.notification.add(message, {type: "warning"});
             }
         } finally {
             if (requestId === this._promoRequestId) {
@@ -3798,7 +3806,7 @@ class AbSalesPosAction extends Component {
             this.schedulePromoRefresh(this.currentBill);
         } catch (err) {
             if (!options?.silent) {
-                this.notification.add(err?.message || "Failed to load line details.", {type: "danger"});
+                this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load line details.")), {type: "danger"});
             }
         } finally {
             line.loading_details = false;
@@ -3864,18 +3872,21 @@ class AbSalesPosAction extends Component {
         }
     }
 
-    _getRpcErrorMessage(err) {
+    _getRpcErrorMessage(err, fallback) {
+        const fallbackMessage = fallback || _t("Request failed.");
         if (!err) {
-            return "Submit failed.";
+            return fallbackMessage;
         }
         const data = err.data || err?.response?.data || {};
-        const rpcArgs = data?.["arguments"];
-        return (
-            (Array.isArray(rpcArgs) && rpcArgs[0]) ||
-            data?.message ||
-            err.message ||
-            "Submit failed."
-        );
+        // Show business errors, never a technical server exception or traceback.
+        if (data.name && !["odoo.exceptions.UserError", "odoo.exceptions.ValidationError",
+            "odoo.exceptions.AccessError", "odoo.exceptions.AccessDenied"].includes(data.name)) {
+            return fallbackMessage;
+        }
+        const rpcArgs = data.arguments;
+        const message = data.message || (Array.isArray(rpcArgs) && rpcArgs[0]) || err.message;
+        return typeof message === "string" && message !== "Odoo Server Error"
+            ? message : fallbackMessage;
     }
 
     productLabel(product) {

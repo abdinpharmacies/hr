@@ -173,9 +173,15 @@
                                             <t t-if="currentBill and currentBill.header and currentBill.header.store_id">
                                             <div class="o_ab_sales_pos_store_status ab_pos_store_status">
                                                 <span class="badge text-bg-success ab_pos_store_status_online"
-                                                      t-if="state.storeOnline === true">Online</span>
+                                                      t-if="state.storeOnline === true">
+                                                    <t t-if="state.branchApiStatus">Branch API connected</t>
+                                                    <t t-else="">Online</t>
+                                                </span>
                                                 <span class="badge text-bg-danger ab_pos_store_status_offline"
-                                                      t-if="state.storeOnline === false">Offline</span>
+                                                      t-if="state.storeOnline === false" t-att-title="state.storeStatusError">
+                                                    <t t-if="state.branchApiStatus">Branch API unavailable</t>
+                                                    <t t-else="">Offline</t>
+                                                </span>
                                             </div>
                                         </t>
                                             <t t-if="state.showStoreDetails">

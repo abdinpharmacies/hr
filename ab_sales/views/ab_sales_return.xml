@@ -126,6 +126,19 @@
             </field>
         </record>
 
+        <record id="ab_sales_return_header_view_form_employee" model="ir.ui.view">
+            <field name="name">ab_sales_return_header_form_employee</field>
+            <field name="model">ab_sales_return_header</field>
+            <field name="inherit_id" ref="ab_sales_return_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='origin_header_id']" position="after">
+                    <field name="return_employee_id" groups="base.group_system"
+                           readonly="status == 'saved'"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Search View -->
         <record id="ab_sales_return_header_view_search" model="ir.ui.view">
             <field name="name">ab_sales_return_header_view_search</field>

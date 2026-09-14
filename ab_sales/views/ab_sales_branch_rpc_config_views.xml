@@ -5,21 +5,20 @@
             <field name="name">ab_sales_branch_rpc_config.list</field>
             <field name="model">ab_sales_branch_rpc_config</field>
             <field name="arch" type="xml">
-                <list string="Branch Connections" decoration-danger="last_test_state == 'error'" decoration-warning="rotation_state == 'review'">
-                    <header><button name="action_check_connections" type="object" string="Check Connections"/>
-                    <button name="action_rotate_credentials" type="object" string="Rotate Credentials"/></header>
-                    <field name="enrollment_state"/><field name="rotation_state"/>
-                    <field name="expires_at"/><field name="last_success_at"/>
-                    <field name="active" optional="hide"/>
-                    <field name="store_id"/>
-                    <field name="store_code"/>
-                    <field name="store_eplus_serial"/>
+                <list string="Branch Connections" decoration-danger="last_test_state == 'error'">
+                    <header>
+                        <button name="action_check_connections" type="object" string="Check Connections"/>
+                    </header>
+                    <field name="store_id" string="Branch"/>
+                    <field name="db_serial"/>
                     <field name="rpc_url"/>
-                    <field name="rpc_db"/>
-                    <field name="rpc_user"/>
+                    <field name="enrollment_state" widget="badge"/>
                     <field name="last_test_state"/>
                     <field name="last_tested_at"/>
-                    <field name="remote_store_id"/>
+                    <field name="rpc_db" optional="hide"/>
+                    <field name="rpc_user" optional="hide"/>
+                    <field name="expires_at" optional="hide"/>
+                    <field name="active" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -30,42 +29,45 @@
             <field name="arch" type="xml">
                 <form string="Branch Connection">
                     <header>
-                        <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary"/>
-                    <button name="action_rotate_credentials" string="Rotate Credential" type="object"/>
-                        <button name="action_revoke_credential" string="Revoke Credential" type="object" confirm="Revoke this branch credential and disable the connection?"/>
+                        <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary" invisible="not active"/>
+                        <field name="enrollment_state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group>
                             <group>
-                                <field name="active"/>
-                                <field name="name"/>
-                                <field name="store_id"/>
-                                <field name="store_code" readonly="1"/>
-                                <field name="store_eplus_serial" readonly="1"/>
+                                <field name="store_id" string="Branch"/>
+                                <field name="db_serial"/>
+                                <field name="push_to_eplus_on_submit"/>
                             </group>
                             <group>
                                 <field name="rpc_url" placeholder="https://branch.example.com"/>
                                 <field name="rpc_db"/>
-                                <field name="rpc_user"/>
                                 <field name="api_key" password="True" groups="base.group_system"/>
-                                <field name="administrator_id"/>
-                                <field name="connection_timeout"/>
-                                <field name="push_to_eplus_on_submit"/>
                             </group>
                         </group>
-                        <group string="Credential Lifecycle">
-                            <field name="enrollment_state"/><field name="rotation_state"/>
-                            <field name="expires_at"/><field name="retire_at"/><field name="rotation_name"/>
-                            <field name="management_message"/><field name="can_post"/>
+                        <group string="Last Test" invisible="last_test_state == 'untested'">
+                            <group>
+                                <field name="last_test_state"/>
+                                <field name="last_tested_at"/>
+                                <field name="last_test_message"/>
+                            </group>
+                            <group invisible="enrollment_state != 'ready'">
+                                <field name="remote_store_name" string="Verified Branch"/>
+                                <field name="rpc_user"/>
+                                <field name="can_post" string="Posting Allowed"/>
+                                <field name="expires_at" invisible="not expires_at"/>
+                            </group>
                         </group>
-                        <group string="Last Test"><field name="last_success_at"/>
-                            <field name="last_test_state"/>
-                            <field name="last_tested_at"/>
-                            <field name="remote_store_id"/>
-                            <field name="remote_store_name"/>
-                            <field name="last_test_message"/>
-                        </group>
-                    </sheet><chatter/>
+                        <details class="mt-3">
+                            <summary>Advanced Settings</summary>
+                            <group class="mt-3">
+                                <field name="active"/>
+                                <field name="administrator_id"/>
+                                <field name="connection_timeout"/>
+                            </group>
+                        </details>
+                    </sheet>
+                    <chatter/>
                 </form>
             </field>
         </record>

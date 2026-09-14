@@ -29,17 +29,19 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _call(self, store, method, *args):
-        return self._config(store)._execute_kw('ab_branch_api', method, [int(store.eplus_serial), *args])
+        config = self._config(store)
+        return config._execute_kw('ab_branch_api', method, [config.db_serial, *args])
 
     @api.model
     def _stock(self, store, serials):
         serials = sorted(set(serials))
+        db_serial = self._config(store).db_serial
         rows = []
         for offset in range(0, len(serials), 200):
             batch = serials[offset:offset + 200]
             response = self._call(store, 'get_stock_lines', batch)
             for row in response['data']:
-                if (int(row['store_eplus_serial']) != int(store.eplus_serial)
+                if (type(row.get('db_serial')) is not int or row['db_serial'] != db_serial
                         or int(row['product_eplus_serial']) not in batch
                         or any(not math.isfinite(float(row[key])) for key in ('qty', 'qty_in_small_unit', 'price', 'cost'))):
                     raise UserError(_('The branch returned invalid stock data.'))
@@ -146,11 +148,19 @@ class BranchReturn(models.Model):
     branch_request_token = fields.Char(string='Branch Request Token', default=lambda self: str(uuid4()),
                                        copy=False, readonly=True, index=True)
     branch_return_id = fields.Integer(string='Branch Return ID', readonly=True, copy=False)
+    return_employee_id = fields.Many2one(
+        'ab_hr_employee', string='Return Employee', copy=False, ondelete='restrict',
+        groups='base.group_system',
+        domain="[('active', '=', True), ('costcenter_id.active', '=', True), ('costcenter_id.code', '!=', False)]",
+        help='Employee responsible for a callcenter return submitted from the Administrator form. POS returns use the logged-in employee.',
+    )
 
     def _branch_snapshot(self, response):
         self.ensure_one()
-        if any(int(row['sto_id']) != int(self.store_id.eplus_serial)
-               or int(row['sth_id']) != int(self.origin_header_id) for row in response['lines']):
+        db_serial = self.env['ab_sales_branch_client']._config(self.store_id).db_serial
+        if (type(response.get('db_serial')) is not int or response['db_serial'] != db_serial
+                or response.get('invoice') != int(self.origin_header_id)
+                or any(int(row['sth_id']) != int(self.origin_header_id) for row in response['lines'])):
             raise UserError(_('The branch returned lines from another invoice or store.'))
         self.write({'branch_return_id': response['branch_return_id'], 'total_sales_net': response['total_sales_net'],
                     'sales_return_id': response['sales_return_id'], 'f_transaction_id': response['f_transaction_id']})
@@ -169,6 +179,8 @@ class BranchReturn(models.Model):
             if len(product) != 1:
                 raise UserError(_('Return product is missing or ambiguous in callcenter.'))
             current = existing.get(int(values['std_id']))
+            if current and current.itm_eplus_id != int(values['itm_eplus_id']):
+                raise UserError(_('Return product does not match the original invoice line.'))
             uom = self._find_uom_by_factor(product, factor)
             if not uom or not math.isclose(float(uom.factor), factor, rel_tol=1e-6):
                 raise UserError(_('Return product unit is missing in callcenter.'))
@@ -214,19 +226,42 @@ class BranchReturn(models.Model):
         return {'type': 'ir.actions.act_window', 'res_model': self._name, 'res_id': self.id,
                 'view_mode': 'form', 'target': self.env.context.get('curr_target', 'current')}
 
+    def _branch_return_employee_reference(self):
+        self.ensure_one()
+        session_token = self.env.context.get('ab_return_session_token')
+        if session_token:
+            return_api = self.env['ab_sales_return_ui_api']
+            if ('ab_employee_access_sales_pos_api' not in self.env
+                    or not hasattr(return_api, '_validate_return_employee_session')):
+                raise UserError(_('Employee POS sessions are not available. Contact support.'))
+            session = self.env['ab_employee_access_sales_pos_api']._get_session(session_token, states=['active'])
+            if session.service_user_id != self.env.user:
+                raise AccessError(_('The employee POS session belongs to another user.'))
+            session = return_api._validate_return_employee_session(self.id, session_token, states=['active'])
+            employee = self.env['ab_hr_employee'].browse(session.employee_id.id)
+        elif self.env.user.has_group('base.group_system'):
+            employee = self.return_employee_id
+            if not employee:
+                raise UserError(_('Select a Return Employee before submitting this callcenter return.'))
+        else:
+            raise UserError(_('Log in to an active employee POS session before submitting this callcenter return.'))
+        employee = employee.exists()
+        employee.check_access('read')
+        if not employee or not employee.active or not employee.costcenter_id.active:
+            raise UserError(_('Select an active return employee with an active employee cost center.'))
+        if not employee.costcenter_id.code:
+            raise UserError(_('The return employee needs a cost center code that matches the branch employee.'))
+        return self.env['ab_sales_branch_client']._reference(employee)
+
     def action_push_to_eplus_return(self):
         client = self.env['ab_sales_branch_client']
         if not client._is_callcenter():
             return super().action_push_to_eplus_return()
         self.ensure_one()
         self.check_access('write')
+        employee_ref = self._branch_return_employee_reference()
         if not self.branch_request_token:
             self.branch_request_token = str(uuid4())
-        employee_ref = False
-        session_token = self.env.context.get('ab_return_session_token')
-        if session_token and 'ab_employee_access_sales_pos_api' in self.env:
-            session = self.env['ab_employee_access_sales_pos_api']._get_session(session_token, states=['active'])
-            employee_ref = client._reference(session.employee_id)
         config = client._config(self.store_id)
         log = self.env['ab_sales_callcenter_rpc_log'].sudo().create({
             'name': _('Callcenter Return Submit'), 'rpc_config_id': config.id, 'store_id': self.store_id.id,
@@ -270,7 +305,7 @@ class BranchReturnPreview(models.TransientModel):
             if header.status != 'saved' and header.line_ids:
                 response = client._call(header.store_id, 'get_return_invoice', int(header.origin_header_id),
                                         header.branch_request_token, header._branch_selections())
-                header.total_return_value = response['total_return_value']
+                header._branch_snapshot(response)
                 result = super().get_state(return_header_id, **kwargs)
         return result
 
@@ -282,3 +317,22 @@ class BranchSaleHeader(models.Model):
         if self.env['ab_sales_branch_client']._is_callcenter():
             raise AccessError(_('Callcenter sales must be submitted through POS using the branch API.'))
         return super().action_push_to_eplus()
+
+
+class BranchStoreStatus(models.TransientModel):
+    _inherit = 'ab_sales_ui_api'
+
+    @api.model
+    def pos_store_status(self, store_id=None):
+        client = self.env['ab_sales_branch_client']
+        if not client._is_callcenter():
+            return super().pos_store_status(store_id=store_id)
+        if not store_id:
+            return False
+        store = self.env['ab_store'].browse(int(store_id)).exists()
+        store.check_access('read')
+        config = client._config(store)
+        if config.enrollment_state != 'ready':
+            raise UserError(_('Verify and activate the branch connection before using it.'))
+        config._status()
+        return True

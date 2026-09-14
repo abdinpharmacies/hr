@@ -2,8 +2,6 @@
 
 import ipaddress
 import logging
-from datetime import timedelta
-from uuid import uuid4
 import requests
 from urllib.parse import urlparse
 
@@ -26,7 +24,7 @@ class AbSalesBranchRpcConfig(models.Model):
     name = fields.Char(required=True, default=lambda self: _("New Branch RPC Configuration"))
     active = fields.Boolean(default=True)
     store_id = fields.Many2one("ab_store", required=True, ondelete="restrict", index=True)
-    store_eplus_serial = fields.Integer(related="store_id.eplus_serial", readonly=True)
+    db_serial = fields.Integer(string="DB Serial", required=True, index=True)
     store_code = fields.Char(related="store_id.code", readonly=True)
     rpc_url = fields.Char(string="Branch Odoo URL", required=True)
     rpc_db = fields.Char(string="Branch Database", required=True)
@@ -34,22 +32,15 @@ class AbSalesBranchRpcConfig(models.Model):
     api_key = fields.Char(string="API Key", compute='_compute_api_key', inverse='_inverse_api_key',
                           groups='base.group_system', exportable=False)
     api_key_encrypted = fields.Char(readonly=True, copy=False, groups='base.group_system', exportable=False)
-    pending_key_encrypted = fields.Char(readonly=True, copy=False, groups='base.group_system', exportable=False)
-    previous_key_encrypted = fields.Char(readonly=True, copy=False, groups='base.group_system', exportable=False)
-    enrollment_state = fields.Selection([('required', 'Enrollment Required'), ('ready', 'Ready'),
-                                         ('revoked', 'Revoked')], default='required', readonly=True, copy=False)
-    rotation_state = fields.Selection([('idle', 'Idle'), ('generating', 'Generating'),
-        ('pending', 'Verification Pending'), ('overlap', 'Overlap'), ('review', 'Needs Review')],
-        default='idle', readonly=True, copy=False)
+    enrollment_state = fields.Selection(
+        [('required', 'Verification Required'), ('ready', 'Ready')],
+        string='Connection Status', default='required', readonly=True, copy=False)
     expires_at = fields.Datetime(readonly=True, copy=False)
-    retire_at = fields.Datetime(readonly=True, copy=False)
     last_success_at = fields.Datetime(readonly=True, copy=False)
-    management_message = fields.Text(readonly=True, copy=False)
     administrator_id = fields.Many2one('res.users', string='Responsible Administrator',
         required=True, default=lambda self: self.env.user)
     remote_user_id = fields.Integer(readonly=True, copy=False)
     can_post = fields.Boolean(readonly=True, copy=False)
-    rotation_name = fields.Char(readonly=True, copy=False)
     alert_activity_id = fields.Many2one('mail.activity', readonly=True, copy=False)
 
     connection_timeout = fields.Integer(default=15)
@@ -89,10 +80,8 @@ class AbSalesBranchRpcConfig(models.Model):
         self._require_admin()
         for record in self:
             if record.api_key:
-                if record.rotation_state not in ('idle', 'review'):
-                    raise UserError(_('Complete credential rotation before replacing the enrollment key.'))
                 record.write({'api_key_encrypted': record._encrypt_secret(record.api_key.strip()),
-                              'enrollment_state': 'required', 'rotation_state': 'idle',
+                              'enrollment_state': 'required',
                               'remote_user_id': 0, 'expires_at': False})
 
     def export_data(self, fields_to_export):
@@ -109,10 +98,10 @@ class AbSalesBranchRpcConfig(models.Model):
 
     def write(self, vals):
         vals = self._normalize_vals(dict(vals or {}))
-        if set(vals) & {'rpc_url', 'rpc_db', 'store_id'}:
-            if any(r.rotation_state not in ('idle', 'review') for r in self):
-                raise UserError(_('Complete credential rotation before changing the destination.'))
-            vals = dict(vals, enrollment_state='required', remote_user_id=0)
+        if set(vals) & {'rpc_url', 'rpc_db', 'store_id', 'db_serial', 'api_key_encrypted', 'active'}:
+            vals = dict(vals, enrollment_state='required', remote_user_id=0, rpc_user=False,
+                        remote_store_id=0, remote_store_name=False, can_post=False, expires_at=False,
+                        last_test_state='untested', last_test_message=False, last_tested_at=False)
         result = super().write(vals)
         if any(key in vals for key in ("store_id", "rpc_url", "rpc_db")):
             self._sync_display_name()
@@ -140,6 +129,14 @@ class AbSalesBranchRpcConfig(models.Model):
         for record in self:
             if not record.administrator_id.active or not record.administrator_id.has_group('base.group_system'):
                 raise ValidationError(_('Choose an active Settings administrator.'))
+
+    @api.constrains('db_serial', 'store_id')
+    def _check_branch_connection(self):
+        for record in self:
+            if record.db_serial <= 0:
+                raise ValidationError(_('DB serial must be a positive integer.'))
+            if not record.store_id.active or not record.store_id.allow_sale:
+                raise ValidationError(_('This store is not allowed.'))
 
     @api.constrains("rpc_url")
     def _check_rpc_url(self):
@@ -212,39 +209,41 @@ class AbSalesBranchRpcConfig(models.Model):
                 raise AccessError(_('The branch rejected the credential or its permissions.'))
             _logger.warning('Branch connection %s: %s.%s HTTP %s', self.id, model, method, response.status_code)
             raise UserError(_('The branch returned an unexpected response (HTTP %s).') % response.status_code)
-        if not isinstance(body, (dict, str, bool)):
+        if not isinstance(body, (dict, list, str, bool)):
             raise UserError(_('The branch returned an invalid JSON response.'))
         return body
 
     def _execute_kw(self, model_name, method, args=None, kwargs=None):
         # Internal compatibility adapter only; all outbound requests use JSON-2.
         signatures = {
-            'get_capabilities': ('store_serial',),
-            'get_stock_lines': ('store_serial', 'product_serials'),
-            'search_products': ('store_serial', 'query', 'limit', 'offset'),
-            'submit_sale': ('store_serial', 'token', 'payload', 'push_to_eplus'),
-            'get_return_invoice': ('store_serial', 'invoice', 'token', 'selections'),
-            'submit_return': ('store_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
-            'get_operation_status': ('store_serial', 'token'),
+            'get_capabilities': ('db_serial',),
+            'get_stock_lines': ('db_serial', 'product_serials'),
+            'search_products': ('db_serial', 'query', 'limit', 'offset'),
+            'submit_sale': ('db_serial', 'token', 'payload', 'push_to_eplus'),
+            'get_return_invoice': ('db_serial', 'invoice', 'token', 'selections'),
+            'submit_return': ('db_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
+            'get_operation_status': ('db_serial', 'token'),
         }
         self.ensure_one()
         if not self.active or self.enrollment_state != 'ready':
             raise UserError(_('Verify and activate the branch connection before using it.'))
         if model_name != 'ab_branch_api' or method not in signatures or len(args or []) > len(signatures[method]):
             raise UserError(_('Unsupported branch API operation.'))
+        self._check_branch_connection()
         values = dict(zip(signatures[method], args or []), **(kwargs or {}))
+        if type(values.get('db_serial')) is not int or values['db_serial'] != self.db_serial:
+            raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         return self._json_call(model_name, method, values)
 
     def _status(self, key=None):
+        self._check_branch_connection()
         result = self._json_call('ab_branch_api', 'get_connection_status',
-                                 {'store_serial': int(self.store_id.eplus_serial)}, key=key)
+                                 {'db_serial': self.db_serial}, key=key)
         if (not isinstance(result, dict) or result.get('version') != 1
-                or result.get('store_serial') != self.store_id.eplus_serial
-                or not result.get('expires_at') or not result.get('programmatic_keys')
+                or type(result.get('db_serial')) is not int or result['db_serial'] != self.db_serial
+                or 'expires_at' not in result
                 or not result.get('user_id')):
-            raise UserError(_('Branch identity, expiry, or programmatic key management is not configured correctly.'))
-        if self.remote_user_id and result['user_id'] != self.remote_user_id:
-            raise AccessError(_('The replacement credential belongs to a different integration user.'))
+            raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         return result
 
     def action_test_connection(self):
@@ -267,18 +266,15 @@ class AbSalesBranchRpcConfig(models.Model):
         self._update_alert()
 
     def _update_alert(self):
-        warning = (self.last_test_state == 'error' or self.rotation_state in ('review', 'generating', 'pending')
-                   or bool(self.management_message)
-                   or (self.expires_at and self.expires_at <= fields.Datetime.now() + timedelta(days=30)))
+        warning = self.last_test_state == 'error'
         activity = self.alert_activity_id.exists()
         if warning and not activity:
             self.alert_activity_id = self.activity_schedule(
                 'mail.mail_activity_data_todo', user_id=self.administrator_id.id,
                 summary=_('Branch connection needs attention'),
-                note=_('Review the connection health, credential expiry, and rotation status.'))
+                note=_('Review the connection address, credential, and branch permissions.'))
         elif not warning and activity:
             activity.action_feedback()
-
 
     def action_check_connections(self):
         self._require_admin()
@@ -286,77 +282,11 @@ class AbSalesBranchRpcConfig(models.Model):
             record.with_delay(identity_key='branch-check-%s' % record.id).job_manage_connection('check')
         return True
 
-    def action_rotate_credentials(self):
-        self._require_admin()
-        for record in self.filtered('active'):
-            record.with_delay(identity_key='branch-rotate-%s' % record.id).job_manage_connection('rotate')
-        return True
-
-    def action_revoke_credential(self):
-        self._require_admin()
-        self.ensure_one()
-        self.env.cr.execute('SELECT pg_try_advisory_lock(%s, %s)', (190901, self.id))
-        if not self.env.cr.fetchone()[0]:
-            raise UserError(_('Complete or reconcile rotation before revoking this connection.'))
-        try:
-            self.flush_recordset()
-            self.invalidate_recordset()
-            if self.rotation_state != 'idle':
-                raise UserError(_('Complete or reconcile rotation before revoking this connection.'))
-            self._json_call('ab_branch_api', 'revoke_credential', {
-                'store_serial': self.store_id.eplus_serial,
-                'key': self._decrypt_secret(self.api_key_encrypted)})
-            self.write({'enrollment_state': 'revoked', 'active': False, 'api_key_encrypted': False})
-            self.env.cr.commit()
-        except Exception:
-            self.env.cr.rollback()
-            raise
-        finally:
-            self.env.cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190901, self.id))
-        return True
-
-    def _rotate(self):
-        if self.enrollment_state != 'ready':
-            return
-        if self.rotation_state == 'generating':
-            self.write({'rotation_state': 'review', 'management_message': _('Credential generation was interrupted. Review branch keys before enrolling again.')})
-            return
-        if self.rotation_state == 'review':
-            return
-        if self.rotation_state == 'idle':
-            self.write({'rotation_state': 'generating', 'rotation_name': 'Branch connection %s %s' % (self.id, uuid4())})
-            self.env.cr.commit()  # Durable marker before the independent remote transaction.
-            try:
-                new_key = self._json_call('res.users.apikeys', 'generate', {
-                    'key': self._decrypt_secret(self.api_key_encrypted), 'scope': 'rpc',
-                    'name': self.rotation_name,
-                    'expiration_date': fields.Datetime.to_string(fields.Datetime.now() + timedelta(days=90))})
-                if not isinstance(new_key, str) or not new_key:
-                    raise UserError(_('The branch did not return a replacement credential.'))
-                self.write({'pending_key_encrypted': self._encrypt_secret(new_key), 'rotation_state': 'pending'})
-                self.env.cr.commit()
-            except (UserError, AccessError):
-                self.write({'rotation_state': 'review', 'management_message': _('Credential generation could not be confirmed. Review branch keys before enrolling again.')})
-                return
-        if self.rotation_state == 'pending':
-            result = self._status(self._decrypt_secret(self.pending_key_encrypted))
-            self.write({'previous_key_encrypted': self.api_key_encrypted,
-                        'api_key_encrypted': self.pending_key_encrypted, 'pending_key_encrypted': False,
-                        'expires_at': result['expires_at'], 'retire_at': fields.Datetime.now() + timedelta(hours=24),
-                        'rotation_state': 'overlap', 'management_message': False})
-            self.env.cr.commit()
-        if self.rotation_state == 'overlap' and self.retire_at <= fields.Datetime.now():
-            self._status()
-            self._json_call('ab_branch_api', 'revoke_credential', {
-                'store_serial': self.store_id.eplus_serial,
-                'key': self._decrypt_secret(self.previous_key_encrypted)})
-            self.write({'previous_key_encrypted': False, 'retire_at': False,
-                        'rotation_state': 'idle', 'management_message': False})
-
     def job_manage_connection(self, operation='check'):
         self._require_admin()
         self.ensure_one()
-        if not self.active:
+        # Only health checks may run; queued rotation requests perform no action.
+        if operation != 'check' or not self.active:
             return
         slot = None
         for candidate in range(4):
@@ -366,7 +296,7 @@ class AbSalesBranchRpcConfig(models.Model):
                 break
         if slot is None:
             return
-        # Session lock spans the deliberate commits around remote key creation.
+        # Serialize health checks for the same connection.
         self.env.cr.execute('SELECT pg_try_advisory_lock(%s, %s)', (190901, self.id))
         if not self.env.cr.fetchone()[0]:
             self.env.cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190902, slot))
@@ -376,14 +306,7 @@ class AbSalesBranchRpcConfig(models.Model):
             self.invalidate_recordset()
             if not self.active:
                 return
-            if operation == 'check':
-                self._check_connection()
-            elif operation == 'rotate':
-                try:
-                    self._rotate()
-                except (UserError, AccessError) as error:
-                    self.management_message = str(error)
-                self._update_alert()
+            self._check_connection()
             self.env.cr.commit()
         except Exception:
             self.env.cr.rollback()
@@ -394,8 +317,7 @@ class AbSalesBranchRpcConfig(models.Model):
 
     @api.model
     def _cron_connections(self, operation='check'):
+        if operation != 'check':
+            return
         for record in self.search(fields.Domain('active', '=', True)):
-            if operation == 'rotate' and not (record.rotation_state != 'idle' or
-                    (record.expires_at and record.expires_at <= fields.Datetime.now() + timedelta(days=30))):
-                continue
-            record.with_delay(identity_key='branch-%s-%s' % (operation, record.id)).job_manage_connection(operation)
+            record.with_delay(identity_key='branch-check-%s' % record.id).job_manage_connection('check')

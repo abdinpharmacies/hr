@@ -419,8 +419,11 @@ msgstr "الفواتير"
 
 #. module: ab_sales
 #. odoo-javascript
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__branch
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
 msgid "Branch"
 msgstr "الفرع"
 
@@ -3367,6 +3370,7 @@ msgstr "المخزن مطلوب ويجب أن يحتوي على مسلسل E-Plu
 
 #. module: ab_sales
 #. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
 #: code:addons/ab_sales/models/ab_sales_pos_api.py:0
 #: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
 #: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
@@ -4262,6 +4266,7 @@ msgstr "أرسل الفرع بنوداً تخص فاتورة أو فرعاً آ�
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 msgid "This store is not allowed."
 msgstr "هذا الفرع غير مسموح به."
 
@@ -4589,6 +4594,7 @@ msgstr "مستخدم التكامل المتحقق منه"
 
 #. module: ab_sales
 #. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 msgid "Verify and activate the branch connection before using it."
 msgstr "تحقق من اتصال الفرع وفعّله قبل استخدامه."
@@ -4597,3 +4603,205 @@ msgstr "تحقق من اتصال الفرع وفعّله قبل استخدامه
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
 msgid "https://branch.example.com"
 msgstr "https://branch.example.com"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Branch identity or credential metadata is not configured correctly."
+msgstr "لم يتم إعداد هوية الفرع أو بيانات مفتاح الاتصال بشكل صحيح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Review the connection address, credential, and branch permissions."
+msgstr "راجع عنوان الاتصال ومفتاح الاتصال وصلاحيات الفرع."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Credential"
+msgstr "مفتاح الاتصال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيانات عدداً صحيحاً موجباً."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__db_serial
+msgid "DB Serial"
+msgstr "الرقم التسلسلي لقاعدة البيانات"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"DB serial must match an active replica with this store as its allowed "
+"default sales store."
+msgstr ""
+"يجب أن يطابق الرقم التسلسلي لقاعدة البيانات قاعدة بيانات متماثلة نشطة يكون "
+"هذا المخزن مخزن المبيعات الافتراضي المسموح به فيها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Return product does not match the original invoice line."
+msgstr "منتج المرتجع لا يطابق سطر الفاتورة الأصلية."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__enrollment_state__required
+msgid "Verification Required"
+msgstr "مطلوب التحقق"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__enrollment_state
+msgid "Connection Status"
+msgstr "حالة الاتصال"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Verified Branch"
+msgstr "الفرع المتحقق منه"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Posting Allowed"
+msgstr "الترحيل مسموح"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Advanced Settings"
+msgstr "الإعدادات المتقدمة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Request failed."
+msgstr "تعذر تنفيذ الطلب."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to save settings."
+msgstr "تعذر حفظ الإعدادات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to load invoices."
+msgstr "تعذر تحميل الفواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to load customer."
+msgstr "تعذر تحميل بيانات العميل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to search customers."
+msgstr "تعذر البحث عن العملاء."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to search products."
+msgstr "تعذر البحث عن المنتجات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Barcode scan failed."
+msgstr "تعذر مسح الباركود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to save barcode links."
+msgstr "تعذر حفظ روابط الباركود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to load promotions."
+msgstr "تعذر تحميل العروض."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to load line details."
+msgstr "تعذر تحميل تفاصيل البند."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch API connected"
+msgstr "واجهة برمجة تطبيقات الفرع متصلة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch API unavailable"
+msgstr "واجهة برمجة تطبيقات الفرع غير متاحة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Could not check the branch connection."
+msgstr "تعذر التحقق من اتصال الفرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__return_employee_id
+msgid "Return Employee"
+msgstr "موظف المرتجع"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__return_employee_id
+msgid ""
+"Employee responsible for a callcenter return submitted from the "
+"Administrator form. POS returns use the logged-in employee."
+msgstr ""
+"الموظف المسؤول عن مرتجع مركز الاتصال المرسل من نموذج المسؤول. تستخدم مرتجعات"
+" نقطة البيع الموظف الذي سجّل الدخول."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Employee POS sessions are not available. Contact support."
+msgstr "جلسات الموظفين لنقطة البيع غير متاحة. تواصل مع الدعم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "The employee POS session belongs to another user."
+msgstr "جلسة الموظف لنقطة البيع تخص مستخدمًا آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Select a Return Employee before submitting this callcenter return."
+msgstr "اختر موظف المرتجع قبل إرسال مرتجع مركز الاتصال هذا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid ""
+"Log in to an active employee POS session before submitting this callcenter "
+"return."
+msgstr ""
+"سجّل الدخول إلى جلسة موظف نشطة لنقطة البيع قبل إرسال مرتجع مركز الاتصال هذا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Select an active return employee with an active employee cost center."
+msgstr "اختر موظف مرتجع نشطًا وله مركز تكلفة نشط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid ""
+"The return employee needs a cost center code that matches the branch "
+"employee."
+msgstr "يجب أن يكون لموظف المرتجع كود مركز تكلفة يطابق موظف الفرع."

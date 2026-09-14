@@ -986,7 +986,7 @@ class AbSalesPosApi(models.TransientModel):
             config = client._config(config.store_id)
             response = config._execute_kw(
                 'ab_branch_api', 'submit_sale',
-                [int(config.store_id.eplus_serial), token, client._sale_payload(payload), push_to_eplus],
+                [config.db_serial, token, client._sale_payload(payload), push_to_eplus],
             )
             if not isinstance(response, dict):
                 raise UserError(_("Branch RPC submit returned an invalid response."))
