@@ -2,7 +2,7 @@
 import datetime
 import math
 import re
-from odoo import models, fields, api
+from odoo import _, models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import SQL, config
 from odoo.addons.ab_odoo_connect import OdooConnectionSingleton
@@ -54,6 +54,11 @@ class OdooReplication(models.AbstractModel):
     _description = 'ab_odoo_replication'
 
     _group_xml_ids = []
+    _sql_only_replication_models = frozenset({'res.partner', 'res.users'})
+    _odoo_15_chatter_position_map = {
+        'normal': 'bottom',
+        'sided': 'side',
+    }
 
     class ReplShare:
         model_name = ""
@@ -62,6 +67,39 @@ class OdooReplication(models.AbstractModel):
         has_main_rec_id = False
         missing_many2one_flds = None  # type: list
         fld__type_rel_dict = None  # type: dict
+        source_major_version = None
+
+    def _get_source_major_version(self):
+        """Return the major version reported by the remote Odoo server."""
+        version_metadata = self.ReplShare.conn.get_server_version_info()
+        version_info = version_metadata.get('server_version_info') or ()
+        if version_info:
+            try:
+                return int(version_info[0])
+            except (TypeError, ValueError):
+                pass
+
+        server_version = version_metadata.get('server_version', '')
+        version_match = re.match(r'^(\d+)', str(server_version))
+        if version_match:
+            return int(version_match.group(1))
+
+        raise UserError(_(
+            "Could not determine the remote Odoo server's major version."
+        ))
+
+    def _normalize_remote_record(self, rec):
+        """Translate version-specific source values to local equivalents."""
+        if (
+            self.ReplShare.source_major_version == 15
+            and self.ReplShare.model_name == 'res.users'
+            and rec.get('chatter_position') in self._odoo_15_chatter_position_map
+        ):
+            rec = dict(rec)
+            rec['chatter_position'] = self._odoo_15_chatter_position_map[
+                rec['chatter_position']
+            ]
+        return rec
 
     def eval_val(self, fld, val, rec_id):
         fld__type_rel_dict = self.ReplShare.fld__type_rel_dict
@@ -211,6 +249,7 @@ class OdooReplication(models.AbstractModel):
         self.ReplShare.table_name = table_name
         self.ReplShare.has_main_rec_id = has_main_rec_id
         self.ReplShare.missing_many2one_flds = []
+        self.ReplShare.source_major_version = None
 
         # fix write_date for base users/partners
         # self._fix_users_and_partners_write_date()
@@ -247,6 +286,13 @@ class OdooReplication(models.AbstractModel):
         if use_write_date:
             pagination_fields.add('write_date')
         fields_to_get = list((repldb_flds_set & remotedb_flds_set) | extra_fields.keys() | pagination_fields)
+
+        if (
+            model_name == 'res.users'
+            and 'chatter_position' in repldb_flds_set
+            and 'chatter_position' in remotedb_flds_set
+        ):
+            self.ReplShare.source_major_version = self._get_source_major_version()
 
         self.ReplShare.fld__type_rel_dict = {
             row[0]: (row[1], row[2])
@@ -315,6 +361,7 @@ class OdooReplication(models.AbstractModel):
             force_id_changes = {'create': {}, 'write': {}}
 
             for rec in server_updates:  # type: dict
+                rec = self._normalize_remote_record(rec)
                 # Skip admin and other built-in users
                 if model_name == 'res.users' and rec.get('id') <= 5:
                     continue
@@ -523,9 +570,27 @@ class OdooReplication(models.AbstractModel):
         insert_str = ','.join(k for k in rec)
         vals_tuple = tuple(val for val in rec.values())
 
-        # Existing IDs do not need raw SQL. ORM write preserves the previous
-        # values for model overrides and triggers their normal business logic.
         if existing_rec:
+            if model_name in self._sql_only_replication_models:
+                update_values = {
+                    field_name: value
+                    for field_name, value in rec.items()
+                    if field_name != 'id'
+                }
+                self._update_replication_row(
+                    table_name,
+                    existing_rec.id,
+                    update_values,
+                )
+                if update_values:
+                    existing_rec.invalidate_recordset(
+                        list(update_values),
+                        flush=False,
+                    )
+                return 'write', existing_rec.id, dict(rec), False, {}
+
+            # Other models retain the ORM lifecycle introduced for forced-ID
+            # replication.
             changed_values = self._get_changed_force_id_replay_values(existing_rec, rec)
             if changed_values:
                 existing_rec.with_context(replication=True).write(changed_values)
@@ -556,9 +621,28 @@ class OdooReplication(models.AbstractModel):
                     f'Forced-ID replication expected {model_name}({rec_id}) '
                     f'but PostgreSQL inserted ID {forced_id}.'
                 )
-            return 'create', forced_id, dict(rec), True, dict(rec)
+            replay_write = model_name not in self._sql_only_replication_models
+            changed_values = dict(rec) if replay_write else {}
+            return 'create', forced_id, dict(rec), replay_write, changed_values
 
         return None
+
+    @api.model
+    def _update_replication_row(self, table_name, record_id, values):
+        """Update one replicated row directly without invoking ORM write."""
+        if not values:
+            return
+
+        assignments = SQL(', ').join(
+            SQL('%s = %s', SQL.identifier(field_name), value)
+            for field_name, value in values.items()
+        )
+        self.env.cr.execute(SQL(
+            'UPDATE %s SET %s WHERE id = %s',
+            SQL.identifier(table_name),
+            assignments,
+            record_id,
+        ))
 
     @api.model
     def _refresh_force_id_record(self, model, record_id, changed_fields=None, created=False):
@@ -948,6 +1032,29 @@ class OdooReplication(models.AbstractModel):
             deferred_values.setdefault(local_id, {})[many2one_name] = related_record_id
 
         deferred_changes = {}
+        if model_name in self._sql_only_replication_models:
+            changed_fields = set()
+            for local_id, values in deferred_values.items():
+                record = target_model.browse(local_id).exists()
+                if not record:
+                    raise UserError(
+                        f'Replication could not load {model_name}({local_id}) '
+                        'for deferred Many2one resolution.'
+                    )
+                self._update_replication_row(
+                    target_model._table,
+                    local_id,
+                    values,
+                )
+                changed_fields.update(values)
+
+            if deferred_values and changed_fields:
+                target_model.browse(list(deferred_values)).invalidate_recordset(
+                    sorted(changed_fields),
+                    flush=False,
+                )
+            return deferred_changes
+
         for local_id, values in deferred_values.items():
             record = target_model.browse(local_id).exists()
             if not record:
