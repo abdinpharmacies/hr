@@ -1,0 +1,79 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_branch_api_return_employee
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-14 09:43+0000\n"
+"PO-Revision-Date: 2026-09-14 09:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_branch_api_return_employee
+#. odoo-python
+#: code:addons/ab_branch_api_return_employee/models/branch_api.py:0
+msgid ""
+"A return employee is required. Log in to the callcenter POS or select a "
+"return employee in the Administrator return form."
+msgstr ""
+"يجب تحديد موظف المرتجع. سجّل الدخول إلى نقطة بيع مركز الاتصال أو اختر موظف "
+"المرتجع في نموذج المرتجع الخاص بالمسؤول."
+
+#. module: ab_branch_api_return_employee
+#. odoo-python
+#: code:addons/ab_branch_api_return_employee/models/branch_api.py:0
+msgid ""
+"The return employee is missing or ambiguous on this branch. Check the "
+"employee cost center code."
+msgstr ""
+"موظف المرتجع غير موجود أو يوجد أكثر من سجل مطابق له في هذا الفرع. تحقق من "
+"كود مركز تكلفة الموظف."
+
+#. module: ab_branch_api_return_employee
+#. odoo-python
+#: code:addons/ab_branch_api_return_employee/models/branch_api.py:0
+msgid ""
+"The return employee and employee cost center must be active on this branch."
+msgstr "يجب أن يكون موظف المرتجع ومركز تكلفته نشطين في هذا الفرع."
+
+#. module: ab_branch_api_return_employee
+#. odoo-python
+#: code:addons/ab_branch_api_return_employee/models/branch_api.py:0
+msgid ""
+"The return employee has no valid E-Plus mapping on this branch. Configure "
+"the employee cost center E-Plus serial before retrying."
+msgstr ""
+"لا يوجد ربط صالح لموظف المرتجع مع إي بلس في هذا الفرع. اضبط الرقم التسلسلي "
+"لإي بلس في مركز تكلفة الموظف قبل إعادة المحاولة."
+
+#. module: ab_branch_api_return_employee
+#: model:ir.model,name:ab_branch_api_return_employee.model_ab_branch_api
+msgid "Branch API"
+msgstr "واجهة برمجة تطبيقات الفرع"
+
+#. module: ab_branch_api_return_employee
+#: model:ir.model.fields,field_description:ab_branch_api_return_employee.field_ab_branch_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_branch_api_return_employee
+#: model:ir.model.fields,field_description:ab_branch_api_return_employee.field_ab_branch_api__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_branch_api_return_employee
+#: model:ir.module.module,shortdesc:base.module_ab_branch_api_return_employee
+msgid "Abdin Branch API Return Employee"
+msgstr "موظف مرتجع واجهة برمجة الفرع"
+
+#. module: ab_branch_api_return_employee
+#: model:ir.module.module,summary:base.module_ab_branch_api_return_employee
+msgid "Validate return employees before reserving branch invoices"
+msgstr "التحقق من موظفي المرتجعات قبل حجز فواتير الفرع"
