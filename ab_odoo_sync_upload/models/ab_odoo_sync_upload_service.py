@@ -1,15 +1,23 @@
 import base64
 import datetime
 import hashlib
+import ipaddress
 import json
 import logging
 import urllib.error
 import urllib.request
 from collections import defaultdict
+from urllib.parse import urlsplit
 
 from odoo import api, fields, models
 from odoo.tools import config
 from odoo.tools.translate import _
+
+from .ab_odoo_sync_hardware import (
+    normalize_hdd_serial,
+    read_hdd_serial,
+    validate_hdd_device_path,
+)
 
 _logger = logging.getLogger(__name__)
 _SENSITIVE_SNAPSHOT_FIELDS = {"password"}
@@ -23,6 +31,33 @@ class AbOdooSyncUploadService(models.AbstractModel):
     def get_db_serial(self):
         raw = config.get("db_serial", 0) or 0
         return self.parse_positive_int(raw, "db_serial")
+
+    @api.model
+    def get_hdd_serial(self):
+        configured_serial = self._icp().get_param("ab_odoo_sync.hdd_serial")
+        if self.is_configured(configured_serial):
+            report_url = (self._icp().get_param("ab_odoo_sync.report_url") or "").strip()
+            if not self._is_loopback_report_url(report_url):
+                raise ValueError(
+                    _(
+                        "Configured hardware serial fallback is only allowed "
+                        "with loopback report URLs."
+                    )
+                )
+            return normalize_hdd_serial(configured_serial)
+        return read_hdd_serial(self._icp().get_param("ab_odoo_sync.hdd_device_path"))
+
+    @api.model
+    def _is_loopback_report_url(self, report_url):
+        parsed = urlsplit(report_url)
+        if parsed.scheme != "http" or not parsed.hostname:
+            return False
+        if parsed.hostname == "localhost":
+            return True
+        try:
+            return ipaddress.ip_address(parsed.hostname).is_loopback
+        except ValueError:
+            return False
 
     @api.model
     def _ensure_ascii_transport_config(self, config_key, value):
@@ -141,7 +176,38 @@ class AbOdooSyncUploadService(models.AbstractModel):
         for key, message in required.items():
             if not self.is_configured(self._icp().get_param(key)):
                 return message
+        try:
+            report_url = (self._icp().get_param("ab_odoo_sync.report_url") or "").strip()
+            self._validate_report_url(report_url)
+            configured_serial = self._icp().get_param("ab_odoo_sync.hdd_serial")
+            if self.is_configured(configured_serial):
+                self.get_hdd_serial()
+            elif self.is_configured(self._icp().get_param("ab_odoo_sync.hdd_device_path")):
+                validate_hdd_device_path(
+                    self._icp().get_param("ab_odoo_sync.hdd_device_path")
+                )
+            else:
+                return _(
+                    "Set the hardware device path system parameter "
+                    "ab_odoo_sync.hdd_device_path, or set ab_odoo_sync.hdd_serial "
+                    "for loopback development."
+                )
+        except ValueError as ex:
+            return str(ex)
         return False
+
+    @api.model
+    def _validate_report_url(self, report_url):
+        parsed = urlsplit(report_url)
+        if not parsed.netloc:
+            raise ValueError(_("Report URL must include a host."))
+        if parsed.scheme == "https":
+            return report_url
+        if self._is_loopback_report_url(report_url):
+            return report_url
+        raise ValueError(
+            _("Report URL must use HTTPS unless it points to a loopback development host.")
+        )
 
     @api.model
     def _report_api_call(self, path, payload):
@@ -158,6 +224,10 @@ class AbOdooSyncUploadService(models.AbstractModel):
             ("ab_odoo_sync.api_key", api_key),
         ):
             self._ensure_ascii_transport_config(key, value)
+        report_url = self._validate_report_url(report_url)
+        payload = dict(payload or {})
+        if "hdd_serial" not in payload:
+            payload["hdd_serial"] = self.get_hdd_serial()
 
         request = urllib.request.Request(
             url=f"{report_url}{path}",
@@ -206,6 +276,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
             "/ab_odoo_sync/upload",
             {
                 "db_serial": self.get_db_serial(),
+                "hdd_serial": self.get_hdd_serial(),
                 "records": records,
             },
         )
@@ -446,7 +517,10 @@ class AbOdooSyncUploadService(models.AbstractModel):
         db_serial = self.get_db_serial()
         health = self._report_api_call(
             "/ab_odoo_sync/health",
-            {"db_serial": db_serial},
+            {
+                "db_serial": db_serial,
+                "hdd_serial": self.get_hdd_serial(),
+            },
         )
         push = self.push_upload_records([])
         return {

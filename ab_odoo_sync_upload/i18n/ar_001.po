@@ -738,3 +738,110 @@ msgstr "يجب أن يحدد مصدر الرفع %(model)s قناة طابور %
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
 msgid "Upload source model name is required."
 msgstr "اسم نموذج مصدر الرفع مطلوب."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Set the hardware device path system parameter: ab_odoo_sync.hdd_device_path"
+msgstr "اضبط معلمة النظام لمسار جهاز العتاد: ab_odoo_sync.hdd_device_path"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report URL must use HTTPS."
+msgstr "يجب أن يستخدم رابط خادم التقارير HTTPS."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware serial must be a string."
+msgstr "يجب أن يكون الرقم التسلسلي للعتاد نصاً."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware serial is required."
+msgstr "الرقم التسلسلي للعتاد مطلوب."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware serial is too long."
+msgstr "الرقم التسلسلي للعتاد طويل جداً."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware serial must not contain control characters."
+msgstr "يجب ألا يحتوي الرقم التسلسلي للعتاد على محارف تحكم."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware serial is not stable enough for binding."
+msgstr "الرقم التسلسلي للعتاد غير مستقر بما يكفي للربط."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware device path must use a stable /dev/disk/by-id/... path."
+msgstr "يجب أن يستخدم مسار جهاز العتاد مساراً مستقراً بصيغة /dev/disk/by-id/..."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Hardware device path must not contain control characters."
+msgstr "يجب ألا يحتوي مسار جهاز العتاد على محارف تحكم."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Could not read hardware serial: %s"
+msgstr "تعذرت قراءة الرقم التسلسلي للعتاد: %s"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Could not read hardware serial with lsblk: %s"
+msgstr "تعذرت قراءة الرقم التسلسلي للعتاد باستخدام lsblk: %s"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "lsblk returned invalid JSON while reading hardware serial."
+msgstr "أرجع lsblk صيغة JSON غير صالحة أثناء قراءة الرقم التسلسلي للعتاد."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "lsblk did not return a hardware serial for the configured device."
+msgstr "لم يرجع lsblk رقماً تسلسلياً للعتاد للجهاز المضبوط."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Configured hardware serial fallback is only allowed with loopback report URLs."
+msgstr "لا يسمح باستخدام الرقم التسلسلي الاحتياطي للعتاد إلا مع روابط تقارير محلية حلقية."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid ""
+"Set the hardware device path system parameter ab_odoo_sync.hdd_device_path, "
+"or set ab_odoo_sync.hdd_serial for loopback development."
+msgstr ""
+"اضبط معلمة النظام لمسار جهاز العتاد ab_odoo_sync.hdd_device_path، "
+"أو اضبط ab_odoo_sync.hdd_serial للتطوير المحلي الحلقي."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report URL must include a host."
+msgstr "يجب أن يحتوي رابط خادم التقارير على مضيف."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report URL must use HTTPS unless it points to a loopback development host."
+msgstr "يجب أن يستخدم رابط خادم التقارير HTTPS ما لم يكن يشير إلى مضيف تطوير محلي حلقي."
