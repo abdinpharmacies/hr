@@ -1192,3 +1192,411 @@ msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف ا�
 #: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_field_override_uniq_sync_identity
 msgid "Source DB and record ID must be unique per upload field override."
 msgstr "يجب أن تكون قاعدة بيانات المصدر ومعرف السجل فريدين لكل تجاوز حقل رفع."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_branch_audit
+msgid "AB Odoo Sync Branch Security Audit"
+msgstr "تدقيق أمان فرع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_branch_hardware_reject_wizard
+msgid "AB Odoo Sync Branch Hardware Rejection"
+msgstr "رفض عتاد فرع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_branch_hardware_replace_wizard
+msgid "AB Odoo Sync Branch Hardware Replacement"
+msgstr "استبدال عتاد فرع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__api_key_hash
+msgid "API Key Hash"
+msgstr "بصمة مفتاح API"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__has_api_key
+msgid "Has API Key"
+msgstr "لديه مفتاح API"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hdd_serial
+msgid "Approved Hardware Serial"
+msgstr "الرقم التسلسلي المعتمد للعتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__pending_hdd_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__pending_hdd_serial
+msgid "Pending Hardware Serial"
+msgstr "الرقم التسلسلي المعلق للعتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_binding_state
+msgid "Hardware Binding State"
+msgstr "حالة ربط العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_registry__hardware_binding_state__unbound
+msgid "Unbound"
+msgstr "غير مربوط"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_registry__hardware_binding_state__pending
+msgid "Pending Approval"
+msgstr "بانتظار الاعتماد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_registry__hardware_binding_state__approved
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_registry__hardware_binding_state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_approved_by_id
+msgid "Hardware Approved By"
+msgstr "تم اعتماد العتاد بواسطة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_approved_at
+msgid "Hardware Approved At"
+msgstr "وقت اعتماد العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_rejected_by_id
+msgid "Hardware Rejected By"
+msgstr "تم رفض العتاد بواسطة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_rejected_at
+msgid "Hardware Rejected At"
+msgstr "وقت رفض العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_rejection_reason
+msgid "Hardware Rejection Reason"
+msgstr "سبب رفض العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_replaced_by_id
+msgid "Hardware Replaced By"
+msgstr "تم استبدال العتاد بواسطة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_replaced_at
+msgid "Hardware Replaced At"
+msgstr "وقت استبدال العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__hardware_replacement_reason
+msgid "Hardware Replacement Reason"
+msgstr "سبب استبدال العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__last_hardware_mismatch_at
+msgid "Last Hardware Mismatch At"
+msgstr "آخر وقت عدم تطابق للعتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__audit_ids
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Security Audit"
+msgstr "تدقيق الأمان"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__branch_id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__branch_id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__key_rotated
+msgid "API Key Rotated"
+msgstr "تم تدوير مفتاح API"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__hardware_pending
+msgid "Hardware Pending Approval"
+msgstr "العتاد بانتظار الاعتماد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__hardware_approved
+msgid "Hardware Approved"
+msgstr "تم اعتماد العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__hardware_rejected
+msgid "Hardware Rejected"
+msgstr "تم رفض العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__hardware_replaced
+msgid "Hardware Replaced"
+msgstr "تم استبدال العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_branch_audit__event_type__hardware_mismatch
+msgid "Hardware Mismatch"
+msgstr "عدم تطابق العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__hdd_serial
+msgid "Hardware Serial"
+msgstr "الرقم التسلسلي للعتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__reason
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__reason
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__event_at
+msgid "Event At"
+msgstr "وقت الحدث"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Branch API Key"
+msgstr "مفتاح API للفرع"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "New API key for %(branch)s: %(api_key)s"
+msgstr "مفتاح API الجديد للفرع %(branch)s: %(api_key)s"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Branch Hardware Approval"
+msgstr "اعتماد عتاد الفرع"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Pending hardware serial approved."
+msgstr "تم اعتماد الرقم التسلسلي المعلق للعتاد."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_hardware_reject_wizard_form
+msgid "Reject Pending Hardware"
+msgstr "رفض العتاد المعلق"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "A rejection reason is required."
+msgstr "سبب الرفض مطلوب."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "There is no pending hardware serial to approve."
+msgstr "لا يوجد رقم تسلسلي معلق للعتاد لاعتماده."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "There is no pending hardware serial to reject."
+msgstr "لا يوجد رقم تسلسلي معلق للعتاد لرفضه."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Branch Hardware Rejection"
+msgstr "رفض عتاد الفرع"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Pending hardware serial rejected."
+msgstr "تم رفض الرقم التسلسلي المعلق للعتاد."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Replace Branch Hardware"
+msgstr "استبدال عتاد الفرع"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__replacement_hdd_serial
+msgid "Replacement Hardware Serial"
+msgstr "الرقم التسلسلي للعتاد البديل"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "A replacement reason is required."
+msgstr "سبب الاستبدال مطلوب."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Replacement hardware serial must be different."
+msgstr "يجب أن يكون الرقم التسلسلي للعتاد البديل مختلفاً."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Only Settings users can manage branch sync security."
+msgstr "يمكن لمستخدمي الإعدادات فقط إدارة أمان مزامنة الفروع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Use branch security actions to update sync credentials."
+msgstr "استخدم إجراءات أمان الفرع لتحديث بيانات اعتماد المزامنة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_audit.py:0
+msgid "Branch security audit records cannot be modified."
+msgstr "لا يمكن تعديل سجلات تدقيق أمان الفرع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_audit.py:0
+msgid "Branch security audit records cannot be deleted."
+msgstr "لا يمكن حذف سجلات تدقيق أمان الفرع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Python package passlib is required for Odoo sync API keys."
+msgstr "حزمة Python passlib مطلوبة لمفاتيح API الخاصة بمزامنة أودو."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "PBKDF2 rounds must be an integer."
+msgstr "يجب أن تكون جولات PBKDF2 رقماً صحيحاً."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "PBKDF2 rounds must be between 600000 and 4294967295."
+msgstr "يجب أن تكون جولات PBKDF2 بين 600000 و4294967295."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Stored API key hash must use pbkdf2_sha512."
+msgstr "يجب أن تستخدم بصمة مفتاح API المخزنة pbkdf2_sha512."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/controllers/report.py:0
+msgid "Invalid or missing hardware serial."
+msgstr "الرقم التسلسلي للعتاد غير صالح أو مفقود."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Hardware serial must be a string."
+msgstr "يجب أن يكون الرقم التسلسلي للعتاد نصاً."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Hardware serial is required."
+msgstr "الرقم التسلسلي للعتاد مطلوب."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Hardware serial is too long."
+msgstr "الرقم التسلسلي للعتاد طويل جداً."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Hardware serial must not contain control characters."
+msgstr "يجب ألا يحتوي الرقم التسلسلي للعتاد على محارف تحكم."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_security.py:0
+msgid "Hardware serial is not stable enough for binding."
+msgstr "الرقم التسلسلي للعتاد غير مستقر بما يكفي للربط."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Authenticated request used an unapproved hardware serial."
+msgstr "استخدم طلب موثق رقماً تسلسلياً غير معتمد للعتاد."
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Generate API Key"
+msgstr "إنشاء مفتاح API"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Approve Hardware"
+msgstr "اعتماد العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Reject Hardware"
+msgstr "رفض العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Replace Hardware"
+msgstr "استبدال العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
+msgid "Hardware Approval"
+msgstr "اعتماد العتاد"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_hardware_reject_wizard_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_hardware_reject_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_hardware_replace_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_hardware_replace_wizard_form
+msgid "Replace"
+msgstr "استبدال"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.actions.act_window,help:ab_odoo_sync_mapping.action_ab_odoo_sync_report_configuration
+msgid "Register branches, rotate branch API keys, and approve branch hardware before accepting uploads."
+msgstr "سجّل الفروع ودوّر مفاتيح API الخاصة بها واعتمد عتاد الفروع قبل قبول الرفعات."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_override.py:0
+msgid ""
+"Target field %(field)s on %(model)s cannot be enabled for sync because it is "
+"computed, related, readonly, non-stored, or has no inverse."
+msgstr ""
+"لا يمكن تفعيل مزامنة الحقل الهدف %(field)s في %(model)s لأنه محسوب أو مرتبط "
+"أو للقراءة فقط أو غير مخزن أو لا يحتوي على دالة عكسية."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Source model %(model)s is an internal sync security model and cannot be uploaded from branches."
+msgstr "نموذج المصدر %(model)s هو نموذج أمان داخلي للمزامنة ولا يمكن رفعه من الفروع."

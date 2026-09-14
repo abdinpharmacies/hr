@@ -110,7 +110,7 @@ class AbOdooSyncUploadFieldOverride(models.Model):
                 raise ValidationError(
                     _(
                         "Target field %(field)s on %(model)s cannot be enabled for sync because it is computed, "
-                        "related, non-stored, or has no inverse."
+                        "related, readonly, non-stored, or has no inverse."
                     )
                     % {
                         "field": override.target_field_name,

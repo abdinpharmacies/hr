@@ -349,6 +349,7 @@ class AbOdooSyncApplyProfile(models.Model):
         return bool(
             target_field
             and target_field.store
+            and not target_field.readonly
             and not (target_field.compute and not target_field.inverse)
             and not (target_field.related and not target_field.inverse)
         )
@@ -703,7 +704,7 @@ class AbOdooSyncFieldMapping(models.Model):
                 raise ValidationError(
                     _(
                         "Target field %(field)s on %(model)s cannot be enabled for sync because it is computed, "
-                        "related, non-stored, or has no inverse."
+                        "related, readonly, non-stored, or has no inverse."
                     )
                     % {
                         "field": mapping.target_field_name,

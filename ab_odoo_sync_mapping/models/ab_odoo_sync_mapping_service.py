@@ -3,10 +3,29 @@ import logging
 from odoo import api, fields, models
 from odoo.tools.translate import _
 
+from .ab_odoo_sync_security import (
+    SyncConfigurationError,
+    normalize_hdd_serial,
+    validate_sync_key_value,
+)
+
 
 _logger = logging.getLogger(__name__)
 _APPLY_CAPABLE_MODES = {"mirror_sync", "business_model"}
 _FEEDER_UPLOAD_STATUSES = ["pending_mapping", "raw_only", "pending", "failed"]
+_PROTECTED_UPLOAD_MODEL_PREFIXES = ("ab_odoo_sync", "ab.odoo.sync.")
+
+
+class SyncAuthorizationError(Exception):
+    pass
+
+
+class SyncHardwarePendingError(Exception):
+    pass
+
+
+class SyncHardwareMismatchError(Exception):
+    pass
 
 
 class AbOdooSyncMappingService(models.AbstractModel):
@@ -22,6 +41,43 @@ class AbOdooSyncMappingService(models.AbstractModel):
         if not branch:
             raise ValueError(_("Unknown or inactive db_serial."))
         return branch
+
+    @api.model
+    def get_registered_branch_for_auth(self, db_serial):
+        db_serial = self.parse_positive_int(db_serial, "db_serial")
+        branches = self.env["ab_odoo_sync_branch_registry"].sudo().search(
+            [("db_serial", "=", db_serial), ("active", "=", True)]
+        )
+        if len(branches) != 1:
+            raise SyncAuthorizationError()
+        return branches
+
+    @api.model
+    def authenticate_branch_request(self, payload, received_key):
+        if not isinstance(payload, dict):
+            raise SyncAuthorizationError()
+        try:
+            branch = self.get_registered_branch_for_auth(payload.get("db_serial"))
+        except ValueError as ex:
+            raise SyncAuthorizationError() from ex
+
+        if not validate_sync_key_value(received_key):
+            raise SyncAuthorizationError()
+        try:
+            key_ok = branch.verify_api_key(received_key)
+        except SyncConfigurationError as ex:
+            _logger.exception("AB Odoo Sync branch authentication is not configured")
+            raise SyncAuthorizationError() from ex
+        if not key_ok:
+            raise SyncAuthorizationError()
+
+        hdd_serial = normalize_hdd_serial(payload.get("hdd_serial"))
+        accepted, hardware_error = branch.enroll_pending_hardware(hdd_serial)
+        if accepted:
+            return branch
+        if hardware_error == "hardware_pending":
+            raise SyncHardwarePendingError()
+        raise SyncHardwareMismatchError()
 
     @api.model
     def receive_upload_batch(self, payload):
@@ -53,6 +109,9 @@ class AbOdooSyncMappingService(models.AbstractModel):
                 model_name = upload_model.validate_source_model_name(
                     row.get("model_name")
                 )
+                security_error = self._upload_source_security_error(model_name)
+                if security_error:
+                    raise ValueError(security_error)
                 rec_id = self.parse_positive_int(row.get("rec_id"), "rec_id")
                 payload_json = row.get("payload")
                 if not isinstance(payload_json, dict):
@@ -101,6 +160,19 @@ class AbOdooSyncMappingService(models.AbstractModel):
 
         branch.write({"last_upload_at": fields.Datetime.now()})
         return result
+
+    @api.model
+    def _upload_source_security_error(self, model_name):
+        rules = self.env["ab_odoo_sync_rules"].sudo()
+        if rules.is_upload_source_forbidden(model_name):
+            return _(
+                "Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches."
+            ) % {"model": model_name}
+        if model_name and model_name.startswith(_PROTECTED_UPLOAD_MODEL_PREFIXES):
+            return _(
+                "Source model %(model)s is an internal sync security model and cannot be uploaded from branches."
+            ) % {"model": model_name}
+        return False
 
     @api.model
     def _ensure_same_name_passive_profile(self, model_name, payload=False):
@@ -159,12 +231,11 @@ class AbOdooSyncMappingService(models.AbstractModel):
 
     @api.model
     def _same_name_passive_profile_error(self, model_name):
+        security_error = self._upload_source_security_error(model_name)
+        if security_error:
+            return security_error
         rules = self.env["ab_odoo_sync_rules"].sudo()
         Profile = self.env["ab_odoo_sync_apply_profile"].sudo()
-        if rules.is_upload_source_forbidden(model_name):
-            return _(
-                "Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches."
-            ) % {"model": model_name}
         if rules.is_never_mirror_model(model_name):
             return _(
                 "Source model %(model)s is report-owned; create a Business Model apply profile instead of a Mirror Sync Model profile."

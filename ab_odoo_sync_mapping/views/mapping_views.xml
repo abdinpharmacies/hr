@@ -7,6 +7,14 @@
             <list delete="0">
                 <field name="db_serial"/>
                 <field name="name"/>
+                <field name="has_api_key"/>
+                <field name="hardware_binding_state" widget="badge"
+                       decoration-warning="hardware_binding_state == 'pending'"
+                       decoration-success="hardware_binding_state == 'approved'"
+                       decoration-danger="hardware_binding_state == 'rejected'"
+                       decoration-muted="hardware_binding_state == 'unbound'"/>
+                <field name="hdd_serial" optional="hide"/>
+                <field name="pending_hdd_serial" optional="show"/>
                 <field name="last_upload_at"/>
                 <field name="active"/>
             </list>
@@ -18,14 +26,106 @@
         <field name="model">ab_odoo_sync_branch_registry</field>
         <field name="arch" type="xml">
             <form delete="0">
+                <header>
+                    <button name="action_generate_api_key" type="object"
+                            string="Generate API Key" class="btn-primary"
+                            groups="base.group_system"/>
+                    <button name="action_approve_pending_hardware" type="object"
+                            string="Approve Hardware" class="btn-primary"
+                            invisible="not pending_hdd_serial"
+                            groups="base.group_system"/>
+                    <button name="action_open_reject_pending_hardware" type="object"
+                            string="Reject Hardware" class="btn-secondary"
+                            invisible="not pending_hdd_serial"
+                            groups="base.group_system"/>
+                    <button name="action_open_replace_hardware" type="object"
+                            string="Replace Hardware" class="btn-secondary"
+                            groups="base.group_system"/>
+                </header>
                 <sheet>
                     <group>
-                        <field name="name"/>
-                        <field name="db_serial"/>
-                        <field name="last_upload_at"/>
-                        <field name="active"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="db_serial"/>
+                            <field name="has_api_key"/>
+                            <field name="last_upload_at"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="hardware_binding_state" widget="badge"/>
+                            <field name="hdd_serial"/>
+                            <field name="pending_hdd_serial"/>
+                            <field name="last_hardware_mismatch_at"/>
+                        </group>
                     </group>
+                    <notebook>
+                        <page string="Hardware Approval">
+                            <group>
+                                <group>
+                                    <field name="hardware_approved_by_id"/>
+                                    <field name="hardware_approved_at"/>
+                                    <field name="hardware_replaced_by_id"/>
+                                    <field name="hardware_replaced_at"/>
+                                </group>
+                                <group>
+                                    <field name="hardware_rejected_by_id"/>
+                                    <field name="hardware_rejected_at"/>
+                                    <field name="hardware_rejection_reason"/>
+                                    <field name="hardware_replacement_reason"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Security Audit">
+                            <field name="audit_ids">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="event_at"/>
+                                    <field name="event_type"/>
+                                    <field name="hdd_serial"/>
+                                    <field name="pending_hdd_serial"/>
+                                    <field name="user_id"/>
+                                    <field name="reason"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ab_odoo_sync_branch_hardware_reject_wizard_form" model="ir.ui.view">
+        <field name="name">ab_odoo_sync_branch_hardware_reject_wizard.form</field>
+        <field name="model">ab_odoo_sync_branch_hardware_reject_wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="branch_id"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Reject"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ab_odoo_sync_branch_hardware_replace_wizard_form" model="ir.ui.view">
+        <field name="name">ab_odoo_sync_branch_hardware_replace_wizard.form</field>
+        <field name="model">ab_odoo_sync_branch_hardware_replace_wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="branch_id"/>
+                    <field name="replacement_hdd_serial"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Replace"
+                            class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

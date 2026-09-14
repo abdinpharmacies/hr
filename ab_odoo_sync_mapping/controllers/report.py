@@ -1,7 +1,11 @@
-import hmac
 import json
 
 from odoo import fields, http
+from odoo.addons.ab_odoo_sync_mapping.models.ab_odoo_sync_mapping_service import (
+    SyncAuthorizationError,
+    SyncHardwareMismatchError,
+    SyncHardwarePendingError,
+)
 from odoo.http import request
 from odoo.tools.translate import _
 
@@ -22,20 +26,43 @@ class AbOdooSyncMappingController(http.Controller):
             return {}
         return payload if isinstance(payload, dict) else {}
 
-    def _authorize(self):
+    def _request_key(self):
+        return request.httprequest.headers.get("X-AB-Sync-Key")
+
+    def _authorized_branch(self, payload):
         service = request.env["ab_odoo_sync_service"].sudo()
-        api_key = (
-            request.env["ir.config_parameter"]
-            .sudo()
-            .get_param("ab_odoo_sync.api_key")
-            or ""
-        ).strip()
-        request_key = (
-            request.httprequest.headers.get("X-AB-Sync-Key") or ""
-        ).strip()
-        return service.is_configured(api_key) and hmac.compare_digest(
-            request_key, api_key
-        )
+        return service.authenticate_branch_request(payload, self._request_key())
+
+    def _auth_error_response(self, ex):
+        if isinstance(ex, SyncAuthorizationError):
+            return _json_response(
+                {"ok": False, "error": _("Unauthorized")},
+                status=401,
+            )
+        if isinstance(ex, ValueError):
+            return _json_response(
+                {"ok": False, "error": _("Invalid or missing hardware serial.")},
+                status=400,
+            )
+        if isinstance(ex, SyncHardwarePendingError):
+            return _json_response(
+                {
+                    "ok": False,
+                    "error": "hardware_pending",
+                    "code": "hardware_pending",
+                },
+                status=403,
+            )
+        if isinstance(ex, SyncHardwareMismatchError):
+            return _json_response(
+                {
+                    "ok": False,
+                    "error": "hardware_mismatch",
+                    "code": "hardware_mismatch",
+                },
+                status=403,
+            )
+        raise ex
 
     @http.route(
         "/ab_odoo_sync/health",
@@ -45,19 +72,16 @@ class AbOdooSyncMappingController(http.Controller):
         csrf=False,
     )
     def health(self, **kwargs):
-        if not self._authorize():
-            return _json_response(
-                {"ok": False, "error": _("Unauthorized")}, status=401
-            )
         payload = self._payload()
         try:
-            branch = (
-                request.env["ab_odoo_sync_service"]
-                .sudo()
-                .get_registered_branch(payload.get("db_serial"))
-            )
-        except ValueError as ex:
-            return _json_response({"ok": False, "error": str(ex)}, status=403)
+            branch = self._authorized_branch(payload)
+        except (
+            SyncAuthorizationError,
+            SyncHardwarePendingError,
+            SyncHardwareMismatchError,
+            ValueError,
+        ) as ex:
+            return self._auth_error_response(ex)
         return _json_response(
             {
                 "ok": True,
@@ -77,15 +101,21 @@ class AbOdooSyncMappingController(http.Controller):
         csrf=False,
     )
     def upload_records(self, **kwargs):
-        if not self._authorize():
-            return _json_response(
-                {"ok": False, "error": _("Unauthorized")}, status=401
-            )
+        payload = self._payload()
+        try:
+            self._authorized_branch(payload)
+        except (
+            SyncAuthorizationError,
+            SyncHardwarePendingError,
+            SyncHardwareMismatchError,
+            ValueError,
+        ) as ex:
+            return self._auth_error_response(ex)
         try:
             result = (
                 request.env["ab_odoo_sync_service"]
                 .sudo()
-                .receive_upload_batch(self._payload())
+                .receive_upload_batch(payload)
             )
         except ValueError as ex:
             return _json_response({"ok": False, "error": str(ex)}, status=400)

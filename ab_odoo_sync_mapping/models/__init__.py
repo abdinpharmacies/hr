@@ -1,4 +1,6 @@
 from . import ab_odoo_sync_branch_registry
+from . import ab_odoo_sync_branch_audit
+from . import ab_odoo_sync_branch_hardware_wizard
 from . import ab_odoo_sync_identity
 from . import ab_odoo_sync_apply_profile
 from . import ab_odoo_sync_upload_record
