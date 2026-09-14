@@ -450,3 +450,61 @@ msgstr "بيانات الاعتماد لا تخص مستخدم التكامل ه
 #: code:addons/ab_branch_api/models/credentials.py:0
 msgid "Use a dedicated non-administrator integration user."
 msgstr "استخدم مستخدم تكامل مخصصاً لا يملك صلاحيات المسؤول."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Configure the service user's business permissions first. The generated API "
+"key has no expiration date."
+msgstr ""
+"قم بإعداد صلاحيات العمل لمستخدم التكامل أولاً. مفتاح واجهة البرمجة الذي يتم "
+"إنشاؤه ليس له تاريخ انتهاء."
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.enrollment_form
+msgid ""
+"Copy this permanent key into the callcenter connection now. It will not be "
+"displayed again after closing."
+msgstr ""
+"انسخ هذا المفتاح الدائم إلى اتصال مركز الاتصال الآن. لن يتم عرضه مرة أخرى "
+"بعد الإغلاق."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "An active replica is required for this DB serial."
+msgstr ""
+"يلزم وجود قاعدة بيانات متماثلة نشطة لهذا الرقم التسلسلي لقاعدة البيانات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Configure an active default sales store within the replica allowed stores."
+msgstr ""
+"قم بإعداد مخزن مبيعات افتراضي نشط ضمن المخازن المسموح بها لقاعدة البيانات "
+"المتماثلة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "DB serial does not match this branch server."
+msgstr "الرقم التسلسلي لقاعدة البيانات لا يطابق خادم هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيانات عدداً صحيحاً موجباً."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Requested products are not accessible."
+msgstr "لا تملك صلاحية الوصول إلى المنتجات المطلوبة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use an active internal non-administrator user."
+msgstr "استخدم مستخدماً داخلياً نشطاً لا يملك صلاحيات المسؤول."
