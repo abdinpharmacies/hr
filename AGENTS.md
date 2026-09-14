@@ -1546,8 +1546,6 @@ Before implementing `ab_product_seo`, ask for an architecture document only. The
 - **SCSS `@import url()` removed** from form SCSS to prevent libsass failure from breaking the entire backend asset bundle.
 - **Bulk code results**: `ir.actions.client` → OWL Dialog (no TransientModel wizard, no ValidationError).
 - **Dialog "Download Missing Codes"** uses client-side Blob + anchor download (no server round trip).
-<<<<<<< Updated upstream
-=======
 
 ## Session Summary — ab_core_ui
 
@@ -1592,4 +1590,3 @@ Build a complete Design System and Component Workspace module `ab_core_ui` as th
 4. Verify component gallery, sidebar filters, search, inspector all work.
 5. Test `t-call` from another module.
 6. Add keyboard shortcuts, more component templates.
->>>>>>> Stashed changes
