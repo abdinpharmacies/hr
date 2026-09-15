@@ -10,6 +10,18 @@
         <xpath expr="//div[contains(@class, 'o_wsale_shorter_cart_summary')]" position="attributes">
             <attribute name="class" add="ab-storefront-cart-summary-column" separator=" "/>
         </xpath>
+        <xpath expr="//div[hasclass('o_total_card')]" position="attributes">
+            <attribute name="class" add="ab-storefront-order-summary-card" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_cta_navigation_container')]/t[@t-call='website_sale.navigation_buttons']" position="before">
+            <a t-if="request.httprequest.path == '/shop/payment'"
+               href="/shop/checkout"
+               class="ab-storefront-payment-address-link">
+                <i class="fa fa-angle-right" aria-hidden="true"/>
+                <span t-if="request.lang.code in ('ar', 'ar_001')">العودة إلى العنوان</span>
+                <span t-else="">Back to address</span>
+            </a>
+        </xpath>
     </template>
 
     <template id="cart_header_abdin" inherit_id="website_sale.cart" name="Abdin Cart Header">
@@ -101,7 +113,354 @@
 
     <template id="cart_navigation_actions_abdin_skin" inherit_id="website_sale.shorter_cart_summary" name="Abdin Cart Navigation Actions Skin">
         <xpath expr="//t[@t-call='website_sale.navigation_buttons']" position="before">
+            <a t-if="request.httprequest.path == '/shop/payment'"
+               href="/shop/checkout"
+               class="ab-storefront-payment-address-link">
+                <i class="fa fa-angle-right" aria-hidden="true"/>
+                <span t-if="request.lang.code in ('ar', 'ar_001')">العودة إلى العنوان</span>
+                <span t-else="">Back to address</span>
+            </a>
             <t t-set="_container_classes" t-valuef="ab-storefront-cart-actions o_cta_navigation_container"/>
+        </xpath>
+    </template>
+
+    <template id="checkout_mobile_navigation_actions_abdin_skin" inherit_id="website_sale.checkout_layout" name="Abdin Checkout Mobile Navigation Actions Skin">
+        <xpath expr="//div[hasclass('o_mobile_summary')]//t[@t-call='website_sale.navigation_buttons']" position="before">
+            <a t-if="request.httprequest.path == '/shop/payment'"
+               href="/shop/checkout"
+               class="ab-storefront-payment-address-link">
+                <i class="fa fa-angle-right" aria-hidden="true"/>
+                <span t-if="request.lang.code in ('ar', 'ar_001')">العودة إلى العنوان</span>
+                <span t-else="">Back to address</span>
+            </a>
+            <t t-set="_container_classes" t-valuef="ab-storefront-cart-actions o_cta_navigation_container"/>
+        </xpath>
+    </template>
+
+    <template id="checkout_delivery_page_abdin_skin" inherit_id="website_sale.checkout" name="Abdin Checkout Delivery Page Skin">
+        <xpath expr="//div[@id='shop_checkout']" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-step" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='shop_checkout']/t[@t-if='order._has_deliverable_products()']/div[t[@t-call='website_sale.delivery_form']]" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-section ab-storefront-delivery-method-section" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='shop_checkout']/t[@t-if='order._has_deliverable_products()']/div[t[@t-call='website_sale.delivery_address_list']]" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-section ab-storefront-delivery-address-section" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="delivery_form_abdin_skin" inherit_id="website_sale.delivery_form" name="Abdin Delivery Form Skin">
+        <xpath expr="//form[@id='o_delivery_form']" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-form" separator=" "/>
+        </xpath>
+        <xpath expr="//form[@id='o_delivery_form']/h4" position="replace">
+            <header class="ab-storefront-delivery-step-head">
+                <span>Checkout</span>
+                <h4>Delivery method</h4>
+                <p>Choose a delivery method for your order</p>
+            </header>
+        </xpath>
+        <xpath expr="//ul[@id='o_delivery_methods']" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-methods" remove="list-group" separator=" "/>
+        </xpath>
+        <xpath expr="//li[@name='o_delivery_method']" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-method" remove="list-group-item" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('alert-warning')]" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-empty" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="delivery_method_abdin_skin" inherit_id="website_sale.delivery_method" name="Abdin Delivery Method Card Skin">
+        <xpath expr="//div[input[@name='o_delivery_radio']]" position="replace">
+            <div class="ab-storefront-delivery-option">
+                <input
+                    t-attf-id="o_delivery_{{dm.id}}"
+                    name="o_delivery_radio"
+                    type="radio"
+                    t-att-checked="is_selected"
+                    disabled="true"
+                    class="ab-storefront-delivery-radio"
+                    t-att-data-dm-id="dm.id"
+                    t-att-data-delivery-type="dm.delivery_type"
+                    t-att-data-is-pickup-location-required="is_pickup_needed"
+                />
+                <label
+                    name="o_delivery_method_label"
+                    class="ab-storefront-delivery-option-card"
+                    t-attf-for="o_delivery_{{dm.id}}"
+                >
+                    <span class="ab-storefront-delivery-radio-mark" aria-hidden="true"/>
+                    <span class="ab-storefront-delivery-option-copy">
+                        <strong name="o_delivery_method_name" t-field="dm.name"/>
+                        <small t-if="not is_pickup_needed">Delivery to your address</small>
+                        <small t-else="">Collect from a pickup point</small>
+                    </span>
+                    <span class="o_wsale_delivery_price_badge ab-storefront-delivery-price text-muted" name="price">
+                        <small>Select to compute delivery rate</small>
+                    </span>
+                </label>
+            </div>
+        </xpath>
+        <xpath expr="//div[@name='o_pickup_location']" position="attributes">
+            <attribute name="class" add="ab-storefront-pickup-location" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='o_pickup_location_details']" position="attributes">
+            <attribute name="class" add="ab-storefront-pickup-details" separator=" "/>
+        </xpath>
+        <xpath expr="//span[@name='o_pickup_location_selector']" position="attributes">
+            <attribute name="class" add="ab-storefront-address-edit-action" separator=" "/>
+        </xpath>
+        <xpath expr="//button[@name='o_pickup_location_selector']" position="attributes">
+            <attribute name="class" add="ab-storefront-pickup-selector" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@t-if='dm.website_description']" position="attributes">
+            <attribute name="class" add="ab-storefront-delivery-description" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="delivery_address_list_abdin_skin" inherit_id="website_sale.delivery_address_list" name="Abdin Delivery Address List Skin">
+        <xpath expr="//div[@id='delivery_address_list']" position="attributes">
+            <attribute name="class" add="ab-storefront-address-list-section" separator=" "/>
+        </xpath>
+        <xpath expr="//h5[@name='delivery_address_title']" position="replace">
+            <h5 name="delivery_address_title" class="ab-storefront-section-title">Delivery address</h5>
+        </xpath>
+        <xpath expr="//a[hasclass('o_address_card_add_new')]" position="replace">
+            <a
+                t-if="not order.website_id.is_public_user()"
+                role="button"
+                t-att-href="new_address_url"
+                t-att-data-address-type="address_type"
+                class="o_address_card_add_new btn btn-outline-primary btn-sm ab-storefront-address-add-action"
+                title="Add delivery address"
+                aria-label="Add delivery address"
+            >
+                <i class="oi oi-plus me-2"/>
+                <span>Add address</span>
+            </a>
+        </xpath>
+    </template>
+
+    <template id="billing_address_list_abdin_skin" inherit_id="website_sale.billing_address_list" name="Abdin Billing Address List Skin">
+        <xpath expr="//div[@id='billing_address_list']" position="attributes">
+            <attribute name="class" add="ab-storefront-billing-section" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='billing_address_list']/div[a[@t-att-data-address-type='address_type']]" position="replace">
+            <div class="ab-storefront-billing-head">
+                <h5 class="ab-storefront-section-title">Billing address</h5>
+                <a
+                    role="button"
+                    t-att-href="new_address_url"
+                    t-att-data-address-type="address_type"
+                    t-attf-class="o_address_card_add_new o_add_billing_address_btn btn btn-outline-primary btn-sm ab-storefront-address-add-action {{'d-none' if use_delivery_as_billing and has_delivery else ''}}"
+                    title="Add billing address"
+                    aria-label="Add billing address"
+                >
+                    <i class="oi oi-plus me-2"/>
+                    <span>Add address</span>
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('form-switch')]" position="replace">
+            <div t-if="has_delivery" class="ab-storefront-billing-toggle-card">
+                <label id="use_delivery_as_billing_label" class="ab-storefront-billing-toggle-label" for="use_delivery_as_billing">
+                    <span class="ab-storefront-billing-toggle-copy">
+                        <strong>Same as delivery address</strong>
+                        <small>Use the same details for the invoice</small>
+                    </span>
+                    <input
+                        type="checkbox"
+                        id="use_delivery_as_billing"
+                        class="form-check-input ab-storefront-billing-toggle-input"
+                        t-att-checked="use_delivery_as_billing"
+                    />
+                    <span class="ab-storefront-billing-switch" aria-hidden="true"/>
+                </label>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='billing_container']" position="attributes">
+            <attribute name="class" add="ab-storefront-billing-container" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="checkout_location_card_abdin" name="Abdin Checkout Location Card">
+        <div class="card-body ab-storefront-address-card-body">
+            <div class="ab-storefront-address-card-icon" aria-hidden="true">
+                <i class="fa fa-map-marker"/>
+            </div>
+            <div class="ab-storefront-address-card-content">
+                <span class="ab-storefront-address-card-label" t-out="card_label"/>
+                <t t-if="card_pickup_data">
+                    <strong t-out="card_pickup_data.get('name', '')"/>
+                    <div t-out="card_pickup_data.get('street', '')"/>
+                    <div
+                        t-out="card_pickup_data.get('city', '') + ' ' + card_pickup_data.get('zip_code', '')"
+                    />
+                </t>
+                <t t-else="">
+                    <t
+                        t-out="card_contact"
+                        t-options="dict(widget='contact', fields=['name', 'address'], no_marker=True, no_tag_br=True)"
+                    />
+                </t>
+            </div>
+            <div class="ab-storefront-address-card-side">
+                <a
+                    t-if="card_edit_href"
+                    name="card_address_ref"
+                    t-att-href="card_edit_href"
+                    t-att-class="card_edit_class or 'ab-storefront-address-edit-action'"
+                    role="button"
+                    t-att-title="card_edit_aria or card_edit_label"
+                    t-att-aria-label="card_edit_aria or card_edit_label"
+                >
+                    <i class="fa fa-pencil" aria-hidden="true"/>
+                    <span t-out="card_edit_label"/>
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <template id="address_card_abdin_checkout_skin" inherit_id="website_sale.address_card" name="Abdin Checkout Address Card Skin">
+        <xpath expr="//div[@name='address_card']" position="attributes">
+            <attribute name="class" add="ab-storefront-address-card" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='address_card']/div[hasclass('card-body')]" position="replace">
+            <t t-if="can_be_edited">
+                <t
+                    t-set="address_update_url"
+                    t-value="address_update_url or (new_address_url + '&amp;partner_id=' + str(contact.id))"
+                />
+            </t>
+            <t t-set="card_label"><t t-if="address_type == 'billing'">Billing address</t><t t-else="">Delivery address</t></t>
+            <t t-set="card_contact" t-value="contact"/>
+            <t t-set="card_pickup_data" t-value="False"/>
+            <t t-set="card_edit_href" t-value="address_update_url if can_be_edited else False"/>
+            <t t-set="card_edit_class" t-value="'js_edit_address ab-storefront-address-edit-action'"/>
+            <t t-set="card_edit_label">Edit address</t>
+            <t t-set="card_edit_aria">Edit address</t>
+            <t t-call="ab_ecommerce_storefront.checkout_location_card_abdin"/>
+        </xpath>
+    </template>
+
+    <template id="payment_address_card_abdin_skin" inherit_id="website_sale.payment" name="Abdin Payment Address Card Skin">
+        <xpath expr="//div[@id='address_on_payment']" position="replace">
+            <div id="address_on_payment" class="ab-storefront-payment-address-section">
+                <t
+                    t-set="use_delivery_as_billing"
+                    t-value="order.partner_invoice_id == order.partner_shipping_id and not order.pickup_location_data"
+                />
+                <t t-set="payment_edit_href" t-value="'/shop/checkout' if order.partner_invoice_id.country_id else '/shop/address?partner_id=%s&amp;address_type=billing' % order.partner_invoice_id.id"/>
+                <h5 class="ab-storefront-section-title">
+                    <t t-if="use_delivery_as_billing and not only_services">Delivery address</t>
+                    <t t-else="">Billing address</t>
+                </h5>
+                <div class="ab-storefront-address-list-section ab-storefront-payment-address-card-wrap">
+                    <div class="card o_address_card ab-storefront-address-card bg-400 border border-primary">
+                        <t t-set="card_label">
+                            <t t-if="use_delivery_as_billing and not only_services">Delivery and billing</t>
+                            <t t-elif="order.pickup_location_data">Pickup point</t>
+                            <t t-else="">Billing address</t>
+                        </t>
+                        <t t-set="card_contact" t-value="order.partner_invoice_id"/>
+                        <t t-set="card_pickup_data" t-value="order.pickup_location_data"/>
+                        <t t-set="card_edit_href" t-value="payment_edit_href"/>
+                        <t t-set="card_edit_class" t-value="'ab-storefront-address-edit-action'"/>
+                        <t t-set="card_edit_label">Edit address</t>
+                        <t t-set="card_edit_aria">Edit delivery and billing address</t>
+                        <t t-call="ab_ecommerce_storefront.checkout_location_card_abdin"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="payment_form_abdin_skin" inherit_id="payment.form" name="Abdin Payment Form Skin">
+        <xpath expr="//form[@id='o_payment_form']" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-form" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='o_payment_form_options']" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-options" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='o_payment_methods']/p" position="replace">
+            <header class="ab-storefront-payment-options-head">
+                <h5>
+                    <t t-if="not collapse_payment_methods">Available payment methods</t>
+                    <t t-else="">Other payment methods</t>
+                </h5>
+                <p>Select one method to continue.</p>
+                <t t-call="payment.availability_report_button"/>
+            </header>
+        </xpath>
+        <xpath expr="//ul[ancestor::div[@id='o_payment_methods']]" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-method-list" remove="list-group" separator=" "/>
+        </xpath>
+        <xpath expr="//li[@name='o_payment_option']" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-option" remove="list-group-item py-3 o_outline" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="payment_method_form_abdin_skin" inherit_id="payment.method_form" name="Abdin Payment Method Card Skin">
+        <xpath expr="//div[@for='o_payment_radio']" position="replace">
+            <label class="ab-storefront-payment-method-card" t-attf-for="o_payment_method_{{pm_sudo.id}}">
+                <input t-attf-id="o_payment_method_{{pm_sudo.id}}"
+                       name="o_payment_radio"
+                       type="radio"
+                       t-att-checked="is_selected"
+                       class="form-check-input ab-storefront-payment-radio"
+                       data-payment-option-type="payment_method"
+                       t-att-data-payment-option-id="pm_sudo.id"
+                       t-att-data-payment-method-code="pm_sudo.code"
+                       t-att-data-provider-id="provider_sudo.id"
+                       t-att-data-provider-code="provider_sudo._get_code()"
+                       t-att-data-provider-state="provider_sudo.state"/>
+                <span class="ab-storefront-payment-radio-mark" aria-hidden="true"/>
+                <span class="ab-storefront-payment-logo-group" aria-hidden="true">
+                    <t t-set="pm_index" t-value="0"/>
+                    <t t-foreach="pms_to_display_sudo" t-as="pm_to_display_sudo">
+                        <t t-if="pm_index &lt; 4 and pm_to_display_sudo.image_payment_form" t-call="payment.form_logo">
+                            <t t-set="logo_pm_sudo" t-value="pm_to_display_sudo"/>
+                        </t>
+                        <t t-set="pm_index" t-value="pm_index + 1"/>
+                    </t>
+                    <span t-if="not pm_sudo.image_payment_form" class="ab-storefront-payment-logo-fallback">
+                        <i class="fa fa-credit-card"/>
+                    </span>
+                </span>
+                <span class="ab-storefront-payment-method-copy">
+                    <span t-out="pm_sudo.name" class="o_payment_option_label"/>
+                    <small>Choose this method to complete your order.</small>
+                    <span class="ab-storefront-payment-flags">
+                        <t t-if="is_unpublished" t-call="payment.form_icon">
+                            <t t-set="icon_name" t-value="'eye-slash'"/>
+                            <t t-set="color_name" t-value="'danger'"/>
+                            <t t-set="title">Unpublished</t>
+                        </t>
+                        <t t-if="is_test" t-call="payment.form_icon">
+                            <t t-set="icon_name" t-value="'exclamation-triangle'"/>
+                            <t t-set="color_name" t-value="'warning'"/>
+                            <t t-set="title">Test mode</t>
+                        </t>
+                    </span>
+                </span>
+            </label>
+            <div t-if="not is_html_empty(provider_sudo.pre_msg)"
+                 class="ab-storefront-payment-method-note">
+                <t t-out="provider_sudo.pre_msg"/>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="payment_logo_abdin_skin" inherit_id="payment.form_logo" name="Abdin Payment Logo Skin">
+        <xpath expr="//span[@t-field='logo_pm_sudo.image_payment_form']" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-logo" remove="rounded shadow-sm" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="payment_no_methods_abdin_skin" inherit_id="payment.no_pms_available_warning" name="Abdin No Payment Methods Warning Skin">
+        <xpath expr="//div[hasclass('alert-warning')]" position="attributes">
+            <attribute name="class" add="ab-storefront-payment-warning" separator=" "/>
         </xpath>
     </template>
 
@@ -153,15 +512,15 @@
                 <div class="ab-storefront-address-section-head">
                     <span class="ab-storefront-address-step">1</span>
                     <div>
-                        <h5>معلومات العميل</h5>
-                        <p>بيانات التواصل الأساسية لتأكيد الطلب.</p>
+                        <h5>Customer information</h5>
+                        <p>Contact details for order confirmation.</p>
                     </div>
                 </div>
             </section>
         </xpath>
         <xpath expr="//div[@id='div_name']" position="replace">
             <div id="div_name" class="col-12 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label" for="o_name">الاسم الكامل</label>
+                <label class="col-form-label" for="o_name">Full name</label>
                 <input
                     id="o_name"
                     type="text"
@@ -169,13 +528,13 @@
                     t-att-value="partner_sudo.name"
                     class="form-control"
                     autocomplete="name"
-                    placeholder="اكتب الاسم الكامل"
+                    placeholder="Enter your full name"
                 />
             </div>
         </xpath>
         <xpath expr="//div[@id='div_email']" position="replace">
             <div id="div_email" class="col-lg-6 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label label-optional" for="o_email">البريد الإلكتروني</label>
+                <label class="col-form-label label-optional" for="o_email">Email</label>
                 <input
                     id="o_email"
                     type="email"
@@ -189,7 +548,7 @@
         </xpath>
         <xpath expr="//div[@id='div_phone']" position="replace">
             <div id="div_phone" class="col-lg-6 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label" for="o_phone">رقم الموبايل</label>
+                <label class="col-form-label" for="o_phone">Mobile number</label>
                 <input
                     id="o_phone"
                     type="tel"
@@ -205,8 +564,8 @@
                 <div class="ab-storefront-address-section-head">
                     <span class="ab-storefront-address-step">2</span>
                     <div>
-                        <h5>عنوان التوصيل</h5>
-                        <p>اكتب بيانات كافية تساعد المندوب يوصل بسرعة.</p>
+                        <h5>Delivery address</h5>
+                        <p>Enter the details needed to reach your address.</p>
                     </div>
                 </div>
             </section>
@@ -214,16 +573,16 @@
         <xpath expr="//t[@name='b2b_fields']" position="replace"/>
         <xpath expr="//div[@id='div_street']" position="replace">
             <div id="div_street" class="col-12 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label" for="o_street">العنوان بالتفصيل</label>
+                <label class="col-form-label" for="o_street">Detailed address</label>
                 <textarea
                     name="street"
                     id="o_street"
                     class="form-control ab-storefront-detailed-address"
                     rows="4"
                     autocomplete="street-address"
-                    placeholder="الشارع، رقم المبنى، الدور، الشقة، وأي علامة مميزة"
+                    placeholder="Street, building, floor, apartment, and landmark"
                 ><t t-out="((partner_sudo.street or '') + (('\n' + partner_sudo.street2) if partner_sudo.street and partner_sudo.street2 else (partner_sudo.street2 or '')))"/></textarea>
-                <small class="form-text">مثال: الشارع، رقم العمارة، الدور، الشقة، وبجوار أي مكان معروف.</small>
+                <small class="form-text">Include the street, building, floor, apartment, and a nearby landmark.</small>
             </div>
         </xpath>
         <xpath expr="//div[@id='div_street2']" position="replace">
@@ -233,7 +592,7 @@
         </xpath>
         <xpath expr="//div[@id='div_city']" position="replace">
             <div id="div_city" class="col-lg-6 mb-3 ab-storefront-checkout-field">
-                <label class="col-form-label" for="o_city">المدينة</label>
+                <label class="col-form-label" for="o_city">City</label>
                 <input
                     id="o_city"
                     type="text"
@@ -241,7 +600,7 @@
                     class="form-control"
                     t-att-value="partner_sudo.city"
                     autocomplete="address-level2"
-                    placeholder="اكتب المدينة أو المنطقة"
+                    placeholder="Enter your city or area"
                 />
             </div>
         </xpath>
@@ -281,14 +640,14 @@
                 class="col-lg-6 mb-3 ab-storefront-checkout-field"
                 t-att-style="not country_states and 'display: none'"
             >
-                <label class="col-form-label label-optional" for="o_state_id">المحافظة</label>
+                <label class="col-form-label label-optional" for="o_state_id">Governorate</label>
                 <select
                     id="o_state_id"
                     name="state_id"
                     class="form-select"
                     autocomplete="address-level1"
                 >
-                    <option value="">اختار المحافظة</option>
+                    <option value="">Select governorate</option>
                     <option
                         t-foreach="country_states"
                         t-as="s"
@@ -308,11 +667,19 @@
         <xpath expr="//a[@name='website_sale_main_button']/span[@t-field='next_website_checkout_step.main_button_label']" position="replace">
             <span>
                 <t t-if="request.httprequest.path == '/shop/address'">Confirm Address</t>
+                <t t-elif="request.httprequest.path == '/shop/checkout'">Continue to payment</t>
                 <t t-else="" t-out="next_website_checkout_step.main_button_label"/>
             </span>
         </xpath>
         <xpath expr="//a[@name='website_sale_main_button']/i[hasclass('fa-angle-right')]" position="replace">
             <i t-if="request.httprequest.path != '/shop/address'" class="fa fa-angle-right ms-2 fw-light"/>
+        </xpath>
+        <xpath expr="//t[@t-if='previous_website_checkout_step']" position="attributes">
+            <attribute name="t-if">previous_website_checkout_step and request.httprequest.path != '/shop/payment'</attribute>
+        </xpath>
+        <xpath expr="//t[a/span[@t-field='previous_website_checkout_step.back_button_label']]/following-sibling::t[@t-else=''][1]" position="attributes">
+            <attribute name="t-else"/>
+            <attribute name="t-elif">request.httprequest.path != '/shop/payment'</attribute>
         </xpath>
     </template>
 
@@ -349,7 +716,7 @@
         </xpath>
         <xpath expr="//form[@name='coupon_code']/div[hasclass('input-group')]" position="before">
             <label class="ab-storefront-coupon-label" for="ab_storefront_coupon_code">
-                كود الخصم
+                Discount code
             </label>
         </xpath>
         <xpath expr="//div[hasclass('input-group')]" position="attributes">
@@ -357,12 +724,12 @@
         </xpath>
         <xpath expr="//input[@name='promo']" position="attributes">
             <attribute name="id">ab_storefront_coupon_code</attribute>
-            <attribute name="placeholder">أدخل كود الخصم</attribute>
-            <attribute name="aria-label">كود الخصم</attribute>
+            <attribute name="placeholder">Enter discount code</attribute>
+            <attribute name="aria-label">Discount code</attribute>
         </xpath>
         <xpath expr="//form[@name='coupon_code']" position="after">
             <a href="/shop" class="ab-storefront-cart-continue-under-coupon">
-                الاستمرار في التسوق
+                Continue shopping
             </a>
         </xpath>
     </template>
