@@ -1,6 +1,10 @@
 import secrets
 
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
+from odoo.tools import LazyTranslate
+
+_lt = LazyTranslate(__name__)
 
 
 class AbPrescriptionOrder(models.Model):
@@ -16,8 +20,9 @@ class AbPrescriptionOrder(models.Model):
     prescription_filename = fields.Char(readonly=True)
     prescription_mimetype = fields.Char(readonly=True)
     customer_note = fields.Text(readonly=True)
-    internal_note = fields.Text(tracking=True)
+    internal_note = fields.Text(groups="base.group_user")
     sale_order_id = fields.Many2one("sale.order", tracking=True)
+    website_id = fields.Many2one("website", readonly=True)
     company_id = fields.Many2one("res.company", default=lambda self: self.env.company, required=True)
     state = fields.Selection(
         [
@@ -40,42 +45,52 @@ class AbPrescriptionOrder(models.Model):
 
     _STATE_COPY = {
         "new": (
-            "Prescription received",
-            "We received the prescription image successfully.",
+            _lt("Prescription received"),
+            _lt("We received the prescription image successfully."),
         ),
         "under_review": (
-            "Under review",
-            "Our team is reviewing the prescription and preparing the next steps.",
+            _lt("Under review"),
+            _lt("Our team is reviewing the prescription and preparing the next steps."),
         ),
         "waiting_call_center": (
-            "Waiting for Call Center confirmation",
-            "Our Call Center team will contact you to confirm the order details.",
+            _lt("Waiting for Call Center confirmation"),
+            _lt("Our Call Center team will contact you to confirm the order details."),
         ),
         "confirmed": (
-            "Confirmed",
-            "Your prescription request is confirmed and will move to preparation.",
+            _lt("Confirmed"),
+            _lt("Your prescription request is confirmed and will move to preparation."),
         ),
         "preparing": (
-            "Preparing",
-            "We are preparing your request now.",
+            _lt("Preparing"),
+            _lt("We are preparing your request now."),
         ),
         "out_for_delivery": (
-            "Out for delivery",
-            "Your order is on its way to you.",
+            _lt("Out for delivery"),
+            _lt("Your order is on its way to you."),
         ),
         "delivered": (
-            "Delivered",
-            "Your request was delivered successfully.",
+            _lt("Delivered"),
+            _lt("Your request was delivered successfully."),
         ),
         "cancelled": (
-            "Cancelled",
-            "This prescription request was cancelled.",
+            _lt("Cancelled"),
+            _lt("This prescription request was cancelled."),
         ),
         "rejected": (
-            "Rejected",
-            "This prescription request could not be processed.",
+            _lt("Rejected"),
+            _lt("This prescription request could not be processed."),
         ),
     }
+
+    _STATE_SEQUENCE = [
+        "new",
+        "under_review",
+        "waiting_call_center",
+        "confirmed",
+        "preparing",
+        "out_for_delivery",
+        "delivered",
+    ]
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -86,6 +101,79 @@ class AbPrescriptionOrder(models.Model):
             if not vals.get("access_token"):
                 vals["access_token"] = secrets.token_urlsafe(32)
         return super().create(vals_list)
+
+    def _ab_storefront_state_index(self):
+        self.ensure_one()
+        if self.state in self._STATE_SEQUENCE:
+            return self._STATE_SEQUENCE.index(self.state)
+        return 0
+
+    def _ab_storefront_create_sale_order(self):
+        self.ensure_one()
+        self.check_access("write")
+        if self.sale_order_id:
+            return self.sale_order_id
+        if self.state not in ("waiting_call_center", "confirmed"):
+            raise ValidationError(_("Review the prescription before creating a quotation."))
+        sale_order = self.env["sale.order"].create({
+            "partner_id": self.partner_id.id,
+            "partner_invoice_id": self.partner_id.id,
+            "partner_shipping_id": self.partner_id.id,
+            "origin": self.name,
+            "client_order_ref": self.name,
+            "company_id": self.company_id.id,
+            "website_id": self.website_id.id,
+        })
+        sale_order._portal_ensure_token()
+        self.write({"sale_order_id": sale_order.id})
+        return sale_order
+
+    def action_create_sale_order(self):
+        self.ensure_one()
+        order = self._ab_storefront_create_sale_order()
+        return {"type": "ir.actions.act_window", "res_model": "sale.order",
+                "res_id": order.id, "view_mode": "form"}
+
+    @api.constrains("sale_order_id", "partner_id", "company_id", "website_id")
+    def _check_sale_order_customer(self):
+        for prescription in self:
+            order = prescription.sale_order_id
+            if order and (
+                order.partner_id.commercial_partner_id != prescription.partner_id.commercial_partner_id
+                or order.company_id != prescription.company_id
+                or (prescription.website_id and order.website_id != prescription.website_id)
+            ):
+                raise ValidationError(_("The sale order must belong to the same customer, company and website."))
+
+    def _ab_storefront_tracking_steps(self, include_order=True):
+        self.ensure_one()
+        linked_order = self.sale_order_id
+        if include_order and linked_order:
+            return linked_order._ab_storefront_tracking_steps()
+        keys = self._STATE_SEQUENCE[:4] if linked_order else self._STATE_SEQUENCE
+        current = self._ab_storefront_state_index()
+        terminal = self.state in ("cancelled", "rejected")
+        steps = []
+        for index, key in enumerate(keys):
+            if terminal and index > 0:
+                break
+            # Linked orders own confirmation and fulfillment; review remains independent.
+            if linked_order and key == "confirmed":
+                break
+            if linked_order.state == "sale" and index > current:
+                continue
+            label, description = self._STATE_COPY[key]
+            steps.append({
+                "key": "prescription_" + key,
+                "label": self.env._(label), "description": self.env._(description),
+                "state": "complete" if terminal or index < current or linked_order.state == "sale"
+                else ("current" if index == current else "pending"),
+            })
+        if terminal:
+            label, description = self._STATE_COPY[self.state]
+            steps.append({"key": self.state, "label": self.env._(label),
+                          "description": self.env._(description), "state": "exception"})
+        return steps
 
     def _compute_access_url(self):
         super()._compute_access_url()
@@ -108,13 +196,21 @@ class AbPrescriptionOrder(models.Model):
         self.write({"state": "confirmed"})
 
     def action_preparing(self):
+        self._check_unlinked_fulfillment()
         self.write({"state": "preparing"})
 
     def action_out_for_delivery(self):
+        self._check_unlinked_fulfillment()
         self.write({"state": "out_for_delivery"})
 
     def action_delivered(self):
+        self._check_unlinked_fulfillment()
         self.write({"state": "delivered"})
+
+    def _check_unlinked_fulfillment(self):
+        self.check_access("write")
+        if self.sale_order_id:
+            raise ValidationError(_("Manage preparation and delivery on the linked sale order."))
 
     def action_cancelled(self):
         self.write({"state": "cancelled"})

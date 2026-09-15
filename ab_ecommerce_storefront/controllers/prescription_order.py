@@ -1,11 +1,16 @@
 import base64
 import binascii
+import io
+
+from PIL import Image, UnidentifiedImageError
 
 from odoo import _
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 from odoo.exceptions import AccessError, MissingError, UserError
 from odoo.http import request, route
 from werkzeug.utils import secure_filename
+
+from .auth import is_valid_egyptian_mobile, normalize_egyptian_phone
 
 
 class AbPrescriptionOrderPortal(CustomerPortal):
@@ -16,53 +21,11 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         "image/webp",
     }
 
-    _prescription_steps = [
-        (
-            "new",
-            "Prescription received",
-            "We received the prescription image successfully.",
-        ),
-        (
-            "under_review",
-            "Under review",
-            "Our team is reviewing the prescription and preparing the next steps.",
-        ),
-        (
-            "waiting_call_center",
-            "Waiting for Call Center confirmation",
-            "Our Call Center team will contact you to confirm the order details.",
-        ),
-        (
-            "confirmed",
-            "Confirmed",
-            "Your prescription request is confirmed and will move to preparation.",
-        ),
-        (
-            "preparing",
-            "Preparing",
-            "We are preparing your request now.",
-        ),
-        (
-            "out_for_delivery",
-            "Out for delivery",
-            "Your order is on its way to you.",
-        ),
-        (
-            "delivered",
-            "Delivered",
-            "Your request was delivered successfully.",
-        ),
-    ]
-
     def _prescription_domain(self):
+        if request.env.user._is_public():
+            return [("id", "=", 0)]
         partner = request.env.user.partner_id.commercial_partner_id
         return [("partner_id", "child_of", [partner.id])]
-
-    def _get_prescription_steps(self):
-        return [
-            (key, request.env._(label), request.env._(description))
-            for key, label, description in self._prescription_steps
-        ]
 
     def _read_prescription_upload(self):
         uploads = request.httprequest.files.getlist("prescription_image")
@@ -87,17 +50,20 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         }
 
     def _is_supported_image(self, data, mimetype):
-        if mimetype == "image/jpeg":
-            return data.startswith(b"\xff\xd8\xff")
-        if mimetype == "image/png":
-            return data.startswith(b"\x89PNG\r\n\x1a\n")
-        if mimetype == "image/webp":
-            return len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP"
-        return False
+        try:
+            with Image.open(io.BytesIO(data)) as image:
+                if image.width * image.height > 25_000_000:
+                    return False
+                if Image.MIME.get(image.format) != mimetype:
+                    return False
+                image.verify()
+            return True
+        except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError):
+            return False
 
     def _prescription_page_values(self, **values):
         PrescriptionOrder = request.env["ab.prescription.order"]
-        recent_prescriptions = PrescriptionOrder.search(
+        recent_prescriptions = PrescriptionOrder if request.env.user._is_public() else PrescriptionOrder.search(
             self._prescription_domain(),
             order="create_date desc, id desc",
             limit=3,
@@ -110,29 +76,63 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         })
         return values
 
-    @route("/prescription-order", type="http", auth="user", website=True, sitemap=True)
+    def _prescription_partner_values(self, post):
+        if not request.env.user._is_public():
+            return {
+                "partner_id": request.env.user.partner_id.id,
+                "user_id": request.env.user.id,
+            }
+        name = (post.get("guest_name") or "").strip()
+        phone = normalize_egyptian_phone(post.get("guest_phone"))
+        if not name:
+            raise UserError("missing_name")
+        if not is_valid_egyptian_mobile(phone):
+            raise UserError("missing_phone")
+        # A supplied phone number is not proof of ownership of an existing partner.
+        partner = request.env["res.partner"].sudo().create({
+            "name": name[:256],
+            "phone": phone,
+            "email": (post.get("guest_email") or "").strip()[:256] or False,
+            "street": (post.get("guest_address") or "").strip()[:512] or False,
+            "lang": request.env.lang,
+        })
+        return {
+            "partner_id": partner.id,
+            "user_id": False,
+        }
+
+    @route("/prescription-order", type="http", auth="public", website=True, sitemap=True)
     def prescription_order_page(self, **kw):
         return request.render(
             "ab_ecommerce_storefront.prescription_order_page",
-            self._prescription_page_values(customer_note=kw.get("customer_note", "")),
+            self._prescription_page_values(
+                customer_note=kw.get("customer_note", ""),
+                guest_name=kw.get("guest_name", ""),
+                guest_phone=kw.get("guest_phone", ""),
+                guest_email=kw.get("guest_email", ""),
+                guest_address=kw.get("guest_address", ""),
+            ),
         )
 
-    @route("/prescription-order/submit", type="http", auth="user", methods=["POST"], website=True)
+    @route("/prescription-order/submit", type="http", auth="public", methods=["POST"], website=True)
     def prescription_order_submit(self, **post):
         try:
             vals = self._read_prescription_upload()
-            vals.update({
-                "partner_id": request.env.user.partner_id.id,
-                "user_id": request.env.user.id,
-                "customer_note": (post.get("customer_note") or "").strip()[:2000],
-            })
-            order = request.env["ab.prescription.order"].create(vals)
+            vals.update(self._prescription_partner_values(post))
+            vals["customer_note"] = (post.get("customer_note") or "").strip()[:2000]
+            vals["company_id"] = request.website.company_id.id
+            vals["website_id"] = request.website.id
+            order = request.env["ab.prescription.order"].sudo().create(vals)
         except UserError as error:
             return request.render(
                 "ab_ecommerce_storefront.prescription_order_page",
                 self._prescription_page_values(
                     error_code=error.args[0],
                     customer_note=post.get("customer_note", ""),
+                    guest_name=post.get("guest_name", ""),
+                    guest_phone=post.get("guest_phone", ""),
+                    guest_email=post.get("guest_email", ""),
+                    guest_address=post.get("guest_address", ""),
                 ),
             )
         return request.redirect(order.get_portal_url(query_string="&submitted=1"))
@@ -162,28 +162,35 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         })
         return request.render("ab_ecommerce_storefront.portal_my_prescriptions", values)
 
-    @route("/my/prescriptions/<int:order_id>", type="http", auth="user", website=True)
+    @route("/my/prescriptions/<int:order_id>", type="http", auth="public", website=True)
     def portal_my_prescription(self, order_id, access_token=None, submitted=None, **kw):
         try:
             order = self._document_check_access("ab.prescription.order", order_id, access_token=access_token)
         except (AccessError, MissingError):
-            return request.redirect("/my")
+            return request.not_found()
+
+        if order.website_id and order.website_id != request.website:
+            return request.not_found()
 
         values = self._prepare_portal_layout_values()
         values.update({
             "prescription": order,
-            "prescription_steps": self._get_prescription_steps(),
-            "prescription_state_keys": [step[0] for step in self._prescription_steps],
             "submitted": bool(submitted),
             "page_name": "prescriptions",
         })
-        return request.render("ab_ecommerce_storefront.portal_my_prescription", values)
+        response = request.render("ab_ecommerce_storefront.portal_my_prescription", values)
+        response.headers["Cache-Control"] = "private, no-store"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        return response
 
-    @route("/my/prescriptions/<int:order_id>/image", type="http", auth="user", website=True)
+    @route("/my/prescriptions/<int:order_id>/image", type="http", auth="public", website=True)
     def portal_my_prescription_image(self, order_id, access_token=None, **kw):
         try:
             order = self._document_check_access("ab.prescription.order", order_id, access_token=access_token)
         except (AccessError, MissingError):
+            return request.not_found()
+
+        if order.website_id and order.website_id != request.website:
             return request.not_found()
 
         try:
@@ -197,6 +204,7 @@ class AbPrescriptionOrderPortal(CustomerPortal):
             ("Content-Type", order.prescription_mimetype or "image/jpeg"),
             ("Content-Length", str(len(image))),
             ("Cache-Control", "private, no-store"),
+            ("X-Content-Type-Options", "nosniff"),
             (
                 "Content-Disposition",
                 f'inline; filename="{order.prescription_filename or "prescription"}"',

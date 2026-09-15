@@ -422,6 +422,11 @@
                             <i class="fa fa-file-text-o" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['prescription']"/>
                         </a>
+                        <a href="/track-order"
+                           class="ab-storefront-track-link nav-link d-inline-flex align-items-center gap-1 text-nowrap">
+                            <i class="fa fa-search" aria-hidden="true"/>
+                            <span t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
+                        </a>
                     </nav>
                 </div>
                 </div>
@@ -470,6 +475,10 @@
                         <a href="/shop/wishlist" class="ab-storefront-mobile-secondary-link">
                             <i class="fa fa-heart-o" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['wishlist']"/>
+                        </a>
+                        <a href="/track-order" class="ab-storefront-mobile-secondary-link">
+                            <i class="fa fa-search" aria-hidden="true"/>
+                            <span t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
                         </a>
                         <div class="ab-storefront-location ab-storefront-location--mobile-menu"
                              data-ab-current-location="true"

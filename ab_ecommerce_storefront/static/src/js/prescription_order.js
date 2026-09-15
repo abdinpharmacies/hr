@@ -13,6 +13,7 @@ export class AbPrescriptionOrderForm extends Interaction {
         this.previewUrl = null;
         this.onChange = this.onChange.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
     }
 
     start() {
@@ -22,14 +23,18 @@ export class AbPrescriptionOrderForm extends Interaction {
         this.preview = this.el.querySelector("[data-ab-prescription-preview]");
         this.previewImage = this.el.querySelector("[data-ab-prescription-preview-image]");
         this.submit = this.el.querySelector("[data-ab-prescription-submit]");
+        this.uploading = this.el.querySelector("[data-ab-prescription-uploading]");
+        this.success = this.el.querySelector("[data-ab-prescription-success]");
         this.maxSize = Number(this.el.dataset.abPrescriptionMaxSize || 8 * 1024 * 1024);
         this.inputs.forEach((input) => input.addEventListener("change", this.onChange));
         this.el.addEventListener("click", this.onClick);
+        this.el.addEventListener("submit", this.onSubmit);
     }
 
     destroy() {
         this.inputs?.forEach((input) => input.removeEventListener("change", this.onChange));
         this.el.removeEventListener("click", this.onClick);
+        this.el.removeEventListener("submit", this.onSubmit);
         this.revokePreviewUrl();
     }
 
@@ -71,6 +76,10 @@ export class AbPrescriptionOrderForm extends Interaction {
         this.showError("");
     }
 
+    onSubmit() {
+        this.showUploadingState();
+    }
+
     validateFile(file) {
         if (!file) {
             return _t("Please upload a prescription image.");
@@ -90,6 +99,8 @@ export class AbPrescriptionOrderForm extends Interaction {
         this.previewImage.src = this.previewUrl;
         this.preview.classList.remove("d-none");
         this.emptyState.classList.add("d-none");
+        this.success?.classList.remove("d-none");
+        this.uploading?.classList.add("d-none");
     }
 
     showEmptyState() {
@@ -99,6 +110,8 @@ export class AbPrescriptionOrderForm extends Interaction {
         }
         this.preview?.classList.add("d-none");
         this.emptyState?.classList.remove("d-none");
+        this.success?.classList.add("d-none");
+        this.uploading?.classList.add("d-none");
         this.syncSubmit();
     }
 
@@ -128,6 +141,17 @@ export class AbPrescriptionOrderForm extends Interaction {
             URL.revokeObjectURL(this.previewUrl);
             this.previewUrl = null;
         }
+    }
+
+    showUploadingState() {
+        if (!this.inputs.some((input) => Boolean(input.files?.[0]))) {
+            return;
+        }
+        this.submit.disabled = true;
+        this.submit.setAttribute("aria-busy", "true");
+        this.submit.querySelector("span").textContent = _t("Uploading...");
+        this.uploading?.classList.remove("d-none");
+        this.success?.classList.add("d-none");
     }
 }
 

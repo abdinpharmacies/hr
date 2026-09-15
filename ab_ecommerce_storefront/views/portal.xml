@@ -1,5 +1,456 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="order_tracking_timeline" name="Abdin Order Tracking Timeline">
+        <t t-set="tracking_steps" t-value="tracking_record._ab_storefront_tracking_steps()"/>
+        <section class="ab-order-track-card" aria-labelledby="abOrderTrackTitle">
+            <div class="ab-order-track-head">
+                <div>
+                    <span>Order status</span>
+                    <h2 id="abOrderTrackTitle">Your order journey</h2>
+                </div>
+                <strong t-if="sale_order" t-out="sale_order._ab_storefront_payment_label()"/>
+            </div>
+            <ol class="ab-order-track-steps">
+                <li t-foreach="tracking_steps" t-as="step"
+                    t-attf-class="ab-order-track-step is-#{step['state']} ab-order-track-step--#{step['key']}"
+                    t-att-aria-current="'step' if step['state'] == 'current' else None">
+                    <span class="ab-order-track-marker" aria-hidden="true">
+                        <svg t-if="step['state'] == 'complete'" viewBox="0 0 24 24" focusable="false">
+                            <path d="m5 12 4 4L19 6"/>
+                        </svg>
+                        <svg t-elif="step['state'] == 'exception'" viewBox="0 0 24 24" focusable="false">
+                            <path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/>
+                        </svg>
+                        <svg t-elif="step['key'] == 'delivered'" viewBox="0 0 24 24" focusable="false">
+                            <path d="M20 7 10 17l-5-5"/><path d="M21 12a9 9 0 1 1-2.64-6.36"/>
+                        </svg>
+                        <svg t-elif="step['key'] in ('shipped', 'partially_shipped')" viewBox="0 0 24 24" focusable="false">
+                            <path d="M3 7h11v9H3Z"/><path d="M14 10h3l3 3v3h-6Z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>
+                        </svg>
+                        <svg t-elif="step['key'] == 'preparing'" viewBox="0 0 24 24" focusable="false">
+                            <path d="M6 8h12l-1 12H7Z"/><path d="M9 8a3 3 0 0 1 6 0"/>
+                        </svg>
+                        <svg t-elif="step['key'] == 'confirmed'" viewBox="0 0 24 24" focusable="false">
+                            <circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>
+                        </svg>
+                        <svg t-else="" viewBox="0 0 24 24" focusable="false">
+                            <path d="M7 5h10v14H7Z"/><path d="M9 9h6M9 13h4"/>
+                        </svg>
+                    </span>
+                    <div>
+                        <span class="visually-hidden">
+                            <t t-if="step['state'] == 'complete'">Completed</t>
+                            <t t-elif="step['state'] == 'current'">Current</t>
+                            <t t-elif="step['state'] == 'exception'">Attention</t>
+                            <t t-else="">Upcoming</t>
+                        </span>
+                        <strong t-out="step['label']"/>
+                        <p t-out="step['description']"/>
+                    </div>
+                </li>
+            </ol>
+        </section>
+    </template>
+
+    <template id="order_customer_invoices" name="Abdin Customer Invoices">
+        <t t-set="customer_invoices" t-value="sale_order._ab_storefront_customer_invoices()"/>
+        <section t-if="customer_invoices" class="ab-order-invoices">
+            <h2>Invoices</h2>
+            <article t-foreach="customer_invoices" t-as="invoice" class="ab-order-invoice">
+                <div>
+                    <strong t-field="invoice.name"/>
+                    <span t-field="invoice.amount_total" t-options="{'widget': 'monetary', 'display_currency': invoice.currency_id}"/>
+                    <span t-field="invoice.payment_state"/>
+                </div>
+                <div class="ab-order-actions">
+                    <a t-att-href="invoice.get_portal_url()" class="btn btn-outline-primary">
+                        <i class="fa fa-file-text-o" aria-hidden="true"/> <span>View invoice</span>
+                    </a>
+                    <a t-att-href="invoice.get_portal_url(report_type='pdf', download=True)" class="btn btn-outline-primary">
+                        <i class="fa fa-download" aria-hidden="true"/> <span>Download invoice</span>
+                    </a>
+                </div>
+            </article>
+        </section>
+    </template>
+
+    <template id="portal_sale_breadcrumbs_abdin" name="Abdin Storefront Order Breadcrumbs" inherit_id="sale.portal_my_home_menu_sale" priority="120">
+        <xpath expr="//li[@id='portal_breadcrumbs_sale']" position="attributes">
+            <attribute name="t-if">(page_name == 'quote' or sale_order and sale_order.state in ('sent', 'cancel')) and not (sale_order and sale_order.website_id)</attribute>
+        </xpath>
+        <xpath expr="//li[@t-elif=&quot;page_name == 'order' or sale_order and sale_order.state not in ('sent', 'cancel')&quot;]" position="attributes">
+            <attribute name="t-elif">(page_name == 'order' or sale_order and sale_order.state not in ('sent', 'cancel')) and not (sale_order and sale_order.website_id)</attribute>
+        </xpath>
+        <xpath expr="//li[@t-if='sale_order' and hasclass('active')]" position="attributes">
+            <attribute name="t-if">sale_order and not sale_order.website_id</attribute>
+        </xpath>
+    </template>
+
+    <template id="guest_order_tracking" name="Guest Order Tracking">
+        <t t-call="website.layout">
+            <section class="ab-order-lookup-page">
+                <div class="container">
+                    <div class="ab-order-lookup-shell">
+                        <header class="ab-order-lookup-hero">
+                            <span>Order support</span>
+                            <h1>Track order</h1>
+                            <p>Enter the order reference and the mobile number used at checkout.</p>
+                        </header>
+                        <form action="/track-order" method="post" class="ab-order-lookup-form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div t-if="error_code == 'not_found'" class="alert alert-danger" role="alert">
+                                We could not verify an order with that reference and mobile number.
+                            </div>
+                            <label for="abTrackOrderReference">Order reference</label>
+                            <input id="abTrackOrderReference"
+                                   name="order_reference"
+                                   class="form-control"
+                                   t-att-value="order_reference or ''"
+                                   autocomplete="off"
+                                   required="required"/>
+                            <label for="abTrackOrderPhone">Mobile number</label>
+                            <input id="abTrackOrderPhone"
+                                   name="phone"
+                                   type="tel"
+                                   inputmode="tel"
+                                   class="form-control"
+                                   placeholder="010xxxxxxxx"
+                                   t-att-value="phone or ''"
+                                   required="required"/>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-search" aria-hidden="true"/>
+                                <span>Track order</span>
+                            </button>
+                            <p>For privacy, the order reference alone is not enough to open tracking details.</p>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </t>
+    </template>
+
+    <template id="confirmation_abdin_order_summary" name="Abdin Order Confirmation" inherit_id="website_sale.confirmation" priority="120">
+        <xpath expr="//div[a[@href='/shop/print']]/h3" position="replace"/>
+        <xpath expr="//t[@t-set='additional_title']" position="replace">
+            <t t-set="additional_title">Order status</t>
+        </xpath>
+        <xpath expr="//t[p/a[contains(@t-att-href, 'signup_prepare')]]" position="replace"/>
+        <xpath expr="//div[@id='order_name']" position="replace">
+            <section class="ab-order-confirmation-hero">
+                <h1>
+                    <t t-if="order.state == 'cancel'">Order cancelled</t>
+                    <t t-elif="tx_sudo.state in ('error', 'cancel')">Payment failed</t>
+                    <t t-elif="order.state == 'sale'">Your order is confirmed</t>
+                    <t t-else="">Your order was received</t>
+                </h1>
+                <p><span>Order reference</span> <strong t-out="order.name"/></p>
+                <p t-if="request.website.is_public_user()">Keep your order reference to track your order with your mobile number.</p>
+                <dl class="ab-order-facts">
+                    <t t-if="tx_sudo">
+                        <dt>Payment method</dt><dd t-out="tx_sudo.provider_id.name"/>
+                    </t>
+                    <t t-if="order.carrier_id">
+                        <dt>Delivery method</dt><dd><span t-field="order.carrier_id.name"/></dd>
+                    </t>
+                    <t t-if="order.commitment_date">
+                        <dt>Expected delivery</dt><dd><span t-field="order.commitment_date"/></dd>
+                    </t>
+                </dl>
+                <div class="ab-order-actions">
+                    <a t-att-href="order.get_portal_url()" class="btn btn-primary">
+                        <i class="fa fa-map-marker" aria-hidden="true"/> <span>Track order</span>
+                    </a>
+                    <a t-if="tx_sudo.state in ('error', 'cancel') and order._has_to_be_paid()"
+                       t-att-href="order.get_portal_url(query_string='&amp;payment=True')" class="btn btn-outline-primary">
+                        <i class="fa fa-refresh" aria-hidden="true"/> <span>Retry payment</span>
+                    </a>
+                    <a href="/shop" class="btn btn-outline-primary">
+                        <i class="fa fa-shopping-bag" aria-hidden="true"/> <span>Continue shopping</span>
+                    </a>
+                </div>
+            </section>
+            <t t-set="sale_order" t-value="order"/>
+            <t t-set="tracking_record" t-value="order"/>
+            <t t-call="ab_ecommerce_storefront.order_tracking_timeline"/>
+            <t t-call="ab_ecommerce_storefront.order_customer_invoices"/>
+        </xpath>
+    </template>
+
+    <template id="sale_order_portal_shell_abdin" name="Abdin Storefront Order Details" inherit_id="sale.sale_order_portal_template" priority="120">
+        <xpath expr="//div[hasclass('o_portal_sale_sidebar')]" position="attributes">
+            <attribute name="t-att-class">'row o_portal_sale_sidebar ab-storefront-order-portal' if sale_order.website_id else 'row o_portal_sale_sidebar'</attribute>
+        </xpath>
+        <xpath expr="//a[@id='print_invoice_report']" position="replace">
+            <a t-if="sale_order.website_id"
+               class="btn btn-light o_print_btn o_portal_invoice_print flex-grow-1"
+               t-att-href="sale_order.get_portal_url(report_type='pdf')"
+               id="print_invoice_report"
+               title="Order details"
+               role="button"
+               target="_blank">
+                <i class="fa fa-file-text-o me-1" aria-hidden="true"/>
+                <span>Order details</span>
+            </a>
+            <t t-else="">$0</t>
+        </xpath>
+        <xpath expr="//div[@t-if='sale_order.user_id']" position="attributes">
+            <attribute name="t-if">sale_order.user_id and not sale_order.website_id</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='sale_order._get_edi_builders()']" position="attributes">
+            <attribute name="t-if">not sale_order.website_id and sale_order._get_edi_builders()</attribute>
+        </xpath>
+        <xpath expr="//t[@t-call='payment.state_header' and t[@t-set='tx']]" position="replace">
+            <t t-if="not sale_order.website_id" t-call="payment.state_header">
+                <t t-set="tx" t-value="current_tx"/>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='sale_order_communication']" position="attributes">
+            <attribute name="t-att-class">'ab-order-help-card' if sale_order.website_id else ''</attribute>
+        </xpath>
+        <xpath expr="//div[@id='sale_order_communication']/h3" position="replace">
+            <header t-if="sale_order.website_id" class="ab-order-section-head">
+                <span>Need help?</span>
+                <h2>Contact Abdin Pharmacies</h2>
+                <p>Send a message about this order and our team will follow up with you.</p>
+            </header>
+            <t t-else="">$0</t>
+        </xpath>
+    </template>
+
+    <template id="sale_order_portal_tracking_abdin" name="Abdin Sale Order Portal Tracking" inherit_id="sale.sale_order_portal_content" priority="120">
+        <xpath expr="//div[@id='introduction']" position="replace">
+            <t t-if="sale_order.website_id"/>
+            <t t-else="">$0</t>
+        </xpath>
+        <xpath expr="//div[@id='content']" position="replace">
+            <t t-if="sale_order.website_id">
+                <t t-set="tracking_steps" t-value="sale_order._ab_storefront_tracking_steps()"/>
+                <t t-set="current_steps" t-value="[step for step in tracking_steps if step['state'] in ('current', 'exception')]"/>
+                <t t-set="current_step" t-value="current_steps and current_steps[-1] or (tracking_steps and tracking_steps[-1])"/>
+                <t t-set="current_tx" t-value="sale_order.get_portal_last_transaction()"/>
+                <t t-set="lines_to_report" t-value="sale_order._get_order_lines_to_report()"/>
+                <t t-set="display_discount" t-value="any(line.discount > 0 for line in lines_to_report)"/>
+                <t t-set="display_taxes" t-value="any(line._has_taxes() for line in lines_to_report)"/>
+                <t t-set="tracking_record" t-value="sale_order"/>
+
+                <div id="content" class="ab-order-dashboard" dir="auto">
+                    <header class="ab-order-status-hero">
+                        <div class="ab-order-status-copy">
+                            <span class="ab-order-eyebrow">Track your pharmacy order</span>
+                            <h1>
+                                <span>Your order</span>
+                                <strong t-out="sale_order.name"/>
+                            </h1>
+                            <p t-if="current_step" t-out="current_step['description']"/>
+                            <p t-else="">We received your order details.</p>
+                        </div>
+                        <div class="ab-order-status-card">
+                            <span t-attf-class="ab-order-status-icon is-#{current_step and current_step['state'] or 'current'}" aria-hidden="true">
+                                <svg t-if="current_step and current_step['state'] == 'exception'" viewBox="0 0 24 24" focusable="false">
+                                    <path d="M12 8v5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9"/>
+                                </svg>
+                                <svg t-else="" viewBox="0 0 24 24" focusable="false">
+                                    <path d="m5 12 4 4L19 6"/>
+                                </svg>
+                            </span>
+                            <span>Current status</span>
+                            <h2 t-if="current_step" t-out="current_step['label']"/>
+                            <h2 t-else="">Order received</h2>
+                            <strong t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                            <small t-out="sale_order._ab_storefront_payment_label()"/>
+                        </div>
+                    </header>
+
+                    <t t-call="ab_ecommerce_storefront.order_tracking_timeline"/>
+
+                    <div class="ab-order-main-grid">
+                        <section class="ab-order-products-card" aria-labelledby="abOrderProductsTitle">
+                            <header class="ab-order-section-head">
+                                <span>What you ordered</span>
+                                <h2 id="abOrderProductsTitle">Your products</h2>
+                            </header>
+                            <div class="ab-order-products">
+                                <t t-foreach="lines_to_report" t-as="line">
+                                    <t t-set="is_note" t-value="line.display_type == 'line_note'"/>
+                                    <t t-set="is_section" t-value="line.display_type in ('line_section', 'line_subsection')"/>
+                                    <article t-if="not line.display_type and not line.is_downpayment" class="ab-order-product-row">
+                                        <a t-if="line.product_id.website_published"
+                                           t-att-href="line.product_id.website_url"
+                                           class="ab-order-product-media"
+                                           t-att-aria-label="line.product_id.display_name">
+                                            <img t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"
+                                                 t-att-alt="line.product_id.display_name"
+                                                 loading="lazy"/>
+                                        </a>
+                                        <span t-else="" class="ab-order-product-media">
+                                            <img t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"
+                                                 t-att-alt="line.product_id.display_name or line.name"
+                                                 loading="lazy"/>
+                                        </span>
+                                        <div class="ab-order-product-copy">
+                                            <t t-set="line_parts" t-value="line._ab_storefront_report_line_parts()"/>
+                                            <h3>
+                                                <a t-if="line.product_id.website_published" t-att-href="line.product_id.website_url" t-out="line_parts['name']"/>
+                                                <span t-else="" t-out="line_parts['name']"/>
+                                            </h3>
+                                            <p t-if="line_parts['description']" t-out="line_parts['description']"/>
+                                            <dl>
+                                                <div>
+                                                    <dt>Quantity</dt>
+                                                    <dd>
+                                                        <span t-field="line.product_uom_qty"/>
+                                                        <span t-field="line.product_uom_id"/>
+                                                    </dd>
+                                                </div>
+                                                <div>
+                                                    <dt>Unit price</dt>
+                                                    <dd>
+                                                        <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                                                    </dd>
+                                                </div>
+                                                <div t-if="display_discount and line.discount">
+                                                    <dt>Discount</dt>
+                                                    <dd><t t-out="((line.discount % 1) and '%s' or '%d') % line.discount"/>%</dd>
+                                                </div>
+                                                <div t-if="display_taxes and line.tax_ids">
+                                                    <dt>Taxes</dt>
+                                                    <dd t-out="', '.join(map(lambda tax: tax.tax_label or tax.name, line.tax_ids))"/>
+                                                </div>
+                                            </dl>
+                                        </div>
+                                        <strong class="ab-order-product-total" t-field="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
+                                    </article>
+                                    <div t-elif="is_section" class="ab-order-product-section" t-out="line.name"/>
+                                    <p t-elif="is_note" class="ab-order-product-note" t-out="line.name"/>
+                                </t>
+                            </div>
+                        </section>
+
+                        <aside class="ab-order-side-stack">
+                            <section class="ab-order-summary-card" aria-labelledby="abOrderSummaryTitle">
+                                <header class="ab-order-section-head">
+                                    <span>Order total</span>
+                                    <h2 id="abOrderSummaryTitle">Order summary</h2>
+                                </header>
+                                <div class="ab-order-totals">
+                                    <t t-call="sale.sale_order_portal_content_totals_table"/>
+                                </div>
+                            </section>
+
+                            <section class="ab-order-payment-card" aria-labelledby="abOrderPaymentTitle">
+                                <span class="ab-order-mini-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
+                                </span>
+                                <div>
+                                    <h2 id="abOrderPaymentTitle">Payment method</h2>
+                                    <strong t-if="current_tx and current_tx.provider_id" t-out="current_tx.provider_id.name"/>
+                                    <strong t-else="" t-out="sale_order._ab_storefront_payment_label()"/>
+                                    <p t-out="sale_order._ab_storefront_payment_label()"/>
+                                </div>
+                            </section>
+
+                            <section class="ab-order-info-card" aria-labelledby="abOrderInfoTitle">
+                                <header class="ab-order-section-head">
+                                    <span>Order details</span>
+                                    <h2 id="abOrderInfoTitle">Details</h2>
+                                </header>
+                                <dl>
+                                    <div>
+                                        <dt>Order date</dt>
+                                        <dd><span t-field="sale_order.date_order" t-options="{'widget': 'date'}"/></dd>
+                                    </div>
+                                    <div t-if="sale_order.validity_date and sale_order.state in ['draft', 'sent']">
+                                        <dt>Offer valid until</dt>
+                                        <dd><span t-field="sale_order.validity_date" t-options="{'widget': 'date'}"/></dd>
+                                    </div>
+                                    <div t-if="sale_order.client_order_ref">
+                                        <dt>Your reference</dt>
+                                        <dd><span t-field="sale_order.client_order_ref"/></dd>
+                                    </div>
+                                    <div t-if="sale_order.commitment_date and sale_order.state in ['sent', 'sale']">
+                                        <dt>Expected delivery</dt>
+                                        <dd><span t-field="sale_order.commitment_date" t-options="{'widget': 'date'}"/></dd>
+                                    </div>
+                                </dl>
+                            </section>
+                        </aside>
+                    </div>
+
+                    <section class="ab-order-address-card" aria-labelledby="abOrderAddressTitle">
+                        <span class="ab-order-mini-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                        </span>
+                        <div>
+                            <header class="ab-order-section-head">
+                                <span>Delivery destination</span>
+                                <h2 id="abOrderAddressTitle">Delivery address</h2>
+                            </header>
+                            <div t-field="sale_order.partner_shipping_id"
+                                 t-options="{'widget': 'contact', 'fields': ['name', 'address', 'phone'], 'no_marker': True, 'phone_icons': False}"/>
+                            <a t-if="sale_order.partner_id == sale_order.partner_shipping_id == sale_order.env.user.partner_id"
+                               class="ab-order-secondary-link"
+                               t-attf-href="/my/account?redirect={{sale_order.get_portal_url()}}">
+                                Edit address
+                            </a>
+                        </div>
+                    </section>
+
+                    <t t-call="ab_ecommerce_storefront.order_customer_invoices"/>
+
+                    <section t-if="product_documents" class="ab-order-documents-card" aria-labelledby="abOrderDocumentsTitle">
+                        <header class="ab-order-section-head">
+                            <span>Useful files</span>
+                            <h2 id="abOrderDocumentsTitle">Documents</h2>
+                        </header>
+                        <div class="ab-order-documents">
+                            <t t-foreach="product_documents" t-as="document_sudo">
+                                <t t-set="attachment_sudo" t-value="document_sudo.ir_attachment_id"/>
+                                <t t-set="target" t-value="attachment_sudo.type == 'url' and '_blank' or '_self'"/>
+                                <a t-att-href="sale_order.get_portal_url('/document/' + str(document_sudo.id))" t-att-target="target">
+                                    <i class="fa fa-file-text-o" aria-hidden="true"/>
+                                    <span t-out="attachment_sudo.name"/>
+                                </a>
+                            </t>
+                        </div>
+                    </section>
+
+                    <section t-if="not is_html_empty(sale_order.note)" id="terms" class="ab-order-terms-card">
+                        <header class="ab-order-section-head">
+                            <span>Order terms</span>
+                            <h2>Terms and conditions</h2>
+                        </header>
+                        <div t-field="sale_order.note"/>
+                    </section>
+
+                    <section t-if="sale_order.payment_term_id and sale_order.payment_term_id.note" class="ab-order-terms-card">
+                        <header class="ab-order-section-head">
+                            <span>Payment</span>
+                            <h2>Payment terms</h2>
+                        </header>
+                        <div t-field="sale_order.payment_term_id.note"/>
+                    </section>
+
+                    <section class="ab-order-support-card" aria-labelledby="abOrderSupportTitle">
+                        <div>
+                            <span class="ab-order-mini-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="M4 11a8 8 0 0 1 16 0v5a3 3 0 0 1-3 3h-2"/><path d="M4 11v4a2 2 0 0 0 2 2h1v-8H6a2 2 0 0 0-2 2Zm16 0v4a2 2 0 0 1-2 2h-1V9h1a2 2 0 0 1 2 2Z"/></svg>
+                            </span>
+                            <div>
+                                <span>Need help?</span>
+                                <h2 id="abOrderSupportTitle">Abdin Pharmacies team is ready to help</h2>
+                            </div>
+                        </div>
+                        <a href="tel:19036" class="btn btn-outline-primary">
+                            <i class="fa fa-phone" aria-hidden="true"/>
+                            <span class="o_force_ltr">19036</span>
+                        </a>
+                    </section>
+                </div>
+            </t>
+            <t t-else="">$0</t>
+        </xpath>
+    </template>
+
     <template id="portal_my_home_account_dashboard" name="Abdin Account Dashboard" inherit_id="portal.portal_my_home" priority="300">
         <xpath expr="//t[@t-set='my_details']" position="attributes">
             <attribute name="t-value">False</attribute>

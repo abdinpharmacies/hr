@@ -49,9 +49,63 @@
                                     <t t-elif="error_code == 'too_large'">The prescription image is too large. Please upload an image up to 8 MB.</t>
                                     <t t-elif="error_code == 'bad_type'">Please upload a JPG, PNG, or WebP image.</t>
                                     <t t-elif="error_code == 'invalid_image'">The selected file is not a valid image.</t>
+                                    <t t-elif="error_code == 'missing_name'">Please enter your full name.</t>
+                                    <t t-elif="error_code == 'missing_phone'">Please enter your mobile number.</t>
                                     <t t-else="">Unable to submit the prescription request. Please try again.</t>
                                 </div>
                                 <p class="ab-prescription-form-error d-none" data-ab-prescription-error="" role="alert"/>
+
+                                <section t-if="request.env.user._is_public()" class="ab-prescription-guest" aria-labelledby="abPrescriptionGuestTitle">
+                                    <div class="ab-prescription-section-head">
+                                        <span><i class="fa fa-user-o" aria-hidden="true"/></span>
+                                        <div>
+                                            <h2 id="abPrescriptionGuestTitle">Customer information</h2>
+                                            <p>We use these details to confirm the prescription and secure tracking.</p>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestName">Full name</label>
+                                            <input id="abPrescriptionGuestName"
+                                                   name="guest_name"
+                                                   type="text"
+                                                   class="form-control"
+                                                   autocomplete="name"
+                                                   t-att-value="guest_name or ''"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestPhone">Mobile number</label>
+                                            <input id="abPrescriptionGuestPhone"
+                                                   name="guest_phone"
+                                                   type="tel"
+                                                   class="form-control"
+                                                   inputmode="tel"
+                                                   autocomplete="tel"
+                                                   placeholder="010xxxxxxxx"
+                                                   t-att-value="guest_phone or ''"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestEmail">Email</label>
+                                            <input id="abPrescriptionGuestEmail"
+                                                   name="guest_email"
+                                                   type="email"
+                                                   class="form-control"
+                                                   autocomplete="email"
+                                                   t-att-value="guest_email or ''"/>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestAddress">Delivery area</label>
+                                            <input id="abPrescriptionGuestAddress"
+                                                   name="guest_address"
+                                                   type="text"
+                                                   class="form-control"
+                                                   autocomplete="street-address"
+                                                   t-att-value="guest_address or ''"/>
+                                        </div>
+                                    </div>
+                                </section>
 
                                 <section class="ab-prescription-upload" aria-labelledby="abPrescriptionUploadTitle">
                                     <div class="ab-prescription-section-head">
@@ -94,6 +148,15 @@
                                         </div>
                                     </div>
 
+                                    <div class="ab-prescription-uploading d-none" data-ab-prescription-uploading="" role="status">
+                                        <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"/>
+                                        <span>Uploading prescription...</span>
+                                    </div>
+                                    <div class="ab-prescription-upload-success d-none" data-ab-prescription-success="" role="status">
+                                        <i class="fa fa-check" aria-hidden="true"/>
+                                        <span>Prescription image is ready to submit.</span>
+                                    </div>
+
                                     <div class="ab-prescription-preview d-none" data-ab-prescription-preview="">
                                         <img alt="Selected prescription preview" data-ab-prescription-preview-image=""/>
                                         <div class="ab-prescription-preview-actions">
@@ -123,6 +186,9 @@
                                     <i class="fa fa-paper-plane-o" aria-hidden="true"/>
                                     <span>Submit request</span>
                                 </button>
+                                <p class="ab-prescription-secure-note">
+                                    Guests receive a secure tracking link after submission and can also track using the order reference plus mobile number.
+                                </p>
                             </form>
 
                             <aside class="ab-prescription-side">
@@ -224,91 +290,12 @@
                 </header>
 
                 <div class="ab-prescription-track-grid">
-                    <section class="ab-prescription-timeline" aria-label="Prescription request status">
-                        <t t-set="current_index" t-value="prescription_state_keys.index(prescription.state) if prescription.state in prescription_state_keys else 0"/>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 0 else ''} #{'is-current' if prescription.state == 'new' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="prescription.state != 'new'" class="fa fa-check" aria-hidden="true"/>
-                                <i t-else="" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Prescription received</strong>
-                                <p>We received the prescription image successfully.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 1 else ''} #{'is-current' if prescription.state == 'under_review' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="current_index &gt; 1" class="fa fa-check" aria-hidden="true"/>
-                                <i t-elif="prescription.state == 'under_review'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Under review</strong>
-                                <p>Our team is reviewing the prescription and preparing the next steps.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 2 else ''} #{'is-current' if prescription.state == 'waiting_call_center' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="current_index &gt; 2" class="fa fa-check" aria-hidden="true"/>
-                                <i t-elif="prescription.state == 'waiting_call_center'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Waiting for Call Center confirmation</strong>
-                                <p>Our Call Center team will contact you to confirm the order details.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 3 else ''} #{'is-current' if prescription.state == 'confirmed' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="current_index &gt; 3" class="fa fa-check" aria-hidden="true"/>
-                                <i t-elif="prescription.state == 'confirmed'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Confirmed</strong>
-                                <p>Your prescription request is confirmed and will move to preparation.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 4 else ''} #{'is-current' if prescription.state == 'preparing' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="current_index &gt; 4" class="fa fa-check" aria-hidden="true"/>
-                                <i t-elif="prescription.state == 'preparing'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Preparing</strong>
-                                <p>We are preparing your request now.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-complete' if current_index &gt; 5 else ''} #{'is-current' if prescription.state == 'out_for_delivery' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="current_index &gt; 5" class="fa fa-check" aria-hidden="true"/>
-                                <i t-elif="prescription.state == 'out_for_delivery'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Out for delivery</strong>
-                                <p>Your order is on its way to you.</p>
-                            </div>
-                        </article>
-                        <article t-attf-class="ab-prescription-step #{'is-current' if prescription.state == 'delivered' else ''}">
-                            <span class="ab-prescription-step-marker">
-                                <i t-if="prescription.state == 'delivered'" class="fa fa-circle" aria-hidden="true"/>
-                            </span>
-                            <div>
-                                <strong>Delivered</strong>
-                                <p>Your request was delivered successfully.</p>
-                            </div>
-                        </article>
-                        <article t-if="prescription.state in ('cancelled', 'rejected')" class="ab-prescription-step is-current is-exception">
-                            <span class="ab-prescription-step-marker"><i class="fa fa-times" aria-hidden="true"/></span>
-                            <div>
-                                <strong>
-                                    <t t-set="state" t-value="prescription.state"/>
-                                    <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
-                                </strong>
-                                <p>
-                                    <t t-set="state" t-value="prescription.state"/>
-                                    <t t-call="ab_ecommerce_storefront.prescription_state_description"/>
-                                </p>
-                            </div>
-                        </article>
-                    </section>
+                    <div>
+                        <t t-set="tracking_record" t-value="prescription"/>
+                        <t t-set="sale_order" t-value="prescription.sale_order_id"/>
+                        <t t-call="ab_ecommerce_storefront.order_tracking_timeline"/>
+                        <t t-if="sale_order" t-call="ab_ecommerce_storefront.order_customer_invoices"/>
+                    </div>
 
                     <aside class="ab-prescription-track-card">
                         <h2>Prescription image</h2>

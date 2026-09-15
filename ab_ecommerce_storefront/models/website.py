@@ -222,6 +222,7 @@ class Website(models.Model):
             "account": self.env._("My account"),
             "signin": self.env._("Sign in"),
             "wishlist": self.env._("Wishlist"),
+            "track_order": self.env._("Track order"),
             "store": self.env._("Store navigation"),
             "category": self.env._("Shop by Category"),
             "need": self.env._("Shop by Need"),
