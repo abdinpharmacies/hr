@@ -1,0 +1,650 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_abdin_sale_order" model="report.paperformat">
+        <field name="name">Abdin Sale Order A4</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">14</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="sale.action_report_saleorder" model="ir.actions.report">
+        <field name="paperformat_id" ref="ab_ecommerce_storefront.paperformat_abdin_sale_order"/>
+    </record>
+
+    <template id="report_saleorder_document_abdin_storefront" inherit_id="sale.report_saleorder_document" priority="300">
+        <xpath expr="//t[@t-call='web.external_layout']" position="replace">
+            <t t-call="web.basic_layout">
+                <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang)"/>
+                <t t-set="company" t-value="doc.company_id.sudo()"/>
+                <t t-set="is_arabic" t-value="(doc.partner_id.lang or env.lang or '').startswith('ar')"/>
+                <t t-set="is_proforma" t-value="env.context.get('proforma', False) or is_pro_forma"/>
+                <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()"/>
+                <t t-set="display_discount" t-value="any(l.discount for l in lines_to_report)"/>
+                <t t-set="display_taxes" t-value="any(l._has_taxes() for l in lines_to_report)"/>
+                <t t-set="delivery_lines" t-value="lines_to_report.filtered(lambda line: 'is_delivery' in line._fields and line.is_delivery)"/>
+                <t t-set="product_lines" t-value="lines_to_report.filtered(lambda line: not ('is_delivery' in line._fields and line.is_delivery))"/>
+                <t t-set="delivery_amount" t-value="doc.amount_delivery if 'amount_delivery' in doc._fields else sum(delivery_lines.mapped('price_subtotal'))"/>
+                <t t-set="discount_amount" t-value="doc._ab_storefront_report_discount_amount()"/>
+                <t t-set="terms_url" t-value="doc._ab_storefront_report_terms_url()"/>
+                <t t-set="logo_src" t-value="doc.website_id and doc.website_id.image_url(doc.website_id, 'logo') or (company.logo and image_data_uri(company.logo))"/>
+
+                <style>
+                    @font-face {
+                        font-family: "IBM Plex Sans Arabic";
+                        src: url("/ab_ecommerce_storefront/static/src/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Regular.woff2") format("woff2");
+                        font-weight: 400;
+                        font-style: normal;
+                    }
+                    @font-face {
+                        font-family: "IBM Plex Sans Arabic";
+                        src: url("/ab_ecommerce_storefront/static/src/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-SemiBold.woff2") format("woff2");
+                        font-weight: 600;
+                        font-style: normal;
+                    }
+                    @font-face {
+                        font-family: "IBM Plex Sans Arabic";
+                        src: url("/ab_ecommerce_storefront/static/src/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Bold.woff2") format("woff2");
+                        font-weight: 700;
+                        font-style: normal;
+                    }
+                    .ab-sale-report {
+                        --ab-green: #16834f;
+                        --ab-green-dark: #0b5f39;
+                        --ab-green-soft: #e9f6ef;
+                        --ab-orange: #ef8b2c;
+                        --ab-blue: #2674a8;
+                        --ab-ink: #19352b;
+                        --ab-muted: #64736d;
+                        --ab-border: #e1ebe5;
+                        --ab-bg: #f7faf8;
+                        --ab-warm: #fbf8f2;
+                        position: relative;
+                        min-height: 270mm;
+                        padding: 12mm 11mm 24mm;
+                        color: var(--ab-ink);
+                        background: #fff;
+                        font-family: "IBM Plex Sans Arabic", "Noto Sans Arabic", "Odoo Unicode Support Noto", "DejaVu Sans", sans-serif;
+                        font-size: 12px;
+                        line-height: 1.55;
+                    }
+                    .ab-sale-report * {
+                        box-sizing: border-box;
+                    }
+                    .ab-sale-report[dir="rtl"] {
+                        text-align: right;
+                    }
+                    .ab-sale-report[dir="ltr"] {
+                        text-align: left;
+                    }
+                    .ab-sale-report .ab-ltr {
+                        direction: ltr;
+                        unicode-bidi: embed;
+                    }
+                    .ab-sale-report-header {
+                        display: table;
+                        width: 100%;
+                        padding-bottom: 14px;
+                        border-bottom: 2px solid var(--ab-green);
+                    }
+                    .ab-sale-report-logo,
+                    .ab-sale-report-title {
+                        display: table-cell;
+                        width: 50%;
+                        vertical-align: top;
+                    }
+                    .ab-sale-report-logo img {
+                        max-width: 170px;
+                        max-height: 58px;
+                        width: auto;
+                        height: auto;
+                        object-fit: contain;
+                    }
+                    .ab-sale-report-title {
+                        text-align: end;
+                    }
+                    .ab-sale-report-title h1 {
+                        margin: 0 0 8px;
+                        color: var(--ab-green-dark);
+                        font-size: 21px;
+                        font-weight: 700;
+                        letter-spacing: 0;
+                        line-height: 1.25;
+                    }
+                    .ab-sale-report-title dl {
+                        display: inline-table;
+                        margin: 0;
+                        color: var(--ab-muted);
+                    }
+                    .ab-sale-report-title dt,
+                    .ab-sale-report-title dd {
+                        display: table-cell;
+                        padding: 2px 0;
+                    }
+                    .ab-sale-report-title dt {
+                        padding-inline-end: 8px;
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                    }
+                    .ab-sale-report-title dd {
+                        color: var(--ab-ink);
+                        font-weight: 700;
+                    }
+                    .ab-sale-section {
+                        margin-top: 16px;
+                        page-break-inside: avoid;
+                    }
+                    .ab-sale-section-title {
+                        margin: 0 0 8px;
+                        color: var(--ab-green-dark);
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-info-grid {
+                        display: table;
+                        width: 100%;
+                        border-spacing: 10px 0;
+                        margin-inline: -10px;
+                    }
+                    .ab-sale-info-card {
+                        display: table-cell;
+                        width: 50%;
+                        padding: 12px 14px;
+                        vertical-align: top;
+                        border: 1px solid var(--ab-border);
+                        border-radius: 8px;
+                        background: var(--ab-warm);
+                    }
+                    .ab-sale-partner-name {
+                        display: block;
+                        margin-bottom: 6px;
+                        color: var(--ab-ink);
+                        font-size: 15px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-contact {
+                        color: var(--ab-muted);
+                    }
+                    .ab-sale-meta {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    .ab-sale-meta th,
+                    .ab-sale-meta td {
+                        padding: 7px 8px;
+                        border-bottom: 1px solid rgba(22, 131, 79, .12);
+                        vertical-align: top;
+                    }
+                    .ab-sale-meta th {
+                        width: 38%;
+                        color: var(--ab-muted);
+                        font-size: 10px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-meta td {
+                        color: var(--ab-ink);
+                        font-weight: 600;
+                    }
+                    .ab-sale-delivery {
+                        padding: 11px 14px;
+                        border: 1px solid rgba(38, 116, 168, .16);
+                        border-radius: 8px;
+                        background: #f5fafc;
+                    }
+                    .ab-sale-delivery strong {
+                        display: block;
+                        color: var(--ab-blue);
+                        font-size: 14px;
+                    }
+                    .ab-sale-delivery p {
+                        margin: 4px 0 0;
+                        color: var(--ab-muted);
+                    }
+                    .ab-sale-lines-title {
+                        margin-top: 18px;
+                        padding-top: 2px;
+                    }
+                    .ab-sale-lines {
+                        width: 100%;
+                        border-collapse: collapse;
+                        table-layout: fixed;
+                        font-size: 11px;
+                    }
+                    .ab-sale-lines thead {
+                        display: table-header-group;
+                    }
+                    .ab-sale-lines th {
+                        padding: 9px 8px;
+                        color: #fff;
+                        background: var(--ab-green);
+                        font-size: 10px;
+                        font-weight: 700;
+                        vertical-align: middle;
+                    }
+                    .ab-sale-lines th:first-child {
+                        border-start-start-radius: 7px;
+                    }
+                    .ab-sale-lines th:last-child {
+                        border-start-end-radius: 7px;
+                    }
+                    .ab-sale-lines td {
+                        padding: 10px 8px;
+                        border-bottom: 1px solid var(--ab-border);
+                        vertical-align: top;
+                        overflow-wrap: anywhere;
+                    }
+                    .ab-sale-lines tbody tr:nth-child(even):not(.ab-sale-line-note):not(.ab-sale-line-section) {
+                        background: #fbfdfb;
+                    }
+                    .ab-sale-line-product {
+                        width: 34%;
+                    }
+                    .ab-sale-line-description {
+                        width: 22%;
+                        color: var(--ab-muted);
+                        font-size: 10px;
+                    }
+                    .ab-sale-line-number {
+                        width: 11%;
+                        text-align: end;
+                        white-space: nowrap;
+                    }
+                    .ab-sale-line-tax {
+                        width: 11%;
+                        color: var(--ab-muted);
+                        text-align: end;
+                    }
+                    .ab-sale-product-name {
+                        display: block;
+                        color: var(--ab-ink);
+                        font-weight: 700;
+                        line-height: 1.45;
+                    }
+                    .ab-sale-sku {
+                        display: inline-block;
+                        margin-bottom: 3px;
+                        color: var(--ab-muted);
+                        font-size: 9px;
+                        font-weight: 600;
+                    }
+                    .ab-sale-line-note td,
+                    .ab-sale-line-section td {
+                        background: var(--ab-green-soft);
+                        color: var(--ab-green-dark);
+                        font-weight: 700;
+                    }
+                    .ab-sale-shipping-line td {
+                        background: #f6fbfd;
+                    }
+                    .ab-sale-shipping-badge {
+                        display: inline-block;
+                        margin-bottom: 3px;
+                        padding: 2px 7px;
+                        border-radius: 99px;
+                        color: var(--ab-blue);
+                        background: rgba(38, 116, 168, .09);
+                        font-size: 9px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-summary-wrap {
+                        display: table;
+                        width: 100%;
+                        margin-top: 16px;
+                        page-break-inside: avoid;
+                    }
+                    .ab-sale-summary-spacer,
+                    .ab-sale-summary {
+                        display: table-cell;
+                        vertical-align: top;
+                    }
+                    .ab-sale-summary-spacer {
+                        width: 48%;
+                    }
+                    .ab-sale-summary {
+                        width: 52%;
+                        padding: 13px 15px;
+                        border: 1px solid rgba(22, 131, 79, .16);
+                        border-radius: 8px;
+                        background: linear-gradient(180deg, #ffffff, #f8fbf9);
+                    }
+                    .ab-sale-summary h2 {
+                        margin: 0 0 8px;
+                        color: var(--ab-green-dark);
+                        font-size: 14px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-summary table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+                    .ab-sale-summary td {
+                        padding: 6px 0;
+                        color: var(--ab-muted);
+                        border-bottom: 1px solid rgba(22, 131, 79, .10);
+                    }
+                    .ab-sale-summary td:last-child {
+                        color: var(--ab-ink);
+                        font-weight: 700;
+                        text-align: end;
+                        white-space: nowrap;
+                    }
+                    .ab-sale-summary tr.ab-sale-grand-total td {
+                        padding-top: 10px;
+                        border-bottom: 0;
+                        color: var(--ab-green-dark);
+                        font-size: 15px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-summary tr.ab-sale-grand-total td:last-child {
+                        font-size: 17px;
+                    }
+                    .ab-sale-bottom-grid {
+                        display: table;
+                        width: 100%;
+                        margin-top: 14px;
+                        border-spacing: 10px 0;
+                        margin-inline: -10px;
+                        page-break-inside: avoid;
+                    }
+                    .ab-sale-bottom-card {
+                        display: table-cell;
+                        width: 50%;
+                        padding: 11px 13px;
+                        border: 1px solid var(--ab-border);
+                        border-radius: 8px;
+                        background: #fff;
+                        vertical-align: top;
+                    }
+                    .ab-sale-bottom-card h2 {
+                        margin: 0 0 6px;
+                        color: var(--ab-green-dark);
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+                    .ab-sale-bottom-card p {
+                        margin: 0;
+                        color: var(--ab-muted);
+                    }
+                    .ab-sale-bottom-card a {
+                        color: var(--ab-green-dark);
+                        font-weight: 700;
+                        text-decoration: none;
+                    }
+                    .ab-sale-footer {
+                        display: table;
+                        width: 100%;
+                        margin-top: 14px;
+                        padding-top: 8px;
+                        border-top: 1px solid var(--ab-border);
+                        color: var(--ab-muted);
+                        font-size: 10px;
+                    }
+                    .ab-sale-footer-brand,
+                    .ab-sale-footer-page {
+                        display: table-cell;
+                        width: 50%;
+                        vertical-align: middle;
+                    }
+                    .ab-sale-footer-brand strong {
+                        color: var(--ab-green-dark);
+                    }
+                    .ab-sale-footer-page {
+                        text-align: end;
+                    }
+                    @page {
+                        margin: 7mm;
+                    }
+                </style>
+
+                <div class="ab-sale-report page" t-att-dir="'rtl' if is_arabic else 'ltr'">
+                    <header class="ab-sale-report-header">
+                        <div class="ab-sale-report-logo">
+                            <img t-if="logo_src" t-att-src="logo_src" alt="Abdin Pharmacies"/>
+                        </div>
+                        <div class="ab-sale-report-title">
+                            <h1>
+                                <t t-if="is_proforma">Pro-Forma Order</t>
+                                <t t-elif="doc.state in ['draft', 'sent']">Quotation / Order Confirmation</t>
+                                <t t-else="">Sales Order / Order Confirmation</t>
+                            </h1>
+                            <dl>
+                                <dt>Order Number</dt>
+                                <dd><span class="ab-ltr" t-field="doc.name"/></dd>
+                            </dl>
+                            <br/>
+                            <dl t-if="doc.date_order">
+                                <dt>Order Date</dt>
+                                <dd><span t-field="doc.date_order" t-options='{"widget": "date"}'/></dd>
+                            </dl>
+                        </div>
+                    </header>
+
+                    <section class="ab-sale-section ab-sale-info-grid">
+                        <div class="ab-sale-info-card">
+                            <h2 class="ab-sale-section-title">Customer Information</h2>
+                            <strong class="ab-sale-partner-name" t-field="doc.partner_id.name"/>
+                            <div class="ab-sale-contact"
+                                 t-field="doc.partner_id"
+                                 t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": False}'/>
+                            <p t-if="doc.partner_id.vat" class="ab-sale-contact">
+                                <strong>Tax ID</strong>
+                                <span class="ab-ltr" t-field="doc.partner_id.vat"/>
+                            </p>
+                        </div>
+                        <div class="ab-sale-info-card">
+                            <h2 class="ab-sale-section-title">Order Information</h2>
+                            <table class="ab-sale-meta">
+                                <tbody>
+                                    <tr>
+                                        <th>Order Number</th>
+                                        <td><span class="ab-ltr" t-field="doc.name"/></td>
+                                    </tr>
+                                    <tr t-if="doc.date_order">
+                                        <th>Order Date</th>
+                                        <td><span t-field="doc.date_order" t-options='{"widget": "date"}'/></td>
+                                    </tr>
+                                    <tr t-if="doc.user_id">
+                                        <th>Salesperson</th>
+                                        <td><span t-field="doc.user_id"/></td>
+                                    </tr>
+                                    <tr t-if="doc.client_order_ref">
+                                        <th>Customer Reference</th>
+                                        <td><span t-field="doc.client_order_ref"/></td>
+                                    </tr>
+                                    <tr t-if="doc.validity_date and doc.state in ['draft', 'sent']">
+                                        <th>Expiration</th>
+                                        <td><span t-field="doc.validity_date"/></td>
+                                    </tr>
+                                    <tr t-if="doc.commitment_date">
+                                        <th>Delivery Date</th>
+                                        <td><span t-field="doc.commitment_date" t-options='{"widget": "date"}'/></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section t-if="doc.partner_shipping_id or doc.carrier_id or delivery_lines" class="ab-sale-section ab-sale-delivery">
+                        <h2 class="ab-sale-section-title">Delivery Information</h2>
+                        <strong t-if="doc.carrier_id" t-field="doc.carrier_id.name"/>
+                        <strong t-elif="delivery_lines" t-out="delivery_lines[:1].name"/>
+                        <p t-if="doc.carrier_id and doc.carrier_id.carrier_description" t-out="doc.carrier_id.carrier_description"/>
+                        <div t-if="doc.partner_shipping_id" class="ab-sale-contact mt-2"
+                             t-field="doc.partner_shipping_id"
+                             t-options='{"widget": "contact", "fields": ["address", "phone"], "no_marker": True, "phone_icons": False}'/>
+                        <p t-if="delivery_amount">
+                            <span>Shipping Cost</span>
+                            <strong t-out="delivery_amount" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                        </p>
+                    </section>
+
+                    <section class="ab-sale-section ab-sale-lines-title">
+                        <h2 class="ab-sale-section-title">Order Details</h2>
+                        <table class="ab-sale-lines">
+                            <thead>
+                                <tr>
+                                    <th class="ab-sale-line-product">Product</th>
+                                    <th class="ab-sale-line-description">Description</th>
+                                    <th class="ab-sale-line-number">Quantity</th>
+                                    <th class="ab-sale-line-number">Unit Price</th>
+                                    <th t-if="display_discount" class="ab-sale-line-number">Discount</th>
+                                    <th t-if="display_taxes" class="ab-sale-line-tax">Tax</th>
+                                    <th class="ab-sale-line-number">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="lines_to_report" t-as="line">
+                                    <t t-set="is_delivery_line" t-value="'is_delivery' in line._fields and line.is_delivery"/>
+                                    <t t-set="is_note" t-value="line.display_type == 'line_note'"/>
+                                    <t t-set="is_section" t-value="line.display_type in ('line_section', 'line_subsection')"/>
+                                    <t t-if="is_section">
+                                        <tr class="ab-sale-line-section">
+                                            <td t-att-colspan="5 + (1 if display_discount else 0) + (1 if display_taxes else 0)">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-elif="is_note">
+                                        <tr class="ab-sale-line-note">
+                                            <td t-att-colspan="5 + (1 if display_discount else 0) + (1 if display_taxes else 0)">
+                                                <span t-field="line.name"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <t t-set="parts" t-value="line._ab_storefront_report_line_parts()"/>
+                                        <tr t-att-class="'ab-sale-shipping-line' if is_delivery_line else ''">
+                                            <td class="ab-sale-line-product">
+                                                <span t-if="is_delivery_line" class="ab-sale-shipping-badge">Shipping</span>
+                                                <span t-if="parts['sku']" class="ab-sale-sku ab-ltr">[<t t-out="parts['sku']"/>]</span>
+                                                <span class="ab-sale-product-name" t-out="parts['name']"/>
+                                            </td>
+                                            <td class="ab-sale-line-description">
+                                                <span t-if="parts['description']" t-out="parts['description']"/>
+                                            </td>
+                                            <td class="ab-sale-line-number">
+                                                <span t-field="line.product_uom_qty"/>
+                                                <span t-field="line.product_uom_id"/>
+                                            </td>
+                                            <td class="ab-sale-line-number">
+                                                <span t-field="line.price_unit"/>
+                                            </td>
+                                            <td t-if="display_discount" class="ab-sale-line-number">
+                                                <span t-if="line.discount">
+                                                    <span t-field="line.discount"/>%
+                                                </span>
+                                            </td>
+                                            <td t-if="display_taxes" class="ab-sale-line-tax">
+                                                <span t-out="line._ab_storefront_report_tax_label()"/>
+                                            </td>
+                                            <td class="ab-sale-line-number">
+                                                <span t-field="line.price_subtotal"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="ab-sale-summary-wrap">
+                        <div class="ab-sale-summary-spacer"/>
+                        <div class="ab-sale-summary">
+                            <h2>Order Summary</h2>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Subtotal</td>
+                                        <td>
+                                            <span t-out="doc.amount_untaxed - delivery_amount"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="discount_amount">
+                                        <td>Discount</td>
+                                        <td>
+                                            <span>- </span>
+                                            <span t-out="discount_amount"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="delivery_amount">
+                                        <td>Shipping</td>
+                                        <td>
+                                            <span t-out="delivery_amount"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <t t-if="doc.tax_totals">
+                                        <t t-foreach="doc.tax_totals['subtotals']" t-as="subtotal">
+                                            <t t-foreach="subtotal['tax_groups']" t-as="tax_group">
+                                                <tr>
+                                                    <td>
+                                                        <span t-out="tax_group['group_name']"/>
+                                                    </td>
+                                                    <td>
+                                                        <span t-out="tax_group['tax_amount_currency']"
+                                                              t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </t>
+                                    <tr t-if="doc.tax_totals and 'cash_rounding_base_amount_currency' in doc.tax_totals">
+                                        <td>Rounding</td>
+                                        <td>
+                                            <span t-out="doc.tax_totals['cash_rounding_base_amount_currency']"
+                                                  t-options='{"widget": "monetary", "display_currency": doc.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                    <tr class="ab-sale-grand-total">
+                                        <td>Total</td>
+                                        <td>
+                                            <span t-field="doc.amount_total"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section t-if="doc.payment_term_id or terms_url or not is_html_empty(doc.note)" class="ab-sale-bottom-grid">
+                        <div t-if="doc.payment_term_id" class="ab-sale-bottom-card">
+                            <h2>Payment Terms</h2>
+                            <p t-field="doc.payment_term_id"/>
+                            <p t-if="not is_html_empty(doc.payment_term_id.note)" t-field="doc.payment_term_id.note"/>
+                        </div>
+                        <div t-if="terms_url or not is_html_empty(doc.note)" class="ab-sale-bottom-card">
+                            <h2>Terms and Conditions</h2>
+                            <p t-if="terms_url">
+                                <a t-att-href="terms_url">View terms and conditions</a>
+                            </p>
+                            <p t-elif="not is_html_empty(doc.note)" t-field="doc.note"/>
+                        </div>
+                    </section>
+
+                    <footer class="ab-sale-footer">
+                        <div class="ab-sale-footer-brand">
+                            <strong>Care, every day.</strong>
+                            <span>Customer support</span>
+                            <span class="ab-ltr">19036</span>
+                            <span>WhatsApp</span>
+                            <span class="ab-ltr">01030578926</span>
+                        </div>
+                        <div class="ab-sale-footer-page">
+                            <span>Page</span>
+                            <span class="ab-ltr">1</span>
+                        </div>
+                    </footer>
+                </div>
+            </t>
+        </xpath>
+    </template>
+</odoo>
