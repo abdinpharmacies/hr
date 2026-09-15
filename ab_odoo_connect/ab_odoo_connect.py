@@ -21,6 +21,7 @@ class OdooConnectionSingleton:
     _user = None
     _db_name = None
     _password_param = None
+    _server_version_info = None
     _checking = False
 
     # must pass env ot OdooConnectionSingleton(env) (__new__ is replacement for __init__)
@@ -58,6 +59,7 @@ class OdooConnectionSingleton:
         self._headers = [
             ("x-sync-key", sync_secret),
         ]
+        self._server_version_info = None
 
         # Initialize connection
         self.connect_to_server()
@@ -132,6 +134,28 @@ class OdooConnectionSingleton:
                 raise UserError(_("Reconnection attempt failed."))
 
         return self._conn, self._uid, self._db, self._password
+
+    def get_server_version_info(self):
+        """Return and cache version metadata from the remote Odoo server."""
+        if self._server_version_info is None:
+            try:
+                common = client.ServerProxy(
+                    f"{self._srv}/xmlrpc/2/common",
+                    headers=self._headers,
+                )
+                version_info = common.version()
+            except Exception as error:
+                raise UserError(_(
+                    "Could not determine the remote Odoo server version."
+                )) from error
+
+            if not isinstance(version_info, dict):
+                raise UserError(_(
+                    "The remote Odoo server returned invalid version information."
+                ))
+            self._server_version_info = version_info
+
+        return self._server_version_info
 
     def execute_kw(self, model_name, method, params, kwargs=None):
         """

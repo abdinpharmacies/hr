@@ -1,8 +1,9 @@
 import datetime
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from odoo import Command
-from odoo.exceptions import AccessError, ValidationError
+from odoo.addons.ab_odoo_connect import OdooConnectionSingleton
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 from odoo.tools import SQL, config
 
@@ -352,3 +353,421 @@ class TestReplicationOverride(TransactionCase):
 
         self.assertIsNone(result)
         self.assertIn('Skipping replication for unavailable local model', logs.output[0])
+
+
+class TestReplicationSourceCompatibility(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.Replication = self.env['ab_odoo_replication']
+        share = self.Replication.ReplShare
+        self.previous_share = {
+            'model_name': share.model_name,
+            'source_major_version': share.source_major_version,
+            'conn': share.conn,
+        }
+
+    def tearDown(self):
+        for field_name, value in self.previous_share.items():
+            setattr(self.Replication.ReplShare, field_name, value)
+        super().tearDown()
+
+    def test_odoo_15_chatter_positions_are_mapped_to_odoo_19_values(self):
+        self.Replication.ReplShare.model_name = 'res.users'
+        self.Replication.ReplShare.source_major_version = 15
+
+        for source_value, expected_value in (
+            ('normal', 'bottom'),
+            ('sided', 'side'),
+        ):
+            source_record = {
+                'id': 10,
+                'chatter_position': source_value,
+                'name': 'Mapped User',
+            }
+            normalized_record = self.Replication._normalize_remote_record(
+                source_record,
+            )
+
+            self.assertEqual(
+                normalized_record['chatter_position'],
+                expected_value,
+            )
+            self.assertEqual(source_record['chatter_position'], source_value)
+            self.assertEqual(normalized_record['name'], source_record['name'])
+
+    def test_chatter_position_mapping_is_limited_to_odoo_15_users(self):
+        source_record = {'id': 10, 'chatter_position': 'normal'}
+
+        self.Replication.ReplShare.model_name = 'res.users'
+        self.Replication.ReplShare.source_major_version = 19
+        self.assertIs(
+            self.Replication._normalize_remote_record(source_record),
+            source_record,
+        )
+
+        self.Replication.ReplShare.model_name = 'res.partner'
+        self.Replication.ReplShare.source_major_version = 15
+        self.assertIs(
+            self.Replication._normalize_remote_record(source_record),
+            source_record,
+        )
+
+    def test_unknown_odoo_15_chatter_position_is_not_silently_changed(self):
+        self.Replication.ReplShare.model_name = 'res.users'
+        self.Replication.ReplShare.source_major_version = 15
+        source_record = {'id': 10, 'chatter_position': 'unexpected'}
+
+        self.assertIs(
+            self.Replication._normalize_remote_record(source_record),
+            source_record,
+        )
+
+    def test_source_major_version_uses_structured_and_string_metadata(self):
+        conn = self.Replication.ReplShare.conn = MagicMock()
+
+        conn.get_server_version_info.return_value = {
+            'server_version_info': [15, 0, 0, 'final', 0],
+        }
+        self.assertEqual(self.Replication._get_source_major_version(), 15)
+
+        conn.get_server_version_info.return_value = {
+            'server_version': '19.0+e',
+        }
+        self.assertEqual(self.Replication._get_source_major_version(), 19)
+
+    def test_invalid_source_version_metadata_raises_clear_error(self):
+        conn = self.Replication.ReplShare.conn = MagicMock()
+        conn.get_server_version_info.return_value = {}
+
+        with self.assertRaisesRegex(UserError, 'major version'):
+            self.Replication._get_source_major_version()
+
+    def test_connection_server_version_is_cached(self):
+        connection = object.__new__(OdooConnectionSingleton)
+        connection._srv = 'https://odoo-source.example.com'
+        connection._headers = [('x-sync-key', 'test')]
+        connection._server_version_info = None
+        version_metadata = {
+            'server_version': '15.0',
+            'server_version_info': [15, 0, 0, 'final', 0],
+        }
+
+        with patch(
+            'odoo.addons.ab_odoo_connect.ab_odoo_connect.client.ServerProxy',
+        ) as server_proxy:
+            server_proxy.return_value.version.return_value = version_metadata
+
+            first_result = connection.get_server_version_info()
+            second_result = connection.get_server_version_info()
+
+        self.assertEqual(first_result, version_metadata)
+        self.assertIs(second_result, first_result)
+        server_proxy.assert_called_once_with(
+            'https://odoo-source.example.com/xmlrpc/2/common',
+            headers=[('x-sync-key', 'test')],
+        )
+        server_proxy.return_value.version.assert_called_once_with()
+
+    def test_connection_server_version_failure_raises_clear_error(self):
+        connection = object.__new__(OdooConnectionSingleton)
+        connection._srv = 'https://odoo-source.example.com'
+        connection._headers = []
+        connection._server_version_info = None
+
+        with patch(
+            'odoo.addons.ab_odoo_connect.ab_odoo_connect.client.ServerProxy',
+        ) as server_proxy:
+            server_proxy.return_value.version.side_effect = RuntimeError('offline')
+            with self.assertRaisesRegex(UserError, 'remote Odoo server version'):
+                connection.get_server_version_info()
+
+
+class TestForceIdReplication(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.Replication = cls.env['ab_odoo_replication']
+        cls.Partner = cls.env['res.partner'].sudo().with_context(active_test=False)
+
+    def _configure_partner_replication(self):
+        share = self.Replication.ReplShare
+        previous = {
+            'model_name': share.model_name,
+            'table_name': share.table_name,
+            'has_main_rec_id': share.has_main_rec_id,
+            'missing_many2one_flds': share.missing_many2one_flds,
+            'fld__type_rel_dict': share.fld__type_rel_dict,
+            'source_major_version': share.source_major_version,
+        }
+        share.model_name = 'res.partner'
+        share.table_name = 'res_partner'
+        share.has_main_rec_id = False
+        share.missing_many2one_flds = []
+        share.fld__type_rel_dict = {
+            'id': ('integer', None),
+            'name': ('char', None),
+            'city': ('char', None),
+            'active': ('boolean', None),
+        }
+        share.source_major_version = None
+        return previous
+
+    def _restore_replication_share(self, previous):
+        for field_name, value in previous.items():
+            setattr(self.Replication.ReplShare, field_name, value)
+
+    def test_refresh_force_id_record_discards_cached_values(self):
+        partner = self.Partner.create({'name': 'Before forced SQL update'})
+        self.assertEqual(partner.name, 'Before forced SQL update')
+
+        self.env.cr.execute(SQL(
+            'UPDATE res_partner SET name = %s WHERE id = %s',
+            'After forced SQL update',
+            partner.id,
+        ))
+        refreshed = self.Replication._refresh_force_id_record(
+            self.Partner,
+            partner.id,
+            changed_fields=['name'],
+        )
+
+        self.assertEqual(refreshed.name, 'After forced SQL update')
+
+    def test_partner_insert_uses_sql_without_orm_write_replay(self):
+        self.env.cr.execute('SELECT COALESCE(MAX(id), 0) + 1 FROM res_partner')
+        forced_id = self.env.cr.fetchone()[0]
+        previous = self._configure_partner_replication()
+        try:
+            with patch.object(
+                type(self.Partner),
+                'write',
+                autospec=True,
+            ) as write:
+                change = self.Replication._replicate_main_fields({
+                    'id': forced_id,
+                    'name': 'Forced ID Partner',
+                    'active': True,
+                })
+                operation, local_id, values, replay_write, changed_values = change
+                self.Replication._finalize_force_id_batch(self.Partner, {
+                    'create': {
+                        local_id: {
+                            'values': values,
+                            'replay_write': replay_write,
+                            'changed_values': changed_values,
+                        },
+                    },
+                    'write': {},
+                })
+
+            self.assertEqual(operation, 'create')
+            self.assertEqual(local_id, forced_id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(self.Partner.browse(forced_id).name, 'Forced ID Partner')
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_replay_values_exclude_orm_managed_fields(self):
+        replay_values = self.Replication._get_force_id_replay_values(
+            self.Partner,
+            {
+                'id': 999,
+                'name': 'Replay Name',
+                'create_date': '2025-01-01 00:00:00',
+                'write_date': '2025-01-02 00:00:00',
+                'display_name': 'Computed Name',
+                'child_ids': [],
+            },
+        )
+
+        self.assertEqual(replay_values, {'name': 'Replay Name'})
+
+    def test_partner_update_uses_sql_without_orm_write(self):
+        partner = self.Partner.create({'name': 'Before replication'})
+        previous = self._configure_partner_replication()
+        try:
+            with patch.object(type(partner), 'write', autospec=True) as write:
+                operation, local_id, values, replay_write, changed_values = (
+                    self.Replication._replicate_main_fields({
+                        'name': 'After replication',
+                        'id': partner.id,
+                    })
+                )
+                self.Replication._finalize_force_id_batch(self.Partner, {
+                    'create': {},
+                    'write': {
+                        local_id: {
+                            'values': values,
+                            'replay_write': replay_write,
+                            'changed_values': changed_values,
+                        },
+                    },
+                })
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(partner.name, 'After replication')
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_exact_copy_identical_update_skips_orm_write_values(self):
+        partner = self.Partner.create({'name': 'Unchanged replication'})
+        previous = self._configure_partner_replication()
+        try:
+            with patch.object(type(partner), 'write', autospec=True) as write:
+                operation, local_id, values, replay_write, changed_values = (
+                    self.Replication._replicate_main_fields({
+                        'id': partner.id,
+                        'name': partner.name,
+                        'active': partner.active,
+                    })
+                )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(values['name'], partner.name)
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_partner_sql_update_accepts_id_in_any_dictionary_position(self):
+        partner = self.Partner.create({
+            'name': 'Partially changed replication',
+            'city': 'Cairo',
+        })
+        previous = self._configure_partner_replication()
+        try:
+            operation, local_id, values, replay_write, changed_values = (
+                self.Replication._replicate_main_fields({
+                    'id': partner.id,
+                    'name': partner.name,
+                    'city': 'Giza',
+                })
+            )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, partner.id)
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(values['name'], partner.name)
+            self.assertEqual(partner.city, 'Giza')
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_users_update_uses_sql_without_orm_write(self):
+        user = self.env['res.users'].sudo().with_context(
+            no_reset_password=True,
+        ).create({
+            'name': 'SQL-only Replication User',
+            'login': 'sql-only-replication-user-before',
+        })
+        share = self.Replication.ReplShare
+        previous = {
+            'model_name': share.model_name,
+            'table_name': share.table_name,
+            'has_main_rec_id': share.has_main_rec_id,
+            'missing_many2one_flds': share.missing_many2one_flds,
+            'fld__type_rel_dict': share.fld__type_rel_dict,
+            'source_major_version': share.source_major_version,
+        }
+        share.model_name = 'res.users'
+        share.table_name = 'res_users'
+        share.has_main_rec_id = False
+        share.missing_many2one_flds = []
+        share.fld__type_rel_dict = {
+            'id': ('integer', None),
+            'login': ('char', None),
+        }
+        share.source_major_version = None
+        try:
+            with patch.object(type(user), 'write', autospec=True) as write:
+                change = self.Replication._replicate_main_fields({
+                    'id': user.id,
+                    'login': 'sql-only-replication-user-after',
+                })
+                operation, local_id, values, replay_write, changed_values = change
+                self.Replication._finalize_force_id_batch(
+                    self.env['res.users'].sudo(),
+                    {
+                        'create': {},
+                        'write': {
+                            local_id: {
+                                'values': values,
+                                'replay_write': replay_write,
+                                'changed_values': changed_values,
+                            },
+                        },
+                    },
+                )
+
+            self.assertEqual(operation, 'write')
+            self.assertFalse(replay_write)
+            self.assertFalse(changed_values)
+            self.assertEqual(user.login, 'sql-only-replication-user-after')
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_partner_deferred_many2one_uses_sql_without_orm_write(self):
+        parent = self.Partner.create({'name': 'Replication Parent'})
+        child = self.Partner.create({'name': 'Replication Child'})
+        previous = self._configure_partner_replication()
+        self.Replication.ReplShare.missing_many2one_flds = [
+            ('res.partner', 'parent_id', parent.id, child.id),
+        ]
+        try:
+            with patch.object(type(child), 'write', autospec=True) as write:
+                deferred_changes = self.Replication._replicate_missing_many2one()
+
+            self.assertFalse(deferred_changes)
+            self.assertEqual(child.parent_id, parent)
+            write.assert_not_called()
+        finally:
+            self._restore_replication_share(previous)
+
+    def test_other_models_retain_orm_update_behavior(self):
+        category = self.env['res.partner.category'].sudo().create({
+            'name': 'Before ORM Replication',
+        })
+        share = self.Replication.ReplShare
+        previous = {
+            'model_name': share.model_name,
+            'table_name': share.table_name,
+            'has_main_rec_id': share.has_main_rec_id,
+            'missing_many2one_flds': share.missing_many2one_flds,
+            'fld__type_rel_dict': share.fld__type_rel_dict,
+            'source_major_version': share.source_major_version,
+        }
+        share.model_name = 'res.partner.category'
+        share.table_name = 'res_partner_category'
+        share.has_main_rec_id = False
+        share.missing_many2one_flds = []
+        share.fld__type_rel_dict = {
+            'id': ('integer', None),
+            'name': ('char', None),
+        }
+        share.source_major_version = None
+        try:
+            with patch.object(type(category), 'write', autospec=True) as write:
+                operation, local_id, values, replay_write, changed_values = (
+                    self.Replication._replicate_main_fields({
+                        'id': category.id,
+                        'name': 'After ORM Replication',
+                    })
+                )
+
+            self.assertEqual(operation, 'write')
+            self.assertEqual(local_id, category.id)
+            self.assertFalse(replay_write)
+            self.assertEqual(values['name'], 'After ORM Replication')
+            self.assertEqual(changed_values, {'name': 'After ORM Replication'})
+            write.assert_called_once()
+        finally:
+            self._restore_replication_share(previous)

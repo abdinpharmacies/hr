@@ -2,15 +2,28 @@
 import datetime
 import math
 import re
-from odoo import models, fields, api
+from odoo import _, models, fields, api
 from odoo.exceptions import UserError
-from odoo.tools import config
+from odoo.tools import SQL, config
 from odoo.addons.ab_odoo_connect import OdooConnectionSingleton
 import logging
 from typing import List, Dict
 from psycopg2.errors import ForeignKeyViolation
 
 _logger = logging.getLogger(__name__)
+
+
+class Base(models.AbstractModel):
+    _inherit = 'base'
+
+    def _after_force_id_replication(self, operation, replicated_values):
+        """Run model-specific work after a raw-SQL replication batch.
+
+        Models may override this hook when ORM cache invalidation and dependent
+        field recomputation are not enough to reproduce their business side
+        effects. ``replicated_values`` is keyed by the local record ID.
+        """
+        return None
 
 
 # -------------------------------
@@ -41,6 +54,11 @@ class OdooReplication(models.AbstractModel):
     _description = 'ab_odoo_replication'
 
     _group_xml_ids = []
+    _sql_only_replication_models = frozenset({'res.partner', 'res.users'})
+    _odoo_15_chatter_position_map = {
+        'normal': 'bottom',
+        'sided': 'side',
+    }
 
     class ReplShare:
         model_name = ""
@@ -49,6 +67,39 @@ class OdooReplication(models.AbstractModel):
         has_main_rec_id = False
         missing_many2one_flds = None  # type: list
         fld__type_rel_dict = None  # type: dict
+        source_major_version = None
+
+    def _get_source_major_version(self):
+        """Return the major version reported by the remote Odoo server."""
+        version_metadata = self.ReplShare.conn.get_server_version_info()
+        version_info = version_metadata.get('server_version_info') or ()
+        if version_info:
+            try:
+                return int(version_info[0])
+            except (TypeError, ValueError):
+                pass
+
+        server_version = version_metadata.get('server_version', '')
+        version_match = re.match(r'^(\d+)', str(server_version))
+        if version_match:
+            return int(version_match.group(1))
+
+        raise UserError(_(
+            "Could not determine the remote Odoo server's major version."
+        ))
+
+    def _normalize_remote_record(self, rec):
+        """Translate version-specific source values to local equivalents."""
+        if (
+            self.ReplShare.source_major_version == 15
+            and self.ReplShare.model_name == 'res.users'
+            and rec.get('chatter_position') in self._odoo_15_chatter_position_map
+        ):
+            rec = dict(rec)
+            rec['chatter_position'] = self._odoo_15_chatter_position_map[
+                rec['chatter_position']
+            ]
+        return rec
 
     def eval_val(self, fld, val, rec_id):
         fld__type_rel_dict = self.ReplShare.fld__type_rel_dict
@@ -112,6 +163,7 @@ class OdooReplication(models.AbstractModel):
         self.ReplShare.table_name = table_name
         self.ReplShare.has_main_rec_id = has_main_rec_id
         self.ReplShare.missing_many2one_flds = []
+        self.ReplShare.source_major_version = None
 
         # fix write_date for base users/partners
         # self._fix_users_and_partners_write_date()
@@ -149,6 +201,13 @@ class OdooReplication(models.AbstractModel):
             pagination_fields.add('write_date')
         fields_to_get = list((repldb_flds_set & remotedb_flds_set) | extra_fields.keys() | pagination_fields)
 
+        if (
+            model_name == 'res.users'
+            and 'chatter_position' in repldb_flds_set
+            and 'chatter_position' in remotedb_flds_set
+        ):
+            self.ReplShare.source_major_version = self._get_source_major_version()
+
         self.ReplShare.fld__type_rel_dict = {
             row[0]: (row[1], row[2])
             for row in repldb_flds__name_type_rel
@@ -176,6 +235,8 @@ class OdooReplication(models.AbstractModel):
 
         processed = 0
         part = 0
+        model = self.env[model_name].sudo()
+        model.flush_model()
 
         init_server_updates = [0]
         while True:
@@ -211,8 +272,10 @@ class OdooReplication(models.AbstractModel):
 
             part += 1
             msg = f'### Replicating {model_name} Part {part}/{parts}'
+            force_id_changes = {'create': {}, 'write': {}}
 
             for rec in server_updates:  # type: dict
+                rec = self._normalize_remote_record(rec)
                 # Skip admin and other built-in users
                 if model_name == 'res.users' and rec.get('id') <= 5:
                     continue
@@ -225,12 +288,21 @@ class OdooReplication(models.AbstractModel):
                         self.env.cr.commit()
                     _logger.info(f"{msg} , --- record {processed}/{server_updates_count}")
 
-                self._replicate_main_fields(rec)
+                force_id_change = self._replicate_main_fields(rec)
+                if force_id_change:
+                    operation, local_id, replicated_values, replay_write, changed_values = force_id_change
+                    force_id_changes[operation][local_id] = {
+                        'values': replicated_values,
+                        'replay_write': replay_write,
+                        'changed_values': changed_values,
+                    }
 
                 if model_name == 'res.users':
                     self._replicate_password(rec)
 
                 self._replicate_extra_fields(extra_fields, rec)
+
+            self._finalize_force_id_batch(model, force_id_changes)
 
             # commit batch لو طلبت
             if commit:
@@ -247,11 +319,15 @@ class OdooReplication(models.AbstractModel):
             last_id = last.get('id', 0)
 
         # بعد ما نخلص كل الـ batches
-        self._replicate_missing_many2one()
+        deferred_changes = self._replicate_missing_many2one()
+        if deferred_changes:
+            self._finalize_force_id_batch(model, {'create': {}, 'write': deferred_changes})
 
         # 🔄 تحديث كيرسور التكرار بعد انتهاء كل الـ batches
         if last_write_date:
             self._update_replication_cursor(model_name, last_write_date, last_id)
+        if commit and deferred_changes:
+            self.env.cr.commit()
 
     def _get_remotedb_flds_set(self):
         conn = self.ReplShare.conn
@@ -389,7 +465,9 @@ class OdooReplication(models.AbstractModel):
                         including many2one fields.
             @type rec: dict
 
-            @return: None
+            @return: A tuple containing the operation, local ID, replicated
+                     values, whether ORM write replay is still required, and
+                     the values that changed; otherwise None for an ORM create.
         """
         model_name = self.ReplShare.model_name
         table_name = self.ReplShare.table_name
@@ -403,20 +481,34 @@ class OdooReplication(models.AbstractModel):
         domain = [('main_rec_id', '=', rec.get('id', 0))] if has_main_rec_id else [('id', '=', rec.get('id', 0))]
         existing_rec = model.with_context(active_test=False).search(domain)
 
-        # if fld_name != 'id' to remove id from update_str sql
-        update_str = ','.join(f"{fld_name}=%s" for fld_name in rec if fld_name != 'id')
-
         insert_str = ','.join(k for k in rec)
         vals_tuple = tuple(val for val in rec.values())
 
-        # update is the same for both has_main_rec_id and exact_copy models
         if existing_rec:
-            # remove fetched server id from values
-            vals_tuple = vals_tuple[1:]
-            sql = f"""UPDATE {table_name}
-                      SET {update_str}
-                      WHERE id=%s"""
-            self.env.cr.execute(sql, vals_tuple + (existing_rec.id,))
+            if model_name in self._sql_only_replication_models:
+                update_values = {
+                    field_name: value
+                    for field_name, value in rec.items()
+                    if field_name != 'id'
+                }
+                self._update_replication_row(
+                    table_name,
+                    existing_rec.id,
+                    update_values,
+                )
+                if update_values:
+                    existing_rec.invalidate_recordset(
+                        list(update_values),
+                        flush=False,
+                    )
+                return 'write', existing_rec.id, dict(rec), False, {}
+
+            # Other models retain the ORM lifecycle introduced for forced-ID
+            # replication.
+            changed_values = self._get_changed_force_id_replay_values(existing_rec, rec)
+            if changed_values:
+                existing_rec.with_context(replication=True).write(changed_values)
+            return 'write', existing_rec.id, dict(rec), False, changed_values
         # create for has_main_rec_id
         elif has_main_rec_id:
             rec.update({"main_rec_id": rec['id']})
@@ -434,8 +526,238 @@ class OdooReplication(models.AbstractModel):
         else:
             sql = f"""
                INSERT INTO {table_name}({insert_str})
-               VALUES ({','.join(['%s'] * len(rec))})"""
+               VALUES ({','.join(['%s'] * len(rec))})
+               RETURNING id"""
             self.env.cr.execute(sql, vals_tuple)
+            forced_id = self.env.cr.fetchone()[0]
+            if forced_id != rec_id:
+                raise UserError(
+                    f'Forced-ID replication expected {model_name}({rec_id}) '
+                    f'but PostgreSQL inserted ID {forced_id}.'
+                )
+            replay_write = model_name not in self._sql_only_replication_models
+            changed_values = dict(rec) if replay_write else {}
+            return 'create', forced_id, dict(rec), replay_write, changed_values
+
+        return None
+
+    @api.model
+    def _update_replication_row(self, table_name, record_id, values):
+        """Update one replicated row directly without invoking ORM write."""
+        if not values:
+            return
+
+        assignments = SQL(', ').join(
+            SQL('%s = %s', SQL.identifier(field_name), value)
+            for field_name, value in values.items()
+        )
+        self.env.cr.execute(SQL(
+            'UPDATE %s SET %s WHERE id = %s',
+            SQL.identifier(table_name),
+            assignments,
+            record_id,
+        ))
+
+    @api.model
+    def _refresh_force_id_record(self, model, record_id, changed_fields=None, created=False):
+        """Return fresh ORM records after a forced-ID SQL insert/update.
+
+        ``record_id`` accepts either one ID or an iterable of IDs so the
+        replication engine can refresh a complete batch in one operation.
+        """
+        requested_records = model.browse(record_id)
+        field_names = sorted({
+            field_name
+            for field_name in (changed_fields or ())
+            if field_name != 'id' and field_name in model._fields
+        })
+        requested_records.invalidate_recordset(field_names or None)
+        records = requested_records.exists()
+        missing_ids = set(requested_records.ids) - set(records.ids)
+        if missing_ids:
+            raise UserError(
+                f'Forced-ID replication could not load {model._name} '
+                f'records {sorted(missing_ids)}.'
+            )
+
+        if field_names:
+            records.modified(field_names, create=created)
+        return records
+
+    @api.model
+    def _get_force_id_replay_values(self, model, values):
+        """Return fields safe to replay through ORM write."""
+        excluded_fields = {
+            'id',
+            'create_uid',
+            'create_date',
+            'write_uid',
+            'write_date',
+            'parent_path',
+        }
+        replay_values = {}
+        for field_name, value in values.items():
+            field = model._fields.get(field_name)
+            if not field or field_name in excluded_fields or not field.store:
+                continue
+            if field.type in {'many2many', 'one2many'}:
+                continue
+            if field.compute and not field.inverse:
+                continue
+            replay_values[field_name] = value
+        return replay_values
+
+    @api.model
+    def _get_changed_force_id_replay_values(self, record, incoming_values):
+        """Return normalized incoming values that differ from the record."""
+        record.ensure_one()
+        replay_values = self._get_force_id_replay_values(record, incoming_values)
+        changed_values = {}
+        for field_name, incoming_value in replay_values.items():
+            field = record._fields[field_name]
+            normalized_incoming = field.convert_to_write(incoming_value, record)
+            current_value = field.convert_to_write(record[field_name], record)
+            if current_value != normalized_incoming:
+                changed_values[field_name] = normalized_incoming
+        return changed_values
+
+    @api.model
+    def _replay_force_id_writes(self, model, replicated_values):
+        """Trigger normal write overrides for records inserted through SQL."""
+        for record_id, values in replicated_values.items():
+            replay_values = self._get_force_id_replay_values(model, values)
+            if replay_values:
+                model.browse(record_id).with_context(replication=True).write(replay_values)
+
+    @api.model
+    def _restore_force_id_audit_values(self, model, replicated_values):
+        """Restore source audit dates changed by ORM write replay."""
+        audit_fields = ('create_date', 'write_date')
+        restored_fields = set()
+        for record_id, values in replicated_values.items():
+            record = model.browse(record_id)
+            record_fields = []
+            normalized_values = {}
+            for field_name in audit_fields:
+                if field_name not in values or field_name not in model._fields:
+                    continue
+                field = model._fields[field_name]
+                incoming_value = field.convert_to_write(values[field_name], record)
+                current_value = field.convert_to_write(record[field_name], record)
+                if current_value != incoming_value:
+                    record_fields.append(field_name)
+                    normalized_values[field_name] = incoming_value
+            if not record_fields:
+                continue
+            assignments = ', '.join(f'{field_name}=%s' for field_name in record_fields)
+            self.env.cr.execute(
+                f'UPDATE {model._table} SET {assignments} WHERE id=%s',
+                tuple(normalized_values[field_name] for field_name in record_fields)
+                + (record_id,),
+            )
+            restored_fields.update(record_fields)
+
+        if restored_fields:
+            model.browse(list(replicated_values)).invalidate_recordset(
+                sorted(restored_fields),
+                flush=False,
+            )
+
+    @api.model
+    def _sync_force_id_sequence(self, model):
+        """Advance an exact-copy model sequence without ever moving it back."""
+        self.env.cr.execute(
+            'SELECT pg_get_serial_sequence(%s, %s)',
+            (model._table, 'id'),
+        )
+        sequence_name = self.env.cr.fetchone()[0]
+        if not sequence_name:
+            return
+
+        self.env.cr.execute(SQL(
+            'SELECT COALESCE(MAX(id), 0) FROM %s',
+            SQL.identifier(model._table),
+        ))
+        max_id = self.env.cr.fetchone()[0]
+        schema_name, separator, unqualified_name = sequence_name.rpartition('.')
+        if not separator:
+            schema_name = None
+            unqualified_name = sequence_name
+        self.env.cr.execute(
+            '''
+                SELECT last_value
+                  FROM pg_sequences
+                 WHERE schemaname = COALESCE(%s, current_schema())
+                   AND sequencename = %s
+            ''',
+            (schema_name, unqualified_name),
+        )
+        sequence_row = self.env.cr.fetchone()
+        last_value = (
+            sequence_row[0]
+            if sequence_row and sequence_row[0] is not None
+            else 0
+        )
+        if max_id > last_value:
+            self.env.cr.execute('SELECT setval(%s, %s, true)', (sequence_name, max_id))
+
+    @api.model
+    def _finalize_force_id_batch(self, model, changes):
+        """Refresh records, replay ORM writes, and invoke lifecycle hooks."""
+        has_changes = any(changes.get(operation) for operation in ('create', 'write'))
+        if not has_changes:
+            return
+
+        all_replicated_values = {}
+        for operation in ('create', 'write'):
+            operation_changes = changes.get(operation) or {}
+            if not operation_changes:
+                continue
+
+            replicated_values = {}
+            replay_values = {}
+            callback_values = {}
+            for record_id, payload in operation_changes.items():
+                if (
+                    isinstance(payload, dict)
+                    and isinstance(payload.get('values'), dict)
+                    and 'replay_write' in payload
+                ):
+                    values = payload['values']
+                    replay_write = payload['replay_write']
+                    changed_values = payload.get('changed_values', values)
+                else:
+                    values = payload
+                    replay_write = True
+                    changed_values = values
+                replicated_values[record_id] = values
+                if replay_write:
+                    replay_values[record_id] = values
+                if changed_values:
+                    callback_values[record_id] = changed_values
+
+            all_replicated_values.update(replicated_values)
+            if replay_values:
+                changed_fields = {
+                    field_name
+                    for values in replay_values.values()
+                    for field_name in values
+                }
+                self._refresh_force_id_record(
+                    model,
+                    list(replay_values),
+                    changed_fields=changed_fields,
+                    created=operation == 'create',
+                )
+                self._replay_force_id_writes(model, replay_values)
+            if callback_values:
+                callback_records = model.browse(list(callback_values)).exists()
+                callback_records._after_force_id_replication(operation, callback_values)
+
+        model.flush_model()
+        self._restore_force_id_audit_values(model, all_replicated_values)
+        if not hasattr(model, 'main_rec_id'):
+            self._sync_force_id_sequence(model)
 
     def _replicate_extra_fields(self, extra_fields, rec):
         for fld, ttype in extra_fields.items():
@@ -524,7 +846,9 @@ class OdooReplication(models.AbstractModel):
 
     def _replicate_missing_many2one(self):
         model_name = self.ReplShare.model_name
-        table_name = self.ReplShare.table_name
+        target_model = self.env[model_name].sudo()
+        has_main_rec_id = self.ReplShare.has_main_rec_id
+        deferred_values = {}
 
         """
         self.ReplShare.missing_many2one_flds is a list of tuples:
@@ -550,11 +874,22 @@ class OdooReplication(models.AbstractModel):
         for many2one_name, many2one_value, rec_id in internal_many2one_flds:
             if many2one_name in {'create_uid', 'write_uid'}:
                 continue
-            self.env.cr.execute(f"""UPDATE {table_name} SET {many2one_name} = %s WHERE id = %s
-                """, (many2one_value, rec_id))
-        self.env.cr.execute(f"""SELECT setval ('{table_name}_id_seq', (SELECT MAX (id) FROM {table_name})+1);""")
-
-        self.env.cr.commit()
+            local_id = rec_id
+            if has_main_rec_id:
+                local_record = target_model.with_context(active_test=False).search([
+                    ('main_rec_id', '=', rec_id),
+                ], limit=1)
+                local_id = local_record.id
+                related_record = target_model.with_context(active_test=False).search([
+                    ('main_rec_id', '=', many2one_value),
+                ], limit=1)
+                if not related_record:
+                    raise UserError(
+                        f'Replication could not resolve {model_name}.{many2one_name} '
+                        f'to {model_name}({many2one_value}).'
+                    )
+                many2one_value = related_record.id
+            deferred_values.setdefault(local_id, {})[many2one_name] = many2one_value
 
         # Getting external not replicated many2one models.
         missing_models = {item[0] for item in self.ReplShare.missing_many2one_flds if item[0] != model_name}
@@ -566,24 +901,92 @@ class OdooReplication(models.AbstractModel):
 
         # Now we can update external many2one field, after many2one model was replicated.
         for many2one_name, many2one_value, rec_id, m2o_model_name in external_many2one_flds:
-            model = self.env[m2o_model_name].sudo()
-            if hasattr(model, 'main_rec_id'):
-                rec = model.with_context(active_test=False).search([('main_rec_id', '=', rec_id)], limit=1)
-                rec_id = rec.id
+            local_id = rec_id
+            if has_main_rec_id:
+                local_record = target_model.with_context(active_test=False).search([
+                    ('main_rec_id', '=', rec_id),
+                ], limit=1)
+                local_id = local_record.id
 
-            Many2oneFld = model._fields.get(many2one_name)
+            related_record_id = many2one_value
+            Many2oneFld = target_model._fields.get(many2one_name)
             if Many2oneFld:
                 related_model = Many2oneFld.comodel_name
+                related_model_records = self.env[related_model].sudo().with_context(
+                    active_test=False,
+                )
 
                 # Filter only existing IDs
-                safe_ids = self._filter_existing_ids(related_model, [many2one_value])
+                if hasattr(related_model_records, 'main_rec_id'):
+                    related_record = related_model_records.search([
+                        ('main_rec_id', '=', many2one_value),
+                    ], limit=1)
+                    safe_ids = related_record.ids
+                else:
+                    safe_ids = self._filter_existing_ids(related_model, [many2one_value])
 
-                if many2one_value not in safe_ids:
+                if not safe_ids:
                     self.replicate_model(related_model, replicate_all=True,
                                          extra_domain=[('id', 'in', [many2one_value])])
+                    if hasattr(related_model_records, 'main_rec_id'):
+                        related_record = related_model_records.search([
+                            ('main_rec_id', '=', many2one_value),
+                        ], limit=1)
+                        safe_ids = related_record.ids
+                    else:
+                        safe_ids = self._filter_existing_ids(related_model, [many2one_value])
 
-            self.env.cr.execute(f"""UPDATE {table_name} SET {many2one_name} = %s where id=%s
-                """, (many2one_value, rec_id))
+                if not safe_ids:
+                    raise UserError(
+                        f'Replication could not resolve {model_name}.{many2one_name} '
+                        f'to {related_model}({many2one_value}).'
+                    )
+                related_record_id = safe_ids[0]
+
+            deferred_values.setdefault(local_id, {})[many2one_name] = related_record_id
+
+        deferred_changes = {}
+        if model_name in self._sql_only_replication_models:
+            changed_fields = set()
+            for local_id, values in deferred_values.items():
+                record = target_model.browse(local_id).exists()
+                if not record:
+                    raise UserError(
+                        f'Replication could not load {model_name}({local_id}) '
+                        'for deferred Many2one resolution.'
+                    )
+                self._update_replication_row(
+                    target_model._table,
+                    local_id,
+                    values,
+                )
+                changed_fields.update(values)
+
+            if deferred_values and changed_fields:
+                target_model.browse(list(deferred_values)).invalidate_recordset(
+                    sorted(changed_fields),
+                    flush=False,
+                )
+            return deferred_changes
+
+        for local_id, values in deferred_values.items():
+            record = target_model.browse(local_id).exists()
+            if not record:
+                raise UserError(
+                    f'Replication could not load {model_name}({local_id}) '
+                    'for deferred Many2one resolution.'
+                )
+            changed_values = self._get_changed_force_id_replay_values(record, values)
+            if not changed_values:
+                continue
+            record.with_context(replication=True).write(changed_values)
+            deferred_changes[local_id] = {
+                'values': values,
+                'replay_write': False,
+                'changed_values': changed_values,
+            }
+
+        return deferred_changes
 
     def init(self):
         self.env.cr.execute("""
