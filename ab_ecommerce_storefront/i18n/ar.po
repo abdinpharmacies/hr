@@ -1187,3 +1187,2446 @@ msgstr "تقليل الكمية"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
 msgid "Confirm Address"
 msgstr "تأكيد العنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "010xxxxxxxx"
+msgstr "010xxxxxxxx"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                                <span>Take prescription photo</span>"
+msgstr ""
+"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                                <span>تصوير الروشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-check\" aria-hidden=\"true\"/>\n"
+"                                        <span>Prescription image is ready to submit.</span>"
+msgstr ""
+"<i class=\"fa fa-check\" aria-hidden=\"true\"/>\n"
+"                                        <span>صورة الروشتة جاهزة للإرسال.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-circle-o-notch fa-spin\" aria-hidden=\"true\"/>\n"
+"                                        <span>Uploading prescription...</span>"
+msgstr ""
+"<i class=\"fa fa-circle-o-notch fa-spin\" aria-hidden=\"true\"/>\n"
+"                                        <span>جارٍ رفع الروشتة...</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_customer_invoices
+msgid ""
+"<i class=\"fa fa-download\" aria-hidden=\"true\"/> <span>Download "
+"invoice</span>"
+msgstr ""
+"<i class=\"fa fa-download\" aria-hidden=\"true\"/> <span>تحميل "
+"الفاتورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
+"                        <span>Order by prescription</span>"
+msgstr ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
+"                        <span>اطلب بالروشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
+"                    <strong>No prescription requests yet</strong>"
+msgstr ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/>\n"
+"                    <strong>لا توجد طلبات روشتة بعد</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_customer_invoices
+msgid ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/> <span>View "
+"invoice</span>"
+msgstr ""
+"<i class=\"fa fa-file-text-o\" aria-hidden=\"true\"/> <span>عرض "
+"الفاتورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n"
+"                                                <span>Upload image</span>"
+msgstr ""
+"<i class=\"fa fa-image\" aria-hidden=\"true\"/>\n"
+"                                                <span>رفع صورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "<i class=\"fa fa-map-marker\" aria-hidden=\"true\"/> <span>Track order</span>"
+msgstr "<i class=\"fa fa-map-marker\" aria-hidden=\"true\"/> <span>تتبع الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n"
+"                                    <span>Submit request</span>"
+msgstr ""
+"<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/>\n"
+"                                    <span>إرسال الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid ""
+"<i class=\"fa fa-plus\" aria-hidden=\"true\"/>\n"
+"                        <span>New request</span>"
+msgstr ""
+"<i class=\"fa fa-plus\" aria-hidden=\"true\"/>\n"
+"                        <span>طلب جديد</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
+"                                                <span>Change image</span>"
+msgstr ""
+"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
+"                                                <span>تغيير الصورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "<i class=\"fa fa-refresh\" aria-hidden=\"true\"/> <span>Retry payment</span>"
+msgstr "<i class=\"fa fa-refresh\" aria-hidden=\"true\"/> <span>إعادة المحاولة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid ""
+"<i class=\"fa fa-search\" aria-hidden=\"true\"/>\n"
+"                                <span>Track order</span>"
+msgstr ""
+"<i class=\"fa fa-search\" aria-hidden=\"true\"/>\n"
+"                                <span>تتبع الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid ""
+"<i class=\"fa fa-shopping-bag\" aria-hidden=\"true\"/> <span>Continue "
+"shopping</span>"
+msgstr ""
+"<i class=\"fa fa-shopping-bag\" aria-hidden=\"true\"/> <span>الاستمرار في "
+"التسوق</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n"
+"                                                <span>Remove image</span>"
+msgstr ""
+"<i class=\"fa fa-trash-o\" aria-hidden=\"true\"/>\n"
+"                                                <span>حذف الصورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.billing_address_list_abdin_skin
+msgid ""
+"<i class=\"oi oi-plus me-2\"/>\n"
+"                    <span>Add address</span>"
+msgstr ""
+"<i class=\"oi oi-plus me-2\"/>\n"
+"                    <span>إضافة عنوان</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_address_list_abdin_skin
+msgid ""
+"<i class=\"oi oi-plus me-2\"/>\n"
+"                <span>Add address</span>"
+msgstr ""
+"<i class=\"oi oi-plus me-2\"/>\n"
+"                <span>إضافة عنوان</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "<option value=\"\">Select governorate</option>"
+msgstr "<option value=\"\">اختار المحافظة</option>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid ""
+"<small class=\"form-text\">Include the street, building, floor, apartment, "
+"and a nearby landmark.</small>"
+msgstr ""
+"<small class=\"form-text\">مثال: الشارع، رقم العمارة، الدور، الشقة، وبجوار "
+"أي مكان معروف.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<small>Notes are reviewed by the pharmacy team and do not automatically "
+"change prescription contents.</small>"
+msgstr ""
+"<small>يراجع فريق الصيدلية الملاحظات، ولا تغير محتويات الروشتة "
+"تلقائيًا.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "<span class=\"ab-prescription-kicker\">Pharmacy service</span>"
+msgstr "<span class=\"ab-prescription-kicker\">خدمة الصيدلية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<span class=\"ab-prescription-upload-icon\">\n"
+"                                            <i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                        </span>\n"
+"                                        <strong>Upload or photograph the prescription</strong>"
+msgstr ""
+"<span class=\"ab-prescription-upload-icon\">\n"
+"                                            <i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                        </span>\n"
+"                                        <strong>ارفع الروشتة أو صوّرها</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "<span class=\"ab-storefront-address-step\">1</span>"
+msgstr "<span class=\"ab-storefront-address-step\">1</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "<span class=\"ab-storefront-address-step\">2</span>"
+msgstr "<span class=\"ab-storefront-address-step\">2</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.billing_address_list_abdin_skin
+msgid ""
+"<span class=\"ab-storefront-billing-toggle-copy\">\n"
+"                        <strong>Same as delivery address</strong>\n"
+"                        <small>Use the same details for the invoice</small>\n"
+"                    </span>"
+msgstr ""
+"<span class=\"ab-storefront-billing-toggle-copy\">\n"
+"                        <strong>مثل عنوان التوصيل</strong>\n"
+"                        <small>استخدم نفس البيانات للفاتورة</small>\n"
+"                    </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_method_abdin_skin
+msgid ""
+"<span class=\"o_wsale_delivery_price_badge ab-storefront-delivery-price text-muted\" name=\"price\">\n"
+"                        <small>Select to compute delivery rate</small>\n"
+"                    </span>"
+msgstr ""
+"<span class=\"o_wsale_delivery_price_badge ab-storefront-delivery-price text-muted\" name=\"price\">\n"
+"                        <small>اختر لحساب تكلفة التوصيل</small>\n"
+"                    </span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "<span>Account</span>"
+msgstr "<span>الحساب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_form_abdin_skin
+msgid "<span>Checkout</span>"
+msgstr "<span>إتمام الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "<span>Order reference</span>"
+msgstr "<span>رقم الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid "<span>Order support</span>"
+msgstr "<span>متابعة الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<span>Prescription request</span>"
+msgstr "<span>طلب روشتة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<strong>Customer notes</strong>"
+msgstr "<strong>ملاحظات العميل</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid ""
+"<strong>Your prescription request was received.</strong>\n"
+"                    <span>Our team will review it before confirmation.</span>"
+msgstr ""
+"<strong>تم استلام طلب الروشتة</strong>\n"
+"                    <span>سيقوم فريقنا بمراجعة الروشتة والتواصل معك لتأكيد الطلب.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Add address"
+msgstr "إضافة عنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.billing_address_list_abdin_skin
+msgid "Add billing address"
+msgstr "إضافة عنوان فوترة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_address_list_abdin_skin
+msgid "Add delivery address"
+msgstr "إضافة عنوان توصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Add internal staff notes. These notes are not shown to the customer."
+msgstr "أضف ملاحظات داخلية للفريق. لا تظهر هذه الملاحظات للعميل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Attention"
+msgstr "تنبيه"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_card_abdin_checkout_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.billing_address_list_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+msgid "Billing address"
+msgstr "عنوان الفوترة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__cancelled
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Cancelled"
+msgstr "تم الإلغاء"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Cash on delivery"
+msgstr "الدفع عند الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_form_abdin_skin
+msgid "Choose a delivery method for your order"
+msgstr "اختر طريقة التوصيل المناسبة لطلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "City"
+msgstr "المدينة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_method_abdin_skin
+msgid "Collect from a pickup point"
+msgstr "استلام من نقطة توصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__confirmed
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Confirmed"
+msgstr "تم التأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Contact details for order confirmation."
+msgstr "بيانات التواصل الأساسية لتأكيد الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.coupon_form_abdin_skin
+msgid "Continue shopping"
+msgstr "الاستمرار في التسوق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
+msgid "Continue to payment"
+msgstr "الانتقال إلى الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_navigation_actions_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_layout_abdin_cart_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_mobile_navigation_actions_abdin_skin
+msgid "Back to address"
+msgstr "العودة إلى العنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Create Quotation"
+msgstr "إنشاء عرض سعر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "Create prescription request"
+msgstr "إنشاء طلب روشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Current"
+msgstr "الحالة الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Customer information"
+msgstr "معلومات العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Customer instructions are shown here."
+msgstr "تظهر تعليمات العميل هنا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__delivered
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_card_abdin_checkout_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_address_list_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+msgid "Delivery address"
+msgstr "عنوان التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+msgid "Delivery and billing"
+msgstr "التوصيل والفوترة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Delivery area"
+msgstr "منطقة التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_form_abdin_skin
+msgid "Delivery method"
+msgstr "طريقة التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_method_abdin_skin
+msgid "Delivery to your address"
+msgstr "توصيل إلى عنوانك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Detailed address"
+msgstr "العنوان بالتفصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.coupon_form_abdin_skin
+msgid "Discount code"
+msgstr "كود الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_card_abdin_checkout_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Edit address"
+msgstr "تعديل العنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+msgid "Edit delivery and billing address"
+msgstr "تعديل عنوان التوصيل والفوترة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.coupon_form_abdin_skin
+msgid "Enter discount code"
+msgstr "أدخل كود الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Enter the details needed to reach your address."
+msgstr "اكتب بيانات كافية تساعد المندوب يوصل بسرعة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid "Enter the order reference and the mobile number used at checkout."
+msgstr "أدخل رقم الطلب ورقم الموبايل المستخدم عند الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Enter your city or area"
+msgstr "اكتب المدينة أو المنطقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Enter your full name"
+msgstr "اكتب الاسم الكامل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Expected delivery"
+msgstr "موعد التوصيل المتوقع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid ""
+"For privacy, the order reference alone is not enough to open tracking "
+"details."
+msgstr "لحماية خصوصيتك، يلزم إدخال رقم الموبايل مع رقم الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Full name"
+msgstr "الاسم الكامل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Governorate"
+msgstr "المحافظة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"Guests receive a secure tracking link after submission and can also track "
+"using the order reference plus mobile number."
+msgstr ""
+"ستحصل على رابط آمن للمتابعة بعد الإرسال، ويمكنك أيضًا استخدام رقم الطلب ورقم"
+" الموبايل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Internal Notes"
+msgstr "ملاحظات داخلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_customer_invoices
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "JPG, PNG, or WebP up to"
+msgstr "صورة JPG أو PNG أو WebP بحجم أقصى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Keep your order reference to track your order with your mobile number."
+msgstr "احتفظ برقم الطلب لتتبعه باستخدام رقم الموبايل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "MB."
+msgstr "ميجابايت."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Mobile number"
+msgstr "رقم الموبايل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__new
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "No payment required"
+msgstr "لا يوجد مبلغ مستحق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Order by prescription"
+msgstr "اطلب بالروشتة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Order cancelled"
+msgstr "تم إلغاء الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Order confirmed"
+msgstr "تم تأكيد طلبك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Order created"
+msgstr "تم استلام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid "Order reference"
+msgstr "رقم الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Order status"
+msgstr "حالة الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Order tracking"
+msgstr "تتبع الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Our Call Center team will contact you to confirm the order details."
+msgstr "سيتواصل معك فريق خدمة العملاء لتأكيد تفاصيل الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Our team is reviewing the prescription and preparing the next steps."
+msgstr "يقوم فريق الصيدلية بمراجعة الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__out_for_delivery
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Out for Delivery"
+msgstr "خرج للتوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Out for delivery"
+msgstr "خرج للتوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Partially shipped"
+msgstr "تم شحن جزء من الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment authorized"
+msgstr "تم تفويض الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment cancelled"
+msgstr "تم إلغاء الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Payment failed"
+msgstr "تعذر إتمام الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment initiated"
+msgstr "تم بدء الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Payment method"
+msgstr "طريقة الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_navigation_actions_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_layout_abdin_cart_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.checkout_mobile_navigation_actions_abdin_skin
+msgid "<span>Back to address</span>"
+msgstr "<span>العودة إلى العنوان</span>"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment pending"
+msgstr "في انتظار الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment processing"
+msgstr "جاري معالجة الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment successful"
+msgstr "تم الدفع بنجاح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+msgid "Pickup point"
+msgstr "نقطة الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your full name."
+msgstr "يرجى إدخال الاسم الكامل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your mobile number."
+msgstr "يرجى إدخال رقم موبايل صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please upload a JPG, PNG, or WebP image."
+msgstr "يرجى رفع صورة بصيغة JPG أو PNG أو WebP."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please upload a prescription image."
+msgstr "يرجى رفع صورة الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__preparing
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Preparing"
+msgstr "جارٍ التجهيز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Preparing order"
+msgstr "جاري تجهيز طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Prescription"
+msgstr "الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_prescription_order
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Prescription Order"
+msgstr "طلب روشتة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_prescription_order_ids
+msgid "Prescription Requests"
+msgstr "طلبات الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Prescription image"
+msgstr "صورة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Prescription notes"
+msgstr "ملاحظات الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Prescription received"
+msgstr "تم استلام الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "Prescription requests"
+msgstr "طلبات الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Recent prescription requests"
+msgstr "أحدث طلبات الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__rejected
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Rejected"
+msgstr "تعذر تنفيذ الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Return received"
+msgstr "تم استلام المرتجعات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Returned items were received by the warehouse."
+msgstr "تم استلام المنتجات المرتجعة في المخزن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "Review the prescription before creating a quotation."
+msgstr "يجب مراجعة الروشتة قبل إنشاء عرض سعر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Selected prescription preview"
+msgstr "معاينة صورة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Send to Call Center"
+msgstr "إرسال لخدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Shipped"
+msgstr "تم شحن طلبك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Some items have been dispatched; others are still being prepared."
+msgstr "تم شحن بعض المنتجات وجارٍ تجهيز باقي الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Start Preparing"
+msgstr "بدء التجهيز"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+msgid "Start Review"
+msgstr "بدء المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "Street, building, floor, apartment, and landmark"
+msgstr "الشارع، رقم المبنى، الدور، الشقة، وأي علامة مميزة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"Take a photo of your prescription or upload an existing image, and we will "
+"help prepare your request."
+msgstr "صوّر الروشتة أو ارفع صورتها وسنساعدك في تجهيز طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The Call Center confirms the order details with you."
+msgstr "تؤكد خدمة العملاء تفاصيل الطلب معك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order is confirmed by Abdin Pharmacies."
+msgstr "تم تأكيد طلبك من صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The order is prepared and delivered."
+msgstr "يتم تجهيز الطلب وتوصيله."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The payment could not be completed."
+msgstr "تعذر إتمام عملية الدفع."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The pharmacy team reviews it."
+msgstr "يراجع فريق الصيدلية الروشتة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"The prescription image is too large. Please upload an image up to 8 MB."
+msgstr "حجم صورة الروشتة كبير. يرجى رفع صورة لا تتجاوز 8 ميجابايت."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The sale order must belong to the same customer, company and website."
+msgstr "يجب أن يكون أمر البيع لنفس العميل والشركة والموقع."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "The selected file is not a valid image."
+msgstr "الملف المحدد ليس صورة صالحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The warehouse has completed dispatch."
+msgstr "تم إتمام خروج الطلب من المخزن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "This order was cancelled."
+msgstr "تم إلغاء هذا الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "This prescription request could not be processed."
+msgstr "تعذر تنفيذ طلب الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "This prescription request was cancelled."
+msgstr "تم إلغاء طلب الروشتة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid "Track order"
+msgstr "تتبع الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Track your order"
+msgstr "تتبع طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Unable to submit the prescription request. Please try again."
+msgstr "تعذر إرسال طلب الروشتة. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Under review"
+msgstr "جارٍ مراجعة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Upcoming"
+msgstr "قادم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid "Uploading..."
+msgstr "جارٍ الرفع..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Use a clear image that shows the full prescription."
+msgstr "استخدم صورة واضحة تظهر الروشتة كاملة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "View related order"
+msgstr "عرض الطلب المرتبط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
+msgid "Waiting for Call Center confirmation"
+msgstr "في انتظار تأكيد خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "We are preparing your request now."
+msgstr "نقوم بتجهيز طلبك الآن."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
+msgid "We could not verify an order with that reference and mobile number."
+msgstr "تعذر التحقق من طلب بهذه البيانات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "We receive your prescription."
+msgstr "نستلم الروشتة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "We received the prescription image successfully."
+msgstr "تم استلام صورة الروشتة بنجاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "We received your order details."
+msgstr "تم استلام بيانات طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "We use these details to confirm the prescription and secure tracking."
+msgstr "نستخدم هذه البيانات لتأكيد طلب الروشتة وتأمين متابعته."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "What happens next?"
+msgstr "ماذا يحدث بعد ذلك؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Write any extra instructions..."
+msgstr "اكتب أي تعليمات إضافية..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Your items are reserved for preparation."
+msgstr "تم حجز المنتجات لتجهيز طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Your order is confirmed"
+msgstr "تم تأكيد طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your order is on its way to you."
+msgstr "طلبك في الطريق إليك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+msgid "Your order was received"
+msgstr "تم استلام طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your prescription request is confirmed and will move to preparation."
+msgstr "تم تأكيد طلب الروشتة وسيتم تجهيزه."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescriptions
+msgid "Your prescription requests will appear here after submission."
+msgstr "ستظهر طلبات الروشتة هنا بعد إرسالها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_description
+msgid "Your request was delivered successfully."
+msgstr "تم تسليم طلبك بنجاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "confirmed"
+msgstr "confirmed"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+msgid "example@email.com"
+msgstr "example@email.com"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "preparing"
+msgstr "preparing"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "shipped"
+msgstr "shipped"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "<span>Order</span>"
+msgstr "<span>الطلب</span>"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Home"
+msgstr "الرئيسية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Order"
+msgstr "الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "Manage preparation and delivery on the linked sale order."
+msgstr "تتم إدارة التجهيز والتوصيل من أمر البيع المرتبط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Shop by Category"
+msgstr "تسوق حسب الفئة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Shop by Need"
+msgstr "تسوق حسب احتياجك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Amount due on delivery"
+msgstr "المبلغ المستحق عند الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Back to home"
+msgstr "العودة إلى الرئيسية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Back to payment"
+msgstr "العودة إلى الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Back to store"
+msgstr "العودة إلى المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Cart"
+msgstr "السلة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Confirmation"
+msgstr "التأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Continue to confirmation"
+msgstr "المتابعة إلى التأكيد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "Copied"
+msgstr "تم النسخ"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Copy"
+msgstr "نسخ"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Delivery"
+msgstr "التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Need help with this payment? Our customer support team is ready to help."
+msgstr "هل تحتاج إلى مساعدة في هذه الدفعة؟ فريق خدمة العملاء جاهز لمساعدتك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Order number"
+msgstr "رقم الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Order confirmed, pay on delivery"
+msgstr "تم تأكيد الطلب والدفع عند الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Order received"
+msgstr "تم استلام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Our customer support team will follow up on your order until delivery."
+msgstr "سيتابع فريق خدمة العملاء طلبك حتى يتم التوصيل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Paid amount"
+msgstr "المبلغ المدفوع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment"
+msgstr "الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment amount"
+msgstr "مبلغ الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment confirmation"
+msgstr "تأكيد الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment confirmed successfully"
+msgstr "تم تأكيد الدفع بنجاح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment details"
+msgstr "تفاصيل الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment is under review"
+msgstr "الدفع قيد المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment reference"
+msgstr "رقم العملية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment status"
+msgstr "حالة الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Payment was not completed"
+msgstr "لم تكتمل عملية الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Pay on delivery"
+msgstr "الدفع عند الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Preparing your order"
+msgstr "تجهيز طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Shipping"
+msgstr "شحن الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Track order status"
+msgstr "تتبع حالة الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We are following your order until it reaches you safely."
+msgstr "نحن نتابع طلبك حتى يصلك بأمان."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We are still checking the latest payment update. You should receive confirmation shortly."
+msgstr "ما زلنا نتحقق من آخر تحديث لعملية الدفع. من المفترض أن يصلك التأكيد قريبًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We could not complete the payment. You can try again or choose another payment method."
+msgstr "تعذر إتمام عملية الدفع. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We received the payment attempt, but it is still waiting for final confirmation. We will update your order status as soon as the review is complete."
+msgstr "تم استلام عملية الدفع، لكنها ما زالت بانتظار التأكيد النهائي. سنقوم بتحديث حالة طلبك بمجرد اكتمال المراجعة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Your order is secured with Abdin Pharmacy and will move through the normal order tracking flow."
+msgstr "تم تأمين طلبك مع صيدليات عبدين وسيتم متابعته من خلال مسار تتبع الطلب المعتاد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered."
+msgstr "تم استلام طلبك بنجاح. لم يتم تحصيل أي دفع إلكتروني؛ سيتم الدفع عند استلام الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Your payment is on its way"
+msgstr "عملية الدفع قيد المتابعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Your payment was processed successfully, and your order is now being prepared."
+msgstr "تمت معالجة دفعتك بنجاح، وطلبك الآن قيد التجهيز."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Pro-Forma Order"
+msgstr "طلب مبدئي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Quotation / Order Confirmation"
+msgstr "عرض سعر / تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Sales Order / Order Confirmation"
+msgstr "أمر بيع / تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Order Number"
+msgstr "رقم الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Order Date"
+msgstr "تاريخ الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Customer Information"
+msgstr "معلومات العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Order Information"
+msgstr "معلومات الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Customer Reference"
+msgstr "مرجع العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Delivery Information"
+msgstr "معلومات التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Shipping Cost"
+msgstr "تكلفة التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Order Details"
+msgstr "تفاصيل الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Order Summary"
+msgstr "ملخص الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Subtotal"
+msgstr "المجموع الفرعي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Payment Terms"
+msgstr "شروط السداد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Terms and Conditions"
+msgstr "الشروط والأحكام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "View terms and conditions"
+msgstr "عرض الشروط والأحكام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Care, every day."
+msgstr "رعاية صحية باهتمام، كل يوم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Customer support"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Page"
+msgstr "صفحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "of"
+msgstr "من"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Discount"
+msgstr "الخصم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Tax"
+msgstr "الضريبة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Rounding"
+msgstr "التقريب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Salesperson"
+msgstr "مندوب المبيعات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Expiration"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Delivery Date"
+msgstr "تاريخ التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+msgid "Tax ID"
+msgstr "الرقم الضريبي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_form_abdin_skin
+msgid "Available payment methods"
+msgstr "طرق الدفع المتاحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_form_abdin_skin
+msgid "Select one method to continue."
+msgstr "اختر طريقة واحدة للمتابعة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_form_abdin_skin
+msgid "Other payment methods"
+msgstr "طرق دفع أخرى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_method_form_abdin_skin
+msgid "Choose this method to complete your order."
+msgstr "اختر هذه الطريقة لإتمام طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_method_form_abdin_skin
+msgid "<small>Choose this method to complete your order.</small>"
+msgstr "<small>اختر هذه الطريقة لإتمام طلبك.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n"
+"                                        <span>Call 19036</span>"
+msgstr ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n"
+"                                        <span>اتصل بـ 19036</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n"
+"                                    <span>19036</span>"
+msgstr ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/>\n"
+"                                    <span>19036</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"<i class=\"fa fa-shopping-bag\" aria-hidden=\"true\"/>\n"
+"                                        <span>Back to store</span>"
+msgstr ""
+"<i class=\"fa fa-shopping-bag\" aria-hidden=\"true\"/>\n"
+"                                        <span>العودة إلى المتجر</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "<span class=\"ab-payment-status-kicker\">Payment status</span>"
+msgstr "<span class=\"ab-payment-status-kicker\">حالة الدفع</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"<span class=\"is-complete\">Cart</span>\n"
+"                                <span class=\"is-complete\">Address</span>"
+msgstr ""
+"<span class=\"is-complete\">السلة</span>\n"
+"                                <span class=\"is-complete\">العنوان</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"<span class=\"is-complete\">Cart</span>\n"
+"                                <span class=\"is-complete\">Address</span>\n"
+"                                <span class=\"is-current\">Payment</span>\n"
+"                                <span>Confirmation</span>"
+msgstr ""
+"<span class=\"is-complete\">السلة</span>\n"
+"                                <span class=\"is-complete\">العنوان</span>\n"
+"                                <span class=\"is-current\">الدفع</span>\n"
+"                                <span>التأكيد</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "<i class=\"fa fa-angle-left\" aria-hidden=\"true\"/> Back to Contact Us"
+msgstr "<i class=\"fa fa-angle-left\" aria-hidden=\"true\"/> العودة إلى تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"<i class=\"fa fa-lock\" aria-hidden=\"true\"/> Your details are shared only "
+"with the team handling your inquiry."
+msgstr ""
+"<i class=\"fa fa-lock\" aria-hidden=\"true\"/> تُشارك بياناتك فقط مع الفريق "
+"المسؤول عن طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "<i class=\"fa fa-map-marker\" aria-hidden=\"true\"/> Track an existing order"
+msgstr "<i class=\"fa fa-map-marker\" aria-hidden=\"true\"/> تتبع طلبك الحالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/> Send message"
+msgstr "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/> إرسال الرسالة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/> Submit partnership "
+"request"
+msgstr "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/> إرسال طلب التعاون"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "<span class=\"ab-contact-eyebrow\">Abdin Pharmacies</span>"
+msgstr "<span class=\"ab-contact-eyebrow\">صيدليات عابدين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "<span class=\"ab-contact-eyebrow\">We are listening</span>"
+msgstr "<span class=\"ab-contact-eyebrow\">نحن هنا لمساعدتك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"<span class=\"ab-contact-link\">Call <bdi>19036</bdi> <i class=\"fa fa-"
+"phone\" aria-hidden=\"true\"/></span>"
+msgstr ""
+"<span class=\"ab-contact-link\">اتصل على <bdi>19036</bdi> <i class=\"fa fa-"
+"phone\" aria-hidden=\"true\"/></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"<span class=\"ab-contact-link\">Explore partnerships <i class=\"fa fa-"
+"external-link\" aria-hidden=\"true\"/></span>"
+msgstr ""
+"<span class=\"ab-contact-link\">فرص التعاون <i class=\"fa fa-external-link\""
+" aria-hidden=\"true\"/></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"<span class=\"ab-contact-link\">Send a message <i class=\"fa fa-angle-down\""
+" aria-hidden=\"true\"/></span>"
+msgstr ""
+"<span class=\"ab-contact-link\">أرسل رسالة <i class=\"fa fa-angle-down\" "
+"aria-hidden=\"true\"/></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"<span><i class=\"fa fa-bullhorn\" aria-hidden=\"true\"/> Advertising &amp; "
+"Marketing</span>"
+msgstr ""
+"<span><i class=\"fa fa-bullhorn\" aria-hidden=\"true\"/> الإعلانات "
+"والتسويق</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "<span><i class=\"fa fa-comment-o\" aria-hidden=\"true\"/> Other</span>"
+msgstr "<span><i class=\"fa fa-comment-o\" aria-hidden=\"true\"/> أخرى</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"<span><i class=\"fa fa-cubes\" aria-hidden=\"true\"/> Product "
+"Partnership</span>"
+msgstr "<span><i class=\"fa fa-cubes\" aria-hidden=\"true\"/> تعاون المنتجات</span>"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_state
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_type_icon
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Additional Details"
+msgstr "تفاصيل إضافية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__partnership_type__marketing
+msgid "Advertising & Marketing"
+msgstr "الإعلانات والتسويق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Advertising &amp; Marketing"
+msgstr "الإعلانات والتسويق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_attachment_count
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_success_content
+msgid "Back to Contact Us"
+msgstr "العودة إلى تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_success_content
+msgid "Back to homepage"
+msgstr "العودة إلى الرئيسية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__brand_name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Brand / Product Name"
+msgstr "اسم العلامة التجارية / المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_footer_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Business &amp; Partnerships"
+msgstr "للشركات والشراكات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_business_partnership
+msgid "Business Partnership"
+msgstr "شراكة تجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,website_form_label:ab_ecommerce_storefront.model_ab_business_partnership
+msgid "Business Partnership Request"
+msgstr "طلب شراكة تجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.business_partnership_action
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.business_partnership_menu
+msgid "Business Partnerships"
+msgstr "الشراكات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Business Partnerships | Abdin Pharmacies"
+msgstr "الشركات والشراكات التجارية | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Choose a partnership type."
+msgstr "يرجى اختيار نوع التعاون."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Choose an internal responsible user with access to this company."
+msgstr "اختر مسؤولاً داخلياً لديه صلاحية الوصول إلى هذه الشركة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__city
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "City / Governorate"
+msgstr "المدينة / المحافظة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Company Name"
+msgstr "اسم الشركة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Company and Contact"
+msgstr "بيانات الشركة والتواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Company fax"
+msgstr "فاكس الشركة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__contact_name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Contact Person"
+msgstr "اسم مسؤول التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Contact options"
+msgstr "خيارات التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__contacted
+msgid "Contacted"
+msgstr "تم التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Customer Support"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Email Address"
+msgstr "البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Enter a complete website address starting with https:// or http://."
+msgstr "يرجى إدخال رابط كامل يبدأ بـ https:// أو http://."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Enter a valid email address."
+msgstr "يرجى إدخال بريد إلكتروني صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Enter a valid phone number, including the country code when needed."
+msgstr "يرجى إدخال رقم هاتف صحيح، مع رمز الدولة عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"Explore collaboration opportunities <i class=\"fa fa-external-link\" aria-"
+"hidden=\"true\"/>"
+msgstr "تعرّف على فرص التعاون <i class=\"fa fa-external-link\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_follower_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_follower_ids
+msgid "Followers"
+msgstr "المتابعين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_partner_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعين (الشركاء)"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__activity_type_icon
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة من Font awesome مثال: fa-tasks"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "For companies and brands looking to work with us."
+msgstr "للشركات والعلامات التجارية الراغبة في التعاون معنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"For companies and brands wishing to advertise or promote their products and "
+"services through Abdin Pharmacies channels."
+msgstr ""
+"للشركات والعلامات التجارية الراغبة في الإعلان أو الترويج لمنتجاتها وخدماتها "
+"عبر قنوات صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"For companies wishing to offer or supply their products through Abdin "
+"Pharmacies and our platforms."
+msgstr ""
+"للشركات التي ترغب في عرض أو توفير منتجاتها من خلال صيدليات عابدين ومنصاتها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "For general questions and support."
+msgstr "للاستفسارات العامة والدعم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "For help with orders and services."
+msgstr "للمساعدة بخصوص الطلبات والخدمات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "General Inquiries"
+msgstr "الاستفسارات العامة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__has_message
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "How can we help?"
+msgstr "كيف يمكننا مساعدتك؟"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__activity_exception_icon
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "الأيقونة للإشارة إلى النشاط المستثنى."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا كان محددًا، فهناك رسائل جديدة عليك رؤيتها."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_sms_error
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا كان محددًا، فقد حدث خطأ في تسليم بعض الرسائل."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__review
+msgid "In Review"
+msgstr "قيد المراجعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_form
+msgid "Inquiry"
+msgstr "الاستفسار"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_is_follower
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__job_title
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Job Title / Role"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسائل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطاتي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "My Inquiries"
+msgstr "طلباتي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_summary
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_type_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction_counter
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب اتخاذ إجراء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error_counter
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل الحادث بها خطأ في التسليم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__partnership_type__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"Partner with Abdin Pharmacies in advertising, marketing, and product "
+"availability. Submit your business inquiry to our partnerships team."
+msgstr ""
+"تعاون مع صيدليات عابدين في مجالات الإعلان والتسويق وإتاحة المنتجات. أرسل "
+"طلبك إلى فريق الشراكات التجارية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_form
+msgid "Partnership"
+msgstr "الشراكة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__partnership_type
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "Partnership Type"
+msgstr "نوع الشراكة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Partnership opportunities"
+msgstr "فرص الشراكة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__phone
+msgid "Phone"
+msgstr "رقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Please complete the required fields."
+msgstr "يرجى استكمال الحقول المطلوبة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/contact.py:0
+msgid "Please enter text in the form fields. File uploads are not supported."
+msgstr "يرجى إدخال نص في حقول النموذج. رفع الملفات غير متاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Please provide at least 10 characters describing your request."
+msgstr "يرجى وصف طلبك في 10 أحرف على الأقل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "Please shorten your entry."
+msgstr "يرجى اختصار النص المدخل."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__product_category
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Product Category"
+msgstr "فئة المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__partnership_type__product
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Product Partnership"
+msgstr "تعاون المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__inquiry
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Proposed Collaboration"
+msgstr "التعاون المقترح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__qualified
+msgid "Qualified"
+msgstr "مؤهل للتعاون"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__rating_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Representing a company or brand?"
+msgstr "هل تمثل شركة أو علامة تجارية؟"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__user_id
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "Responsible"
+msgstr "المسؤول"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_sms_error
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسائل النصية القصيرة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Send us your question and our team will get back to you."
+msgstr "أرسل استفسارك وسيتواصل معك فريقنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Start a conversation"
+msgstr "لنتعرف على فرص التعاون"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__state
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__state
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__activity_state
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الأنشطة المعتمدة على الحالة\n"
+"المتأخرة: تاريخ الاستحقاق مر\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"المخطط: الأنشطة المستقبلية."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__create_date
+msgid "Submission Date"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"Submit a partnership request <i class=\"fa fa-angle-down\" aria-"
+"hidden=\"true\"/>"
+msgstr "تقديم طلب تعاون <i class=\"fa fa-angle-down\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"Tell us about your company and your proposal. Our business team will review "
+"your request and contact you."
+msgstr "عرّفنا بشركتك ومقترحك. سيقوم فريق الشراكات بمراجعة طلبك والتواصل معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_thanks_abdin
+msgid "Thank you for contacting us"
+msgstr "شكراً لتواصلك معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships_thanks
+msgid "Thank you for your interest in partnering with Abdin Pharmacies"
+msgstr "شكراً لاهتمامك بالتعاون مع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships_thanks
+msgid "Thank you for your partnership request"
+msgstr "شكراً لطلب التعاون"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/business_partnership.py:0
+msgid "The website must belong to the inquiry company."
+msgstr "يجب أن يتبع الموقع الإلكتروني شركة الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__activity_exception_decoration
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط المستثنى في السجل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+msgid "Unassigned"
+msgstr "بدون مسؤول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"We are happy to hear from you. For questions about our services or a helping"
+" hand, the Abdin Pharmacies team is here for you."
+msgstr ""
+"يسعدنا التواصل معك. سواء كان لديك استفسار عن خدماتنا أو طلب مساعدة، فريق "
+"صيدليات عابدين هنا لمساعدتك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/contact.py:0
+msgid "We could not accept this request. Please try again later."
+msgstr "تعذر قبول هذا الطلب. يرجى المحاولة لاحقاً."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_success_content
+msgid ""
+"We have received your request. Our team will review it and contact you soon."
+msgstr ""
+"تم استلام طلبك بنجاح، وسيقوم فريقنا المختص بمراجعته والتواصل معك قريباً."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"We welcome companies and brands interested in working with Abdin Pharmacies "
+"on advertising, promotion, and product availability."
+msgstr ""
+"نرحب بالشركات والعلامات التجارية الراغبة في التعاون مع صيدليات عابدين في "
+"مجالات الإعلان والترويج وإتاحة المنتجات."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_url
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Website / Social Media"
+msgstr "الموقع الإلكتروني / رابط التواصل الاجتماعي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_message_ids
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__website_message_ids
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
+msgid "Website communication history"
+msgstr "سجل تواصل الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"What kind of partnership are you looking for? <span "
+"class=\"s_website_form_mark\" aria-hidden=\"true\">*</span>"
+msgstr ""
+"ما نوع التعاون الذي تبحث عنه؟ <span class=\"s_website_form_mark\" aria-"
+"hidden=\"true\">*</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"Work with us on advertising, marketing, and making products available "
+"through Abdin Pharmacies."
+msgstr ""
+"نتعاون مع الشركات والعلامات التجارية في مجالات الإعلان والتسويق وإتاحة "
+"المنتجات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Your Proposal"
+msgstr "مقترح التعاون"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/contact.py:0
+msgid "Your session expired. Refresh the page and try again."
+msgstr "انتهت صلاحية الجلسة. يرجى تحديث الصفحة والمحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Abdin Pharmacies team is ready to help"
+msgstr "فريق صيدليات عابدين جاهز لمساعدتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Contact Abdin Pharmacies"
+msgstr "تواصل مع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Current status"
+msgstr "الحالة الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Delivery destination"
+msgstr "وجهة التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Offer valid until"
+msgstr "العرض صالح حتى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Order details"
+msgstr "تفاصيل الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Order summary"
+msgstr "ملخص الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Order total"
+msgstr "إجمالي الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Payment terms"
+msgstr "شروط الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Send a message about this order and our team will follow up with you."
+msgstr "أرسل رسالة بخصوص هذا الطلب وسيتابع فريقنا معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Taxes"
+msgstr "الضرائب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Terms and conditions"
+msgstr "الشروط والأحكام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Track your pharmacy order"
+msgstr "تتبع طلبك من الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Unit price"
+msgstr "سعر الوحدة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Useful files"
+msgstr "ملفات مفيدة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "What you ordered"
+msgstr "محتويات طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Your order"
+msgstr "طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Your order journey"
+msgstr "رحلة طلبك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Your products"
+msgstr "منتجاتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Your reference"
+msgstr "مرجعك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Your order has left the pharmacy and is on the way."
+msgstr "خرج طلبك من الصيدلية وهو في الطريق إليك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Your order has been delivered."
+msgstr "تم تسليم طلبك."

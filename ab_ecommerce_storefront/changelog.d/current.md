@@ -1,242 +1,124 @@
 Recent commits:
 
-Commit: `3b024b1`
+Commit: `48a14d9`
 Author: Mohamed Fawzy
-Date: 2026-09-03 14:24:14 +0300
-Subject: ab_ecommerce_storefront/fix: refine search and account profile polish
+Date: 2026-09-13 12:46:28 +0300
+Subject: ab_ecommerce_storefront/feat: organize the address page and data collected from customer
 
 User-facing changes:
 
-- Refine storefront search presentation.
-- Polish the account profile empty-address state.
+- Simplify checkout customer and address information.
+- Make email and ZIP optional in the storefront address validation.
 
 Files changed:
 
-- `ab_ecommerce_storefront/changelog.d/current.md`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
-- `ab_ecommerce_storefront/views/layout.xml`
-- `ab_ecommerce_storefront/views/portal.xml`
-
-Current changes before commit:
-
-- Remove the duplicated light input layer from the storefront search bar while keeping the custom search container stroke and Odoo search behavior.
-- Refine the no-address account empty state into a centered vertical card and send the CTA directly to the add-address form.
-- Consolidate homepage, shop, category, search, wishlist, and recommendation tiles into one reusable storefront product-card template.
-- Use the best available product image size on storefront cards and fall back to the grayscale website logo instead of Odoo's default missing-image placeholder.
-- Clamp the shop price slider to the current highest available price after category, brand, and attribute filters are applied.
-- Keep the selected price slider track highlighted in orange from the left side, including Arabic and RTL storefront pages.
-- Present deduplicated Abdin package levels as customer-facing pack information without exposing internal large, medium, and small unit fields.
-- Enable alternate unit selection only when descriptive Abdin packaging has a verified matching native Odoo sale UoM and conversion ratio.
-- Add data-driven quick-add, unavailable, configurable, discounted, quantity, loading, success, error, and wishlist states.
-- Reuse Odoo's cart service and wishlist RPC routes so selected quantity, verified UoM, cart totals, and persisted wishlist state remain synchronized.
-- Include the module in Odoo's frontend translation catalog so JavaScript loading, success, error, and wishlist feedback follow the active language.
-- Modernize product-card density, media proportions, controls, and responsive behavior without changing product, cart, or pricing records.
-- Restore the product fly-to-favorite animation after the new product-card wishlist RPC succeeds.
-- Keep the custom cart toast/fly feedback connected to the redesigned quick-add button.
-- Present the product-card CTA as a bottom split action with a `Buy now` label and a separate cart icon cell.
-- Align the split `Buy now` CTA and cart icon colors with the Abdeen green storefront palette.
-- Make product-card wishlist fly feedback target the visible header wishlist action reliably across breakpoints.
-- Add a lightweight typewriter placeholder to storefront product search inputs using realistic pharmacy discovery prompts.
-- Stop the animated search placeholder on focus, click, keyboard input, or entered text, and resume it only after an empty blur.
-- Preserve Odoo search values, autocomplete attributes, form actions, and reduced-motion accessibility fallback.
-- Replace the add-to-cart toast logo with a small animated product-into-cart motion graphic.
-- Keep wishlist toast media unchanged while using the cart-specific animation only for cart additions.
-- Avoid frontend loader failures from the search typewriter by resolving placeholder phrases after the page is ready.
-- Keep the search placeholder prefix fixed while animating only the discovery keyword and appending trailing dots.
-- Add an animated total-price display to the product detail page that follows Odoo's live unit price and selected quantity.
-- Render each changed numeric character as an independent vertical roller while keeping currency symbols and separators static.
-- Make increasing totals roll upward and decreasing totals roll downward with a smoother easing curve.
-- Preserve RTL numeric order, reduced-motion behavior, manual quantity changes, variant changes, and existing Add to Cart behavior.
-- Add a compact sticky storefront shopping header that keeps search, cart, and category navigation accessible while scrolling.
-- Collapse lower-priority header controls in the sticky state while preserving the live Odoo cart badge and search form.
-- Expose the existing category navigation as a compact horizontally scrollable mobile row without hardcoded categories.
-- Keep the live wishlist action beside the cart in the compact sticky mobile header.
-- Stabilize sticky header state changes with a measured placeholder and hysteresis to avoid flicker near the scroll boundary.
-- Replace the duplicated footer Shop column with About Abdin, Customer Service, and Help link groups.
-- Improve narrow mobile cart and wishlist badge placement so non-zero counters are not clipped.
-- Add a floating customer support widget with WhatsApp, Messenger, and hotline actions using the requested contact destinations.
-- Keep the support widget responsive, RTL-ready, keyboard closable, and offset from mobile bottom controls.
-- Animate support options as sequential bubble reveals from the floating button, with RTL and reduced-motion fallbacks.
-- Rotate the floating support toggle between chat and close states with a fast icon swap instead of a slow flip.
-- Close floating support bubbles in reverse sequence and lock toggle colors to avoid dark icon flashes during state changes.
-- Remove the extra closing spin so the support toggle rotates directly back to the chat state.
-- Match desktop home and category navigation colors to the softer mobile chip style instead of white-on-green.
-- Smooth the sticky header transition with a subtle drop-in motion from above when entering scroll state.
-- Convert shop category/subcategory navigation into expandable accordion groups on desktop and mobile filter panels.
-- Remove the desktop shop filter rail's internal scroll while keeping the mobile and tablet filter panel behavior unchanged below 992px.
-- Remove header navigation inner scrolling from 767px upward so the category dropdown opens outside the nav row instead of inside a clipped overflow area.
-- Restore the desktop category toggle to its closed chip colors after closing the dropdown by separating closed, focus, and open states.
-- Restore the category toggle orange underline as a hover-only affordance, with the menu opening directly below the trigger.
-- Replace the hardcoded homepage carousel slides with active records from `ab_website_carousel_slide`, preserving sequence order and per-slide CTA links.
-- Render homepage carousel images as contained non-clickable image layers instead of cropped clickable backgrounds.
-- Use the native sliding carousel transition and remove storefront background-image classes from carousel slides so horizontal navigation does not distort the slide image layer.
-- Render one visible carousel indicator per active admin slide, including the first `data-bs-slide-to="0"` indicator.
-- Stabilize carousel pointer swipe and horizontal trackpad navigation with a scoped transition lock so swiping back and forth does not leave the carousel stuck.
-- Make desktop mouse drag and mobile horizontal swipe navigate in the same direction as the gesture while preserving natural vertical page scrolling.
-- Reverse the carousel drag decision on Arabic/RTL pages so right and left drags follow the storefront reading direction.
-- Apply per-slide admin CTA X/Y position and width values to the frontend CTA overlay.
-- Resolve each CTA position against the visible contained image and use physical centering in RTL layouts so backend placement remains identical across frontend screen sizes.
-- Keep frontend carousel CTA placement coordinates left-to-right so RTL pages match the backend placement preview.
-- Render the carousel CTA as a separate overlay, either a normal text button or an uploaded clickable image button.
-- Scale Image Button artwork from the administrator's CTA Width while preserving its configured center position across responsive layouts.
-- Render Link-style carousel slides as full-image links so a CTA drawn anywhere in the uploaded artwork leads to the configured destination.
-- Preserve carousel drag handling when a gesture starts over a full-image slide link while allowing normal clicks to follow its destination.
-- Scale text CTA font size responsively while keeping its center exactly aligned to the administrator's image-relative X/Y position.
-- Honor the administrator's exact text CTA width, including compact widths, while wrapping long labels inside the button.
-- Preserve native vertical page scrolling while keeping horizontal carousel swipe behavior.
-- Add `ab_website_admin_content` as a storefront dependency so the homepage carousel model is available when the storefront renders.
-- Reorder the homepage so Offers appear before the service trust strip, then continue with Best Sellers, Feedback, Why Abdin, Testimonials, and CTA/Hotline.
-- Keep the existing category and promo content, merging promo cards into the CTA/Hotline area while adding Feedback, Why Abdin, and Testimonials after Best Sellers.
-- Split product-card purchase actions so `Buy now` opens the existing cart without adding the displayed product, while the cart icon remains the only quick-add control.
-- Show contextual cart guidance only for customers arriving through `Buy now`, explaining that checkout includes every current cart line.
-- Reuse Odoo's native cart wishlist action to move unwanted products to Favorites and remove them from the active cart without a duplicate cart workflow.
-- Relabel the native cart action as `Move to Favorites` on desktop and mobile, with matching Arabic translations.
-- Resize the product-card `Buy now` and cart icon controls to a stable 44px height, keeping the icon button square across responsive widths.
-
-Files changed:
-
-- `ab_ecommerce_storefront/__manifest__.py`
-- `ab_ecommerce_storefront/models/__init__.py`
-- `ab_ecommerce_storefront/controllers/__init__.py`
 - `ab_ecommerce_storefront/controllers/shop.py`
-- `ab_ecommerce_storefront/models/ir_http.py`
-- `ab_ecommerce_storefront/models/product_template.py`
-- `ab_ecommerce_storefront/models/website.py`
-- `ab_ecommerce_storefront/static/src/js/animated_price.js`
-- `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
-- `ab_ecommerce_storefront/static/src/js/hero_carousel.js`
-- `ab_ecommerce_storefront/static/src/js/support_widget.js`
-- `ab_ecommerce_storefront/static/src/js/product_card.js`
-- `ab_ecommerce_storefront/static/src/js/search_typewriter.js`
-- `ab_ecommerce_storefront/static/src/js/shop_category_accordion.js`
-- `ab_ecommerce_storefront/static/src/js/product_image_zoom.js`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
 - `ab_ecommerce_storefront/views/cart.xml`
 - `ab_ecommerce_storefront/views/layout.xml`
-- `ab_ecommerce_storefront/views/homepage.xml`
-- `ab_ecommerce_storefront/views/product.xml`
-- `ab_ecommerce_storefront/views/shop.xml`
-- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
-- `ab_ecommerce_storefront/i18n/ar.po`
-- `ab_ecommerce_storefront/i18n/ar_001.po`
-- `ab_ecommerce_storefront/changelog.d/current.md`
 
-Header refactor updates in this working tree:
+Commit: `d4d5023`
+Author: Mohamed Fawzy
+Date: 2026-09-13 12:00:51 +0300
+Subject: ab_ecommerce_storefront/fix: stabilize storefront product and sticky interactions
 
-- Simplify the storefront header hierarchy to logo, native Odoo search, account, and native Odoo cart in the main shopping row.
-- Replace duplicated category dropdown plus horizontal category links with one dynamic category mega menu using existing Odoo website category routes.
-- Add a Prescription Order storefront CTA that points to the existing contact route because no dedicated prescription upload/order route exists in the local addons.
-- Move lower-priority location, wishlist, language, and contact controls out of the main shopping row and into the utility/account/mobile menu surfaces.
-- Keep mobile on the native Odoo search snippet instead of the previous custom overlay search panel, preserving search form action and autocomplete attributes.
-- Refactor sticky behavior so CSS owns sticky positioning and JavaScript only toggles compact visual state.
-- Redesign the sticky state into a compact floating glass navigation surface instead of a full-width condensed bar.
-- Morph the existing header controls by animating spacing, radius, transparency, shadow, search, actions, and category navigation.
-- Improve the sticky fallback scroll listener with a passive requestAnimationFrame update.
-- Fix the Sass native `min()` unit conflict that caused Odoo to serve fallback CSS with the red asset-error banner.
-- Prevent closed category mega-menu markup from causing desktop horizontal overflow.
-- Restore the desktop non-sticky header to the full storefront layout while preserving the floating glass sticky state.
-- Align desktop category navigation to the start side of the active language direction, right in Arabic and left in English.
-- Restore the original top announcement strip sizing, green gradient background, and desktop header utility placement from the pre-refactor layout.
-- Restore the pre-refactor mobile and tablet header below 992px with the menu inside the action row, inline search/location below it, and no normal mobile category strip.
-- Keep the green announcement strip visible below 992px in the normal header state, matching the pre-refactor layout.
-- Change the sticky header morph so the sticky surface stays attached to the viewport top and only the lower corners become rounded.
-- Reduce the storefront navigation strip to Home, Offers, and Prescription Order, removing category links from that navbar.
-- Show the same Home, Offers, and Prescription Order navigation strip in the normal mobile and tablet header below 992px.
-- Restore the desktop-only Shop by Category dropdown in the storefront navigation using the pre-refactor menu structure.
-- Show the Shop by Category dropdown from 767px upward while keeping it hidden on narrower mobile screens.
-- Convert remaining storefront UI copy to English source strings and keep Arabic translations in both Arabic catalogs.
-- Add translation-safe location, authentication, avatar, search, navigation, empty-state, and filter dialog labels.
-- Normalize the Home and Shop by Category active colors to green backgrounds with white text and remove the extra search backing layer.
-- Smooth the header-to-sticky transition with scoped enter and exit morph animations that preserve the top-attached sticky shape.
-- Fix Shop by Category dropdown placement and state colors so the menu opens directly below the trigger and closed navigation items return to their non-active appearance.
-- Restrict the Shop by Category orange underline to hover only so it does not remain visible after closing the dropdown.
-- Split the storefront navigation discovery dropdown into Shop by Category and Shop by Need menus with pharmacy-specific links and Arabic translations.
-- Refresh the module POT and Arabic catalogs so Odoo 19 imports Python, QWeb, and JavaScript translations consistently at runtime.
-- Route dynamic header, location, category, and need labels through runtime language-aware translation helpers.
-- Clear storefront product search autocomplete results immediately when the customer empties the search field.
+User-facing changes:
 
-Files changed for this header refactor:
+- Stabilize product actions, price filtering, and sticky navigation.
 
-- `ab_ecommerce_storefront/__manifest__.py`
-- `ab_ecommerce_storefront/views/layout.xml`
-- `ab_ecommerce_storefront/models/website.py`
-- `ab_ecommerce_storefront/static/src/js/search_autocomplete_clear.js`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/js/price_range_guard.js`
+- `ab_ecommerce_storefront/static/src/js/product_card.js`
 - `ab_ecommerce_storefront/static/src/js/sticky_shop_nav.js`
-- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
-- `ab_ecommerce_storefront/i18n/ar.po`
-- `ab_ecommerce_storefront/i18n/ar_001.po`
 
-Admin storefront login fix in this working tree:
+Current changes before commit:
 
-- Allow the storefront login form to submit username/email-style logins such as `admin` without blocking them with phone-number validation.
-- Preserve username/email-style login values during submit instead of normalizing them through the phone formatter.
-- Keep phone-only validation for signup and password-reset flows.
-- Verified a direct `/web/login` POST with `admin` redirects to `/odoo`.
+- Make the original native mail.mail form the first visible Contact Us content. Remove the introductory hero, General Inquiries and Customer Support tiles, and the form-side introduction; place Business & Partnerships below the centered form, preserving validation and the branded success layout.
+- Add a dedicated Business & Partnerships page with type-first progressive fields, Arabic/English content, SEO metadata, and a small footer link; do not add it to the primary shopping navigation.
+- Store business submissions in ab_business_partnership, separate from general emails, with Website admin kanban/list/form/search views, responsibility, workflow stages, internal notes, chatter, and activities. CRM remains uninstalled and is not required.
+- Restrict partnership management to existing Website Editor and Designer users and allowed companies. Deny public/portal direct record access; whitelist submitted fields, enforce guest CSRF, retain native CAPTCHA integration, and add a honeypot and session attempt limits.
+- Reuse storefront design tokens and native website form interactions through scoped contact assets. Preserve existing unrelated header, order, checkout, payment, and invoice work.
+- Consolidate the existing stashed guest tracking, prescription, confirmation, header, and delivery UI work without consuming the stashes or changing other modules.
+- Keep native checkout address creation, carrier rates, payment transactions, COD confirmation, sales orders, portal access, and accounting.
+- Verify guest tracking using the reference and normalized mobile number, limited to the current website/company, with session attempt limits and private responses.
+- Let guests upload prescriptions without registration; never associate an unverified phone with an existing customer.
+- Keep prescription submission as a request. Staff can create an idempotent native quotation after review or link an existing matching customer/company/website order.
+- Protect internal notes at field level, prevent portal-created workflow records, enforce company access, and validate private image contents.
+- Share one accessible vertical tracking timeline across prescription details, native order details, and confirmation.
+- Derive order status from sale.order, payment status from the native transaction/provider, preparation from reserved outgoing transfers, dispatch from completed outgoing transfers, and returns from completed customer return moves.
+- Preserve existing prescription-only operational delivery states for unlinked legacy requests. Linked orders use native fulfillment; no unsupported last-mile or delivery-failure state is invented.
+- Show invoice view/download actions only for posted customer invoices/credit notes belonging to the order's company and billing customer; use native portal tokens.
+- Restore the simplified header and delivery UI, keep existing sticky/support behavior, and prioritize tracking above the order sidebar on mobile.
+- Restore the storefront header markup and sticky behavior back to the `origin/e_commerce` baseline, including the green announcement strip, location selector, wishlist, language controls, and the header Track order link requested afterward.
+- Move the payment-step Back to address action out from under the Pay Now button and show it as a compact link under the order summary on desktop and mobile.
+- Limit the `/shop/payment` UI change to the payment-method selection section only, keeping the surrounding checkout layout, header, stepper, address area, order summary, and native payment CTA behavior in place.
+- Render native Odoo payment methods as clean selectable cards with real provider/method images, radio semantics, and preserved Odoo data attributes, inline forms, submit buttons, and transaction routes.
+- Redesign the Odoo payment status page as a focused Abdin payment confirmation experience with status-aware success, pending, and failure messaging.
+- Treat Cash on Delivery as its own customer-facing payment status: the order is received, no online payment has been collected, and payment is due on delivery.
+- Preserve the native `/payment/status` polling container and `/shop/payment/validate` landing-route behavior while replacing the customer-facing "Skip" action with appropriate checkout CTAs.
+- Add compact checkout progress, payment summary, next-step reassurance, support actions, and copy-to-clipboard feedback for payment references.
+- Redesign the native Odoo sale order PDF into an Abdin-branded order confirmation with the configured website/company logo, Arabic RTL layout, customer/order/delivery sections, structured product rows, shipping treatment, totals summary, payment terms, terms link, and compact support footer.
+- Add sale report presentation helpers for clean SKU, product name, description, tax-label, terms-link, and discount display without changing sale order, tax, delivery, payment, or accounting calculations.
+- Bind the sale order PDF to an Abdin A4 paper format with tighter print margins so the redesigned layout prints without the default Odoo header whitespace.
+- Redesign the customer-facing sale order portal page into an Abdin Pharmacy order tracking dashboard with a status hero, state-driven order journey, product cards with real Odoo product images, native totals, payment, delivery address, documents, terms, support, and redesigned chatter presentation.
+- Preserve native sale order workflow, payment/sign modals, PDF detail link, invoice portal links, product quantities, prices, taxes, totals, access tokens, and portal chatter behavior while changing only presentation.
+- Hide the raw Odoo breadcrumb/payment banner for storefront sale orders and keep the fallback native portal presentation for non-storefront orders.
+- Add Out for delivery and Delivered as customer-facing order journey milestones while keeping the existing warehouse dispatch signal as the last confirmed backend state.
+- Increase the status hero check icon responsively so the current order state is easier to read on mobile and desktop.
+- Maintain English source text with Arabic translations in both PO files and merge relevant exported entries into the existing POT used by Odoo during import.
 
-Files changed for this login fix:
-
-- `ab_ecommerce_storefront/static/src/js/auth.js`
-
-Prescription order feature in this working tree:
-
-- Add a complete authenticated `Order by prescription` customer flow at `/prescription-order`.
-- Reuse the redesigned header CTA and point it to the dedicated prescription-order page instead of the contact form.
-- Allow customers to take a prescription photo on supported mobile devices or upload a JPG, PNG, or WebP image.
-- Add client-side preview, replace/remove controls, disabled submit state, and friendly validation messages.
-- Validate uploads server-side for required image, supported MIME type, image signature, and 8 MB maximum size.
-- Create `ab.prescription.order` records with customer, user, private binary image attachment, filename, MIME type, customer note, internal note, status, portal token, and optional related sale order.
-- Add the staff backend list/form/menu for reviewing requests, opening the prescription image, reading customer notes, adding internal notes, linking a sale order, and moving the status through the workflow.
-- Add customer portal pages for listing prescription requests and tracking a request through received, review, Call Center confirmation, confirmed, preparing, out for delivery, and delivered states, with cancelled/rejected exception states.
-- Keep prescription images behind authenticated portal routes and customer-owned record rules.
-- Add Arabic translations and the exported module POT metadata needed by Odoo 19 to import the new website terms.
-
-Files changed for this prescription order feature:
+Files changed:
 
 - `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/contact.py`
 - `ab_ecommerce_storefront/controllers/portal.py`
 - `ab_ecommerce_storefront/controllers/prescription_order.py`
-- `ab_ecommerce_storefront/data/prescription_sequence.xml`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
 - `ab_ecommerce_storefront/i18n/ar_001.po`
 - `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/business_partnership.py`
 - `ab_ecommerce_storefront/models/prescription_order.py`
+- `ab_ecommerce_storefront/models/sale_order.py`
+- `ab_ecommerce_storefront/security/business_partnership.xml`
 - `ab_ecommerce_storefront/security/ir.model.access.csv`
 - `ab_ecommerce_storefront/security/record_rules.xml`
+- `ab_ecommerce_storefront/static/src/js/business_partnership.js`
+- `ab_ecommerce_storefront/static/src/js/payment_status.js`
 - `ab_ecommerce_storefront/static/src/js/prescription_order.js`
+- `ab_ecommerce_storefront/static/src/scss/contact.scss`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
-- `ab_ecommerce_storefront/views/layout.xml`
+- `ab_ecommerce_storefront/views/cart.xml`
+- `ab_ecommerce_storefront/views/business_partnership_views.xml`
+- `ab_ecommerce_storefront/views/contact_templates.xml`
 - `ab_ecommerce_storefront/views/portal.xml`
 - `ab_ecommerce_storefront/views/prescription_order_templates.xml`
 - `ab_ecommerce_storefront/views/prescription_order_views.xml`
+- `ab_ecommerce_storefront/views/sale_order_report.xml`
 
-Current changes before commit:
+Validation:
 
-- Use the existing branded grayscale product placeholder when a storefront product has no `image_512` or `image_1920`.
-- Keep real product images untouched and only render the fallback image for products without an uploaded product image.
-- Limit the shop price slider maximum to the highest currently available product price after applying the other active filters.
-- Clamp selected min/max prices back into the available filtered range.
-- Force the selected price slider track to render from the left side using the storefront orange accent.
-- Prevent the price slider min and max handles from crossing over each other while dragging.
-
-Files changed:
-
-- `ab_ecommerce_storefront/__manifest__.py`
-- `ab_ecommerce_storefront/controllers/__init__.py`
-- `ab_ecommerce_storefront/controllers/shop.py`
-- `ab_ecommerce_storefront/static/src/js/price_range_guard.js`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
-- `ab_ecommerce_storefront/views/homepage.xml`
-
-Current translation changes before commit:
-
-- Add Arabic translations for the split product-card cart action and cart Favorites workflow.
-- Refresh the storefront POT entries for the new cart guidance and action labels.
-
-Files changed:
-
-- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
-- `ab_ecommerce_storefront/i18n/ar.po`
-- `ab_ecommerce_storefront/i18n/ar_001.po`
+- The form-first Contact Us revision passed all seven transactional tests again, including first-section ordering, removed introductory tiles, the partnership CTA below the form, native submission behavior, and Arabic/English responsive checks. Final result: zero failures/errors in /tmp/ab_contact_form_first_tests.log; desktop/mobile screenshots reviewed.
+- Contact and partnership validation passed seven transactional tests with zero failures or errors, including real browser submission, Arabic field errors/success, native mail dispatch interception, input validation/abuse checks, role/company isolation, and admin kanban/form rendering.
+- Contact, partnership, and shared success layouts passed Arabic RTL and English LTR rendering, alignment, progressive-field, and overflow checks at 375, 390, 430, 768, 820, 1024, 1280, and 1440 pixels. Targeted upgrade, Python/XML parsing, and both Arabic PO format checks passed.
+- Contact test sources are archived outside the production addon at /tmp/ab_contact_validation/tests; screenshots are in /tmp/ab_contact_browser, and the final passing run is PID 543299 in /tmp/ab_contact_tests.log. External SMTP delivery and third-party CAPTCHA challenges were not exercised.
+- Python AST, XML parsing, and both msgfmt format checks passed.
+- Payment back-address layout change passed XML parsing and both Arabic PO format checks.
+- Payment status redesign passed XML parsing, JavaScript syntax checking, POT/Arabic PO format checks, targeted module upgrade, runtime Arabic/English rendering checks, and desktop/tablet/mobile screenshot review.
+- Cash on Delivery payment status was verified against transaction `S00113`: it renders the COD-specific Arabic title, amount label, method, and status, and no longer shows payment review wording or a payment reference.
+- Payment-method selector redesign passed XML parsing, POT/Arabic PO format checks, targeted `ab_ecommerce_storefront` upgrade, runtime Arabic rendering checks, Odoo payment DOM-contract checks, COD radio-selection verification, and Chrome screenshot QA at 1366, 1440, 390, and 430 pixels with no horizontal overflow.
+- Sale order PDF redesign passed Python compilation, XML parsing, POT/Arabic PO format checks, targeted module upgrades with Arabic language reload, and real `sale.action_report_saleorder` PDF rendering for Arabic website order `S00111` to `/tmp/ab_sale_order_S00111.pdf`.
+- The rendered sample is A4, one page, uses the real configured Abdin website logo, and was visually reviewed from `/tmp/ab_sale_order_S00111_page-1.png`; local dynamic page totals are limited by the installed unpatched wkhtmltopdf build.
+- Targeted module upgrade passed with the configured virtual environment. telebot is available; the previously reported abdin_telegram import failure did not recur.
+- Header restore was verified with `git show origin/e_commerce`, local `git diff`, XML parsing, targeted module upgrade, service restart, and runtime `/ar/shop` rendering: the green announcement strip renders again and the header Track order link appears as `تتبع الطلب`.
+- Ten transactional HTTP/browser tests passed with zero failures or errors. Coverage includes guest and portal isolation, prescription upload/review/quotation, native checkout/COD, online payment failure/retry, dispatch/returns, and native invoice view/PDF access.
+- Six customer pages passed overflow and rendering checks at 375, 390, 430, 768, 820, 1024, 1280, and 1440 pixels. Upload preview/reset and Arabic runtime labels passed.
+- Existing PO source entries and nonempty translations were preserved. Test sources are archived at /tmp/ab_customer_journey_validation/tests; screenshots are under /tmp/ab_journey_browser and the final runtime log is /tmp/ab_journey_tests3.log.
+- Order tracking redesign passed XML well-formedness, Python compile, Arabic PO format checks, live English/Arabic portal render checks for order `S00113`, hook checks for `modalaccept`, `print_invoice_report`, and `o_portal_chatter`, and Chrome screenshot review at 390px mobile and 1366px desktop. Targeted upgrade is currently blocked by unrelated installed module `abdin_telegram` missing Python package `telebot`, so the new PO translations are validated on disk but not imported into the live database in this run.
+- The added delivery milestones passed Python AST parsing, XML well-formedness, and Arabic PO/POT format checks.
+- Live payment settlement and physical camera capture were not exercised. The existing ab_store IP login policy requires a deployment decision for public-internet portal login; no authentication policy was changed.

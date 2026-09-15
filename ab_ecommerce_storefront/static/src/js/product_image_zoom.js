@@ -7,6 +7,7 @@ import { Interaction } from "@web/public/interaction";
 import { patch } from "@web/core/utils/patch";
 import { CartService } from "@website_sale/js/cart_service";
 import wishlistUtils from "@website_sale_wishlist/js/website_sale_wishlist_utils";
+import { animateQuantityChange } from "@ab_ecommerce_storefront/js/quantity_motion";
 
 const MIN_VIEWPORT_WIDTH = 992;
 const LENS_SIZE = 230;
@@ -592,49 +593,7 @@ export class AbStorefrontProductImageZoom extends Interaction {
         if (!quantity) {
             return;
         }
-        const previousValue = this.getQuantityNumber(quantity);
-        const isIncrease = button.classList.contains("css_quantity_plus");
-        setTimeout(() => {
-            const nextValue = this.getQuantityNumber(quantity);
-            const className = this.isQuantityBlocked(quantity, button, previousValue, nextValue)
-                ? "ab-storefront-quantity-shake"
-                : isIncrease
-                    ? "ab-storefront-quantity-slide-next"
-                    : "ab-storefront-quantity-slide-prev";
-            quantity.classList.remove(
-                "ab-storefront-quantity-slide-next",
-                "ab-storefront-quantity-slide-prev",
-                "ab-storefront-quantity-shake"
-            );
-            void quantity.offsetWidth;
-            quantity.classList.add(className);
-        }, 80);
-    }
-
-    getQuantityNumber(quantity) {
-        const value = parseFloat(quantity.value);
-        return Number.isFinite(value) ? value : 0;
-    }
-
-    getQuantityLimit(quantity, name, fallback) {
-        const rawValue = quantity.dataset[name] ?? quantity.getAttribute(name);
-        const value = parseFloat(rawValue);
-        return Number.isFinite(value) ? value : fallback;
-    }
-
-    isQuantityBlocked(quantity, button, previousValue, nextValue) {
-        if (button.classList.contains("disabled") || button.getAttribute("aria-disabled") === "true") {
-            return true;
-        }
-        if (button.classList.contains("css_quantity_minus")) {
-            const minValue = this.getQuantityLimit(quantity, "min", 1);
-            return previousValue <= minValue && nextValue <= minValue;
-        }
-        const maxValue = this.getQuantityLimit(quantity, "max", Infinity);
-        if (previousValue >= maxValue && nextValue >= maxValue) {
-            return true;
-        }
-        return nextValue === previousValue;
+        animateQuantityChange({ button, quantity });
     }
 
     getZoomSource(image) {

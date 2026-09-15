@@ -5,6 +5,7 @@ import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
 import { Interaction } from "@web/public/interaction";
 import wishlistUtils from "@website_sale_wishlist/js/website_sale_wishlist_utils";
+import { animateQuantityChange, getQuantityInputNumber } from "@ab_ecommerce_storefront/js/quantity_motion";
 
 const CARD_FLY_DURATION = 760;
 
@@ -207,8 +208,16 @@ export class AbStorefrontProductCard extends Interaction {
         }
         const direction = ev.currentTarget.dataset.abCardQuantity;
         const current = Math.max(parseInt(input.value, 10) || 1, 1);
+        const previousValue = getQuantityInputNumber(input);
         input.value = String(direction === "increase" ? current + 1 : Math.max(current - 1, 1));
         input.dispatchEvent(new Event("change", { bubbles: true }));
+        animateQuantityChange({
+            button: ev.currentTarget,
+            quantity: input,
+            direction,
+            previousValue,
+            delay: 0,
+        });
     }
 
     onSelectUnit(ev) {
