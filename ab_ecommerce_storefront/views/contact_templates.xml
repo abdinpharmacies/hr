@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="contact_us_abdin" inherit_id="website.contactus" name="Abdin Contact Us" priority="130">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="ab-contact-page" separator=" "/>
+        </xpath>
+        <xpath expr="//section[hasclass('s_title')]" position="before">
+            <section id="general-contact" class="ab-contact-form-section container">
+                <h1 class="visually-hidden">Contact us</h1>
+                <section class="s_website_form ab-contact-form" data-vcss="001" id="ab_general_form_slot"/>
+            </section>
+            <section class="ab-contact-business-band">
+                <div class="container">
+                    <div><h2>Business &amp; Partnerships</h2><p>Work with us on advertising, marketing, and making products available through Abdin Pharmacies.</p></div>
+                    <a href="/business-partnerships" class="btn btn-outline-primary">Explore collaboration opportunities <i class="fa fa-external-link" aria-hidden="true"/></a>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//section[@id='ab_general_form_slot']" position="inside">
+            <xpath expr="//form[@id='contactus_form']" position="move"/>
+        </xpath>
+        <xpath expr="//section[hasclass('s_title')]" position="replace"/>
+        <xpath expr="//section[@data-snippet='s_text_block']" position="replace"/>
+        <xpath expr="//form[@id='contactus_form']" position="inside"><input type="hidden" name="ab_contact_form" value="general"/></xpath>
+        <xpath expr="//form[@id='contactus_form']" position="attributes">
+            <attribute name="action">/website/form/</attribute>
+            <attribute name="data-model_name">ab_contact_message</attribute>
+        </xpath>
+        <xpath expr="//form[@id='contactus_form']//label" position="attributes"><attribute name="style"/><attribute name="class" add="col-form-label" separator=" "/></xpath>
+        <xpath expr="//textarea[@name='description']" position="attributes"><attribute name="rows">5</attribute></xpath>
+        <xpath expr="//div[hasclass('s_website_form_submit')]/div" position="replace"/>
+        <xpath expr="//a[hasclass('s_website_form_send')]" position="replace">
+            <button type="submit" class="btn btn-primary s_website_form_send"><i class="fa fa-paper-plane-o" aria-hidden="true"/> Send message</button>
+        </xpath>
+        <xpath expr="//span[@id='s_website_form_result']" position="attributes"><attribute name="role">status</attribute><attribute name="aria-live">polite</attribute></xpath>
+    </template>
+
+    <template id="business_input" name="Business Inquiry Field">
+        <div t-attf-class="s_website_form_field #{'s_website_form_required s_website_form_model_required' if field_required else ''} #{'ab-contact-field-wide' if field_name in ('inquiry', 'message') else ''}" data-type="char">
+            <label class="s_website_form_label col-form-label" t-att-for="'ab_business_' + field_name">
+                <span class="s_website_form_label_content" t-out="field_label"/><span t-if="field_required" class="s_website_form_mark" aria-hidden="true"> *</span>
+            </label>
+            <textarea t-if="field_name == 'message'" t-att-id="'ab_business_' + field_name" t-att-name="field_name" class="form-control s_website_form_input" rows="5" required="required" minlength="10" maxlength="5000"/>
+            <input t-else="" t-att-id="'ab_business_' + field_name" t-att-name="field_name" t-att-type="'email' if field_name == 'email' else ('tel' if field_name == 'phone' else ('url' if field_name == 'website_url' else 'text'))" t-att-required="field_required" maxlength="256" class="form-control s_website_form_input"/>
+        </div>
+    </template>
+
+    <template id="business_partnerships" name="Abdin Business Partnerships">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Business Partnerships | Abdin Pharmacies</t>
+            <t t-set="website_meta_description">Partner with Abdin Pharmacies in advertising, marketing, and product availability. Submit your business inquiry to our partnerships team.</t>
+            <div id="wrap" class="oe_structure ab-contact-page ab-business-page">
+                <section class="ab-contact-intro">
+                    <div class="container">
+                        <a href="/contactus" class="ab-contact-back"><i class="fa fa-angle-left" aria-hidden="true"/> Back to Contact Us</a>
+                        <h1>Business &amp; Partnerships</h1>
+                        <p>We welcome companies and brands interested in working with Abdin Pharmacies on advertising, promotion, and product availability.</p>
+                        <a href="#business-inquiry" class="btn btn-primary">Submit a partnership request <i class="fa fa-angle-down" aria-hidden="true"/></a>
+                    </div>
+                </section>
+                <section class="container ab-partnership-paths" aria-label="Partnership opportunities">
+                    <article class="ab-contact-path">
+                        <i class="fa fa-bullhorn ab-contact-icon" aria-hidden="true"/><h2>Advertising &amp; Marketing</h2>
+                        <p>For companies and brands wishing to advertise or promote their products and services through Abdin Pharmacies channels.</p>
+                    </article>
+                    <article class="ab-contact-path ab-contact-path--support">
+                        <i class="fa fa-cubes ab-contact-icon" aria-hidden="true"/><h2>Product Partnership</h2>
+                        <p>For companies wishing to offer or supply their products through Abdin Pharmacies and our platforms.</p>
+                    </article>
+                </section>
+                <section id="business-inquiry" class="container ab-business-inquiry">
+                    <div class="ab-contact-form-heading"><h2>Start a conversation</h2><p>Tell us about your company and your proposal. Our business team will review your request and contact you.</p></div>
+                    <section class="s_website_form ab-contact-form" data-vcss="001">
+                        <form action="/website/form/" method="post" data-model_name="ab_business_partnership" data-success-mode="redirect" data-success-page="/business-partnerships/thank-you" data-ab-business-form="" class="o_mark_required" data-mark="*">
+                            <input type="hidden" name="ab_csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="ab-contact-honeypot" aria-hidden="true" hidden="hidden">
+                                <label for="ab_company_fax">Company fax</label>
+                                <input id="ab_company_fax" name="ab_company_fax" type="text" tabindex="-1" autocomplete="off"/>
+                            </div>
+                            <fieldset class="ab-business-type s_website_form_field s_website_form_required s_website_form_model_required" data-type="selection">
+                                <legend>What kind of partnership are you looking for? <span class="s_website_form_mark" aria-hidden="true">*</span></legend>
+                                <div class="ab-business-type-options">
+                                    <label><input type="radio" class="s_website_form_input" name="partnership_type" value="marketing" required="required" aria-controls="ab_business_details"/><span><i class="fa fa-bullhorn" aria-hidden="true"/> Advertising &amp; Marketing</span></label>
+                                    <label><input type="radio" class="s_website_form_input" name="partnership_type" value="product" required="required" aria-controls="ab_business_details"/><span><i class="fa fa-cubes" aria-hidden="true"/> Product Partnership</span></label>
+                                    <label><input type="radio" class="s_website_form_input" name="partnership_type" value="other" required="required" aria-controls="ab_business_details"/><span><i class="fa fa-comment-o" aria-hidden="true"/> Other</span></label>
+                                </div>
+                            </fieldset>
+                            <div id="ab_business_details">
+                                <fieldset><legend>Company and Contact</legend><div class="ab-contact-fields">
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'company_name'"/><t t-set="field_label">Company Name</t><t t-set="field_required" t-value="True"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'contact_name'"/><t t-set="field_label">Contact Person</t><t t-set="field_required" t-value="True"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'phone'"/><t t-set="field_label">Phone Number</t><t t-set="field_required" t-value="True"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'email'"/><t t-set="field_label">Email Address</t><t t-set="field_required" t-value="True"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'job_title'"/><t t-set="field_label">Job Title / Role</t><t t-set="field_required" t-value="False"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'city'"/><t t-set="field_label">City / Governorate</t><t t-set="field_required" t-value="False"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'website_url'"/><t t-set="field_label">Website / Social Media</t><t t-set="field_required" t-value="False"/></t>
+                                </div></fieldset>
+                                <fieldset><legend>Your Proposal</legend><div class="ab-contact-fields">
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'brand_name'"/><t t-set="field_label">Brand / Product Name</t><t t-set="field_required" t-value="False"/></t>
+                                    <div data-ab-product-fields=""><t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'product_category'"/><t t-set="field_label">Product Category</t><t t-set="field_required" t-value="False"/></t></div>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'inquiry'"/><t t-set="field_label">Proposed Collaboration</t><t t-set="field_required" t-value="True"/></t>
+                                    <t t-call="ab_ecommerce_storefront.business_input"><t t-set="field_name" t-value="'message'"/><t t-set="field_label">Additional Details</t><t t-set="field_required" t-value="True"/></t>
+                                </div></fieldset>
+                                <p class="ab-contact-privacy"><i class="fa fa-lock" aria-hidden="true"/> Your details are shared only with the team handling your inquiry.</p>
+                                <div class="s_website_form_submit">
+                                    <button type="submit" class="btn btn-primary s_website_form_send"><i class="fa fa-paper-plane-o" aria-hidden="true"/> Submit partnership request</button>
+                                    <span id="s_website_form_result" role="status" aria-live="polite"/>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="contact_success_content" name="Abdin Contact Success">
+        <section class="ab-contact-success container">
+            <span class="ab-contact-success-icon"><i class="fa fa-check" aria-hidden="true"/></span>
+            <h1 t-out="success_title"/>
+            <p>We have received your request. Our team will review it and contact you soon.</p>
+            <div class="ab-contact-success-actions"><a href="/" class="btn btn-primary">Back to homepage</a><a href="/contactus" class="btn btn-outline-primary">Back to Contact Us</a></div>
+        </section>
+    </template>
+    <template id="contact_thanks_abdin" inherit_id="website.contactus_thanks_ir_ui_view" name="Abdin Contact Thank You" priority="130">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure ab-contact-page"><t t-set="success_title">Thank you for contacting us</t><t t-call="ab_ecommerce_storefront.contact_success_content"/></div>
+        </xpath>
+    </template>
+    <template id="business_partnerships_thanks" name="Abdin Partnership Thank You">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Thank you for your partnership request</t>
+            <t t-set="no_index" t-value="True"/>
+            <div id="wrap" class="oe_structure ab-contact-page"><t t-set="success_title">Thank you for your interest in partnering with Abdin Pharmacies</t><t t-call="ab_ecommerce_storefront.contact_success_content"/></div>
+        </t>
+    </template>
+    <template id="business_footer_link" inherit_id="ab_ecommerce_storefront.layout" name="Abdin Partnership Footer Link" priority="140">
+        <xpath expr="//footer//a[@href='/about-us']/parent::li" position="after">
+            <li><a href="/business-partnerships">Business &amp; Partnerships</a></li>
+        </xpath>
+    </template>
+</odoo>

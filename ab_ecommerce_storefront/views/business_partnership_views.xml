@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="business_partnership_list" model="ir.ui.view">
+        <field name="name">ab.business.partnership.list</field>
+        <field name="model">ab_business_partnership</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'rejected'">
+                <field name="company_name"/><field name="contact_name"/>
+                <field name="partnership_type"/><field name="phone" widget="phone"/>
+                <field name="email" widget="email"/><field name="state" widget="badge"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="create_date"/><field name="website_id" optional="hide"/>
+                <field name="activity_ids" widget="list_activity"/>
+            </list>
+        </field>
+    </record>
+    <record id="business_partnership_kanban" model="ir.ui.view">
+        <field name="name">ab.business.partnership.kanban</field>
+        <field name="model">ab_business_partnership</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="state"/>
+                <templates><t t-name="card">
+                    <field name="company_name" class="fw-bold fs-5"/>
+                    <field name="inquiry" class="text-muted"/>
+                    <field name="partnership_type" widget="badge"/>
+                    <field name="contact_name"/>
+                    <footer><field name="activity_ids" widget="kanban_activity"/>
+                        <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                    </footer>
+                </t></templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="business_partnership_form" model="ir.ui.view">
+        <field name="name">ab.business.partnership.form</field>
+        <field name="model">ab_business_partnership</field>
+        <field name="arch" type="xml">
+            <form>
+                <header><field name="state" widget="statusbar" options="{'clickable': True}" statusbar_visible="new,review,contacted,qualified,completed"/></header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title"><label for="company_name"/><h1><field name="company_name"/></h1></div>
+                    <group>
+                        <group string="Company and Contact">
+                            <field name="contact_name"/><field name="job_title"/>
+                            <field name="phone" widget="phone"/><field name="email" widget="email"/>
+                            <field name="website_url" widget="url"/><field name="city"/>
+                        </group>
+                        <group string="Partnership">
+                            <field name="partnership_type"/><field name="brand_name"/>
+                            <field name="product_category" invisible="partnership_type != 'product'"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="website_id"/><field name="company_id" groups="base.group_multi_company"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <group string="Inquiry"><field name="inquiry"/><field name="message"/></group>
+                    <group string="Internal Notes"><field name="internal_notes" nolabel="1"/></group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="business_partnership_search" model="ir.ui.view">
+        <field name="name">ab.business.partnership.search</field>
+        <field name="model">ab_business_partnership</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="company_name"/><field name="contact_name"/><field name="email"/><field name="inquiry"/>
+                <filter name="my_inquiries" string="My Inquiries" domain="[('user_id', '=', uid)]"/>
+                <filter name="unassigned" string="Unassigned" domain="[('user_id', '=', False)]"/>
+                <filter name="open" string="Open" domain="[('state', 'not in', ['completed', 'rejected'])]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="by_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="by_type" string="Partnership Type" context="{'group_by': 'partnership_type'}"/>
+                    <filter name="by_user" string="Responsible" context="{'group_by': 'user_id'}"/>
+                    <filter name="by_site" string="Website" context="{'group_by': 'website_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="business_partnership_action" model="ir.actions.act_window">
+        <field name="name">Business Partnerships</field>
+        <field name="res_model">ab_business_partnership</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="business_partnership_search"/>
+    </record>
+    <menuitem id="business_partnership_menu" name="Business Partnerships" parent="contact_us_menu" action="business_partnership_action" sequence="20" groups="website.group_website_designer"/>
+</odoo>

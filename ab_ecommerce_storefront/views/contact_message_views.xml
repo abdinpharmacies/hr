@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="contact_us_menu"
+              name="Contact Us"
+              parent="website.menu_website_configuration"
+              sequence="55"
+              groups="website.group_website_designer"/>
+
+    <record id="contact_message_list" model="ir.ui.view">
+        <field name="name">ab.contact.message.list</field>
+        <field name="model">ab_contact_message</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'closed'">
+                <field name="subject"/>
+                <field name="name"/>
+                <field name="phone" widget="phone"/>
+                <field name="email_from" widget="email"/>
+                <field name="state" widget="badge"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="create_date"/>
+                <field name="website_id" optional="hide"/>
+                <field name="activity_ids" widget="list_activity"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="contact_message_kanban" model="ir.ui.view">
+        <field name="name">ab.contact.message.kanban</field>
+        <field name="model">ab_contact_message</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="subject" class="fw-bold fs-5"/>
+                        <field name="description" class="text-muted"/>
+                        <field name="name"/>
+                        <footer>
+                            <field name="activity_ids" widget="kanban_activity"/>
+                            <field name="user_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="contact_message_form" model="ir.ui.view">
+        <field name="name">ab.contact.message.form</field>
+        <field name="model">ab_contact_message</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" options="{'clickable': True}" statusbar_visible="new,review,answered,closed"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="subject"/>
+                        <h1><field name="subject"/></h1>
+                    </div>
+                    <group>
+                        <group string="Contact">
+                            <field name="name"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email_from" widget="email"/>
+                            <field name="company"/>
+                        </group>
+                        <group string="Handling">
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="website_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <group string="Message">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <group string="Internal Notes">
+                        <field name="internal_notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="contact_message_search" model="ir.ui.view">
+        <field name="name">ab.contact.message.search</field>
+        <field name="model">ab_contact_message</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="subject"/>
+                <field name="name"/>
+                <field name="email_from"/>
+                <field name="description"/>
+                <filter name="my_messages" string="My Messages" domain="[('user_id', '=', uid)]"/>
+                <filter name="unassigned" string="Unassigned" domain="[('user_id', '=', False)]"/>
+                <filter name="open" string="Open" domain="[('state', 'not in', ['answered', 'closed'])]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="by_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="by_user" string="Responsible" context="{'group_by': 'user_id'}"/>
+                    <filter name="by_site" string="Website" context="{'group_by': 'website_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="contact_message_action" model="ir.actions.act_window">
+        <field name="name">Contact Messages</field>
+        <field name="res_model">ab_contact_message</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="contact_message_search"/>
+    </record>
+
+    <menuitem id="contact_message_menu"
+              name="Messages"
+              parent="contact_us_menu"
+              action="contact_message_action"
+              sequence="10"
+              groups="website.group_website_designer"/>
+</odoo>

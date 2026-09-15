@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_contact_message_company" model="ir.rule">
+        <field name="name">Contact messages: allowed companies</field>
+        <field name="model_id" ref="model_ab_contact_message"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_business_partnership_company" model="ir.rule">
+        <field name="name">Business partnerships: allowed companies</field>
+        <field name="model_id" ref="model_ab_business_partnership"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="model_ab_contact_message" model="ir.model">
+        <field name="website_form_access">True</field>
+        <field name="website_form_label">Contact Us Message</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+        <value>ab_contact_message</value>
+        <value eval="['name', 'phone', 'email_from', 'company', 'subject', 'description']"/>
+    </function>
+    <record id="model_ab_business_partnership" model="ir.model">
+        <field name="website_form_access">True</field>
+        <field name="website_form_label">Business Partnership Request</field>
+    </record>
+    <function model="ir.model.fields" name="formbuilder_whitelist">
+        <value>ab_business_partnership</value>
+        <value eval="['company_name', 'contact_name', 'job_title', 'phone', 'email', 'website_url', 'city', 'partnership_type', 'brand_name', 'product_category', 'inquiry', 'message']"/>
+    </function>
+</odoo>

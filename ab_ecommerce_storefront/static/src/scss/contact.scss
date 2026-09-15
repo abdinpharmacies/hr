@@ -1,0 +1,135 @@
+body.ab-storefront .ab-contact-page {
+    background: var(--ab-background);
+    color: var(--ab-ink);
+
+    .container { max-width: 1160px; }
+    // Odoo's #wrap clearfix pseudo-elements otherwise consume grid tracks.
+    .container::before, .container::after { content: none !important; display: none !important; }
+    h1 { font-size: 2.5rem; line-height: 1.4; margin: 12px 0; }
+    h2 { font-size: 1.5rem; line-height: 1.5; margin: 0 0 12px; }
+    p { color: var(--ab-muted); line-height: 1.85; margin-bottom: 20px; }
+    .btn { min-height: 48px; padding: 12px 22px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; white-space: normal; }
+    .btn-primary { color: #fff; }
+    .btn-outline-primary { color: var(--ab-primary); }
+    .btn-outline-primary:hover { color: #fff; }
+    a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid var(--ab-primary); outline-offset: 3px; }
+    [hidden] { display: none !important; }
+
+    .ab-contact-intro { padding: 44px 0 32px; background: #fff; border-bottom: 1px solid var(--ab-border); }
+    .ab-contact-intro p { max-width: 740px; font-size: 1.1rem; }
+    .ab-contact-eyebrow { color: var(--ab-primary); font-size: .9rem; font-weight: 700; }
+    .ab-contact-paths, .ab-partnership-paths { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding-top: 28px; padding-bottom: 32px; }
+    .ab-partnership-paths { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ab-contact-path { display: flex; flex-direction: column; align-items: flex-start; padding: 24px; border: 1px solid var(--ab-border); border-radius: 8px; background: #fff; text-decoration: none; min-width: 0; transition: box-shadow .2s, border-color .2s; }
+    .ab-contact-path h2 { font-size: 1.2rem; }
+    .ab-contact-path p { font-size: .95rem; }
+    a.ab-contact-path:hover { border-color: var(--ab-primary); box-shadow: 0 6px 20px rgba(25, 53, 43, .07); }
+    .ab-contact-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 8px; background: #e9f6ef; color: var(--ab-primary); font-size: 1.25rem; margin-bottom: 18px; }
+    .ab-contact-path--support .ab-contact-icon { background: #edf5fb; color: var(--ab-blue); }
+    .ab-contact-path--business { border-color: #f0d5ba; }
+    .ab-contact-path--business .ab-contact-icon { background: #fff3e8; color: #9c4c0b; }
+    .ab-contact-path--business .ab-contact-link { color: #9c4c0b; }
+    .ab-contact-link { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .95rem; margin-top: auto; color: var(--ab-primary); text-decoration: none; }
+    .ab-contact-form-section { max-width: 920px; padding-top: 28px; padding-bottom: 48px; scroll-margin-top: 220px; }
+    .ab-contact-form-heading { padding-top: 8px; }
+    .ab-contact-form-heading p { max-width: 680px; }
+    .ab-contact-form { min-width: 0; }
+    .ab-contact-form form { position: relative; transition: opacity .28s cubic-bezier(.22, 1, .36, 1), transform .28s cubic-bezier(.22, 1, .36, 1); }
+    .ab-contact-form form::after {
+        content: "";
+        position: absolute;
+        inset: -14px;
+        z-index: 2;
+        pointer-events: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, .58);
+        opacity: 0;
+        transform: scale(.985);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        transition: opacity .22s cubic-bezier(.22, 1, .36, 1), transform .22s cubic-bezier(.22, 1, .36, 1);
+    }
+    .ab-contact-form form.ab-contact-form-submitting { transform: translateY(-2px); }
+    .ab-contact-form form.ab-contact-form-submitting::after { opacity: 1; transform: scale(1); }
+    .ab-contact-form form.ab-contact-form-submitting .s_website_form_send { position: relative; z-index: 3; }
+    .ab-contact-submit-spinner {
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, .45);
+        border-top-color: #fff;
+        animation: ab-contact-spin .75s linear infinite;
+    }
+    .ab-contact-form .s_website_form_label { display: block; width: auto !important; font-size: .95rem; font-weight: 600; margin-bottom: 8px; }
+    .ab-contact-form .s_website_form_mark { color: var(--ab-primary); }
+    .ab-contact-form .form-control { min-height: 48px; border: 1px solid var(--ab-border); border-radius: 8px; padding: 11px 14px; background: #fff; color: var(--ab-ink); text-align: start; }
+    .ab-contact-form input[type=email], .ab-contact-form input[type=tel], .ab-contact-form input[type=url] { direction: ltr; }
+    .ab-contact-form .form-control:focus { border-color: var(--ab-primary); box-shadow: 0 0 0 3px rgba(22, 131, 79, .12); }
+    .ab-contact-form .o_has_error .form-control, .ab-contact-form .is-invalid { border-color: #b42318; }
+    .ab-contact-form .s_website_form_submit { text-align: start !important; display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+    #s_website_form_result { display: block; max-width: 100%; }
+    .ab-contact-business-band { padding: 32px 0; border-top: 1px solid var(--ab-border); background: #edf5fb; }
+    .ab-contact-business-band .container { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+    .ab-contact-business-band p { margin-bottom: 0; max-width: 680px; }
+    .ab-contact-business-band .btn { flex-shrink: 0; }
+    .ab-contact-back { display: inline-flex; align-items: center; gap: 8px; color: var(--ab-muted); text-decoration: none; font-size: .95rem; }
+    .ab-business-inquiry { max-width: 920px; padding-top: 20px; padding-bottom: 56px; scroll-margin-top: 220px; }
+    fieldset { min-width: 0; margin: 0 0 28px; }
+    legend { float: none; font-size: 1.2rem; font-weight: 700; margin-bottom: 18px; }
+    .ab-contact-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+    .ab-contact-field-wide { grid-column: 1 / -1; }
+    .ab-business-type { border-bottom: 1px solid var(--ab-border); padding: 8px 0 28px; }
+    .ab-business-type-options { display: flex; flex-wrap: wrap; gap: 12px; }
+    .ab-business-type-options label { position: relative; display: flex; gap: 10px; align-items: center; padding: 14px 18px; border: 1px solid var(--ab-border); border-radius: 8px; background: #fff; cursor: pointer; }
+    .ab-business-type-options label:has(input:checked) { background: #e9f6ef; border-color: var(--ab-primary); }
+    .ab-business-type-options input { accent-color: var(--ab-primary); width: 18px; height: 18px; flex-shrink: 0; }
+    .ab-business-type-options span { display: inline-flex; align-items: center; gap: 8px; }
+    .ab-contact-privacy { display: flex; gap: 10px; align-items: baseline; font-size: .9rem; }
+    .ab-contact-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    .ab-contact-success { min-height: 420px; padding-top: 64px; padding-bottom: 64px; text-align: center; animation: ab-contact-success-in .42s cubic-bezier(.22, 1, .36, 1) both; }
+    .ab-contact-success h1 { max-width: 780px; margin-inline: auto; font-size: 2rem; }
+    .ab-contact-success-icon { display: inline-grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: #e9f6ef; color: var(--ab-primary); font-size: 1.8rem; margin-bottom: 16px; animation: ab-contact-success-icon .5s cubic-bezier(.22, 1, .36, 1) .08s both; }
+    .ab-contact-success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+
+    @media (max-width: 991.98px) {
+        .ab-contact-path { padding: 20px; }
+        .ab-contact-business-band .container { align-items: flex-start; flex-direction: column; gap: 20px; }
+    }
+    @media (max-width: 575.98px) {
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.3rem; }
+        .ab-contact-intro { padding: 28px 0 20px; }
+        .ab-contact-intro p { font-size: 1rem; }
+        .ab-contact-paths, .ab-partnership-paths { grid-template-columns: 1fr; gap: 12px; padding-top: 20px; padding-bottom: 20px; }
+        .ab-contact-path { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 16px; padding: 18px; }
+        .ab-contact-icon { grid-row: span 3; margin: 0; }
+        .ab-contact-path h2 { margin: 0 0 4px; }
+        .ab-contact-path p { margin: 0 0 12px; }
+        .ab-contact-link { grid-column: 2; }
+        .ab-contact-fields { grid-template-columns: 1fr; gap: 18px; }
+        .ab-business-type-options { flex-direction: column; }
+        .ab-contact-form-section { padding-top: 16px; padding-bottom: 32px; }
+        .ab-contact-form .s_website_form_submit .btn { width: 100%; }
+        .ab-contact-success { padding-top: 40px; padding-bottom: 40px; }
+        .ab-contact-success h1 { font-size: 1.6rem; }
+    }
+    @keyframes ab-contact-spin { to { transform: rotate(360deg); } }
+    @keyframes ab-contact-success-in {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ab-contact-success-icon {
+        from { opacity: 0; transform: translateY(8px) scale(.88); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .ab-contact-path,
+        .ab-contact-form form,
+        .ab-contact-form form::after { transition: none; }
+        .ab-contact-submit-spinner,
+        .ab-contact-success,
+        .ab-contact-success-icon { animation: none; }
+    }
+}
+
+html[dir=rtl] .ab-contact-back .fa-angle-left { transform: rotate(180deg); }

@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ab_prescription_order_internal,ab.prescription.order.internal,model_ab_prescription_order,base.group_user,1,1,1,0
 access_ab_prescription_order_portal,ab.prescription.order.portal,model_ab_prescription_order,base.group_portal,1,0,1,0
+access_ab_contact_message_designer,ab.contact.message.designer,model_ab_contact_message,website.group_website_designer,1,1,1,0
+access_ab_business_partnership_designer,ab.business.partnership.designer,model_ab_business_partnership,website.group_website_designer,1,1,1,0
