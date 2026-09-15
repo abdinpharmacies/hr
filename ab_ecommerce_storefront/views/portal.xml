@@ -723,6 +723,199 @@
         </xpath>
     </template>
 
+    <template id="payment_status_abdin_skin" name="Abdin Payment Status Experience" inherit_id="payment.payment_status" priority="120">
+        <xpath expr="//div[hasclass('wrap')]" position="replace">
+            <div class="wrap ab-payment-status-page" t-translation-context="ab_ecommerce_storefront">
+                <div class="container">
+                    <t t-if="payment_not_found">
+                        <section class="ab-payment-status-shell is-pending">
+                            <nav class="ab-payment-progress" aria-label="Checkout progress">
+                                <span class="is-complete">Cart</span>
+                                <span class="is-complete">Address</span>
+                                <span class="is-current">Payment</span>
+                                <span>Confirmation</span>
+                            </nav>
+                            <article class="ab-payment-status-card">
+                                <div class="ab-payment-status-icon" aria-hidden="true">
+                                    <i class="fa fa-clock-o"/>
+                                </div>
+                                <span class="ab-payment-status-kicker">Payment status</span>
+                                <h1>Your payment is on its way</h1>
+                                <p>We are still checking the latest payment update. You should receive confirmation shortly.</p>
+                                <div class="ab-payment-status-actions">
+                                    <a href="/shop" class="btn btn-primary">
+                                        <i class="fa fa-shopping-bag" aria-hidden="true"/>
+                                        <span>Back to store</span>
+                                    </a>
+                                    <a href="tel:19036" class="btn btn-outline-primary">
+                                        <i class="fa fa-phone" aria-hidden="true"/>
+                                        <span>Call 19036</span>
+                                    </a>
+                                </div>
+                            </article>
+                        </section>
+                    </t>
+                        <t t-else="">
+                            <t t-set="order" t-value="tx.sale_order_ids[:1]"/>
+                            <t t-set="is_cod" t-value="tx.payment_method_code == 'cash_on_delivery' or tx.provider_id.custom_mode == 'cash_on_delivery'"/>
+                            <t t-set="is_success" t-value="tx.state == 'done'"/>
+                            <t t-set="is_pending" t-value="not is_cod and tx.state in ('draft', 'pending', 'authorized')"/>
+                            <t t-set="is_failed" t-value="tx.state in ('cancel', 'error')"/>
+                            <t t-set="status_variant" t-value="'cod' if is_cod else 'success' if is_success else 'danger' if is_failed else 'pending'"/>
+                            <t t-set="status_icon" t-value="'fa-money' if is_cod else 'fa-check' if is_success else 'fa-exclamation-triangle' if is_failed else 'fa-clock-o'"/>
+                            <t t-set="status_title">
+                                <t t-if="is_cod">Order confirmed, pay on delivery</t>
+                                <t t-elif="is_success">Payment confirmed successfully</t>
+                                <t t-elif="is_failed">Payment was not completed</t>
+                                <t t-else="">Payment is under review</t>
+                            </t>
+                            <t t-set="status_description">
+                                <t t-if="is_cod">Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered.</t>
+                                <t t-elif="is_success">Your payment was processed successfully, and your order is now being prepared.</t>
+                                <t t-elif="is_failed">We could not complete the payment. You can try again or choose another payment method.</t>
+                                <t t-else="">We received the payment attempt, but it is still waiting for final confirmation. We will update your order status as soon as the review is complete.</t>
+                            </t>
+                            <t t-set="primary_href" t-value="order.get_portal_url() if order and not is_failed else order.get_portal_url(query_string='&amp;payment=True') if order and is_failed and order._has_to_be_paid() else tx.landing_route or '/shop/payment'"/>
+                            <t t-set="primary_label">
+                                <t t-if="(is_success or is_cod) and order">Track order</t>
+                                <t t-elif="is_pending and order">Track order status</t>
+                                <t t-elif="is_failed">Retry payment</t>
+                                <t t-else="">Continue to confirmation</t>
+                        </t>
+                        <section name="o_payment_status"
+                                 t-attf-class="ab-payment-status-shell is-#{status_variant}"
+                                 aria-live="polite">
+                            <nav class="ab-payment-progress" aria-label="Checkout progress">
+                                <span class="is-complete">Cart</span>
+                                <span class="is-complete">Address</span>
+                                <span t-att-class="'is-complete' if is_success else 'is-current'">Payment</span>
+                                <span t-att-class="'is-current' if is_success else ''">Confirmation</span>
+                            </nav>
+
+                            <article class="ab-payment-status-card">
+                                <div class="ab-payment-status-icon" aria-hidden="true">
+                                    <i t-attf-class="fa #{status_icon}"/>
+                                </div>
+                                <span class="ab-payment-status-kicker">Payment status</span>
+                                <h1 t-out="status_title"/>
+                                <p t-out="status_description"/>
+                                <p t-if="tx.state_message and is_failed" class="ab-payment-provider-message" t-out="tx.state_message"/>
+
+                                <section class="ab-payment-summary-card" aria-labelledby="ab_payment_summary_title">
+                                    <h2 id="ab_payment_summary_title">Payment details</h2>
+                                    <dl>
+                                        <div>
+                                            <dt>
+                                                <t t-if="is_cod">Amount due on delivery</t>
+                                                <t t-elif="is_success">Paid amount</t>
+                                                <t t-else="">Payment amount</t>
+                                            </dt>
+                                            <dd>
+                                                <span t-out="tx.amount"
+                                                      t-options="{'widget': 'monetary', 'display_currency': tx.currency_id}"/>
+                                            </dd>
+                                        </div>
+                                        <div t-if="order">
+                                            <dt>Order number</dt>
+                                            <dd>
+                                                <code t-out="order.name"/>
+                                            </dd>
+                                        </div>
+                                        <div t-if="not is_cod">
+                                            <dt>Payment reference</dt>
+                                            <dd class="ab-payment-reference">
+                                                <code t-out="tx.reference"/>
+                                                <button type="button"
+                                                        class="ab-payment-copy"
+                                                        t-att-data-ab-copy-value="tx.reference"
+                                                        aria-label="Copy payment reference">
+                                                    <i class="fa fa-copy" aria-hidden="true"/>
+                                                    <span>Copy</span>
+                                                </button>
+                                            </dd>
+                                        </div>
+                                        <div t-if="tx.payment_method_code != 'unknown'">
+                                            <dt>
+                                                <t t-if="request.lang.code in ('ar', 'ar_001')">طريقة الدفع</t>
+                                                <t t-else="">Payment method</t>
+                                            </dt>
+                                            <dd t-out="tx.payment_method_id.name"/>
+                                        </div>
+                                        <div>
+                                            <dt>
+                                                <t t-if="request.lang.code in ('ar', 'ar_001')">الحالة</t>
+                                                <t t-else="">Status</t>
+                                            </dt>
+                                            <dd>
+                                                <t t-if="is_cod">Pay on delivery</t>
+                                                <t t-elif="is_success">Confirmed</t>
+                                                <t t-elif="is_failed">Failed</t>
+                                                <t t-else="">Under review</t>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </section>
+
+                                <div class="ab-payment-status-actions">
+                                    <a t-att-href="primary_href" class="btn btn-primary">
+                                        <i t-attf-class="fa #{'fa-map-marker' if order and not is_failed else 'fa-refresh' if is_failed else 'fa-arrow-circle-right'}" aria-hidden="true"/>
+                                        <span t-out="primary_label"/>
+                                    </a>
+                                    <a t-if="not is_failed" href="/" class="btn btn-outline-primary">
+                                        <i class="fa fa-home" aria-hidden="true"/>
+                                        <span>Back to home</span>
+                                    </a>
+                                    <a t-if="is_failed" href="/shop/payment" class="btn btn-outline-primary">
+                                        <i class="fa fa-credit-card" aria-hidden="true"/>
+                                        <span>Back to payment</span>
+                                    </a>
+                                </div>
+
+                                <section class="ab-payment-next-steps" aria-labelledby="ab_payment_next_title">
+                                    <h2 id="ab_payment_next_title">What happens next?</h2>
+                                    <ol>
+                                        <li t-att-class="'is-complete' if (is_success or is_cod) else 'is-current'">
+                                            <span><i class="fa fa-check" aria-hidden="true"/></span>
+                                            <strong><t t-if="is_cod">Order received</t><t t-else="">Payment confirmation</t></strong>
+                                        </li>
+                                        <li>
+                                            <span><i class="fa fa-medkit" aria-hidden="true"/></span>
+                                            <strong>Preparing your order</strong>
+                                        </li>
+                                        <li>
+                                            <span><i class="fa fa-truck" aria-hidden="true"/></span>
+                                            <strong>Shipping</strong>
+                                        </li>
+                                        <li>
+                                            <span><i class="fa fa-home" aria-hidden="true"/></span>
+                                            <strong>Delivery</strong>
+                                        </li>
+                                    </ol>
+                                </section>
+                            </article>
+
+                            <aside class="ab-payment-trust-card" aria-label="Payment support">
+                                <div>
+                                    <i class="fa fa-shield" aria-hidden="true"/>
+                                </div>
+                                <div>
+                                    <h2>We are following your order until it reaches you safely.</h2>
+                                    <p t-if="is_cod">Our customer support team will follow up on your order until delivery.</p>
+                                    <p t-elif="is_failed or is_pending">Need help with this payment? Our customer support team is ready to help.</p>
+                                    <p t-else="">Your order is secured with Abdin Pharmacy and will move through the normal order tracking flow.</p>
+                                </div>
+                                <a href="tel:19036" class="ab-payment-support-link">
+                                    <i class="fa fa-phone" aria-hidden="true"/>
+                                    <span>19036</span>
+                                </a>
+                            </aside>
+                        </section>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
     <template id="portal_my_details_avatar" name="Abdin Portal Avatar" inherit_id="portal.portal_my_details" priority="120">
         <xpath expr="//div[hasclass('o_customer_address_fill')]" position="before">
             <section class="ab-account-avatar-card"
