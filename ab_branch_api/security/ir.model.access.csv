@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_api_user,Branch API user,model_ab_branch_api,base.group_user,1,0,0,0
 access_operation_admin,Branch API operation administrator,model_ab_branch_api_operation,base.group_system,1,0,0,0
+access_snapshot_admin,Branch API snapshot administrator,model_ab_branch_api_snapshot,base.group_system,1,0,0,0

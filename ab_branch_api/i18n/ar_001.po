@@ -67,6 +67,7 @@ msgstr "يوجد مرتجع آخر لهذه الفاتورة يحتاج إلى �
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
 msgid "At most 200 products may be requested."
 msgstr "يمكن طلب 200 صنف كحد أقصى."
 
@@ -172,6 +173,7 @@ msgstr "المعرف"
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
 msgid "Invalid product unit conversion in E-Plus."
 msgstr "تحويل وحدة الصنف في إي بلس غير صالح."
 
@@ -190,6 +192,7 @@ msgstr "الفاتورة لا تخص هذا الفرع."
 
 #. module: ab_branch_api
 #: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__kind
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__kind
 msgid "Kind"
 msgstr "النوع"
 
@@ -339,6 +342,7 @@ msgstr "عملية الفرع هذه غير مسموح بها."
 
 #. module: ab_branch_api
 #: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__token
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__token
 msgid "Token"
 msgstr "الرمز"
 
@@ -505,6 +509,7 @@ msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيا
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
 #: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
 msgid "Requested products are not accessible."
 msgstr "لا تملك صلاحية الوصول إلى المنتجات المطلوبة."
 
@@ -697,3 +702,77 @@ msgstr ""
 #: model:ir.model,name:ab_branch_api.model_ab_sales_line
 msgid "ab_sales_line"
 msgstr "بنود المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "At most 200 invoices may be requested."
+msgstr "يمكن طلب 200 فاتورة كحد أقصى."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_api_snapshot
+msgid "Branch API Snapshot"
+msgstr "لقطة بيانات واجهة الفرع"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__kind__customer
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid branch bill reference."
+msgstr "مرجع فاتورة الفرع غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid page offset."
+msgstr "موضع الصفحة غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Invalid print format."
+msgstr "تنسيق الطباعة غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Only completed sales days can be requested."
+msgstr "يمكن طلب أيام المبيعات المكتملة فقط."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__owner_id
+msgid "Owner"
+msgstr "المالك"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_snapshot__payload
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Start the snapshot at the first page."
+msgstr "ابدأ لقطة البيانات من الصفحة الأولى."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The bill does not belong to the selected branch."
+msgstr "الفاتورة لا تخص الفرع المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The branch returned invalid sales data."
+msgstr "أعاد الفرع بيانات مبيعات غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "The snapshot expired or belongs to another request."
+msgstr "انتهت صلاحية لقطة البيانات أو أنها تخص طلباً آخر."

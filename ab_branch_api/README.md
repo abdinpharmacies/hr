@@ -8,7 +8,7 @@ Business ACLs and record rules remain in force; no users or mappings are created
 
 ## Store selection and contract
 
-All eight methods accept optional keyword `store_eplus_serial`. An explicit value
+All methods accept optional keyword `store_eplus_serial`. An explicit value
 must be a positive JSON integer identifying exactly one active, sales-enabled
 store. If omitted, the configured default sales store is used. Invalid explicit
 selections and invalid defaults fail without choosing another store.
@@ -101,9 +101,9 @@ Existing recorded outcomes are returned with their authorized request identity.
 
 ## Rollout
 
-1. Administrators must manually uninstall `ab_sales_routing` where installed and
-   verify ordinary branch routing before deploying this design. No automatic
-   uninstall is included; do not remove its directory while still installed.
+1. For the API-only correction, keep every branch addon except `ab_branch_api`
+   unchanged. Existing branch endpoint selection remains owned by its installed
+   sales workflow. This release requires no routing-module uninstall.
 2. Deploy branch `ab_branch_api` with the callcenter `ab_sales`
    adapter in the same maintenance window. Keep their Git changes separate.
 3. Upgrade branch `ab_branch_api`; include
@@ -120,3 +120,51 @@ Existing recorded outcomes are returned with their authorized request identity.
 No hooks, migrations, automatic provisioning or reservation cleanup are shipped.
 Validation uses isolated databases and mocked external operations. No production
 deployment or live E-Plus writes are included in implementation verification.
+
+
+## API-only call-center correction (19.0.5.0.0)
+
+Only `ab_branch_api` changes on the branch. No SQL connector, branch sales source,
+external database schema, hook, or scheduled job is changed. All SQL below runs
+inside the authenticated branch request scope. Call-center access is HTTPS JSON-2.
+
+Additional methods (all require `db_serial` and a resolved authorized store):
+
+| Method | Additional arguments | Result |
+|---|---|---|
+| `get_product_balances` | `product_serials` (up to 200) | `data` with explicit zero balances, default prices, and `fetched_at` |
+| `lookup_customer` | `phone` | Customer payload with external serial; no branch ORM customer ID |
+| `create_customer` | `token`, `phone`, `name`, `address` | Idempotent branch customer workflow result |
+| `get_inventory_snapshot` | `token=False`, `offset=0` | Fixed, committed inventory result, 200 rows per page |
+| `get_sales_day` | `sale_date`, `token=False`, `offset=0` | Fixed result for one completed day, 200 rows per page |
+| `get_invoice_statuses` | `invoices` (up to 200) | Current branch-filtered invoice statuses |
+| `search_bills` | `filters={}`, `token=False`, `offset=0` | 20 branch Odoo sales/returns per page |
+| `get_bill_details` | `reference` | `bill` with header/lines and permitted actions |
+| `update_bill_notes` | `reference`, `notes` | Authorized update and refreshed `bill` |
+| `render_bill_print` | `reference`, `print_format='a4'` | HTML only; does not dispatch to a branch printer |
+
+Every result retains database/store identity. Bill references contain
+`db_serial`, `store_eplus_serial`, `record_type` (`sale`/`return`), and `record_id`.
+The last identifier is opaque and valid only inside that database/store. Access
+and record rules are rechecked on every detail, notes, and print request.
+
+Bill filters: `product_query`, `product_serials`, `customer_query`, `date_start`,
+`date_end`, `eplus_serial`, `document_type`, and `status`. Default statuses are
+pending/saved; drafts are explicitly selectable. E-Plus-only invoices are not
+included. Customer matching on returns stays within the selected branch.
+
+Snapshots are user/store/kind scoped and expire after one hour. The existing
+Odoo transient cleanup removes old storage; there is no new cron. Continue with
+the returned token and `next_offset`; `false` ends the snapshot. Clients must
+collect and validate all rows before replacing a cache. Missing/invalid unit
+conversion rejects inventory retrieval rather than fabricating quantities.
+
+`create_customer` uses the existing operation reservation/hash/outcome mechanism.
+A processing/uncertain outcome requires reconciliation. Completed requests replay
+only with the same payload. Credentials and customer data are not included in
+call-center failure logs.
+
+Deploy this provider before the matching call-center client and retest Branch
+Connections. The client checks advertised methods and rejects older providers.
+Runtime and HTTP validation use isolated databases; external write workflows are
+mocked. No production deployment is performed by those tests.
