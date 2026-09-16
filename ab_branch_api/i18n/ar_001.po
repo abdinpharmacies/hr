@@ -109,6 +109,7 @@ msgstr "وحدة الفرع لا تدعم الحقل: %s"
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Branch product unit is missing or ambiguous."
 msgstr "وحدة الصنف في الفرع غير موجودة أو غير محددة بشكل فريد."
 
@@ -170,7 +171,7 @@ msgstr "المعرف"
 
 #. module: ab_branch_api
 #. odoo-python
-#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Invalid product unit conversion in E-Plus."
 msgstr "تحويل وحدة الصنف في إي بلس غير صالح."
 
@@ -183,6 +184,7 @@ msgstr "بند المرتجع أو الكمية غير صالح."
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Invoice does not belong to this branch."
 msgstr "الفاتورة لا تخص هذا الفرع."
 
@@ -275,6 +277,7 @@ msgstr "مرتجع"
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Return invoice does not match the request."
 msgstr "فاتورة المرتجع لا تطابق الطلب."
 
@@ -290,6 +293,7 @@ msgstr ""
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Return product does not match the original invoice line."
 msgstr "صنف المرتجع لا يطابق بند الفاتورة الأصلية."
 
@@ -500,6 +504,7 @@ msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيا
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
 msgid "Requested products are not accessible."
 msgstr "لا تملك صلاحية الوصول إلى المنتجات المطلوبة."
 
@@ -508,3 +513,187 @@ msgstr "لا تملك صلاحية الوصول إلى المنتجات المط
 #: code:addons/ab_branch_api/models/credentials.py:0
 msgid "Use an active internal non-administrator user."
 msgstr "استخدم مستخدماً داخلياً نشطاً لا يملك صلاحيات المسؤول."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"A return employee is required. Log in to the callcenter POS or select a "
+"return employee in the Administrator return form."
+msgstr ""
+"يجب تحديد موظف المرتجع. سجّل الدخول إلى نقطة بيع مركز الاتصال أو اختر موظف "
+"المرتجع في نموذج المرتجع الخاص بالمسؤول."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "An authorized API SQL request is required."
+msgstr "يلزم طلب معتمد لواجهة برمجة تطبيقات الفرع للاتصال بقاعدة البيانات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "An unambiguous active sales store is required for this E-Plus serial."
+msgstr "يجب أن يطابق الرقم التسلسلي لإي بلس مخزن مبيعات نشطًا واحدًا فقط."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة برمجة تطبيقات نقطة البيع"
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة برمجة تطبيقات شاشة المبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "Select a store or configure a default sales store for this operation."
+msgstr "اختر مخزنًا أو اضبط مخزن مبيعات افتراضيًا لهذه العملية."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Store E-Plus serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي للمخزن في إي بلس عددًا صحيحًا موجبًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "The API SQL request belongs to another database or user."
+msgstr ""
+"طلب قاعدة البيانات لواجهة برمجة التطبيقات يخص قاعدة بيانات أو مستخدمًا آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "The SQL store does not match the authorized API store."
+msgstr ""
+"مخزن استعلام قاعدة البيانات لا يطابق المخزن المعتمد لطلب واجهة برمجة "
+"التطبيقات."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee and employee cost center must be active on this branch."
+msgstr "يجب أن يكون موظف المرتجع ومركز تكلفته نشطين في هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee has no valid E-Plus mapping on this branch. Configure "
+"the employee cost center E-Plus serial before retrying."
+msgstr ""
+"لا يوجد ربط صالح لموظف المرتجع مع إي بلس في هذا الفرع. اضبط الرقم التسلسلي "
+"لإي بلس في مركز تكلفة الموظف قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The return employee is missing or ambiguous on this branch. Check the "
+"employee cost center code."
+msgstr ""
+"موظف المرتجع غير موجود أو يوجد أكثر من سجل مطابق له في هذا الفرع. تحقق من "
+"كود مركز تكلفة الموظف."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+msgid "The selected store E-Plus endpoint is unreachable."
+msgstr "تعذر الوصول إلى خادم إي بلس للمخزن المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/routing.py:0
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "The selected store has no E-Plus server address."
+msgstr "لم يتم ضبط عنوان خادم إي بلس للمخزن المحدد."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The selected store is not in the replica Allowed Sales Stores."
+msgstr "المخزن المحدد غير مدرج ضمن مخازن المبيعات المسموح بها في قاعدة الفرع."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_eplus_connect
+msgid "ab_eplus_connect"
+msgstr "موصل إي بلس"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "An active sales store with an E-Plus serial is required."
+msgstr "يلزم اختيار مخزن مبيعات نشط له رقم تسلسلي في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Can not get data for multiple headers"
+msgstr "لا يمكن جلب البيانات لعدة رؤوس في نفس الوقت"
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "رأس مرتجع مبيعات E-Plus"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "E-Plus returned invalid stock values."
+msgstr "أعاد إي بلس قيم مخزون غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Please enter sth_id (Original Invoice) first."
+msgstr "الرجاء إدخال sth_id (الفاتورة الأصلي) أولاً."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid ""
+"Return invoice lines changed. Review the source invoice before retrying."
+msgstr "تغيرت بنود فاتورة المرتجع. راجع الفاتورة الأصلية قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Return product is missing or ambiguous on this branch."
+msgstr "صنف المرتجع غير موجود أو توجد له سجلات متطابقة متعددة في هذا الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Saved returns cannot be modified."
+msgstr "لا يمكن تعديل المرتجعات المحفوظة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Stock rows do not belong to the selected store and products."
+msgstr "بيانات المخزون لا تخص المخزن والأصناف المحددة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "The source invoice has no returnable lines."
+msgstr "لا تحتوي الفاتورة الأصلية على بنود قابلة للإرجاع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sales_workflow.py:0
+msgid "Unsupported return invoice query. Update the Branch API integration."
+msgstr ""
+"استعلام فاتورة المرتجع غير مدعوم. حدّث تكامل واجهة برمجة تطبيقات الفرع."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "بنود المبيعات"

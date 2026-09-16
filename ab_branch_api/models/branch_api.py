@@ -8,6 +8,8 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import config
 
+from .routing import api_request, request_store, selected_server, STORE_UNSET
+
 
 _return_employee = ContextVar('branch_api_return_employee', default=None)
 
@@ -46,7 +48,7 @@ class BranchApi(models.AbstractModel):
         return super().decrypt_password()
 
     @api.model
-    def _scope(self, db_serial):
+    def _authenticate_replica(self, db_serial):
         self._authenticate_bearer()
         if type(db_serial) is not int or db_serial <= 0:
             raise UserError(_('DB serial must be a positive integer.'))
@@ -60,10 +62,28 @@ class BranchApi(models.AbstractModel):
             fields.Domain('db_serial', '=', db_serial) & fields.Domain('active', '=', True), limit=2)
         if len(replica) != 1:
             raise UserError(_('An active replica is required for this DB serial.'))
-        store = replica.default_sales_store_id
-        if (not store or not store.active or not store.allow_sale or store.eplus_serial <= 0
-                or (replica.allowed_sales_store_ids and store not in replica.allowed_sales_store_ids)):
-            raise UserError(_('Configure an active default sales store within the replica allowed stores.'))
+        return replica
+
+    @api.model
+    def _resolve_store(self, replica, store_eplus_serial=STORE_UNSET, required=True):
+        if store_eplus_serial is STORE_UNSET:
+            default = replica.default_sales_store_id
+            if not default:
+                if required:
+                    raise UserError(_('Select a store or configure a default sales store for this operation.'))
+                return self.env['ab_store']
+            store_eplus_serial = default.eplus_serial
+        else:
+            default = False
+        if type(store_eplus_serial) is not int or store_eplus_serial <= 0:
+            raise UserError(_('Store E-Plus serial must be a positive integer.'))
+        store = self.env['ab_store'].sudo().search(
+            fields.Domain('eplus_serial', '=', store_eplus_serial)
+            & fields.Domain('active', '=', True) & fields.Domain('allow_sale', '=', True), limit=2)
+        if len(store) != 1 or (default and store != default):
+            raise UserError(_('An unambiguous active sales store is required for this E-Plus serial.'))
+        if not replica.allowed_sales_store_ids or store not in replica.allowed_sales_store_ids:
+            raise AccessError(_('The selected store is not in the replica Allowed Sales Stores.'))
         # Metadata lookup is privileged; business records retain the caller's environment.
         store = self.env['ab_store'].browse(store.id)
         store.check_access('read')
@@ -88,16 +108,21 @@ class BranchApi(models.AbstractModel):
         return True
 
     @api.model
-    def get_capabilities(self, db_serial):
-        store = self._scope(db_serial)
+    @api_request
+    def get_capabilities(self, db_serial, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self, required=False)
         self._business_permissions('sale')
         can_post = all(self._business_permissions(kind, post=True, raise_exception=False)
                        for kind in ('sale', 'return'))
-        return {'version': 1, 'db_serial': db_serial,
-                'store_name': store.display_name, 'branch_store_id': store.id, 'can_post': can_post,
+        return {'version': 1, **self._identity(store, db_serial),
+                'store_name': store.display_name or '', 'branch_store_id': store.id, 'can_post': can_post,
                 'methods': ['get_capabilities', 'get_connection_status', 'search_products',
                             'get_stock_lines', 'submit_sale', 'get_return_invoice',
                             'submit_return', 'get_operation_status']}
+
+    @api.model
+    def _identity(self, store, db_serial):
+        return {'db_serial': db_serial, 'store_eplus_serial': int(store.eplus_serial) if store else False}
 
     @api.model
     def _resolve(self, model, ref):
@@ -121,8 +146,8 @@ class BranchApi(models.AbstractModel):
         return records
 
     @api.model
-    def search_products(self, db_serial, query='', limit=60, offset=0):
-        self._scope(db_serial)
+    @api_request
+    def search_products(self, db_serial, query='', limit=60, offset=0, *, store_eplus_serial=STORE_UNSET):
         self._business_permissions('sale')
         domain = fields.Domain('active', '=', True)
         if query:
@@ -133,43 +158,25 @@ class BranchApi(models.AbstractModel):
                  'name': p.display_name} for p in products if p.eplus_serial]
 
     @api.model
-    def get_stock_lines(self, db_serial, product_serials):
-        store = self._scope(db_serial)
+    @api_request
+    def get_stock_lines(self, db_serial, product_serials, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self)
         self._business_permissions('sale')
+        return self._stock_lines(store, db_serial, product_serials)
+
+    @api.model
+    def _stock_lines(self, store, db_serial, product_serials):
         serials = sorted({int(s) for s in product_serials if int(s) > 0})
         if len(serials) > 200:
             raise UserError(_('At most 200 products may be requested.'))
         if not serials:
-            return {'data': []}
+            return {**self._identity(store, db_serial), 'data': []}
         products = self.env['ab_product'].search(fields.Domain('eplus_serial', 'in', serials))
         if set(products.mapped('eplus_serial')) != set(serials):
             raise AccessError(_('Requested products are not accessible.'))
-        server = self.env['ab_sales_header']._get_store_server(store)
-        if not server:
-            raise UserError(_('The branch E-Plus server is not configured.'))
-        # Live display reads use committed SQL data, not NOLOCK. Posting revalidates stock.
-        with self.connect_eplus(server=server, autocommit=False, charset='UTF-8', param_str='?') as conn:
-            cur = conn.cursor()
-            slots = ','.join(['?'] * len(serials))
-            cur.execute(f'''
-                SELECT ics.c_id, ics.itm_id, ics.sto_id, ics.sell_price,
-                       ics.itm_qty, ics.itm_qty / NULLIF(ic.itm_unit1_unit3, 0),
-                       ics.pharm_price + ics.sell_tax, ics.itm_expiry_date
-                  FROM Item_Class_Store ics
-                  JOIN item_catalog ic ON ic.itm_id = ics.itm_id
-                 WHERE ics.sto_id = ? AND ics.itm_id IN ({slots}) AND ics.itm_qty > 0
-                 ORDER BY ics.itm_id, ics.itm_expiry_date, ics.c_id
-            ''', tuple([int(store.eplus_serial)] + serials))
-            data = []
-            for row in cur.fetchall():
-                if row[5] is None:
-                    raise UserError(_('Invalid product unit conversion in E-Plus.'))
-                data.append({'source_id': int(row[0]), 'product_eplus_serial': int(row[1]),
-                             'db_serial': db_serial, 'store_eplus_serial': int(row[2]), 'price': float(row[3] or 0),
-                             'qty_in_small_unit': float(row[4]), 'qty': float(row[5]),
-                             'cost': float(row[6] or 0),
-                             'exp_date': str(row[7]) if row[7] else ''})
-            return {'data': data}
+        rows = self.env['ab_sales_header']._read_store_stock(store, serials)
+        return {**self._identity(store, db_serial),
+                'data': [dict(row, db_serial=db_serial) for row in rows]}
 
     @api.model
     def _operation(self, store, token, kind):
@@ -187,24 +194,26 @@ class BranchApi(models.AbstractModel):
         return operation
 
     @api.model
-    def get_operation_status(self, db_serial, token):
-        store = self._scope(db_serial)
+    @api_request
+    def get_operation_status(self, db_serial, token, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self)
         self._business_permissions('sale')
         operation = self.env['ab_branch_api_operation'].sudo().search(
             fields.Domain('user_id', '=', self.env.uid) & fields.Domain('token', '=', token)
             & fields.Domain('store_id', '=', store.id), limit=1)
         if not operation:
-            return {'state': 'not_found'}
+            return {**self._identity(store, db_serial), 'state': 'not_found'}
         self._business_permissions(operation.kind)
         if operation.record_id:
             model = 'ab_sales_header' if operation.kind == 'sale' else 'ab_sales_return_header'
             self.env[model].browse(operation.record_id).check_access('read')
-        return {'state': operation.state, 'result': operation.result or {},
+        return {**self._identity(store, db_serial), 'state': operation.state,
+                'result': ({**operation.result, **self._identity(store, db_serial)} if operation.result else {}),
                 'message': operation.message or ''}
 
     @api.model
     def _assert_invoice_branch(self, store, invoice, require_saved=False):
-        server = self.env['ab_sales_return_header']._get_store_server(store)
+        server = selected_server(self, store)
         if not server:
             raise UserError(_('The branch E-Plus server is not configured.'))
         with self.connect_eplus(server=server, autocommit=False, charset='UTF-8', param_str='?') as conn:
@@ -244,7 +253,7 @@ class BranchApi(models.AbstractModel):
             values['uom_factor'] = float(line.uom_id.factor or line.source_uom_factor or 1)
             values['selected_qty_source'] = float(line._qty_to_source_unit())
             lines.append(values)
-        return {'db_serial': db_serial, 'invoice': int(header.origin_header_id),
+        return {**self._identity(header.store_id, db_serial), 'invoice': int(header.origin_header_id),
                 'branch_return_id': header.id, 'status': header.status,
                 'sales_return_id': int(header.sales_return_id or 0),
                 'f_transaction_id': int(header.f_transaction_id or 0),
@@ -252,8 +261,9 @@ class BranchApi(models.AbstractModel):
                 'total_return_value': float(header.total_return_value), 'lines': lines}
 
     @api.model
-    def get_return_invoice(self, db_serial, invoice, token, selections=False):
-        store = self._scope(db_serial)
+    @api_request
+    def get_return_invoice(self, db_serial, invoice, token, selections=False, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self)
         self._business_permissions('return', post=True)
         operation = self._operation(store, token, 'return')
         if operation.state in ('processing', 'uncertain'):
@@ -273,7 +283,8 @@ class BranchApi(models.AbstractModel):
             if operation.payload_hash != digest:
                 raise UserError(_('The request token was already used with different data.'))
             if operation.state == 'done':
-                return operation.result
+                return {**(operation.result or {}),
+                        **self._identity(request_store(self), int(config.get('db_serial')))}
             raise UserError(_('Operation outcome needs reconciliation. Check the branch before retrying.'))
         operation.write({'state': 'processing', 'payload_hash': digest})
         # Durably reserve before crossing the SQL Server/PostgreSQL transaction boundary.
@@ -317,14 +328,33 @@ class BranchApi(models.AbstractModel):
             line.qty_str = str(qty * float(line.source_uom_factor or 1) / factor)
 
     @api.model
-    def submit_return(self, db_serial, invoice, token, lines, notes='', employee_ref=False):
-        store = self._scope(db_serial)
+    def _validate_return_employee(self, employee_ref):
+        if not employee_ref:
+            raise UserError(_('A return employee is required. Log in to the callcenter POS or select a return employee in the Administrator return form.'))
+        try:
+            employee = self.with_context(active_test=False)._resolve('ab_hr_employee', employee_ref)
+        except UserError as error:
+            raise UserError(_('The return employee is missing or ambiguous on this branch. Check the employee cost center code.')) from error
+        employee.check_access('read')
+        costcenter = employee.costcenter_id
+        costcenter.check_access('read')
+        if not employee.active or not costcenter or not costcenter.active:
+            raise UserError(_('The return employee and employee cost center must be active on this branch.'))
+        if costcenter.eplus_serial <= 0:
+            raise UserError(_('The return employee has no valid E-Plus mapping on this branch. Configure the employee cost center E-Plus serial before retrying.'))
+        return employee
+
+    @api.model
+    @api_request
+    def submit_return(self, db_serial, invoice, token, lines, notes='', employee_ref=False, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self)
         self._business_permissions('return', post=True)
         operation = self._operation(store, token, 'return')
         payload = {'invoice': int(invoice), 'lines': lines, 'notes': str(notes), 'employee_ref': employee_ref}
         if operation.state != 'draft':
             self._return_header(store, operation, invoice)
             return self._run_post(operation, payload, lambda: {})
+        employee = self._validate_return_employee(employee_ref)
         header = self._return_header(store, operation, invoice)
         invoice_date = self._assert_invoice_branch(store, invoice, require_saved=True)
         header._validate_invoice_return_window(sth_id=int(invoice), sec_insert_date=invoice_date)
@@ -332,7 +362,6 @@ class BranchApi(models.AbstractModel):
         self._apply_return_lines(header, lines)
         header.notes = str(notes)
         header._validate_return()
-        employee = self._resolve('ab_hr_employee', employee_ref) if employee_ref else False
         operation.reservation_key = 'return:%s:%s' % (store.id, int(invoice))
 
         def post():
@@ -343,12 +372,14 @@ class BranchApi(models.AbstractModel):
             finally:
                 _return_employee.reset(actor_token)
         return self._run_post(operation, payload, post, lambda: {
+            **self._identity(store, db_serial),
             'branch_return_id': header.id, 'sales_return_id': int(header.sales_return_id or 0),
             'f_transaction_id': int(header.f_transaction_id or 0), 'status': header.status})
 
     @api.model
-    def submit_sale(self, db_serial, token, payload, push_to_eplus=True):
-        store = self._scope(db_serial)
+    @api_request
+    def submit_sale(self, db_serial, token, payload, push_to_eplus=True, *, store_eplus_serial=STORE_UNSET):
+        store = request_store(self)
         self._business_permissions('sale', post=True)
         operation = self._operation(store, token, 'sale')
         request = {'payload': payload, 'push': bool(push_to_eplus)}
@@ -399,11 +430,12 @@ class BranchApi(models.AbstractModel):
                 header.with_context(pos_submit=True).action_push_to_eplus()
                 if not header.eplus_serial or header.status not in ('pending', 'saved'):
                     raise UserError(_('Branch sale was not pushed to E-Plus.'))
-            return {'remote_callcenter': True, 'branch_header_id': header.id,
+            return {**self._identity(store, db_serial), 'remote_callcenter': True, 'branch_header_id': header.id,
                     'remote_header_id': header.id, 'status': header.status,
                     'eplus_serial': int(header.eplus_serial or 0), 'pos_header_id': False,
                     'message': _('Branch sale submitted.')}
         return self._run_post(operation, request, post, lambda: {
+            **self._identity(store, db_serial),
             'branch_header_id': header.id, 'eplus_serial': int(header.eplus_serial or 0), 'status': header.status})
 
     @api.model
