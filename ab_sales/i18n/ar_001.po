@@ -343,6 +343,9 @@ msgstr "رجوع"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product__balance
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance
 #: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+#: code:addons/ab_sales/models/branch_services.py:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__balance
+#: model_terms:ir.ui.view,arch_db:ab_sales.callcenter_product_store_balance_html
 msgid "Balance"
 msgstr "الرصيد"
 
@@ -414,6 +417,7 @@ msgstr "معالج الفاتورة"
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: model:ir.actions.act_window,name:ab_sales.ab_sales_header_action
 #: model:ir.ui.menu,name:ab_sales.ab_sales_header_menu
+#: model:ir.actions.client,name:ab_sales.ab_sales_bill_wizard_action
 msgid "Bills"
 msgstr "الفواتير"
 
@@ -424,6 +428,9 @@ msgstr "الفواتير"
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__branch
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
+#: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.callcenter_product_store_balance_html
 msgid "Branch"
 msgstr "الفرع"
 
@@ -719,6 +726,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__customer
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
 #: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__customer_id
 msgid "Customer"
 msgstr "العميل"
 
@@ -2148,6 +2156,9 @@ msgstr "ادفع للعميل"
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__pending
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__pending
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_per_day_sync_state__state__pending
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_per_day_sync_state_view_search
 msgid "Pending"
 msgstr "قيد الانتظار"
 
@@ -2446,6 +2457,15 @@ msgstr "الطابعات"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__product_id
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__product_id
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_search
+#: code:addons/ab_sales/models/branch_services.py:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__product_id
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_metadata_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.callcenter_product_store_balance_html
 msgid "Product"
 msgstr "المنتج"
 
@@ -2799,6 +2819,7 @@ msgstr "تم حفظ المرتجع، ولكن فشل تحديث sales_return.ret
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__notice_header_ids
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 msgid "Returns"
 msgstr "المرتجعات"
 
@@ -2843,6 +2864,8 @@ msgstr "سطر البيع"
 
 #. module: ab_sales
 #: model:ir.ui.menu,name:ab_sales.sales_menu_root
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/dashboard/sales_dashboard.xml:0
 msgid "Sales"
 msgstr "المبيعات"
 
@@ -3010,6 +3033,7 @@ msgstr "حفظ الإعدادات"
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__saved
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 msgid "Saved"
 msgstr "محفوظة"
 
@@ -3277,6 +3301,11 @@ msgstr "تاريخ البداية"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__status
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__header_status
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__status
+#: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__state
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_per_day_sync_state_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.callcenter_product_store_balance_html
 msgid "Status"
 msgstr "الحالة"
 
@@ -4008,7 +4037,8 @@ msgstr "يجب أن يحتوي الفرع المحدد على رقم E-Plus أو
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
-msgid "Connection works, but matching branch store was not found on remote Odoo."
+msgid ""
+"Connection works, but matching branch store was not found on remote Odoo."
 msgstr "الاتصال يعمل، لكن لم يتم العثور على الفرع المطابق في أودو البعيد."
 
 #. module: ab_sales
@@ -4137,8 +4167,12 @@ msgstr "الإرسال إلى E-Plus عند الاعتماد"
 
 #. module: ab_sales
 #: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__push_to_eplus_on_submit
-msgid "When enabled, call-center POS submit asks the branch Odoo to push the remote prepending invoice to E-Plus immediately."
-msgstr "عند التفعيل، يطلب إرسال نقطة بيع مركز الاتصال من أودو الفرع إرسال الفاتورة المبدئية البعيدة إلى E-Plus فورًا."
+msgid ""
+"When enabled, call-center POS submit asks the branch Odoo to push the remote"
+" prepending invoice to E-Plus immediately."
+msgstr ""
+"عند التفعيل، يطلب إرسال نقطة بيع مركز الاتصال من أودو الفرع إرسال الفاتورة "
+"المبدئية البعيدة إلى E-Plus فورًا."
 
 #. module: ab_sales
 #. odoo-python
@@ -4156,7 +4190,8 @@ msgstr "تم إرسال فاتورة الفرع البعيد إلى E-Plus مس�
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_pos_api.py:0
 msgid "Remote branch invoice must be prepending before E-Plus push."
-msgstr "يجب أن تكون فاتورة الفرع البعيد في حالة مبدئية قبل الإرسال إلى E-Plus."
+msgstr ""
+"يجب أن تكون فاتورة الفرع البعيد في حالة مبدئية قبل الإرسال إلى E-Plus."
 
 #. module: ab_sales
 #. odoo-python
@@ -4173,8 +4208,12 @@ msgstr "تم الإرسال إلى فاتورة الفرع رقم %(id)s"
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_header.py:0
-msgid "Reused existing E-Plus invoice (sth_id=%s); skipped duplicate detail and stock writes."
-msgstr "تم استخدام فاتورة E-Plus موجودة مسبقًا (sth_id=%s)؛ وتم تجاوز تكرار كتابة التفاصيل والمخزون."
+msgid ""
+"Reused existing E-Plus invoice (sth_id=%s); skipped duplicate detail and "
+"stock writes."
+msgstr ""
+"تم استخدام فاتورة E-Plus موجودة مسبقًا (sth_id=%s)؛ وتم تجاوز تكرار كتابة "
+"التفاصيل والمخزون."
 
 #. module: ab_sales
 #. odoo-python
@@ -4254,6 +4293,7 @@ msgstr "إصدار واجهة برمجة الفرع أو الفرع غير مط�
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+#: code:addons/ab_sales/models/branch_services.py:0
 msgid "The branch returned invalid stock data."
 msgstr "أرسل الفرع بيانات مخزون غير صالحة."
 
@@ -4805,3 +4845,222 @@ msgid ""
 "The return employee needs a cost center code that matches the branch "
 "employee."
 msgstr "يجب أن يكون لموظف المرتجع كود مركز تكلفة يطابق موظف الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "All authorized branches"
+msgstr "جميع الفروع المصرح بها"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Balance refresh failed; cached value shown"
+msgstr "تعذر تحديث الرصيد؛ تظهر القيمة المحفوظة"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_branch_bill_search
+msgid "Branch Bill Search"
+msgstr "البحث في فواتير الفروع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__branch_refreshed_at
+msgid "Branch Refreshed At"
+msgstr "آخر تحديث من الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "Callcenter sales must use the branch API."
+msgstr "يجب أن تستخدم مبيعات مركز الاتصال واجهة الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "Check the branch operation status before retrying."
+msgstr "تحقق من حالة العملية في الفرع قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "Current"
+msgstr "محدث"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/access_policy.py:0
+msgid "Direct E-Plus access is disabled on this server. Use the branch API."
+msgstr "الاتصال المباشر بـ E-Plus معطل على هذا الخادم. استخدم واجهة الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Document Type"
+msgstr "نوع المستند"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Incomplete results. Unavailable branches:"
+msgstr "النتائج غير مكتملة. الفروع غير المتاحة:"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "Invalid branch bill reference."
+msgstr "مرجع فاتورة الفرع غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "No authorized branches are configured."
+msgstr "لم يتم إعداد فروع مصرح بها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "Open the next page in order."
+msgstr "افتح الصفحة التالية بالترتيب."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid ""
+"Operation outcome needs reconciliation. Check the branch before retrying."
+msgstr "تحتاج نتيجة العملية إلى مراجعة. تحقق من الفرع قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Pending and saved"
+msgstr "المعلقة والمحفوظة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "Return action is available for submitted sales bills only."
+msgstr "المرتجع متاح فقط لفواتير المبيعات المرسلة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Sales and returns"
+msgstr "المبيعات والمرتجعات"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "Some products are unavailable at the branch."
+msgstr "بعض الأصناف غير متاحة في الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Stale"
+msgstr "غير محدث"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_bill_search__state
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "The bill does not belong to an authorized branch."
+msgstr "الفاتورة لا تخص فرعاً مصرحاً به."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "The bill search expired. Refresh the results."
+msgstr "انتهت صلاحية البحث عن الفواتير. حدث النتائج."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The branch returned an incomplete snapshot."
+msgstr "أعاد الفرع لقطة بيانات غير مكتملة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The branch returned an invalid customer."
+msgstr "أعاد الفرع بيانات عميل غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The branch returned an invalid snapshot."
+msgstr "أعاد الفرع لقطة بيانات غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The branch returned invalid invoice status."
+msgstr "أعاد الفرع حالة فاتورة غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The branch returned invalid sales data."
+msgstr "أعاد الفرع بيانات مبيعات غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "The customer reference is ambiguous."
+msgstr "مرجع العميل غير محدد بشكل فريد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"The operation may have completed. Retry with the same request token to "
+"reconcile."
+msgstr "قد تكون العملية قد اكتملت. أعد المحاولة بنفس رمز الطلب للتحقق."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"The operation outcome is unknown. Keep the request token and check the "
+"branch before retrying."
+msgstr ""
+"نتيجة العملية غير معروفة. احتفظ برمز الطلب وتحقق من الفرع قبل إعادة "
+"المحاولة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_bill_search__token
+msgid "Token"
+msgstr "رمز الطلب"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "Unavailable; last refresh: %s"
+msgstr "غير متاح؛ آخر تحديث: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Upgrade the branch API before using this call-center version."
+msgstr "حدث واجهة الفرع قبل استخدام هذا الإصدار من مركز الاتصال."

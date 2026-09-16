@@ -430,6 +430,7 @@ class AbSalesAddProductsAction extends Component {
     }
 
     schedulePosBalanceRefresh(results, storeId) {
+        for (const product of results || []) { product.pos_balance_stale = true; }
         if (this._posBalanceTimer) {
             clearTimeout(this._posBalanceTimer);
         }
@@ -470,9 +471,15 @@ class AbSalesAddProductsAction extends Component {
                     }
                     const val = parseFloat(balance || 0) || 0;
                     product.pos_balance = val;
+                    product.pos_balance_stale = false;
+                    product.pos_balance_refreshed_at = balances._refreshed_at || "";
                 }
             })
-            .catch(() => {});
+            .catch(() => {
+                if (requestId === this._posBalanceRequestId) {
+                    for (const product of this.state.products || []) { product.pos_balance_stale = true; }
+                }
+            });
     }
 
     onSearch(ev) {

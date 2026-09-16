@@ -2638,6 +2638,7 @@ class AbSalesPosAction extends Component {
     }
 
     schedulePosBalanceRefresh(results, storeId) {
+        for (const product of results || []) { product.pos_balance_stale = true; }
         if (this._posBalanceTimer) {
             clearTimeout(this._posBalanceTimer);
         }
@@ -2678,9 +2679,14 @@ class AbSalesPosAction extends Component {
                     }
                     const val = parseFloat(balance || 0) || 0;
                     product.pos_balance = val;
+                    product.pos_balance_stale = false;
+                    product.pos_balance_refreshed_at = balances._refreshed_at || "";
                 }
             })
             .catch(() => {
+                if (requestId === this._posBalanceRequestId) {
+                    for (const product of this.state.productResults || []) { product.pos_balance_stale = true; }
+                }
             });
     }
 
@@ -2726,9 +2732,14 @@ class AbSalesPosAction extends Component {
                     }
                     const val = parseFloat(balance || 0) || 0;
                     line.pos_balance = val;
+                    line.pos_balance_stale = false;
+                    line.pos_balance_refreshed_at = balances._refreshed_at || "";
                 }
             })
             .catch(() => {
+                if (requestId === this._linePosBalanceRequestId) {
+                    for (const line of target.lines || []) { line.pos_balance_stale = true; }
+                }
             });
     }
 
@@ -2753,9 +2764,10 @@ class AbSalesPosAction extends Component {
                     return;
                 }
                 line.pos_balance = parseFloat(balance || 0) || 0;
+                line.pos_balance_stale = false;
+                line.pos_balance_refreshed_at = balances._refreshed_at || "";
             })
-            .catch(() => {
-            });
+            .catch(() => { line.pos_balance_stale = true; });
     }
 
     refreshStoreStatus(storeId) {

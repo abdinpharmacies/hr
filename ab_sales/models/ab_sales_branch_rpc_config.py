@@ -218,6 +218,16 @@ class AbSalesBranchRpcConfig(models.Model):
         # Internal compatibility adapter only; all outbound requests use JSON-2.
         signatures = {
             'get_capabilities': ('db_serial',),
+            'get_product_balances': ('db_serial', 'product_serials'),
+            'lookup_customer': ('db_serial', 'phone'),
+            'create_customer': ('db_serial', 'token', 'phone', 'name', 'address'),
+            'get_inventory_snapshot': ('db_serial', 'token', 'offset'),
+            'get_sales_day': ('db_serial', 'sale_date', 'token', 'offset'),
+            'get_invoice_statuses': ('db_serial', 'invoices'),
+            'search_bills': ('db_serial', 'filters', 'token', 'offset'),
+            'get_bill_details': ('db_serial', 'reference'),
+            'update_bill_notes': ('db_serial', 'reference', 'notes'),
+            'render_bill_print': ('db_serial', 'reference', 'print_format'),
             'get_stock_lines': ('db_serial', 'product_serials'),
             'search_products': ('db_serial', 'query', 'limit', 'offset'),
             'submit_sale': ('db_serial', 'token', 'payload', 'push_to_eplus'),
@@ -239,7 +249,28 @@ class AbSalesBranchRpcConfig(models.Model):
                 (type(values['store_eplus_serial']) is not int or values['store_eplus_serial'] != selected_serial)):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         values['store_eplus_serial'] = selected_serial
-        result = self._json_call(model_name, method, values)
+        writes = ('submit_sale', 'submit_return', 'create_customer')
+        status_values = {'db_serial': self.db_serial, 'store_eplus_serial': selected_serial,
+                         'token': values.get('token')}
+        if method in writes:
+            status = self._json_call('ab_branch_api', 'get_operation_status', status_values)
+            self._validate_identity(status)
+            if status.get('state') in ('processing', 'uncertain'):
+                raise UserError(_('Operation outcome needs reconciliation. Check the branch before retrying.'))
+        try:
+            result = self._json_call(model_name, method, values)
+        except UserError:
+            if method in writes:
+                try:
+                    status = self._json_call('ab_branch_api', 'get_operation_status', status_values)
+                    self._validate_identity(status)
+                except (UserError, AccessError):
+                    raise UserError(_('The operation outcome is unknown. Keep the request token and check the branch before retrying.')) from None
+                # Do not hide a payload mismatch by returning an older completed result.
+                # A retry uses the same token and lets the provider verify its payload hash.
+                if status.get('state') in ('processing', 'uncertain', 'done'):
+                    raise UserError(_('The operation may have completed. Retry with the same request token to reconcile.')) from None
+            raise
         if method != 'search_products':
             self._validate_identity(result)
             if method == 'get_operation_status' and result.get('result'):
@@ -264,6 +295,11 @@ class AbSalesBranchRpcConfig(models.Model):
                 or 'expires_at' not in result
                 or not result.get('user_id')):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
+        required = {'get_product_balances', 'lookup_customer', 'create_customer', 'search_bills',
+                    'get_bill_details', 'update_bill_notes', 'render_bill_print',
+                    'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses'}
+        if not required.issubset(set(result.get('methods') or [])):
+            raise UserError(_('Upgrade the branch API before using this call-center version.'))
         return result
 
     def action_test_connection(self):

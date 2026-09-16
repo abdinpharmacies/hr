@@ -944,7 +944,7 @@ class AbSalesPosApi(models.TransientModel):
 
     @api.model
     def _pos_callcenter_remote_config(self, payload):
-        if not self.env.user.has_group("ab_sales.group_call_center"):
+        if not self.env["ab_sales_branch_client"]._is_callcenter():
             return self.env["ab_sales_branch_rpc_config"]
         header_vals = payload.get("header") or {}
         try:

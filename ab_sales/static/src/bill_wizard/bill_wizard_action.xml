@@ -66,15 +66,41 @@
 
     <t t-name="ab_sales.BillWizardAction">
         <div class="o_ab_sales_bill_wizard">
+            <div class="alert alert-warning" t-if="state.unavailableBranches.length">
+                Incomplete results. Unavailable branches: <t t-esc="state.unavailableBranches.join(', ')"/>
+                <button class="btn btn-link" t-on-click="applyFilters">Retry</button>
+            </div>
             <div class="o_ab_sales_bill_wizard_header">
                 <div class="o_ab_sales_bill_wizard_title_block">
-                    <h3 class="o_ab_sales_bill_wizard_title">Bill Wizard</h3>
+                    <h3 class="o_ab_sales_bill_wizard_title">Bills</h3>
                     <div class="o_ab_sales_bill_wizard_subtitle">
                         <t t-if="!state.isSearch">Showing latest 20 pending/saved bills.</t>
                         <t t-else="">Search result includes old bills too.</t>
                     </div>
                 </div>
                 <div class="o_ab_sales_bill_wizard_filters">
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                        <label class="form-label mb-1">Branch</label>
+                        <select class="form-select" t-model="state.filters.storeId">
+                            <option value="">All authorized branches</option>
+                            <t t-foreach="state.branches" t-as="branch" t-key="branch.id">
+                                <option t-att-value="branch.id" t-esc="branch.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                        <label class="form-label mb-1">Document Type</label>
+                        <select class="form-select" t-model="state.filters.documentType">
+                            <option value="">Sales and returns</option><option value="sale">Sales</option><option value="return">Returns</option>
+                        </select>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                        <label class="form-label mb-1">Status</label>
+                        <select class="form-select" t-model="state.filters.status">
+                            <option value="">Pending and saved</option><option value="prepending">Draft</option>
+                            <option value="pending">Pending</option><option value="saved">Saved</option>
+                        </select>
+                    </div>
                     <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_product"
                          t-ref="productSearchInput">
                         <label class="form-label mb-1">Product</label>
@@ -300,7 +326,7 @@
                             <div class="mt-2 d-flex justify-content-end">
                                 <button class="btn btn-primary btn-sm"
                                         type="button"
-                                        t-att-disabled="state.savingNotes"
+                                        t-att-disabled="state.savingNotes || (state.remoteBills &amp;&amp; !state.details.can_edit_notes)"
                                         t-on-click="saveNotes">
                                     Save Notes
                                 </button>

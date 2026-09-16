@@ -222,7 +222,7 @@
         </record>
 
         <menuitem id="ab_sales_header_menu" name="Bills" parent="sales_menu_root"
-                  action="ab_sales_header_action" sequence="3"
-                  groups="ab_sales.group_ab_sales_manager,base.group_system"/>
+                  action="ab_sales_bill_wizard_action" sequence="3"
+                  groups="ab_sales.group_ab_sales_manager,ab_sales.group_call_center,base.group_system"/>
     </data>
 </odoo>

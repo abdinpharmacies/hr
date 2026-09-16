@@ -1,6 +1,7 @@
 """Callcenter adapters for the versioned ab_branch_api provider."""
 import math
 from uuid import uuid4
+from .access_policy import is_callcenter
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
@@ -11,11 +12,12 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _is_callcenter(self):
-        return self.env.user.has_group('ab_sales.group_call_center')
+        return is_callcenter()
 
     @api.model
     def _config(self, store):
         store = store.exists()
+        store.check_access('read')
         if not store or not store.eplus_serial:
             raise UserError(_('A store with an E-Plus serial is required.'))
         allowed = self.env['ab_sales_header']._get_allowed_store_ids()
@@ -141,6 +143,9 @@ class BranchPos(models.TransientModel):
             balances = self.pos_refresh_pos_balances(store_id=store_id, product_ids=[product_id])
             response['pos_balance'] = balances.get(int(product_id), 0.0)
             response['balance'] = response['pos_balance']
+            product = self.env['ab_product'].browse(int(product_id))
+            response['sell_price'] = self._store_default_price(int(store_id), product)
+            response['default_price'] = response['sell_price']
         return response
 
 

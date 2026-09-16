@@ -71,6 +71,9 @@ class AbSalesBillWizardAction extends Component {
 
         this.state = useState({
             filters: {
+                storeId: "",
+                documentType: "",
+                status: "",
                 productQuery: "",
                 productSelection: [],
                 customerQuery: "",
@@ -84,6 +87,10 @@ class AbSalesBillWizardAction extends Component {
                 pageCount: 1,
                 totalCount: 0,
             },
+            branches: [],
+            unavailableBranches: [],
+            searchToken: false,
+            remoteBills: false,
             items: [],
             selectedId: null,
             details: null,
@@ -145,6 +152,10 @@ class AbSalesBillWizardAction extends Component {
             eplus_serial: (this.state.filters.eplusSerial || "").trim(),
             date_start: this.state.filters.dateStart || false,
             date_end: this.state.filters.dateEnd || false,
+            store_id: parseInt(this.state.filters.storeId || 0, 10) || false,
+            document_type: this.state.filters.documentType,
+            status: this.state.filters.status,
+            search_token: targetPage === 1 ? false : this.state.searchToken,
             page: targetPage,
             per_page: 20,
         };
@@ -282,6 +293,10 @@ class AbSalesBillWizardAction extends Component {
             );
             const items = Array.isArray(result?.items) ? result.items : [];
             this.state.items = items;
+            this.state.branches = result.branches || [];
+            this.state.unavailableBranches = result.unavailable_branches || [];
+            this.state.searchToken = result.search_token || false;
+            this.state.remoteBills = !!result.remote_bills;
             this.state.isSearch = !!result?.is_search;
             const pagination = result?.pagination || {};
             this.state.pagination.page = Math.max(1, parseInt(pagination.page || 1, 10) || 1);
@@ -337,6 +352,9 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async resetFilters() {
+        this.state.filters.storeId = "";
+        this.state.filters.documentType = "";
+        this.state.filters.status = "";
         this.state.filters.productQuery = "";
         this.state.filters.productSelection = [];
         this.state.filters.customerQuery = "";
@@ -370,7 +388,7 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async selectBill(billId) {
-        const parsed = parseInt(billId || 0, 10);
+        const parsed = billId;
         if (!parsed || this.state.selectedId === parsed) {
             return;
         }
@@ -379,17 +397,19 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async loadDetails(billId = null) {
-        const targetId = parseInt(billId || this.state.selectedId || 0, 10);
+        const targetId = billId || this.state.selectedId;
         if (!targetId) {
             this.state.details = null;
             this.state.notesDraft = "";
             return;
         }
+        this.state.details = null;
         this.state.loadingDetails = true;
         try {
             const payload = await this.orm.call("ab_sales_ui_api", "bill_wizard_details", [], {
                 header_id: targetId,
             });
+            if (this.state.selectedId !== targetId) { return; }
             this.state.details = payload || null;
             this.state.notesDraft = payload?.notes || "";
         } catch (err) {

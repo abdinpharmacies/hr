@@ -29,6 +29,8 @@
                             </t>
                             <i class="fa fa-shopping-cart ab_pos_product_card_pos_balance_icon" aria-hidden="true"
                                title="Balance"/>
+                            <small t-if="p.pos_balance_stale" class="text-warning" title="Balance refresh failed; cached value shown">Stale</small>
+                            <small t-if="p.pos_balance_refreshed_at" class="text-muted" t-att-title="p.pos_balance_refreshed_at">↻</small>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-1 flex-wrap">

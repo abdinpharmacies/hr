@@ -267,3 +267,73 @@ Deploy provider and callcenter contract changes together and retest connections.
 Omitted `store_eplus_serial` uses the provider default when valid. Explicit invalid
 selections never fall back. Callcenter always sends its selected store; there is
 no automatic provisioning.
+
+
+## API-only correction (19.0.3.0.0)
+
+Set `AB_ODOO_SERVER_ROLE=callcenter` in the call-center Odoo service environment
+and restart the process after upgrading `ab_sales`. Missing/invalid role values
+also fail closed in this checkout. The only value permitting SQL is explicit
+`branch`; never set it on call-center. User groups, administrators, cron users,
+`sudo()` and RPC context cannot select the SQL transport.
+
+The call-center `ab_sales` addon inherits the connector to reject credential
+access, SQL probes, validation and connection creation before any network call.
+No change to the filesystem-protected connector addon is needed. A restart is
+mandatory to discard connections created by previously loaded code. For an
+independent operational boundary, deny call-center egress to E-Plus hosts/SQL
+ports and remove its SQL credentials. Keep `decryption_key`: it encrypts branch
+API keys too. These service/firewall/credential changes are deployment steps,
+not module hooks or actions executed during development validation.
+
+Active Branch Connections define available remote stores. Existing configured
+local Allowed Sales Stores, when present, further restrict them; normal store
+record rules still apply. A local replica/default store is not mandatory.
+
+Stock, price cache, product details, customer lookup/creation, sales and returns
+use the authenticated branch API. The all-store balance dialog queries each
+permitted connection. Read failures retain cached values and mark them stale;
+missing responses never become zero stock. Price-cache changes log old/new price,
+store/product, user and refresh time. Customer cache records are mapped by stable
+E-Plus serial and created through ORM when absent; no SQL lookup is performed.
+
+Existing inventory, completed-day sales-history and invoice-status jobs use API
+snapshots/batches. No new jobs are added. Inventory snapshots are validated before
+applying or clearing absent balances. Sales-day replacement waits for every
+required branch and affects only those authorized stores. Other branches and
+failed-day history remain unchanged.
+
+### Bills page
+
+The **Bills** menu and POS bill search now use the same remote page. It displays
+all branch Odoo sales and returns, even when no corresponding sale record exists
+in call-center. It does not import duplicate sale orders for display or include
+invoices created only in E-Plus.
+
+Use Branch (default: all authorized branches), Document Type, Status, product,
+customer, invoice-number and date filters. Results use per-branch snapshots and
+20-row merged pages; duplicate record IDs/invoice numbers across branches remain
+distinct. An unavailable branch is shown explicitly; available results are marked
+incomplete. Retry starts a fresh search. A later page failure preserves the prior
+page rather than skipping unseen branch records.
+
+Selection, notes, details, returns and printing carry a validated database/store/
+record-type/record-ID reference. Return opening creates only the necessary local
+return working record and uses the remote original invoice. Employee-session
+validation still applies. HTML is rendered from source branch data; printing is
+dispatched by the existing call-center printer flow, never by the branch API.
+
+### Safe writes and rollout
+
+Sale/return/customer calls check operation status before posting. Processing or
+uncertain operations do not post again. After an ambiguous response, check the
+same token on the branch. Retrying retains the token and lets the provider check
+the payload hash; no automatic external write retry or SQL fallback occurs.
+Customer creation uses a deterministic token for the same caller/store/request.
+
+Upgrade only branch `ab_branch_api` first. Retest every Branch Connection after
+the call-center upgrade; all added capabilities must be present. Restore the
+existing refresh jobs after connection checks. Keep changes in `pos19` limited
+to `ab_branch_api`; do not transfer call-center sales code into branch `ab_sales`.
+No `-u base`, hooks, automatic uninstalls, schema migrations or external writes
+are part of this correction's validation.

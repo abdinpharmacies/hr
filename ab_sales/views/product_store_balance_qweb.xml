@@ -303,4 +303,16 @@
             </t>
         </div>
     </template>
+    <template id="callcenter_product_store_balance_html">
+        <div class="o_ab_sales_callcenter_balances table-responsive">
+            <table class="table">
+                <thead><tr><th>Branch</th><th>Product</th><th>Balance</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr t-foreach="rows" t-as="row">
+                        <td t-foreach="row" t-as="value"><t t-out="value"/></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </template>
 </odoo>

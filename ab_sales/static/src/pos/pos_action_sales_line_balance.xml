@@ -26,6 +26,8 @@
                         t-on-click.stop="() => refreshLinePosBalance(line)"
                         title="Balance">
                     <span class="ab_pos_line_btn_refresh_pos_balance_text" t-esc="formatQty(((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : 0) || 0)"/>
+                    <small t-if="line.pos_balance_stale" class="text-warning" title="Balance refresh failed; cached value shown">Stale</small>
+                    <small t-if="line.pos_balance_refreshed_at" class="text-muted" t-att-title="line.pos_balance_refreshed_at">↻</small>
                     <i class="fa fa-shopping-cart ab_pos_line_btn_refresh_pos_balance_icon" aria-hidden="true" title="Balance"/>
                 </button>
             </div>
