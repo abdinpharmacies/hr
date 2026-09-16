@@ -135,7 +135,8 @@ class AbSalesBranchRpcConfig(models.Model):
         for record in self:
             if record.db_serial <= 0:
                 raise ValidationError(_('DB serial must be a positive integer.'))
-            if not record.store_id.active or not record.store_id.allow_sale:
+            if (not record.store_id.active or not record.store_id.allow_sale
+                    or record.store_id.eplus_serial <= 0):
                 raise ValidationError(_('This store is not allowed.'))
 
     @api.constrains("rpc_url")
@@ -233,12 +234,31 @@ class AbSalesBranchRpcConfig(models.Model):
         values = dict(zip(signatures[method], args or []), **(kwargs or {}))
         if type(values.get('db_serial')) is not int or values['db_serial'] != self.db_serial:
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
-        return self._json_call(model_name, method, values)
+        selected_serial = int(self.store_id.eplus_serial)
+        if ('store_eplus_serial' in values and
+                (type(values['store_eplus_serial']) is not int or values['store_eplus_serial'] != selected_serial)):
+            raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
+        values['store_eplus_serial'] = selected_serial
+        result = self._json_call(model_name, method, values)
+        if method != 'search_products':
+            self._validate_identity(result)
+            if method == 'get_operation_status' and result.get('result'):
+                self._validate_identity(result['result'])
+        return result
+
+    def _validate_identity(self, result):
+        self.ensure_one()
+        if (not isinstance(result, dict)
+                or type(result.get('db_serial')) is not int or result['db_serial'] != self.db_serial
+                or type(result.get('store_eplus_serial')) is not int
+                or result['store_eplus_serial'] != self.store_id.eplus_serial):
+            raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
 
     def _status(self, key=None):
         self._check_branch_connection()
         result = self._json_call('ab_branch_api', 'get_connection_status',
-                                 {'db_serial': self.db_serial}, key=key)
+                                 {'db_serial': self.db_serial, 'store_eplus_serial': int(self.store_id.eplus_serial)}, key=key)
+        self._validate_identity(result)
         if (not isinstance(result, dict) or result.get('version') != 1
                 or type(result.get('db_serial')) is not int or result['db_serial'] != self.db_serial
                 or 'expires_at' not in result

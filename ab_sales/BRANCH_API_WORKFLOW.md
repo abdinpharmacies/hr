@@ -1,7 +1,7 @@
 # Callcenter and Branch Connection Guide
 
-API version remains **1**. All eight methods require `db_serial`, a positive JSON
-integer. `store_serial` is rejected. URLs remain `/json/2/ab_branch_api/<method>`.
+API version remains **1**. All eight methods require positive JSON integer `db_serial` and accept optional
+keyword `store_eplus_serial`. Callcenter always sends the selected store serial. `store_serial` is rejected. URLs remain `/json/2/ab_branch_api/<method>`.
 The branch implementation lives in `custom-addons/ab_branch_api`; the callcenter
 adapter lives in `worktrees/callcenter/ab_sales`.
 
@@ -30,11 +30,19 @@ included in either addon.
 | Value | Meaning |
 |---|---|
 | `db_serial` | Shared branch identity, equal to the branch server configuration and its active `ab_replica_db.db_serial` |
-| Branch replica default sales store | Store resolved on the branch server; must be active and available for sales, and included if allowed stores are configured |
+| `store_eplus_serial` | Selected store E-Plus serial; exactly one active sales-enabled store must match on the branch and belong to the replica Allowed Sales Stores (an empty list rejects) |
 | Callcenter selected store | Chooses the active Branch Connection for that sale or return; no local replica/default-store mapping is required |
-| Store Odoo ID / E-Plus serial | Local identifiers; neither needs to equal DB serial or match the other database |
+| Store Odoo ID | Local identifier; may differ between servers and from DB/store serials |
 | `rpc_db` / X-Odoo-Database | Exact remote PostgreSQL database name, separate from DB serial |
 | Product / invoice identifiers | Existing E-Plus identifiers; their meanings do not change |
+
+The adapter derives `store_eplus_serial` from the connection's selected store;
+no new connection field is needed. Store E-Plus serials must agree across servers.
+Without an explicit selection, the provider uses its default sales store.
+Connection/capability checks and product search may proceed without either;
+store-specific operations require a resolved store. An invalid explicit selection
+or invalid default rejects without falling back. Empty allowed-store lists deny
+store-specific operations. The default uses `192.168.1.150`; other stores need `ip1`.
 
 The branch uses its resolved store's E-Plus serial in stock and transaction
 queries. Live stock and invoice ownership checks read committed source data;
@@ -66,7 +74,7 @@ generation, rotation, or revocation is performed by callcenter.
 After loading the updated addon code, target-upgrade `ab_sales` on callcenter
 and restart its Odoo process so the form and renamed status are visible. If the
 branch API changes have not yet been loaded, target-upgrade the branch addons
-`ab_sales,ab_branch_api` and restart that process too. Never upgrade `base` for
+`ab_branch_api` and restart that process too. Never upgrade `base` for
 this change.
 
 1. **Connection:** enter Branch, DB Serial, Branch Odoo URL, Branch Database,
@@ -113,7 +121,7 @@ Authorization: bearer <raw native Odoo API key>
 X-Odoo-Database: <remote PostgreSQL database name>
 Content-Type: application/json
 
-{"db_serial": 102}
+{"db_serial": 102, "store_eplus_serial": 7}
 ```
 
 Every method validates the bearer credential again and requires its owner to
@@ -133,7 +141,8 @@ calls continue through the inherited implementation.
 | `submit_return` | `invoice`, `token`, `lines`, `notes`, `employee_ref` |
 | `get_operation_status` | `token` |
 
-Capabilities return `version`, `db_serial`, `branch_store_id`, `store_name`,
+Callcenter sends both identity arguments in addition to those listed above.
+Capabilities return `version`, `db_serial`, `store_eplus_serial`, `branch_store_id`, `store_name`,
 `can_post`, and `methods`. Connection status adds `credential_id`, `expires_at`,
 `user_id`, and `login`. No raw credential or hash is returned; no-expiry keys
 return `expires_at: false`.
@@ -146,10 +155,10 @@ whether both sale and return permissions are present; individual operations
 still enforce their own permissions and record rules. Costs are returned to
 eligible callers without a separate API cost flag.
 
-Stock rows include `db_serial`; return snapshots include `db_serial` and
-`invoice`, including empty snapshots. Callcenter validates branch identity using
-DB serial and retains product, invoice, unit, and numeric checks. E-Plus store
-identifiers remain source transaction metadata.
+Stock envelopes and rows, sale/return results and operation status include both
+`db_serial` and `store_eplus_serial`. Callcenter validates both, including empty
+stock/return responses. Return lines also retain invoice/store checks through
+`sth_id` and `sto_id`. Product search retains its list response.
 
 ## Operations and rollout
 
@@ -165,7 +174,7 @@ for reconciliation. Validation must mock E-Plus operations.
 
 Deploy both addon changes together to clean installations. No compatibility
 layer, lifecycle hook, migration, or automatic provisioning is shipped. Use only
-targeted upgrades (`ab_sales,ab_branch_api` on branch and `ab_sales` on callcenter),
+targeted upgrades (`ab_branch_api` on branch and `ab_sales` on callcenter),
 then provision/test connections before business use. This source change does not
 deploy or execute live E-Plus writes.
 
@@ -178,30 +187,40 @@ means that Odoo and the credential are working; it does not test E-Plus. An API
 failure shows **Branch API unavailable**, with the business error in a notification
 and the badge tooltip. Changing the selected branch discards older status responses.
 
-With `ab_sales_routing` installed, the branch uses the resolved store's configured
-`ip1` for sales, returns, stock,
-and customer lookups, including its replica default store. The bridge overrides the legacy SQL
-address helpers without editing the branch sales or cashier source files. Configure the correct E-Plus
-server address on the branch's Store record; no new Branch Connection field is
-needed. The callcenter store IP is not used for its API health badge.
+### Reused sales workflows and API SQL safety
 
-If the API is connected but stock or submission fails, inspect the E-Plus error.
-A missing address fails before connecting. Known connection/access errors retain
-their details; unexpected sale/return driver errors show a safe E-Plus connection
-message. Verify the SQL endpoint belongs to the intended branch before operational
-use; an open TCP port alone does not verify the database or its identity.
+The provider reuses branch `ab_sales_header._get_store_server()`:
+configured default store → `192.168.1.150:1433`; another selected store → its
+`ip1:1433`. Missing/unreachable endpoints fail. There is no `bconnect_ip1`,
+`bconnect_ip2` or implicit API fallback. Existing credentials and drivers remain.
 
-To test safely, mock the SQL connector or use a dedicated test E-Plus database:
-verify default and non-default stores use their own addresses, missing addresses
-fail, API authentication/identity failures are visible, and E-Plus failure does
-not change the API badge to a SQL-derived offline result. Local branch POS keeps
-its direct SQL status check using the same configured address.
+The provider owns its read-only `_read_store_stock()` helper and scoped inventory
+and return-loading overrides in `ab_branch_api`. Sales price-cache updates stay
+outside the reader. Reads are parameterized and store-filtered, use committed
+data, and retain quantities, costs, prices and expiry. Return loading reuses branch
+conversion helpers with normal ORM permissions and retained units and selections.
+Existing sale/return business methods still execute posting. Branch `ab_sales`
+source is unchanged; ordinary calls delegate to the original implementations.
+The API return adapter filters the legacy inline invoice total/date reads without
+copying external write logic. Branch query changes require an adapter review.
 
-Install the same `ab_sales_routing` addon on the branch and callcenter to enable
-configured-IP routing. It depends on `ab_sales` and `ab_sales_cashier`; it does
-not modify or depend on `ab_branch_api`. The bridge also covers cashier reads
-and existing cashier posting paths.
+API SQL connections are isolated per database/user/store request. The endpoint is
+pinned; opened connections are reused without reconnecting or replaying statements.
+The scope resets and its connections close on exit. Callcenter never automatically
+retries posting. Uncertain results require reconciliation.
 
+Capabilities and Test Connection are independent of SQL availability. Without a
+selected/default store, the API can return false store IDs and an empty store name.
+Callcenter connection testing always supplies a store and requires a matching
+resolved identity before marking the connection Ready. `can_post` reports model
+permissions, not SQL health or permission to post to an unspecified store.
+
+Before rollout, administrators must manually uninstall `ab_sales_routing` where
+installed and verify ordinary branch routing. No automatic uninstall is included.
+Deploy branch `ab_branch_api` with this callcenter adapter (branch `ab_sales`
+requires no change or upgrade), then restart
+and retest connections. Validate using isolated databases and mocked external
+operations; do not perform live E-Plus writes during implementation validation.
 
 ## Return employee identity
 
@@ -215,8 +234,8 @@ The selected employee and cost center must be active, with a cost center code
 that identifies the same employee on the branch. The callcenter does not need
 the branch employee's local Odoo ID or E-Plus serial.
 
-Install `ab_branch_api_return_employee` on the branch and upgrade this callcenter
-`ab_sales` adapter. The extension requires exactly one active branch HR employee
+Upgrade `ab_branch_api` on the branch and this callcenter `ab_sales` adapter.
+The provider requires exactly one active branch HR employee
 with an active cost center and a positive cost center E-Plus serial. It checks
 that mapping before an invoice reservation or external invoice query. The
 callcenter Administrator is separate from the native API-key owner, which must
@@ -230,7 +249,21 @@ test E-Plus environment. Repeat through POS and confirm the logged-in employee
 is used. Completed requests retain their normal replay protection; do not
 change the employee or other payload data when retrying a submitted request.
 
-Existing uncertain operations still require reconciliation. This extension
-never clears their reservations or retries their external writes automatically.
-Neither `ab_branch_api`, the branch copy of `ab_sales`, nor `ab_sales_routing`
-was changed for this employee fix.
+Existing uncertain operations still require reconciliation. Their reservations
+are never cleared automatically. Completed identical requests replay even if
+the employee is subsequently archived.
+
+### Retire the old employee extension
+
+If `ab_branch_api_return_employee` is installed, deploy its deprecated shell in
+the same rollout and upgrade `ab_branch_api,ab_branch_api_return_employee`
+together. Its validation and translations now belong to `ab_branch_api`.
+Administrators may then uninstall the shell normally; existing API operation
+records and validation remain. Fresh installations need only `ab_branch_api`.
+Remove the obsolete directory in a later release after confirming it is
+uninstalled everywhere. No hooks, automatic uninstall or migrations are included.
+
+Deploy provider and callcenter contract changes together and retest connections.
+Omitted `store_eplus_serial` uses the provider default when valid. Explicit invalid
+selections never fall back. Callcenter always sends its selected store; there is
+no automatic provisioning.

@@ -42,6 +42,8 @@ class BranchClient(models.AbstractModel):
             response = self._call(store, 'get_stock_lines', batch)
             for row in response['data']:
                 if (type(row.get('db_serial')) is not int or row['db_serial'] != db_serial
+                        or type(row.get('store_eplus_serial')) is not int
+                        or row['store_eplus_serial'] != store.eplus_serial
                         or int(row['product_eplus_serial']) not in batch
                         or any(not math.isfinite(float(row[key])) for key in ('qty', 'qty_in_small_unit', 'price', 'cost'))):
                     raise UserError(_('The branch returned invalid stock data.'))
@@ -157,10 +159,13 @@ class BranchReturn(models.Model):
 
     def _branch_snapshot(self, response):
         self.ensure_one()
-        db_serial = self.env['ab_sales_branch_client']._config(self.store_id).db_serial
+        config = self.env['ab_sales_branch_client']._config(self.store_id)
+        config._validate_identity(response)
+        db_serial = config.db_serial
         if (type(response.get('db_serial')) is not int or response['db_serial'] != db_serial
                 or response.get('invoice') != int(self.origin_header_id)
-                or any(int(row['sth_id']) != int(self.origin_header_id) for row in response['lines'])):
+                or any(int(row['sth_id']) != int(self.origin_header_id)
+                       or int(row['sto_id']) != self.store_id.eplus_serial for row in response['lines'])):
             raise UserError(_('The branch returned lines from another invoice or store.'))
         self.write({'branch_return_id': response['branch_return_id'], 'total_sales_net': response['total_sales_net'],
                     'sales_return_id': response['sales_return_id'], 'f_transaction_id': response['f_transaction_id']})
