@@ -27,6 +27,7 @@ def _isolate_telegram_notification(method):
                 method.__name__, self.ids, type(exc).__name__,
             )
             return False
+
     return isolated
 
 
@@ -152,7 +153,7 @@ class SupplierClaimCycle(models.Model):
     @api.model
     def _supplier_claim_telegram_notifications_enabled(self):
         return self.env['ir.config_parameter'].sudo().get_param(
-            'supplier_claim.telegram_notifications_enabled', 'False'
+            'supplier_claim.telegram_notifications_enabled', 'True'
         ).strip().lower() == 'true'
 
     def _get_claim_created_telegram_recipient_users(self):
@@ -253,7 +254,8 @@ class SupplierClaimCycle(models.Model):
         if not chat_id:
             _logger.info('Telegram skipped: no verified Telegram identity for user %s', manager.display_name)
             return False
-        text = self.with_context(lang=self._get_telegram_recipient_lang(manager))._build_escalation_telegram_message(stage_key=stage_key)
+        text = self.with_context(lang=self._get_telegram_recipient_lang(manager))._build_escalation_telegram_message(
+            stage_key=stage_key)
         return self._enqueue_telegram_notification(chat_id, text)
 
     def _enqueue_telegram_notification(self, chat_id, text):
@@ -280,13 +282,13 @@ class SupplierClaimCycle(models.Model):
         # A context UUID alone is not evidence of worker execution. The runner
         # persists STARTED and its PID before calling the registered method.
         if not (
-            job
-            and job.state == 'started'
-            and job.worker_pid == os.getpid()
-            and job.model_name == self._name
-            and job.method_name == '_deliver_telegram_notification'
-            and job.records.ids == self.ids
-            and tuple(job.args) == (chat_id, text)
+                job
+                and job.state == 'started'
+                and job.worker_pid == os.getpid()
+                and job.model_name == self._name
+                and job.method_name == '_deliver_telegram_notification'
+                and job.records.ids == self.ids
+                and tuple(job.args) == (chat_id, text)
         ):
             raise FailedJobError(_('Supplier Claim Telegram delivery requires a running background job.'))
         if not self._supplier_claim_telegram_notifications_enabled():
@@ -338,9 +340,9 @@ class SupplierClaimCycle(models.Model):
         telegram_manager_users = self.env['res.users']
         for reg in registrations:
             if (
-                reg.employee_id
-                and reg.employee_id.user_id
-                and reg._employee_has_real_telegram_identity(reg.employee_id)
+                    reg.employee_id
+                    and reg.employee_id.user_id
+                    and reg._employee_has_real_telegram_identity(reg.employee_id)
             ):
                 telegram_managers |= reg.employee_id
                 telegram_manager_users |= reg.employee_id.user_id
