@@ -776,3 +776,9 @@ msgstr "أعاد الفرع بيانات مبيعات غير صالحة."
 #: code:addons/ab_branch_api/models/callcenter_services.py:0
 msgid "The snapshot expired or belongs to another request."
 msgstr "انتهت صلاحية لقطة البيانات أو أنها تخص طلباً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Provide at most 200 valid sale request tokens."
+msgstr "أرسل 200 رمز طلب بيع صالح كحد أقصى."

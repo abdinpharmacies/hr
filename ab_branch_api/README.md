@@ -168,3 +168,23 @@ Deploy this provider before the matching call-center client and retest Branch
 Connections. The client checks advertised methods and rejects older providers.
 Runtime and HTTP validation use isolated databases; external write workflows are
 mocked. No production deployment is performed by those tests.
+
+
+## Call-center order status refresh (19.0.5.1.0)
+
+`get_sale_statuses(db_serial, tokens, store_eplus_serial=...)` accepts at most
+200 sale submission tokens. It returns `data` rows containing `token`,
+`branch_header_id`, `eplus_serial`, and `status`, with the usual database/store
+identity. Only completed sale operations owned by the authenticated integration
+user and selected store are eligible; normal sale record rules also apply.
+Unknown tokens, other users/stores, returns, uncertain operations, archived or
+inaccessible orders are omitted. No operation is created or replayed by this read.
+
+The service reads current branch Odoo status for draft/saved sales and checks
+E-Plus only for the selected pending sales' invoice IDs. Missing E-Plus rows are
+omitted and must not clear, archive, or complete the client's previous status.
+This API does not enumerate all branch invoices or replace the branch's normal
+status job. Bill browsing continues through the separate search/detail endpoints.
+
+Upgrade `ab_branch_api` before call-center `ab_sales` 19.0.3.1.0 and retest Branch
+Connections. Existing submission tokens remain valid; no migration is required.

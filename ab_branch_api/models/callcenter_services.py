@@ -33,7 +33,7 @@ class CallcenterServices(models.AbstractModel):
     def get_capabilities(self, db_serial, *, store_eplus_serial=STORE_UNSET):
         result = super().get_capabilities(db_serial, store_eplus_serial=store_eplus_serial)
         result['methods'] += ['get_product_balances', 'lookup_customer', 'create_customer',
-            'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses',
+            'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses', 'get_sale_statuses',
             'search_bills', 'get_bill_details', 'update_bill_notes', 'render_bill_print']
         return result
 
@@ -148,6 +148,43 @@ class CallcenterServices(models.AbstractModel):
                                 + ','.join('?' for s in serials) + ')', (store.eplus_serial, *serials))
                     data = [{'invoice': int(s), 'status': 'saved' if flag == 'C' else 'pending'} for s, flag in cur.fetchall()]
         return {**self._identity(store, db_serial), 'data': data}
+
+    @api.model
+    @api_request
+    def get_sale_statuses(self, db_serial, tokens, *, store_eplus_serial=STORE_UNSET):
+        """Refresh only sales submitted by this integration user, never all bills."""
+        store = request_store(self)
+        self._business_permissions('sale')
+        if (not isinstance(tokens, list) or len(tokens) > 200
+                or any(not isinstance(token, str) or not 16 <= len(token) <= 128 for token in tokens)):
+            raise UserError(_('Provide at most 200 valid sale request tokens.'))
+        operations = self.env['ab_branch_api_operation'].sudo().search(
+            fields.Domain('token', 'in', tokens) & fields.Domain('user_id', '=', self.env.uid)
+            & fields.Domain('store_id', '=', store.id) & fields.Domain('kind', '=', 'sale')
+            & fields.Domain('state', '=', 'done'))
+        # Normal business record rules still apply after the scoped operation lookup.
+        headers = self.env['ab_sales_header'].search(
+            fields.Domain('id', 'in', operations.mapped('record_id')) & fields.Domain('store_id', '=', store.id))
+        by_id = {header.id: header for header in headers}
+        owned = [(op.token, by_id[op.record_id]) for op in operations
+                 if op.record_id in by_id and by_id[op.record_id].pos_client_token == op.token]
+        invoices = sorted({int(header.eplus_serial) for _token, header in owned
+                           if header.status == 'pending' and header.eplus_serial > 0})
+        statuses = {}
+        if invoices:
+            response = self.get_invoice_statuses(db_serial, invoices, store_eplus_serial=store.eplus_serial)
+            statuses = {row['invoice']: row['status'] for row in response['data']}
+        rows = []
+        for token, header in owned:
+            status = header.status
+            if status == 'pending':
+                # An absent E-Plus row is not a cancellation or a completed sale.
+                status = statuses.get(int(header.eplus_serial or 0))
+            if status not in ('prepending', 'pending', 'saved'):
+                continue
+            rows.append({'token': token, 'branch_header_id': header.id,
+                         'eplus_serial': int(header.eplus_serial or 0), 'status': status})
+        return {**self._identity(store, db_serial), 'data': rows}
 
     def _customer_result(self, result, store, db_serial):
         result = dict(result)
