@@ -69,7 +69,7 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _sale_payload(self, payload):
-        ignored = {'store_id', 'pos_client_token', 'pos_hr_profile_id', 'pos_hr_role_id',
+        ignored = {'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
                    'pos_hr_shift_id', 'pos_hr_session_id', 'pos_hr_service_user_id',
                    # Contract POS display values; branch business logic computes totals.
                    'contract_name', 'company_pay', 'cust_pay'}
@@ -283,8 +283,8 @@ class BranchReturn(models.Model):
                                    self._branch_selections(), self.notes or '', employee_ref)
             log.write({'state': 'success', 'remote_header_id': response['branch_return_id'],
                        'remote_status': response['status'], 'remote_eplus_serial': response['sales_return_id']})
-            self.env.cr.commit()
             self._branch_snapshot(response)
+            self.env.cr.commit()
         except Exception as error:
             self.env.cr.rollback()
             log.write({'state': 'error', 'error_message': str(error)})

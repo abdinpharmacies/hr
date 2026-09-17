@@ -185,7 +185,7 @@
 
         <!-- Menu -->
         <menuitem id="ab_sales_return_header_menu"
-                  groups="ab_sales.group_ab_sales_manager"
+                  groups="ab_sales.group_ab_sales_manager,ab_sales.group_call_center,base.group_system"
                   name="Sales Return"
                   parent="sales_menu_root"
                   action="ab_sales_return_header_action"

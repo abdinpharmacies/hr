@@ -92,6 +92,7 @@ class AbSalesBillWizardAction extends Component {
             unavailableBranches: [],
             searchToken: false,
             remoteBills: false,
+            localBills: false,
             items: [],
             selectedId: null,
             details: null,
@@ -280,7 +281,7 @@ class AbSalesBillWizardAction extends Component {
         }
     }
 
-    async loadBills({page = null} = {}) {
+    async loadBills({page = null, refreshStatus = false} = {}) {
         if (this.state.loadingList) {
             return;
         }
@@ -290,7 +291,7 @@ class AbSalesBillWizardAction extends Component {
                 "ab_sales_ui_api",
                 "bill_wizard_search",
                 [],
-                this._searchPayload(page)
+                {...this._searchPayload(page), refresh_status: refreshStatus}
             );
             const items = Array.isArray(result?.items) ? result.items : [];
             this.state.items = items;
@@ -298,6 +299,7 @@ class AbSalesBillWizardAction extends Component {
             this.state.unavailableBranches = result.unavailable_branches || [];
             this.state.searchToken = result.search_token || false;
             this.state.remoteBills = !!result.remote_bills;
+            this.state.localBills = !!result.local_bills;
             this.state.isSearch = !!result?.is_search;
             const pagination = result?.pagination || {};
             this.state.pagination.page = Math.max(1, parseInt(pagination.page || 1, 10) || 1);
@@ -356,7 +358,7 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async applyFilters() {
-        await this.loadBills({page: 1});
+        await this.loadBills({page: 1, refreshStatus: true});
     }
 
     async resetFilters() {
@@ -369,7 +371,7 @@ class AbSalesBillWizardAction extends Component {
         this.state.filters.eplusSerial = "";
         this.state.filters.dateStart = "";
         this.state.filters.dateEnd = "";
-        await this.loadBills({page: 1});
+        await this.loadBills({page: 1, refreshStatus: true});
     }
 
     async goToPreviousPage() {

@@ -151,6 +151,13 @@ msgstr "الإجراءات"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__active
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__active
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__active
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_metadata_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
 msgid "Active"
 msgstr "نشط"
 
@@ -4157,6 +4164,7 @@ msgstr "لم يتم العثور على إعداد RPC نشط للفرع الم�
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales/models/local_bills.py:0
 msgid "Branch RPC submit returned an invalid response."
 msgstr "أرجع إرسال RPC للفرع استجابة غير صحيحة."
 
@@ -4307,6 +4315,7 @@ msgstr "أرسل الفرع بنوداً تخص فاتورة أو فرعاً آ�
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+#: code:addons/ab_sales/models/local_bills.py:0
 msgid "This store is not allowed."
 msgstr "هذا الفرع غير مسموح به."
 
@@ -5015,6 +5024,7 @@ msgstr "أعاد الفرع لقطة بيانات غير صالحة."
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/models/local_bills.py:0
 msgid "The branch returned invalid invoice status."
 msgstr "أعاد الفرع حالة فاتورة غير صالحة."
 
@@ -5099,3 +5109,128 @@ msgstr ""
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
 msgid "Failed to load bills."
 msgstr "تعذر تحميل الفواتير."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "%s: status refresh unavailable; showing local bills."
+msgstr "%s: تعذر تحديث الحالة؛ يتم عرض الفواتير المحلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "A submitted request cannot be edited. Retry the original bill."
+msgstr "لا يمكن تعديل طلب الإرسال. أعد محاولة إرسال الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "All statuses"
+msgstr "جميع الحالات"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Archive callcenter bills instead of deleting them."
+msgstr "قم بأرشفة فواتير مركز الاتصال بدلاً من حذفها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Branch submission metadata is read-only."
+msgstr "بيانات إرسال الفاتورة إلى الفرع للقراءة فقط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_bills.py:0
+msgid "Invalid bill filter."
+msgstr "عامل تصفية الفواتير غير صالح."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__local_bill_storage
+msgid "Local Bill Storage"
+msgstr "تخزين الفواتير محلياً"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.local_bill_form_view
+msgid "Retry Submission"
+msgstr "إعادة محاولة الإرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/local_bill_list.js:0
+msgid "Status refresh unavailable; showing local bills."
+msgstr "تعذر تحديث الحالة؛ يتم عرض الفواتير المحلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Status refresh unavailable; showing local bills:"
+msgstr "تعذر تحديث الحالة؛ يتم عرض الفواتير المحلية:"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid ""
+"The branch database changed. Reconcile the original request before retrying."
+msgstr ""
+"تغيرت قاعدة بيانات الفرع. تحقق من نتيجة الطلب الأصلي قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "This action is only available on the callcenter."
+msgstr "هذا الإجراء متاح في مركز الاتصال فقط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "This bill has no stored branch submission request."
+msgstr "لا يوجد طلب إرسال محفوظ لهذه الفاتورة إلى الفرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_header_id
+msgid "Branch Bill ID"
+msgstr "معرف فاتورة الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_submission_payload
+msgid "Branch Submission Payload"
+msgstr "بيانات طلب الإرسال إلى الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_submission_started
+msgid "Branch Submission Started"
+msgstr "بدأ إرسال الطلب إلى الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"The branch could not confirm this submission yet. Your bill is retained. "
+"Retry the same bill when the branch is available. Branch response: %s"
+msgstr ""
+"لم يتمكن الفرع من تأكيد الإرسال بعد. فاتورتك محفوظة. أعد محاولة إرسال "
+"الفاتورة نفسها عند توفر اتصال بالفرع. رد الفرع: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"The branch is still processing this submission. Your bill is retained; retry"
+" the same bill shortly."
+msgstr ""
+"لا يزال الفرع يعالج هذا الإرسال. فاتورتك محفوظة؛ أعد محاولة إرسال الفاتورة "
+"نفسها بعد قليل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Submission error: %(submission)s\n"
+"Recovery error: %(recovery)s\n"
+"Your bill is retained with its original request token."
+msgstr ""
+"خطأ الإرسال: %(submission)s\n"
+"خطأ التحقق من النتيجة: %(recovery)s\n"
+"فاتورتك محفوظة برمز الطلب الأصلي."

@@ -1,172 +1,63 @@
-"""Browse branch-owned bills without local sale replicas or direct SQL."""
-from datetime import timedelta
-from uuid import uuid4
+"""Callcenter browsing uses durable local bills, independent of branch availability."""
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import UserError
 
 
-class BranchBillSearch(models.TransientModel):
-    _name = 'ab_sales_branch_bill_search'
-    _description = 'Branch Bill Search'
-    _transient_max_hours = 2
-
-    token = fields.Char(default=lambda self: str(uuid4()), required=True, index=True)
-    state = fields.Json(required=True)
-
-
-class BranchBills(models.TransientModel):
+class LocalBills(models.TransientModel):
     _inherit = 'ab_sales_ui_api'
-
-    def _branch_bill_ref(self, reference):
-        client = self.env['ab_sales_branch_client']
-        if isinstance(reference, str):
-            try:
-                db, store, kind, record = reference.split(':')
-                reference = {'db_serial': int(db), 'store_eplus_serial': int(store),
-                             'record_type': kind, 'record_id': int(record)}
-            except (ValueError, TypeError):
-                raise AccessError(_('Invalid branch bill reference.')) from None
-        if not isinstance(reference, dict) or reference.get('record_type') not in ('sale', 'return'):
-            raise AccessError(_('Invalid branch bill reference.'))
-        store = client._stores().filtered(lambda s: s.eplus_serial == reference.get('store_eplus_serial'))
-        if len(store) != 1:
-            raise AccessError(_('The bill does not belong to an authorized branch.'))
-        config = client._config(store)
-        config._validate_identity(reference)
-        return client, store, reference
-
-    def _branch_bill_page(self, client, store, branch, filters):
-        response = client._call(store, 'search_bills', filters, branch['token'], branch['offset'])
-        if branch['token'] and branch['token'] != response['token']:
-            raise UserError(_('The branch returned an invalid snapshot.'))
-        for bill in response['items']:
-            client._config(store)._validate_identity(bill['reference'])
-            if bill.get('id') != '%s:%s:%s:%s' % (bill['reference']['db_serial'], store.eplus_serial,
-                                                  bill['reference']['record_type'], bill['reference']['record_id']):
-                raise UserError(_('Invalid branch bill reference.'))
-        branch.update(token=response['token'], offset=response['next_offset'], buffer=response['items'],
-                      count=response['total_count'])
 
     @api.model
     def bill_wizard_search(self, query='', product_query='', product_ids=None, customer_query='',
                            date_start=False, date_end=False, eplus_serial='', page=1, per_page=20,
-                           store_id=False, document_type='', status='', search_token=False, **kwargs):
-        client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
+                           store_id=False, document_type='', status='', search_token=False,
+                           refresh_status=False, **kwargs):
+        if not self.env['ab_sales_branch_client']._is_callcenter():
             return super().bill_wizard_search(query=query, product_query=product_query, product_ids=product_ids,
                 customer_query=customer_query, date_start=date_start, date_end=date_end,
                 eplus_serial=eplus_serial, page=page, per_page=per_page, **kwargs)
-        stores = client._stores()
-        options = [{'id': s.id, 'name': s.display_name} for s in stores]
+        if document_type not in ('', 'sale', 'return') or status not in ('', 'prepending', 'pending', 'saved'):
+            raise UserError(_('Invalid bill filter.'))
+        if query and not any((product_query, product_ids, customer_query, eplus_serial)):
+            if str(query).isdigit():
+                eplus_serial = query
+            else:
+                product_query = query
+        filters = dict(product_query=product_query, product_ids=product_ids, customer_query=customer_query,
+                       date_start=date_start, date_end=date_end, eplus_serial=eplus_serial)
+        sale_domain = fields.Domain(self._bill_wizard_domain(**filters)[0])
+        return_domain = fields.Domain(self._bill_wizard_return_domain(**filters)[0])
+        # The base helpers exclude drafts for branch installations only.
+        sale_domain = sale_domain.map_conditions(lambda c: fields.Domain.TRUE if c.field_expr == 'status' else c)
+        return_domain = return_domain.map_conditions(lambda c: fields.Domain.TRUE if c.field_expr == 'status' else c)
         if store_id:
-            stores = stores.filtered(lambda s: s.id == int(store_id))
-        if not stores:
-            raise UserError(_('No authorized branches are configured.'))
-        products = self.env['ab_product'].browse(product_ids or []).exists()
-        products.check_access('read')
-        filters = {'product_query': product_query, 'product_serials': products.mapped('eplus_serial') or ([-1] if product_ids else []),
-                   'customer_query': customer_query, 'date_start': date_start, 'date_end': date_end,
-                   'eplus_serial': eplus_serial or query, 'document_type': document_type, 'status': status}
-        Session = self.env['ab_sales_branch_bill_search']
-        page = max(1, int(page))
-        if search_token and page != 1:
-            session = Session.search([('token', '=', search_token), ('create_uid', '=', self.env.uid),
-                ('create_date', '>=', fields.Datetime.now() - timedelta(hours=1))], limit=1)
-            if (not session or session.state.get('bill_scope') != 'callcenter_only:v1'
-                    or session.state['filters'] != filters or session.state['stores'] != stores.ids):
-                raise UserError(_('The bill search expired. Refresh the results.'))
-            state = dict(session.state)
-            # Cached pages must still require a restricted provider.
-            for store in stores:
-                if state['branches'][str(store.id)]['token']:
-                    client._config(store)._require_callcenter_bill_scope()
-            if page > len(state['pages']) + 1:
-                raise UserError(_('Open the next page in order.'))
-        else:
-            state = {'bill_scope': 'callcenter_only:v1', 'filters': filters, 'stores': stores.ids, 'branches': {}, 'pages': [], 'errors': []}
-            for store in stores:
-                branch = {'token': False, 'offset': 0, 'buffer': [], 'count': 0}
-                try:
-                    self._branch_bill_page(client, store, branch, filters)
-                except (UserError, AccessError) as error:
-                    state['errors'].append('%s: %s' % (store.display_name, error))
-                    branch['offset'] = False
-                state['branches'][str(store.id)] = branch
-            session = Session.create({'state': state})
-            page = 1
-        if page > len(state['pages']):
-            items = []
-            while len(items) < 20:
-                candidates = []
-                for store in stores:
-                    branch = state['branches'][str(store.id)]
-                    if not branch['buffer'] and branch['offset'] is not False:
-                        # Later failures must not skip unseen newer bills and reorder pagination.
-                        self._branch_bill_page(client, store, branch, filters)
-                    if branch['buffer']:
-                        candidates.append((branch['buffer'][0], branch))
-                if not candidates:
-                    break
-                bill, branch = max(candidates, key=lambda pair: (pair[0]['create_date'] or '', pair[0]['reference']['db_serial'],
-                    pair[0]['reference']['store_eplus_serial'], pair[0]['reference']['record_type'], pair[0]['reference']['record_id']))
-                items.append(bill)
-                branch['buffer'].pop(0)
-            state['pages'].append(items)
-            session.state = state
-        count = sum(b['count'] for b in state['branches'].values())
-        return {'items': state['pages'][page-1], 'is_search': True, 'branches': options,
-                'unavailable_branches': state['errors'], 'search_token': session.token, 'remote_bills': True,
-                'pagination': {'page': page, 'per_page': 20, 'page_count': max(1, (count + 19)//20), 'total_count': count}}
-
-    @api.model
-    def bill_wizard_details(self, header_id):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_details(header_id)
-        client, store, ref = self._branch_bill_ref(header_id)
-        return client._call(store, 'get_bill_details', ref)['bill']
-
-    @api.model
-    def bill_wizard_update_notes(self, header_id, notes=''):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_update_notes(header_id, notes)
-        client, store, ref = self._branch_bill_ref(header_id)
-        return client._call(store, 'update_bill_notes', ref, notes)['bill']
-
-    @api.model
-    def bill_wizard_open_return_action(self, header_id):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_open_return_action(header_id)
-        client, store, ref = self._branch_bill_ref(header_id)
-        bill = client._call(store, 'get_bill_details', ref)['bill']
-        if ref['record_type'] != 'sale' or not bill.get('can_return'):
-            raise UserError(_('Return action is available for submitted sales bills only.'))
-        Header = self.env['ab_sales_return_header']
-        header = Header.search([('store_id', '=', store.id), ('origin_header_id', '=', bill['eplus_serial']),
-                               ('is_callcenter_order', '=', True),
-                               ('status', '=', 'prepending'), ('create_uid', '=', self.env.uid)], limit=1)
-        if not header:
-            header = Header._create_callcenter_order({'store_id': store.id, 'origin_header_id': bill['eplus_serial']})
-        header.action_load_lines()
-        return self.env['ab_sales_return_ui_api']._action_payload(header.id)
-
-    @api.model
-    def bill_wizard_render_print_html(self, header_id, print_format='a4'):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_render_print_html(header_id, print_format)
-        client, store, ref = self._branch_bill_ref(header_id)
-        return client._call(store, 'render_bill_print', ref, print_format)
-
-    @api.model
-    def bill_wizard_direct_print(self, header_id, print_format='a4', printer_name='', printer_id=0, selected_printer=None):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_direct_print(header_id, print_format, printer_name, printer_id, selected_printer)
-        printer = self._bill_wizard_resolve_selected_printer(printer_id=printer_id,
-                        printer_name=printer_name, print_format=print_format)
-        fmt = printer.paper_size if printer else print_format
-        result = self.bill_wizard_render_print_html(header_id, fmt)
-        if printer:
-            printer.dispatch_print_html(result['content'], print_format=fmt)
-        else:
-            self._direct_print_html(result['content'], printer_name=printer_name, print_format=fmt)
-        return {'ok': True, 'printer_id': printer.id if printer else 0,
-                'printer_name': printer.build_display_label() if printer else printer_name, 'print_format': fmt}
+            sale_domain &= fields.Domain('store_id', '=', int(store_id))
+            return_domain &= fields.Domain('store_id', '=', int(store_id))
+        Header, Return = self.env['ab_sales_header'], self.env['ab_sales_return_header']
+        errors = []
+        if refresh_status and document_type != 'return':
+            errors = Header.refresh_bill_statuses(list(sale_domain))['unavailable_branches']
+        if status:
+            sale_domain &= fields.Domain('status', '=', status)
+            return_domain &= fields.Domain('status', '=', status)
+        if document_type == 'return':
+            sale_domain &= fields.Domain.FALSE
+        if document_type == 'sale':
+            return_domain &= fields.Domain.FALSE
+        count = Header.search_count(sale_domain) + Return.search_count(return_domain)
+        per_page = 20
+        pages = max(1, (count + per_page - 1) // per_page)
+        page = min(max(1, int(page)), pages)
+        offset = (page - 1) * per_page
+        sales = Header.search(sale_domain, order='create_date desc, id desc', limit=offset + per_page)
+        returns = Return.search(return_domain, order='create_date desc, id desc', limit=offset + per_page)
+        rows = [('sale', r) for r in sales] + [('return', r) for r in returns]
+        rows.sort(key=lambda pair: (pair[1].create_date, pair[1].id, pair[0]), reverse=True)
+        domain = self.env.user._ab_sales_bill_domain()
+        grouped = Header._read_group(domain, ['store_id']) + Return._read_group(domain, ['store_id'])
+        store_ids = self.env['ab_store'].browse(sorted({row[0].id for row in grouped if row[0]}))
+        return {'items': [self._bill_wizard_header_payload(r, record_type=kind)
+                          for kind, r in rows[offset:offset + per_page]],
+                'is_search': True, 'local_bills': True,
+                'branches': [{'id': s.id, 'name': s.display_name} for s in store_ids.sorted('name')],
+                'unavailable_branches': errors,
+                'pagination': {'page': page, 'per_page': per_page, 'page_count': pages, 'total_count': count}}

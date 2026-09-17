@@ -937,82 +937,17 @@ class AbSalesPosApi(models.TransientModel):
             vals["uom_id"] = self._pos_line_uom_id(product_by_id.get(product_id), vals.get("uom_id"))
             vals["header_id"] = header.id
             vals["qty_str"] = vals.get("qty_str") or "1"
-            self._pos_fill_inventory_json_for_price_validation(header, vals)
+            if not self.env['ab_sales_branch_client']._is_callcenter():
+                self._pos_fill_inventory_json_for_price_validation(header, vals)
             lines_to_create.append(vals)
 
         if lines_to_create:
             self.env["ab_sales_line"].create(lines_to_create)
 
         self._pos_apply_payload_promotion(header, payload)
-        self._fill_lines_balance_from_offline(header)
+        if not self.env['ab_sales_branch_client']._is_callcenter():
+            self._fill_lines_balance_from_offline(header)
         return header, False, on_existing_token
-
-    @api.model
-    def _pos_callcenter_remote_config(self, payload):
-        if not self.env["ab_sales_branch_client"]._is_callcenter():
-            return self.env["ab_sales_branch_rpc_config"]
-        header_vals = payload.get("header") or {}
-        try:
-            store_id = int(header_vals.get("store_id") or 0)
-        except Exception:
-            store_id = 0
-        if not store_id:
-            raise UserError(_("Store is required."))
-        config = self.env["ab_sales_branch_rpc_config"].sudo().search([
-            ("store_id", "=", store_id),
-            ("active", "=", True),
-        ], limit=1)
-        if not config:
-            raise UserError(_("No active branch RPC configuration was found for the selected store."))
-        return config
-
-    @api.model
-    def _pos_submit_to_branch_rpc(self, payload):
-        config = self._pos_callcenter_remote_config(payload)
-        if not config:
-            return False
-
-        header_vals = payload.get("header") or {}
-        token = (header_vals.get("pos_client_token") or "").strip()
-        push_to_eplus = bool(config.push_to_eplus_on_submit)
-        log = self.env["ab_sales_callcenter_rpc_log"].sudo().create({
-            "rpc_config_id": config.id,
-            "store_id": config.store_id.id,
-            "payload_token": token,
-            "push_to_eplus_requested": push_to_eplus,
-            "state": "started",
-            "submitted_by_id": self.env.uid,
-            "submitted_at": fields.Datetime.now(),
-        })
-        self.env.cr.commit()
-
-        try:
-            client = self.env['ab_sales_branch_client']
-            config = client._config(config.store_id)
-            response = config._execute_kw(
-                'ab_branch_api', 'submit_sale',
-                [config.db_serial, token, client._sale_payload(payload), push_to_eplus],
-            )
-            if not isinstance(response, dict):
-                raise UserError(_("Branch RPC submit returned an invalid response."))
-            log.write({
-                "state": "success",
-                "remote_header_id": int(
-                    response.get("branch_header_id") or response.get("remote_header_id") or 0
-                ),
-                "remote_status": response.get("status") or "",
-                "remote_eplus_serial": int(response.get("eplus_serial") or 0),
-                "response_message": response.get("message") or "",
-            })
-            self.env.cr.commit()
-            return response
-        except Exception as error:
-            log.write({
-                "state": "error",
-                "error_message": str(error),
-            })
-            self.env.cr.commit()
-            raise
 
     @api.model
     def _pos_push_callcenter_header_to_eplus(self, header):

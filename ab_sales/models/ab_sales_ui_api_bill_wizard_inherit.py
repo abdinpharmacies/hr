@@ -299,7 +299,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         ]
         if getattr(header, "store_id", False) and header.store_id.eplus_serial:
             domain.append(("sto_eplus_serial", "=", header.store_id.eplus_serial))
-        return self.env["ab_sales_return_header"].search(domain)
+        return self.env["ab_sales_return_header"].with_context(active_test=False).search(domain)
 
     @api.model
     def _bill_wizard_adjust_sale_lines_for_returns(self, header, lines, return_headers):
@@ -469,8 +469,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         header = self.env["ab_sales_return_header"].browse(record_id).exists()
         if not header:
             raise UserError("Bill not found.")
-        header.check_access_rights("read")
-        header.check_access_rule("read")
+        header.check_access('read')
         return record_type, header
 
     @api.model
@@ -1291,12 +1290,13 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
                     | fields.Domain("customer_id.work_phone", "=ilike", customer_like)
                     | fields.Domain("customer_id.delivery_phone", "=ilike", customer_like)
             )
-            source_headers = self.env["ab_sales_header"].search(list(source_domain), limit=1200)
-            serials = [int(s) for s in source_headers.mapped("eplus_serial") if s]
-            if not serials:
-                domain &= fields.Domain("id", "=", 0)
-            else:
-                domain &= fields.Domain("origin_header_id", "in", serials)
+            source_headers = self.env["ab_sales_header"].search(list(source_domain))
+            domain &= fields.Domain.OR([
+                fields.Domain('store_id', '=', store.id)
+                & fields.Domain('origin_header_id', 'in', source_headers.filtered(
+                    lambda h: h.store_id == store).mapped('eplus_serial'))
+                for store in source_headers.store_id
+            ])
 
         eplus_serial = str(eplus_serial or "").strip()
         if eplus_serial:
@@ -1342,8 +1342,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         header = self.env["ab_sales_header"].browse(header_id).exists()
         if not header:
             raise UserError("Bill not found.")
-        header.check_access_rights("read")
-        header.check_access_rule("read")
+        header.check_access('read')
         return header
 
     @api.model

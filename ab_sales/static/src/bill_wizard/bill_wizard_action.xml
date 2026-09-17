@@ -67,7 +67,7 @@
     <t t-name="ab_sales.BillWizardAction">
         <div class="o_ab_sales_bill_wizard">
             <div class="alert alert-warning" t-if="state.unavailableBranches.length">
-                Incomplete results. Unavailable branches: <t t-esc="state.unavailableBranches.join(', ')"/>
+                Status refresh unavailable; showing local bills: <t t-esc="state.unavailableBranches.join(', ')"/>
                 <button class="btn btn-link" t-on-click="applyFilters">Retry</button>
             </div>
             <div class="o_ab_sales_bill_wizard_header">
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <div class="o_ab_sales_bill_wizard_filters">
-                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills || state.localBills">
                         <label class="form-label mb-1">Branch</label>
                         <select class="form-select" t-model="state.filters.storeId">
                             <option value="">All authorized branches</option>
@@ -88,16 +88,16 @@
                             </t>
                         </select>
                     </div>
-                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills || state.localBills">
                         <label class="form-label mb-1">Document Type</label>
                         <select class="form-select" t-model="state.filters.documentType">
                             <option value="">Sales and returns</option><option value="sale">Sales</option><option value="return">Returns</option>
                         </select>
                     </div>
-                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills">
+                    <div class="o_ab_sales_bill_wizard_filter" t-if="state.remoteBills || state.localBills">
                         <label class="form-label mb-1">Status</label>
                         <select class="form-select" t-model="state.filters.status">
-                            <option value="">Pending and saved</option><option value="prepending">Draft</option>
+                            <option value="">All statuses</option><option value="prepending">Draft</option>
                             <option value="pending">Pending</option><option value="saved">Saved</option>
                         </select>
                     </div>

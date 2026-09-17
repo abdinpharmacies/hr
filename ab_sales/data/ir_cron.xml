@@ -62,4 +62,9 @@
             <field name="code">model.cron_refresh_rankings()</field>
         </record>
     </data>
+    <!-- This release explicitly enables the existing status poller on upgrade. -->
+    <function model="ir.cron" name="write">
+        <value eval="[ref('ab_sales.ir_cron_sync_sales_status_from_store')]"/>
+        <value eval="{'active': True, 'interval_number': 5, 'interval_type': 'minutes'}"/>
+    </function>
 </odoo>

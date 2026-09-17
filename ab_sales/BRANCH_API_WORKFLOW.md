@@ -165,8 +165,9 @@ stock/return responses. Return lines also retain invoice/store checks through
 Tokens belong to one user, store, and operation kind. Reusing a token from another
 user/store is rejected; another user's status cannot be read. Completed unchanged
 requests replay their result. Changed payloads fail; processing or uncertain
-outcomes require reconciliation. Inspect **Branch API → Operations** as a Settings
-administrator. Do not switch users or tokens to bypass uncertain outcomes.
+bill outcomes reconcile automatically inside the branch API on retry.
+**Branch API → Operations** retains the audit journal for administrators.
+Do not switch users or tokens to bypass uncertain outcomes.
 
 There is no distributed transaction between SQL Server and PostgreSQL. Existing
 branch workflows reserve operations before posting and retain transaction IDs
@@ -207,7 +208,8 @@ copying external write logic. Branch query changes require an adapter review.
 API SQL connections are isolated per database/user/store request. The endpoint is
 pinned; opened connections are reused without reconnecting or replaying statements.
 The scope resets and its connections close on exit. Callcenter never automatically
-retries posting. Uncertain results require reconciliation.
+repeats an unconfirmed external post. The branch reconciles uncertain bill results
+before allowing a retry with the same request.
 
 Capabilities and Test Connection are independent of SQL availability. Without a
 selected/default store, the API can return false store IDs and an empty store name.
@@ -249,8 +251,8 @@ test E-Plus environment. Repeat through POS and confirm the logged-in employee
 is used. Completed requests retain their normal replay protection; do not
 change the employee or other payload data when retrying a submitted request.
 
-Existing uncertain operations still require reconciliation. Their reservations
-are never cleared automatically. Completed identical requests replay even if
+Uncertain bill operations are reconciled by the branch API. Reservations are
+released only after confirmed completion; conflicting evidence stays blocked. Completed identical requests replay even if
 the employee is subsequently archived.
 
 ### Retire the old employee extension
@@ -303,95 +305,84 @@ applying or clearing absent balances. Sales-day replacement waits for every
 required branch and affects only those authorized stores. Other branches and
 failed-day history remain unchanged.
 
-### Bills page
+### Local bills (19.0.3.3.0)
 
-The **Bills** menu and POS bill search now use the same remote page. It displays
-call-center-created branch Odoo sales and returns, even when no corresponding
-sale record exists in call-center. It does not import duplicate sale orders for display or include
-invoices created only in E-Plus.
+The callcenter stores each sales header and its lines before requesting branch
+submission. Local return headers and lines are retained as well. Browsing,
+details and printing use these records, even while a branch is unavailable.
+No historical branch bills are imported or reconstructed from RPC logs.
 
-Use Branch (default: all authorized branches), Document Type, Status, product,
-customer, invoice-number and date filters. Results use per-branch snapshots and
-20-row merged pages; duplicate record IDs/invoice numbers across branches remain
-distinct. An unavailable branch is shown explicitly; available results are marked
-incomplete. Retry starts a fresh search. A later page failure clears displayed
-rows and requires a fresh search; unseen branch records are never skipped.
+- **Bills** opens the native sales list/form. **Sales Return** opens the separate
+  return list/form. **Bill Wizard** keeps its combined sales/returns layout.
+- All three states are visible: PrePending, Pending and Saved. Local browsing
+  and status synchronization do not depend on `is_callcenter_order`; that field
+  remains protected metadata for existing submission workflows.
+- A failed sale remains a local PrePending draft. Open it in Bills and use
+  **Retry Submission**. The original request, branch database identity, posting
+  option and request token are retained. Submitted request contents are locked.
+  The branch API automatically checks the original transaction before retrying:
+  it returns an already-posted bill or safely reuses the same draft after a
+  proven rollback. There is no automatic submission queue.
+- A successful branch response supplies the local bill's status, branch bill ID
+  and `eplus_serial`. Returns retain their submission response status and
+  `sales_return_id`.
+- The existing **Sales: Sync Pending Status From Store** cron runs every five
+  minutes. It requests only local Pending sales with a positive `eplus_serial`,
+  using `get_invoice_statuses` in batches of up to 200. Matching includes branch
+  database/store identity. Only status is updated; bill content is retained.
+- Explicit wizard searches and changes to the sales list's search domain run
+  the same status refresh before applying status filters. Initial browsing,
+  pagination, details and printing do not require branch connections. Missing
+  or malformed results and unavailable branches retain the previous status;
+  searches still show local records with a warning.
+- Drafts, Saved sales and returns are not polled. A branch submission accepted
+  as PrePending without an E-Plus serial remains PrePending locally; the status
+  cron does not discover a later serial for it.
+- Branch-assigned users are limited to their department/employee branches.
+  Managers and Settings administrators bypass that assignment restriction.
+  Unassigned Call Center users can see the server's authorized sales branches.
+  Users without branch assignment or Call Center access see no local bills.
+  Server Allowed Sales Stores restrictions still apply when configured.
+- Bill headers and lines are protected by global record rules, including direct
+  ORM access, wizard details and printing. Assignment changes invalidate cached
+  rules. Local bills are archived rather than physically deleted.
 
-Selection, notes, details, returns and printing carry a validated database/store/
-record-type/record-ID reference. Return opening creates only the necessary local
-return working record and uses the remote original invoice. Employee-session
-validation still applies. HTML is rendered from source branch data; printing is
-dispatched by the existing call-center printer flow, never by the branch API.
+The existing API endpoint and five-minute cron are reused. The module upgrade
+explicitly enables that cron and sets its interval to five minutes. No branch addon
+change is required for this release. Target-upgrade `ab_sales` on callcenter and
+restart its Odoo process after deployment; do not upgrade `base`. Translation
+updates support both `ar` and `ar_001`. No migration hooks or historical imports
+are installed.
 
-### Safe writes and rollout
-
-Sale/return/customer calls check operation status before posting. Processing or
-uncertain operations do not post again. After an ambiguous response, check the
-same token on the branch. Retrying retains the token and lets the provider check
-the payload hash; no automatic external write retry or SQL fallback occurs.
-Customer creation uses a deterministic token for the same caller/store/request.
-
-Upgrade only branch `ab_branch_api` first. Retest every Branch Connection after
-the call-center upgrade; all added capabilities must be present. Restore the
-existing refresh jobs after connection checks. Keep changes in `pos19` limited
-to `ab_branch_api`; do not transfer call-center sales code into branch `ab_sales`.
-No `-u base`, hooks, automatic uninstalls, schema migrations or external writes
-are part of this correction's validation.
-
-
-## Refresh call-center orders only (19.0.3.1.0)
-
-The existing five-minute status job now tracks successful call-center submission
-logs with a remote order ID and `prepending`/`pending` status. Remote submission
-does not create a local sales header, so local sales headers are not the polling
-source and are never updated merely because their invoice numbers match.
-
-Requests contain up to 200 unique submission tokens per branch. The provider's
-`get_sale_statuses` service verifies sale ownership using its operation records;
-return/customer operations and unrelated branch orders cannot be refreshed as
-sales. Duplicate successful submission logs share one request and receive the
-same verified result. A previously unposted order can acquire its E-Plus invoice
-ID when branch staff submit it later. Saved orders stop being polled.
-
-Missing rows and unavailable branches preserve existing statuses. Invalid order
-references or invoice IDs reject that branch's refresh; other branches continue.
-Submission success/error state remains the original audit outcome. Failed or
-uncertain submissions still use the existing explicit reconciliation workflow;
-the status job never resubmits them. Existing successful submissions backed by branch API sale operations
-are eligible without a new origin flag, backfill, or migration. Older submissions
-without that ownership evidence are not enrolled automatically.
-
-The Bills page remains an on-demand view and does not import bills or enroll
-them in background status polling. Its origin restriction is described below. Upgrade
-branch `ab_branch_api` first, then call-center `ab_sales`, and verify the new
-capability on each Branch Connection.
+Stock lookup, customer operations, return eligibility checks and submission
+continue through the existing branch API. Direct E-Plus access remains disabled
+on callcenter. This change does not make new branch operations available offline.
 
 
-## Show only call-center-created bills (19.0.3.2.0)
+### Automatic submission recovery (19.0.3.4.0)
 
-The Bills page shows only sales and returns whose branch header has
-`is_callcenter_order=True`. The scope covers every operator within authorized
-branches, including drafts, pending bills, and saved bills. Existing records
-remain unmarked and excluded. No historical backfill or migration is shipped.
-A branch-created return remains excluded even if its original sale was created
-by call-center. Returns can load or submit only against a marked original sale
-in the selected branch.
+If a sale/return API response fails, callcenter invokes `reconcile_operation`
+using the original database/store identity and token. When the branch confirms
+completion, callcenter repeats the original API method to obtain the stored
+result with payload-hash validation; it does not create another bill. A proven
+rollback preserves the original validation error and the draft for explicit
+retry. An unavailable/busy branch keeps the bill and asks the operator to retry
+the same bill later, without routine manual branch inspection.
 
-The client verifies `bill_scope="callcenter_only"` before invoking every bill
-or return endpoint. An older provider receives no unrestricted bill request;
-the connection test and Bills page explain that the branch API needs upgrading.
-Cached search pages require the same capability. Old client pagination sessions
-and provider snapshot tokens are invalid, so refresh the search after rollout.
-Rejected searches clear the displayed rows and details.
+Use **Bills → Retry Submission** for a retained sale. The branch handles all
+external transaction checks. The five-minute cron and search refresh remain
+status-only for Pending sales matched by `eplus_serial`; they never repost drafts.
+Conflicting evidence and legacy returns without sufficient durable identifiers
+remain blocked and require support rather than risking duplicate inventory or
+cash changes. Customer-creation recovery is unchanged.
 
-Matching local sale/return fields are read-only and cannot be set by ordinary
-create/import payloads, context defaults, or writes. Trusted local POS creation,
-return actions, and new return forms stamp new headers. Copies and existing
-submission retries retain an unmarked origin when appropriate. All normal ORM
-creation validations remain in effect. Remote POS submission still creates its
-sale on the branch rather than introducing a local replica.
+Deploy branch `ab_branch_api` 19.0.5.3.0 before callcenter `ab_sales` 19.0.3.4.0,
+perform targeted upgrades/restarts, then retest Branch Connections. Tests use
+disposable Odoo databases and mocked external writes; live deployment is separate.
 
-Deploy branch `ab_branch_api` 19.0.5.2.0 first, then call-center `ab_sales`
-19.0.3.2.0, and retest each Branch Connection. Only target these modules for
-upgrade. Existing verified status-refresh logs keep their previous behavior;
-browsing never adds unrelated branch orders to the refresh job.
+
+Recovery diagnostics correction (19.0.3.4.1): callcenter preserves the original
+submission error alongside any recovery failure. A reconciliation conflict is
+not an E-Plus connectivity test. The branch correction in `ab_branch_api`
+19.0.5.3.1 excludes invoice ID zero when the draft has no serial and reports the
+specific reason for any remaining conflict. Keep using the original bill/token.

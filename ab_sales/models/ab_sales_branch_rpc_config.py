@@ -235,6 +235,7 @@ class AbSalesBranchRpcConfig(models.Model):
             'get_return_invoice': ('db_serial', 'invoice', 'token', 'selections'),
             'submit_return': ('db_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
             'get_operation_status': ('db_serial', 'token'),
+            'reconcile_operation': ('db_serial', 'token'),
         }
         self.ensure_one()
         if not self.active or self.enrollment_state != 'ready':
@@ -256,14 +257,32 @@ class AbSalesBranchRpcConfig(models.Model):
         writes = ('submit_sale', 'submit_return', 'create_customer')
         status_values = {'db_serial': self.db_serial, 'store_eplus_serial': selected_serial,
                          'token': values.get('token')}
-        if method in writes:
+        if method == 'create_customer':
             status = self._json_call('ab_branch_api', 'get_operation_status', status_values)
             self._validate_identity(status)
             if status.get('state') in ('processing', 'uncertain'):
                 raise UserError(_('Operation outcome needs reconciliation. Check the branch before retrying.'))
         try:
             result = self._json_call(model_name, method, values)
-        except UserError:
+        except UserError as original_error:
+            if method in ('submit_sale', 'submit_return'):
+                try:
+                    status = self._json_call('ab_branch_api', 'reconcile_operation', status_values)
+                    self._validate_identity(status)
+                except (UserError, AccessError) as recovery_error:
+                    raise UserError(_('Submission error: %(submission)s\nRecovery error: %(recovery)s\nYour bill is retained with its original request token.') % {
+                        'submission': str(original_error), 'recovery': str(recovery_error)}) from original_error
+                if status.get('state') == 'done':
+                    # Replay only the API result. The provider checks the original
+                    # payload hash before returning it; no blind external repost.
+                    result = self._json_call(model_name, method, values)
+                    self._validate_identity(result)
+                    return result
+                if status.get('state') in ('processing', 'uncertain'):
+                    raise UserError(_('The branch is still processing this submission. Your bill is retained; retry the same bill shortly.')) from original_error
+                # A proven rollback is retryable, but preserve the original error
+                # (e.g. missing employee mapping) instead of repeatedly posting it.
+                raise
             if method in writes:
                 try:
                     status = self._json_call('ab_branch_api', 'get_operation_status', status_values)
@@ -277,7 +296,7 @@ class AbSalesBranchRpcConfig(models.Model):
             raise
         if method != 'search_products':
             self._validate_identity(result)
-            if method == 'get_operation_status' and result.get('result'):
+            if method in ('get_operation_status', 'reconcile_operation') and result.get('result'):
                 self._validate_identity(result['result'])
         return result
 
@@ -309,7 +328,8 @@ class AbSalesBranchRpcConfig(models.Model):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         required = {'get_product_balances', 'lookup_customer', 'create_customer', 'search_bills',
                     'get_bill_details', 'update_bill_notes', 'render_bill_print',
-                    'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses', 'get_sale_statuses'}
+                    'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses', 'get_sale_statuses',
+                    'reconcile_operation'}
         if result.get('bill_scope') != 'callcenter_only':
             raise UserError(_('Upgrade the branch API to support call-center-only bills, then retest the connection.'))
         if not required.issubset(set(result.get('methods') or [])):

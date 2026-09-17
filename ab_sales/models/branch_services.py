@@ -191,51 +191,7 @@ class ApiSalesHeader(models.Model):
         client = self.env['ab_sales_branch_client']
         if not client._is_callcenter():
             return super().cron_update_status_from_store()
-        Log = self.env['ab_sales_callcenter_rpc_log']
-        for store in client._stores():
-            try:
-                # Roll back this branch's refresh on an invalid/failed request,
-                # while allowing healthy branches to continue. No submission replay.
-                with self.env.cr.savepoint():
-                    config = client._config(store)
-                    logs = Log.search(
-                        fields.Domain('rpc_config_id', '=', config.id) & fields.Domain('store_id', '=', store.id)
-                        & fields.Domain('state', '=', 'success') & fields.Domain('payload_token', '!=', False)
-                        & fields.Domain('remote_header_id', '>', 0)
-                        & fields.Domain('remote_status', 'in', ['prepending', 'pending']))
-                    by_token = {}
-                    for log in logs:
-                        by_token.setdefault(log.payload_token, Log.browse())
-                        by_token[log.payload_token] |= log
-                    tokens = sorted(by_token)
-                    for offset in range(0, len(tokens), 200):
-                        batch = tokens[offset:offset + 200]
-                        response = client._call(store, 'get_sale_statuses', batch)
-                        if not isinstance(response.get('data'), list):
-                            raise UserError(_('The branch returned invalid invoice status.'))
-                        seen, updates = set(), []
-                        for row in response['data']:
-                            if not isinstance(row, dict):
-                                raise UserError(_('The branch returned invalid invoice status.'))
-                            token = row.get('token')
-                            if (not isinstance(token, str) or token not in batch or token in seen
-                                    or type(row.get('branch_header_id')) is not int
-                                    or type(row.get('eplus_serial')) is not int or row['eplus_serial'] < 0
-                                    or row.get('status') not in ('prepending', 'pending', 'saved')
-                                    or (row['status'] != 'prepending' and not row['eplus_serial'])):
-                                raise UserError(_('The branch returned invalid invoice status.'))
-                            tracked = by_token[token]
-                            if any(log.remote_header_id != row['branch_header_id']
-                                   or (log.remote_eplus_serial and log.remote_eplus_serial != row['eplus_serial'])
-                                   or (log.remote_status == 'pending' and row['status'] == 'prepending')
-                                   for log in tracked):
-                                raise UserError(_('The branch returned invalid invoice status.'))
-                            seen.add(token)
-                            updates.append((tracked, row))
-                        for tracked, row in updates:
-                            tracked.write({'remote_status': row['status'], 'remote_eplus_serial': row['eplus_serial']})
-            except (UserError, AccessError):
-                _logger.warning('Call-center order status refresh failed for store %s; previous statuses retained.', store.id)
+        self.refresh_bill_statuses()
         return True
 
 

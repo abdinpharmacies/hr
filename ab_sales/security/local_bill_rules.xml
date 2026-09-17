@@ -1,0 +1,22 @@
+<odoo>
+    <record id="ab_sales_header_local_branch_rule" model="ir.rule">
+        <field name="name">Local bills: authorized branches (ab_sales_header)</field>
+        <field name="model_id" ref="model_ab_sales_header"/>
+        <field name="domain_force">user._ab_sales_bill_domain('')</field>
+    </record>
+    <record id="ab_sales_line_local_branch_rule" model="ir.rule">
+        <field name="name">Local bills: authorized branches (ab_sales_line)</field>
+        <field name="model_id" ref="model_ab_sales_line"/>
+        <field name="domain_force">user._ab_sales_bill_domain('header_id.')</field>
+    </record>
+    <record id="ab_sales_return_header_local_branch_rule" model="ir.rule">
+        <field name="name">Local bills: authorized branches (ab_sales_return_header)</field>
+        <field name="model_id" ref="model_ab_sales_return_header"/>
+        <field name="domain_force">user._ab_sales_bill_domain('')</field>
+    </record>
+    <record id="ab_sales_return_line_local_branch_rule" model="ir.rule">
+        <field name="name">Local bills: authorized branches (ab_sales_return_line)</field>
+        <field name="model_id" ref="model_ab_sales_return_line"/>
+        <field name="domain_force">user._ab_sales_bill_domain('header_id.')</field>
+    </record>
+</odoo>

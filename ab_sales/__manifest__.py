@@ -1,6 +1,6 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.3.2.0',
+    'version': '19.0.3.4.1',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
@@ -10,6 +10,7 @@
         'data/ir_cron.xml',
         'security/groups_sales.xml',
         'security/rules_sales.xml',
+        'security/local_bill_rules.xml',
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/pos_action.xml',
@@ -32,6 +33,7 @@
         'data/branch_connection_jobs.xml',
         'views/ab_sales_callcenter_rpc_log_views.xml',
         'views/ab_sales_branch_api_views.xml',
+        'views/local_bill_views.xml',
         'views/ab_product_metadata_views.xml',
         'views/ab_product_inherit.xml',
         'views/ab_product_balance_wizard.xml',

@@ -1,0 +1,73 @@
+<odoo>
+    <record id="local_bill_list_view" model="ir.ui.view">
+        <field name="name">ab_sales_header.local_bills</field>
+        <field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales_header_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="js_class">ab_sales_local_bills</attribute>
+                <attribute name="delete">0</attribute>
+            </xpath>
+            <xpath expr="//list" position="inside">
+                <field name="active" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="local_bill_form_view" model="ir.ui.view">
+        <field name="name">ab_sales_header.local_bill_retry</field>
+        <field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="delete">0</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <field name="local_bill_storage" invisible="1"/>
+                <field name="branch_submission_started" invisible="1"/>
+                <field name="branch_header_id" invisible="1"/>
+                <button name="action_retry_branch_submission" type="object" string="Retry Submission"
+                        class="btn-primary" invisible="not local_bill_storage or status != 'prepending' or branch_header_id or not pos_client_token"/>
+            </xpath>
+            <xpath expr="//header/span[contains(@class, 'bg-success')]" position="attributes">
+                <attribute name="invisible" add="local_bill_storage" separator=" or "/>
+            </xpath>
+            <xpath expr="//header/span[contains(@class, 'bg-danger')]" position="attributes">
+                <attribute name="invisible" add="local_bill_storage" separator=" or "/>
+            </xpath>
+            <xpath expr="//button[@name='action_open_add_products']" position="attributes">
+                <attribute name="invisible" add="branch_submission_started" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="push_state" readonly="1" invisible="push_state == 'none'"/>
+                <field name="push_message" readonly="1" invisible="not push_message"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="local_return_list_view" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.local_list</field>
+        <field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales_return_header_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="delete">0</attribute>
+                <attribute name="multi_edit">0</attribute>
+            </xpath>
+            <xpath expr="//list" position="inside">
+                <field name="active" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="local_return_form_view" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.local_archive</field>
+        <field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales_return_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="delete">0</attribute>
+            </xpath>
+            <xpath expr="//field[@name='store_id']" position="after">
+                <field name="active" invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
