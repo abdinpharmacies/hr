@@ -1,0 +1,4 @@
+<odoo>
+<record id="channel_telegram" model="queue.job.channel"><field name="name">telegram</field><field name="parent_id" ref="queue_job.channel_root"/></record>
+<record id="function_deliver" model="queue.job.function"><field name="model_id" ref="model_ab_telegram_bot_message"/><field name="method">_deliver</field><field name="channel_id" ref="channel_telegram"/></record>
+</odoo>

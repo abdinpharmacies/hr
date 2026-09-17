@@ -1,0 +1,1114 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_telegram_bot
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-17 15:54+0000\n"
+"PO-Revision-Date: 2026-09-17 16:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "A media group requires 2 to 10 items."
+msgstr "تتطلب مجموعة الوسائط من عنصرين إلى 10 عناصر."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "A queue job is already handling this delivery."
+msgstr "توجد مهمة في قائمة الانتظار تعالج هذا الإرسال بالفعل."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "A sending delivery cannot be cancelled while its queue job is active."
+msgstr "لا يمكن إلغاء الإرسال الجاري ما دامت مهمته نشطة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__active
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__active
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__active
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Add at least one bot to validate the group."
+msgstr "أضف بوتًا واحدًا على الأقل للتحقق من المجموعة."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid ""
+"An enabled subscription requires an active bot and a default destination."
+msgstr "يتطلب الاشتراك المفعّل بوتًا نشطًا ووجهة افتراضية."
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_subscription_form
+msgid ""
+"An explicit chat ID overrides the selected group. Sending a test message "
+"contacts Telegram."
+msgstr ""
+"يتجاوز معرّف المحادثة المحدد المجموعة المختارة. إرسال رسالة اختبار يتصل "
+"بتليجرام."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_module_subscription__language__ar
+msgid "Arabic"
+msgstr "العربية"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_module_subscription__language__ar_001
+msgid "Arabic (World)"
+msgstr "العربية (العالم)"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__attachment_ids
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Attachment not found."
+msgstr "لم يتم العثور على المرفق."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Audio and document albums must contain only their own media type."
+msgstr "يجب أن تحتوي ألبومات الصوت والمستندات على نوع الوسائط نفسه فقط."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__operator_ids
+msgid "Authorized Users"
+msgstr "المستخدمون المصرح لهم"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__bot_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__bot_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__bot_id
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Bot"
+msgstr "البوت"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Bot is inactive or its token is missing."
+msgstr "البوت غير نشط أو رمز الوصول غير موجود."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Bot tokens cannot be exported."
+msgstr "لا يمكن تصدير رموز وصول البوتات."
+
+#. module: ab_telegram_bot
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__bot_ids
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_bot
+msgid "Bots"
+msgstr "البوتات"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_message_form
+msgid "Cancel Delivery"
+msgstr "إلغاء الإرسال"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_group__chat_type__channel
+msgid "Channel"
+msgstr "قناة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__chat_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__chat_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__chat_id
+msgid "Chat"
+msgstr "المحادثة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__chat_type
+msgid "Chat Type"
+msgstr "نوع المحادثة"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_bot_form
+msgid "Check Connection"
+msgstr "فحص الاتصال"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__checked_at
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__checked_at
+msgid "Checked At"
+msgstr "وقت الفحص"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Choose an active bot and a supported method."
+msgstr "اختر بوتًا نشطًا وطريقة مدعومة."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Choose an active bot in an allowed company."
+msgstr "اختر بوتًا نشطًا في شركة مسموح بها."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__client_name
+msgid "Client Name"
+msgstr "اسم العميل"
+
+#. module: ab_telegram_bot
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_client
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_client
+msgid "Clients"
+msgstr "العملاء"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__company_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__company_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__company_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__company_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__company_id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__connection_note
+msgid "Connection Note"
+msgstr "ملاحظة الاتصال"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Connection successful."
+msgstr "تم الاتصال بنجاح."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__create_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__create_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__create_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__create_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__create_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__create_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__create_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__create_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__create_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__create_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__dedupe_key
+msgid "Dedupe Key"
+msgstr "مفتاح منع التكرار"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__default_group_id
+msgid "Default Group"
+msgstr "المجموعة الافتراضية"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__default_group_chat_id
+msgid "Default Group Chat ID"
+msgstr "معرّف محادثة المجموعة الافتراضية"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__topic_id
+msgid "Default Topic ID"
+msgstr "معرّف الموضوع الافتراضي"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__unknown
+msgid "Delivery Unknown"
+msgstr "حالة الإرسال غير معروفة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Delivery history can only be changed by delivery actions."
+msgstr "لا يمكن تغيير سجل الإرسال إلا من خلال إجراءات الإرسال."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Delivery history cannot be deleted."
+msgstr "لا يمكن حذف سجل الإرسال."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__display_name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__display_name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__display_name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__display_name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__display_name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__enabled
+msgid "Enabled"
+msgstr "مفعّل"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_module_subscription__language__en_us
+msgid "English"
+msgstr "الإنجليزية"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Enter a numeric Telegram chat ID or a public @username."
+msgstr "أدخل معرّف محادثة تليجرام رقميًا أو اسم مستخدم عامًا بصيغة @username."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Enter a valid bot token from BotFather."
+msgstr "أدخل رمز وصول صالحًا للبوت من BotFather."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__error
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__failed
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_update__state__failed
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_message_form
+msgid ""
+"For uncertain deliveries, check Telegram first. Retrying may send a "
+"duplicate message."
+msgstr ""
+"للإرسال غير المؤكد، تحقق من تليجرام أولًا. قد تؤدي إعادة المحاولة إلى إرسال "
+"رسالة مكررة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__group_id
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_group__chat_type__group
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Group"
+msgstr "المجموعة"
+
+#. module: ab_telegram_bot
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_group
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_group
+msgid "Groups"
+msgstr "المجموعات"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__id
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Invalid upload parameter."
+msgstr "معامل رفع غير صالح."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__language
+msgid "Language"
+msgstr "اللغة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__write_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__write_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__write_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__write_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__write_uid
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__write_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__write_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__write_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__write_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__write_date
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,help:ab_telegram_bot.field_ab_telegram_bot_client__started_bot_ids
+msgid "Manually recorded; incoming Telegram updates are not collected."
+msgstr "مسجل يدويًا؛ لا يتم جمع تحديثات تليجرام الواردة."
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_message_form
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_form
+msgid "Message Content"
+msgstr "محتوى الرسالة"
+
+#. module: ab_telegram_bot
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_message
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_message
+msgid "Message History"
+msgstr "سجل الرسائل"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Message text cannot be empty."
+msgstr "لا يمكن أن يكون نص الرسالة فارغًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__method
+msgid "Method"
+msgstr "الطريقة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_module_subscription__module_id
+msgid "Module"
+msgstr "التطبيق"
+
+#. module: ab_telegram_bot
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_subscription
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_subscription
+msgid "Module Subscriptions"
+msgstr "اشتراكات الوحدات"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__name
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__next_send_at
+msgid "Next Send At"
+msgstr "وقت الإرسال التالي"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Only failed or uncertain deliveries can be retried."
+msgstr "يمكن إعادة محاولة الرسائل الفاشلة أو غير المؤكدة فقط."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_module_subscription_unique_subscription
+msgid "Only one subscription per module and company is allowed."
+msgstr "يُسمح باشتراك واحد فقط لكل وحدة وشركة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__order_key
+msgid "Order Key"
+msgstr "مفتاح الترتيب"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__payload
+msgid "Payload"
+msgstr "بيانات الرسالة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid ""
+"Previous delivery was interrupted after send intent. Review Telegram before "
+"retrying."
+msgstr ""
+"انقطع الإرسال السابق بعد تسجيل نية الإرسال. راجع تليجرام قبل إعادة المحاولة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__private_chat_id
+msgid "Private Chat"
+msgstr "المحادثة الخاصة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__queue_job_id
+msgid "Queue Job"
+msgstr "مهمة الطابور"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_group_form
+msgid ""
+"Register known chat IDs manually. Validation checks these bots in this chat;"
+" it does not discover other groups."
+msgstr ""
+"سجل معرّفات المحادثات المعروفة يدويًا. يتحقق الفحص من هذه البوتات في هذه "
+"المحادثة ولا يكتشف مجموعات أخرى."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__retry_at
+msgid "Retry At"
+msgstr "موعد إعادة المحاولة"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_message_form
+msgid "Retry Delivery"
+msgstr "إعادة محاولة الإرسال"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_subscription_form
+msgid "Send Test Message"
+msgstr "إرسال رسالة اختبار"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_subscription_form
+msgid "Send a test message to the configured Telegram destination?"
+msgstr "هل تريد إرسال رسالة اختبار إلى وجهة تليجرام المضبوطة؟"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__sending
+msgid "Sending"
+msgstr "جارٍ الإرسال"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_message__state__sent
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__sent_at
+msgid "Sent At"
+msgstr "وقت الإرسال"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Set a default destination first."
+msgstr "حدد وجهة افتراضية أولًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__source_model
+msgid "Source Model"
+msgstr "نموذج المصدر"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid ""
+"Split formatted messages into blocks of at most 4000 UTF-16 units before "
+"sending."
+msgstr ""
+"قسّم الرسائل المنسقة إلى أجزاء لا تتجاوز 4000 وحدة UTF-16 قبل الإرسال."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__started_bot_ids
+msgid "Started Bots (Manual)"
+msgstr "البوتات التي تم بدء محادثتها (يدوي)"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_client_form
+msgid ""
+"Started bots are recorded manually. This module does not collect incoming "
+"updates."
+msgstr ""
+"تُسجل البوتات التي تم بدء محادثتها يدويًا. لا تجمع هذه الوحدة التحديثات "
+"الواردة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__state
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_group__chat_type__supergroup
+msgid "Supergroup"
+msgstr "مجموعة فائقة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram"
+msgstr "تليجرام"
+
+#. module: ab_telegram_bot
+#: model:res.groups.privilege,name:ab_telegram_bot.privilege_telegram
+msgid "Telegram Access"
+msgstr "صلاحيات تليجرام"
+
+#. module: ab_telegram_bot
+#: model:res.groups,name:ab_telegram_bot.group_administrator
+msgid "Telegram Administrator"
+msgstr "مدير تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot
+msgid "Telegram Bot"
+msgstr "بوت تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__bot_id
+msgid "Telegram Bot ID"
+msgstr "معرّف بوت تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.module.category,name:ab_telegram_bot.category_telegram
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_telegram_root
+msgid "Telegram Bots"
+msgstr "بوتات تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot_client
+msgid "Telegram Client"
+msgstr "عميل تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot_message
+msgid "Telegram Delivery"
+msgstr "إرسال تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot_group
+msgid "Telegram Group"
+msgstr "مجموعة تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__telegram_message_ids
+msgid "Telegram Message IDs"
+msgstr "معرّفات رسائل تليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot_module_subscription
+msgid "Telegram Module Subscription"
+msgstr "اشتراك وحدة تليجرام"
+
+#. module: ab_telegram_bot
+#: model:res.groups,name:ab_telegram_bot.group_operator
+msgid "Telegram Operator"
+msgstr "مشغّل تليجرام"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram Operator access is required."
+msgstr "يلزم امتلاك صلاحية مشغّل تليجرام."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__client_id
+msgid "Telegram User ID"
+msgstr "معرّف مستخدم تليجرام"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram User ID must be a positive numeric ID."
+msgstr "يجب أن يكون معرّف مستخدم تليجرام رقمًا موجبًا."
+
+#. module: ab_telegram_bot
+#: model:res.groups,name:ab_telegram_bot.group_viewer
+msgid "Telegram Viewer"
+msgstr "قارئ تليجرام"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram connection test from Odoo."
+msgstr "اختبار اتصال تليجرام من أودو."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Telegram delivery %s"
+msgstr "إرسال تليجرام %s"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid ""
+"Telegram delivery failed or could not be confirmed (HTTP code %s). Check the"
+" destination, token and permissions."
+msgstr ""
+"فشل إرسال تليجرام أو تعذر تأكيده (رمز HTTP %s). تحقق من الوجهة ورمز الوصول "
+"والصلاحيات."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram file download failed."
+msgstr "فشل تنزيل ملف تليجرام."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Telegram file downloads are limited to 20 MiB."
+msgstr "الحد الأقصى لتنزيل ملفات تليجرام هو 20 ميبيبايت."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid ""
+"Telegram request failed (HTTP code %s). Check the token, destination and bot"
+" permissions."
+msgstr ""
+"فشل طلب تليجرام (رمز HTTP %s). تحقق من رمز الوصول والوجهة وصلاحيات البوت."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Telegram temporarily unavailable (HTTP code %s)."
+msgstr "تليجرام غير متاح مؤقتًا (رمز HTTP %s)."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Telegram text or caption exceeds the supported length."
+msgstr "يتجاوز نص تليجرام أو التعليق الطول المدعوم."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Test message queued."
+msgstr "تم إدراج رسالة الاختبار في قائمة الانتظار."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "The attachment and bot must belong to the same company."
+msgstr "يجب أن ينتمي المرفق والبوت إلى الشركة نفسها."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "The selected bot must be associated with the selected group."
+msgstr "يجب ربط البوت المختار بالمجموعة المختارة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_unique_bot
+msgid "This Telegram bot is already registered in this company."
+msgstr "بوت تليجرام هذا مسجل بالفعل في هذه الشركة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_client_unique_client
+msgid "This Telegram client is already registered."
+msgstr "عميل تليجرام هذا مسجل بالفعل."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_group_unique_chat
+msgid "This Telegram group is already registered."
+msgstr "مجموعة تليجرام هذه مسجلة بالفعل."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "This chat is not a group or channel."
+msgstr "هذه المحادثة ليست مجموعة أو قناة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_message_unique_delivery
+msgid "This notification is already queued."
+msgstr "هذا الإشعار موجود بالفعل في قائمة الانتظار."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__token
+msgid "Token"
+msgstr "رمز الوصول"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Topic ID cannot be negative."
+msgstr "لا يمكن أن يكون معرّف الموضوع سالبًا."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Unsupported Telegram method."
+msgstr "طريقة تليجرام غير مدعومة."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/bot.py:0
+msgid "Unsupported media group item type."
+msgstr "نوع عنصر مجموعة الوسائط غير مدعوم."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_message__upload_map
+msgid "Upload Map"
+msgstr "ربط الملفات المرفوعة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Upload data must be valid base64."
+msgstr "يجب أن تكون بيانات الرفع بتنسيق base64 صالح."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid ""
+"Uploads must be nonempty and no larger than 10 MiB for photos or 50 MiB for "
+"other media."
+msgstr ""
+"يجب ألا تكون الملفات المرفوعة فارغة وألا تتجاوز 10 ميبيبايت للصور أو 50 "
+"ميبيبايت للوسائط الأخرى."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Use a bot messaging method to create deliveries."
+msgstr "استخدم طريقة مراسلة البوت لإنشاء عمليات الإرسال."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/message.py:0
+msgid "Use an attachment ID, base64 upload, or Telegram file ID."
+msgstr "استخدم معرّف مرفق أو ملفًا بترميز base64 أو معرّف ملف تليجرام."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__username
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__username
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_group_form
+msgid "Validate Group"
+msgstr "التحقق من المجموعة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__validation_note
+msgid "Validation Note"
+msgstr "ملاحظة التحقق"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "A bot with incoming history cannot change company."
+msgstr "لا يمكن تغيير شركة روبوت له سجل تحديثات واردة."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid ""
+"A full batch was received. Click Fetch Updates again to check for more."
+msgstr ""
+"تم استلام دفعة كاملة. اضغط على جلب التحديثات مجددًا للتحقق من وجود المزيد."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_unique_poller
+msgid ""
+"Another Odoo bot record already receives updates for this Telegram bot."
+msgstr "يوجد سجل روبوت آخر في أودو يستقبل بالفعل تحديثات روبوت تيليجرام هذا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,help:ab_telegram_bot.field_ab_telegram_bot_client__started_bot_ids
+msgid ""
+"Bots started with a private /start received through Fetch Updates, or "
+"recorded manually."
+msgstr ""
+"الروبوتات التي بدأ المستخدم محادثة خاصة معها بأمر /start عبر جلب التحديثات، "
+"أو المسجلة يدويًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__client_id
+msgid "Client"
+msgstr "العميل"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_bot_updates
+msgid ""
+"Each click receives up to 100 pending updates. Telegram retains pending "
+"updates for at most 24 hours. This is not chat history; another polling "
+"application may consume the updates first."
+msgstr ""
+"تجلب كل ضغطة حتى 100 تحديث معلق. يحتفظ تيليجرام بالتحديثات المعلقة لمدة لا "
+"تتجاوز 24 ساعة. هذه ليست محفوظات المحادثة؛ وقد يستقبل تطبيق آخر التحديثات "
+"أولًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__event_at
+msgid "Event At"
+msgstr "وقت الحدث"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_bot_updates
+msgid "Fetch Updates"
+msgstr "جلب التحديثات"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_update__state__ignored
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Ignored"
+msgstr "تم التجاهل"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+#: model:ir.actions.act_window,name:ab_telegram_bot.action_update
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__update_count
+#: model:ir.ui.menu,name:ab_telegram_bot.menu_update
+msgid "Incoming Updates"
+msgstr "التحديثات الواردة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Incoming update history cannot be deleted."
+msgstr "لا يمكن حذف سجل التحديثات الواردة."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Incoming updates can only be created by Fetch Updates."
+msgstr "لا يمكن إنشاء التحديثات الواردة إلا عبر جلب التحديثات."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Incoming updates cannot be edited manually."
+msgstr "لا يمكن تعديل التحديثات الواردة يدويًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__last_fetch_at
+msgid "Last Fetch At"
+msgstr "وقت آخر جلب"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__last_fetch_note
+msgid "Last Fetch Note"
+msgstr "ملاحظة آخر جلب"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_bot_updates
+msgid "Manual Update Fetching"
+msgstr "جلب التحديثات يدويًا"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__message_id
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__next_update_offset
+msgid "Next Update Offset"
+msgstr "مؤشر التحديث التالي"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Observation metadata cannot be edited manually."
+msgstr "لا يمكن تعديل بيانات الرصد يدويًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__observed_bot_ids
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__observed_bot_ids
+msgid "Observed Bots"
+msgstr "الروبوتات الراصدة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Only failed updates can be retried."
+msgstr "يمكن إعادة معالجة التحديثات الفاشلة فقط."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot__poll_identity
+msgid "Poll Identity"
+msgstr "هوية الاستقبال"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Polling state can only be changed by Fetch Updates."
+msgstr "لا يمكن تغيير حالة الاستقبال إلا عبر جلب التحديثات."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_update__state__processed
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Processed"
+msgstr "تمت المعالجة"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid ""
+"Processing failed. The raw update was preserved; review it and retry "
+"processing."
+msgstr "فشلت المعالجة. تم حفظ التحديث الأصلي؛ راجعه ثم أعد المعالجة."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__raw_update
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_form
+msgid "Raw Update"
+msgstr "التحديث الأصلي"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields.selection,name:ab_telegram_bot.selection__ab_telegram_bot_update__state__received
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__received_at
+msgid "Received At"
+msgstr "وقت الاستلام"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "Received: %s; new: %s; duplicates: %s; processing failures: %s."
+msgstr "المستلم: %s؛ الجديد: %s؛ المكرر: %s؛ إخفاقات المعالجة: %s."
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_group_form
+msgid ""
+"Register known chats manually or discover them through Fetch Updates. "
+"Validate Group checks current membership for the selected bots."
+msgstr ""
+"سجل المحادثات المعروفة يدويًا أو اكتشفها عبر جلب التحديثات. يتحقق زر التحقق "
+"من المجموعة من العضوية الحالية للروبوتات المحددة."
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_form
+msgid "Retry Processing"
+msgstr "إعادة المعالجة"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__sender_id
+msgid "Sender"
+msgstr "المرسل"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__started_bot_ids
+msgid "Started Bots"
+msgstr "الروبوتات التي بدأ محادثتها"
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_client_form
+msgid ""
+"Started Bots records private /start commands received through Fetch Updates "
+"or entered manually. Observed Bots also includes bots that saw this client "
+"in a group."
+msgstr ""
+"تسجل الروبوتات التي بدأ محادثتها أوامر /start الخاصة المستلمة عبر جلب "
+"التحديثات أو المدخلة يدويًا. تشمل الروبوتات الراصدة أيضًا الروبوتات التي "
+"شاهدت هذا العميل في مجموعة."
+
+#. module: ab_telegram_bot
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_telegram_bot
+#: model:ir.model,name:ab_telegram_bot.model_ab_telegram_bot_update
+msgid "Telegram Incoming Update"
+msgstr "تحديث تيليجرام وارد"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__telegram_membership_versions
+msgid "Telegram Membership Versions"
+msgstr "إصدارات عضوية تيليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_client__telegram_profile_version
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_group__telegram_profile_version
+msgid "Telegram Profile Version"
+msgstr "إصدار ملف تيليجرام"
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__update_id
+msgid "Telegram Update ID"
+msgstr "معرف تحديث تيليجرام"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid ""
+"Telegram returned an invalid update batch. The polling offset was not "
+"advanced."
+msgstr "أعاد تيليجرام دفعة تحديثات غير صالحة. لم يتم تقديم مؤشر الاستقبال."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__text
+msgid "Text / Caption"
+msgstr "النص / الوصف"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "The Telegram identity does not match this bot history."
+msgstr "هوية تيليجرام لا تطابق سجل هذا الروبوت."
+
+#. module: ab_telegram_bot
+#: model:ir.model.constraint,message:ab_telegram_bot.constraint_ab_telegram_bot_update_unique_update
+msgid "This Telegram update is already stored for this bot."
+msgstr "تحديث تيليجرام هذا محفوظ بالفعل لهذا الروبوت."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid ""
+"This bot has a webhook. Remove it in the owning application before using "
+"Fetch Updates. No webhook was changed."
+msgstr ""
+"هذا الروبوت مرتبط بخطاف ويب. أزله من التطبيق المسؤول عنه قبل استخدام جلب "
+"التحديثات. لم يتم تغيير أي خطاف ويب."
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "This token belongs to another bot. Create a separate bot record."
+msgstr "هذا الرمز يخص روبوتًا آخر. أنشئ سجل روبوت منفصلًا."
+
+#. module: ab_telegram_bot
+#: model:ir.model.fields,field_description:ab_telegram_bot.field_ab_telegram_bot_update__update_type
+#: model_terms:ir.ui.view,arch_db:ab_telegram_bot.view_update_search
+msgid "Update Type"
+msgstr "نوع التحديث"
+
+#. module: ab_telegram_bot
+#. odoo-python
+#: code:addons/ab_telegram_bot/models/update.py:0
+msgid "bot_id"
+msgstr "الروبوت"

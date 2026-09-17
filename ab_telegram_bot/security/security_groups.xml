@@ -1,0 +1,8 @@
+<odoo>
+    <record id="category_telegram" model="ir.module.category"><field name="name">Telegram Bots</field></record>
+    <record id="privilege_telegram" model="res.groups.privilege"><field name="name">Telegram Access</field><field name="category_id" ref="category_telegram"/></record>
+    <record id="group_viewer" model="res.groups"><field name="name">Telegram Viewer</field><field name="privilege_id" ref="privilege_telegram"/></record>
+    <record id="group_operator" model="res.groups"><field name="name">Telegram Operator</field><field name="privilege_id" ref="privilege_telegram"/><field name="implied_ids" eval="[(4, ref('group_viewer'))]"/></record>
+    <record id="group_administrator" model="res.groups"><field name="name">Telegram Administrator</field><field name="privilege_id" ref="privilege_telegram"/><field name="implied_ids" eval="[(4, ref('group_operator'))]"/></record>
+    <record id="base.group_system" model="res.groups"><field name="implied_ids" eval="[(4, ref('group_administrator'))]"/></record>
+</odoo>

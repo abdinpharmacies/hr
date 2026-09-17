@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bot_viewer,bot viewer,model_ab_telegram_bot,group_viewer,1,0,0,0
+access_bot_admin,bot admin,model_ab_telegram_bot,group_administrator,1,1,1,0
+access_client_viewer,client viewer,model_ab_telegram_bot_client,group_viewer,1,0,0,0
+access_client_admin,client admin,model_ab_telegram_bot_client,group_administrator,1,1,1,0
+access_group_viewer,group viewer,model_ab_telegram_bot_group,group_viewer,1,0,0,0
+access_group_admin,group admin,model_ab_telegram_bot_group,group_administrator,1,1,1,0
+access_subscription_viewer,subscription viewer,model_ab_telegram_bot_module_subscription,group_viewer,1,0,0,0
+access_subscription_admin,subscription admin,model_ab_telegram_bot_module_subscription,group_administrator,1,1,1,0
+access_message_viewer,message viewer,model_ab_telegram_bot_message,group_viewer,1,0,0,0
+access_message_admin,message admin,model_ab_telegram_bot_message,group_administrator,1,0,0,0
+access_update_viewer,update viewer,model_ab_telegram_bot_update,group_viewer,1,0,0,0
