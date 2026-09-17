@@ -64,7 +64,9 @@ class PostingConnection:
     def _commit_now(self):
         scope = current_request(self.provider)
         if scope.posting_operation == self.operation:
-            header = self.provider._operation_header(self.operation)
+            # Posting has already moved the bill to Pending/Saved, where normal
+            # record rules forbid edits. Journaling only reads its identifiers.
+            header = self.provider._operation_header(self.operation, access='read')
             if self.operation.kind == 'sale':
                 evidence = {'eplus_serial': int(header.eplus_serial or 0)}
             else:
@@ -94,13 +96,15 @@ class BranchRecovery(models.AbstractModel):
         self.env.cr.commit()  # Start a fresh repeatable-read snapshot after locking.
         self.env.invalidate_all()
 
-    def _operation_header(self, operation):
+    def _operation_header(self, operation, access='write'):
         model = 'ab_sales_header' if operation.kind == 'sale' else 'ab_sales_return_header'
         header = self.env[model].browse(operation.record_id).exists()
-        if not header or header.store_id != request_store(self):
+        if (not header or operation.user_id.id != self.env.uid
+                or operation.store_id != request_store(self)
+                or header.store_id != operation.store_id):
             raise AccessError(_('The stored bill does not match the authorized branch operation.'))
-        header.check_access('write')
-        header.line_ids.check_access('write')
+        header.check_access(access)
+        header.line_ids.check_access(access)
         return header
 
     @contextmanager
@@ -143,7 +147,7 @@ class BranchRecovery(models.AbstractModel):
                 'message': _('Branch sale submitted.')}
 
     def _reconcile_post(self, operation):
-        header = self._operation_header(operation)
+        header = self._operation_header(operation, access='read')
         connection = self._guard_connection(header.get_connection(), operation)
         cur = connection.cursor()
         cur.execute('SET LOCK_TIMEOUT 5000')
@@ -172,7 +176,10 @@ class BranchRecovery(models.AbstractModel):
                 if evidence.get('eplus_serial') and evidence['eplus_serial'] != int(rows[0][0]):
                     self._recovery_conflict(operation, _('The invoice does not match the transaction identifier recorded before commit.'))
                 serial, flag = rows[0][:2]
-                header.write({'active': True, 'pos_client_token': operation.token,
+                # Only the original operation's lifecycle/transaction fields are
+                # finalized here, just as in the existing posting workflow.
+                # Pending/Saved records remain read-only to ordinary ORM edits.
+                header.sudo().write({'active': True, 'pos_client_token': operation.token,
                               'eplus_serial': int(serial), 'status': 'saved' if flag == 'C' else 'pending',
                               'push_state': 'success', 'push_message': _('Branch sale submitted.')})
                 committed = True
@@ -201,7 +208,9 @@ class BranchRecovery(models.AbstractModel):
                 if returns or finance or payments:
                     if len(returns) != 1 or len(finance) != 1 or len(payments) != 1:
                         self._recovery_conflict(operation, _('The return, cash transaction and payment records do not form one complete transaction.'))
-                    header.write({**evidence, 'status': 'saved'})
+                    header.sudo().write({'sales_return_id': evidence['sales_return_id'],
+                                         'f_transaction_id': evidence['f_transaction_id'],
+                                         'status': 'saved'})
                     committed = True
         if committed:
             result = (self._sale_result(header) if operation.kind == 'sale' else
@@ -218,7 +227,10 @@ class BranchRecovery(models.AbstractModel):
                               push_state='error', push_message=operation.message or '')
             else:
                 values.update(sales_return_id=False, f_transaction_id=False)
-            header.write(values)
+            # A failed commit may have left Pending/Saved in PostgreSQL. Restore
+            # only lifecycle fields after proving external rollback; a later
+            # submit still checks ordinary draft header/line write permission.
+            header.sudo().write(values)
             operation.write({'state': 'retryable', 'result': False})
         self.env.cr.commit()
 

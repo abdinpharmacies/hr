@@ -282,3 +282,24 @@ and the recovery error instead of treating every recovery failure as an outage.
 Deploy branch 19.0.5.3.1 and callcenter 19.0.3.4.1 with targeted upgrades and
 worker restarts. Retry the existing bill and token; no record reset is required
 for the zero-ID false match.
+
+
+### Read-only bill access correction (19.0.5.3.2)
+
+Normal sales rules intentionally make Pending/Saved headers and lines read-only.
+The posting workflow sets Pending before the external commit; the recovery
+journal must therefore read the generated identifiers without requesting write
+access to the now-locked bill. Draft submission still requires normal header and
+line write permission.
+
+Recovery validates the operation owner, authorized store, and current header/line
+read access before checking external evidence. It then uses the same narrowly
+scoped lifecycle updates as posting: status, transaction IDs, submission token,
+active flag and push result. Product lines, prices, employees and customer data
+are never changed by recovery. Ordinary writes to Pending/Saved bills remain
+blocked. No ACLs, record rules, groups or user memberships are expanded.
+
+Upgrade branch `ab_branch_api` to 19.0.5.3.2 and restart its workers. Existing
+requests can be retried using the same bill/token; a stale Pending value left by
+the rejected checkpoint is repaired only after the branch verifies the outcome.
+This correction requires no callcenter code change or additional user privileges.
