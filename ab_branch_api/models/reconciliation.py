@@ -158,14 +158,19 @@ class BranchRecovery(models.AbstractModel):
                     (SELECT COUNT(*) FROM sales_trans_d d WITH (READCOMMITTEDLOCK)
                      WHERE d.sth_id=h.sth_id), h.temp_col6
                 FROM sales_trans_h h WITH (READCOMMITTEDLOCK)
-                WHERE (h.temp_col6=? OR h.sth_id=?) AND h.sto_id=?''',
+                WHERE (h.temp_col6=? OR (h.sth_id=? AND h.sth_id>0)) AND h.sto_id=?''',
                 (marker, serial_hint, int(header.store_id.eplus_serial)))
             rows = cur.fetchall()
             if rows:
-                if (len(rows) != 1 or int(rows[0][4] or 0) != marker
-                        or not rows[0][3] or int(rows[0][2] or 0) != int(rows[0][3])
-                        or (evidence.get('eplus_serial') and evidence['eplus_serial'] != int(rows[0][0]))):
-                    self._recovery_conflict()
+                if len(rows) != 1:
+                    self._recovery_conflict(operation, _('More than one invoice matches the stored request.'))
+                if int(rows[0][0] or 0) <= 0 or int(rows[0][4] or 0) != marker:
+                    self._recovery_conflict(operation, _('The invoice identifier or request marker does not match the stored bill.'))
+                if not rows[0][3] or int(rows[0][2] or 0) != int(rows[0][3]):
+                    self._recovery_conflict(operation, _('Invoice %(invoice)s has %(header)s declared lines but %(details)s stored detail rows.') % {
+                        'invoice': rows[0][0], 'header': rows[0][2], 'details': rows[0][3]})
+                if evidence.get('eplus_serial') and evidence['eplus_serial'] != int(rows[0][0]):
+                    self._recovery_conflict(operation, _('The invoice does not match the transaction identifier recorded before commit.'))
                 serial, flag = rows[0][:2]
                 header.write({'active': True, 'pos_client_token': operation.token,
                               'eplus_serial': int(serial), 'status': 'saved' if flag == 'C' else 'pending',
@@ -173,12 +178,12 @@ class BranchRecovery(models.AbstractModel):
                 committed = True
             elif header.eplus_serial and not operation.recovery_enabled:
                 # Legacy local identifiers alone cannot prove an external rollback.
-                self._recovery_conflict()
+                self._recovery_conflict(operation, _('The legacy bill has an invoice identifier, but no matching branch invoice was found.'))
         else:
             # A return has no external request marker. New postings journal BOTH
             # generated identifiers before committing; legacy ambiguous returns stay blocked.
             if not operation.recovery_enabled:
-                self._recovery_conflict()
+                self._recovery_conflict(operation, _('This older return has no commit journal to establish whether it was posted.'))
             if evidence:
                 cur.execute('''SELECT r.sr_id FROM sales_return r WITH (READCOMMITTEDLOCK)
                     JOIN sales_trans_h h WITH (READCOMMITTEDLOCK) ON h.sth_id=r.sth_id
@@ -195,7 +200,7 @@ class BranchRecovery(models.AbstractModel):
                 payments = cur.fetchall()
                 if returns or finance or payments:
                     if len(returns) != 1 or len(finance) != 1 or len(payments) != 1:
-                        self._recovery_conflict()
+                        self._recovery_conflict(operation, _('The return, cash transaction and payment records do not form one complete transaction.'))
                     header.write({**evidence, 'status': 'saved'})
                     committed = True
         if committed:
@@ -206,7 +211,7 @@ class BranchRecovery(models.AbstractModel):
                          operation.kind, operation.id, header.eplus_serial if operation.kind == 'sale' else header.sales_return_id)
         else:
             if operation.state == 'processing' and not operation.recovery_enabled:
-                self._recovery_conflict()
+                self._recovery_conflict(operation, _('This older request is still marked as processing and has no recovery journal.'))
             values = {'status': 'prepending'}
             if operation.kind == 'sale':
                 values.update(active=True, pos_client_token=operation.token, eplus_serial=False,
@@ -217,8 +222,11 @@ class BranchRecovery(models.AbstractModel):
             operation.write({'state': 'retryable', 'result': False})
         self.env.cr.commit()
 
-    def _recovery_conflict(self):
-        raise UserError(_('The branch found conflicting or incomplete posting evidence. Automatic retry is paused to prevent a duplicate bill; contact support with this bill reference.'))
+    def _recovery_conflict(self, operation, reason):
+        _logger.warning('Branch API recovery blocked: operation=%s kind=%s store=%s reason=%s',
+                        operation.id, operation.kind, operation.store_id.id, reason)
+        raise UserError(_('Branch operation %(operation)s could not be reconciled: %(reason)s No bill was resubmitted.') % {
+            'operation': operation.id, 'reason': reason})
 
     @api.model
     @api_request

@@ -852,3 +852,78 @@ msgstr ""
 #: code:addons/ab_branch_api/models/reconciliation.py:0
 msgid "The stored bill does not match the authorized branch operation."
 msgstr "الفاتورة المحفوظة لا تطابق عملية الفرع المصرح بها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid "More than one invoice matches the stored request."
+msgstr "توجد أكثر من فاتورة تطابق الطلب المحفوظ."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The invoice identifier or request marker does not match the stored bill."
+msgstr "معرف الفاتورة أو علامة الطلب لا يطابق الفاتورة المحفوظة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"Invoice %(invoice)s has %(header)s declared lines but %(details)s stored "
+"detail rows."
+msgstr ""
+"الفاتورة %(invoice)s مسجل بها عدد بنود %(header)s، بينما عدد صفوف التفاصيل "
+"المحفوظة هو %(details)s."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The invoice does not match the transaction identifier recorded before "
+"commit."
+msgstr "الفاتورة لا تطابق معرف العملية المسجل قبل تأكيد الحفظ."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The legacy bill has an invoice identifier, but no matching branch invoice "
+"was found."
+msgstr ""
+"الفاتورة القديمة لها معرف، ولكن لم يتم العثور على فاتورة مطابقة في الفرع."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"This older return has no commit journal to establish whether it was posted."
+msgstr ""
+"هذا المرتجع القديم ليس له سجل لتأكيد الحفظ يمكن من خلاله تحديد ما إذا كان قد"
+" تم ترحيله."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The return, cash transaction and payment records do not form one complete "
+"transaction."
+msgstr "سجلات المرتجع والحركة النقدية والدفع لا تشكل عملية واحدة مكتملة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"This older request is still marked as processing and has no recovery "
+"journal."
+msgstr "هذا الطلب القديم لا يزال مسجلاً كقيد المعالجة وليس له سجل استعادة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"Branch operation %(operation)s could not be reconciled: %(reason)s No bill "
+"was resubmitted."
+msgstr ""
+"تعذر التحقق من نتيجة عملية الفرع %(operation)s: %(reason)s لم تتم إعادة "
+"إرسال أي فاتورة."

@@ -267,3 +267,18 @@ target-upgrade callcenter `ab_sales` (19.0.3.4.0), restart the corresponding Odo
 workers, and retest Branch Connections. No external schema changes, migration
 hooks, or extra scheduled jobs are introduced. Disposable-database validation
 uses mocked external posting and failure injection; it does not post live bills.
+
+
+### Recovery correction (19.0.5.3.1)
+
+A missing invoice serial is not an invoice identifier: recovery now excludes
+zero/negative IDs from its serial fallback. Previously, an unrelated zero-ID
+header could produce a false conflict for a draft that had never been posted.
+Real marker/serial conflicts, duplicate headers and incomplete transactions still
+block reposting. Conflict responses now name the branch operation and exact
+reason, and the branch log records that reason without customer or payload data.
+The matching callcenter correction retains both the original submission error
+and the recovery error instead of treating every recovery failure as an outage.
+Deploy branch 19.0.5.3.1 and callcenter 19.0.3.4.1 with targeted upgrades and
+worker restarts. Retry the existing bill and token; no record reset is required
+for the zero-ID false match.
