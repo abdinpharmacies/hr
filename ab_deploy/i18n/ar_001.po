@@ -1,0 +1,3114 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_deploy
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-10 14:04+0000\n"
+"PO-Revision-Date: 2026-09-10 00:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "A deployment request must be approved by a different user."
+msgstr "يجب اعتماد طلب النشر بواسطة مستخدم آخر."
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_target_unique_target
+msgid "A server may appear only once in a deployment request."
+msgstr "لا يمكن إضافة الخادم أكثر من مرة إلى طلب النشر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__action
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_needaction
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__active
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__active
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__active
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تمييز استثناء النشاط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_state
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_type_icon
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__addons_paths
+msgid "Addons Paths"
+msgstr "مسارات الإضافات"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid ""
+"Administrative planning only. Server execution is not available in this "
+"version."
+msgstr "للتخطيط الإداري فقط. تنفيذ النشر على الخوادم غير متاح في هذا الإصدار."
+
+#. module: ab_deploy
+#: model:res.groups,name:ab_deploy.group_administrator
+#: model:res.groups.privilege,name:ab_deploy.privilege_administrator
+msgid "Administrator"
+msgstr "مسؤول النظام"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__after_values
+msgid "After Values"
+msgstr "القيم بعد التغيير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__approval_activity_id
+msgid "Approval Activity"
+msgstr "نشاط الاعتماد"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Approval History"
+msgstr "سجل الاعتماد"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Approve"
+msgstr "اعتماد"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__approved
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__approved_at
+msgid "Approved At"
+msgstr "وقت الاعتماد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__approved_by
+msgid "Approved By"
+msgstr "اعتمد بواسطة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__approver_id
+#: model:res.groups,name:ab_deploy.group_approver
+#: model:res.groups.privilege,name:ab_deploy.privilege_approver
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
+msgid "Approver"
+msgstr "المعتمد"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_attachment_count
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#: model:ir.actions.act_window,name:ab_deploy.action_audit
+#: model:ir.ui.menu,name:ab_deploy.menu_audit
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_audit_log
+#: model:ir.ui.menu,name:ab_deploy.menu_audit_log
+msgid "Audit Logs"
+msgstr "سجلات التدقيق"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Audit records can only be created by the deployment workflow."
+msgstr "لا يمكن إنشاء سجلات التدقيق إلا من خلال سير عمل النشر."
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__backup_policy
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__backup_policy
+msgid "Backup Policy"
+msgstr "سياسة النسخ الاحتياطي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__before_values
+msgid "Before Values"
+msgstr "القيم قبل التغيير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__branch
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__branch_code
+msgid "Branch Code"
+msgstr "كود الفرع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__business_reason
+msgid "Business Reason"
+msgstr "سبب النشر"
+
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__cancelled
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__cancelled
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__cancelled
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__cancelled
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__change_summary
+msgid "Change Summary"
+msgstr "ملخص التغييرات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Choose an active user with the Approver or Administrator role."
+msgstr "اختر مستخدمًا نشطًا لديه دور المعتمد أو مسؤول النشر."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__state__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__code
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__commit_sha
+msgid "Commit SHA"
+msgstr "معرف تثبيت Git"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Complete the repository, database impact, test evidence, execution "
+"instructions, rollback plan, and change summary."
+msgstr ""
+"أكمل المستودع وأثر قاعدة البيانات وأدلة الاختبار وتعليمات التنفيذ وخطة "
+"التراجع وملخص التغييرات."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__config_path
+msgid "Config Path"
+msgstr "مسار ملف الإعدادات"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_audit_log__action__create
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_uid
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_date
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__risk_level__critical
+msgid "Critical"
+msgstr "حرج"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__data
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__data
+msgid "Data Change"
+msgstr "تغيير البيانات"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__database
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__database
+msgid "Database"
+msgstr "قاعدة البيانات"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__database_impact
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__database_impact
+msgid "Database Impact"
+msgstr "أثر قاعدة البيانات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__database_name
+msgid "Database Name"
+msgstr "اسم قاعدة البيانات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Database changes and module upgrades require a database backup policy."
+msgstr ""
+"تتطلب تغييرات قاعدة البيانات وترقيات الموديولات سياسة نسخ احتياطي لقاعدة "
+"البيانات."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__decision_note
+msgid "Decision / Withdrawal Reason"
+msgstr "سبب القرار أو سحب الطلب"
+
+#. module: ab_deploy
+msgid "Deployment Access"
+msgstr "صلاحيات النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_graph
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_pivot
+msgid "Deployment Approvals"
+msgstr "اعتمادات النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_audit_log
+msgid "Deployment Audit Log"
+msgstr "سجل تدقيق النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_form
+msgid "Deployment Configuration"
+msgstr "إعدادات النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__deployment_group
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_search
+msgid "Deployment Group"
+msgstr "مجموعة النشر"
+
+#. module: ab_deploy
+#: model:ir.module.category,name:ab_deploy.module_category_deploy
+#: model:ir.ui.menu,name:ab_deploy.menu_deploy_root
+msgid "Deployment Manager"
+msgstr "إدارة النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_guard
+msgid "Deployment Record Guard"
+msgstr "حماية سجلات النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_release
+msgid "Deployment Release"
+msgstr "إصدار النشر"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_reports
+#: model:ir.ui.menu,name:ab_deploy.menu_reports
+msgid "Deployment Reports"
+msgstr "تقارير النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_request
+msgid "Deployment Request"
+msgstr "طلب النشر"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_request
+#: model:ir.ui.menu,name:ab_deploy.menu_request
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_form
+msgid "Deployment Requests"
+msgstr "طلبات النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_server
+msgid "Deployment Server"
+msgstr "خادم النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_target
+msgid "Deployment Target"
+msgstr "هدف النشر"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_target
+#: model:ir.ui.menu,name:ab_deploy.menu_target
+msgid "Deployment Targets"
+msgstr "أهداف النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Deployment audit history cannot be deleted."
+msgstr "لا يمكن حذف سجل تدقيق النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Deployment audit history cannot be modified."
+msgstr "لا يمكن تعديل سجل تدقيق النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Deployment records must be retained. Archive or cancel them instead."
+msgstr "يجب الاحتفاظ بسجلات النشر. استخدم الأرشفة أو الإلغاء بدلًا من الحذف."
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__description
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__description
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__description
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__description
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__description
+msgid "Description"
+msgstr "الوصف"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__developer_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__developer_id
+#: model:res.groups,name:ab_deploy.group_developer
+#: model:res.groups.privilege,name:ab_deploy.privilege_developer
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
+msgid "Developer"
+msgstr "المطور"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__development
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__development
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__development
+msgid "Development"
+msgstr "التطوير"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__display_name
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Enter a full immutable Git commit SHA (40 or 64 hexadecimal characters)."
+msgstr ""
+"أدخل معرف تثبيت Git كاملًا وثابتًا مكونًا من 40 أو 64 حرفًا بالنظام الست "
+"عشري."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Enter a reason before cancelling the request."
+msgstr "أدخل السبب قبل إلغاء الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Enter a reason before rejecting the request."
+msgstr "أدخل السبب قبل رفض الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Enter a reason before returning the request to draft."
+msgstr "أدخل السبب قبل إعادة الطلب إلى مسودة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__environment
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__environment
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__environment
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_search
+msgid "Environment"
+msgstr "البيئة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__execution_instructions
+msgid "Execution Instructions"
+msgstr "تعليمات التنفيذ"
+
+#. module: ab_deploy
+#: model:res.groups,name:ab_deploy.group_executor
+#: model:res.groups.privilege,name:ab_deploy.privilege_executor
+msgid "Executor"
+msgstr "منفذ النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__failure_threshold
+msgid "Failure Threshold (%)"
+msgstr "حد الفشل (%)"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__files
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__files
+msgid "Files"
+msgstr "الملفات"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__both
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__both
+msgid "Files and Database"
+msgstr "الملفات وقاعدة البيانات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_follower_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_partner_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_type_icon
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font awesome مثل fa-tasks"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__has_message
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__has_message
+msgid "Has Message"
+msgstr "لديه رسالة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__risk_level__high
+msgid "High"
+msgstr "مرتفع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__host_fingerprint
+msgid "Host Fingerprint"
+msgstr "بصمة الخادم"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__hostname
+msgid "Hostname"
+msgstr "اسم المضيف"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_exception_icon
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط استثنائي."
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_needaction
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم تحديده، فهناك رسائل جديدة تتطلب انتباهك."
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_has_error
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم تحديده، فهناك خطأ في تسليم بعض الرسائل."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_is_follower
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_uid
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_date
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__risk_level__low
+msgid "Low"
+msgstr "منخفض"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__maintenance_mode
+msgid "Maintenance Mode"
+msgstr "وضع الصيانة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__max_parallel
+msgid "Max Parallel"
+msgstr "الحد الأقصى للتنفيذ المتوازي"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__risk_level__medium
+msgid "Medium"
+msgstr "متوسط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_has_error
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__upgrade_required
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__upgrade_required
+msgid "Module Upgrade Required"
+msgstr "ترقية الموديولات مطلوبة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__module_names
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__module_names
+msgid "Modules"
+msgstr "الموديولات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__name
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_summary
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_type_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__none
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__none
+msgid "No Database Change"
+msgstr "لا يوجد تغيير في قاعدة البيانات"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__none
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__none
+msgid "None"
+msgstr "بدون"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_needaction_counter
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_has_error_counter
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__occurred_at
+msgid "Occurred At"
+msgstr "وقت الحدث"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__service_name
+msgid "Odoo Service"
+msgstr "خدمة Odoo"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only draft requests can be submitted."
+msgstr "يمكن إرسال الطلبات المسودة فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only requested deployments can be approved or rejected."
+msgstr "يمكن اعتماد أو رفض طلبات النشر المرسلة للاعتماد فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Only the assigned approver or a deployment administrator can decide this "
+"request."
+msgstr "يمكن للمعتمد المحدد أو مسؤول النشر فقط اتخاذ قرار بشأن هذا الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Parallelism must be positive and the failure threshold must be greater than "
+"0 and at most 100."
+msgstr ""
+"يجب أن يكون عدد التنفيذ المتوازي موجبًا وحد الفشل أكبر من صفر ولا يتجاوز "
+"100."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__state__partial
+msgid "Partially Developed"
+msgstr "تطوير جزئي"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__pilot
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__pilot
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__pilot
+msgid "Pilot"
+msgstr "تجريبي محدود"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__production
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__production
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__production
+msgid "Production"
+msgstr "الإنتاج"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__project_path
+msgid "Project Path"
+msgstr "مسار المشروع"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_form
+msgid "Readiness and Rollback"
+msgstr "الجاهزية والتراجع"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__state__ready
+msgid "Ready for Deployment"
+msgstr "جاهز للنشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__state__testing
+msgid "Ready for Testing"
+msgstr "جاهز للاختبار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__record_id
+msgid "Record"
+msgstr "السجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__record_model
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
+msgid "Record Model"
+msgstr "نموذج السجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__record_name
+msgid "Record Name"
+msgstr "اسم السجل"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__release_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__release_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__release_id
+msgid "Release"
+msgstr "الإصدار"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_form
+msgid "Release Details"
+msgstr "تفاصيل الإصدار"
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_release_unique_code
+msgid "Release code must be unique."
+msgstr "يجب أن يكون كود الإصدار فريدًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Release codes cannot be changed."
+msgstr "لا يمكن تغيير أكواد الإصدارات."
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_release
+#: model:ir.ui.menu,name:ab_deploy.menu_release
+msgid "Releases"
+msgstr "الإصدارات"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_audit_log__action__unlink
+msgid "Removed"
+msgstr "تمت الإزالة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__repository
+msgid "Repository"
+msgstr "المستودع"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__request_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__request_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__request_id
+msgid "Request"
+msgstr "الطلب"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Request Approval"
+msgstr "طلب الاعتماد"
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_request_unique_name
+msgid "Request reference must be unique."
+msgstr "يجب أن يكون مرجع الطلب فريدًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__requested
+msgid "Requested"
+msgstr "مطلوب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__requested_at
+msgid "Requested At"
+msgstr "وقت الطلب"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__requested_by_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__requested_by
+msgid "Requested By"
+msgstr "مقدم الطلب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_user_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__restart_required
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__restart_required
+msgid "Restart Required"
+msgstr "إعادة التشغيل مطلوبة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Return the request to draft before editing its scope."
+msgstr "أعد الطلب إلى مسودة قبل تعديل نطاقه."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Return to Draft"
+msgstr "إعادة إلى مسودة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Review deployment request"
+msgstr "مراجعة طلب النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__risk_level
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
+msgid "Risk Level"
+msgstr "مستوى الخطورة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__rollback_plan
+msgid "Rollback Plan"
+msgstr "خطة التراجع"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH port must be between 1 and 65535."
+msgstr "يجب أن يكون منفذ SSH بين 1 و65535."
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__schema
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__schema
+msgid "Schema Change"
+msgstr "تغيير بنية قاعدة البيانات"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__both
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__both
+msgid "Schema and Data Change"
+msgstr "تغيير البنية والبيانات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Select at least one target server."
+msgstr "اختر خادمًا مستهدفًا واحدًا على الأقل."
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__sequence
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__sequence
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__server_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_id
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_target_search
+msgid "Server"
+msgstr "الخادم"
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_code
+msgid "Server code must be unique."
+msgstr "يجب أن يكون كود الخادم فريدًا."
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_server
+#: model:ir.ui.menu,name:ab_deploy.menu_server
+msgid "Servers"
+msgstr "الخوادم"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Specify comma-separated module technical names for targeted upgrades; base "
+"is not allowed."
+msgstr ""
+"حدد الأسماء التقنية للموديولات مفصولة بفواصل للترقية المحددة؛ لا يُسمح "
+"بترقية base."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__ssh_key_reference
+msgid "Ssh Key Reference"
+msgstr "مرجع مفتاح SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__ssh_port
+msgid "Ssh Port"
+msgstr "منفذ SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__ssh_user
+msgid "Ssh User"
+msgstr "مستخدم SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__state
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__state
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__state
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__state
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_target_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_state
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة حسب الأنشطة\n"
+"متأخر: انقضى تاريخ الاستحقاق\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__tag
+msgid "Tag"
+msgstr "الوسم"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__target_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__target_ids
+msgid "Target"
+msgstr "الهدف"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__server_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__target_ids
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Target Servers"
+msgstr "الخوادم المستهدفة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Target workflow fields cannot be set manually."
+msgstr "لا يمكن تعيين حقول سير عمل الهدف يدويًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__target_count
+msgid "Targets"
+msgstr "الأهداف"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Targets must be active, outside maintenance, and in the request environment."
+msgstr "يجب أن تكون الأهداف نشطة وخارج وضع الصيانة وفي بيئة الطلب."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__test
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__test
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__test
+msgid "Test"
+msgstr "الاختبار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__test_evidence
+msgid "Test Evidence"
+msgstr "أدلة الاختبار"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The deployment window end must be after its start."
+msgstr "يجب أن تكون نهاية نافذة النشر بعد بدايتها."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The deployment window has already ended."
+msgstr "انتهت نافذة النشر بالفعل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The release must be active and ready for deployment."
+msgstr "يجب أن يكون الإصدار نشطًا وجاهزًا للنشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The request is already a draft."
+msgstr "الطلب مسودة بالفعل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The request is already cancelled."
+msgstr "الطلب ملغى بالفعل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The target request and workflow fields cannot be changed."
+msgstr "لا يمكن تغيير طلب الهدف أو حقول سير العمل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The target server must match the request environment."
+msgstr "يجب أن يتطابق الخادم المستهدف مع بيئة الطلب."
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_exception_decoration
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي في السجل."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__state__development
+msgid "Under Development"
+msgstr "تحت التطوير"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_audit_log__action__write
+msgid "Updated"
+msgstr "تم التحديث"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Use a dedicated deployment user instead of root."
+msgstr "استخدم مستخدمًا مخصصًا للنشر بدلًا من root."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__user_id
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_deploy
+#: model:res.groups,name:ab_deploy.group_viewer
+#: model:res.groups.privilege,name:ab_deploy.privilege_deploy
+msgid "Viewer"
+msgstr "مشاهد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__wave
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_target_search
+msgid "Wave"
+msgstr "مرحلة النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Wave numbers must be positive."
+msgstr "يجب أن تكون أرقام مراحل النشر موجبة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__window_end
+msgid "Window End"
+msgstr "نهاية نافذة النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__window_start
+msgid "Window Start"
+msgstr "بداية نافذة النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Withdraw active requests before changing their release."
+msgstr "اسحب الطلبات النشطة قبل تغيير إصدارها."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Withdraw active requests before changing their server configuration."
+msgstr "اسحب الطلبات النشطة قبل تغيير إعدادات خوادمها."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Withdraw the request before editing its targets."
+msgstr "اسحب الطلب قبل تعديل أهدافه."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Workflow fields can only be set using deployment actions."
+msgstr "لا يمكن تعيين حقول سير العمل إلا باستخدام إجراءات النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "You cannot approve or reject your own deployment request."
+msgstr "لا يمكنك اعتماد أو رفض طلب النشر الذي قدمته بنفسك."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "You do not have the required deployment role."
+msgstr "ليس لديك دور النشر المطلوب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "A command template must contain between 1 and 65536 characters."
+msgstr "يجب أن يحتوي قالب الأمر على عدد أحرف بين 1 و65536."
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_job_unique_target
+msgid "A target can have only one execution job."
+msgstr "يمكن أن تكون لكل وجهة مهمة تنفيذ واحدة فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Add active deployment commands before requesting approval."
+msgstr "أضف أوامر نشر نشطة قبل طلب الموافقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Add at least one deployment command."
+msgstr "أضف أمر نشر واحدًا على الأقل."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid "Apply Import"
+msgstr "تطبيق الاستيراد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__script
+msgid "Approved Script"
+msgstr "البرنامج النصي المعتمد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__area
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_area
+msgid "Area"
+msgstr "المنطقة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__template
+msgid "Bash Template"
+msgstr "قالب Bash"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__database_change
+msgid "Changes Database"
+msgstr "يغير قاعدة البيانات"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid "Close"
+msgstr "إغلاق"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__command_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__command_id
+msgid "Command"
+msgstr "الأمر"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_command
+#: model:ir.ui.menu,name:ab_deploy.menu_command
+msgid "Command Catalog"
+msgstr "دليل الأوامر"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__command_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__command_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_execution_form
+msgid "Commands"
+msgstr "الأوامر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid ""
+"Complete the SSH alias, deployment paths, service, user, database, and Odoo "
+"URL."
+msgstr ""
+"أكمل الاسم المستعار لاتصال SSH ومسارات النشر والخدمة والمستخدم وقاعدة "
+"البيانات ورابط أودو."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+msgid ""
+"Confirm that you inspected the remote job and it is no longer running. This "
+"does not stop remote execution."
+msgstr ""
+"أكد أنك فحصت المهمة على الخادم البعيد وأنها لم تعد قيد التشغيل. هذا الإجراء "
+"لا يوقف التنفيذ البعيد."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__contact
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__custom
+msgid "Custom Command"
+msgstr "أمر مخصص"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__db_serial
+msgid "Database Serial"
+msgstr "الرقم التسلسلي لقاعدة البيانات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Database-changing commands require a database backup policy."
+msgstr ""
+"تتطلب الأوامر التي تغير قاعدة البيانات سياسة نسخ احتياطي لقاعدة البيانات."
+
+#. module: ab_deploy
+#: model:res.groups,name:ab_deploy.group_administrator
+#: model:res.groups.privilege,name:ab_deploy.privilege_administrator
+msgid "Deployment Administrator"
+msgstr "مسؤول النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_command
+msgid "Deployment Command"
+msgstr "أمر النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_job
+msgid "Deployment Job"
+msgstr "مهمة النشر"
+
+#. module: ab_deploy
+#: model:res.groups,name:ab_deploy.group_runner
+#: model:res.groups.privilege,name:ab_deploy.privilege_runner
+msgid "Deployment Runner"
+msgstr "منفذ مهام النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Deployment paths must be absolute and contain no control characters."
+msgstr "يجب أن تكون مسارات النشر مطلقة وألا تحتوي على أحرف تحكم."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "Each CSV row must have exactly the expected columns."
+msgstr "يجب أن يحتوي كل صف في ملف CSV على الأعمدة المتوقعة بالضبط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Enter a full immutable Git commit SHA."
+msgstr "أدخل قيمة SHA كاملة وثابتة لاعتماد Git."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid ""
+"Enter a valid SSH alias using letters, digits, underscores, or hyphens."
+msgstr ""
+"أدخل اسمًا مستعارًا صالحًا لاتصال SSH باستخدام الحروف والأرقام والشرطات "
+"السفلية أو الشرطات."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Enter a valid repository URL matching the target origin."
+msgstr "أدخل رابط مستودع صالحًا يطابق origin على الخادم المستهدف."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid ""
+"Enter an HTTP or HTTPS Odoo URL without credentials, query, or fragment."
+msgstr ""
+"أدخل رابط أودو ببروتوكول HTTP أو HTTPS دون بيانات دخول أو استعلام أو جزء "
+"مرجعي."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "Every CSV row needs a distinct SSH alias."
+msgstr "يجب أن يحتوي كل صف في ملف CSV على اسم مستعار فريد لاتصال SSH."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Executed requests are immutable. Create a new request for another attempt."
+msgstr ""
+"لا يمكن تعديل الطلبات التي بدأ تنفيذها. أنشئ طلبًا جديدًا لمحاولة أخرى."
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__job_ids
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_job
+#: model:ir.ui.menu,name:ab_deploy.menu_job
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_execution_form
+msgid "Execution Jobs"
+msgstr "مهام التنفيذ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__execution_state
+msgid "Execution State"
+msgstr "حالة التنفيذ"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Execution snapshots can only be set by the deployment workflow."
+msgstr "لا يمكن تعيين لقطات التنفيذ إلا من خلال سير عمل النشر."
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__failed
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__failed
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__failed
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__failed
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__filename
+msgid "Filename"
+msgstr "اسم الملف"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__finished_at
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__finished_at
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__finished_at
+msgid "Finished At"
+msgstr "وقت الانتهاء"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_server_import
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid "Import Deployment Servers"
+msgstr "استيراد خوادم النشر"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_server_import
+#: model:ir.ui.menu,name:ab_deploy.menu_server_import
+msgid "Import Servers CSV"
+msgstr "استيراد خوادم من CSV"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "Import previews can only be generated by the preview action."
+msgstr "لا يمكن إنشاء معاينة الاستيراد إلا باستخدام إجراء المعاينة."
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_install
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__install
+msgid "Install Modules"
+msgstr "تثبيت الوحدات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Invalid job identifier."
+msgstr "معرف المهمة غير صالح."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Invalid or oversized runner report."
+msgstr "تقرير منفذ المهام غير صالح أو يتجاوز الحجم المسموح."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Invalid runner state."
+msgstr "حالة منفذ المهام غير صالحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "Invalid server settings or timeout in CSV row: %s"
+msgstr "إعدادات الخادم أو مهلة الانتظار غير صالحة في صف CSV: %s"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__job_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__job_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__job_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__job_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__job_ids
+msgid "Job"
+msgstr "المهمة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__job_key
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__job_key
+msgid "Job Key"
+msgstr "مفتاح المهمة"
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_job_unique_key
+msgid "Job identifier must be unique."
+msgstr "يجب أن يكون معرف المهمة فريدًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Job results can only be changed by the runner workflow."
+msgstr "لا يمكن تغيير نتائج المهمة إلا من خلال سير عمل منفذ المهام."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Jobs can only be created by the execution workflow."
+msgstr "لا يمكن إنشاء المهام إلا من خلال سير عمل التنفيذ."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__lease_token
+msgid "Lease Token"
+msgstr "رمز حجز المهمة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__lease_until
+msgid "Lease Until"
+msgstr "انتهاء حجز المهمة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__log_tail
+msgid "Log Tail"
+msgstr "نهاية السجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__monitor_timeout_seconds
+msgid "Monitor Timeout Seconds"
+msgstr "مهلة المراقبة بالثواني"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Monitoring timeout must be between 1 and 86400 seconds."
+msgstr "يجب أن تكون مهلة المراقبة بين 1 و86400 ثانية."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__not_started
+msgid "Not Started"
+msgstr "لم يبدأ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_bin_path
+msgid "Odoo Bin Path"
+msgstr "مسار برنامج أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_url
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_odoo_url
+msgid "Odoo URL"
+msgstr "رابط أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_user
+msgid "Odoo User"
+msgstr "مستخدم أودو"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "Only Deployment Administrators can import servers."
+msgstr "يمكن لمسؤولي النشر فقط استيراد الخوادم."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Only approved requests inside an unexpired deployment window can be queued."
+msgstr ""
+"يمكن إدراج الطلبات المعتمدة فقط التي لم تنته نافذة نشرها في قائمة الانتظار."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Only the dedicated deployment runner can call this method."
+msgstr "يمكن لمنفذ مهام النشر المخصص فقط استدعاء هذه الطريقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Only unknown jobs with a documented remote inspection can be resolved as "
+"failed."
+msgstr ""
+"يمكن تسجيل المهام مجهولة الحالة كفاشلة فقط بعد توثيق فحصها على الخادم "
+"البعيد."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__placeholder_help
+msgid "Placeholder Help"
+msgstr "تعليمات المتغيرات البديلة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__preview
+msgid "Preview"
+msgstr "المعاينة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__preview_hash
+msgid "Preview Hash"
+msgstr "بصمة المعاينة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid "Preview Import"
+msgstr "معاينة الاستيراد"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid ""
+"Preview the import again; the file, environment, or server records changed."
+msgstr "أعد معاينة الاستيراد؛ تغير الملف أو البيئة أو سجلات الخوادم."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__python_path
+msgid "Python Path"
+msgstr "مسار Python"
+
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_execution_form
+msgid "Queue Deployment"
+msgstr "إدراج النشر في قائمة الانتظار"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__queued
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__queued
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__queued
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__queued
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__log_tail
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+msgid "Recent Log"
+msgstr "السجل الأخير"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_release_command
+msgid "Release Command"
+msgstr "أمر الإصدار"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Release commands cannot be moved to another release."
+msgstr "لا يمكن نقل أوامر الإصدار إلى إصدار آخر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__report
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__resolution_note
+msgid "Resolution Note"
+msgstr "ملاحظة معالجة الحالة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+msgid "Resolve as Failed"
+msgstr "تسجيل كفشل"
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_restart
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__restart
+msgid "Restart Odoo"
+msgstr "إعادة تشغيل أودو"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+msgid "Results"
+msgstr "النتائج"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__runner_id
+msgid "Runner"
+msgstr "منفذ المهام"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__running
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__running
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__running
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__running
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__ssh_alias
+msgid "SSH Alias"
+msgstr "الاسم المستعار لاتصال SSH"
+
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_alias
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_ssh_alias
+msgid "SSH alias must be unique."
+msgstr "يجب أن يكون الاسم المستعار لاتصال SSH فريدًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__script_hash
+msgid "Script SHA-256"
+msgstr "بصمة SHA-256 للبرنامج النصي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__serial
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_serial
+msgid "Serial"
+msgstr "الرقم التسلسلي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__csv_file
+msgid "Servers CSV"
+msgstr "ملف CSV للخوادم"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid ""
+"Service, database, and operating-system user names contain invalid "
+"characters."
+msgstr ""
+"تحتوي أسماء الخدمة أو قاعدة البيانات أو مستخدم نظام التشغيل على أحرف غير "
+"صالحة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__snapshot
+msgid "Snapshot"
+msgstr "اللقطة المحفوظة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Specify module technical names; base and all are forbidden."
+msgstr "حدد الأسماء التقنية للوحدات؛ لا يسمح باستخدام base أو all."
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_start
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__start
+msgid "Start Odoo"
+msgstr "تشغيل أودو"
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__started_at
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__started_at
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__started_at
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_stop
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__stop
+msgid "Stop Odoo"
+msgstr "إيقاف أودو"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__succeeded
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__succeeded
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__succeeded
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__succeeded
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__succeeded
+msgid "Succeeded"
+msgstr "نجح"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Success requires a zero exit code, health checks, and the approved commit."
+msgstr ""
+"يتطلب النجاح رمز خروج صفرًا واجتياز فحوصات السلامة ومطابقة اعتماد Git "
+"المعتمد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid ""
+"Supported placeholders: {{modules}}, {{service}}, {{project}}, {{config}}, "
+"{{database}}, {{python}}, {{odoo_bin}}, {{odoo_user}}, {{commit}}, "
+"{{repository}}. Values are shell-quoted; place placeholders as complete "
+"unquoted arguments. Templates are privileged code. Use deploy_stop and "
+"deploy_start for recovery tracking."
+msgstr ""
+"المتغيرات المدعومة: {{modules}}، {{service}}، {{project}}، {{config}}، "
+"{{database}}، {{python}}، {{odoo_bin}}، {{odoo_user}}، {{commit}}، "
+"{{repository}}. تُقتبس القيم تلقائيًا لأوامر الصدفة؛ ضع المتغيرات كوسائط "
+"كاملة دون اقتباس إضافي. القوالب شيفرة ذات صلاحيات مرتفعة. استخدم deploy_stop"
+" وdeploy_start لتتبع الاستعادة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid "The CSV must contain between 1 and 10000 server rows."
+msgstr "يجب أن يحتوي ملف CSV على عدد صفوف للخوادم بين 1 و10000."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "The approved script is missing or its checksum is invalid."
+msgstr "البرنامج النصي المعتمد مفقود أو بصمته غير صالحة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid ""
+"The environment applies to new servers only. Existing servers are matched by"
+" SSH alias. Preview additions and updates before importing."
+msgstr ""
+"تطبق البيئة على الخوادم الجديدة فقط. تتم مطابقة الخوادم الحالية بالاسم "
+"المستعار لاتصال SSH. عاين الإضافات والتحديثات قبل الاستيراد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "The runner lease does not match this job."
+msgstr "حجز منفذ المهام لا يطابق هذه المهمة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "This request already has execution jobs."
+msgstr "يحتوي هذا الطلب بالفعل على مهام تنفيذ."
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_uninstall
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__uninstall
+msgid "Uninstall Modules"
+msgstr "إلغاء تثبيت الوحدات"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__unknown
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__unknown
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__unknown
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__unknown
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Unknown deployment job."
+msgstr "مهمة النشر غير معروفة."
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_update_code
+msgid "Update Approved Code"
+msgstr "تحديث الشيفرة المعتمدة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__update_code
+msgid "Update Code"
+msgstr "تحديث الشيفرة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Update code must occur once, before other commands except Stop Odoo."
+msgstr "يجب تحديث الشيفرة مرة واحدة قبل الأوامر الأخرى باستثناء إيقاف أودو."
+
+#. module: ab_deploy
+#: model:ab_deploy_command,name:ab_deploy.command_upgrade
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__operation__upgrade
+msgid "Upgrade Modules"
+msgstr "ترقية الوحدات"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/server_import.py:0
+msgid ""
+"Upload a UTF-8 CSV with server, serial, db_serial, odoo_link, name, contact,"
+" Area, timeout, and ip columns (maximum 2 MB)."
+msgstr ""
+"ارفع ملف CSV بترميز UTF-8 يحتوي على الأعمدة server وserial وdb_serial "
+"وodoo_link وname وcontact وArea وtimeout وip (بحد أقصى 2 ميجابايت)."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Use a dedicated Odoo operating-system user instead of root."
+msgstr "استخدم مستخدم نظام تشغيل مخصصًا لأودو بدلًا من root."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/engine.py:0
+msgid "Use only supported command placeholders."
+msgstr "استخدم متغيرات الأوامر المدعومة فقط."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"<code translate=\"off\">{{modules}}</code>\n"
+"                            <code translate=\"off\">{{service}}</code>\n"
+"                            <code translate=\"off\">{{project}}</code>\n"
+"                            <code translate=\"off\">{{config}}</code>\n"
+"                            <code translate=\"off\">{{database}}</code>\n"
+"                            <code translate=\"off\">{{python}}</code>\n"
+"                            <code translate=\"off\">{{odoo_bin}}</code>\n"
+"                            <code translate=\"off\">{{odoo_user}}</code>\n"
+"                            <code translate=\"off\">{{commit}}</code>\n"
+"                            <code translate=\"off\">{{repository}}</code>"
+msgstr ""
+"<code translate=\"off\">{{modules}}</code>\n"
+"                            <code translate=\"off\">{{service}}</code>\n"
+"                            <code translate=\"off\">{{project}}</code>\n"
+"                            <code translate=\"off\">{{config}}</code>\n"
+"                            <code translate=\"off\">{{database}}</code>\n"
+"                            <code translate=\"off\">{{python}}</code>\n"
+"                            <code translate=\"off\">{{odoo_bin}}</code>\n"
+"                            <code translate=\"off\">{{odoo_user}}</code>\n"
+"                            <code translate=\"off\">{{commit}}</code>\n"
+"                            <code translate=\"off\">{{repository}}</code>"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"<i class=\"fa fa-info-circle\" aria-hidden=\"true\"/>\n"
+"                            Supported placeholders"
+msgstr ""
+"<i class=\"fa fa-info-circle\" aria-hidden=\"true\"/>\n"
+"                            المتغيرات المدعومة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid "Command template help"
+msgstr "تعليمات قالب الأوامر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Use <code translate=\"off\">deploy_stop</code> and <code "
+"translate=\"off\">deploy_start</code> to track service recovery."
+msgstr ""
+"استخدم <code translate=\"off\">deploy_stop</code> و<code "
+"translate=\"off\">deploy_start</code> لتتبع استعادة تشغيل الخدمة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Values are quoted automatically. Use placeholders as complete arguments "
+"without adding quotes."
+msgstr ""
+"تُقتبس القيم تلقائيًا. استخدم المتغيرات كوسائط كاملة دون إضافة علامات "
+"اقتباس."
+
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__hostname
+msgid "Address (Informational)"
+msgstr "العنوان (للمعلومات فقط)"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "An unknown execution and an inspection note are required."
+msgstr "يجب اختيار تنفيذ بحالة غير معروفة وإدخال ملاحظة الفحص."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__template
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid "Bash Script"
+msgstr "سكربت Bash"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid "Bash command help"
+msgstr "تعليمات أوامر Bash"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Cancel pending executions? Running commands will continue."
+msgstr "هل تريد إلغاء عمليات التنفيذ المعلقة؟ ستستمر الأوامر قيد التشغيل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Cannot verify the remote execution. Restore SSH access before resolving it."
+msgstr "تعذر التحقق من التنفيذ البعيد. استعد اتصال SSH قبل تسوية الحالة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
+msgid ""
+"Check unfinished deployments and restore missing monitoring tasks. Completed"
+" commands are never replayed. Uncertain executions require remote "
+"inspection. Other modules are not affected."
+msgstr "افحص عمليات النشر غير المكتملة واستعد مهام المراقبة المفقودة. لا تُعاد الأوامر المكتملة. تتطلب حالات التنفيذ غير المؤكدة فحصًا للخادم البعيد. لا تتأثر الوحدات الأخرى."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Commands cannot be moved to another request."
+msgstr "لا يمكن نقل الأوامر إلى طلب آخر."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
+msgid "Confirm Resolution"
+msgstr "تأكيد تسوية الحالة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__coordinator_generation
+msgid "Coordinator Generation"
+msgstr "رقم دورة التنسيق"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__coordinator_queue_id
+msgid "Coordinator Queue"
+msgstr "مهمة التنسيق في الطابور"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid "Custom Bash commands"
+msgstr "أوامر Bash مخصصة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/recovery.py:0
+msgid "Deployment Recovery"
+msgstr "استعادة متابعة النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
+msgid ""
+"Document your remote inspection. Resolution checks the remote status again "
+"and refuses while its tmux session is running. It does not stop remote "
+"commands."
+msgstr "وثّق فحصك للخادم البعيد. تُفحص الحالة مجددًا وتُرفض التسوية ما دامت جلسة tmux قيد التشغيل. لا تُوقف الأوامر البعيدة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Enter a Bash script of 1 to 65536 characters without null bytes."
+msgstr "أدخل سكربت Bash من 1 إلى 65536 حرفًا دون محارف فارغة من نوع null."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__exit_code
+msgid "Exit Code"
+msgstr "رمز الخروج"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid ""
+"Informational only. These fields do not run backups, restart services, "
+"upgrade modules, or restrict approval."
+msgstr "للمعلومات فقط. لا تنفذ هذه الحقول نسخًا احتياطية أو إعادة تشغيل للخدمات أو ترقية للوحدات، ولا تقيّد الموافقة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__note
+msgid "Inspection Note"
+msgstr "ملاحظة الفحص"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Job results can only be changed by the execution workflow."
+msgstr "لا يمكن تغيير نتائج المهمة إلا من خلال سير عمل التنفيذ."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__last_checked_at
+msgid "Last Checked At"
+msgstr "وقت آخر فحص"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__monitor_deadline
+msgid "Monitor Deadline"
+msgstr "الموعد النهائي للمراقبة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"Monitoring could not confirm completion. Inspect the remote job before "
+"another attempt."
+msgstr "لم تتمكن المراقبة من تأكيد الاكتمال. افحص المهمة على الخادم البعيد قبل محاولة أخرى."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"No placeholders or automatic backups, restarts, module upgrades, or Git "
+"checks are applied. Submitted requests retain their approved script."
+msgstr "لا تُطبَّق متغيرات بديلة أو نسخ احتياطية أو إعادة تشغيل أو ترقيات وحدات أو فحوص Git تلقائية. تحتفظ الطلبات المرسلة بالسكربت المعتمد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/recovery.py:0
+msgid "Only Deployment Administrators can recover executions."
+msgstr "يمكن لمسؤولي النشر فقط استعادة متابعة عمليات التنفيذ."
+
+#: code:addons/ab_deploy/wizard/conflict.py:0
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only approved, unqueued requests can be queued."
+msgstr "يمكن وضع الطلبات المعتمدة وغير المدرجة سابقًا في طابور التنفيذ فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Only unknown executions can be resolved."
+msgstr "يمكن تسوية حالات التنفيذ غير المعروفة فقط."
+
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__queue_job_id
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__queue_job_id
+msgid "Queue Job"
+msgstr "مهمة الطابور"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Queued requests are immutable. Create a new request for another attempt."
+msgstr "لا يمكن تعديل الطلبات المدرجة في الطابور. أنشئ طلبًا جديدًا لمحاولة أخرى."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/recovery.py:0
+msgid "Queued: %(queued)s; Running: %(running)s; Unknown: %(unknown)s"
+msgstr "في الطابور: %(queued)s؛ قيد التشغيل: %(running)s؛ غير معروفة: %(unknown)s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Readiness"
+msgstr "الجاهزية"
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_recovery
+#: model:ir.model,name:ab_deploy.model_ab_deploy_recovery
+#: model:ir.ui.menu,name:ab_deploy.menu_recovery
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
+msgid "Recover Deployment Jobs"
+msgstr "استعادة متابعة مهام النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__recovery_pending_ids
+msgid "Recovery Pending"
+msgstr "عمليات الاستعادة المعلقة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__recovery_requested
+msgid "Recovery Requested"
+msgstr "تم طلب الاستعادة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/recovery.py:0
+msgid ""
+"Recovery scheduled for %s requests. Active queue tasks will finish normally."
+msgstr "تمت جدولة الاستعادة لعدد %s من الطلبات. ستكتمل مهام الطابور النشطة بشكل طبيعي."
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_request_command
+msgid "Request Command"
+msgstr "أمر الطلب"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+#: model:ir.model,name:ab_deploy.model_ab_deploy_resolution
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
+msgid "Resolve Execution"
+msgstr "تسوية حالة التنفيذ"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Return the request to draft before editing it."
+msgstr "أعد الطلب إلى المسودة قبل تعديله."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid ""
+"SSH launch outcome is uncertain. Inspect the remote job before retrying."
+msgstr "نتيجة بدء التنفيذ عبر SSH غير مؤكدة. افحص المهمة البعيدة قبل إعادة المحاولة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Select active commands before requesting approval."
+msgstr "اختر أوامر نشطة قبل طلب الموافقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Select commands and at least one target server."
+msgstr "اختر الأوامر وخادمًا مستهدفًا واحدًا على الأقل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Server is archived or in maintenance."
+msgstr "الخادم مؤرشف أو في وضع الصيانة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__summary
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+msgid ""
+"The environment applies to new servers only. Existing servers are matched by"
+" SSH alias. Preview additions and updates before importing. Legacy CSV "
+"timeout values are ignored: new servers use 600 seconds for monitoring; "
+"existing server timeouts are preserved."
+msgstr "تُطبّق البيئة على الخوادم الجديدة فقط. تُطابق الخوادم الموجودة باستخدام اسم SSH المستعار. عاين الإضافات والتحديثات قبل الاستيراد. تُتجاهل قيم المهلة القديمة في CSV: تستخدم الخوادم الجديدة 600 ثانية للمراقبة، وتُحفظ مهل الخوادم الموجودة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "The remote tmux session is still running. Wait for it to finish."
+msgstr "جلسة tmux البعيدة ما زالت قيد التشغيل. انتظر حتى تنتهي."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__tick
+msgid "Tick"
+msgstr "دورة المتابعة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__title
+msgid "Title"
+msgstr "العنوان"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Write plain Bash. Commands run in order, each starting in the remote SSH "
+"user's home directory. A failing command stops execution."
+msgstr "اكتب أوامر Bash مباشرة. تُنفذ الأوامر بالترتيب، ويبدأ كل أمر في المجلد الرئيسي لمستخدم SSH البعيد. يؤدي فشل أي أمر إلى إيقاف التنفيذ."
+
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Add All Development Servers"
+msgstr "إضافة جميع خوادم التطوير"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Add All Production Servers"
+msgstr "إضافة جميع خوادم الإنتاج"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Targets must be active and outside maintenance."
+msgstr "يجب أن تكون الخوادم المستهدفة نشطة وخارج وضع الصيانة."
+
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_log_part_unique_offset
+msgid "An Odoo log chunk can be stored only once."
+msgstr "يمكن تخزين كل جزء من سجل أودو مرة واحدة فقط."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__byte_offset
+msgid "Byte Offset"
+msgstr "موضع البايت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__byte_size
+msgid "Byte Size"
+msgstr "الحجم بالبايت"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_odoo_logs
+msgid ""
+"Capture WARNING, ERROR and CRITICAL entries with tracebacks during script "
+"execution. Shared logs may include other databases. Collection errors do not"
+" change the command result."
+msgstr "تسجيل التحذيرات والأخطاء والأخطاء الحرجة مع تفاصيل التتبع أثناء تنفيذ السكربت. قد تتضمن السجلات المشتركة قواعد بيانات أخرى. لا تؤثر أخطاء جمع السجل على نتيجة الأمر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Captured Odoo logs cannot be deleted."
+msgstr "لا يمكن حذف سجلات أودو المجمعة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Captured Odoo logs cannot be modified."
+msgstr "لا يمكن تعديل سجلات أودو المجمعة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__checksum
+msgid "Checksum"
+msgstr "بصمة التحقق"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__done
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__done
+msgid "Collected"
+msgstr "تم الجمع"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__warning
+msgid "Collected with Warnings"
+msgstr "تم الجمع مع تحذيرات"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__pending
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__pending
+msgid "Collecting"
+msgstr "جارٍ الجمع"
+
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__error
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__error
+msgid "Collection Error"
+msgstr "خطأ في الجمع"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Complete all four Odoo paths for server %s before requesting log collection."
+msgstr "أكمل مسارات أودو الأربعة للخادم %s قبل طلب جمع السجل."
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_log_part
+msgid "Deployment Odoo Log Part"
+msgstr "جزء من سجل أودو للنشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__data
+msgid "Download"
+msgstr "تنزيل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_offset
+msgid "Downloaded Bytes"
+msgstr "البايتات التي تم تنزيلها"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__get_recent_odoo_log
+msgid "Get Recent Odoo Log"
+msgstr "جلب سجل أودو الأخير"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Invalid log collection notes."
+msgstr "ملاحظات جمع السجل غير صالحة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_finished_at
+msgid "Log Capture End"
+msgstr "نهاية تسجيل السجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_started_at
+msgid "Log Capture Start"
+msgstr "بداية تسجيل السجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_error
+msgid "Log Collection Notes"
+msgstr "ملاحظات جمع السجل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Log parts can only be created by the deployment workflow."
+msgstr "يمكن إنشاء أجزاء السجل من خلال سير عمل النشر فقط."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__disabled
+msgid "Not Requested"
+msgstr "غير مطلوب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_checked_at
+msgid "Odoo Log Checked At"
+msgstr "وقت فحص سجل أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_status
+msgid "Odoo Log Collection"
+msgstr "جمع سجل أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_failures
+msgid "Odoo Log Failures"
+msgstr "عدد إخفاقات سجل أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_part_ids
+msgid "Odoo Log Parts"
+msgstr "أجزاء سجل أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_log_path
+msgid "Odoo Log Path"
+msgstr "مسار سجل أودو"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_odoo_logs
+msgid "Odoo Paths"
+msgstr "مسارات أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_python_path
+msgid "Odoo Python Venv"
+msgstr "مسار بايثون لبيئة أودو الافتراضية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_config_path
+msgid "Odoo Server Config"
+msgstr "ملف إعدادات خادم أودو"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__odoo_server_path
+msgid "Odoo Server Path"
+msgstr "مسار خادم أودو"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_odoo_logs
+msgid "Odoo Warnings and Errors"
+msgstr "تحذيرات وأخطاء أودو"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"Odoo log collection is unavailable. Use Recover Deployment Jobs to retry."
+msgstr "جمع سجل أودو غير متاح. استخدم استعادة مهام النشر لإعادة المحاولة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"Odoo log collection stopped making progress. Use recovery to check it again."
+msgstr "توقف جمع سجل أودو عن التقدم. استخدم الاستعادة لفحصه مجددًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Odoo paths must be absolute and contain no control characters."
+msgstr "يجب أن تكون مسارات أودو مطلقة ولا تحتوي على محارف تحكم."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__odoo_log_preview
+msgid "Recent Odoo Warnings and Errors"
+msgstr "تحذيرات وأخطاء أودو الأخيرة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"The captured Odoo log changed. Existing downloaded parts were preserved."
+msgstr "تغير سجل أودو المجمع. تم الاحتفاظ بالأجزاء التي سبق تنزيلها."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"The captured Odoo log was truncated or replaced. Existing downloaded parts "
+"were preserved."
+msgstr "تم اقتطاع سجل أودو المجمع أو استبداله. تم الاحتفاظ بالأجزاء التي سبق تنزيلها."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_odoo_logs
+msgid ""
+"The preview shows the latest 64 KiB. Download all parts in order for the "
+"full captured output; a part may split a line."
+msgstr "تعرض المعاينة آخر 64 كيبيبايت. نزّل جميع الأجزاء بالترتيب للحصول على السجل المجمع بالكامل؛ قد يمتد السطر عبر أكثر من جزء."
+
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Capture did not start before command execution."
+msgstr "لم يبدأ جمع السجل قبل تنفيذ الأمر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Execution wrapper disappeared; exact end boundary is unavailable."
+msgstr "اختفى برنامج التنفيذ؛ وقت النهاية الدقيق غير متاح."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Execution wrapper exited before log capture started."
+msgstr "انتهى برنامج التنفيذ قبل بدء جمع السجل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"Log collector could not start; check the configured Python interpreter and "
+"permissions."
+msgstr "تعذر بدء جامع السجل؛ تحقق من مسار مفسر بايثون والصلاحيات."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Log reading failed; capture may be incomplete."
+msgstr "فشلت قراءة السجل؛ قد يكون الجمع غير مكتمل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid ""
+"Log rotation detected; entries written to older files after rotation may be "
+"missing."
+msgstr "تم اكتشاف تدوير السجل؛ قد تفقد الإدخالات المكتوبة في الملفات القديمة بعد التدوير."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Log truncation detected; entries between polls may be missing."
+msgstr "تم اكتشاف اقتطاع السجل؛ قد تفقد بعض الإدخالات بين عمليات الفحص."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Odoo log collector failed."
+msgstr "فشل جامع سجل أودو."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Odoo log is missing or unreadable; some entries may be unavailable."
+msgstr "سجل أودو مفقود أو غير قابل للقراءة؛ قد تكون بعض الإدخالات غير متاحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/odoo_logs.py:0
+msgid "Odoo log path disappeared or became unreadable during capture."
+msgstr "اختفى مسار سجل أودو أو تعذرت قراءته أثناء الجمع."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/recovery.py:0
+msgid ""
+"Queued: %(queued)s; Running: %(running)s; Unknown: %(unknown)s; Logs needing"
+" attention: %(logs)s"
+msgstr "في الانتظار: %(queued)s؛ قيد التنفيذ: %(running)s؛ غير معروف: %(unknown)s؛ سجلات تحتاج إلى متابعة: %(logs)s"
+
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "%s: SSH retry"
+msgstr "%s: إعادة محاولة اتصال SSH"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "%s: execute and monitor"
+msgstr "%s: تنفيذ ومراقبة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "An active queue job is already handling these executions."
+msgstr "توجد مهمة نشطة تتولى هذه التنفيذات بالفعل."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid "Cancel Older Waiting Executions and Queue"
+msgstr "إلغاء التنفيذات السابقة المنتظرة وإضافة النشر للطابور"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__cancelled_by_id
+msgid "Cancelled By"
+msgstr "ألغاه"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__changed
+msgid "Changed"
+msgstr "تم التغيير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__command_log_offset
+msgid "Command Log Offset"
+msgstr "موضع سجل الأوامر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__command_log_part_ids
+msgid "Command Log Parts"
+msgstr "أجزاء سجل الأوامر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__command_log_status
+msgid "Command Log Status"
+msgstr "حالة سجل الأوامر"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_log_part__kind__command
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_batch_form
+msgid "Command Output"
+msgstr "مخرجات الأوامر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Command log changed; downloaded parts were preserved."
+msgstr "تغير سجل الأوامر؛ تم الاحتفاظ بالأجزاء التي تم تنزيلها."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__connecting
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__connecting
+msgid "Connecting"
+msgstr "جارٍ الاتصال"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__attempt_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_batch_form
+msgid "Connection Attempts"
+msgstr "محاولات الاتصال"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_attempt
+msgid "Deployment Connection Attempt"
+msgstr "محاولة اتصال للنشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+#: model:ir.model,name:ab_deploy.model_ab_deploy_conflict
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid "Deployment Queue Conflicts"
+msgstr "تعارضات طابور النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_run
+msgid "Deployment Queue Run"
+msgstr "تشغيل دفعة نشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__detail
+msgid "Detail"
+msgstr "التفاصيل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Execution history cannot be deleted."
+msgstr "لا يمكن حذف سجل التنفيذ."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Execution history cannot be modified manually."
+msgstr "لا يمكن تعديل سجل التنفيذ يدويًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Execution history is managed by the deployment workflow."
+msgstr "تتم إدارة سجل التنفيذ من خلال سير عمل النشر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__job_ids
+msgid "Executions"
+msgstr "التنفيذات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__conflict_ids
+msgid "Existing Executions"
+msgstr "التنفيذات الحالية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__failure_kind
+msgid "Failure Kind"
+msgstr "نوع الإخفاق"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__fingerprint
+msgid "Fingerprint"
+msgstr "بصمة التحقق"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__finished
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__finished
+msgid "Finished"
+msgstr "انتهى"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid "Go Back"
+msgstr "رجوع"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__interrupted
+msgid "Interrupted"
+msgstr "تمت المقاطعة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid "Keep Existing and Queue After"
+msgstr "الإبقاء على التنفيذات الحالية وإضافة النشر بعدها"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__launch_intent
+msgid "Launch Intent"
+msgstr "تم تسجيل نية التشغيل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Log download interrupted. Resume monitoring to collect remaining output."
+msgstr "انقطع تنزيل السجل. استأنف المراقبة لجمع المخرجات المتبقية."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__monitor
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__failure_kind__monitor
+msgid "Monitoring Interrupted"
+msgstr "انقطعت المراقبة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__timeout
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__failure_kind__timeout
+msgid "Monitoring Timeout"
+msgstr "انتهت مهلة المراقبة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Observation stopped; the remote script was not terminated."
+msgstr "توقفت المراقبة؛ لم يتم إنهاء السكربت البعيد."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_log_part__kind__odoo
+msgid "Odoo Log"
+msgstr "سجل أودو"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Only SSH failures can be retried. Other command failures require a new "
+"deployment."
+msgstr "يمكن إعادة محاولة إخفاقات SSH فقط. تتطلب إخفاقات الأوامر الأخرى طلب نشر جديدًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__outcome
+msgid "Outcome"
+msgstr "النتيجة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__run_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_batch_form
+msgid "Queue Runs"
+msgstr "تشغيلات الطابور"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__queue_state
+msgid "Queue State"
+msgstr "حالة الطابور"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Queue runs can only be created by deployment actions."
+msgstr "يمكن إنشاء تشغيلات الطابور من خلال إجراءات النشر فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Queue runs cannot be deleted."
+msgstr "لا يمكن حذف تشغيلات الطابور."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Queue runs cannot be modified manually."
+msgstr "لا يمكن تعديل تشغيلات الطابور يدويًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Remote completion is not confirmed. Resume monitoring or inspect the "
+"execution."
+msgstr "لم يتم تأكيد انتهاء التنفيذ البعيد. استأنف المراقبة أو افحص التنفيذ."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__superseded_by_id
+msgid "Replaced By"
+msgstr "استُبدل بواسطة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_batch_form
+msgid "Resume Monitoring"
+msgstr "استئناف المراقبة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Resume is for unfinished executions or incomplete logs only."
+msgstr "الاستئناف متاح للتنفيذات غير المنتهية أو السجلات غير المكتملة فقط."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_batch_form
+msgid "Retry SSH Failure"
+msgstr "إعادة محاولة إخفاق SSH"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_batch_form
+msgid "Retry SSH Failures"
+msgstr "إعادة محاولة إخفاقات SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__run_id
+msgid "Run"
+msgstr "التشغيل"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__ssh_connected
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__ssh_connected
+msgid "SSH Connected"
+msgstr "تم الاتصال عبر SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__ssh
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__failure_kind__ssh
+msgid "SSH Failure"
+msgstr "إخفاق SSH"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "SSH observation ended: %s"
+msgstr "انتهت مراقبة SSH: %s"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__script_created
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__script_created
+msgid "Script Created"
+msgstr "تم إنشاء السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__script
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__failure_kind__script
+msgid "Script Failure"
+msgstr "فشل السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__script_running
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__script_running
+msgid "Script Running"
+msgstr "السكربت قيد التنفيذ"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Server unavailable or approved script invalid."
+msgstr "الخادم غير متاح أو السكربت المعتمد غير صالح."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__setup
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__failure_kind__setup
+msgid "Setup Failure"
+msgstr "إخفاق الإعداد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__stage
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__stage
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__needs_check
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__needs_check
+msgid "Status Needs Checking"
+msgstr "الحالة تحتاج إلى تحقق"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__unknown
+msgid "Status Unknown"
+msgstr "الحالة غير معروفة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid ""
+"The conflicting executions changed. Review the updated list and confirm "
+"again."
+msgstr "تغيرت التنفيذات المتعارضة. راجع القائمة المحدثة وأكد مجددًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "There are no SSH failures to retry."
+msgstr "لا توجد إخفاقات SSH لإعادة المحاولة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid ""
+"These servers already have waiting or unfinished deployments. You can cancel"
+" older waiting executions on the same servers. Running or uncertain scripts "
+"and other servers are not stopped."
+msgstr "توجد عمليات نشر منتظرة أو غير منتهية على هذه الخوادم. يمكنك إلغاء التنفيذات السابقة المنتظرة على الخوادم نفسها. لن يتم إيقاف السكربتات الجارية أو غير المؤكدة أو التنفيذات على الخوادم الأخرى."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__tmux_started
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__tmux_started
+msgid "Tmux Started"
+msgstr "تم بدء جلسة Tmux"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__waiting
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__stage__waiting
+msgid "Waiting"
+msgstr "في الانتظار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__waiting_for_ids
+msgid "Waiting for Executions"
+msgstr "في انتظار التنفيذات"
+
+#. module: ab_deploy
+#: model:ir.ui.menu,name:ab_deploy.menu_deploy_config
+msgid "Config"
+msgstr "الإعدادات"
+
+#. module: ab_deploy
+#: model:ir.ui.menu,name:ab_deploy.menu_deploy_tools
+msgid "Tools"
+msgstr "الأدوات"
+
+#. module: ab_deploy
+#: model:ir.ui.menu,name:ab_deploy.menu_deploy_reports
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Clear Deployment Selection"
+msgstr "إلغاء تحديد النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__delayed
+msgid "Delayed"
+msgstr "مؤجل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__deploy
+msgid "Deploy"
+msgstr "نشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Deployment selection requires an approved request."
+msgstr "يتطلب تحديد النشر طلبًا معتمدًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only approved requests can queue selected servers."
+msgstr "يمكن إدراج الخوادم المحددة في قائمة النشر للطلبات المعتمدة فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only delayed targets on approved requests can be selected."
+msgstr "يمكن تحديد الخوادم المؤجلة فقط في الطلبات المعتمدة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only deployment selection can change on approved targets."
+msgstr "يمكن تغيير تحديد النشر فقط للخوادم المستهدفة المعتمدة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+msgid "Queue Selected Servers"
+msgstr "إدراج الخوادم المحددة في قائمة النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Select All for Deployment"
+msgstr "تحديد الكل للنشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Select at least one delayed server for deployment."
+msgstr "حدد خادمًا مؤجلًا واحدًا على الأقل للنشر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__deployment_status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid ""
+"The selected servers or conflicting executions changed. Review the selection"
+" and updated list before confirming again."
+msgstr ""
+"تغيرت الخوادم المحددة أو عمليات التنفيذ المتعارضة. راجع التحديد والقائمة "
+"المحدثة قبل التأكيد مرة أخرى."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_code
+msgid "Server Code"
+msgstr "رمز الخادم"

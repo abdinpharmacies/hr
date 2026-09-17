@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <menuitem id="menu_deploy_root" name="Deployment Manager" sequence="80" groups="group_viewer" web_icon="ab_deploy,static/description/icon.png"/>
+    <menuitem id="menu_deploy_config" name="Config" parent="menu_deploy_root" sequence="10"/>
+    <menuitem id="menu_deploy_tools" name="Tools" parent="menu_deploy_root" sequence="20"/>
+    <menuitem id="menu_deploy_reports" name="Reports" parent="menu_deploy_root" sequence="30"/>
+</odoo>

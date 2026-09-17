@@ -1,0 +1,21 @@
+<odoo>
+    <record id="channel_deployment" model="queue.job.channel">
+        <field name="name">deployment</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+    <record id="job_function_run_tick" model="queue.job.function">
+        <field name="model_id" ref="model_ab_deploy_job"/>
+        <field name="method">_run_tick</field>
+        <field name="channel_id" ref="channel_deployment"/>
+    </record>
+    <record id="job_function_coordinate" model="queue.job.function">
+        <field name="model_id" ref="model_ab_deploy_request"/>
+        <field name="method">_coordinate</field>
+        <field name="channel_id" ref="channel_deployment"/>
+    </record>
+    <record id="job_function_execute_run" model="queue.job.function">
+        <field name="model_id" ref="model_ab_deploy_run"/>
+        <field name="method">_execute</field>
+        <field name="channel_id" ref="channel_deployment"/>
+    </record>
+</odoo>

@@ -1,0 +1,100 @@
+.ab_deploy_command_editor {
+    width: 100%;
+    min-width: 0;
+
+    .ab_deploy_command_help {
+        margin-bottom: 20px;
+        padding: 16px 20px;
+        border: 1px solid var(--border-color, #d8dee5);
+        border-inline-start: 4px solid var(--primary, #71639e);
+        border-radius: 8px;
+        background: var(--o-view-background-color, #f8f9fa);
+
+        p {
+            margin: 8px 0 0;
+            line-height: 1.6;
+        }
+
+        code {
+            direction: ltr;
+            unicode-bidi: isolate;
+            display: inline-block;
+        }
+    }
+
+    .ab_deploy_command_help_title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .ab_deploy_command_tokens {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        code {
+            padding: 4px 9px;
+            border: 1px solid var(--border-color, #d8dee5);
+            border-radius: 5px;
+            background: var(--o-form-lightsecondary, #fff);
+            color: inherit;
+            font-size: 12px;
+        }
+    }
+
+    .ab_deploy_command_editor_label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .ab_deploy_bash_input {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        height: 360px;
+        border: 1px solid var(--border-color, #adb5bd);
+        border-radius: 8px;
+        overflow: hidden;
+        background: var(--o-form-lightsecondary, #fff);
+
+        &:focus-within {
+            border-color: var(--primary, #71639e);
+            box-shadow: 0 0 0 2px rgba(113, 99, 158, 0.15);
+        }
+
+        // Odoo's text widget assigns an inline height to this container on input.
+        > div {
+            height: 100% !important;
+            min-width: 0;
+        }
+
+        textarea.o_input,
+        > span {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100% !important;
+            min-height: 0;
+            max-height: 100%;
+            padding: 16px !important;
+            border: 0 !important;
+            overflow: auto !important;
+            resize: none;
+            direction: ltr;
+            text-align: left;
+            unicode-bidi: isolate;
+            white-space: pre;
+            overflow-wrap: normal;
+            word-break: normal;
+            font-family: var(--font-monospace, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+            font-size: 13px;
+            line-height: 1.6;
+            tab-size: 4;
+        }
+    }
+}

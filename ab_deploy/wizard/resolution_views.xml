@@ -1,0 +1,9 @@
+<odoo>
+    <record id="view_resolution_form" model="ir.ui.view">
+        <field name="name">ab_deploy_resolution_form</field><field name="model">ab_deploy_resolution</field>
+        <field name="arch" type="xml"><form string="Resolve Execution"><group><field name="job_id"/><field name="note"/></group>
+            <p>Document your remote inspection. Resolution checks the remote status again and refuses while its tmux session is running. It does not stop remote commands.</p>
+            <footer><button name="action_resolve" string="Confirm Resolution" type="object" class="btn-primary"/><button string="Cancel" special="cancel"/></footer>
+        </form></field>
+    </record>
+</odoo>

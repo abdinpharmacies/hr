@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_command_editor_form" model="ir.ui.view">
+        <field name="name">ab_deploy_command_editor_form</field><field name="model">ab_deploy_command</field>
+        <field name="inherit_id" ref="view_command_form"/>
+        <field name="arch" type="xml"><xpath expr="//group[@name='script_editor']" position="replace">
+            <div class="ab_deploy_command_editor">
+                <aside class="ab_deploy_command_help" aria-label="Bash command help">
+                    <h3 class="ab_deploy_command_help_title">Custom Bash commands</h3>
+                    <p>Write plain Bash. Commands run in order, each starting in the remote SSH user's home directory. A failing command stops execution.</p>
+                    <p>No placeholders or automatic backups, restarts, module upgrades, or Git checks are applied. Submitted requests retain their approved script.</p>
+                </aside>
+                <label for="template" string="Bash Script" class="ab_deploy_command_editor_label"/>
+                <field name="template" nolabel="1" class="ab_deploy_bash_input"/>
+            </div>
+        </xpath></field>
+    </record>
+</odoo>

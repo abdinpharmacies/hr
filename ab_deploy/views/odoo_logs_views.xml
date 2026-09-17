@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_server_odoo_logs" model="ir.ui.view">
+        <field name="name">ab_deploy_server_odoo_logs</field><field name="model">ab_deploy_server</field>
+        <field name="inherit_id" ref="view_server_form"/>
+        <field name="arch" type="xml"><xpath expr="//sheet" position="inside">
+            <group string="Odoo Paths"><field name="odoo_log_path"/><field name="odoo_server_path"/><field name="odoo_config_path"/><field name="odoo_python_path"/></group>
+        </xpath></field>
+    </record>
+    <record id="view_request_odoo_logs" model="ir.ui.view">
+        <field name="name">ab_deploy_request_odoo_logs</field><field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="view_request_form"/>
+        <field name="arch" type="xml"><field name="description" position="after">
+            <field name="get_recent_odoo_log" readonly="state != 'draft' or queued"/>
+            <p invisible="not get_recent_odoo_log">Capture WARNING, ERROR and CRITICAL entries with tracebacks during script execution. Shared logs may include other databases. Collection errors do not change the command result.</p>
+        </field></field>
+    </record>
+    <record id="view_job_odoo_logs" model="ir.ui.view">
+        <field name="name">ab_deploy_job_odoo_logs</field><field name="model">ab_deploy_job</field>
+        <field name="inherit_id" ref="view_job_form"/>
+        <field name="arch" type="xml"><xpath expr="//sheet" position="inside">
+            <group string="Odoo Warnings and Errors">
+                <field name="odoo_log_status"/>
+                <field name="odoo_log_started_at"/><field name="odoo_log_finished_at"/>
+                <field name="odoo_log_offset"/><field name="odoo_log_error"/>
+            </group>
+            <p invisible="odoo_log_status == 'disabled'">The preview shows the latest 64 KiB. Download all parts in order for the full captured output; a part may split a line.</p>
+            <field name="odoo_log_preview" nolabel="1" invisible="odoo_log_status == 'disabled'"/>
+            <field name="odoo_log_part_ids" nolabel="1" invisible="odoo_log_status == 'disabled'">
+                <list create="0" edit="0" delete="0"><field name="name"/><field name="byte_offset"/><field name="byte_size"/><field name="data" filename="name" widget="binary"/></list>
+            </field>
+        </xpath></field>
+    </record>
+</odoo>

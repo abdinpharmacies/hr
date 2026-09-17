@@ -1,0 +1,16 @@
+<odoo>
+    <record id="view_conflict_form" model="ir.ui.view">
+        <field name="name">ab_deploy_conflict_form</field><field name="model">ab_deploy_conflict</field>
+        <field name="arch" type="xml"><form string="Deployment Queue Conflicts">
+            <field name="request_id"/><field name="changed" invisible="1"/>
+            <div class="alert alert-warning" role="alert" invisible="not changed">The selected servers or conflicting executions changed. Review the selection and updated list before confirming again.</div>
+            <p>These servers already have waiting or unfinished deployments. You can cancel older waiting executions on the same servers. Running or uncertain scripts and other servers are not stopped.</p>
+            <field name="conflict_ids"><list create="0" edit="0" delete="0"><field name="request_id"/><field name="server_id"/><field name="state"/><field name="stage"/></list></field>
+            <footer>
+                <button name="action_replace" type="object" string="Cancel Older Waiting Executions and Queue" class="btn-primary"/>
+                <button name="action_wait" type="object" string="Keep Existing and Queue After"/>
+                <button string="Go Back" special="cancel"/>
+            </footer>
+        </form></field>
+    </record>
+</odoo>

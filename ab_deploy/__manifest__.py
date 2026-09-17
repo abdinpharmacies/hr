@@ -1,0 +1,33 @@
+{
+    'name': 'Deployment Manager',
+    'version': '19.0.4.1.0',
+    'license': 'LGPL-3',
+    'category': 'Administration',
+    'author': 'Abdin Pharmacies',
+    'developer': 'emadco88',
+    'application': True,
+    'depends': ['base', 'mail', 'queue_job'],
+    'data': [
+        'security/security_groups.xml',
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+        'data/sequences.xml',
+        'data/queue_jobs.xml',
+        'views/deployment_views.xml',
+        'views/execution_views.xml',
+        'views/request_targets_views.xml',
+        'views/odoo_logs_views.xml',
+        'views/batch_views.xml',
+        'views/command_editor_views.xml',
+        'wizard/server_import_views.xml',
+        'wizard/resolution_views.xml',
+        'wizard/recovery_views.xml',
+        'wizard/conflict_views.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_deploy/static/src/scss/command_editor.scss',
+        ],
+    },
+    'installable': True,
+}

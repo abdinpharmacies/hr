@@ -1,0 +1,25 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_server_viewer,server viewer,model_ab_deploy_server,group_viewer,1,0,0,0
+access_request_viewer,request viewer,model_ab_deploy_request,group_viewer,1,0,0,0
+access_target_viewer,target viewer,model_ab_deploy_target,group_viewer,1,0,0,0
+access_audit_log_viewer,audit_log viewer,model_ab_deploy_audit_log,group_viewer,1,0,0,0
+access_server_administrator,server administrator,model_ab_deploy_server,group_administrator,1,1,1,0
+access_request_developer,request developer,model_ab_deploy_request,group_developer,1,1,1,0
+access_request_approver,request approver,model_ab_deploy_request,group_approver,1,1,0,0
+access_target_developer,target developer,model_ab_deploy_target,group_developer,1,1,1,1
+access_command_viewer,command viewer,model_ab_deploy_command,group_viewer,1,0,0,0
+access_job_viewer,job viewer,model_ab_deploy_job,group_viewer,1,0,0,0
+access_command_administrator,command administrator,model_ab_deploy_command,group_administrator,1,1,1,0
+access_job_administrator,job administrator,model_ab_deploy_job,group_administrator,1,1,0,0
+access_request_executor,request executor,model_ab_deploy_request,group_executor,1,1,0,0
+access_import_administrator,server import administrator,model_ab_deploy_server_import,group_administrator,1,1,1,1
+access_request_command_viewer,request command viewer,model_ab_deploy_request_command,group_viewer,1,0,0,0
+access_request_command_developer,request command developer,model_ab_deploy_request_command,group_developer,1,1,1,1
+access_resolution_administrator,resolution administrator,model_ab_deploy_resolution,group_administrator,1,1,1,1
+access_recovery_administrator,recovery administrator,model_ab_deploy_recovery,group_administrator,1,1,1,1
+access_odoo_log_part_viewer,odoo log part viewer,model_ab_deploy_log_part,group_viewer,1,0,0,0
+access_run_viewer,run viewer,model_ab_deploy_run,group_viewer,1,0,0,0
+access_attempt_viewer,attempt viewer,model_ab_deploy_attempt,group_viewer,1,0,0,0
+access_conflict_executor,conflict executor,model_ab_deploy_conflict,group_executor,1,1,1,1
+
+access_target_executor,target executor,model_ab_deploy_target,group_executor,1,1,0,0
