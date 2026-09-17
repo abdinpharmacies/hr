@@ -25,6 +25,10 @@ class SqlRequest:
     pool: dict = field(default_factory=dict)
     health: dict = field(default_factory=dict)
     opened: dict = field(default_factory=dict)
+    operation_locks: set = field(default_factory=set)
+    posting_operation: object = None
+    guarded: dict = field(default_factory=dict)
+    deferred_commits: dict = field(default_factory=dict)
 
 
 def current_request(model):
@@ -82,13 +86,28 @@ def api_request(method):
             return method(self, db_serial, *args, store_eplus_serial=store_eplus_serial, **kwargs)
         finally:
             try:
+                for connection in scope.guarded.values():
+                    try:
+                        connection.release()
+                    except Exception:
+                        _logger.warning('Could not release an API SQL operation lock', exc_info=True)
                 for connection in scope.pool.values():
                     try:
                         connection.close()  # Rolls back any uncommitted SQL work.
                     except Exception:
                         _logger.warning('Could not close an API SQL connection', exc_info=True)
             finally:
-                _request.reset(token)
+                try:
+                    for lock in scope.operation_locks:
+                        # Session locks survive the posting workflow's commits.
+                        # A failed transaction must be cleared before unlocking.
+                        try:
+                            self.env.cr.execute('SELECT pg_advisory_unlock(%s)', (lock,))
+                        except Exception:
+                            self.env.cr.rollback()
+                            self.env.cr.execute('SELECT pg_advisory_unlock(%s)', (lock,))
+                finally:
+                    _request.reset(token)
     return wrapped
 
 

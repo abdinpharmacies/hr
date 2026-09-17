@@ -27,8 +27,10 @@ class BranchApiOperation(models.Model):
     kind = fields.Selection([('sale', 'Sale'), ('return', 'Return')], required=True)
     state = fields.Selection([
         ('draft', 'Draft'), ('processing', 'Processing'), ('done', 'Done'),
-        ('uncertain', 'Needs Reconciliation'),
+        ('uncertain', 'Needs Reconciliation'), ('retryable', 'Ready to Retry'),
     ], default='draft', required=True)
+    recovery_enabled = fields.Boolean(readonly=True)
+    commit_evidence = fields.Json(readonly=True)
     payload_hash = fields.Char(readonly=True)
     reservation_key = fields.Char(readonly=True, index=True)
     _unique_reservation = models.Constraint('UNIQUE(reservation_key)', 'Another return for this invoice needs completion or reconciliation.')
@@ -118,7 +120,7 @@ class BranchApi(models.AbstractModel):
                 'store_name': store.display_name or '', 'branch_store_id': store.id, 'can_post': can_post,
                 'methods': ['get_capabilities', 'get_connection_status', 'search_products',
                             'get_stock_lines', 'submit_sale', 'get_return_invoice',
-                            'submit_return', 'get_operation_status']}
+                            'submit_return', 'get_operation_status', 'reconcile_operation']}
 
     @api.model
     def _identity(self, store, db_serial):
@@ -182,6 +184,7 @@ class BranchApi(models.AbstractModel):
     def _operation(self, store, token, kind):
         if not isinstance(token, str) or not 16 <= len(token) <= 128:
             raise UserError(_('A request token between 16 and 128 characters is required.'))
+        self._lock_operation(token)
         Operation = self.env['ab_branch_api_operation'].sudo()
         operation = Operation.search(fields.Domain('token', '=', token), limit=1)
         if not operation:
@@ -190,7 +193,6 @@ class BranchApi(models.AbstractModel):
                                           'token': token, 'kind': kind})
         if operation.user_id.id != self.env.uid or operation.store_id != store or operation.kind != kind:
             raise AccessError(_('Request token belongs to another operation.'))
-        operation.write({'state': operation.state})
         return operation
 
     @api.model
@@ -205,8 +207,9 @@ class BranchApi(models.AbstractModel):
             return {**self._identity(store, db_serial), 'state': 'not_found'}
         self._business_permissions(operation.kind)
         if operation.record_id:
-            model = 'ab_sales_header' if operation.kind == 'sale' else 'ab_sales_return_header'
-            self.env[model].browse(operation.record_id).check_access('read')
+            if operation.kind in ('sale', 'return'):
+                model = 'ab_sales_header' if operation.kind == 'sale' else 'ab_sales_return_header'
+                self.env[model].browse(operation.record_id).check_access('read')
         return {**self._identity(store, db_serial), 'state': operation.state,
                 'result': ({**operation.result, **self._identity(store, db_serial)} if operation.result else {}),
                 'message': operation.message or ''}
@@ -274,7 +277,7 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('return', post=True)
         operation = self._operation(store, token, 'return')
         if operation.state in ('processing', 'uncertain'):
-            raise UserError(_('Return outcome needs reconciliation. Check the branch operation before retrying.'))
+            self._reconcile_post(operation)
         header = self._return_header(store, operation, invoice)
         if header.status != 'saved':
             self._assert_invoice_branch(store, invoice)
@@ -286,19 +289,24 @@ class BranchApi(models.AbstractModel):
     @api.model
     def _run_post(self, operation, payload, callback, failure_snapshot=None):
         digest = hashlib.sha256(json.dumps(payload, sort_keys=True, allow_nan=False).encode()).hexdigest()
-        if operation.state != 'draft':
+        if operation.payload_hash and operation.payload_hash != digest:
+            raise UserError(_('The request token was already used with different data.'))
+        if operation.state not in ('draft', 'retryable'):
             if operation.payload_hash != digest:
                 raise UserError(_('The request token was already used with different data.'))
             if operation.state == 'done':
                 return {**(operation.result or {}),
                         **self._identity(request_store(self), int(config.get('db_serial')))}
             raise UserError(_('Operation outcome needs reconciliation. Check the branch before retrying.'))
-        operation.write({'state': 'processing', 'payload_hash': digest})
+        operation.write({'state': 'processing', 'payload_hash': digest,
+                         'recovery_enabled': operation.kind in ('sale', 'return'),
+                         'commit_evidence': False})
         # Durably reserve before crossing the SQL Server/PostgreSQL transaction boundary.
         # Concurrent updates conflict under Odoo repeatable-read; no automatic external retry.
         self.env.cr.commit()
         try:
-            result = callback()
+            with self._posting_scope(operation):
+                result = callback()
         except Exception as error:
             partial = {}
             if failure_snapshot:
@@ -358,7 +366,8 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('return', post=True)
         operation = self._operation(store, token, 'return')
         payload = {'invoice': int(invoice), 'lines': lines, 'notes': str(notes), 'employee_ref': employee_ref}
-        if operation.state != 'draft':
+        self._prepare_post(operation, payload)
+        if operation.state == 'done':
             self._return_header(store, operation, invoice)
             return self._run_post(operation, payload, lambda: {})
         employee = self._validate_return_employee(employee_ref)
@@ -390,45 +399,48 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('sale', post=True)
         operation = self._operation(store, token, 'sale')
         request = {'payload': payload, 'push': bool(push_to_eplus)}
-        if operation.state != 'draft':
+        self._prepare_post(operation, request)
+        if operation.state == 'done':
             self.env['ab_sales_header'].browse(operation.record_id).check_access('read')
             return self._run_post(operation, request, lambda: {})
-        Pos = self.env['ab_sales_pos_api']
-        header_model = self.env['ab_sales_header']
-        allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
-                   'is_delivery', 'description', 'invoice_address', 'new_customer_name',
-                   'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
-                   'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
-                   'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',
-                   'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
-        values = self._sale_values(header_model, payload.get('header', {}), allowed)
-        values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
-        header_model.new(values)._validate_new_customer()
-        header = header_model._create_callcenter_order(values)
-        operation.record_id = header.id
-        Line = self.env['ab_sales_line']
-        line_values = []
-        for source in payload.get('lines', []):
-            line_source = {key: value for key, value in source.items() if key != 'uom_factor'}
-            vals = self._sale_values(Line, line_source, {'product_id', 'qty_str', 'sell_price',
-                'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product', 'uom_factor'})
-            product = self.env['ab_product'].browse(vals.get('product_id')).exists()
-            if not product:
-                raise UserError(_('Product is required.'))
-            factor = float(source.get('uom_factor') or product.uom_id.factor)
-            uom = self.env['ab_product_uom'].search(fields.Domain('category_id', '=', product.uom_category_id.id)
-                                                   & fields.Domain('factor', '=', factor), limit=2)
-            if len(uom) != 1:
-                raise UserError(_('Branch product unit is missing or ambiguous.'))
-            vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
-            Pos._pos_fill_inventory_json_for_price_validation(header, vals)
-            line_values.append(vals)
-        Line.create(line_values)
-        if payload.get('promotion'):
-            program = self._resolve('ab_promo_program', payload['promotion'])
-            header.applied_program_ids = [fields.Command.set(program.ids)]
-            header.btn_apply_promotion()
-        Pos._fill_lines_balance_from_offline(header)
+        header = self._operation_header(operation) if operation.record_id else False
+        if not header:
+            Pos = self.env['ab_sales_pos_api']
+            header_model = self.env['ab_sales_header']
+            allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
+                       'is_delivery', 'description', 'invoice_address', 'new_customer_name',
+                       'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
+                       'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
+                       'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',
+                       'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
+            values = self._sale_values(header_model, payload.get('header', {}), allowed)
+            values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
+            header_model.new(values)._validate_new_customer()
+            header = header_model._create_callcenter_order(values)
+            operation.record_id = header.id
+            Line = self.env['ab_sales_line']
+            line_values = []
+            for source in payload.get('lines', []):
+                line_source = {key: value for key, value in source.items() if key != 'uom_factor'}
+                vals = self._sale_values(Line, line_source, {'product_id', 'qty_str', 'sell_price',
+                    'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product', 'uom_factor'})
+                product = self.env['ab_product'].browse(vals.get('product_id')).exists()
+                if not product:
+                    raise UserError(_('Product is required.'))
+                factor = float(source.get('uom_factor') or product.uom_id.factor)
+                uom = self.env['ab_product_uom'].search(fields.Domain('category_id', '=', product.uom_category_id.id)
+                                                       & fields.Domain('factor', '=', factor), limit=2)
+                if len(uom) != 1:
+                    raise UserError(_('Branch product unit is missing or ambiguous.'))
+                vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
+                Pos._pos_fill_inventory_json_for_price_validation(header, vals)
+                line_values.append(vals)
+            Line.create(line_values)
+            if payload.get('promotion'):
+                program = self._resolve('ab_promo_program', payload['promotion'])
+                header.applied_program_ids = [fields.Command.set(program.ids)]
+                header.btn_apply_promotion()
+            Pos._fill_lines_balance_from_offline(header)
         header.check_access('write')
         header.line_ids.check_access('write')
 

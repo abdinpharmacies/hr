@@ -800,3 +800,55 @@ msgstr "لا يمكن تغيير مصدر إنشاء فاتورة مركز ال�
 #: code:addons/ab_branch_api/models/branch_api.py:0
 msgid "Only call-center invoices can be returned."
 msgstr "يمكن إرجاع فواتير مركز الاتصال فقط."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__commit_evidence
+msgid "Commit Evidence"
+msgstr "أدلة تأكيد الحفظ"
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__retryable
+msgid "Ready to Retry"
+msgstr "جاهز لإعادة المحاولة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__recovery_enabled
+msgid "Recovery Enabled"
+msgstr "الاستعادة التلقائية مفعلة"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch could not record the posting identifiers. Retry using the same "
+"bill."
+msgstr ""
+"تعذر على الفرع تسجيل معرفات ترحيل الفاتورة. أعد المحاولة باستخدام الفاتورة "
+"نفسها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch found conflicting or incomplete posting evidence. Automatic retry"
+" is paused to prevent a duplicate bill; contact support with this bill "
+"reference."
+msgstr ""
+"وجد الفرع أدلة ترحيل متعارضة أو غير مكتملة. تم إيقاف إعادة المحاولة "
+"التلقائية لمنع تكرار الفاتورة؛ تواصل مع الدعم وأرسل مرجع هذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid ""
+"The branch is still processing this request. Retry shortly using the same "
+"bill."
+msgstr ""
+"لا يزال الفرع يعالج هذا الطلب. أعد المحاولة بعد قليل باستخدام الفاتورة "
+"نفسها."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/reconciliation.py:0
+msgid "The stored bill does not match the authorized branch operation."
+msgstr "الفاتورة المحفوظة لا تطابق عملية الفرع المصرح بها."
