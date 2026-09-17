@@ -1,0 +1,390 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_deploy_telegram
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-17 15:54+0000\n"
+"PO-Revision-Date: 2026-09-17 16:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid ""
+"A Telegram notification could not be queued. Check the notification "
+"configuration and message history."
+msgstr ""
+"تعذر إدراج إشعار تليجرام في قائمة الانتظار. تحقق من إعدادات الإشعارات وسجل "
+"الرسائل."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Approved servers: %s"
+msgstr "الخوادم المعتمدة: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Approver: %s"
+msgstr "المعتمد: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Batch: %s"
+msgstr "الدفعة: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Choose an allowed company."
+msgstr "اختر شركة مسموحًا بها."
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid ""
+"Configure an active Telegram bot with a token in the deployment company."
+msgstr "اضبط بوت تليجرام نشطًا مع رمز وصول في شركة النشر."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid ""
+"Configure an enabled Telegram subscription for ab_deploy in this company "
+"first."
+msgstr "اضبط اشتراك تليجرام مفعّلًا لوحدة ab_deploy في هذه الشركة أولًا."
+
+#. module: ab_deploy_telegram
+#: model:ir.model,name:ab_deploy_telegram.model_ab_deploy_run
+msgid "Deployment Queue Run"
+msgstr "تشغيل دفعة نشر"
+
+#. module: ab_deploy_telegram
+#: model:ir.model,name:ab_deploy_telegram.model_ab_deploy_request
+msgid "Deployment Request"
+msgstr "طلب النشر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment approved"
+msgstr "تم اعتماد النشر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment batch outcome"
+msgstr "نتيجة دفعة النشر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment batch queued"
+msgstr "تمت جدولة دفعة النشر"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__display_name
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_run__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Executor: %s"
+msgstr "المنفذ: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__id
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_run__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_deploy_telegram
+#: model_terms:ir.ui.view,arch_db:ab_deploy_telegram.view_request_telegram
+msgid ""
+"Leave overrides empty to use the enabled ab_deploy module subscription. "
+"Destinations are frozen when requesting approval. Telegram sends approval, "
+"queued-batch and batch-outcome summaries; deployment actions remain in Odoo."
+msgstr ""
+"اترك التجاوزات فارغة لاستخدام اشتراك وحدة ab_deploy المفعّل. تُثبت الوجهات "
+"عند طلب الاعتماد. يرسل تليجرام ملخصات الاعتماد وجدولة الدفعة ونتيجتها؛ وتبقى"
+" إجراءات النشر في أودو."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Selected servers: %s"
+msgstr "الخوادم المحددة: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Servers"
+msgstr "الخوادم"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Still delayed: %s"
+msgstr "الخوادم التي ما زالت مؤجلة: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Succeeded"
+msgstr "نجح"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_bot_id
+msgid "Telegram Bot Override"
+msgstr "تجاوز بوت تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_chat_id
+msgid "Telegram Chat ID Override"
+msgstr "تجاوز معرّف محادثة تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_group_id
+msgid "Telegram Group Override"
+msgstr "تجاوز مجموعة تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_note
+msgid "Telegram Notification Notes"
+msgstr "ملاحظات إشعارات تليجرام"
+
+#. module: ab_deploy_telegram
+#: model_terms:ir.ui.view,arch_db:ab_deploy_telegram.view_request_telegram
+msgid "Telegram Notifications"
+msgstr "إشعارات تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_snapshot
+msgid "Telegram Snapshot"
+msgstr "إعدادات تليجرام المثبتة"
+
+#. module: ab_deploy_telegram
+#: model:ir.ui.menu,name:ab_deploy_telegram.menu_deployment_telegram_subscriptions
+msgid "Telegram Subscriptions"
+msgstr "اشتراكات تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_topic_id
+msgid "Telegram Topic ID Override"
+msgstr "تجاوز معرّف موضوع تليجرام"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Telegram notification history cannot be changed manually."
+msgstr "لا يمكن تغيير سجل إشعارات تليجرام يدويًا."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "The Telegram bot must belong to the deployment company."
+msgstr "يجب أن ينتمي بوت تليجرام إلى شركة النشر."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "The Telegram group must belong to the deployment company."
+msgstr "يجب أن تنتمي مجموعة تليجرام إلى شركة النشر."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "The frozen Telegram destination is no longer available."
+msgstr "وجهة تليجرام المثبتة لم تعد متاحة."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "The notification bot must be associated with the selected group."
+msgstr "يجب ربط بوت الإشعارات بالمجموعة المختارة."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Topic ID cannot be negative."
+msgstr "لا يمكن أن يكون معرّف الموضوع سالبًا."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Unfinished"
+msgstr "غير مكتمل"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,help:ab_deploy_telegram.field_ab_deploy_request__telegram_topic_id
+msgid "Zero uses the subscription topic."
+msgstr "القيمة صفر تستخدم موضوع الاشتراك."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment request name: %s"
+msgstr "اسم طلب النشر: %s"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Description:"
+msgstr "الوصف:"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Not provided"
+msgstr "غير محدد"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Title: %s"
+msgstr "العنوان: %s"
+
+#. module: ab_deploy_telegram
+#: model_terms:ir.ui.view,arch_db:ab_deploy_telegram.view_request_telegram
+msgid ""
+"Notifications are automatic through the enabled ab_deploy subscription. "
+"Leave overrides empty to use its defaults. Destinations are saved when "
+"requesting approval, or at the next event if not yet configured. Missing "
+"configuration is reported below without blocking deployment."
+msgstr ""
+"تُرسل الإشعارات تلقائيًا عبر اشتراك ab_deploy المفعل. اترك إعدادات التجاوز "
+"فارغة لاستخدام القيم الافتراضية. تُحفظ الوجهات عند طلب الموافقة، أو عند "
+"الحدث التالي إذا لم تُضبط بعد. يُعرض نقص الإعدادات أدناه دون تعطيل النشر."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid ""
+"The Telegram destination could not be configured. Check the enabled "
+"ab_deploy subscription and bot access."
+msgstr ""
+"تعذر إعداد وجهة تيليجرام. تحقق من اشتراك ab_deploy المفعل وصلاحية الوصول إلى"
+" الروبوت."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Area"
+msgstr "المنطقة"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Delayed"
+msgstr "مؤجل"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment Report"
+msgstr "تقرير النشر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Deployment report queued for Telegram."
+msgstr "تمت إضافة تقرير النشر إلى قائمة إرسال تيليجرام."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Not started"
+msgstr "لم يبدأ"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Queued"
+msgstr "في الانتظار"
+
+#. module: ab_deploy_telegram
+#: model_terms:ir.ui.view,arch_db:ab_deploy_telegram.view_request_telegram
+msgid ""
+"Reports are sent automatically only when a batch finishes, or manually with "
+"Send Deployment Report. Each report includes all target servers in a summary"
+" and an Arabic Markdown attachment. Leave overrides empty to use its "
+"defaults. Destinations are saved when requesting approval, or at the next "
+"event if not yet configured. Missing configuration is reported below without"
+" blocking deployment."
+msgstr ""
+"تُرسل التقارير تلقائيًا عند انتهاء الدفعة فقط، أو يدويًا عبر إرسال تقرير "
+"النشر. يشمل كل تقرير جميع الخوادم المستهدفة في ملخص ومرفق Markdown عربي. "
+"اترك إعدادات التجاوز فارغة لاستخدام القيم الافتراضية للاشتراك. تُحفظ الوجهات"
+" عند طلب الموافقة، أو عند الحدث التالي إذا لم تُضبط بعد. يُعرض نقص الإعدادات"
+" أدناه دون تعطيل النشر."
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Running"
+msgstr "قيد التنفيذ"
+
+#. module: ab_deploy_telegram
+#: model_terms:ir.ui.view,arch_db:ab_deploy_telegram.view_request_telegram
+msgid "Send Deployment Report"
+msgstr "إرسال تقرير النشر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Serial"
+msgstr "المسلسل"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Server"
+msgstr "السرفر"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Still delayed"
+msgstr "ما زال مؤجلاً"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Unknown"
+msgstr "غير معروف"

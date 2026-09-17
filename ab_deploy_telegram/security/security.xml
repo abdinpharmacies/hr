@@ -1,0 +1,11 @@
+<odoo>
+    <record id="ab_deploy.group_developer" model="res.groups"><field name="implied_ids" eval="[(4, ref('ab_telegram_bot.group_viewer'))]"/></record>
+    <record id="ab_deploy.group_approver" model="res.groups"><field name="implied_ids" eval="[(4, ref('ab_telegram_bot.group_viewer'))]"/></record>
+    <record id="ab_deploy.group_executor" model="res.groups"><field name="implied_ids" eval="[(4, ref('ab_telegram_bot.group_viewer'))]"/></record>
+    <record id="rule_request_company" model="ir.rule"><field name="name">Deployment requests: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_request"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+    <record id="rule_target_company" model="ir.rule"><field name="name">Deployment targets: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_target"/><field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field></record>
+    <record id="rule_job_company" model="ir.rule"><field name="name">Deployment jobs: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_job"/><field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field></record>
+    <record id="rule_run_company" model="ir.rule"><field name="name">Deployment runs: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_run"/><field name="domain_force">[('request_id.company_id', 'in', company_ids)]</field></record>
+    <record id="rule_attempt_company" model="ir.rule"><field name="name">Deployment attempts: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_attempt"/><field name="domain_force">[('job_id.request_id.company_id', 'in', company_ids)]</field></record>
+    <record id="rule_log_company" model="ir.rule"><field name="name">Deployment logs: allowed companies</field><field name="model_id" ref="ab_deploy.model_ab_deploy_log_part"/><field name="domain_force">[('job_id.request_id.company_id', 'in', company_ids)]</field></record>
+</odoo>

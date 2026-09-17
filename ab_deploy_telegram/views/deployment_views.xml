@@ -1,0 +1,25 @@
+<odoo>
+    <record id="view_request_telegram" model="ir.ui.view">
+        <field name="name">ab_deploy_request_telegram</field><field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="ab_deploy.view_request_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_send_deployment_report" type="object" string="Send Deployment Report" groups="ab_deploy.group_executor,ab_deploy.group_administrator"/>
+            </xpath>
+            <xpath expr="//page[field[@name='command_ids']]" position="before">
+                <page string="Telegram Notifications" name="telegram_notifications">
+                    <group><field name="company_id" readonly="state != 'draft'"/></group>
+                    <group>
+                        <field name="telegram_bot_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                        <field name="telegram_group_id" readonly="state != 'draft'" options="{'no_create': True}"/>
+                        <field name="telegram_chat_id" readonly="state != 'draft'"/>
+                        <field name="telegram_topic_id" readonly="state != 'draft'"/>
+                    </group>
+                    <p>Reports are sent automatically only when a batch finishes, or manually with Send Deployment Report. Each report includes all target servers in a summary and an Arabic Markdown attachment. Leave overrides empty to use its defaults. Destinations are saved when requesting approval, or at the next event if not yet configured. Missing configuration is reported below without blocking deployment.</p>
+                    <field name="telegram_note" nolabel="1" invisible="not telegram_note"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <menuitem id="menu_deployment_telegram_subscriptions" name="Telegram Subscriptions" parent="ab_deploy.menu_deploy_config" action="ab_telegram_bot.action_subscription" groups="ab_telegram_bot.group_administrator" sequence="30"/>
+</odoo>
