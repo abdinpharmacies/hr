@@ -229,15 +229,22 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     def _return_header(self, store, operation, invoice):
+        source = self.env['ab_sales_header'].search(
+            fields.Domain('store_id', '=', store.id)
+            & fields.Domain('eplus_serial', '=', int(invoice))
+            & fields.Domain('is_callcenter_order', '=', True), limit=1)
+        if not source or int(invoice) <= 0:
+            raise AccessError(_('Only call-center invoices can be returned.'))
         header = self.env['ab_sales_return_header'].browse(operation.record_id).exists()
         if header:
             header.check_access('write')
             header.line_ids.check_access('write')
-            if header.store_id != store or header.origin_header_id != int(invoice):
+            if (header.store_id != store or header.origin_header_id != int(invoice)
+                    or not header.is_callcenter_order):
                 raise AccessError(_('Return invoice does not match the request.'))
         else:
             self._assert_invoice_branch(store, invoice)
-            header = self.env['ab_sales_return_header'].create({
+            header = self.env['ab_sales_return_header']._create_callcenter_order({
                 'store_id': store.id, 'origin_header_id': int(invoice)})
             operation.record_id = header.id
         return header
@@ -397,7 +404,7 @@ class BranchApi(models.AbstractModel):
         values = self._sale_values(header_model, payload.get('header', {}), allowed)
         values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
         header_model.new(values)._validate_new_customer()
-        header = header_model.create(values)
+        header = header_model._create_callcenter_order(values)
         operation.record_id = header.id
         Line = self.env['ab_sales_line']
         line_values = []

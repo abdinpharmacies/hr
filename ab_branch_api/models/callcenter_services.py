@@ -18,7 +18,7 @@ class BranchSnapshot(models.TransientModel):
     owner_id = fields.Many2one('res.users', required=True)
     store_id = fields.Many2one('ab_store', required=True)
     kind = fields.Char(required=True)
-    payload = fields.Json(required=True)
+    payload = fields.Json()
 
 
 class BranchOperation(models.Model):
@@ -32,6 +32,7 @@ class CallcenterServices(models.AbstractModel):
     @api.model
     def get_capabilities(self, db_serial, *, store_eplus_serial=STORE_UNSET):
         result = super().get_capabilities(db_serial, store_eplus_serial=store_eplus_serial)
+        result['bill_scope'] = 'callcenter_only'
         result['methods'] += ['get_product_balances', 'lookup_customer', 'create_customer',
             'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses', 'get_sale_statuses',
             'search_bills', 'get_bill_details', 'update_bill_notes', 'render_bill_print']
@@ -52,7 +53,7 @@ class CallcenterServices(models.AbstractModel):
                 raise UserError(_('Start the snapshot at the first page.'))
             snapshot = Snapshot.create({'owner_id': self.env.uid, 'store_id': store.id,
                 'kind': kind, 'payload': loader()})
-        rows = snapshot.payload
+        rows = snapshot.payload or []
         end = min(offset + size, len(rows))
         return {**self._identity(store, db_serial), 'token': snapshot.token, 'data': rows[offset:end],
                 'next_offset': end if end < len(rows) else False, 'total_count': len(rows),
@@ -223,7 +224,7 @@ class CallcenterServices(models.AbstractModel):
         model = 'ab_sales_header' if kind == 'sale' else 'ab_sales_return_header'
         record = self.env[model].browse(int(reference.get('record_id') or 0)).exists()
         record.check_access('read')
-        if not record or record.store_id != store:
+        if not record or record.store_id != store or not record.is_callcenter_order:
             raise AccessError(_('The bill does not belong to the selected branch.'))
         return kind, record
 
@@ -263,13 +264,14 @@ class CallcenterServices(models.AbstractModel):
                     sources = self.env['ab_sales_header'].search(fields.Domain(source_domain)
                         & fields.Domain('store_id', '=', store.id))
                     domain = list(fields.Domain(domain) & fields.Domain('origin_header_id', 'in', sources.mapped('eplus_serial')))
-                statuses = [filters['status']] if filters.get('status') in ('prepending', 'pending', 'saved') else ['pending', 'saved']
+                statuses = [filters['status']] if filters.get('status') in ('prepending', 'pending', 'saved') else ['prepending', 'pending', 'saved']
                 domain = [('status', 'in', statuses) if isinstance(term, (tuple, list)) and term[0] == 'status' else term for term in domain]
                 records = self.env[model].search(fields.Domain(domain) & fields.Domain('store_id', '=', store.id)
+                                                & fields.Domain('is_callcenter_order', '=', True)
                                                 & fields.Domain('status', 'in', statuses), order='create_date desc,id desc')
                 entries.extend({'kind': kind, 'id': r.id, 'date': fields.Datetime.to_string(r.create_date)} for r in records)
             return sorted(entries, key=lambda x: (x['date'], x['kind'], x['id']), reverse=True)
-        page = self._snapshot_page(store, db_serial, 'bills', token, offset, load, size=20)
+        page = self._snapshot_page(store, db_serial, 'bills:callcenter_only:v1', token, offset, load, size=20)
         items = []
         for entry in page.pop('data'):
             ref = {**self._identity(store, db_serial), 'record_type': entry['kind'], 'record_id': entry['id']}

@@ -138,7 +138,7 @@ Additional methods (all require `db_serial` and a resolved authorized store):
 | `get_inventory_snapshot` | `token=False`, `offset=0` | Fixed, committed inventory result, 200 rows per page |
 | `get_sales_day` | `sale_date`, `token=False`, `offset=0` | Fixed result for one completed day, 200 rows per page |
 | `get_invoice_statuses` | `invoices` (up to 200) | Current branch-filtered invoice statuses |
-| `search_bills` | `filters={}`, `token=False`, `offset=0` | 20 branch Odoo sales/returns per page |
+| `search_bills` | `filters={}`, `token=False`, `offset=0` | 20 call-center-created branch sales/returns per page |
 | `get_bill_details` | `reference` | `bill` with header/lines and permitted actions |
 | `update_bill_notes` | `reference`, `notes` | Authorized update and refreshed `bill` |
 | `render_bill_print` | `reference`, `print_format='a4'` | HTML only; does not dispatch to a branch printer |
@@ -149,9 +149,9 @@ The last identifier is opaque and valid only inside that database/store. Access
 and record rules are rechecked on every detail, notes, and print request.
 
 Bill filters: `product_query`, `product_serials`, `customer_query`, `date_start`,
-`date_end`, `eplus_serial`, `document_type`, and `status`. Default statuses are
-pending/saved; drafts are explicitly selectable. E-Plus-only invoices are not
-included. Customer matching on returns stays within the selected branch.
+`date_end`, `eplus_serial`, `document_type`, and `status`. All three statuses
+(draft, pending, saved) are included by default, restricted to call-center-created
+headers. E-Plus-only invoices are not included. Customer matching on returns stays within the selected branch.
 
 Snapshots are user/store/kind scoped and expire after one hour. The existing
 Odoo transient cleanup removes old storage; there is no new cron. Continue with
@@ -188,3 +188,33 @@ status job. Bill browsing continues through the separate search/detail endpoints
 
 Upgrade `ab_branch_api` before call-center `ab_sales` 19.0.3.1.0 and retest Branch
 Connections. Existing submission tokens remain valid; no migration is required.
+
+
+## Call-center bill origin (19.0.5.2.0)
+
+Sales and returns now have a stored, indexed, read-only `is_callcenter_order`
+Boolean. New `submit_sale` headers and API-created return headers are marked by
+private server creation methods. Existing records stay false; no backfill or
+migration is included. Copies lose the marker, ordinary create/import calls
+cannot supply it, and ordinary writes cannot change it. Retrying an older sale
+operation does not relabel its header.
+
+`search_bills` restricts both document types by this marker and the authorized
+store before building snapshots or totals. With no status filter, drafts,
+pending bills, and saved bills are included. Operators can browse all marked
+bills in their authorized branches, regardless of who created them. Existing
+product, customer, invoice, date, document type, and status filters remain.
+Details, notes, and printing enforce the same origin restriction. A return
+must itself be marked; having a marked original sale is insufficient to expose
+a branch-created return. Return loading and submission also require a marked
+original sale in the selected branch, in addition to existing invoice checks.
+
+Capabilities and connection status advertise `bill_scope="callcenter_only"`.
+Old bill snapshot tokens are rejected. Empty results produce a valid zero-count
+page. Browsing does not create sale-status polling operations; verified older
+submission operations retain their existing status-refresh behavior.
+
+Rollout: upgrade branch `ab_branch_api` first, then call-center `ab_sales`
+19.0.3.2.0. Retest each Branch Connection and start a fresh Bills search. The
+client refuses bill/return requests to providers missing this scope capability.
+Validation uses isolated Odoo databases and mocked external connections only.

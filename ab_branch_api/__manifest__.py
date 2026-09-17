@@ -1,6 +1,6 @@
 {
     'name': 'Branch API',
-    'version': '19.0.5.1.0',
+    'version': '19.0.5.2.0',
     'license': 'LGPL-3',
     'category': 'Sales',
     'author': 'Abdin Pharmacies',

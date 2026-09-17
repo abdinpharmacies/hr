@@ -782,3 +782,21 @@ msgstr "انتهت صلاحية لقطة البيانات أو أنها تخص �
 #: code:addons/ab_branch_api/models/callcenter_services.py:0
 msgid "Provide at most 200 valid sale request tokens."
 msgstr "أرسل 200 رمز طلب بيع صالح كحد أقصى."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__is_callcenter_order
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_return_header__is_callcenter_order
+msgid "Created by Call Center"
+msgstr "تم إنشاؤه بواسطة مركز الاتصال"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_origin.py:0
+msgid "The call-center origin cannot be changed."
+msgstr "لا يمكن تغيير مصدر إنشاء فاتورة مركز الاتصال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Only call-center invoices can be returned."
+msgstr "يمكن إرجاع فواتير مركز الاتصال فقط."
