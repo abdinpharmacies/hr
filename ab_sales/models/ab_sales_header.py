@@ -613,19 +613,25 @@ class AbdinSalesHeader(models.Model):
 
     def action_open_sales_return(self):
         self.ensure_one()
+        if self.env['ab_sales_branch_client']._is_callcenter() and not self.is_callcenter_order:
+            raise UserError(_("Only call-center invoices can be returned."))
         if not self.store_id:
             raise UserError(_("Please select a Store first."))
         if not self.eplus_serial:
             raise UserError(_("Please Submit this invoice first."))
 
         ReturnHeader = self.env['ab_sales_return_header']
-        return_header = ReturnHeader.search([
+        origin_domain = ([('is_callcenter_order', '=', True)]
+                         if self.env['ab_sales_branch_client']._is_callcenter() else [])
+        return_header = ReturnHeader.search(origin_domain + [
             ('origin_header_id', '=', int(self.eplus_serial)),
             ('store_id', '=', self.store_id.id),
             ('status', '=', 'prepending'),
         ], order='id desc', limit=1)
         if not return_header:
-            return_header = ReturnHeader.create({
+            return_header = (ReturnHeader._create_callcenter_order
+                             if self.env['ab_sales_branch_client']._is_callcenter()
+                             else ReturnHeader.create)({
                 'store_id': self.store_id.id,
                 'origin_header_id': int(self.eplus_serial),
             })

@@ -72,19 +72,24 @@ class BranchBills(models.TransientModel):
         if search_token and page != 1:
             session = Session.search([('token', '=', search_token), ('create_uid', '=', self.env.uid),
                 ('create_date', '>=', fields.Datetime.now() - timedelta(hours=1))], limit=1)
-            if not session or session.state['filters'] != filters or session.state['stores'] != stores.ids:
+            if (not session or session.state.get('bill_scope') != 'callcenter_only:v1'
+                    or session.state['filters'] != filters or session.state['stores'] != stores.ids):
                 raise UserError(_('The bill search expired. Refresh the results.'))
             state = dict(session.state)
+            # Cached pages must still require a restricted provider.
+            for store in stores:
+                if state['branches'][str(store.id)]['token']:
+                    client._config(store)._require_callcenter_bill_scope()
             if page > len(state['pages']) + 1:
                 raise UserError(_('Open the next page in order.'))
         else:
-            state = {'filters': filters, 'stores': stores.ids, 'branches': {}, 'pages': [], 'errors': []}
+            state = {'bill_scope': 'callcenter_only:v1', 'filters': filters, 'stores': stores.ids, 'branches': {}, 'pages': [], 'errors': []}
             for store in stores:
                 branch = {'token': False, 'offset': 0, 'buffer': [], 'count': 0}
                 try:
                     self._branch_bill_page(client, store, branch, filters)
-                except (UserError, AccessError):
-                    state['errors'].append(store.display_name)
+                except (UserError, AccessError) as error:
+                    state['errors'].append('%s: %s' % (store.display_name, error))
                     branch['offset'] = False
                 state['branches'][str(store.id)] = branch
             session = Session.create({'state': state})
@@ -137,9 +142,10 @@ class BranchBills(models.TransientModel):
             raise UserError(_('Return action is available for submitted sales bills only.'))
         Header = self.env['ab_sales_return_header']
         header = Header.search([('store_id', '=', store.id), ('origin_header_id', '=', bill['eplus_serial']),
+                               ('is_callcenter_order', '=', True),
                                ('status', '=', 'prepending'), ('create_uid', '=', self.env.uid)], limit=1)
         if not header:
-            header = Header.create({'store_id': store.id, 'origin_header_id': bill['eplus_serial']})
+            header = Header._create_callcenter_order({'store_id': store.id, 'origin_header_id': bill['eplus_serial']})
         header.action_load_lines()
         return self.env['ab_sales_return_ui_api']._action_payload(header.id)
 

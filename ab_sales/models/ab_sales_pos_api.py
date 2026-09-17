@@ -878,6 +878,8 @@ class AbSalesPosApi(models.TransientModel):
     def _pos_create_prepending_header_from_payload(self, payload):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_product")
 
+        if (payload.get("header") or {}).get('is_callcenter_order'):
+            raise UserError(_("The call-center origin cannot be changed."))
         header_vals = self._filter_vals("ab_sales_header", payload.get("header") or {})
         if not header_vals.get("employee_id"):
             header_vals.pop("employee_id", None)
@@ -901,7 +903,10 @@ class AbSalesPosApi(models.TransientModel):
         self.env["ab_sales_header"].new(header_vals)._validate_new_customer()
         try:
             with self.env.cr.savepoint():
-                header = self.env["ab_sales_header"].create(header_vals)
+                Header = self.env["ab_sales_header"]
+                header = (Header._create_callcenter_order(header_vals)
+                          if self.env['ab_sales_branch_client']._is_callcenter()
+                          else Header.create(header_vals))
         except (UserError, ValidationError):
             raise
         except Exception:

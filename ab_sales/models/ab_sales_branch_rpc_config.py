@@ -224,6 +224,7 @@ class AbSalesBranchRpcConfig(models.Model):
             'get_inventory_snapshot': ('db_serial', 'token', 'offset'),
             'get_sales_day': ('db_serial', 'sale_date', 'token', 'offset'),
             'get_invoice_statuses': ('db_serial', 'invoices'),
+            'get_sale_statuses': ('db_serial', 'tokens'),
             'search_bills': ('db_serial', 'filters', 'token', 'offset'),
             'get_bill_details': ('db_serial', 'reference'),
             'update_bill_notes': ('db_serial', 'reference', 'notes'),
@@ -249,6 +250,9 @@ class AbSalesBranchRpcConfig(models.Model):
                 (type(values['store_eplus_serial']) is not int or values['store_eplus_serial'] != selected_serial)):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         values['store_eplus_serial'] = selected_serial
+        if method in ('search_bills', 'get_bill_details', 'update_bill_notes',
+                      'render_bill_print', 'get_return_invoice', 'submit_return'):
+            self._require_callcenter_bill_scope()
         writes = ('submit_sale', 'submit_return', 'create_customer')
         status_values = {'db_serial': self.db_serial, 'store_eplus_serial': selected_serial,
                          'token': values.get('token')}
@@ -277,6 +281,14 @@ class AbSalesBranchRpcConfig(models.Model):
                 self._validate_identity(result['result'])
         return result
 
+    def _require_callcenter_bill_scope(self):
+        self.ensure_one()
+        capabilities = self._json_call('ab_branch_api', 'get_capabilities',
+            {'db_serial': self.db_serial, 'store_eplus_serial': int(self.store_id.eplus_serial)})
+        self._validate_identity(capabilities)
+        if capabilities.get('bill_scope') != 'callcenter_only':
+            raise UserError(_('Upgrade the branch API to support call-center-only bills, then retest the connection.'))
+
     def _validate_identity(self, result):
         self.ensure_one()
         if (not isinstance(result, dict)
@@ -297,7 +309,9 @@ class AbSalesBranchRpcConfig(models.Model):
             raise UserError(_('Branch identity or credential metadata is not configured correctly.'))
         required = {'get_product_balances', 'lookup_customer', 'create_customer', 'search_bills',
                     'get_bill_details', 'update_bill_notes', 'render_bill_print',
-                    'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses'}
+                    'get_inventory_snapshot', 'get_sales_day', 'get_invoice_statuses', 'get_sale_statuses'}
+        if result.get('bill_scope') != 'callcenter_only':
+            raise UserError(_('Upgrade the branch API to support call-center-only bills, then retest the connection.'))
         if not required.issubset(set(result.get('methods') or [])):
             raise UserError(_('Upgrade the branch API before using this call-center version.'))
         return result

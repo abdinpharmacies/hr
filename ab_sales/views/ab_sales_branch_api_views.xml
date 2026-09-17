@@ -20,4 +20,24 @@
             </xpath>
         </field>
     </record>
+    <record id="sale_callcenter_origin_view" model="ir.ui.view">
+        <field name="name">ab_sales_header.callcenter_origin</field>
+        <field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='store_id']" position="after">
+                <field name="is_callcenter_order" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="return_callcenter_origin_view" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.callcenter_origin</field>
+        <field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_return_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='store_id']" position="after">
+                <field name="is_callcenter_order" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

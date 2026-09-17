@@ -1689,3 +1689,38 @@ msgstr "الفواتير"
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 msgid "Upgrade the branch API before using this call-center version."
 msgstr "حدث واجهة الفرع قبل استخدام هذا الإصدار من مركز الاتصال."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_callcenter_order
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__is_callcenter_order
+msgid "Created by Call Center"
+msgstr "تم إنشاؤه بواسطة مركز الاتصال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales/models/callcenter_origin.py:0
+msgid "The call-center origin cannot be changed."
+msgstr "لا يمكن تغيير مصدر إنشاء فاتورة مركز الاتصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Only call-center invoices can be returned."
+msgstr "يمكن إرجاع فواتير مركز الاتصال فقط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid ""
+"Upgrade the branch API to support call-center-only bills, then retest the "
+"connection."
+msgstr ""
+"يرجى ترقية واجهة برمجة تطبيقات الفرع لدعم فواتير مركز الاتصال فقط، ثم إعادة "
+"اختبار الاتصال."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Failed to load bills."
+msgstr "تعذر تحميل الفواتير."

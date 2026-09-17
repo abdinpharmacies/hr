@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
 import {Component, onMounted, onWillStart, useRef, useState} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
@@ -315,7 +316,14 @@ class AbSalesBillWizardAction extends Component {
             }
             await this.loadDetails(this.state.selectedId);
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Failed to load bills."), {type: "danger"});
+            this.state.items = [];
+            this.state.details = null;
+            this.state.selectedId = null;
+            this.state.notesDraft = "";
+            this.state.searchToken = false;
+            this.state.pagination.totalCount = 0;
+            this.state.pagination.pageCount = 1;
+            this.notification.add(this._getErrorMessage(err, _t("Failed to load bills.")), {type: "danger"});
         } finally {
             this.state.loadingList = false;
         }
