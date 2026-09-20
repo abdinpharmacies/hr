@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_call_center_list" model="ir.ui.view">
+        <field name="name">sale.order.call.center.list</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <list string="Call Center Orders"
+                  class="ab_call_center_order_list"
+                  default_order="date_order desc"
+                  decoration-muted="state == 'cancel'">
+                <header>
+                    <button string="Create Invoices"
+                            name="%(sale.action_view_sale_advance_payment_inv)d"
+                            type="action"
+                            class="btn-secondary"/>
+                </header>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" column_invisible="True"/>
+                <field name="name" string="Order" readonly="1" decoration-bf="1"/>
+                <field name="partner_id" string="Customer" readonly="1"/>
+                <field name="ab_call_center_order_type"
+                       widget="badge"
+                       decoration-info="ab_call_center_order_type == 'normal'"
+                       decoration-success="ab_call_center_order_type == 'prescription'"/>
+                <field name="ab_call_center_status"
+                       widget="badge"
+                       decoration-info="ab_call_center_status in ('received', 'confirmed')"
+                       decoration-warning="ab_call_center_status == 'preparing'"
+                       decoration-success="ab_call_center_status in ('warehouse_done', 'delivered')"
+                       decoration-danger="ab_call_center_status in ('cancelled', 'return_received')"/>
+                <field name="ab_call_center_payment_status"
+                       widget="badge"
+                       decoration-success="ab_call_center_payment_status == 'paid'"
+                       decoration-info="ab_call_center_payment_status in ('authorized', 'cash_on_delivery')"
+                       decoration-warning="ab_call_center_payment_status in ('pending', 'unpaid')"
+                       decoration-danger="ab_call_center_payment_status == 'failed'"/>
+                <field name="ab_call_center_delivery_status"
+                       widget="badge"
+                       decoration-success="ab_call_center_delivery_status in ('warehouse_done', 'delivered')"
+                       decoration-info="ab_call_center_delivery_status == 'preparing'"
+                       decoration-warning="ab_call_center_delivery_status in ('waiting_stock', 'partial')"
+                       decoration-danger="ab_call_center_delivery_status == 'cancelled'"/>
+                <field name="amount_total"
+                       string="Amount"
+                       widget="monetary"
+                       sum="Total"
+                       decoration-bf="1"/>
+                <field name="date_order" string="Order Date" readonly="1"/>
+                <field name="website_id" optional="hide" groups="website.group_multi_website"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="hide"/>
+                <field name="activity_ids" widget="list_activity" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_sale_order_call_center_search" model="ir.ui.view">
+        <field name="name">sale.order.call.center.search</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="website_sale.view_sales_order_filter_ecommerce"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <field name="name" position="attributes">
+                <attribute name="string">Order, Customer, Phone or Email</attribute>
+                <attribute name="filter_domain">['|', '|', '|', '|', ('name', 'ilike', self), ('client_order_ref', 'ilike', self), ('partner_id', 'child_of', self), ('partner_id.phone', 'ilike', self), ('partner_id.email', 'ilike', self)]</attribute>
+            </field>
+            <field name="partner_id" position="after">
+                <field name="ab_call_center_order_type"/>
+                <field name="ab_call_center_payment_status"/>
+                <field name="ab_call_center_status"/>
+                <field name="ab_call_center_delivery_status"/>
+                <field name="website_id"/>
+            </field>
+            <filter name="order_date" position="before">
+                <filter name="ab_call_center_operational"
+                        string="Operational Orders"
+                        domain="['|', ('state', '!=', 'draft'), ('ab_call_center_order_type', '=', 'prescription')]"
+                        invisible="1"/>
+                <separator/>
+                <filter name="ab_order_type_prescription"
+                        string="Prescription Orders"
+                        domain="[('ab_call_center_order_type', '=', 'prescription')]"/>
+                <filter name="ab_order_type_normal"
+                        string="Normal Orders"
+                        domain="[('ab_call_center_order_type', '=', 'normal')]"/>
+                <separator/>
+                <filter name="ab_payment_paid"
+                        string="Paid"
+                        domain="[('ab_call_center_payment_status', '=', 'paid')]"/>
+                <filter name="ab_payment_pending"
+                        string="Payment Pending"
+                        domain="[('ab_call_center_payment_status', 'in', ('pending', 'authorized', 'cash_on_delivery'))]"/>
+                <filter name="ab_payment_failed"
+                        string="Payment Failed"
+                        domain="[('ab_call_center_payment_status', '=', 'failed')]"/>
+                <filter name="ab_payment_unpaid"
+                        string="Unpaid"
+                        domain="[('ab_call_center_payment_status', '=', 'unpaid')]"/>
+                <separator/>
+                <filter name="ab_order_new"
+                        string="New Orders"
+                        domain="[('state', 'in', ('draft', 'sent'))]"/>
+                <filter name="ab_order_confirmed"
+                        string="Confirmed Orders"
+                        domain="[('state', '=', 'sale')]"/>
+                <filter name="ab_order_cancelled"
+                        string="Cancelled Orders"
+                        domain="[('state', '=', 'cancel')]"/>
+                <separator/>
+                <filter name="ab_delivery_not_started"
+                        string="Delivery Not Started"
+                        domain="[('ab_call_center_delivery_status', '=', 'not_started')]"/>
+                <filter name="ab_delivery_preparing"
+                        string="Preparing Delivery"
+                        domain="[('ab_call_center_delivery_status', 'in', ('waiting_stock', 'preparing', 'partial'))]"/>
+                <filter name="ab_delivery_warehouse_done"
+                        string="Warehouse Processed"
+                        domain="[('ab_call_center_delivery_status', '=', 'warehouse_done')]"/>
+                <separator/>
+            </filter>
+            <xpath expr="//group" position="inside">
+                <filter name="ab_group_order_type"
+                        string="Order Type"
+                        context="{'group_by': 'ab_call_center_order_type'}"/>
+                <filter name="ab_group_operational_status"
+                        string="Current Status"
+                        context="{'group_by': 'ab_call_center_status'}"/>
+                <filter name="ab_group_payment_status"
+                        string="Payment Status"
+                        context="{'group_by': 'ab_call_center_payment_status'}"/>
+                <filter name="ab_group_delivery_status"
+                        string="Delivery Status"
+                        context="{'group_by': 'ab_call_center_delivery_status'}"/>
+                <filter name="ab_group_website"
+                        string="Website"
+                        context="{'group_by': 'website_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_sale_order_call_center_form" model="ir.ui.view">
+        <field name="name">sale.order.call.center.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="mode">primary</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='payment_action_capture']" position="attributes">
+                <attribute name="groups">account.group_account_invoice</attribute>
+            </xpath>
+            <xpath expr="//button[@name='payment_action_void']" position="attributes">
+                <attribute name="groups">account.group_account_invoice</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_uom_qty']" position="after">
+                <field name="ab_stock_qty_available"
+                       string="On Hand"
+                       readonly="1"
+                       optional="show"
+                       invisible="display_type"/>
+                <field name="ab_stock_incoming_qty"
+                       string="Incoming"
+                       readonly="1"
+                       optional="show"
+                       invisible="display_type"/>
+                <field name="ab_stock_outgoing_qty"
+                       string="Outgoing"
+                       readonly="1"
+                       optional="show"
+                       invisible="display_type"/>
+                <field name="ab_stock_forecasted_qty"
+                       string="Forecasted"
+                       readonly="1"
+                       optional="show"
+                       invisible="display_type"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_ab_mark_delivered"
+                        string="Mark as Delivered"
+                        type="object"
+                        class="btn-primary"
+                        groups="sales_team.group_sale_manager"
+                        invisible="state != 'sale' or ab_call_center_delivery_status != 'warehouse_done' or ab_last_mile_status == 'delivered'"/>
+            </xpath>
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="ab_call_center_order_form" separator=" "/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//group[@name='sale_header']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <field name="ab_call_center_order_type" invisible="1"/>
+                <field name="ab_call_center_status" invisible="1"/>
+                <field name="ab_call_center_delivery_status" invisible="1"/>
+                <field name="ab_call_center_payment_status" invisible="1"/>
+                <field name="ab_last_mile_status" invisible="1"/>
+                <field name="ab_call_center_workspace_data"
+                       widget="ab_call_center_order_workspace"
+                       class="ab_cc_workspace_field"
+                       readonly="1"
+                       nolabel="1"/>
+                <group name="ab_call_center_coordination" class="ab_cc_coordination">
+                    <group string="Customer &amp; Delivery" name="ab_call_center_customer">
+                        <field name="partner_id"
+                               widget="res_partner_many2one"
+                               context="{'display_website': True, 'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
+                               placeholder="Type to find a customer..."
+                               readonly="state in ['cancel', 'sale']"/>
+                        <field name="partner_invoice_id"
+                               groups="account.group_delivery_invoice_address"
+                               options="{'no_quick_create': True}"
+                               context="{'default_type': 'invoice', 'show_address': False, 'show_vat': False, 'default_parent_id': partner_id}"
+                               readonly="state == 'cancel' or locked"/>
+                        <field name="partner_shipping_id"
+                               groups="account.group_delivery_invoice_address"
+                               options="{'no_quick_create': True}"
+                               context="{'default_type': 'delivery', 'show_address': True, 'show_vat': False, 'default_parent_id': partner_id}"
+                               readonly="state == 'cancel' or locked"/>
+                    </group>
+                    <group string="Order Coordination" name="ab_call_center_owner">
+                        <field name="user_id" widget="many2one_avatar_user"/>
+                        <field name="preferred_payment_method_line_id"/>
+                        <field name="date_order" readonly="state in ['cancel', 'sale']"/>
+                        <field name="commitment_date" readonly="state == 'cancel' or locked"/>
+                        <field name="ab_last_mile_status" readonly="1"/>
+                        <field name="ab_last_mile_delivered_date"
+                               readonly="1"
+                               invisible="ab_last_mile_status != 'delivered'"/>
+                        <field name="ab_last_mile_delivered_by_id"
+                               readonly="1"
+                               invisible="ab_last_mile_status != 'delivered'"/>
+                        <field name="website_id" groups="website.group_multi_website"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Payment" name="ab_call_center_payment" groups="account.group_account_invoice">
+                    <field name="transaction_ids" readonly="1" nolabel="1">
+                        <list create="0" edit="0" delete="0">
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="reference"/>
+                            <field name="payment_method_id"/>
+                            <field name="provider_id" optional="hide"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'done'"
+                                   decoration-info="state == 'authorized'"
+                                   decoration-warning="state in ('draft', 'pending')"
+                                   decoration-danger="state in ('cancel', 'error')"/>
+                            <field name="create_date"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Prescription"
+                      name="ab_call_center_prescription"
+                      invisible="ab_call_center_order_type != 'prescription'">
+                    <field name="ab_prescription_order_ids" readonly="1" nolabel="1">
+                        <list create="0" edit="0" delete="0">
+                            <field name="name"/>
+                            <field name="state" widget="badge"/>
+                            <field name="prescription_filename"/>
+                            <field name="customer_note"/>
+                            <field name="internal_note" optional="show"/>
+                            <field name="create_date"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="website_sale.action_orders_ecommerce" model="ir.actions.act_window">
+        <field name="name">Orders</field>
+        <field name="context">{'show_sale': True, 'search_default_ab_call_center_operational': 1, 'search_default_from_website': 1, 'ab_call_center_workspace': True}</field>
+        <field name="search_view_id" ref="view_sale_order_call_center_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">There are no pharmacy orders to coordinate.</p>
+        </field>
+    </record>
+
+    <record id="action_orders_ecommerce_call_center_list" model="ir.actions.act_window.view">
+        <field name="sequence" eval="1"/>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_sale_order_call_center_list"/>
+        <field name="act_window_id" ref="website_sale.action_orders_ecommerce"/>
+    </record>
+
+    <record id="action_orders_ecommerce_call_center_form" model="ir.actions.act_window.view">
+        <field name="sequence" eval="2"/>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_sale_order_call_center_form"/>
+        <field name="act_window_id" ref="website_sale.action_orders_ecommerce"/>
+    </record>
+</odoo>

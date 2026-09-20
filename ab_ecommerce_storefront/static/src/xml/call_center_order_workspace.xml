@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_storefront.CallCenterOrderWorkspace">
+        <section class="ab_cc_workspace" aria-labelledby="abCcOrderTitle">
+            <header class="ab_cc_identity">
+                <div class="ab_cc_identity_main">
+                    <span class="ab_cc_eyebrow">Call Center order workspace</span>
+                    <h1 id="abCcOrderTitle" t-esc="data.name || 'New'"/>
+                    <strong t-esc="data.customer?.name"/>
+                    <div class="ab_cc_badges">
+                        <span t-attf-class="ab_cc_badge ab_cc_badge--#{data.order_type?.value || 'normal'}"
+                              t-esc="data.order_type?.label"/>
+                        <span t-attf-class="ab_cc_badge ab_cc_badge--status-#{data.status?.value || 'received'}"
+                              t-esc="data.status?.label"/>
+                    </div>
+                </div>
+                <div class="ab_cc_identity_total">
+                    <span>Order total</span>
+                    <strong t-esc="data.total"/>
+                    <small t-esc="data.payment?.label"/>
+                </div>
+            </header>
+
+            <div class="ab_cc_relation" aria-label="Order operations relationship">
+                <div class="ab_cc_relation_node is-order">
+                    <span class="ab_cc_relation_icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M7 4h10v16H7z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                    </span>
+                    <div><small>Order</small><strong t-esc="data.name"/></div>
+                </div>
+                <span class="ab_cc_relation_arrow" aria-hidden="true">›</span>
+                <div t-attf-class="ab_cc_relation_node is-payment is-#{data.payment?.status || 'unpaid'}">
+                    <span class="ab_cc_relation_icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18M7 15h3"/></svg>
+                    </span>
+                    <div><small>Payment</small><strong t-esc="data.payment?.method"/><span t-esc="data.payment?.label"/></div>
+                </div>
+                <span class="ab_cc_relation_arrow" aria-hidden="true">›</span>
+                <button type="button"
+                        t-att-class="'ab_cc_relation_node is-delivery' + (data.delivery?.count &amp;&amp; data.delivery?.can_read ? ' is-actionable' : '')"
+                        t-att-disabled="!data.delivery?.count || !data.delivery?.can_read || state.loadingDelivery"
+                        t-on-click="openDeliveryQuickView"
+                        title="Open delivery quick view">
+                    <span class="ab_cc_relation_icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+                    </span>
+                    <div>
+                        <small>Delivery</small>
+                        <strong t-esc="data.delivery?.reference || data.delivery?.label"/>
+                        <span t-if="data.delivery?.count"><t t-esc="data.delivery.count"/> operation(s)</span>
+                        <span t-else="">Not created</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="ab_cc_body_grid">
+                <section class="ab_cc_journey" aria-labelledby="abCcJourneyTitle">
+                    <div class="ab_cc_section_head">
+                        <div>
+                            <span>Operational progress</span>
+                            <h2 id="abCcJourneyTitle">Order journey</h2>
+                        </div>
+                        <button t-if="data.delivery?.count &amp;&amp; data.delivery?.can_read"
+                                type="button"
+                                class="btn btn-outline-primary btn-sm"
+                                t-on-click="openDeliveryQuickView"
+                                t-att-disabled="state.loadingDelivery">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+                            <span>Delivery quick view</span>
+                        </button>
+                    </div>
+                    <ol class="ab_cc_timeline">
+                        <li t-foreach="data.timeline || []"
+                            t-as="step"
+                            t-key="step.key"
+                            t-attf-class="ab_cc_step is-#{step.state} #{step.gap ? 'has-gap' : ''}"
+                            t-att-aria-current="step.state === 'current' ? 'step' : undefined">
+                            <span class="ab_cc_step_icon" aria-hidden="true">
+                                <svg t-if="step.key === 'received'" viewBox="0 0 24 24"><path d="M7 4h10v16H7z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+                                <svg t-elif="step.key === 'confirmed'" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
+                                <svg t-elif="step.key === 'preparing'" viewBox="0 0 24 24"><path d="m4 8 8-4 8 4-8 4z"/><path d="M4 8v8l8 4 8-4V8M12 12v8"/></svg>
+                                <svg t-elif="['out_for_delivery', 'shipped', 'partially_shipped'].includes(step.key)" viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+                                <svg t-else="" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/><circle cx="12" cy="12" r="10"/></svg>
+                            </span>
+                            <div class="ab_cc_step_copy">
+                                <div>
+                                    <strong t-esc="step.label"/>
+                                    <span class="ab_cc_step_state">
+                                        <t t-if="step.state === 'complete'">Completed</t>
+                                        <t t-elif="step.state === 'current'">Current</t>
+                                        <t t-else="">Upcoming</t>
+                                    </span>
+                                </div>
+                                <p t-esc="step.description"/>
+                                <small t-if="step.detail" t-esc="step.detail"/>
+                                <small t-if="step.operation" class="ab_cc_step_operation" t-esc="step.operation"/>
+                                <button t-if="step.delivery_id"
+                                        type="button"
+                                        class="ab_cc_inline_action"
+                                        t-on-click="openDeliveryQuickView">
+                                    View delivery operation
+                                </button>
+                            </div>
+                        </li>
+                    </ol>
+                </section>
+
+                <aside class="ab_cc_side">
+                    <section class="ab_cc_panel" aria-labelledby="abCcCustomerTitle">
+                        <div class="ab_cc_section_head">
+                            <div><span>Contact details</span><h2 id="abCcCustomerTitle">Customer</h2></div>
+                        </div>
+                        <dl class="ab_cc_details">
+                            <div><dt>Name</dt><dd t-esc="data.customer?.name"/></div>
+                            <div t-if="data.customer?.phone">
+                                <dt>Phone</dt>
+                                <dd><a t-att-href="'tel:' + data.customer.phone" class="o_force_ltr" t-esc="data.customer.phone"/></dd>
+                            </div>
+                            <div t-if="data.customer?.email">
+                                <dt>Email</dt>
+                                <dd><a t-att-href="'mailto:' + data.customer.email" t-esc="data.customer.email"/></dd>
+                            </div>
+                            <div><dt>Delivery address</dt><dd t-esc="data.customer?.address || 'Not specified'"/></div>
+                            <div><dt>Responsible</dt><dd t-esc="data.responsible"/></div>
+                        </dl>
+                    </section>
+
+                    <section class="ab_cc_panel ab_cc_next" aria-labelledby="abCcNextTitle">
+                        <span class="ab_cc_panel_icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
+                        </span>
+                        <div><span>Next action</span><h2 id="abCcNextTitle" t-esc="data.next_action"/></div>
+                    </section>
+
+                    <section t-if="data.attention?.length" class="ab_cc_panel ab_cc_attention" aria-labelledby="abCcAttentionTitle">
+                        <div class="ab_cc_section_head">
+                            <div><span>Operational checks</span><h2 id="abCcAttentionTitle">Needs attention</h2></div>
+                        </div>
+                        <ul>
+                            <li t-foreach="data.attention" t-as="item" t-key="item.label" t-attf-class="is-#{item.level}">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                                <span t-esc="item.label"/>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <section t-if="data.prescription" class="ab_cc_panel ab_cc_prescription" aria-labelledby="abCcPrescriptionTitle">
+                        <img t-att-src="data.prescription.image_url" alt="Prescription preview"/>
+                        <div>
+                            <span>Prescription</span>
+                            <h2 id="abCcPrescriptionTitle" t-esc="data.prescription.name"/>
+                            <p t-esc="data.prescription.state"/>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </t>
+
+    <t t-name="ab_ecommerce_storefront.CallCenterDeliveryDialog">
+        <Dialog title="props.title" size="'xl'" contentClass="'ab_cc_delivery_dialog'">
+            <div class="ab_cc_delivery_shell">
+                <header>
+                    <div>
+                        <span>Sales Order</span>
+                        <strong t-esc="props.orderName"/>
+                    </div>
+                    <p>Delivery Orders execute the stock movement generated from this Sales Order.</p>
+                </header>
+                <div t-if="!props.deliveries.length" class="ab_cc_delivery_empty">
+                    No outgoing Delivery Order is available.
+                </div>
+                <article t-foreach="props.deliveries" t-as="delivery" t-key="delivery.id" class="ab_cc_delivery_record">
+                    <div class="ab_cc_delivery_title">
+                        <div>
+                            <span>Delivery Order</span>
+                            <h3 t-esc="delivery.name"/>
+                            <p><span>Source</span> <strong t-esc="delivery.source"/></p>
+                        </div>
+                        <span t-attf-class="ab_cc_delivery_status is-#{delivery.status_value}" t-esc="delivery.status"/>
+                    </div>
+                    <dl class="ab_cc_delivery_meta">
+                        <div><dt>Delivery address</dt><dd t-esc="delivery.address || 'Not specified'"/></div>
+                        <div><dt>Availability</dt><dd t-esc="delivery.availability"/></div>
+                        <div t-if="delivery.scheduled_date"><dt>Scheduled</dt><dd t-esc="delivery.scheduled_date"/></div>
+                    </dl>
+                    <section class="ab_cc_delivery_products" aria-label="Delivery products">
+                        <h4>Products</h4>
+                        <div t-foreach="delivery.products" t-as="product" t-key="product.id" class="ab_cc_delivery_product">
+                            <img t-att-src="product.image_url" t-att-alt="product.name"/>
+                            <strong t-esc="product.name"/>
+                            <span><t t-esc="product.quantity"/> <t t-esc="product.uom"/></span>
+                        </div>
+                    </section>
+                    <button type="button" class="btn btn-primary" t-on-click="() => this.openPicking(delivery.id)">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M14 7l5 5-5 5"/></svg>
+                        <span>Open Delivery Order</span>
+                    </button>
+                </article>
+            </div>
+            <t t-set-slot="footer">
+                <button type="button" class="btn btn-secondary" t-on-click="props.close">Close</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

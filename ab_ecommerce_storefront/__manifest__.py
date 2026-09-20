@@ -12,6 +12,7 @@
         "ab_website_sale_product",
         "mail",
         "portal",
+        "sale_stock",
         "website_sale_wishlist",
     ],
     "data": [
@@ -24,6 +25,7 @@
         "views/avatar.xml",
         "views/auth.xml",
         "views/prescription_order_views.xml",
+        "views/call_center_order_views.xml",
         "views/layout.xml",
         "views/contact_message_views.xml",
         "views/business_partnership_views.xml",
@@ -38,6 +40,11 @@
         "views/empty_states.xml",
     ],
     "assets": {
+        "web.assets_backend": [
+            "ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js",
+            "ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml",
+            "ab_ecommerce_storefront/static/src/scss/call_center_order_workspace.scss",
+        ],
         "web.assets_frontend": [
             "ab_ecommerce_storefront/static/src/js/hero_carousel.js",
             "ab_ecommerce_storefront/static/src/js/auth.js",
