@@ -92,8 +92,12 @@ msgstr "اتصل بالخط الساخن"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-msgid "Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt."
-msgstr "رعاية صيدلية موثوقة ومستلزمات صحية من صيدليات عابدين تصل إليك بثقة في أنحاء مصر."
+msgid ""
+"Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, "
+"delivered with confidence across Egypt."
+msgstr ""
+"رعاية صيدلية موثوقة ومستلزمات صحية من صيدليات عابدين تصل إليك بثقة في أنحاء "
+"مصر."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
@@ -157,8 +161,12 @@ msgstr "كل ما تحتاجه أسرتك من صيدلية تهتم بك."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Shop medicines, personal care, wellness essentials, and everyday healthcare products from Abdin Pharmacies."
-msgstr "تسوق الأدوية والعناية الشخصية ومستلزمات الصحة والمنتجات الصحية اليومية من صيدليات عابدين."
+msgid ""
+"Shop medicines, personal care, wellness essentials, and everyday healthcare "
+"products from Abdin Pharmacies."
+msgstr ""
+"تسوق الأدوية والعناية الشخصية ومستلزمات الصحة والمنتجات الصحية اليومية من "
+"صيدليات عابدين."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -374,8 +382,12 @@ msgstr "اختيارات بسيطة لأيام أكثر صحة وإشراقًا.
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Discover personal care, vitamins, wellness, and family essentials selected for everyday life."
-msgstr "اكتشف منتجات العناية الشخصية والفيتامينات والعافية واحتياجات الأسرة المختارة للحياة اليومية."
+msgid ""
+"Discover personal care, vitamins, wellness, and family essentials selected "
+"for everyday life."
+msgstr ""
+"اكتشف منتجات العناية الشخصية والفيتامينات والعافية واحتياجات الأسرة المختارة"
+" للحياة اليومية."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -394,7 +406,9 @@ msgstr "رعاية صحية موثوقة تصل إليك أينما كنت."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-msgid "Order your healthcare essentials online and let Abdin Pharmacies take care of the rest."
+msgid ""
+"Order your healthcare essentials online and let Abdin Pharmacies take care "
+"of the rest."
 msgstr "اطلب احتياجاتك الصحية عبر الإنترنت ودع صيدليات عابدين تتولى الباقي."
 
 #. module: ab_ecommerce_storefront
@@ -481,8 +495,7 @@ msgstr "<i class=\"fa fa-check-circle me-2\"/>منتجات أصلية"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid ""
 "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n"
-"                    <span><strong>Genuine products</strong><small>Carefully "
-"sourced</small></span>"
+"                    <span><strong>Genuine products</strong><small>Carefully sourced</small></span>"
 msgstr ""
 "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n"
 "                    <span><strong>منتجات أصلية</strong><small>مختارة بعناية</small></span>"
@@ -491,8 +504,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid ""
 "<i class=\"fa fa-headphones\" aria-hidden=\"true\"/>\n"
-"                    <span><strong>Need assistance?</strong><small>Call "
-"19036</small></span>"
+"                    <span><strong>Need assistance?</strong><small>Call 19036</small></span>"
 msgstr ""
 "<i class=\"fa fa-headphones\" aria-hidden=\"true\"/>\n"
 "                    <span><strong>تحتاج إلى مساعدة؟</strong><small>اتصل على 19036</small></span>"
@@ -797,6 +809,9 @@ msgid "Call hotline <span class=\"o_force_ltr\">19036</span>"
 msgstr "اتصل بالخط الساخن <span class=\"o_force_ltr\">19036</span>"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Close"
 msgstr "إغلاق"
@@ -852,6 +867,12 @@ msgstr "عرض كل المنتجات <i class=\"fa fa-arrow-right ms-1\"/>"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_website
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_id
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
@@ -862,8 +883,12 @@ msgstr "بانادول إكسترا أوبتيزورب | 24 قرصًا"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_panadol_extra
-msgid "Pack of 24 tablets. Use only as directed on the package and ask a pharmacist if needed."
-msgstr "عبوة من 24 قرصًا. يُستخدم فقط وفقًا لإرشادات العبوة مع استشارة الصيدلي عند الحاجة."
+msgid ""
+"Pack of 24 tablets. Use only as directed on the package and ask a pharmacist"
+" if needed."
+msgstr ""
+"عبوة من 24 قرصًا. يُستخدم فقط وفقًا لإرشادات العبوة مع استشارة الصيدلي عند "
+"الحاجة."
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,name:ab_ecommerce_storefront.product_brufen_400
@@ -872,8 +897,12 @@ msgstr "بروفين 400 مجم | 30 قرصًا"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_brufen_400
-msgid "Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a pharmacist when needed."
-msgstr "إيبوبروفين 400 مجم في عبوة من 30 قرصًا. يُستخدم فقط وفقًا للإرشادات مع استشارة الصيدلي عند الحاجة."
+msgid ""
+"Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a"
+" pharmacist when needed."
+msgstr ""
+"إيبوبروفين 400 مجم في عبوة من 30 قرصًا. يُستخدم فقط وفقًا للإرشادات مع "
+"استشارة الصيدلي عند الحاجة."
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,name:ab_ecommerce_storefront.product_limitless_man_max
@@ -882,7 +911,8 @@ msgstr "ليمتلس مان ماكس | 30 قرصًا"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_man_max
-msgid "Daily multivitamin and mineral supplement for men, supplied as 30 tablets."
+msgid ""
+"Daily multivitamin and mineral supplement for men, supplied as 30 tablets."
 msgstr "مكمل يومي متعدد الفيتامينات والمعادن للرجال، عبوة 30 قرصًا."
 
 #. module: ab_ecommerce_storefront
@@ -892,7 +922,8 @@ msgstr "ليمتلس وومان ماكس | 30 قرصًا"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_woman_max
-msgid "Daily multivitamin and mineral supplement for women, supplied as 30 tablets."
+msgid ""
+"Daily multivitamin and mineral supplement for women, supplied as 30 tablets."
 msgstr "مكمل يومي متعدد الفيتامينات والمعادن للسيدات، عبوة 30 قرصًا."
 
 #. module: ab_ecommerce_storefront
@@ -902,7 +933,8 @@ msgstr "إيفازلاين كريم لليدين باشن | 60 جم"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_evasline_hand_cream
-msgid "Passion-scented hand cream in a convenient 60 g tube for everyday hand care."
+msgid ""
+"Passion-scented hand cream in a convenient 60 g tube for everyday hand care."
 msgstr "كريم لليدين برائحة باشن في عبوة عملية 60 جم للعناية اليومية باليدين."
 
 #. module: ab_ecommerce_storefront
@@ -912,7 +944,8 @@ msgstr "سنسوداين معجون أسنان أوريجينال | 100 مل"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_sensodyne_original
-msgid "Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube."
+msgid ""
+"Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube."
 msgstr "معجون أسنان يومي بطعم أوريجينال للأسنان الحساسة في عبوة 100 مل."
 
 #. module: ab_ecommerce_storefront
@@ -922,8 +955,12 @@ msgstr "بيتادين محلول مطهر | 60 مل"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_betadine_60ml
-msgid "Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package directions."
-msgstr "محلول مطهر بوفيدون-يود في عبوة 60 مل. اتبع إرشادات الاستخدام المدونة على العبوة."
+msgid ""
+"Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package "
+"directions."
+msgstr ""
+"محلول مطهر بوفيدون-يود في عبوة 60 مل. اتبع إرشادات الاستخدام المدونة على "
+"العبوة."
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,name:ab_ecommerce_storefront.product_dettol_50ml
@@ -932,7 +969,9 @@ msgstr "ديتول سائل مطهر | 50 مل"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_dettol_50ml
-msgid "Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as directed."
+msgid ""
+"Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as "
+"directed."
 msgstr "سائل مطهر مركز في عبوة صغيرة 50 مل. يُخفف ويُستخدم وفقًا للإرشادات."
 
 #. module: ab_ecommerce_storefront
@@ -942,7 +981,8 @@ msgstr "أكيو-تشيك أكتيف جهاز قياس سكر الدم"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_accu_chek_active
-msgid "Compact blood glucose monitoring kit intended for convenient self-testing."
+msgid ""
+"Compact blood glucose monitoring kit intended for convenient self-testing."
 msgstr "جهاز مدمج لمتابعة سكر الدم ومخصص للقياس الذاتي بسهولة."
 
 #. module: ab_ecommerce_storefront
@@ -962,7 +1002,9 @@ msgstr "إيفا ماء ورد | 100 مل"
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_rose_water
-msgid "Rose water for a refreshing addition to a daily beauty routine, in a 100 ml bottle."
+msgid ""
+"Rose water for a refreshing addition to a daily beauty routine, in a 100 ml "
+"bottle."
 msgstr "ماء ورد لإضافة منعشة إلى روتين العناية اليومي في عبوة 100 مل."
 
 #. module: ab_ecommerce_storefront
@@ -992,7 +1034,8 @@ msgstr "جونسون نو مور تانجلز شامبو للأطفال | 500 م
 
 #. module: ab_ecommerce_storefront
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_johnsons_no_more_tangles
-msgid "Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
+msgid ""
+"Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
 msgstr "شامبو لطيف للأطفال يساعد على فك التشابك في عبوة عائلية 500 مل."
 
 #. module: ab_ecommerce_storefront
@@ -1014,6 +1057,7 @@ msgstr "إيزيس زنجبيل وقرفة أعشاب | 12 كيسًا"
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_ginger_cinnamon
 msgid "Warming ginger and cinnamon herbal infusion supplied as 12 tea bags."
 msgstr "مشروب أعشاب دافئ بالزنجبيل والقرفة في عبوة 12 كيسًا."
+
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "skin care"
@@ -1095,8 +1139,7 @@ msgstr ""
 msgid ""
 "Remove anything you do not want, or move it to Favorites to save it for "
 "later."
-msgstr ""
-"احذف أي منتج لا تريده، أو انقله إلى المفضلة للاحتفاظ به لوقت لاحق."
+msgstr "احذف أي منتج لا تريده، أو انقله إلى المفضلة للاحتفاظ به لوقت لاحق."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_line_move_to_wishlist
@@ -1139,8 +1182,12 @@ msgstr "ابدأ بإضافة منتجات الصيدلية التي تحتاج�
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_buy_now_guidance
-msgid "Buy now adds the selected product to your cart first. Checkout includes every item shown here."
-msgstr "زر اشتري الآن يضيف المنتج المحدد إلى عربتك أولًا. سيشمل إتمام الشراء كل المنتجات الظاهرة هنا."
+msgid ""
+"Buy now adds the selected product to your cart first. Checkout includes "
+"every item shown here."
+msgstr ""
+"زر اشتري الآن يضيف المنتج المحدد إلى عربتك أولًا. سيشمل إتمام الشراء كل "
+"المنتجات الظاهرة هنا."
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -1351,11 +1398,13 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "<option value=\"\">Select governorate</option>"
 msgstr "<option value=\"\">اختار المحافظة</option>"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid ""
 "<small class=\"form-text\">Include the street, building, floor, apartment, "
 "and a nearby landmark.</small>"
@@ -1502,10 +1551,14 @@ msgid "Cancel"
 msgstr "إلغاء"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__cancelled
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__cancelled
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 msgid "Cancelled"
-msgstr "تم الإلغاء"
+msgstr "ملغي"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -1520,6 +1573,7 @@ msgstr "اختر طريقة التوصيل المناسبة لطلبك"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "City"
 msgstr "المدينة"
 
@@ -1529,9 +1583,12 @@ msgid "Collect from a pickup point"
 msgstr "استلام من نقطة توصيل"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__completed
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Completed"
-msgstr "مكتمل"
+msgstr "مكتملة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
@@ -1558,7 +1615,7 @@ msgstr "الاستمرار في التسوق"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
 msgid "Continue to payment"
-msgstr "الانتقال إلى الدفع"
+msgstr "المتابعة إلى الدفع"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_navigation_actions_abdin_skin
@@ -1578,13 +1635,18 @@ msgid "Create prescription request"
 msgstr "إنشاء طلب روشتة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Current"
-msgstr "الحالة الحالية"
+msgstr "الحالية"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Customer"
 msgstr "العميل"
 
@@ -1600,6 +1662,9 @@ msgid "Customer instructions are shown here."
 msgstr "تظهر تعليمات العميل هنا."
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__delivered
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
@@ -1607,10 +1672,14 @@ msgid "Delivered"
 msgstr "تم التسليم"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_card_abdin_checkout_skin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_address_list_abdin_skin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Delivery address"
 msgstr "عنوان التوصيل"
 
@@ -1637,6 +1706,8 @@ msgstr "توصيل إلى عنوانك"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Detailed address"
 msgstr "العنوان بالتفصيل"
 
@@ -1658,6 +1729,10 @@ msgid "Edit delivery and billing address"
 msgstr "تعديل عنوان التوصيل والفوترة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__email
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__email_from
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Email"
@@ -1670,6 +1745,7 @@ msgstr "أدخل كود الخصم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Enter the details needed to reach your address."
 msgstr "اكتب بيانات كافية تساعد المندوب يوصل بسرعة."
 
@@ -1680,6 +1756,7 @@ msgstr "أدخل رقم الطلب ورقم الموبايل المستخدم ع
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Enter your city or area"
 msgstr "اكتب المدينة أو المنطقة"
 
@@ -1708,6 +1785,7 @@ msgstr "الاسم الكامل"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Governorate"
 msgstr "المحافظة"
 
@@ -1764,7 +1842,7 @@ msgstr "جديد"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "No payment required"
-msgstr "لا يوجد مبلغ مستحق"
+msgstr "لا يتطلب دفعًا"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -1785,13 +1863,13 @@ msgstr "تم إلغاء الطلب"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Order confirmed"
-msgstr "تم تأكيد طلبك"
+msgstr "تم تأكيد الطلب"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Order created"
-msgstr "تم استلام الطلب"
+msgstr "تم إنشاء الطلب"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
@@ -1825,6 +1903,9 @@ msgid "Out for Delivery"
 msgstr "خرج للتوصيل"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 msgid "Out for delivery"
 msgstr "خرج للتوصيل"
@@ -1833,13 +1914,13 @@ msgstr "خرج للتوصيل"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Partially shipped"
-msgstr "تم شحن جزء من الطلب"
+msgstr "تم الشحن جزئيًا"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Payment authorized"
-msgstr "تم تفويض الدفع"
+msgstr "تم التصريح بالدفع"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -1852,16 +1933,18 @@ msgstr "تم إلغاء الدفع"
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
 msgid "Payment failed"
-msgstr "تعذر إتمام الدفع"
+msgstr "فشل الدفع"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Payment initiated"
-msgstr "تم بدء الدفع"
+msgstr "بدأت عملية الدفع"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Payment method"
 msgstr "طريقة الدفع"
 
@@ -1876,7 +1959,7 @@ msgstr "<span>العودة إلى العنوان</span>"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Payment pending"
-msgstr "في انتظار الدفع"
+msgstr "الدفع قيد الانتظار"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -1929,15 +2012,19 @@ msgstr "جارٍ التجهيز"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Preparing order"
-msgstr "جاري تجهيز طلبك"
+msgstr "جاري تجهيز الطلب"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
 msgid "Prescription"
 msgstr "الروشتة"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_ab_prescription_order
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_order_type__prescription
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Prescription Order"
 msgstr "طلب روشتة"
@@ -1989,13 +2076,13 @@ msgstr "تعذر تنفيذ الطلب"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Return received"
-msgstr "تم استلام المرتجعات"
+msgstr "تم استلام المرتجع"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Returned items were received by the warehouse."
-msgstr "تم استلام المنتجات المرتجعة في المخزن."
+msgstr "استلم المخزن المنتجات المرتجعة."
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -2023,7 +2110,7 @@ msgstr "تم شحن طلبك"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Some items have been dispatched; others are still being prepared."
-msgstr "تم شحن بعض المنتجات وجارٍ تجهيز باقي الطلب."
+msgstr "تم صرف بعض المنتجات وما زال تجهيز المنتجات الأخرى جاريًا."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
@@ -2043,6 +2130,7 @@ msgstr "الحالة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Street, building, floor, apartment, and landmark"
 msgstr "الشارع، رقم المبنى، الدور، الشقة، وأي علامة مميزة"
 
@@ -2062,7 +2150,7 @@ msgstr "تؤكد خدمة العملاء تفاصيل الطلب معك."
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "The order is confirmed by Abdin Pharmacies."
-msgstr "تم تأكيد طلبك من صيدليات عابدين."
+msgstr "تم تأكيد الطلب من صيدليات عابدين."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2073,7 +2161,7 @@ msgstr "يتم تجهيز الطلب وتوصيله."
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "The payment could not be completed."
-msgstr "تعذر إتمام عملية الدفع."
+msgstr "تعذر إكمال عملية الدفع."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2144,9 +2232,11 @@ msgid "Under review"
 msgstr "جارٍ مراجعة الروشتة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Upcoming"
-msgstr "قادم"
+msgstr "قادمة"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -2192,8 +2282,9 @@ msgstr "تم استلام صورة الروشتة بنجاح."
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
-msgid "We received your order details."
-msgstr "تم استلام بيانات طلبك."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "We received your order details. We will contact you soon."
+msgstr "تم استلام بيانات طلبك. سيتم التواصل معك قريباً."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2250,7 +2341,7 @@ msgstr "تم تسليم طلبك بنجاح."
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "confirmed"
-msgstr "confirmed"
+msgstr "تم التأكيد"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
@@ -2261,13 +2352,13 @@ msgstr "example@email.com"
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "preparing"
-msgstr "preparing"
+msgstr "جاري التجهيز"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "shipped"
-msgstr "shipped"
+msgstr "تم الشحن"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
@@ -2281,7 +2372,10 @@ msgid "Home"
 msgstr "الرئيسية"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Order"
 msgstr "الطلب"
 
@@ -2355,18 +2449,22 @@ msgid "Copy"
 msgstr "نسخ"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_delivery_status
 msgid "Delivery"
 msgstr "التوصيل"
 
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__failed
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Failed"
 msgstr "فشل"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "Need help with this payment? Our customer support team is ready to help."
+msgid ""
+"Need help with this payment? Our customer support team is ready to help."
 msgstr "هل تحتاج إلى مساعدة في هذه الدفعة؟ فريق خدمة العملاء جاهز لمساعدتك."
 
 #. module: ab_ecommerce_storefront
@@ -2380,7 +2478,10 @@ msgid "Order confirmed, pay on delivery"
 msgstr "تم تأكيد الطلب والدفع عند الاستلام"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Order received"
 msgstr "تم استلام الطلب"
 
@@ -2395,7 +2496,11 @@ msgid "Paid amount"
 msgstr "المبلغ المدفوع"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_payment_status
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
 msgid "Payment"
 msgstr "الدفع"
 
@@ -2466,28 +2571,47 @@ msgstr "نحن نتابع طلبك حتى يصلك بأمان."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "We are still checking the latest payment update. You should receive confirmation shortly."
-msgstr "ما زلنا نتحقق من آخر تحديث لعملية الدفع. من المفترض أن يصلك التأكيد قريبًا."
+msgid ""
+"We are still checking the latest payment update. You should receive "
+"confirmation shortly."
+msgstr ""
+"ما زلنا نتحقق من آخر تحديث لعملية الدفع. من المفترض أن يصلك التأكيد قريبًا."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "We could not complete the payment. You can try again or choose another payment method."
-msgstr "تعذر إتمام عملية الدفع. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع أخرى."
+msgid ""
+"We could not complete the payment. You can try again or choose another "
+"payment method."
+msgstr ""
+"تعذر إتمام عملية الدفع. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع أخرى."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "We received the payment attempt, but it is still waiting for final confirmation. We will update your order status as soon as the review is complete."
-msgstr "تم استلام عملية الدفع، لكنها ما زالت بانتظار التأكيد النهائي. سنقوم بتحديث حالة طلبك بمجرد اكتمال المراجعة."
+msgid ""
+"We received the payment attempt, but it is still waiting for final "
+"confirmation. We will update your order status as soon as the review is "
+"complete."
+msgstr ""
+"تم استلام عملية الدفع، لكنها ما زالت بانتظار التأكيد النهائي. سنقوم بتحديث "
+"حالة طلبك بمجرد اكتمال المراجعة."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "Your order is secured with Abdin Pharmacy and will move through the normal order tracking flow."
-msgstr "تم تأمين طلبك مع صيدليات عبدين وسيتم متابعته من خلال مسار تتبع الطلب المعتاد."
+msgid ""
+"Your order is secured with Abdin Pharmacy and will move through the normal "
+"order tracking flow."
+msgstr ""
+"تم تأمين طلبك مع صيدليات عبدين وسيتم متابعته من خلال مسار تتبع الطلب "
+"المعتاد."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered."
-msgstr "تم استلام طلبك بنجاح. لم يتم تحصيل أي دفع إلكتروني؛ سيتم الدفع عند استلام الطلب."
+msgid ""
+"Your order has been received successfully. No online payment has been "
+"collected; you will pay when the order is delivered."
+msgstr ""
+"تم استلام طلبك بنجاح. لم يتم تحصيل أي دفع إلكتروني؛ سيتم الدفع عند استلام "
+"الطلب."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
@@ -2496,7 +2620,9 @@ msgstr "عملية الدفع قيد المتابعة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
-msgid "Your payment was processed successfully, and your order is now being prepared."
+msgid ""
+"Your payment was processed successfully, and your order is now being "
+"prepared."
 msgstr "تمت معالجة دفعتك بنجاح، وطلبك الآن قيد التجهيز."
 
 #. module: ab_ecommerce_storefront
@@ -2521,6 +2647,7 @@ msgstr "رقم الطلب"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Order Date"
 msgstr "تاريخ الطلب"
 
@@ -2636,6 +2763,7 @@ msgstr "الضريبة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Amount"
 msgstr "المبلغ"
 
@@ -2646,6 +2774,7 @@ msgstr "التقريب"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Total"
 msgstr "الإجمالي"
 
@@ -3269,9 +3398,12 @@ msgid "Partnership opportunities"
 msgstr "فرص الشراكة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__phone
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__phone
 msgid "Phone"
-msgstr "رقم الهاتف"
+msgstr "الهاتف"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
@@ -3337,10 +3469,14 @@ msgid "Representing a company or brand?"
 msgstr "هل تمثل شركة أو علامة تجارية؟"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__user_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Responsible"
-msgstr "المسؤول"
+msgstr "مسؤول المتابعة"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_user_id
@@ -3432,9 +3568,12 @@ msgid "Type of the exception activity on record."
 msgstr "نوع النشاط المستثنى في السجل."
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Unassigned"
-msgstr "بدون مسؤول"
+msgstr "غير مسند"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
@@ -3555,7 +3694,8 @@ msgid "Order summary"
 msgstr "ملخص الطلب"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 msgid "Order total"
 msgstr "إجمالي الطلب"
 
@@ -3630,3 +3770,743 @@ msgstr "خرج طلبك من الصيدلية وهو في الطريق إليك.
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Your order has been delivered."
 msgstr "تم تسليم طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_workspace_data
+msgid "Ab Call Center Workspace Data"
+msgstr "بيانات مساحة عمل مركز الاتصال"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__authorized
+msgid "Authorized"
+msgstr "مصرح به"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Availability"
+msgstr "التوفر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Call Center Order Workspace"
+msgstr "مساحة عمل طلبات مركز الاتصال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+msgid "Call Center Orders"
+msgstr "طلبات مركز الاتصال"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Call Center order workspace"
+msgstr "مساحة عمل طلبات مركز الاتصال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Cancelled Orders"
+msgstr "الطلبات الملغاة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__cash_on_delivery
+msgid "Cash on Delivery"
+msgstr "الدفع عند الاستلام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Confirmed Orders"
+msgstr "الطلبات المؤكدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Contact details"
+msgstr "بيانات التواصل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Contact the customer or retry payment using the native payment flow."
+msgstr "تواصل مع العميل أو أعد محاولة الدفع من خلال مسار الدفع الأساسي."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Continue monitoring the native delivery operation."
+msgstr "استمر في متابعة عملية التوصيل الأساسية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Courier handoff has not been recorded by an authoritative state."
+msgstr "لم يتم تسجيل تسليم الطلب للمندوب بحالة موثوقة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+msgid "Create Invoices"
+msgstr "إنشاء فواتير"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_status
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Current Status"
+msgstr "الحالة الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Customer & Delivery"
+msgstr "العميل والتوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Customer receipt requires a reliable delivery confirmation."
+msgstr "استلام العميل يتطلب تأكيد توصيل موثوقًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Delivery %(delivery)s — %(availability)s"
+msgstr "أمر التوصيل %(delivery)s — %(availability)s"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Delivery Not Started"
+msgstr "التوصيل لم يبدأ"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery Order"
+msgstr "أمر التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid ""
+"Delivery Orders execute the stock movement generated from this Sales Order."
+msgstr "تنفذ أوامر التوصيل حركة المخزون الناتجة عن أمر البيع هذا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Delivery Status"
+msgstr "حالة التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Delivery address is incomplete."
+msgstr "عنوان التوصيل غير مكتمل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Delivery details"
+msgstr "تفاصيل التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Delivery details could not be loaded."
+msgstr "تعذر تحميل تفاصيل التوصيل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery products"
+msgstr "منتجات التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery quick view"
+msgstr "عرض سريع للتوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Follow up product reservation with the warehouse team."
+msgstr "تابع حجز المنتجات مع فريق المخزن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Last-mile status is not configured"
+msgstr "حالة التوصيل للميل الأخير غير مهيأة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Needs attention"
+msgstr "يحتاج متابعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "New Orders"
+msgstr "طلبات جديدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Next action"
+msgstr "الخطوة التالية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "No outgoing Delivery Order is available."
+msgstr "لا يوجد أمر توصيل صادر متاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "No successful payment is recorded."
+msgstr "لا توجد عملية دفع ناجحة مسجلة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_order_type__normal
+msgid "Normal Order"
+msgstr "طلب عادي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Normal Orders"
+msgstr "طلبات عادية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Normal order"
+msgstr "طلب عادي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__not_required
+msgid "Not Required"
+msgstr "غير مطلوب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__not_started
+msgid "Not Started"
+msgstr "لم يبدأ"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not available"
+msgstr "غير متوفر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Not created"
+msgstr "لم يتم الإنشاء"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not specified"
+msgstr "غير محدد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not started"
+msgstr "لم يبدأ"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open Delivery Order"
+msgstr "فتح أمر التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Order Support Team"
+msgstr "فريق دعم الطلبات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open delivery quick view"
+msgstr "فتح العرض السريع للتوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Operational Orders"
+msgstr "الطلبات التشغيلية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Operational checks"
+msgstr "فحوصات التشغيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Operational progress"
+msgstr "التقدم التشغيلي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__cancelled
+msgid "Order Cancelled"
+msgstr "تم إلغاء الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__confirmed
+msgid "Order Confirmed"
+msgstr "تم تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Order Coordination"
+msgstr "تنسيق الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__received
+msgid "Order Received"
+msgstr "تم استلام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_order_type
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Order Type"
+msgstr "نوع الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Order journey"
+msgstr "رحلة الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Order operations relationship"
+msgstr "علاقة عمليات الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Order, Customer, Phone or Email"
+msgstr "الطلب أو العميل أو الهاتف أو البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__paid
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Paid"
+msgstr "مدفوع"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__partial
+msgid "Partially Processed"
+msgstr "تمت المعالجة جزئيًا"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Partially processed"
+msgstr "تمت المعالجة جزئيًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Failed"
+msgstr "فشل الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Pending"
+msgstr "الدفع قيد الانتظار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Status"
+msgstr "حالة الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment confirmation is pending."
+msgstr "تأكيد الدفع قيد الانتظار."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment failed and needs follow-up."
+msgstr "فشل الدفع ويحتاج إلى متابعة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Preparing Delivery"
+msgstr "تجهيز التوصيل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__preparing
+msgid "Preparing Order"
+msgstr "جاري تجهيز الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_ab_prescription_order
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_ab_prescription_order_root
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Prescription Orders"
+msgstr "طلبات الروشتات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Prescription order"
+msgstr "طلب روشتة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Prescription preview"
+msgstr "معاينة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Product availability needs review."
+msgstr "توفر المنتجات يحتاج إلى مراجعة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Products move through the native warehouse operation."
+msgstr "تتحرك المنتجات من خلال عملية المخزن الأساسية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__preparing
+msgid "Ready for Preparation"
+msgstr "جاهز للتجهيز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Ready for preparation"
+msgstr "جاهز للتجهيز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Record courier handoff in an authoritative last-mile workflow."
+msgstr "سجل تسليم الطلب للمندوب في مسار توصيل موثوق."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__return_received
+msgid "Return Received"
+msgstr "تم استلام المرتجع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review product availability with the warehouse team."
+msgstr "راجع توفر المنتجات مع فريق المخزن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the cancellation and any required customer follow-up."
+msgstr "راجع الإلغاء وأي متابعة مطلوبة مع العميل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the prescription and complete the order before confirmation."
+msgstr "راجع الروشتة وأكمل بيانات الطلب قبل التأكيد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model,name:ab_ecommerce_storefront.model_sale_order
+msgid "Sales Order"
+msgstr "أمر البيع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Scheduled"
+msgstr "الموعد المجدول"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The Sales Order is confirmed."
+msgstr "تم تأكيد أمر البيع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The customer request is recorded in Odoo."
+msgstr "تم تسجيل طلب العميل في أودو."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The warehouse can prepare the reserved products."
+msgstr "يمكن للمخزن تجهيز المنتجات المحجوزة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Type to find a customer..."
+msgstr "اكتب للبحث عن عميل..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__unpaid
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Unpaid"
+msgstr "غير مدفوع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Verify customer and order details, then confirm the Sales Order."
+msgstr "تحقق من بيانات العميل والطلب، ثم أكد أمر البيع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "View delivery operation"
+msgstr "عرض عملية التوصيل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Wait for the native Delivery Order to be created."
+msgstr "انتظر إنشاء أمر التوصيل الأساسي."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__waiting_stock
+msgid "Waiting for Stock"
+msgstr "في انتظار المخزون"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for a delivery operation."
+msgstr "في انتظار إنشاء عملية توصيل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for another operation"
+msgstr "في انتظار عملية أخرى"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for stock"
+msgstr "في انتظار المخزون"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__warehouse_done
+msgid "Warehouse Dispatch Completed"
+msgstr "اكتملت عملية الصرف من المخزن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Warehouse Processed"
+msgstr "تمت معالجة المخزن"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__warehouse_done
+msgid "Warehouse Transfer Completed"
+msgstr "اكتملت حركة المخزن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse dispatch completed"
+msgstr "اكتملت عملية الصرف من المخزن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse processing is complete, but courier handoff is not recorded."
+msgstr "اكتملت معالجة المخزن، لكن تسليم الطلب للمندوب غير مسجل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse transfer completed"
+msgstr "اكتملت حركة المخزن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "delivered"
+msgstr "تم التسليم"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "operation(s)"
+msgstr "عملية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your delivery address."
+msgstr "من فضلك اكتب عنوان التوصيل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your city or area."
+msgstr "من فضلك اكتب المدينة أو المنطقة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please select your governorate."
+msgstr "من فضلك اختار المحافظة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<span>Payment method</span>"
+msgstr "<span>طريقة الدفع</span>"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__payment_method_id
+msgid "Preferred Payment Method"
+msgstr "طريقة الدفع المختارة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Cash on delivery is temporarily unavailable. Please try again later."
+msgstr "الدفع عند الاستلام غير متاح مؤقتاً. من فضلك حاول مرة أخرى لاحقاً."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment method assigned automatically: %(method)s"
+msgstr "تم تحديد طريقة الدفع تلقائياً: %(method)s"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "Order number copied"
+msgstr "تم نسخ رقم الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "Payment reference copied"
+msgstr "تم نسخ مرجع الدفع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "The order number is ready to paste."
+msgstr "رقم الطلب جاهز للصق."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "The payment reference is ready to paste."
+msgstr "مرجع الدفع جاهز للصق."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "Reviewing prescription"
+msgstr "جارٍ مراجعة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The Call Center team will contact you to confirm the order details."
+msgstr "سيتواصل معك فريق خدمة العملاء لتأكيد تفاصيل الطلب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The pharmacy team is reviewing the prescription."
+msgstr "يقوم فريق الصيدلية بمراجعة الروشتة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The customer prescription image was received successfully."
+msgstr "تم استلام صورة الروشتة من العميل بنجاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the prescription image and identify the required products before contacting the customer."
+msgstr "راجع صورة الروشتة وحدد المنتجات المطلوبة قبل التواصل مع العميل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Contact the customer to confirm order details, delivery address, and payment method."
+msgstr "تواصل مع العميل لتأكيد تفاصيل الطلب وعنوان التوصيل وطريقة الدفع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order is confirmed. Follow preparation with the pharmacy team."
+msgstr "تم تأكيد الطلب. تابع التجهيز مع فريق الصيدلية."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Products are reserved for preparation. Follow the delivery operation status."
+msgstr "تم حجز المنتجات للتجهيز. تابع حالة أمر التوصيل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order has left the pharmacy for delivery. Follow up with the courier if needed."
+msgstr "خرج الطلب من الصيدلية للتوصيل. تابع مع المندوب عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order cycle is closed after customer delivery."
+msgstr "تم إغلاق دورة الطلب بعد التسليم للعميل."

@@ -13,7 +13,7 @@
         <xpath expr="//div[hasclass('o_total_card')]" position="attributes">
             <attribute name="class" add="ab-storefront-order-summary-card" separator=" "/>
         </xpath>
-        <xpath expr="//div[hasclass('o_cta_navigation_container')]/t[@t-call='website_sale.navigation_buttons']" position="before">
+        <xpath expr="//div[hasclass('o_cta_navigation_container')]/t[@t-call='website_sale.navigation_buttons']" position="after">
             <a t-if="request.httprequest.path == '/shop/payment'"
                href="/shop/checkout"
                class="ab-storefront-payment-address-link">
@@ -102,6 +102,12 @@
         <xpath expr="//div[@name='o_wsale_cart_line_button_container_mobile']" position="attributes">
             <attribute name="class" add="ab-storefront-cart-item-actions-mobile" separator=" "/>
         </xpath>
+        <xpath expr="//div[hasclass('d-none') and hasclass('d-md-block') and hasclass('mt-2')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-quantity-slot" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@name='o_wsale_cart_line_button_container_mobile']/div[hasclass('me-auto')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-quantity-slot" separator=" "/>
+        </xpath>
         <xpath expr="//a[hasclass('js_delete_product')]" position="attributes">
             <attribute name="class" add="ab-storefront-cart-remove" separator=" "/>
         </xpath>
@@ -113,6 +119,9 @@
 
     <template id="cart_navigation_actions_abdin_skin" inherit_id="website_sale.shorter_cart_summary" name="Abdin Cart Navigation Actions Skin">
         <xpath expr="//t[@t-call='website_sale.navigation_buttons']" position="before">
+            <t t-set="_container_classes" t-valuef="ab-storefront-cart-actions o_cta_navigation_container"/>
+        </xpath>
+        <xpath expr="//t[@t-call='website_sale.navigation_buttons']" position="after">
             <a t-if="request.httprequest.path == '/shop/payment'"
                href="/shop/checkout"
                class="ab-storefront-payment-address-link">
@@ -120,7 +129,6 @@
                 <span t-if="request.lang.code in ('ar', 'ar_001')">العودة إلى العنوان</span>
                 <span t-else="">Back to address</span>
             </a>
-            <t t-set="_container_classes" t-valuef="ab-storefront-cart-actions o_cta_navigation_container"/>
         </xpath>
     </template>
 
@@ -157,7 +165,12 @@
             <header class="ab-storefront-delivery-step-head">
                 <span>Checkout</span>
                 <h4>Delivery method</h4>
-                <p>Choose a delivery method for your order</p>
+                <p t-if="request.lang.code in ('ar', 'ar_001')">
+                    اختر طريقة التوصيل المناسبة لطلبك
+                </p>
+                <p t-else="">
+                    Choose the delivery method that suits your order
+                </p>
             </header>
         </xpath>
         <xpath expr="//ul[@id='o_delivery_methods']" position="attributes">
@@ -197,7 +210,6 @@
                         <small t-else="">Collect from a pickup point</small>
                     </span>
                     <span class="o_wsale_delivery_price_badge ab-storefront-delivery-price text-muted" name="price">
-                        <small>Select to compute delivery rate</small>
                     </span>
                 </label>
             </div>
@@ -684,11 +696,46 @@
     </template>
 
     <template id="cart_quantity_abdin_skin" inherit_id="website_sale.cart_lines_quantity" name="Abdin Cart Quantity Skin">
+        <xpath expr="//div[contains(@t-attf-class, 'css_quantity')]" position="before">
+            <t t-set="ab_stock_warning" t-value="line._get_shop_warning(clear=False)"/>
+        </xpath>
         <xpath expr="//div[contains(@t-attf-class, 'css_quantity')]" position="attributes">
             <attribute name="t-attf-class" add="ab-storefront-cart-quantity" separator=" "/>
         </xpath>
         <xpath expr="//input[hasclass('js_quantity')]" position="attributes">
             <attribute name="class" add="ab-storefront-cart-quantity-input" separator=" "/>
+            <attribute name="t-att-aria-describedby">ab_stock_warning and 'ab_stock_helper_%s' % line.id or None</attribute>
+        </xpath>
+        <xpath expr="//a[i[hasclass('oi-minus')]]" position="attributes">
+            <attribute name="t-attf-class" add="#{line._get_displayed_quantity() &lt;= 1 and 'ab-storefront-cart-removes-line' or ''}" separator=" "/>
+            <attribute name="t-att-aria-label">line._get_displayed_quantity() &lt;= 1 and 'Remove from cart' or 'Remove one'</attribute>
+            <attribute name="t-att-title">line._get_displayed_quantity() &lt;= 1 and 'Remove from cart' or 'Remove one'</attribute>
+        </xpath>
+        <xpath expr="//i[hasclass('oi-minus')]" position="after">
+            <i class="fa fa-trash-o ab-storefront-cart-trash-icon" aria-hidden="true"/>
+        </xpath>
+        <xpath expr="//t[@t-if='line._get_shop_warning(clear=False)']/a" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-stock-indicator" separator=" "/>
+            <attribute name="aria-label">Stock quantity adjusted</attribute>
+        </xpath>
+        <xpath expr="//i[hasclass('fa-warning')]" position="attributes">
+            <attribute name="class" add="ab-storefront-cart-stock-icon" separator=" "/>
+        </xpath>
+        <xpath expr="//div[contains(@t-attf-class, 'css_quantity')]" position="after">
+            <div t-if="ab_stock_warning"
+                 t-att-id="'ab_stock_helper_%s' % line.id"
+                 class="ab-storefront-cart-stock-helper"
+                 role="status">
+                <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
+                <span t-if="env.context.get('lang') in ('ar', 'ar_001')">
+                    الحد الأقصى المتاح:
+                    <strong t-out="line._get_displayed_quantity()"/>
+                </span>
+                <span t-else="">
+                    Max available:
+                    <strong t-out="line._get_displayed_quantity()"/>
+                </span>
+            </div>
         </xpath>
     </template>
 

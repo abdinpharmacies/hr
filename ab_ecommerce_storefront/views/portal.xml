@@ -242,7 +242,7 @@
                                 <strong t-out="sale_order.name"/>
                             </h1>
                             <p t-if="current_step" t-out="current_step['description']"/>
-                            <p t-else="">We received your order details.</p>
+                            <p t-else="">We received your order details. We will contact you soon.</p>
                         </div>
                         <div class="ab-order-status-card">
                             <span t-attf-class="ab-order-status-icon is-#{current_step and current_step['state'] or 'current'}" aria-hidden="true">
@@ -817,8 +817,17 @@
                                         </div>
                                         <div t-if="order">
                                             <dt>Order number</dt>
-                                            <dd>
-                                                <code t-out="order.name"/>
+                                            <dd class="ab-payment-order-number">
+                                                <span class="ab-payment-order-code">
+                                                    <code t-out="order.name"/>
+                                                    <button type="button"
+                                                            class="ab-payment-copy ab-payment-order-copy"
+                                                            t-att-data-ab-copy-value="order.name"
+                                                            aria-label="Copy order number">
+                                                        <i class="fa fa-copy" aria-hidden="true"/>
+                                                        <span class="visually-hidden">Copy</span>
+                                                    </button>
+                                                </span>
                                             </dd>
                                         </div>
                                         <div t-if="not is_cod">

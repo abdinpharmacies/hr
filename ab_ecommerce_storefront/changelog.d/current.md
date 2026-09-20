@@ -46,6 +46,7 @@ Current changes before commit:
 - Verify guest tracking using the reference and normalized mobile number, limited to the current website/company, with session attempt limits and private responses.
 - Let guests upload prescriptions without registration; never associate an unverified phone with an existing customer.
 - Keep prescription submission as a request. Staff can create an idempotent native quotation after review or link an existing matching customer/company/website order.
+- Keep prescription-linked admin and customer timelines on the same seven-step structure and the same customer-facing milestone copy.
 - Protect internal notes at field level, prevent portal-created workflow records, enforce company access, and validate private image contents.
 - Share one accessible vertical tracking timeline across prescription details, native order details, and confirmation.
 - Derive order status from sale.order, payment status from the native transaction/provider, preparation from reserved outgoing transfers, dispatch from completed outgoing transfers, and returns from completed customer return moves.
@@ -54,12 +55,15 @@ Current changes before commit:
 - Restore the simplified header and delivery UI, keep existing sticky/support behavior, and prioritize tracking above the order sidebar on mobile.
 - Restore the storefront header markup and sticky behavior back to the `origin/e_commerce` baseline, including the green announcement strip, location selector, wishlist, language controls, and the header Track order link requested afterward.
 - Move the payment-step Back to address action out from under the Pay Now button and show it as a compact link under the order summary on desktop and mobile.
+- Align the cart quantity trash icon visually with the quantity controls when the minus action removes the line.
 - Limit the `/shop/payment` UI change to the payment-method selection section only, keeping the surrounding checkout layout, header, stepper, address area, order summary, and native payment CTA behavior in place.
 - Render native Odoo payment methods as clean selectable cards with real provider/method images, radio semantics, and preserved Odoo data attributes, inline forms, submit buttons, and transaction routes.
 - Redesign the Odoo payment status page as a focused Abdin payment confirmation experience with status-aware success, pending, and failure messaging.
 - Treat Cash on Delivery as its own customer-facing payment status: the order is received, no online payment has been collected, and payment is due on delivery.
 - Preserve the native `/payment/status` polling container and `/shop/payment/validate` landing-route behavior while replacing the customer-facing "Skip" action with appropriate checkout CTAs.
 - Add compact checkout progress, payment summary, next-step reassurance, support actions, and copy-to-clipboard feedback for payment references.
+- Show the reusable storefront action toast after copying the order number or payment reference from the payment status summary.
+- Update the received-order status copy to reassure customers that the team will contact them soon.
 - Redesign the native Odoo sale order PDF into an Abdin-branded order confirmation with the configured website/company logo, Arabic RTL layout, customer/order/delivery sections, structured product rows, shipping treatment, totals summary, payment terms, terms link, and compact support footer.
 - Add sale report presentation helpers for clean SKU, product name, description, tax-label, terms-link, and discount display without changing sale order, tax, delivery, payment, or accounting calculations.
 - Bind the sale order PDF to an Abdin A4 paper format with tighter print margins so the redesigned layout prints without the default Odoo header whitespace.
@@ -67,6 +71,7 @@ Current changes before commit:
 - Preserve native sale order workflow, payment/sign modals, PDF detail link, invoice portal links, product quantities, prices, taxes, totals, access tokens, and portal chatter behavior while changing only presentation.
 - Hide the raw Odoo breadcrumb/payment banner for storefront sale orders and keep the fallback native portal presentation for non-storefront orders.
 - Add Out for delivery and Delivered as customer-facing order journey milestones while keeping the existing warehouse dispatch signal as the last confirmed backend state.
+- Close the customer-facing order journey visually when the admin marks the order as delivered, so the Delivered step renders as completed instead of current.
 - Increase the status hero check icon responsively so the current order state is easier to read on mobile and desktop.
 - Maintain English source text with Arabic translations in both PO files and merge relevant exported entries into the existing POT used by Odoo during import.
 

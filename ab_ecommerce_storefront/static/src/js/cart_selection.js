@@ -13,6 +13,7 @@ let wishlistSyncPromise = null;
 let wishlistStateLoaded = false;
 let cartViewportFrame = null;
 let cartViewportBottom = -1;
+let cartNoticeToastTimer = null;
 
 function getProductId(button) {
     const value = Number.parseInt(button?.dataset?.productProductId || "0", 10);
@@ -168,15 +169,115 @@ function setQuantityMinusState(minus, value) {
     minus.setAttribute("title", removesLine ? _t("Remove from cart") : _t("Remove one"));
 }
 
+function isArabicPage() {
+    const lang = document.documentElement.lang || "";
+    return lang.startsWith("ar");
+}
+
+function getMaxQuantity(input) {
+    const max = Number.parseFloat(input?.dataset?.max || input?.getAttribute("max") || "");
+    return Number.isFinite(max) ? max : Infinity;
+}
+
+function getQuantityMaxLabel() {
+    return isArabicPage() ? "وصلت للحد الأقصى المتاح" : _t("Maximum available quantity selected");
+}
+
+function getCartLineProductName(input) {
+    const line = input?.closest(LINE_SELECTOR);
+    return line?.querySelector(".ab-storefront-cart-item-title")?.textContent?.trim()
+        || line?.querySelector("[name='o_cart_line_product_link']")?.textContent?.trim()
+        || "";
+}
+
+function getQuantityMaxMessage(input) {
+    const value = input?.value || "";
+    const productName = getCartLineProductName(input);
+    if (isArabicPage()) {
+        return productName
+            ? `وصلت للحد المتاح لهذا المنتج: ${productName}. الكمية المتوفرة: ${value}`
+            : `وصلت للحد المتاح لهذا المنتج. الكمية المتوفرة: ${value}`;
+    }
+    return productName
+        ? _t("You reached the available limit for %s. Available quantity: %s", productName, value)
+        : _t("You reached the available limit. Available quantity: %s", value);
+}
+
+function showCartNoticeToast({
+    title,
+    message,
+    variant = "stock",
+    icon = "fa-exclamation-triangle",
+    actionIcon = "fa-check",
+}) {
+    document.querySelector(".ab-storefront-cart-notice-toast")?.remove();
+    window.clearTimeout(cartNoticeToastTimer);
+
+    const toast = document.createElement("div");
+    toast.className = `ab-storefront-action-toast ab-storefront-action-toast-${variant} ab-storefront-cart-notice-toast`;
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
+
+    const media = document.createElement("span");
+    media.className = "ab-storefront-action-toast-media";
+
+    const iconWrap = document.createElement("span");
+    iconWrap.className = "ab-storefront-action-toast-icon";
+    const iconEl = document.createElement("i");
+    iconEl.className = `fa ${icon}`;
+    iconEl.setAttribute("aria-hidden", "true");
+    iconWrap.appendChild(iconEl);
+    media.appendChild(iconWrap);
+
+    const copy = document.createElement("span");
+    copy.className = "ab-storefront-action-toast-copy";
+    const titleEl = document.createElement("strong");
+    titleEl.textContent = title;
+    const messageEl = document.createElement("small");
+    messageEl.textContent = message;
+    copy.append(titleEl, messageEl);
+
+    const check = document.createElement("span");
+    check.className = "ab-storefront-action-toast-check";
+    check.innerHTML = `<i class="fa ${actionIcon}" aria-hidden="true"></i>`;
+
+    toast.append(media, copy, check);
+    document.body.appendChild(toast);
+    window.requestAnimationFrame(() => toast.classList.add("is-visible"));
+    cartNoticeToastTimer = window.setTimeout(() => {
+        toast.classList.remove("is-visible");
+        window.setTimeout(() => toast.remove(), 260);
+    }, 2600);
+}
+
+function isQuantityAtMax(input) {
+    const value = Number.parseFloat(input?.value || "0");
+    const max = getMaxQuantity(input);
+    return Number.isFinite(value) && Number.isFinite(max) && value >= max;
+}
+
+function setQuantityPlusState(plus, input) {
+    if (!plus) return;
+    const atMax = isQuantityAtMax(input);
+    plus.classList.toggle("ab-storefront-cart-plus-max", atMax);
+    plus.setAttribute("aria-disabled", atMax ? "true" : "false");
+    plus.setAttribute("aria-label", atMax ? getQuantityMaxLabel() : _t("Add one"));
+    plus.setAttribute("title", atMax ? getQuantityMaxLabel() : _t("Add one"));
+}
+
 function updateQuantityIcons(root = document) {
     root.querySelectorAll(`${LINE_SELECTOR} .css_quantity`).forEach((quantity) => {
         const input = quantity.querySelector("input.js_quantity");
         const minus = [...quantity.querySelectorAll("a")].find((button) =>
             button.querySelector(".oi-minus")
         );
-        if (!input || !minus) return;
+        const plus = [...quantity.querySelectorAll("a")].find((button) =>
+            button.querySelector(".oi-plus")
+        );
+        if (!input) return;
         const value = Number.parseFloat(input.value || "0");
         setQuantityMinusState(minus, value);
+        setQuantityPlusState(plus, input);
     });
 }
 
@@ -359,6 +460,26 @@ document.addEventListener("input", (event) => {
     updateSelectedSummary();
     scheduleCartRebindAfterOdooUpdate();
 });
+
+document.addEventListener("click", (event) => {
+    const plusButton = event.target.closest(`${LINE_SELECTOR} .css_quantity .btn`);
+    if (!plusButton?.querySelector(".oi-plus")) return;
+    const input = plusButton.closest(".css_quantity")?.querySelector("input.js_quantity");
+    if (!isQuantityAtMax(input)) return;
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+    plusButton.classList.add("ab-storefront-cart-plus-max-pulse");
+    window.setTimeout(() => plusButton.classList.remove("ab-storefront-cart-plus-max-pulse"), 420);
+    setQuantityPlusState(plusButton, input);
+    if (window.matchMedia("(max-width: 767.98px)").matches) {
+        showCartNoticeToast({
+            title: getQuantityMaxLabel(),
+            message: getQuantityMaxMessage(input),
+            actionIcon: "fa-info",
+        });
+    }
+}, true);
 
 document.addEventListener("click", (event) => {
     const quantityButton = event.target.closest(`${LINE_SELECTOR} .css_quantity .btn`);

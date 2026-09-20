@@ -1178,7 +1178,9 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__cancelled
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__cancelled
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 msgid "Cancelled"
 msgstr ""
@@ -1237,6 +1239,8 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Close"
@@ -1389,8 +1393,11 @@ msgid "Current offers"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Customer"
 msgstr ""
 
@@ -1473,6 +1480,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__delivered
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
@@ -1493,6 +1501,8 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Detailed address"
 msgstr ""
 
@@ -2166,6 +2176,8 @@ msgid "My orders"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__name
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
@@ -2319,7 +2331,10 @@ msgid "Oral and Dental Care"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Order"
 msgstr ""
 
@@ -2376,6 +2391,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_state_label
 msgid "Out for delivery"
 msgstr ""
@@ -2582,7 +2598,10 @@ msgid "Preparing"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
 msgid "Prescription"
 msgstr ""
 
@@ -2603,6 +2622,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_ab_prescription_order
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_order_type__prescription
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Prescription Order"
 msgstr ""
@@ -2612,6 +2632,7 @@ msgstr ""
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_ab_prescription_order_root
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_list
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
 msgid "Prescription Orders"
 msgstr ""
 
@@ -2790,6 +2811,8 @@ msgid "Sale Order"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model,name:ab_ecommerce_storefront.model_sale_order
 msgid "Sales Order"
 msgstr ""
@@ -3421,9 +3444,12 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_website
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
 msgid "Website"
 msgstr ""
 
@@ -3777,11 +3803,13 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "<option value=\"\">Select governorate</option>"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid ""
 "<small class=\"form-text\">Include the street, building, floor, apartment, "
 "and a nearby landmark.</small>"
@@ -3864,6 +3892,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "City"
 msgstr ""
 
@@ -3873,8 +3902,10 @@ msgid "Collect from a pickup point"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__completed
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Completed"
 msgstr ""
 
@@ -3918,6 +3949,8 @@ msgid "Create Quotation"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Current"
 msgstr ""
@@ -3929,10 +3962,14 @@ msgid "Customer information"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_card_abdin_checkout_skin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.delivery_address_list_abdin_skin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_address_card_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Delivery address"
 msgstr ""
 
@@ -3968,9 +4005,12 @@ msgid "Edit delivery and billing address"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__email
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__email_from
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__email
 msgid "Email"
 msgstr ""
 
@@ -3981,6 +4021,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Enter the details needed to reach your address."
 msgstr ""
 
@@ -3991,6 +4032,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Enter your city or area"
 msgstr ""
 
@@ -4019,6 +4061,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Governorate"
 msgstr ""
 
@@ -4119,6 +4162,8 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Payment method"
 msgstr ""
 
@@ -4198,6 +4243,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Street, building, floor, apartment, and landmark"
 msgstr ""
 
@@ -4244,6 +4290,8 @@ msgid "Track your order"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "Upcoming"
 msgstr ""
@@ -4262,7 +4310,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
-msgid "We received your order details."
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "We received your order details. We will contact you soon."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -4372,11 +4421,14 @@ msgid "Copy"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_delivery_status
 msgid "Delivery"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__failed
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Failed"
 msgstr ""
@@ -4398,7 +4450,10 @@ msgid "Order confirmed, pay on delivery"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 msgid "Order received"
 msgstr ""
 
@@ -4413,7 +4468,11 @@ msgid "Paid amount"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_payment_status
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
 msgid "Payment"
 msgstr ""
 
@@ -4619,6 +4678,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Order Date"
 msgstr ""
 
@@ -4719,6 +4779,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Amount"
 msgstr ""
 
@@ -4729,6 +4790,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
 msgid "Total"
 msgstr ""
 
@@ -5082,7 +5144,10 @@ msgid "Partnership opportunities"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__phone
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__phone
 msgid "Phone"
 msgstr ""
 
@@ -5144,8 +5209,12 @@ msgid "Representing a company or brand?"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__user_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Responsible"
 msgstr ""
 
@@ -5200,7 +5269,10 @@ msgid "The website must belong to the inquiry company."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Unassigned"
 msgstr ""
 
@@ -5302,7 +5374,8 @@ msgid "Order summary"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 msgid "Order total"
 msgstr ""
 
@@ -5376,4 +5449,713 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Your order has been delivered."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_workspace_data
+msgid "Ab Call Center Workspace Data"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__authorized
+msgid "Authorized"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Availability"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Call Center Order Workspace"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+msgid "Call Center Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Call Center order workspace"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Cancelled Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__cash_on_delivery
+msgid "Cash on Delivery"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Confirmed Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Contact details"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Contact the customer or retry payment using the native payment flow."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Continue monitoring the native delivery operation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Courier handoff has not been recorded by an authoritative state."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+msgid "Create Invoices"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_status
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Current Status"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Customer & Delivery"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Customer receipt requires a reliable delivery confirmation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Delivery %(delivery)s — %(availability)s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Delivery Not Started"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery Order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid ""
+"Delivery Orders execute the stock movement generated from this Sales Order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Delivery Status"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Delivery address is incomplete."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Delivery details"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+msgid "Delivery details could not be loaded."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Delivery quick view"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Draft"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Follow up product reservation with the warehouse team."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Last-mile status is not configured"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Needs attention"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "New Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Next action"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "No outgoing Delivery Order is available."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "No successful payment is recorded."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_order_type__normal
+msgid "Normal Order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Normal Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Normal order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__not_required
+msgid "Not Required"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__not_started
+msgid "Not Started"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not available"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Not created"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not specified"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Not started"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open Delivery Order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open delivery quick view"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Operational Orders"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Operational checks"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Operational progress"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__cancelled
+msgid "Order Cancelled"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__confirmed
+msgid "Order Confirmed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Order Coordination"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__received
+msgid "Order Received"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_call_center_order_type
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Order Type"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Order journey"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Order operations relationship"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Order, Customer, Phone or Email"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__paid
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Paid"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__partial
+msgid "Partially Processed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Partially processed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Failed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Pending"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Payment Status"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment confirmation is pending."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment failed and needs follow-up."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__pending
+msgid "Pending"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Preparing Delivery"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__preparing
+msgid "Preparing Order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Prescription order"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Prescription preview"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Product availability needs review."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Products move through the native warehouse operation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Ready"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__preparing
+msgid "Ready for Preparation"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Ready for preparation"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Record courier handoff in an authoritative last-mile workflow."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__return_received
+msgid "Return Received"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review product availability with the warehouse team."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the cancellation and any required customer follow-up."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the prescription and complete the order before confirmation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Scheduled"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Source"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The Sales Order is confirmed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The customer request is recorded in Odoo."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The warehouse can prepare the reserved products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Type to find a customer..."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__unpaid
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Unpaid"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Verify customer and order details, then confirm the Sales Order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "View delivery operation"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Wait for the native Delivery Order to be created."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__waiting_stock
+msgid "Waiting for Stock"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for a delivery operation."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for another operation"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Waiting for stock"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_status__warehouse_done
+msgid "Warehouse Dispatch Completed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Warehouse Processed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_delivery_status__warehouse_done
+msgid "Warehouse Transfer Completed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse dispatch completed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse processing is complete, but courier handoff is not recorded."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Warehouse transfer completed"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "delivered"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "operation(s)"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your delivery address."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please enter your city or area."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Please select your governorate."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_prescription
+msgid "<span>Payment method</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__payment_method_id
+msgid "Preferred Payment Method"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Cash on delivery is temporarily unavailable. Please try again later."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Payment method assigned automatically: %(method)s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "Order number copied"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "Payment reference copied"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "The order number is ready to paste."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/payment_status.js:0
+msgid "The payment reference is ready to paste."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "Reviewing prescription"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The Call Center team will contact you to confirm the order details."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The pharmacy team is reviewing the prescription."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The customer prescription image was received successfully."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Review the prescription image and identify the required products before contacting the customer."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Contact the customer to confirm order details, delivery address, and payment method."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order is confirmed. Follow preparation with the pharmacy team."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "Products are reserved for preparation. Follow the delivery operation status."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order has left the pharmacy for delivery. Follow up with the courier if needed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The order cycle is closed after customer delivery."
 msgstr ""

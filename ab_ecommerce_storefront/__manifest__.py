@@ -62,6 +62,7 @@
             "ab_ecommerce_storefront/static/src/js/business_partnership.js",
             "ab_ecommerce_storefront/static/src/js/payment_status.js",
             "ab_ecommerce_storefront/static/src/js/quantity_motion.js",
+            "ab_ecommerce_storefront/static/src/js/stock_warning.js",
             "ab_ecommerce_storefront/static/src/js/product_card.js",
             "ab_ecommerce_storefront/static/src/js/animated_price.js",
             "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",
