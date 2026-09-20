@@ -21,6 +21,12 @@ class AbPrescriptionOrder(models.Model):
     prescription_mimetype = fields.Char(readonly=True)
     customer_note = fields.Text(readonly=True)
     internal_note = fields.Text(groups="base.group_user")
+    payment_method_id = fields.Many2one(
+        "payment.method",
+        string="Preferred Payment Method",
+        readonly=True,
+        tracking=True,
+    )
     sale_order_id = fields.Many2one("sale.order", tracking=True)
     website_id = fields.Many2one("website", readonly=True)
     company_id = fields.Many2one("res.company", default=lambda self: self.env.company, required=True)
@@ -49,28 +55,28 @@ class AbPrescriptionOrder(models.Model):
             _lt("We received the prescription image successfully."),
         ),
         "under_review": (
-            _lt("Under review"),
-            _lt("Our team is reviewing the prescription and preparing the next steps."),
+            _lt("Reviewing prescription"),
+            _lt("The pharmacy team is reviewing the prescription."),
         ),
         "waiting_call_center": (
             _lt("Waiting for Call Center confirmation"),
-            _lt("Our Call Center team will contact you to confirm the order details."),
+            _lt("The Call Center team will contact you to confirm the order details."),
         ),
         "confirmed": (
-            _lt("Confirmed"),
-            _lt("Your prescription request is confirmed and will move to preparation."),
+            _lt("Order confirmed"),
+            _lt("The order is confirmed by Abdin Pharmacies."),
         ),
         "preparing": (
-            _lt("Preparing"),
-            _lt("We are preparing your request now."),
+            _lt("Preparing order"),
+            _lt("Your items are reserved for preparation."),
         ),
         "out_for_delivery": (
             _lt("Out for delivery"),
-            _lt("Your order is on its way to you."),
+            _lt("Your order has left the pharmacy and is on the way."),
         ),
         "delivered": (
             _lt("Delivered"),
-            _lt("Your request was delivered successfully."),
+            _lt("Your order has been delivered."),
         ),
         "cancelled": (
             _lt("Cancelled"),
@@ -92,10 +98,30 @@ class AbPrescriptionOrder(models.Model):
         "delivered",
     ]
 
+    @api.model
+    def _ab_storefront_cash_on_delivery_method(self, company=None):
+        company = company or self.env.company
+        providers = self.env["payment.provider"].sudo().search([
+            ("code", "=", "custom"),
+            ("custom_mode", "=", "cash_on_delivery"),
+            ("state", "in", ("enabled", "test")),
+            ("company_id", "=", company.id),
+        ])
+        return providers.payment_method_ids.filtered(
+            lambda method: method.active and method.code == "cash_on_delivery"
+        ).sorted(lambda method: (method.sequence, method.id))[:1]
+
     @api.model_create_multi
     def create(self, vals_list):
         sequence = self.env["ir.sequence"].sudo()
         for vals in vals_list:
+            if not vals.get("payment_method_id"):
+                company = self.env["res.company"].browse(
+                    vals.get("company_id")
+                ).exists() or self.env.company
+                payment_method = self._ab_storefront_cash_on_delivery_method(company)
+                if payment_method:
+                    vals["payment_method_id"] = payment_method.id
             if not vals.get("name") or vals.get("name") == "New":
                 vals["name"] = sequence.next_by_code("ab.prescription.order") or _("New")
             if not vals.get("access_token"):
@@ -108,12 +134,12 @@ class AbPrescriptionOrder(models.Model):
             return self._STATE_SEQUENCE.index(self.state)
         return 0
 
-    def _ab_storefront_create_sale_order(self):
+    def _ab_storefront_create_sale_order(self, allow_unreviewed=False):
         self.ensure_one()
         self.check_access("write")
         if self.sale_order_id:
             return self.sale_order_id
-        if self.state not in ("waiting_call_center", "confirmed"):
+        if not allow_unreviewed and self.state not in ("waiting_call_center", "confirmed"):
             raise ValidationError(_("Review the prescription before creating a quotation."))
         sale_order = self.env["sale.order"].create({
             "partner_id": self.partner_id.id,

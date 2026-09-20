@@ -8,6 +8,7 @@
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="state" widget="badge"/>
+                <field name="payment_method_id" optional="show"/>
                 <field name="sale_order_id"/>
                 <field name="create_date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
@@ -70,6 +71,7 @@
                         <group string="Status">
                             <field name="state_label"/>
                             <field name="state_description"/>
+                            <field name="payment_method_id"/>
                             <field name="prescription_filename"/>
                             <field name="prescription_mimetype"/>
                         </group>
@@ -102,11 +104,13 @@
     <menuitem id="menu_ab_prescription_order_root"
               name="Prescription Orders"
               sequence="65"
+              active="False"
               groups="base.group_user"/>
     <menuitem id="menu_ab_prescription_order_requests"
               name="Requests"
               parent="menu_ab_prescription_order_root"
               action="action_ab_prescription_order"
               sequence="10"
+              active="False"
               groups="base.group_user"/>
 </odoo>

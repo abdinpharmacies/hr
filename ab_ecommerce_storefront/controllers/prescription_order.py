@@ -3,6 +3,7 @@ import binascii
 import io
 
 from PIL import Image, UnidentifiedImageError
+import PIL.WebPImagePlugin  # noqa: F401 - register WebP support in Odoo workers.
 
 from odoo import _
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
@@ -38,31 +39,34 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         data = upload.read(self._max_prescription_upload_size + 1)
         if len(data) > self._max_prescription_upload_size:
             raise UserError("too_large")
-        if mimetype not in self._allowed_prescription_mimetypes:
-            raise UserError("bad_type")
-        if not self._is_supported_image(data, mimetype):
+        detected_mimetype = self._get_supported_image_mimetype(data)
+        if not detected_mimetype:
             raise UserError("invalid_image")
 
         return {
             "prescription_image": base64.b64encode(data),
             "prescription_filename": filename,
-            "prescription_mimetype": mimetype,
+            "prescription_mimetype": detected_mimetype,
         }
 
-    def _is_supported_image(self, data, mimetype):
+    def _get_supported_image_mimetype(self, data):
         try:
             with Image.open(io.BytesIO(data)) as image:
                 if image.width * image.height > 25_000_000:
                     return False
-                if Image.MIME.get(image.format) != mimetype:
+                mimetype = Image.MIME.get(image.format)
+                if mimetype not in self._allowed_prescription_mimetypes:
                     return False
                 image.verify()
-            return True
+            return mimetype
         except (UnidentifiedImageError, OSError, ValueError, Image.DecompressionBombError):
             return False
 
     def _prescription_page_values(self, **values):
         PrescriptionOrder = request.env["ab.prescription.order"]
+        country = request.website.company_id.country_id or request.env["res.country"].sudo().search(
+            [("code", "=", "EG")], limit=1,
+        )
         recent_prescriptions = PrescriptionOrder if request.env.user._is_public() else PrescriptionOrder.search(
             self._prescription_domain(),
             order="create_date desc, id desc",
@@ -70,7 +74,16 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         )
         values.setdefault("error_code", False)
         values.setdefault("customer_note", "")
+        values.setdefault("guest_city", "")
+        values.setdefault("guest_state_id", "")
+        country_states = (
+            country.state_ids.sorted("name")
+            if country
+            else request.env["res.country.state"]
+        )
         values.update({
+            "prescription_country": country,
+            "prescription_country_states": country_states,
             "recent_prescriptions": recent_prescriptions,
             "prescription_max_upload_mb": self._max_prescription_upload_size // (1024 * 1024),
         })
@@ -84,16 +97,34 @@ class AbPrescriptionOrderPortal(CustomerPortal):
             }
         name = (post.get("guest_name") or "").strip()
         phone = normalize_egyptian_phone(post.get("guest_phone"))
+        address = (post.get("guest_address") or "").strip()
+        city = (post.get("guest_city") or "").strip()
+        state_value = (post.get("guest_state_id") or "").strip()
         if not name:
             raise UserError("missing_name")
         if not is_valid_egyptian_mobile(phone):
             raise UserError("missing_phone")
+        if not state_value.isdigit():
+            raise UserError("missing_state")
+        if not city:
+            raise UserError("missing_city")
+        if not address:
+            raise UserError("missing_address")
+        country = request.website.company_id.country_id or request.env["res.country"].sudo().search(
+            [("code", "=", "EG")], limit=1,
+        )
+        state = request.env["res.country.state"].sudo().browse(int(state_value)).exists()
+        if not state or (country and state.country_id != country):
+            raise UserError("missing_state")
         # A supplied phone number is not proof of ownership of an existing partner.
         partner = request.env["res.partner"].sudo().create({
             "name": name[:256],
             "phone": phone,
             "email": (post.get("guest_email") or "").strip()[:256] or False,
-            "street": (post.get("guest_address") or "").strip()[:512] or False,
+            "street": address[:512],
+            "city": city[:256],
+            "state_id": state.id,
+            "country_id": (country or state.country_id).id,
             "lang": request.env.lang,
         })
         return {
@@ -111,6 +142,8 @@ class AbPrescriptionOrderPortal(CustomerPortal):
                 guest_phone=kw.get("guest_phone", ""),
                 guest_email=kw.get("guest_email", ""),
                 guest_address=kw.get("guest_address", ""),
+                guest_city=kw.get("guest_city", ""),
+                guest_state_id=kw.get("guest_state_id", ""),
             ),
         )
 
@@ -118,11 +151,19 @@ class AbPrescriptionOrderPortal(CustomerPortal):
     def prescription_order_submit(self, **post):
         try:
             vals = self._read_prescription_upload()
+            PrescriptionOrder = request.env["ab.prescription.order"].sudo()
+            payment_method = PrescriptionOrder._ab_storefront_cash_on_delivery_method(
+                request.website.company_id
+            )
+            if not payment_method:
+                raise UserError("payment_method_unavailable")
             vals.update(self._prescription_partner_values(post))
+            vals["payment_method_id"] = payment_method.id
             vals["customer_note"] = (post.get("customer_note") or "").strip()[:2000]
             vals["company_id"] = request.website.company_id.id
             vals["website_id"] = request.website.id
-            order = request.env["ab.prescription.order"].sudo().create(vals)
+            order = PrescriptionOrder.create(vals)
+            order._ab_storefront_create_sale_order(allow_unreviewed=True)
         except UserError as error:
             return request.render(
                 "ab_ecommerce_storefront.prescription_order_page",
@@ -133,6 +174,8 @@ class AbPrescriptionOrderPortal(CustomerPortal):
                     guest_phone=post.get("guest_phone", ""),
                     guest_email=post.get("guest_email", ""),
                     guest_address=post.get("guest_address", ""),
+                    guest_city=post.get("guest_city", ""),
+                    guest_state_id=post.get("guest_state_id", ""),
                 ),
             )
         return request.redirect(order.get_portal_url(query_string="&submitted=1"))
