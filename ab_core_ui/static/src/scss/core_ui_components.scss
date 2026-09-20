@@ -891,6 +891,113 @@ textarea.core_ui_input_control {
   }
 }
 
+// ===== Sync Progress Panel =====
+.core_ui_sync_panel {
+  background: linear-gradient(180deg, #172238 0%, #101827 100%);
+  border: 1px solid rgba(96, 165, 250, 0.22);
+  border-radius: var(--core-ui-radius-lg);
+  color: #e5eefc;
+  padding: var(--core-ui-space-lg);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+
+  .core_ui_sync_panel_meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--core-ui-space-md);
+    margin-bottom: var(--core-ui-space-md);
+    color: #94a3b8;
+    font-size: var(--core-ui-font-size-sm);
+    font-weight: var(--core-ui-font-weight-semibold);
+  }
+
+  .core_ui_sync_panel_percent {
+    border-radius: var(--core-ui-radius-full);
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    padding: 4px 12px;
+    min-width: 68px;
+    text-align: center;
+  }
+
+  .core_ui_sync_panel_bar {
+    height: 6px;
+    border-radius: var(--core-ui-radius-full);
+    background: rgba(148, 163, 184, 0.18);
+    overflow: hidden;
+  }
+
+  .core_ui_sync_panel_fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22d3ee, #3b82f6, #6366f1);
+    transition: width var(--core-ui-transition-normal);
+  }
+
+  .o_progressbar {
+    margin: 0;
+
+    .o_progress {
+      height: 6px;
+      border-radius: var(--core-ui-radius-full);
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      box-shadow: none;
+    }
+
+    .o_progressbar_complete {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22d3ee, #3b82f6, #6366f1);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.2);
+      transition: width var(--core-ui-transition-normal);
+    }
+
+    .o_progressbar_value {
+      color: #34d399;
+      font-weight: var(--core-ui-font-weight-bold);
+    }
+  }
+
+  .core_ui_sync_status {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--core-ui-space-md);
+    margin-top: var(--core-ui-space-lg);
+    background: rgba(6, 78, 59, 0.28);
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    border-radius: var(--core-ui-radius-lg);
+    padding: var(--core-ui-space-md) var(--core-ui-space-lg);
+  }
+
+  .core_ui_sync_status_title {
+    color: #f8fafc;
+    font-size: var(--core-ui-font-size-base);
+    font-weight: var(--core-ui-font-weight-bold);
+    margin-bottom: 4px;
+  }
+
+  .core_ui_sync_status_text {
+    color: #cbd5e1;
+    font-size: var(--core-ui-font-size-sm);
+  }
+
+  .core_ui_sync_status_icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--core-ui-radius-md);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.14);
+    border: 1px solid rgba(16, 185, 129, 0.32);
+    flex: 0 0 auto;
+  }
+}
+
 // ===== Progress Circle =====
 .core_ui_progress_circle {
   position: relative;

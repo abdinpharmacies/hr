@@ -164,6 +164,14 @@ PREVIEW_DATA = {
         'circumference': 213.62830044410595,
         'offset': 46.99882609770331,
     },
+    'core_ui.progress.sync_panel': {
+        'label': 'Synced products: 18,761 / 18,761',
+        'value': 100,
+        'title': 'Inventory Fully Synchronized',
+        'detail': 'All required products are synchronized with Odoo Inventory.',
+        'icon': 'fa-check',
+        'completeLabel': '100%',
+    },
     'core_ui.nav.breadcrumb': {
         'items': [
             {'label': 'Dashboard', 'url': '#'},

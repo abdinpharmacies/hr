@@ -361,6 +361,16 @@
             <field name="status">stable</field>
         </record>
 
+        <record id="comp_progress_sync_panel" model="core_ui.component">
+            <field name="component_id">core_ui.progress.sync_panel</field>
+            <field name="name">Sync Progress Panel</field>
+            <field name="category_id" ref="cat_progress"/>
+            <field name="sequence">30</field>
+            <field name="description">Dashboard-style synchronization progress panel with completion badge and status message.</field>
+            <field name="template_ref">core_ui.progress.sync_panel</field>
+            <field name="status">stable</field>
+        </record>
+
         <!-- ==================== NAVIGATION ==================== -->
         <record id="comp_nav_breadcrumb" model="core_ui.component">
             <field name="component_id">core_ui.nav.breadcrumb</field>

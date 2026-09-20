@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.progress.sync_panel">
+        <section class="core_ui_sync_panel">
+            <div class="core_ui_sync_panel_meta">
+                <span t-esc="props.label"/>
+                <span class="core_ui_sync_panel_percent" t-esc="safeValue >= 100 ? props.completeLabel : percentLabel"/>
+            </div>
+            <div class="core_ui_sync_panel_bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" t-att-aria-valuenow="safeValue">
+                <div class="core_ui_sync_panel_fill" t-att-style="progressStyle"/>
+            </div>
+            <div class="core_ui_sync_status">
+                <span t-att-class="iconClass" aria-hidden="true"/>
+                <div>
+                    <div class="core_ui_sync_status_title" t-esc="props.title"/>
+                    <div class="core_ui_sync_status_text" t-esc="props.detail"/>
+                </div>
+            </div>
+        </section>
+    </t>
+</templates>

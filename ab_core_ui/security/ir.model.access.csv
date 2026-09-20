@@ -1,6 +1,11 @@
 id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 access_core_ui_category,core_ui.category,model_core_ui_category,group_core_ui_developer,1,1,1,1
+access_core_ui_category_user,core_ui.category.user,model_core_ui_category,base.group_user,1,1,1,1
 access_core_ui_component,core_ui.component,model_core_ui_component,group_core_ui_developer,1,1,1,1
+access_core_ui_component_user,core_ui.component.user,model_core_ui_component,base.group_user,1,1,1,1
 access_core_ui_design_token,core_ui.design_token,model_core_ui_design_token,group_core_ui_developer,1,1,1,1
+access_core_ui_design_token_user,core_ui.design_token.user,model_core_ui_design_token,base.group_user,1,1,1,1
 access_core_ui_token_category,core_ui.token_category,model_core_ui_token_category,group_core_ui_developer,1,1,1,1
+access_core_ui_token_category_user,core_ui.token_category.user,model_core_ui_token_category,base.group_user,1,1,1,1
 access_core_ui_pattern,core_ui.pattern,model_core_ui_pattern,group_core_ui_developer,1,1,1,1
+access_core_ui_pattern_user,core_ui.pattern.user,model_core_ui_pattern,base.group_user,1,1,1,1

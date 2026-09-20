@@ -375,6 +375,25 @@
         </div>
     </template>
 
+    <template id="progress_sync_panel" name="core_ui.progress.sync_panel">
+        <section class="core_ui_sync_panel">
+            <div class="core_ui_sync_panel_meta">
+                <span t-esc="label"/>
+                <span class="core_ui_sync_panel_percent" t-esc="completeLabel or ((value or 0) + '%')"/>
+            </div>
+            <div class="core_ui_sync_panel_bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" t-att-aria-valuenow="value or 0">
+                <div class="core_ui_sync_panel_fill" t-att-style="'width: ' + str(value or 0) + '%;'"/>
+            </div>
+            <div class="core_ui_sync_status">
+                <span t-att-class="'core_ui_sync_status_icon fa ' + (icon or 'fa-check')" aria-hidden="true"/>
+                <div>
+                    <div class="core_ui_sync_status_title" t-esc="title"/>
+                    <div class="core_ui_sync_status_text" t-esc="detail"/>
+                </div>
+            </div>
+        </section>
+    </template>
+
     
 
     <template id="empty_no_data" name="core_ui.empty.no_data">
