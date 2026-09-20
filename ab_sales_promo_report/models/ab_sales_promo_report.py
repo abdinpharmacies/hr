@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, time, timedelta
 import logging
 from math import floor
 
@@ -152,9 +152,6 @@ class AbSalesPromoReportWizard(models.TransientModel):
         if not self.include_promo_notice and not self.include_off_customer:
             raise UserError(_("Select at least one invoice filter."))
 
-        rows = self._fetch_bconnect_rows()
-        vals_list = self._build_report_vals(rows)
-
         ReportLine = self.env["ab_sales_promo_report_line"]
         if self.replace_existing:
             ReportLine.search([
@@ -163,14 +160,23 @@ class AbSalesPromoReportWizard(models.TransientModel):
                 ("invoice_date", "<=", date_to),
             ]).unlink()
 
-        lines = ReportLine.create(vals_list) if vals_list else ReportLine.browse()
-        if not lines:
-            if rows:
+        line_ids = []
+        row_count = 0
+        for batch_from, batch_to in self._date_batches(date_from, date_to):
+            rows = self._fetch_bconnect_rows(batch_from, batch_to)
+            row_count += len(rows)
+            vals_list = self._build_report_vals(rows)
+            for offset in range(0, len(vals_list), 1000):
+                line_ids.extend(ReportLine.create(vals_list[offset:offset + 1000]).ids)
+            del rows, vals_list
+
+        if not line_ids:
+            if row_count:
                 raise UserError(_(
                     "BConnect returned %s line(s), but no lines matched local stores/products/promotions. "
                     "Use 'Show BConnect Query' to verify the SQL, then check eplus_serial mappings and promo dates/products. "
                     "Enable 'Include Lines With No Promo Found' to include unmatched rows."
-                ) % len(rows))
+                ) % row_count)
             raise UserError(_("No matching sales promo lines were found. BConnect returned no rows."))
 
         return {
@@ -178,7 +184,7 @@ class AbSalesPromoReportWizard(models.TransientModel):
             "name": _("Sales Promo Report"),
             "res_model": "ab_sales_promo_report_line",
             "view_mode": "list,pivot,graph",
-            "domain": [("id", "in", lines.ids)],
+            "domain": [("id", "in", line_ids)],
             "context": {"create": False, "edit": False, "delete": True},
         }
 
@@ -190,8 +196,18 @@ class AbSalesPromoReportWizard(models.TransientModel):
             self._format_debug_sql(query, params),
         ))
 
-    def _fetch_bconnect_rows(self):
+    @staticmethod
+    def _date_batches(date_from, date_to):
+        batch_from = date_from
+        while batch_from <= date_to:
+            batch_to = min(batch_from + timedelta(days=6), date_to)
+            yield batch_from, batch_to
+            batch_from = batch_to + timedelta(days=1)
+
+    def _fetch_bconnect_rows(self, date_from=None, date_to=None):
         query, params = self._prepare_bconnect_query()
+        params[0] = fields.Date.to_string(date_from or self.date_from)
+        params[1] = fields.Date.to_string(date_to or self.date_to)
         _logger.info(
             "Sales Promo Report BConnect SQL:\n%s",
             self._format_debug_sql(query, params),
@@ -199,7 +215,14 @@ class AbSalesPromoReportWizard(models.TransientModel):
         with self.connect_eplus(param_str=PARAM_STR, charset="CP1256") as conn:
             with conn.cursor(as_dict=True) as cur:
                 cur.execute(query, tuple(params))
-                return cur.fetchall()
+                columns = [column[0] for column in cur.description]
+                rows = []
+                while chunk := cur.fetchmany(2000):
+                    rows.extend(
+                        row if isinstance(row, dict) else dict(zip(columns, row))
+                        for row in chunk
+                    )
+                return rows
 
     def _prepare_bconnect_query(self):
         store_serials = self.store_ids.mapped("eplus_serial")
@@ -335,69 +358,37 @@ class AbSalesPromoReportWizard(models.TransientModel):
             ])
             invoice_compensation = self._invoice_total_compensation(grouped_rows)
             is_odoo = any(self._row_bool(row, "is_odoo") for row in grouped_rows)
-            candidate_promos = self._product_matching_promos(
-                promos,
-                promo_scope_by_id,
-                store,
-                invoice_products,
-            )
-            matched_promo, promo_discount = self._matched_promo_for_invoice(
-                candidate_promos,
-                promo_scope_by_id,
-                grouped_rows,
-                products_by_serial,
-                store,
-                invoice_compensation,
-                is_odoo,
-            )
+            matches_by_product = {}
+            for product in invoice_products:
+                candidate_promos = self._product_matching_promos(
+                    promos, promo_scope_by_id, store, product, invoice_key[2],
+                )
+                matched_promo, promo_discount = self._matched_promo_for_invoice(
+                    candidate_promos,
+                    promo_scope_by_id,
+                    grouped_rows,
+                    products_by_serial,
+                    store,
+                    invoice_compensation,
+                    is_odoo,
+                )
+                if matched_promo:
+                    status = "in_date"
+                elif self._has_total_compensation(invoice_compensation) and candidate_promos:
+                    status = "no_promo_applied"
+                elif self.include_no_promo_found:
+                    status = "no_promo_found"
+                else:
+                    continue
+                matches_by_product[product.id] = (matched_promo, promo_discount, status)
 
-            added_row_indexes = set()
-            if matched_promo:
-                promo_products = promo_scope_by_id.get(matched_promo.id, self.env["ab_product"])
-                promo_date_status = self._promo_date_status(matched_promo, invoice_key[2])
-                for row_index, row in enumerate(grouped_rows):
-                    product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
-                    if not product or product not in promo_products:
-                        continue
+            for row in grouped_rows:
+                product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
+                match = matches_by_product.get(product.id) if product else None
+                if match:
+                    matched_promo, promo_discount, status = match
                     vals_list.append(self._report_vals_from_row(
-                        row,
-                        store,
-                        product,
-                        matched_promo,
-                        promo_discount,
-                        promo_date_status,
-                    ))
-                    added_row_indexes.add(row_index)
-            elif self._has_total_compensation(invoice_compensation) and candidate_promos:
-                promo_products = self._promos_report_products(candidate_promos, promo_scope_by_id)
-                for row_index, row in enumerate(grouped_rows):
-                    product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
-                    if not product or product not in promo_products:
-                        continue
-                    vals_list.append(self._report_vals_from_row(
-                        row,
-                        store,
-                        product,
-                        self.env["ab_promo_program"],
-                        0.0,
-                        "no_promo_applied",
-                    ))
-                    added_row_indexes.add(row_index)
-
-            if self.include_no_promo_found:
-                for row_index, row in enumerate(grouped_rows):
-                    if row_index in added_row_indexes:
-                        continue
-                    product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
-                    if not product:
-                        continue
-                    vals_list.append(self._report_vals_from_row(
-                        row,
-                        store,
-                        product,
-                        self.env["ab_promo_program"],
-                        0.0,
-                        "no_promo_found",
+                        row, store, product, matched_promo, promo_discount, status,
                     ))
 
         return vals_list
@@ -414,26 +405,32 @@ class AbSalesPromoReportWizard(models.TransientModel):
         return {int(rec.eplus_serial): rec for rec in records if rec.eplus_serial}
 
     def _promo_candidates(self, stores=False):
-        domain = [
-            ("active", "=", True),
-            "|", ("company_id", "=", self.env.company.id), ("company_id", "=", False),
-        ]
+        period_start = datetime.combine(fields.Date.to_date(self.date_from), time.min)
+        period_end = datetime.combine(fields.Date.to_date(self.date_to), time.max)
+        domain = (
+            fields.Domain("active", "=", True)
+            & (fields.Domain("company_id", "=", self.env.company.id) | fields.Domain("company_id", "=", False))
+            & (fields.Domain("rule_date_from", "=", False) | fields.Domain("rule_date_from", "<=", period_end))
+            & (fields.Domain("rule_date_to", "=", False) | fields.Domain("rule_date_to", ">=", period_start))
+        )
         if stores:
-            domain += ["|", ("store_ids", "=", False), ("store_ids", "in", stores.ids)]
+            domain &= fields.Domain("store_ids", "=", False) | fields.Domain("store_ids", "in", stores.ids)
         if self.promo_ids:
-            domain.append(("id", "in", self.promo_ids.ids))
+            domain &= fields.Domain("id", "in", self.promo_ids.ids)
         return self.env["ab_promo_program"].sudo().search(domain, order="sequence,id")
 
-    def _product_matching_promos(self, promos, promo_scope_by_id, store, invoice_products):
-        if not store or not invoice_products:
+    def _product_matching_promos(self, promos, promo_scope_by_id, store, product, invoice_date):
+        if not store or not product:
             return promos.browse()
 
         matching = promos.browse()
         for promo in promos:
             if promo.store_ids and store not in promo.store_ids:
                 continue
+            if not self._promo_date_matches(promo, invoice_date):
+                continue
             scope = promo_scope_by_id.get(promo.id, self.env["ab_product"])
-            if scope and (scope & invoice_products):
+            if scope and product in scope:
                 matching |= promo
         return matching
 
