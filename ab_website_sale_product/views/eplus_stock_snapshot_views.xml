@@ -11,6 +11,25 @@
                             string="Refresh from Eplus"
                             class="btn-primary"
                             display="always"/>
+                    <button name="action_refresh_branch_stock_from_eplus"
+                            type="object"
+                            string="Refresh Branch Stock"
+                            class="btn-secondary"
+                            display="always"/>
+                    <button name="action_start_full_inventory_sync"
+                            type="object"
+                            string="Sync to Odoo Inventory"
+                            class="btn-primary"
+                            display="always"/>
+                    <button name="action_sync_to_odoo_inventory"
+                            type="object"
+                            string="Sync Selected to Odoo Inventory"
+                            class="btn-secondary"
+                            confirm="This will update Odoo inventory quantities for the selected Eplus stock rows. Continue?"/>
+                    <button name="action_open_eplus_branch_stock"
+                            type="object"
+                            string="Open Branch Stock"
+                            class="btn-secondary"/>
                 </header>
                 <field name="itm_id"/>
                 <field name="itm_code"/>
@@ -33,6 +52,19 @@
                             type="object"
                             string="Refresh from Eplus"
                             class="btn-primary"/>
+                    <button name="action_refresh_branch_stock_from_eplus"
+                            type="object"
+                            string="Refresh Branch Stock"
+                            class="btn-secondary"/>
+                    <button name="action_sync_to_odoo_inventory"
+                            type="object"
+                            string="Sync to Odoo Inventory"
+                            class="btn-secondary"
+                            confirm="This will update Odoo inventory quantity for this Eplus stock row. Continue?"/>
+                    <button name="action_open_eplus_branch_stock"
+                            type="object"
+                            string="Open Branch Stock"
+                            class="btn-secondary"/>
                 </header>
                 <sheet>
                     <group>

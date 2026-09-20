@@ -1,5 +1,6 @@
 from . import ab_product
 from . import add_many_by_codes_wizard
+from . import eplus_inventory_sync_job
 from . import eplus_stock_snapshot
 from . import product_template
 from . import sale_order

@@ -11,5 +11,15 @@
             <field name="state">code</field>
             <field name="code">model.cron_sync_website_products()</field>
         </record>
+        <record id="ir_cron_process_eplus_inventory_sync_jobs" model="ir.cron">
+            <field name="name">Eplus Inventory: Process Sync Jobs</field>
+            <field name="active" eval="True"/>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number" eval="1"/>
+            <field name="interval_type">minutes</field>
+            <field name="model_id" ref="model_ab_eplus_inventory_sync_job"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_process_inventory_sync_jobs()</field>
+        </record>
     </data>
 </odoo>

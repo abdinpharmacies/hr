@@ -1001,3 +1001,88 @@ msgstr "فارغ"
 #: code:addons/ab_website_sale_product/static/src/xml/stock_availability.xml:0
 msgid "in your cart)"
 msgstr ""
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Select active Eplus stock rows to inspect branch quantities."
+msgstr "اختر صفوف مخزون إي بلس النشطة لعرض كميات الفروع."
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_ab_eplus_stock_snapshot_store
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_stock_snapshot_store_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__eplus_stock_snapshot_store_ids
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_pivot
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
+msgid "Eplus Branch Stock"
+msgstr "مخزون إي بلس حسب الفرع"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/ab_product.py:0
+msgid "Eplus Branch Stock - %s"
+msgstr "مخزون إي بلس حسب الفرع - %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__sto_id
+msgid "Eplus Store ID"
+msgstr "معرف فرع إي بلس"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__sto_code
+msgid "Store Code"
+msgstr "كود الفرع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__store_name_ar
+msgid "Store Name Arabic"
+msgstr "اسم الفرع بالعربية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__store_name_en
+msgid "Store Name English"
+msgstr "اسم الفرع بالإنجليزية"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_form
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
+msgid "Open Eplus Branch Stock"
+msgstr "فتح مخزون إي بلس حسب الفرع"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+msgid "Open Branch Stock"
+msgstr "فتح مخزون الفروع"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+msgid "Refresh Branch Stock"
+msgstr "تحديث مخزون الفروع"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Eplus branch stock refreshed: %(total)s rows, %(matched)s matched, %(unmatched)s unmatched."
+msgstr "تم تحديث مخزون إي بلس حسب الفروع: %(total)s صف، %(matched)s مطابق، %(unmatched)s غير مطابق."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Prepared %(total)s product(s). %(unchanged)s already matched, %(pending)s pending, %(skipped)s skipped."
+msgstr "تم تجهيز %(total)s منتج: %(unchanged)s مطابق بالفعل، %(pending)s قيد التنفيذ، %(skipped)s متخطى."

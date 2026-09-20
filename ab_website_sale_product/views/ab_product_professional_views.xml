@@ -171,6 +171,13 @@
                                             <i class="fa fa-list" title="Items"/>
                                             Open Eplus Items
                                         </button>
+                                        <button name="action_open_eplus_branch_stock" type="object"
+                                                class="btn abdin_ecommerce_btn_ghost btn-block"
+                                                invisible="not eplus_stock_item_count"
+                                                title="Open Eplus Branch Stock">
+                                            <i class="fa fa-building-o" title="Branches"/>
+                                            Open Eplus Branch Stock
+                                        </button>
                                     </div>
                                 </group>
                             </div>
@@ -182,6 +189,19 @@
                                     <field name="itm_code"/>
                                     <field name="itm_qty" sum="Total Quantity"/>
                                     <field name="matched_by"/>
+                                    <field name="last_sync_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Eplus Branch Stock" name="page_eplus_branch_stock">
+                            <field name="eplus_stock_snapshot_store_ids" readonly="1" nolabel="1">
+                                <list string="Eplus Branch Stock" create="0" edit="0" delete="0">
+                                    <field name="itm_id"/>
+                                    <field name="itm_code"/>
+                                    <field name="sto_id"/>
+                                    <field name="sto_code"/>
+                                    <field name="store_name_en"/>
+                                    <field name="itm_qty" sum="Total Quantity"/>
                                     <field name="last_sync_date"/>
                                 </list>
                             </field>

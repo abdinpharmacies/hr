@@ -353,6 +353,12 @@ class AbProduct(models.Model):
         string="Eplus Items",
         groups="base.group_user",
     )
+    eplus_stock_snapshot_store_ids = fields.One2many(
+        "ab_eplus_stock_snapshot_store",
+        "product_id",
+        string="Eplus Branch Stock",
+        groups="base.group_user",
+    )
     eplus_stock_item_count = fields.Integer(
         string="Eplus Item Count",
         compute="_compute_eplus_stock_snapshot_summary",
@@ -567,6 +573,17 @@ class AbProduct(models.Model):
             "view_mode": "list,form,pivot",
             "domain": [("product_id", "=", self.id)],
             "context": {"search_default_filter_matched": 1},
+        }
+
+    def action_open_eplus_branch_stock(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Eplus Branch Stock - %s") % self.display_name,
+            "res_model": "ab_eplus_stock_snapshot_store",
+            "view_mode": "list,pivot,form",
+            "domain": [("product_id", "=", self.id), ("active", "=", True)],
+            "context": {"search_default_group_by_store": 1},
         }
 
     @api.model

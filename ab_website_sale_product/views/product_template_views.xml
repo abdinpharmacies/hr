@@ -35,6 +35,12 @@
                                         groups="base.group_user"
                                         class="btn-secondary"
                                         invisible="not eplus_stock_item_count"/>
+                                <button name="action_open_eplus_branch_stock"
+                                        type="object"
+                                        string="Open Eplus Branch Stock"
+                                        groups="base.group_user"
+                                        class="btn-secondary"
+                                        invisible="not eplus_stock_item_count"/>
                             </group>
                         </group>
                         <field name="eplus_stock_snapshot_ids" readonly="1" nolabel="1">
@@ -44,6 +50,17 @@
                                 <field name="itm_qty" sum="Total Quantity"/>
                                 <field name="product_id"/>
                                 <field name="matched_by"/>
+                                <field name="last_sync_date"/>
+                            </list>
+                        </field>
+                        <field name="eplus_stock_snapshot_store_ids" readonly="1" nolabel="1">
+                            <list string="Eplus Branch Stock" create="0" edit="0" delete="0">
+                                <field name="itm_id"/>
+                                <field name="itm_code"/>
+                                <field name="sto_id"/>
+                                <field name="sto_code"/>
+                                <field name="store_name_en"/>
+                                <field name="itm_qty" sum="Total Quantity"/>
                                 <field name="last_sync_date"/>
                             </list>
                         </field>

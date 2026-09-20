@@ -21,6 +21,12 @@ class ProductTemplate(models.Model):
         readonly=True,
         groups="base.group_user",
     )
+    eplus_stock_snapshot_store_ids = fields.One2many(
+        related="ab_product_id.eplus_stock_snapshot_store_ids",
+        string="Eplus Branch Stock",
+        readonly=True,
+        groups="base.group_user",
+    )
     eplus_stock_item_count = fields.Integer(
         related="ab_product_id.eplus_stock_item_count",
         string="Eplus Item Count",
@@ -90,6 +96,12 @@ class ProductTemplate(models.Model):
             "domain": [("product_id", "=", self.ab_product_id.id)],
             "context": {"search_default_filter_matched": 1},
         }
+
+    def action_open_eplus_branch_stock(self):
+        self.ensure_one()
+        if not self.ab_product_id:
+            return False
+        return self.ab_product_id.action_open_eplus_branch_stock()
 
     def _is_sold_out(self):
         self.ensure_one()
