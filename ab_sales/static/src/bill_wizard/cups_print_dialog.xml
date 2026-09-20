@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.CupsPrintDialog" t-inherit="ab_sales.BillWizardPrintDialog" t-inherit-mode="primary">
+        <xpath expr="//select[@t-on-change='onFormatInput']" position="attributes">
+            <attribute name="t-att-disabled">state.saving</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('form-text')]" position="replace">
+            <div class="form-text">Lists printers available to the server. Use System dialog for printers connected to your computer.</div>
+        </xpath>
+    </t>
+</templates>

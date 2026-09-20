@@ -1651,3 +1651,57 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             "printer_name": selected_printer_label,
             "print_format": selected_format,
         }
+
+    @api.model
+    def bill_wizard_cups_print(self, header_id, printer_name, print_format="a4"):
+        # Preserve optional business guards without adding a printing role.
+        guard = getattr(self, '_raise_sales_prevented', None)
+        if guard:
+            guard()
+        # Resolve records under the caller's ACLs and branch record rules.
+        record_type, record_id = self._bill_wizard_decode_ref(header_id)
+        model = 'ab_sales_return_header' if record_type == 'return' else 'ab_sales_header'
+        record = self.env[model].browse(record_id).exists()
+        record.check_access('read')
+        if not record:
+            raise UserError(_("Select a bill to print."))
+        service = self.env['ab_printing_service']
+        if printer_name not in service.list_printers():
+            raise UserError(_("The selected CUPS printer is no longer available. Refresh the printer list."))
+        record_type, header, lines, fmt, settings, content = self._bill_wizard_prepare_print_content(
+            header_id, print_format=print_format,
+        )
+        if not lines:
+            raise UserError(_("No lines to print."))
+        html = self._bill_wizard_build_print_html(
+            header=header, lines=lines, print_format=fmt,
+            receipt_header="Sales Return Receipt" if record_type == 'return' else (
+                settings.get('receipt_header') or "Sales Receipt"
+            ), record_type=record_type, printer_name=printer_name,
+        )
+        # Give the existing fixed-width RTL receipt room inside the PDF viewport.
+        html = str(html).replace('</head>', (
+            '<style>body { width: 520px; margin: 0 auto; }'
+            '.receipt-page { width: 520px; padding: 4px 10px; }</style></head>'
+        ), 1)
+        result = self.env['ab_printing_service']._print_html(
+            self._prepare_print_html(html), printer=printer_name,
+            print_format=fmt,
+        )
+        return dict(result, print_format=fmt)
+
+    @api.model
+    def bill_wizard_cups_options(self):
+        options = self.bill_wizard_get_print_options()
+        queues = self.env['ab_printing_service'].list_printers()
+        configured = self.env['ab_printer'].sudo().get_active_printers()
+        formats = {rec.printer_name: rec.paper_size for rec in configured}
+        options['available_printer_records'] = [
+            {'id': index, 'label': queue, 'name': queue, 'printer_name': queue,
+             'paper_size': formats.get(queue, 'a4'), 'protocol': 'connected'}
+            for index, queue in enumerate(queues, start=1)
+        ]
+        # IDs here belong only to this response, never to ab_printer records.
+        options['printer_id'] = 0
+        options['printer_name'] = ''
+        return options

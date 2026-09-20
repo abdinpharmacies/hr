@@ -1,9 +1,12 @@
 /** @odoo-module **/
 
+import {_t} from "@web/core/l10n/translation";
+import {user} from "@web/core/user";
+import {session} from "@web/session";
 import {registry} from "@web/core/registry";
 import {Component, onMounted, onWillStart, useRef, useState} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
-import {AbSalesBillWizardPrintDialog} from "./print_dialog";
+import {AbSalesCupsPrintDialog} from "./cups_print_dialog";
 import {ABMany2many} from "@ab_widgets/ab_many2many";
 
 const openBillWizardPrintWindow = (html, format = "a4", {focus = true} = {}) => {
@@ -210,12 +213,14 @@ class AbSalesBillWizardAction extends Component {
         this._loadPrintOptionsPromise = (async () => {
             this.state.loadingPrintOptions = true;
             try {
-                const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_get_print_options", [], {});
+                const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_cups_options", [], {});
                 const printerRecords = normalizePrinterRecords(result?.available_printer_records);
                 this.state.availablePrinters = printerRecords;
 
-                const selectedId = Number.parseInt(result?.printer_id || 0, 10) || 0;
-                const selected = findPrinterById(printerRecords, selectedId);
+                const preferred = this.state.printerName || window.localStorage.getItem(
+                    `ab_sales.cupsPrinter.${session.db}.${user.userId}`
+                ) || "";
+                const selected = printerRecords.find((printer) => printer.printer_name === preferred);
                 this.state.printerId = selected ? selected.id : 0;
                 this.state.printerName = selected?.label || String(result?.printer_name || "").trim();
                 this.state.defaultPrintFormat = selected?.paper_size || (result?.print_format === "pos_80mm" ? "pos_80mm" : "a4");
@@ -459,43 +464,61 @@ class AbSalesBillWizardAction extends Component {
             payload?.printerId !== undefined ? payload.printerId : (this.state.printerId || 0),
             10
         ) || 0;
-        const selectedRecord = findPrinterById(this.state.availablePrinters, selectedId) || payload?.printer || null;
-        const selectedPrinter = selectedRecord?.label || String(
-            payload?.printerName !== undefined ? payload.printerName : (this.state.printerName || "")
-        ).trim();
+        const selectedRecord = payload?.printer || findPrinterById(this.state.availablePrinters, selectedId) || null;
         const selectedFormat = selectedRecord?.paper_size || (payload?.printFormat === "pos_80mm" ? "pos_80mm" : "a4");
-        const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_set_print_preferences", [], {
-            printer_id: selectedId,
-            printer_name: selectedPrinter,
-            print_format: selectedFormat,
-        });
-        this.state.printerId = Number.parseInt(result?.printer_id || selectedId || 0, 10) || 0;
-        const canonical = findPrinterById(this.state.availablePrinters, this.state.printerId);
-        this.state.printerName = canonical?.label || (result?.printer_name || selectedPrinter || "").trim();
-        this.state.defaultPrintFormat = canonical?.paper_size || (result?.print_format === "pos_80mm" ? "pos_80mm" : "a4");
-        return {
-            printerId: this.state.printerId,
-            printerName: this.state.printerName,
-            printFormat: this.state.defaultPrintFormat,
-            printer: canonical || selectedRecord || null,
-        };
+        this.state.printerId = selectedRecord?.id || 0;
+        this.state.printerName = selectedRecord?.printer_name || "";
+        this.state.defaultPrintFormat = payload.printFormat || selectedFormat;
+        window.localStorage.setItem(
+            `ab_sales.cupsPrinter.${session.db}.${user.userId}`,
+            this.state.printerName,
+        );
+        return payload;
     }
 
     async _confirmPrintAndPrint(payload) {
         const bill = this.state.details;
         if (!bill) {
-            return;
+            return false;
         }
         const selectedId = Number.parseInt(
             payload?.printerId !== undefined ? payload.printerId : (this.state.printerId || 0),
             10
         ) || 0;
-        const selectedRecord = findPrinterById(this.state.availablePrinters, selectedId) || payload?.printer || null;
+        const selectedRecord = payload?.printer || findPrinterById(this.state.availablePrinters, selectedId) || null;
         const selectedPrinter = selectedRecord?.label || String(
             payload?.printerName !== undefined ? payload.printerName : (this.state.printerName || "")
         ).trim();
-        const printFormat = selectedRecord?.paper_size || (payload?.printFormat === "pos_80mm" ? "pos_80mm" : "a4");
+        const printFormat = payload?.printFormat || selectedRecord?.paper_size || "a4";
 
+        if (!selectedId) {
+            // Open during the click, before RPC, to avoid popup blockers.
+            const win = window.open("", "_blank", "width=900,height=720");
+            if (!win) {
+                this.notification.add(_t("Popup blocked. Allow popups to print."), {type: "warning"});
+                return false;
+            }
+            try {
+                await this._saveBillWizardPrintPreferences({printerId: 0, printFormat});
+                const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_render_print_html", [], {
+                    header_id: this.state.selectedId, print_format: printFormat,
+                });
+                if (!result?.content) {
+                    throw new Error(_t("Nothing to print."));
+                }
+                win.document.open();
+                win.document.write(result.content);
+                win.document.close();
+                await win.document.fonts.ready;
+                win.focus();
+                win.print();
+                return true;
+            } catch (err) {
+                win.close();
+                this.notification.add(this._getErrorMessage(err, _t("Direct print failed.")), {type: "danger"});
+                return false;
+            }
+        }
         try {
             await this._saveBillWizardPrintPreferences({
                 printerId: selectedId,
@@ -504,34 +527,31 @@ class AbSalesBillWizardAction extends Component {
                 printer: selectedRecord,
             });
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Failed to save print preferences."), {type: "danger"});
-            return;
+            this.notification.add(this._getErrorMessage(err, _t("Failed to save print preferences.")), {type: "danger"});
+            return false;
         }
 
         try {
-            const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_direct_print", [], {
+            const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_cups_print", [], {
                 header_id: this.state.selectedId,
+                printer_name: selectedRecord?.printer_name || "",
                 print_format: printFormat,
-                printer_id: selectedId,
-                printer_name: selectedPrinter || this.state.printerName || "",
-                selected_printer: selectedRecord || false,
             });
             const finalPrinter = (result?.printer_name || selectedPrinter || this.state.printerName || "").trim();
-            this.state.printerId = Number.parseInt(result?.printer_id || this.state.printerId || 0, 10) || 0;
             this.notification.add(
-                finalPrinter
-                    ? `Print command sent to '${finalPrinter}'.`
-                    : "Print command sent to default system printer.",
+                _t("Sent to %(printer)s. CUPS job: %(job)s.", {printer: finalPrinter, job: result.job_id}),
                 {type: "success"}
             );
+            return true;
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Direct print failed."), {type: "danger"});
+            this.notification.add(this._getErrorMessage(err, _t("Direct print failed.")), {type: "danger"});
+            return false;
         }
     }
 
     async openPrintDialog() {
         await this.loadPrintOptions({silent: true});
-        this.dialog.add(AbSalesBillWizardPrintDialog, {
+        this.dialog.add(AbSalesCupsPrintDialog, {
             printerId: this.state.printerId || 0,
             printerName: this.state.printerName || "",
             printFormat: this.state.defaultPrintFormat || "a4",
@@ -541,7 +561,7 @@ class AbSalesBillWizardAction extends Component {
                 await this.previewReceipt(payload || {});
             },
             onConfirm: async (payload) => {
-                await this._confirmPrintAndPrint(payload || {});
+                return await this._confirmPrintAndPrint(payload || {});
             },
         });
     }
@@ -577,8 +597,8 @@ class AbSalesBillWizardAction extends Component {
             payload?.printerId !== undefined ? payload.printerId : (this.state.printerId || 0),
             10
         ) || 0;
-        const selectedRecord = findPrinterById(this.state.availablePrinters, selectedId) || payload?.printer || null;
-        const format = selectedRecord?.paper_size || (
+        const selectedRecord = payload?.printer || findPrinterById(this.state.availablePrinters, selectedId) || null;
+        const format = (
             hasPayloadFormat
                 ? (payload?.printFormat === "pos_80mm" ? "pos_80mm" : "a4")
                 : (this.state.defaultPrintFormat === "pos_80mm" ? "pos_80mm" : "a4")
