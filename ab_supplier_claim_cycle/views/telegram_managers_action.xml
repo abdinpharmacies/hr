@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <record id="action_telegram_managers" model="ir.actions.client">
-        <field name="name">Telegram Connected Employees</field>
-        <field name="tag">scc_telegram_managers</field>
-    </record>
-</odoo>

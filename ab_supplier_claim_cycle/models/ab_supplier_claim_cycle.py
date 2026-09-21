@@ -22,24 +22,11 @@ class ab_supplier_claim_cycle(models.Model):
         selection=[('south', 'South'),
                    ('north', 'North'),
                    ], required=True)
-    amount_of_check = fields.Monetary(string='Check Amount', currency_field='currency_id', required=True)
-    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
+    amount_of_check = fields.Char(required=True)
     type_of_invoice = fields.Selection(
         selection=[('original', 'Original'),
                    ('copy', 'Copy'),
                    ], required=True)
-    check_delivery_status = fields.Selection(
-        selection=[
-            ('ready', 'Delivered'),
-            ('cash', 'Cash'),
-            ('bank_transfer', 'Bank Transfer'),
-            ('check_delivered', 'Issue Check'),
-            ('mixed', 'Mixed (Bank Transfer + Cheque)'),
-            ('shipped', 'Shipped'),
-        ],
-        string="Cheque Delivery Status",
-        tracking=True,
-    )
 
     def btn_status(self):
         status = self.env.context.get('action')

@@ -4,14 +4,14 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'mail', 'ab_costcenter', 'ab_hr', 'ab_supplier'],
+    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter'],
+
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
         'security/record_rules.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
-        'views/ab_supplier_claim_escalation.xml',
 
     ],
     'installable': True,
