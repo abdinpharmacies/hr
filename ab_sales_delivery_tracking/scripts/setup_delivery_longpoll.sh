@@ -134,6 +134,27 @@ systemd_env_value() {
     printf '"%s"' "$value"
 }
 
+systemd_environment_file_path() {
+    # EnvironmentFile is an unquoted absolute glob, not an ExecStart argument.
+    # Escape literal glob characters and systemd specifiers only.
+    "$PYTHON_BIN" - "$1" <<'PYEOF'
+import sys
+
+path = sys.argv[1]
+pattern = "".join("\\" + char if char in "\\*?[" else char for char in path)
+print(pattern.replace("%", "%%"))
+PYEOF
+}
+
+write_environment_override() {
+    local target
+    target="$1"
+    {
+        printf '[Service]\nEnvironmentFile=\nEnvironmentFile='
+        systemd_environment_file_path "$ENV_FILE"
+    } > "$target"
+}
+
 make_temp_file() {
     local file
     file="$(mktemp)"
@@ -639,7 +660,7 @@ configure_sudo() {
     current_group="$(id -gn)"
     USE_SUDO=0
     if [[ "$(id -u)" -ne 0 ]]; then
-        if ! can_write_path "$RUNNER_DEST" || ! can_write_path "$UNIT_DEST" || ! can_write_path "$ENV_DIR" || ! can_write_path "$STATE_DIR"; then
+        if ! can_write_path "$RUNNER_DEST" || ! can_write_path "$UNIT_DEST" || ! can_write_path "$ENV_DIR" || ! can_write_path "$STATE_DIR" || ! can_write_path "$ENV_OVERRIDE_DEST"; then
             USE_SUDO=1
         elif [[ "$SERVICE_USER" != "$current_user" || "$SERVICE_GROUP" != "$current_group" ]]; then
             USE_SUDO=1
@@ -670,7 +691,7 @@ install_unit() {
 }
 
 install_environment() {
-    local env_tmp env_file
+    local env_tmp env_file override_tmp
     env_tmp="$(make_temp_file)"
     env_file="$ENV_DIR/${ESCAPED_INSTANCE}.env"
     write_env_file "$env_tmp"
@@ -678,6 +699,12 @@ install_environment() {
     info "Creating environment file: $env_file"
     run_privileged install -d -m 0750 "$ENV_DIR"
     run_privileged install -m 0600 "$env_tmp" "$env_file"
+
+    # Use an instance-specific literal path rather than the template's %i glob.
+    # A missing required environment file now fails explicitly at service start.
+    override_tmp="$(make_temp_file)"
+    write_environment_override "$override_tmp"
+    run_privileged install -D -m 0644 "$override_tmp" "$ENV_OVERRIDE_DEST"
 }
 
 prepare_state_directory() {
@@ -756,12 +783,13 @@ done
 
 validate_inputs
 validate_python_runtime
-configure_sudo
 
 ESCAPED_INSTANCE="$(systemd-escape -- "$INSTANCE_NAME")"
 ENV_FILE="$ENV_DIR/${ESCAPED_INSTANCE}.env"
 SERVICE_NAME="ab-delivery-longpoll@${ESCAPED_INSTANCE}.service"
 SQLITE_PATH="$STATE_DIR/${ESCAPED_INSTANCE}.sqlite"
+ENV_OVERRIDE_DEST="$(path_parent "$UNIT_DEST")/${SERVICE_NAME}.d/10-environment.conf"
+configure_sudo
 
 install_runner
 install_unit

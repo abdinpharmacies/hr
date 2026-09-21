@@ -86,11 +86,18 @@ Default paths:
 ```text
 Runner: /opt/ab-delivery-longpoll/run_longpoll_service.py
 Unit: /etc/systemd/system/ab-delivery-longpoll@.service
+Instance override: /etc/systemd/system/ab-delivery-longpoll@<ESCAPED_INSTANCE>.service.d/10-environment.conf
 Environment: /etc/ab-delivery-longpoll/<ESCAPED_INSTANCE>.env
 SQLite: /var/lib/ab-delivery-longpoll/<ESCAPED_INSTANCE>.sqlite
 ```
 
 The setup script creates or updates these files automatically.
+
+The instance override makes the environment file required and escapes its path
+for both systemd configuration parsing and wildcard matching. This allows names
+such as `abdin_replica(POS)` to load their bot token correctly. Re-running the
+setup script installs the override without changing the instance's SQLite path
+or resetting its reception history.
 
 ## systemd Commands
 
