@@ -29,44 +29,37 @@ msgstr "لا يمكن إضافة الخادم أكثر من مرة إلى طلب
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__action
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
 msgid "Action"
 msgstr "الإجراء"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_needaction
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_needaction
 msgid "Action Needed"
 msgstr "إجراء مطلوب"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__active
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__active
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__active
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__active
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__active
 msgid "Active"
 msgstr "نشط"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_ids
 msgid "Activities"
 msgstr "الأنشطة"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_exception_decoration
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_exception_decoration
 msgid "Activity Exception Decoration"
 msgstr "تمييز استثناء النشاط"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_state
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_state
 msgid "Activity State"
 msgstr "حالة النشاط"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_type_icon
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_type_icon
 msgid "Activity Type Icon"
 msgstr "أيقونة نوع النشاط"
@@ -128,7 +121,6 @@ msgstr "اعتمد بواسطة"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__approver_id
 #: model:res.groups,name:ab_deploy.group_approver
 #: model:res.groups.privilege,name:ab_deploy.privilege_approver
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
 msgid "Approver"
 msgstr "المعتمد"
 
@@ -141,16 +133,13 @@ msgid "Archived"
 msgstr "مؤرشف"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_attachment_count
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_attachment_count
 msgid "Attachment Count"
 msgstr "عدد المرفقات"
 
+#. module: ab_deploy
 #: model:ir.actions.act_window,name:ab_deploy.action_audit
 #: model:ir.ui.menu,name:ab_deploy.menu_audit
-#. module: ab_deploy
-#: model:ir.actions.act_window,name:ab_deploy.action_audit_log
-#: model:ir.ui.menu,name:ab_deploy.menu_audit_log
 msgid "Audit Logs"
 msgstr "سجلات التدقيق"
 
@@ -160,9 +149,8 @@ msgstr "سجلات التدقيق"
 msgid "Audit records can only be created by the deployment workflow."
 msgstr "لا يمكن إنشاء سجلات التدقيق إلا من خلال سير عمل النشر."
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__backup_policy
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__backup_policy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__backup_policy
 msgid "Backup Policy"
 msgstr "سياسة النسخ الاحتياطي"
 
@@ -186,18 +174,16 @@ msgstr "كود الفرع"
 msgid "Business Reason"
 msgstr "سبب النشر"
 
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
 #. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
 msgid "Cancel"
 msgstr "إلغاء"
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__cancelled
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__cancelled
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__cancelled
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__cancelled
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__cancelled
 msgid "Cancelled"
 msgstr "ملغى"
@@ -219,7 +205,6 @@ msgid "Closed"
 msgstr "مغلق"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__code
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__code
 msgid "Code"
 msgstr "الكود"
@@ -249,40 +234,36 @@ msgstr "مسار ملف الإعدادات"
 msgid "Created"
 msgstr "تم الإنشاء"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_uid
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__create_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_date
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__create_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_date
@@ -294,21 +275,18 @@ msgstr "تاريخ الإنشاء"
 msgid "Critical"
 msgstr "حرج"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__data
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__data
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__data
 msgid "Data Change"
 msgstr "تغيير البيانات"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__database
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__database
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__database
 msgid "Database"
 msgstr "قاعدة البيانات"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__database_impact
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__database_impact
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__database_impact
 msgid "Database Impact"
 msgstr "أثر قاعدة البيانات"
 
@@ -386,7 +364,6 @@ msgstr "طلب النشر"
 #. module: ab_deploy
 #: model:ir.actions.act_window,name:ab_deploy.action_request
 #: model:ir.ui.menu,name:ab_deploy.menu_request
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_form
 msgid "Deployment Requests"
 msgstr "طلبات النشر"
 
@@ -424,46 +401,39 @@ msgstr "لا يمكن تعديل سجل تدقيق النشر."
 msgid "Deployment records must be retained. Archive or cancel them instead."
 msgstr "يجب الاحتفاظ بسجلات النشر. استخدم الأرشفة أو الإلغاء بدلًا من الحذف."
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__description
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__description
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__description
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__description
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__description
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__description
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__description
 msgid "Description"
 msgstr "الوصف"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__developer_id
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__developer_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__developer_id
 #: model:res.groups,name:ab_deploy.group_developer
 #: model:res.groups.privilege,name:ab_deploy.privilege_developer
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
 msgid "Developer"
 msgstr "المطور"
 
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__development
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__development
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__development
 msgid "Development"
 msgstr "التطوير"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__display_name
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__display_name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_name
@@ -503,11 +473,8 @@ msgid "Enter a reason before returning the request to draft."
 msgstr "أدخل السبب قبل إعادة الطلب إلى مسودة."
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__environment
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__environment
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__environment
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_search
 msgid "Environment"
 msgstr "البيئة"
 
@@ -527,38 +494,32 @@ msgstr "منفذ النشر"
 msgid "Failure Threshold (%)"
 msgstr "حد الفشل (%)"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__files
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__files
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__files
 msgid "Files"
 msgstr "الملفات"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__both
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__both
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__both
 msgid "Files and Database"
 msgstr "الملفات وقاعدة البيانات"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_follower_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_follower_ids
 msgid "Followers"
 msgstr "المتابعون"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_partner_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "المتابعون (جهات الاتصال)"
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_type_icon
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
 msgstr "أيقونة Font awesome مثل fa-tasks"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__has_message
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__has_message
 msgid "Has Message"
 msgstr "لديه رسالة"
@@ -578,21 +539,19 @@ msgstr "بصمة الخادم"
 msgid "Hostname"
 msgstr "اسم المضيف"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__id
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__id
@@ -600,69 +559,60 @@ msgid "ID"
 msgstr "المعرف"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_exception_icon
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_exception_icon
 msgid "Icon"
 msgstr "الأيقونة"
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_exception_icon
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_exception_icon
 msgid "Icon to indicate an exception activity."
 msgstr "أيقونة تشير إلى نشاط استثنائي."
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_needaction
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "إذا تم تحديده، فهناك رسائل جديدة تتطلب انتباهك."
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_has_error
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_has_error
 msgid "If checked, some messages have a delivery error."
 msgstr "إذا تم تحديده، فهناك خطأ في تسليم بعض الرسائل."
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_is_follower
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_is_follower
 msgid "Is Follower"
 msgstr "متابع"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_uid
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__write_uid
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_date
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__write_date
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_date
@@ -690,20 +640,17 @@ msgid "Medium"
 msgstr "متوسط"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_has_error
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_has_error
 msgid "Message Delivery error"
 msgstr "خطأ في تسليم الرسالة"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_ids
 msgid "Messages"
 msgstr "الرسائل"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__upgrade_required
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__upgrade_required
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__upgrade_required
 msgid "Module Upgrade Required"
 msgstr "ترقية الموديولات مطلوبة"
 
@@ -714,70 +661,59 @@ msgid "Modules"
 msgstr "الموديولات"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr "الموعد النهائي لنشاطي"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__name
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__name
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__name
 msgid "Name"
 msgstr "الاسم"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_date_deadline
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "الموعد النهائي للنشاط التالي"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_summary
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_summary
 msgid "Next Activity Summary"
 msgstr "ملخص النشاط التالي"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_type_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_type_id
 msgid "Next Activity Type"
 msgstr "نوع النشاط التالي"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__none
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__none
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__none
 msgid "No Database Change"
 msgstr "لا يوجد تغيير في قاعدة البيانات"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__none
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__backup_policy__none
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__backup_policy__none
 msgid "None"
 msgstr "بدون"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_needaction_counter
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_needaction_counter
 msgid "Number of Actions"
 msgstr "عدد الإجراءات"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__message_has_error_counter
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__message_has_error_counter
 msgid "Number of errors"
 msgstr "عدد الأخطاء"
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_needaction_counter
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_needaction_counter
 msgid "Number of messages requiring action"
 msgstr "عدد الرسائل التي تتطلب إجراءً"
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__message_has_error_counter
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل التي بها خطأ في التسليم"
@@ -833,14 +769,12 @@ msgid "Pending"
 msgstr "قيد الانتظار"
 
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__pilot
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__pilot
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__pilot
 msgid "Pilot"
 msgstr "تجريبي محدود"
 
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__production
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__production
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__production
 msgid "Production"
@@ -873,7 +807,6 @@ msgstr "السجل"
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__record_model
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
 msgid "Record Model"
 msgstr "نموذج السجل"
 
@@ -931,12 +864,11 @@ msgstr "تمت الإزالة"
 msgid "Repository"
 msgstr "المستودع"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__request_id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__request_id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__request_id
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__request_id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__request_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__request_id
 msgid "Request"
 msgstr "الطلب"
@@ -961,21 +893,19 @@ msgstr "مطلوب"
 msgid "Requested At"
 msgstr "وقت الطلب"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__requested_by_id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__requested_by
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__requested_by_id
 msgid "Requested By"
 msgstr "مقدم الطلب"
 
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__activity_user_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__activity_user_id
 msgid "Responsible User"
 msgstr "المستخدم المسؤول"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__restart_required
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__restart_required
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__restart_required
 msgid "Restart Required"
 msgstr "إعادة التشغيل مطلوبة"
 
@@ -1013,15 +943,13 @@ msgstr "خطة التراجع"
 msgid "SSH port must be between 1 and 65535."
 msgstr "يجب أن يكون منفذ SSH بين 1 و65535."
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__schema
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__schema
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__schema
 msgid "Schema Change"
 msgstr "تغيير بنية قاعدة البيانات"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__both
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__database_impact__both
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__database_impact__both
 msgid "Schema and Data Change"
 msgstr "تغيير البنية والبيانات"
 
@@ -1031,17 +959,14 @@ msgstr "تغيير البنية والبيانات"
 msgid "Select at least one target server."
 msgstr "اختر خادمًا مستهدفًا واحدًا على الأقل."
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__sequence
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__sequence
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__sequence
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__sequence
 msgid "Sequence"
 msgstr "الترتيب"
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__server_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_id
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_target_search
 msgid "Server"
 msgstr "الخادم"
 
@@ -1083,17 +1008,11 @@ msgstr "مستخدم SSH"
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__state
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__state
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__state
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__state
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_search
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_search
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_target_search
 msgid "State"
 msgstr "الحالة"
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_state
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_state
 msgid ""
 "Status based on activities\n"
@@ -1113,13 +1032,12 @@ msgstr "الوسم"
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__target_id
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__target_ids
 msgid "Target"
 msgstr "الهدف"
 
+#. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__server_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__target_ids
-#. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
 msgid "Target Servers"
 msgstr "الخوادم المستهدفة"
@@ -1143,7 +1061,6 @@ msgid ""
 msgstr "يجب أن تكون الأهداف نشطة وخارج وضع الصيانة وفي بيئة الطلب."
 
 #. module: ab_deploy
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__environment__test
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__environment__test
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server_import__environment__test
 msgid "Test"
@@ -1197,7 +1114,6 @@ msgid "The target server must match the request environment."
 msgstr "يجب أن يتطابق الخادم المستهدف مع بيئة الطلب."
 
 #. module: ab_deploy
-#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_release__activity_exception_decoration
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__activity_exception_decoration
 msgid "Type of the exception activity on record."
 msgstr "نوع النشاط الاستثنائي في السجل."
@@ -1220,7 +1136,6 @@ msgstr "استخدم مستخدمًا مخصصًا للنشر بدلًا من ro
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__user_id
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_audit_log_search
 msgid "User"
 msgstr "المستخدم"
 
@@ -1343,9 +1258,8 @@ msgstr "يغير قاعدة البيانات"
 msgid "Close"
 msgstr "إغلاق"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__command_id
 #. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release_command__command_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__command_id
 msgid "Command"
 msgstr "الأمر"
 
@@ -1355,11 +1269,9 @@ msgstr "الأمر"
 msgid "Command Catalog"
 msgstr "دليل الأوامر"
 
+#. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__command_ids
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
-#. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_release__command_ids
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_release_execution_form
 msgid "Commands"
 msgstr "الأوامر"
 
@@ -1482,9 +1394,9 @@ msgid ""
 msgstr ""
 "لا يمكن تعديل الطلبات التي بدأ تنفيذها. أنشئ طلبًا جديدًا لمحاولة أخرى."
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__job_ids
 #. module: ab_deploy
 #: model:ir.actions.act_window,name:ab_deploy.action_job
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__job_ids
 #: model:ir.ui.menu,name:ab_deploy.menu_job
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_execution_form
 msgid "Execution Jobs"
@@ -1501,11 +1413,9 @@ msgstr "حالة التنفيذ"
 msgid "Execution snapshots can only be set by the deployment workflow."
 msgstr "لا يمكن تعيين لقطات التنفيذ إلا من خلال سير عمل النشر."
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__failed
 #. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__failed
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__failed
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__failed
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__failed
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__failed
 msgid "Failed"
 msgstr "فشل"
@@ -1515,10 +1425,10 @@ msgstr "فشل"
 msgid "Filename"
 msgstr "اسم الملف"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__finished_at
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__finished_at
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__finished_at
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__finished_at
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__finished_at
 msgid "Finished At"
 msgstr "وقت الانتهاء"
 
@@ -1570,11 +1480,10 @@ msgstr "حالة منفذ المهام غير صالحة."
 msgid "Invalid server settings or timeout in CSV row: %s"
 msgstr "إعدادات الخادم أو مهلة الانتظار غير صالحة في صف CSV: %s"
 
+#. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__job_id
-#. module: ab_deploy
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__job_ids
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__job_ids
 msgid "Job"
 msgstr "المهمة"
@@ -1716,24 +1625,21 @@ msgstr "أعد معاينة الاستيراد؛ تغير الملف أو الب
 msgid "Python Path"
 msgstr "مسار Python"
 
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
 #. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_execution_form
 msgid "Queue Deployment"
 msgstr "إدراج النشر في قائمة الانتظار"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__queued
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__queued
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__queued
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__queued
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__queued
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__queued
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__log_tail
 #. module: ab_deploy
-#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_form
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__log_tail
 msgid "Recent Log"
 msgstr "السجل الأخير"
 
@@ -1781,8 +1687,6 @@ msgstr "منفذ المهام"
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__running
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__running
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__running
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__running
 msgid "Running"
 msgstr "قيد التشغيل"
@@ -1792,9 +1696,8 @@ msgstr "قيد التشغيل"
 msgid "SSH Alias"
 msgstr "الاسم المستعار لاتصال SSH"
 
-#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_alias
 #. module: ab_deploy
-#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_ssh_alias
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_server_unique_alias
 msgid "SSH alias must be unique."
 msgstr "يجب أن يكون الاسم المستعار لاتصال SSH فريدًا."
 
@@ -1841,10 +1744,10 @@ msgstr "حدد الأسماء التقنية للوحدات؛ لا يسمح با
 msgid "Start Odoo"
 msgstr "تشغيل أودو"
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__started_at
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__started_at
 #. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__started_at
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__started_at
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__started_at
 msgid "Started At"
 msgstr "وقت البدء"
 
@@ -1854,11 +1757,9 @@ msgstr "وقت البدء"
 msgid "Stop Odoo"
 msgstr "إيقاف أودو"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__succeeded
 #. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__succeeded
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__succeeded
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__succeeded
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__succeeded
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__succeeded
 msgid "Succeeded"
 msgstr "نجح"
@@ -1929,8 +1830,6 @@ msgstr "إلغاء تثبيت الوحدات"
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__unknown
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__execution_state__unknown
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__state__unknown
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__unknown
 msgid "Unknown"
 msgstr "غير معروف"
@@ -2042,7 +1941,6 @@ msgstr ""
 "تُقتبس القيم تلقائيًا. استخدم المتغيرات كوسائط كاملة دون إضافة علامات "
 "اقتباس."
 
-
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__hostname
 msgid "Address (Informational)"
@@ -2083,7 +1981,10 @@ msgid ""
 "Check unfinished deployments and restore missing monitoring tasks. Completed"
 " commands are never replayed. Uncertain executions require remote "
 "inspection. Other modules are not affected."
-msgstr "افحص عمليات النشر غير المكتملة واستعد مهام المراقبة المفقودة. لا تُعاد الأوامر المكتملة. تتطلب حالات التنفيذ غير المؤكدة فحصًا للخادم البعيد. لا تتأثر الوحدات الأخرى."
+msgstr ""
+"افحص عمليات النشر غير المكتملة واستعد مهام المراقبة المفقودة. لا تُعاد "
+"الأوامر المكتملة. تتطلب حالات التنفيذ غير المؤكدة فحصًا للخادم البعيد. لا "
+"تتأثر الوحدات الأخرى."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2123,7 +2024,9 @@ msgid ""
 "Document your remote inspection. Resolution checks the remote status again "
 "and refuses while its tmux session is running. It does not stop remote "
 "commands."
-msgstr "وثّق فحصك للخادم البعيد. تُفحص الحالة مجددًا وتُرفض التسوية ما دامت جلسة tmux قيد التشغيل. لا تُوقف الأوامر البعيدة."
+msgstr ""
+"وثّق فحصك للخادم البعيد. تُفحص الحالة مجددًا وتُرفض التسوية ما دامت جلسة "
+"tmux قيد التشغيل. لا تُوقف الأوامر البعيدة."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2146,7 +2049,9 @@ msgstr "رمز الخروج"
 msgid ""
 "Informational only. These fields do not run backups, restart services, "
 "upgrade modules, or restrict approval."
-msgstr "للمعلومات فقط. لا تنفذ هذه الحقول نسخًا احتياطية أو إعادة تشغيل للخدمات أو ترقية للوحدات، ولا تقيّد الموافقة."
+msgstr ""
+"للمعلومات فقط. لا تنفذ هذه الحقول نسخًا احتياطية أو إعادة تشغيل للخدمات أو "
+"ترقية للوحدات، ولا تقيّد الموافقة."
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__note
@@ -2175,14 +2080,18 @@ msgstr "الموعد النهائي للمراقبة"
 msgid ""
 "Monitoring could not confirm completion. Inspect the remote job before "
 "another attempt."
-msgstr "لم تتمكن المراقبة من تأكيد الاكتمال. افحص المهمة على الخادم البعيد قبل محاولة أخرى."
+msgstr ""
+"لم تتمكن المراقبة من تأكيد الاكتمال. افحص المهمة على الخادم البعيد قبل "
+"محاولة أخرى."
 
 #. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
 msgid ""
 "No placeholders or automatic backups, restarts, module upgrades, or Git "
 "checks are applied. Submitted requests retain their approved script."
-msgstr "لا تُطبَّق متغيرات بديلة أو نسخ احتياطية أو إعادة تشغيل أو ترقيات وحدات أو فحوص Git تلقائية. تحتفظ الطلبات المرسلة بالسكربت المعتمد."
+msgstr ""
+"لا تُطبَّق متغيرات بديلة أو نسخ احتياطية أو إعادة تشغيل أو ترقيات وحدات أو "
+"فحوص Git تلقائية. تحتفظ الطلبات المرسلة بالسكربت المعتمد."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2190,9 +2099,9 @@ msgstr "لا تُطبَّق متغيرات بديلة أو نسخ احتياطي
 msgid "Only Deployment Administrators can recover executions."
 msgstr "يمكن لمسؤولي النشر فقط استعادة متابعة عمليات التنفيذ."
 
-#: code:addons/ab_deploy/wizard/conflict.py:0
 #. module: ab_deploy
 #. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
 #: code:addons/ab_deploy/models/deployment.py:0
 msgid "Only approved, unqueued requests can be queued."
 msgstr "يمكن وضع الطلبات المعتمدة وغير المدرجة سابقًا في طابور التنفيذ فقط."
@@ -2203,9 +2112,9 @@ msgstr "يمكن وضع الطلبات المعتمدة وغير المدرجة 
 msgid "Only unknown executions can be resolved."
 msgstr "يمكن تسوية حالات التنفيذ غير المعروفة فقط."
 
-#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__queue_job_id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__queue_job_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__queue_job_id
 msgid "Queue Job"
 msgstr "مهمة الطابور"
 
@@ -2214,13 +2123,15 @@ msgstr "مهمة الطابور"
 #: code:addons/ab_deploy/models/deployment.py:0
 msgid ""
 "Queued requests are immutable. Create a new request for another attempt."
-msgstr "لا يمكن تعديل الطلبات المدرجة في الطابور. أنشئ طلبًا جديدًا لمحاولة أخرى."
+msgstr ""
+"لا يمكن تعديل الطلبات المدرجة في الطابور. أنشئ طلبًا جديدًا لمحاولة أخرى."
 
 #. module: ab_deploy
 #. odoo-python
 #: code:addons/ab_deploy/wizard/recovery.py:0
 msgid "Queued: %(queued)s; Running: %(running)s; Unknown: %(unknown)s"
-msgstr "في الطابور: %(queued)s؛ قيد التشغيل: %(running)s؛ غير معروفة: %(unknown)s"
+msgstr ""
+"في الطابور: %(queued)s؛ قيد التشغيل: %(running)s؛ غير معروفة: %(unknown)s"
 
 #. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
@@ -2250,7 +2161,9 @@ msgstr "تم طلب الاستعادة"
 #: code:addons/ab_deploy/wizard/recovery.py:0
 msgid ""
 "Recovery scheduled for %s requests. Active queue tasks will finish normally."
-msgstr "تمت جدولة الاستعادة لعدد %s من الطلبات. ستكتمل مهام الطابور النشطة بشكل طبيعي."
+msgstr ""
+"تمت جدولة الاستعادة لعدد %s من الطلبات. ستكتمل مهام الطابور النشطة بشكل "
+"طبيعي."
 
 #. module: ab_deploy
 #: model:ir.model,name:ab_deploy.model_ab_deploy_request_command
@@ -2277,7 +2190,8 @@ msgstr "أعد الطلب إلى المسودة قبل تعديله."
 #: code:addons/ab_deploy/models/jobs.py:0
 msgid ""
 "SSH launch outcome is uncertain. Inspect the remote job before retrying."
-msgstr "نتيجة بدء التنفيذ عبر SSH غير مؤكدة. افحص المهمة البعيدة قبل إعادة المحاولة."
+msgstr ""
+"نتيجة بدء التنفيذ عبر SSH غير مؤكدة. افحص المهمة البعيدة قبل إعادة المحاولة."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2309,7 +2223,11 @@ msgid ""
 " SSH alias. Preview additions and updates before importing. Legacy CSV "
 "timeout values are ignored: new servers use 600 seconds for monitoring; "
 "existing server timeouts are preserved."
-msgstr "تُطبّق البيئة على الخوادم الجديدة فقط. تُطابق الخوادم الموجودة باستخدام اسم SSH المستعار. عاين الإضافات والتحديثات قبل الاستيراد. تُتجاهل قيم المهلة القديمة في CSV: تستخدم الخوادم الجديدة 600 ثانية للمراقبة، وتُحفظ مهل الخوادم الموجودة."
+msgstr ""
+"تُطبّق البيئة على الخوادم الجديدة فقط. تُطابق الخوادم الموجودة باستخدام اسم "
+"SSH المستعار. عاين الإضافات والتحديثات قبل الاستيراد. تُتجاهل قيم المهلة "
+"القديمة في CSV: تستخدم الخوادم الجديدة 600 ثانية للمراقبة، وتُحفظ مهل "
+"الخوادم الموجودة."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2332,8 +2250,9 @@ msgstr "العنوان"
 msgid ""
 "Write plain Bash. Commands run in order, each starting in the remote SSH "
 "user's home directory. A failing command stops execution."
-msgstr "اكتب أوامر Bash مباشرة. تُنفذ الأوامر بالترتيب، ويبدأ كل أمر في المجلد الرئيسي لمستخدم SSH البعيد. يؤدي فشل أي أمر إلى إيقاف التنفيذ."
-
+msgstr ""
+"اكتب أوامر Bash مباشرة. تُنفذ الأوامر بالترتيب، ويبدأ كل أمر في المجلد "
+"الرئيسي لمستخدم SSH البعيد. يؤدي فشل أي أمر إلى إيقاف التنفيذ."
 
 #. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
@@ -2350,7 +2269,6 @@ msgstr "إضافة جميع خوادم الإنتاج"
 #: code:addons/ab_deploy/models/deployment.py:0
 msgid "Targets must be active and outside maintenance."
 msgstr "يجب أن تكون الخوادم المستهدفة نشطة وخارج وضع الصيانة."
-
 
 #. module: ab_deploy
 #: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_log_part_unique_offset
@@ -2373,7 +2291,10 @@ msgid ""
 "Capture WARNING, ERROR and CRITICAL entries with tracebacks during script "
 "execution. Shared logs may include other databases. Collection errors do not"
 " change the command result."
-msgstr "تسجيل التحذيرات والأخطاء والأخطاء الحرجة مع تفاصيل التتبع أثناء تنفيذ السكربت. قد تتضمن السجلات المشتركة قواعد بيانات أخرى. لا تؤثر أخطاء جمع السجل على نتيجة الأمر."
+msgstr ""
+"تسجيل التحذيرات والأخطاء والأخطاء الحرجة مع تفاصيل التتبع أثناء تنفيذ "
+"السكربت. قد تتضمن السجلات المشتركة قواعد بيانات أخرى. لا تؤثر أخطاء جمع "
+"السجل على نتيجة الأمر."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2392,8 +2313,8 @@ msgstr "لا يمكن تعديل سجلات أودو المجمعة."
 msgid "Checksum"
 msgstr "بصمة التحقق"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__done
 #. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__done
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__done
 msgid "Collected"
 msgstr "تم الجمع"
@@ -2403,14 +2324,14 @@ msgstr "تم الجمع"
 msgid "Collected with Warnings"
 msgstr "تم الجمع مع تحذيرات"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__pending
 #. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__pending
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__pending
 msgid "Collecting"
 msgstr "جارٍ الجمع"
 
-#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__error
 #. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__error
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__error
 msgid "Collection Error"
 msgstr "خطأ في الجمع"
@@ -2562,15 +2483,18 @@ msgstr "تغير سجل أودو المجمع. تم الاحتفاظ بالأج�
 msgid ""
 "The captured Odoo log was truncated or replaced. Existing downloaded parts "
 "were preserved."
-msgstr "تم اقتطاع سجل أودو المجمع أو استبداله. تم الاحتفاظ بالأجزاء التي سبق تنزيلها."
+msgstr ""
+"تم اقتطاع سجل أودو المجمع أو استبداله. تم الاحتفاظ بالأجزاء التي سبق "
+"تنزيلها."
 
 #. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_odoo_logs
 msgid ""
 "The preview shows the latest 64 KiB. Download all parts in order for the "
 "full captured output; a part may split a line."
-msgstr "تعرض المعاينة آخر 64 كيبيبايت. نزّل جميع الأجزاء بالترتيب للحصول على السجل المجمع بالكامل؛ قد يمتد السطر عبر أكثر من جزء."
-
+msgstr ""
+"تعرض المعاينة آخر 64 كيبيبايت. نزّل جميع الأجزاء بالترتيب للحصول على السجل "
+"المجمع بالكامل؛ قد يمتد السطر عبر أكثر من جزء."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2610,7 +2534,9 @@ msgstr "فشلت قراءة السجل؛ قد يكون الجمع غير مكت�
 msgid ""
 "Log rotation detected; entries written to older files after rotation may be "
 "missing."
-msgstr "تم اكتشاف تدوير السجل؛ قد تفقد الإدخالات المكتوبة في الملفات القديمة بعد التدوير."
+msgstr ""
+"تم اكتشاف تدوير السجل؛ قد تفقد الإدخالات المكتوبة في الملفات القديمة بعد "
+"التدوير."
 
 #. module: ab_deploy
 #. odoo-python
@@ -2642,8 +2568,9 @@ msgstr "اختفى مسار سجل أودو أو تعذرت قراءته أثن�
 msgid ""
 "Queued: %(queued)s; Running: %(running)s; Unknown: %(unknown)s; Logs needing"
 " attention: %(logs)s"
-msgstr "في الانتظار: %(queued)s؛ قيد التنفيذ: %(running)s؛ غير معروف: %(unknown)s؛ سجلات تحتاج إلى متابعة: %(logs)s"
-
+msgstr ""
+"في الانتظار: %(queued)s؛ قيد التنفيذ: %(running)s؛ غير معروف: %(unknown)s؛ "
+"سجلات تحتاج إلى متابعة: %(logs)s"
 
 #. module: ab_deploy
 #. odoo-python
@@ -2845,7 +2772,9 @@ msgstr "سجل أودو"
 msgid ""
 "Only SSH failures can be retried. Other command failures require a new "
 "deployment."
-msgstr "يمكن إعادة محاولة إخفاقات SSH فقط. تتطلب إخفاقات الأوامر الأخرى طلب نشر جديدًا."
+msgstr ""
+"يمكن إعادة محاولة إخفاقات SSH فقط. تتطلب إخفاقات الأوامر الأخرى طلب نشر "
+"جديدًا."
 
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__outcome
@@ -3005,7 +2934,10 @@ msgid ""
 "These servers already have waiting or unfinished deployments. You can cancel"
 " older waiting executions on the same servers. Running or uncertain scripts "
 "and other servers are not stopped."
-msgstr "توجد عمليات نشر منتظرة أو غير منتهية على هذه الخوادم. يمكنك إلغاء التنفيذات السابقة المنتظرة على الخوادم نفسها. لن يتم إيقاف السكربتات الجارية أو غير المؤكدة أو التنفيذات على الخوادم الأخرى."
+msgstr ""
+"توجد عمليات نشر منتظرة أو غير منتهية على هذه الخوادم. يمكنك إلغاء التنفيذات "
+"السابقة المنتظرة على الخوادم نفسها. لن يتم إيقاف السكربتات الجارية أو غير "
+"المؤكدة أو التنفيذات على الخوادم الأخرى."
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__stage__tmux_started
@@ -3056,6 +2988,7 @@ msgstr "نشر"
 
 #. module: ab_deploy
 #. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
 #: code:addons/ab_deploy/models/deployment.py:0
 msgid "Deployment selection requires an approved request."
 msgstr "يتطلب تحديد النشر طلبًا معتمدًا."
@@ -3112,3 +3045,90 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_code
 msgid "Server Code"
 msgstr "رمز الخادم"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Clear Selection"
+msgstr "مسح التحديد"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Only delayed servers or SSH failures can be selected."
+msgstr "يمكن تحديد الخوادم المؤجلة أو الخوادم التي فشل اتصال SSH بها فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Queue Selected Servers accepts only delayed servers. Clear SSH failures or "
+"other executed servers from the selection."
+msgstr ""
+"تقبل إضافة الخوادم المحددة إلى قائمة الانتظار الخوادم المؤجلة فقط. أزل من "
+"التحديد الخوادم التي فشل اتصال SSH بها أو التي نُفذت سابقًا."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_batch_form
+msgid "Retry Selected SSH Failures"
+msgstr "إعادة محاولة اتصالات SSH الفاشلة المحددة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Retry Selected SSH Failures accepts only SSH failures. Clear delayed or "
+"other ineligible servers from the selection."
+msgstr ""
+"تقبل إعادة المحاولة الخوادم التي فشل اتصال SSH بها فقط. أزل الخوادم المؤجلة "
+"أو غير المؤهلة من التحديد."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Select All SSH Failures"
+msgstr "تحديد كل اتصالات SSH الفاشلة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Select at least one SSH-failed server to retry."
+msgstr "حدد خادمًا واحدًا على الأقل فشل اتصال SSH به لإعادة المحاولة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__deploy
+msgid "Selected"
+msgstr "محدد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__selection_eligible
+msgid "Selection Eligible"
+msgstr "مؤهل للتحديد"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_serial_length
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_serial_length
+msgid "Serial Sort Length"
+msgstr "طول ترتيب المسلسل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_serial_kind
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_serial_kind
+msgid "Serial Sort Type"
+msgstr "نوع ترتيب المسلسل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_serial_value
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_serial_value
+msgid "Serial Sort Value"
+msgstr "قيمة ترتيب المسلسل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_server_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_server_name
+msgid "Server Name Sort Value"
+msgstr "قيمة ترتيب اسم الخادم"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_status_rank
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_status_rank
+msgid "Status Sort Rank"
+msgstr "ترتيب الحالة"

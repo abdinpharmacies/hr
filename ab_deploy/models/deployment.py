@@ -228,26 +228,32 @@ class DeployRequest(models.Model):
     def action_select_all_targets(self):
         return self._select_targets(True)
 
+    def action_select_all_ssh_failures(self):
+        return self._select_targets(True, retry=True)
+
     def action_clear_target_selection(self):
         return self._select_targets(False)
 
-    def _select_targets(self, selected):
+    def _select_targets(self, selected, retry=False):
         self._require_role('executor')
         self.sorted('id')._lock()
         if any(request.state != 'approved' for request in self):
             raise UserError(_('Deployment selection requires an approved request.'))
-        targets = self.target_ids.filtered(lambda target: not target.job_ids)
-        if targets:
-            targets.write({'deploy': selected})
+        self.target_ids._clear_selection()
+        if selected:
+            targets = self.target_ids.filtered(lambda target: target._ssh_retry_job() if retry else not target.job_ids)
+            targets.write({'deploy': True})
         return True
 
     def _selected_targets(self):
         self.ensure_one()
         if self.state != 'approved':
             raise UserError(_('Only approved requests can queue selected servers.'))
-        targets = self.target_ids.filtered(lambda target: target.deploy and not target.job_ids)
+        targets = self.target_ids.filtered('deploy')
         if not targets:
             raise UserError(_('Select at least one delayed server for deployment.'))
+        if any(target.job_ids for target in targets):
+            raise UserError(_('Queue Selected Servers accepts only delayed servers. Clear SSH failures or other executed servers from the selection.'))
         return targets
 
     def _draft(self):
@@ -398,7 +404,8 @@ class DeployTarget(models.Model):
     snapshot = fields.Json(readonly=True, copy=False)
     job_key = fields.Char(readonly=True, copy=False)
     job_ids = fields.One2many('ab_deploy_job', 'target_id', readonly=True)
-    deploy = fields.Boolean(string='Deploy', default=False, copy=False)
+    deploy = fields.Boolean(string='Selected', default=False, copy=False)
+    selection_eligible = fields.Boolean(compute='_compute_selection_eligible')
     deployment_status = fields.Selection([
         ('delayed', 'Delayed'), ('queued', 'Queued'), ('running', 'Running'),
         ('unknown', 'Unknown'), ('succeeded', 'Succeeded'), ('failed', 'Failed'),
@@ -411,6 +418,16 @@ class DeployTarget(models.Model):
             target.deployment_status = latest.state if latest else (
                 'cancelled' if target.request_id.state == 'cancelled' else 'delayed')
 
+    def _ssh_retry_job(self):
+        self.ensure_one()
+        latest = self.job_ids.sorted('id', reverse=True)[:1]
+        return latest.filtered(lambda job: job.failure_kind == 'ssh' and job.state in ('failed', 'unknown'))
+
+    @api.depends('job_ids.state', 'job_ids.failure_kind')
+    def _compute_selection_eligible(self):
+        for target in self:
+            target.selection_eligible = not target.job_ids or bool(target._ssh_retry_job())
+
     def _clear_selection(self):
         return super(DeployTarget, self).write({'deploy': False})
 
@@ -418,12 +435,28 @@ class DeployTarget(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
+        # Inline rows may include defaults and readonly display values. Never
+        # trust those values: recompute them from the server and execution data.
+        display_fields = {
+            'server_serial', 'server_area', 'server_odoo_url',
+            'deployment_status', 'selection_eligible', 'display_status_rank',
+            'display_serial_kind', 'display_serial_length',
+            'display_serial_value', 'display_server_name',
+        }
+        clean_vals_list = []
+        for incoming in vals_list:
+            vals = dict(incoming)
+            for field in display_fields:
+                vals.pop(field, None)
+            if 'deploy' in vals and (vals['deploy'] is False or type(vals['deploy']) is int and vals['deploy'] == 0):
+                vals.pop('deploy')
             if set(vals) - {'request_id', 'server_id'}:
                 raise AccessError(_('Target workflow fields cannot be set manually.'))
             vals.setdefault('request_id', self.env.context.get('default_request_id'))
-        self.env['ab_deploy_request'].browse([v['request_id'] for v in vals_list])._draft()
-        return super().create(vals_list)
+            clean_vals_list.append(vals)
+        self.env['ab_deploy_request'].browse([v['request_id'] for v in clean_vals_list])._draft()
+        # Override context defaults too: new targets must start unselected.
+        return super().create([dict(vals, deploy=False) for vals in clean_vals_list])
 
     def write(self, vals):
         if set(vals) == {'deploy'}:
@@ -431,8 +464,11 @@ class DeployTarget(models.Model):
             requests._require_role('executor')
             requests.sorted('id')._lock()
             self.sorted('id')._lock()
-            if any(r.state != 'approved' for r in requests) or any(t.job_ids for t in self):
-                raise UserError(_('Only delayed targets on approved requests can be selected.'))
+            if any(r.state != 'approved' for r in requests):
+                raise UserError(_('Deployment selection requires an approved request.'))
+            self.job_ids.sorted('id')._lock()
+            if vals['deploy'] and any(t.job_ids and not t._ssh_retry_job() for t in self):
+                raise UserError(_('Only delayed servers or SSH failures can be selected.'))
             return super().write(vals)
         if set(vals) - {'server_id'}:
             raise AccessError(_('The target request and workflow fields cannot be changed.'))

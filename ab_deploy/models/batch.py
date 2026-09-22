@@ -160,10 +160,23 @@ class DeployRequestBatch(models.Model):
 
     def action_retry_ssh(self):
         self._require_role('executor')
-        failed = self.job_ids.filtered(lambda j: j.failure_kind == 'ssh' and j.state in ('failed', 'unknown'))
-        if not failed:
-            raise UserError(_('There are no SSH failures to retry.'))
-        return failed.action_retry_ssh()
+        self.ensure_one()
+        self._lock()
+        if self.state != 'approved':
+            raise UserError(_('Deployment selection requires an approved request.'))
+        targets = self.target_ids.filtered('deploy')
+        if not targets:
+            raise UserError(_('Select at least one SSH-failed server to retry.'))
+        targets.sorted('id')._lock()
+        targets.job_ids.sorted('id')._lock()
+        if any(not target._ssh_retry_job() for target in targets):
+            raise UserError(_('Retry Selected SSH Failures accepts only SSH failures. Clear delayed or other ineligible servers from the selection.'))
+        jobs = self.env['ab_deploy_job']
+        for target in targets:
+            jobs |= target._ssh_retry_job()
+        result = jobs.action_retry_ssh()
+        targets._clear_selection()
+        return result
 
 
 class DeployRun(models.Model):

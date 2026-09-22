@@ -10,7 +10,8 @@
                 </div>
                 <div class="mb-3" invisible="state != 'approved'" groups="ab_deploy.group_executor">
                     <button name="action_select_all_targets" string="Select All for Deployment" type="object" class="btn-secondary me-2"/>
-                    <button name="action_clear_target_selection" string="Clear Deployment Selection" type="object" class="btn-secondary"/>
+                    <button name="action_select_all_ssh_failures" string="Select All SSH Failures" type="object" class="btn-secondary me-2"/>
+                    <button name="action_clear_target_selection" string="Clear Selection" type="object" class="btn-secondary"/>
                 </div>
                 <field name="target_ids" nolabel="1" invisible="state != 'draft'" readonly="queued">
                     <list editable="bottom" limit="80">
@@ -27,7 +28,8 @@
                         <field name="server_id" readonly="1"/>
                         <field name="server_area"/>
                         <field name="server_odoo_url" widget="url" readonly="1"/>
-                        <field name="deploy" groups="ab_deploy.group_executor" readonly="deployment_status != 'delayed'"/>
+                        <field name="selection_eligible" column_invisible="True"/>
+                        <field name="deploy" groups="ab_deploy.group_executor" readonly="not selection_eligible and not deploy"/>
                         <field name="deployment_status"/>
                     </list>
                 </field>
