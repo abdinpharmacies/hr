@@ -24,6 +24,5 @@
             'ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml',
         ],
     },
-    'auto_install': ['ab_supplier_claim_cycle'],
     'installable': True,
 }
