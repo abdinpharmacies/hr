@@ -11,13 +11,13 @@ class ab_supplier_claim_cycle(models.Model):
     num_of_invoice = fields.Integer(required=True, tracking=True)
     status = fields.Selection(
         selection=[('inventory', 'Inventory'),
-                    ('purchase', 'Purchase'),
+                   ('purchase', 'Purchase'),
                    ('suppliers', 'Suppliers'),
                    ('bank_acc', 'Bank Acc'),
                    ('sign_check', 'Sign check'),
                    ('closed', 'Closed')],
         default='inventory', required=True, tracking=True)
-    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
+    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user, ondelete='set null')
     area = fields.Selection(
         selection=[('south', 'South'),
                    ('north', 'North'),
