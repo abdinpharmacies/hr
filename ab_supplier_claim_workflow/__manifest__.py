@@ -30,7 +30,6 @@
     ],
 
     'installable': True,
-    'auto_install': ['ab_supplier_claim_cycle'],
     'assets': {
         'web.assets_backend': [
             'ab_supplier_claim_workflow/static/src/scss/supplier_claim_cycle.scss',
