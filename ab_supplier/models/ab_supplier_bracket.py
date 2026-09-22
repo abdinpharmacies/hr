@@ -16,10 +16,10 @@ class AbSupplierBracket(models.Model):
 
     supplier_id = fields.Many2one('ab_costcenter', index=True)
     start_day = fields.Integer(default=0)
-    termination_day = fields.Integer(default=0, required=True, index=True)
+    termination_day = fields.Integer(default=0, index=True)
     credit_days = fields.Integer(index=True)
     discount = fields.Float(digits=(5, 2))
-    withdrawal_bracket = fields.Float(default=0.0, required=True)
+    withdrawal_bracket = fields.Float(default=0.0)
 
     @api.depends('supplier_id.name', 'payment_type_id.name')
     def _compute_display_name(self):
