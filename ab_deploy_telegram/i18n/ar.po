@@ -388,3 +388,9 @@ msgstr "ما زال مؤجلاً"
 #: code:addons/ab_deploy_telegram/models/deployment.py:0
 msgid "Unknown"
 msgstr "غير معروف"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid "Manually Resolved"
+msgstr "تمت المعالجة يدويًا"

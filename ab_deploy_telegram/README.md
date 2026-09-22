@@ -36,7 +36,7 @@ this request, including successes from earlier batches. No approval or queued-ba
 notification is sent. Each report consists of:
 
 1. A text summary: request reference, title, full description, executor and totals for
-   failed, unfinished, cancelled, delayed and succeeded targets. Long summaries split
+   failed, unfinished, cancelled, delayed, manually resolved and succeeded targets. Long summaries split
    into multiple Telegram text messages without truncating the description.
 2. A UTF-8 `<request>-servers.md` attachment: Arabic headers and status labels, with
    server serial, server name, area and current target status. Markdown columns use
@@ -44,7 +44,7 @@ notification is sent. Each report consists of:
 
 Targets are counted once using their current deployment status. Queued/running/unknown
 are counted and displayed as unfinished in the report. Rows and summary totals sort by
-failed, unfinished, cancelled, delayed, succeeded; then Serial and name. Serial contains
+failed, unfinished, cancelled, delayed, manually resolved, succeeded; then Serial and name. Serial contains
 the actual server value, not row numbering. Empty areas remain blank. Pipes/backslashes
 are escaped and multiline cells are flattened.
 
@@ -74,3 +74,7 @@ then an approved deployment, to confirm delivery to your chosen group.
 
 Existing approved requests without a saved destination automatically use the subscription
 at their next completion event or manual report. Past events are not replayed and deployments are not rerun.
+
+Manually resolved servers have a separate count and the Arabic label تمت المعالجة يدويًا.
+They are not counted as automatic successes. Marking or undoing manual resolution does
+not send a report automatically; use Send Deployment Report to publish the new state.

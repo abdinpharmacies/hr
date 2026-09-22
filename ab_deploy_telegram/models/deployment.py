@@ -126,7 +126,7 @@ class DeploymentTelegram(models.Model):
                  target.server_id.area or '', target.deployment_status)
                 for target in self.target_ids]
         totals = {status: sum(row[3] == status for row in rows)
-                  for status in ('succeeded', 'failed', 'cancelled', 'delayed', 'queued', 'running', 'unknown')}
+                  for status in ('succeeded', 'failed', 'cancelled', 'delayed', 'queued', 'running', 'unknown', 'manually_resolved')}
         lines = [self.env._('Deployment request name: %s', self.name),
                  self.env._('Title: %s', self.title or ''), self.env._('Description:'),
                  self.description or self.env._('Not provided'), '',
@@ -135,11 +135,12 @@ class DeploymentTelegram(models.Model):
                              (self.env._('Unfinished'), sum(totals[key] for key in ('queued', 'running', 'unknown'))),
                              (self.env._('Cancelled'), totals['cancelled']),
                              (self.env._('Delayed'), totals['delayed']),
+                             (self.env._('Manually Resolved'), totals['manually_resolved']),
                              (self.env._('Succeeded'), totals['succeeded'])]:
             lines.append('%s (%s)' % (label, count))
         # Explicit Arabic file labels use the shipped catalogs even if Arabic is
         # not activated as an Odoo UI language in this database.
-        labels = {'succeeded': _lt('Succeeded'), 'failed': _lt('Failed'),
+        labels = {'manually_resolved': _lt('Manually Resolved'), 'succeeded': _lt('Succeeded'), 'failed': _lt('Failed'),
                   'delayed': _lt('Delayed'), 'cancelled': _lt('Cancelled'),
                   'queued': _lt('Unfinished'), 'running': _lt('Unfinished'), 'unknown': _lt('Unfinished')}
         headers = [_lt('Serial'), _lt('Server'), _lt('Area'), _lt('Status')]
@@ -148,7 +149,7 @@ class DeploymentTelegram(models.Model):
         table = ['| ' + ' | '.join(h._translate('ar_001') for h in headers) + ' |',
                  '| ---: | ---: | ---: | ---: |']
         ranks = {'failed': 0, 'queued': 1, 'running': 1, 'unknown': 1,
-                 'cancelled': 2, 'delayed': 3, 'succeeded': 4}
+                 'cancelled': 2, 'delayed': 3, 'manually_resolved': 4, 'succeeded': 5}
         def sort_key(row):
             serial = row[0]
             return (ranks[row[3]], (0, int(serial)) if serial.isdecimal() else (1, serial.casefold()), row[1].casefold())
