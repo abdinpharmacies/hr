@@ -4,7 +4,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 from ..runner import engine
 
-TERMINAL = {'succeeded', 'failed', 'cancelled'}
+TERMINAL = {'succeeded', 'failed', 'cancelled', 'manually_resolved'}
 
 
 class DeployJob(models.Model):
@@ -19,7 +19,8 @@ class DeployJob(models.Model):
     server_id = fields.Many2one(related='target_id.server_id', store=True, index=True)
     job_key = fields.Char(required=True, readonly=True)
     state = fields.Selection([('queued', 'Queued'), ('running', 'Running'), ('unknown', 'Unknown'),
-                              ('succeeded', 'Succeeded'), ('failed', 'Failed'), ('cancelled', 'Cancelled')],
+                              ('succeeded', 'Succeeded'), ('failed', 'Failed'), ('cancelled', 'Cancelled'),
+                              ('manually_resolved', 'Manually Resolved')],
                              required=True, default='queued', readonly=True)
     started_at = fields.Datetime(readonly=True)
     finished_at = fields.Datetime(readonly=True)
@@ -27,6 +28,10 @@ class DeployJob(models.Model):
     log_tail = fields.Text(string='Recent Log', readonly=True)
     error = fields.Text(readonly=True)
     resolution_note = fields.Text(readonly=True)
+    manual_resolved_by_id = fields.Many2one('res.users', string='Manually Resolved By', readonly=True, copy=False)
+    manual_resolved_at = fields.Datetime(string='Manually Resolved At', readonly=True, copy=False)
+    manual_resolution_note = fields.Text(string='Manual Resolution Note', readonly=True, copy=False)
+    manual_undo_note = fields.Text(string='Undo Resolution Reason', readonly=True, copy=False)
     queue_job_id = fields.Many2one('queue.job', string='Queue Job', readonly=True, ondelete='set null')
     tick = fields.Integer(default=0, readonly=True)
     last_checked_at = fields.Datetime(readonly=True)
@@ -43,6 +48,10 @@ class DeployJob(models.Model):
         raise AccessError(_('Job results can only be changed by the execution workflow.'))
 
     def _set(self, vals):
+        # Late worker observations must not rewrite a human resolution.
+        self = self.filtered(lambda job: job.state != 'manually_resolved')
+        if not self:
+            return True
         if vals.get('state') in TERMINAL:
             vals = dict(vals, finished_at=fields.Datetime.now())
         # Human permissions are checked at workflow boundaries. Workers can only
@@ -68,6 +77,50 @@ class DeployJob(models.Model):
         if self.state in TERMINAL or self.tick != tick:
             return
         self.request_id._schedule_run()
+
+    def action_manual_resolve(self):
+        return self._open_manual_resolution(False)
+
+    def action_undo_manual_resolution(self):
+        return self._open_manual_resolution(True)
+
+    def _open_manual_resolution(self, undo):
+        self.ensure_one()
+        self.check_access('read')
+        self.request_id._require_role('administrator' if undo else 'executor')
+        if self.state != ('manually_resolved' if undo else 'failed'):
+            raise UserError(_('This execution is not eligible for this resolution action.'))
+        return {'type': 'ir.actions.act_window',
+                'name': _('Undo Manual Resolution') if undo else _('Mark as Manually Resolved'),
+                'res_model': 'ab_deploy_manual_resolution', 'view_mode': 'form', 'target': 'new',
+                'context': {'default_job_id': self.id, 'default_undo': undo}}
+
+    def _confirm_manual_resolution(self, note, undo=False):
+        self.ensure_one()
+        self.check_access('read')
+        self.request_id._require_role('administrator' if undo else 'executor')
+        self.request_id._lock()
+        self.server_id._lock()
+        self._lock()
+        if self.state != ('manually_resolved' if undo else 'failed'):
+            raise UserError(_('This execution is not eligible for this resolution action.'))
+        if not undo and self.request_id.state != 'approved':
+            raise UserError(_('Manual resolution requires an approved deployment request.'))
+        note = (note or '').strip()
+        if not note:
+            raise UserError(_('Enter a resolution note or an undo reason.'))
+        self._check_not_busy()
+        if undo:
+            vals = {'state': 'failed', 'manual_undo_note': note}
+        else:
+            vals = {'state': 'manually_resolved', 'manual_resolution_note': note,
+                    'manual_resolved_by_id': self.env.uid, 'manual_resolved_at': fields.Datetime.now(),
+                    'manual_undo_note': False}
+        # Deliberately avoid _set: preserve the original execution finish time,
+        # errors and logs. The guard's write records actor, timestamp and values.
+        super(DeployJob, self.sudo()).write(vals)
+        self.target_id._clear_selection()
+        return True
 
     def action_resolve(self):
         self._require_role('administrator')

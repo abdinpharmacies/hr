@@ -15,8 +15,8 @@ class DeployRecovery(models.TransientModel):
     @api.model
     def _summary(self):
         self._check_admin()
-        jobs = self.env['ab_deploy_job'].search(fields.Domain('state', 'in', ['queued', 'running', 'unknown'])
-                                                   | fields.Domain('odoo_log_status', 'in', ['pending', 'error']))
+        jobs = self.env['ab_deploy_job'].search(fields.Domain('state', '!=', 'manually_resolved') & (fields.Domain('state', 'in', ['queued', 'running', 'unknown'])
+                                                   | fields.Domain('odoo_log_status', 'in', ['pending', 'error'])))
         return _('Queued: %(queued)s; Running: %(running)s; Unknown: %(unknown)s; Logs needing attention: %(logs)s',
                  queued=len(jobs.filtered(lambda j: j.state == 'queued')),
                  running=len(jobs.filtered(lambda j: j.state == 'running')),
@@ -26,8 +26,8 @@ class DeployRecovery(models.TransientModel):
     def action_recover(self):
         self.ensure_one()
         self._check_admin()
-        jobs = self.env['ab_deploy_job'].search(fields.Domain('state', 'in', ['queued', 'running', 'unknown'])
-                                                   | fields.Domain('odoo_log_status', 'in', ['pending', 'error']))
+        jobs = self.env['ab_deploy_job'].search(fields.Domain('state', '!=', 'manually_resolved') & (fields.Domain('state', 'in', ['queued', 'running', 'unknown'])
+                                                   | fields.Domain('odoo_log_status', 'in', ['pending', 'error'])))
         # Scope comes only from deployment records, never arbitrary queue-job IDs.
         jobs.mapped('request_id')._schedule_run()
         return {'type': 'ir.actions.client', 'tag': 'display_notification',

@@ -139,7 +139,7 @@ class DeployRequestBatch(models.Model):
             request._lock()
             selected = jobs if jobs is not None else request.job_ids.filtered(
                 lambda j: j.state in ('queued', 'running', 'unknown') or j._needs_logs())
-            selected = selected.filtered(lambda j: j.request_id == request and j.state != 'cancelled')
+            selected = selected.filtered(lambda j: j.request_id == request and j.state not in ('cancelled', 'manually_resolved'))
             active = request.run_ids.filtered(lambda r: r.queue_job_id.state in ACTIVE_QUEUE)
             selected -= active.job_ids
             if selected:
@@ -226,7 +226,7 @@ class DeployRun(models.Model):
             if job not in self.job_ids and any(a.run_id != self and a.run_id.queue_job_id.state == 'started'
                                                for a in job.attempt_ids.filtered(lambda a: not a.finished_at)):
                 continue
-            if job.state == 'cancelled' or (job.state in ('failed', 'succeeded') and not job._needs_logs()):
+            if job.state in ('cancelled', 'manually_resolved') or (job.state in ('failed', 'succeeded') and not job._needs_logs()):
                 excluded.add(job.id)
                 continue
             if job.state == 'queued':
@@ -270,7 +270,7 @@ class DeployRun(models.Model):
         job._lock()
         attempt = self.env['ab_deploy_attempt'].browse(attempt_id)
         kind = event['kind']
-        if job.state == 'cancelled':
+        if job.state in ('cancelled', 'manually_resolved'):
             return False
         if kind == 'intent':
             job._set({'launch_intent': True})

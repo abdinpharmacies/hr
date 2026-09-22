@@ -175,6 +175,7 @@ msgid "Business Reason"
 msgstr "سبب النشر"
 
 #. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_manual_resolution_form
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_recovery_form
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_form
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_form
@@ -241,6 +242,7 @@ msgstr "تم الإنشاء"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_uid
@@ -259,6 +261,7 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__create_date
@@ -429,6 +432,7 @@ msgstr "التطوير"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__display_name
@@ -547,6 +551,7 @@ msgstr "اسم المضيف"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_guard__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__id
@@ -590,6 +595,7 @@ msgstr "متابع"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_uid
@@ -608,6 +614,7 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_recovery__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__write_date
@@ -1483,6 +1490,7 @@ msgstr "إعدادات الخادم أو مهلة الانتظار غير صال
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__job_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__job_ids
 msgid "Job"
@@ -3132,3 +3140,107 @@ msgstr "قيمة ترتيب اسم الخادم"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_status_rank
 msgid "Status Sort Rank"
 msgstr "ترتيب الحالة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_manual_resolution_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_manual_resolution_form
+msgid ""
+"Confirm that you fixed or verified this server outside the deployment "
+"workflow. The original failure and logs are preserved. No SSH command or "
+"notification will be sent."
+msgstr ""
+"أكد أنك أصلحت هذا الخادم أو تحققت منه خارج إجراءات النشر. يُحتفظ بالفشل "
+"الأصلي والسجلات. لن يُرسل أي أمر SSH أو إشعار."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Enter a resolution note or an undo reason."
+msgstr "أدخل ملاحظة المعالجة أو سبب التراجع."
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_manual_resolution
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_manual_resolution_form
+msgid "Manual Deployment Resolution"
+msgstr "المعالجة اليدوية للنشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_manual_resolution
+msgid "Manual Resolution"
+msgstr "المعالجة اليدوية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__manual_resolution_note
+msgid "Manual Resolution Note"
+msgstr "ملاحظة المعالجة اليدوية"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "Manual resolution requires an approved deployment request."
+msgstr "تتطلب المعالجة اليدوية طلب نشر معتمدًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__manually_resolved
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__manually_resolved
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_manual_resolution_search
+msgid "Manually Resolved"
+msgstr "تمت المعالجة يدويًا"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__manual_resolved_at
+msgid "Manually Resolved At"
+msgstr "وقت المعالجة اليدوية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__manual_resolved_by_id
+msgid "Manually Resolved By"
+msgstr "تمت المعالجة يدويًا بواسطة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_manual_resolution
+msgid "Mark as Manually Resolved"
+msgstr "تعيين كتمت المعالجة يدويًا"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__note
+msgid "Resolution Note / Undo Reason"
+msgstr "ملاحظة المعالجة / سبب التراجع"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_manual_resolution_form
+msgid ""
+"Restore Failed status and record why the manual resolution was incorrect. "
+"This does not retry the deployment."
+msgstr ""
+"استعد حالة الفشل وسجل سبب عدم صحة المعالجة اليدوية. لن يؤدي ذلك إلى إعادة "
+"محاولة النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+msgid "This execution is not eligible for this resolution action."
+msgstr "هذا التنفيذ غير مؤهل لإجراء المعالجة هذا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_manual_resolution__undo
+msgid "Undo"
+msgstr "تراجع"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/jobs.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_manual_resolution
+msgid "Undo Manual Resolution"
+msgstr "التراجع عن المعالجة اليدوية"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__manual_undo_note
+msgid "Undo Resolution Reason"
+msgstr "سبب التراجع عن المعالجة"

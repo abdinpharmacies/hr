@@ -409,7 +409,7 @@ class DeployTarget(models.Model):
     deployment_status = fields.Selection([
         ('delayed', 'Delayed'), ('queued', 'Queued'), ('running', 'Running'),
         ('unknown', 'Unknown'), ('succeeded', 'Succeeded'), ('failed', 'Failed'),
-        ('cancelled', 'Cancelled')], string='Status', compute='_compute_deployment_status')
+        ('cancelled', 'Cancelled'), ('manually_resolved', 'Manually Resolved')], string='Status', compute='_compute_deployment_status')
 
     @api.depends('job_ids.state', 'request_id.state')
     def _compute_deployment_status(self):

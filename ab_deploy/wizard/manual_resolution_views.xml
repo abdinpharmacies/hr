@@ -1,0 +1,39 @@
+<odoo>
+    <record id="view_manual_resolution_form" model="ir.ui.view">
+        <field name="name">ab_deploy_manual_resolution_form</field><field name="model">ab_deploy_manual_resolution</field>
+        <field name="arch" type="xml"><form string="Manual Deployment Resolution"><group><field name="job_id"/><field name="undo" invisible="True"/><field name="note"/></group>
+            <p invisible="undo">Confirm that you fixed or verified this server outside the deployment workflow. The original failure and logs are preserved. No SSH command or notification will be sent.</p>
+            <p invisible="not undo">Restore Failed status and record why the manual resolution was incorrect. This does not retry the deployment.</p>
+            <footer><button name="action_confirm" string="Confirm" type="object" class="btn-primary"/><button string="Cancel" special="cancel"/></footer>
+        </form></field>
+    </record>
+    <record id="view_job_manual_resolution" model="ir.ui.view">
+        <field name="name">ab_deploy_job_manual_resolution</field><field name="model">ab_deploy_job</field><field name="inherit_id" ref="view_job_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside"><button name="action_manual_resolve" string="Mark as Manually Resolved" type="object" groups="ab_deploy.group_executor" invisible="state != 'failed'"/><button name="action_undo_manual_resolution" string="Undo Manual Resolution" type="object" groups="ab_deploy.group_administrator" invisible="state != 'manually_resolved'"/></xpath>
+            <xpath expr="//button[@name='action_resume']" position="attributes"><attribute name="invisible">state in ('cancelled', 'manually_resolved')</attribute></xpath>
+            <xpath expr="//sheet" position="inside"><group string="Manual Resolution" invisible="not manual_resolved_at"><field name="manual_resolved_by_id"/><field name="manual_resolved_at"/><field name="manual_resolution_note"/><field name="manual_undo_note" invisible="not manual_undo_note"/></group></xpath>
+        </field>
+    </record>
+    <record id="view_job_manual_resolution_search" model="ir.ui.view">
+        <field name="name">ab_deploy_job_manual_resolution_search</field><field name="model">ab_deploy_job</field>
+        <field name="arch" type="xml"><search><field name="request_id"/><field name="server_id"/><field name="state"/><filter name="manually_resolved" string="Manually Resolved" domain="[('state', '=', 'manually_resolved')]"/></search></field>
+    </record>
+    <record id="action_job" model="ir.actions.act_window"><field name="search_view_id" ref="view_job_manual_resolution_search"/></record>
+    <record id="view_job_manual_resolution_list" model="ir.ui.view">
+        <field name="name">ab_deploy_job_manual_resolution_list</field><field name="model">ab_deploy_job</field><field name="inherit_id" ref="view_job_batch_list"/>
+        <field name="arch" type="xml"><xpath expr="//list" position="attributes"><attribute name="decoration-info">state == 'manually_resolved'</attribute></xpath></field>
+    </record>
+    <record id="view_request_manual_resolution_lists" model="ir.ui.view">
+        <field name="name">ab_deploy_request_manual_resolution_lists</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_ids']/list" position="attributes"><attribute name="decoration-info">state == 'manually_resolved'</attribute></xpath>
+        </field>
+    </record>
+    <record id="view_target_manual_resolution_list" model="ir.ui.view">
+        <field name="name">ab_deploy_target_manual_resolution_list</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_targets_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='target_ids'][@readonly=&quot;state != 'approved'&quot;]/list" position="attributes"><attribute name="decoration-info">deployment_status == 'manually_resolved'</attribute></xpath>
+        </field>
+    </record>
+</odoo>

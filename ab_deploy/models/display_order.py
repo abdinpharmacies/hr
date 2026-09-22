@@ -2,7 +2,7 @@
 from odoo import api, fields, models
 
 STATUS_RANK = {'failed': 0, 'queued': 1, 'running': 1, 'unknown': 1,
-               'cancelled': 2, 'delayed': 3, 'succeeded': 4}
+               'cancelled': 2, 'delayed': 3, 'manually_resolved': 4, 'succeeded': 5}
 
 
 def display_values(status, server):
