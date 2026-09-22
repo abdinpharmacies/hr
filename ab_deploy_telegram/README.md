@@ -36,15 +36,15 @@ this request, including successes from earlier batches. No approval or queued-ba
 notification is sent. Each report consists of:
 
 1. A text summary: request reference, title, full description, executor and totals for
-   succeeded, failed, cancelled, unfinished and delayed targets. Long summaries split
+   failed, unfinished, cancelled, delayed and succeeded targets. Long summaries split
    into multiple Telegram text messages without truncating the description.
 2. A UTF-8 `<request>-servers.md` attachment: Arabic headers and status labels, with
    server serial, server name, area and current target status. Markdown columns use
    `---:` for right alignment in compatible viewers; Telegram receives a document.
 
 Targets are counted once using their current deployment status. Queued/running/unknown
-are counted as unfinished but keep their individual status in the file. Rows sort by
-succeeded, failed, delayed, cancelled, unfinished; then Serial and name. Serial contains
+are counted and displayed as unfinished in the report. Rows and summary totals sort by
+failed, unfinished, cancelled, delayed, succeeded; then Serial and name. Serial contains
 the actual server value, not row numbering. Empty areas remain blank. Pipes/backslashes
 are escaped and multiline cells are flattened.
 

@@ -1,7 +1,7 @@
 {
     'name': 'Deployment Telegram Notifications',
     'description': 'Send deployment approval and batch summaries through configured Telegram bots.',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'license': 'LGPL-3',
     'category': 'Administration',
     'author': 'Abdin Pharmacies',

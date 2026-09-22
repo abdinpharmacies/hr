@@ -161,7 +161,7 @@ msgstr "الخوادم التي ما زالت مؤجلة: %s"
 #. odoo-python
 #: code:addons/ab_deploy_telegram/models/deployment.py:0
 msgid "Succeeded"
-msgstr "نجح"
+msgstr "تم"
 
 #. module: ab_deploy_telegram
 #: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__telegram_bot_id
