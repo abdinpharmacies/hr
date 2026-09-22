@@ -30,3 +30,25 @@ msgstr "ملكية العرض"
 #: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__promotion_ownership__our_promotion
 msgid "Our Promotion"
 msgstr "عرضنا"
+
+#. module: ab_sales_promo_report
+#: model:res.groups,name:ab_sales_promo_report.group_ab_sales_promo_reports
+msgid "Sales Promo Reports"
+msgstr "تقارير العروض"
+
+#. module: ab_sales_promo_report
+#. odoo-python
+#: code:addons/ab_sales_promo_report/models/ab_sales_promo_report.py:0
+#: model:ir.ui.menu,name:ab_sales_promo_report.ab_sales_promo_report_menu_load
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_graph
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_pivot
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
+msgid "Sales Promo Report"
+msgstr "تقرير العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.actions.act_window,name:ab_sales_promo_report.ab_sales_promo_report_line_action
+#: model:ir.ui.menu,name:ab_sales_promo_report.ab_sales_promo_report_menu_lines
+msgid "Sales Promo Report Lines"
+msgstr "سطور تقرير العروض"

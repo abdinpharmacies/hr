@@ -1,41 +1,27 @@
-commit 02b72220c94d6533d1b2938324bfc21b7ecc50bc
-Author: hager yasser <hageryasser2002@gmail.com>
-Date: 2026-08-26
-Subject: ab_sales_promo_report/FEAT(#2327):  Minimal Promotion Ownership Column
-
-User-facing changes in that commit:
-- Add related Promotion Ownership to the report and Arabic translations.
-- Grant system administrators access to the report lines and wizard.
-
-Files changed in that commit:
-- ab_sales_promo_report/changelog.d
-- ab_sales_promo_report/i18n/ar.po
-- ab_sales_promo_report/i18n/ar_001.po
-- ab_sales_promo_report/models/ab_sales_promo_report.py
-- ab_sales_promo_report/security/ir.model.access.csv
-- ab_sales_promo_report/views/ab_sales_promo_report_views.xml
-
 Current changes before commit:
-- Bump 19.0.1.0.0 to 19.0.1.0.1.
-- Process contiguous inclusive seven-day report batches with fetchmany(2000), consuming each cursor inside its connection context.
-- Normalize raw ODBC fetchmany rows using cursor column names while preserving dictionary rows; cover the connector wrapper contract in a regression test.
-- Build values per batch, create at most 1,000 report lines per call, retain created IDs and release batch rows/values.
-- Apply replacement once for the complete requested period; preserve existing empty-result messages and total row counts.
-- Add report-period overlap filtering while preserving active, company, store, explicit-promotion filters and sequence,id ordering.
-- Match each invoice product independently against date-valid promotions and the complete invoice compensation; reuse results for repeated source rows.
-- Preserve discount formulas and tolerances, no_promo_applied behavior, and historical out_of_date values; newly generated lines never attach date-invalid promotions.
-- Add coverage for batching, boundaries, open-ended dates, product matching, related dates, scope, mapping, SQL filters and tolerance.
-- Use installation context only for transactional test fixtures on replica databases; report calls retain their normal context.
-- Leave SQL structure, connector code, UI, strings and translations unchanged.
+- Add Sales Promo Reports under Abdin Sales, implying Internal User; system administrators inherit the new group automatically.
+- Require explicit report-group assignment for Marketing users to load reports and manage their own report lines.
+- Restrict both report menus and the report-line/wizard ACLs to the dedicated group while retaining administrator ACLs.
+- Replace the ownership rule's Internal User group with the report group, preserving own-record isolation.
+- Load the group definition before ACLs and record rules.
+- Add Sales Promo Reports (تقارير العروض) and both menu translations in ar.po and ar_001.po using references exported from Odoo.
+- Keep report calculations, sales data, and inventory logic unchanged.
 
 Files changed:
 - ab_sales_promo_report/__manifest__.py
-- ab_sales_promo_report/models/ab_sales_promo_report.py
-- ab_sales_promo_report/tests/test_sales_promo_report.py
+- ab_sales_promo_report/security/security_groups.xml
+- ab_sales_promo_report/security/ir.model.access.csv
+- ab_sales_promo_report/security/record_rules.xml
+- ab_sales_promo_report/views/menus.xml
+- ab_sales_promo_report/i18n/ar.po
+- ab_sales_promo_report/i18n/ar_001.po
 - ab_sales_promo_report/changelog.d
 
 Validation:
-- 25 focused test methods passed on abdin_replica(POS) (27 Odoo test-stat entries), including raw driver-row regression coverage; external report queries mocked.
-- Targeted ab_sales_promo_report upgrade succeeded.
-- AST comparison confirmed unchanged SQL preparation, discount formulas, tolerance, invoice-date predicate and product-scope helper; translated strings unchanged.
-- Only the four approved module files differ from HEAD.
+- Targeted ab_sales_promo_report upgrade on abdin_replica(POS); all 25 existing tests passed (27 Odoo test-stat entries).
+- Rollback-only XML user fixtures verified both menus, report loading, and own-line read/write/unlink for report users, plus administrator access.
+- Marketing-only users were denied menus, direct model reads, and direct report loading; other-user lines were hidden and direct read/write/unlink denied.
+- External report data was mocked; temporary users and report lines were rolled back.
+- Both translation files passed msgfmt --check-format.
+- Verified ar_001 runtime names differ from en_US for the group and both menus; the group displays تقارير العروض.
+- Retried the translation upgrade successfully after a concurrent database update conflict; unrelated missing-module warnings remain in the replica environment.

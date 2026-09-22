@@ -3,12 +3,14 @@
     <data>
         <menuitem id="ab_sales_promo_report_menu_load"
                   name="Sales Promo Report"
+                  groups="ab_sales_promo_report.group_ab_sales_promo_reports"
                   parent="ab_sales.ab_sales_reports_menu"
                   action="ab_sales_promo_report_wizard_action"
                   sequence="30"/>
 
         <menuitem id="ab_sales_promo_report_menu_lines"
                   name="Sales Promo Report Lines"
+                  groups="ab_sales_promo_report.group_ab_sales_promo_reports"
                   parent="ab_sales.ab_sales_reports_menu"
                   action="ab_sales_promo_report_line_action"
                   sequence="31"/>
