@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_inventory_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_tree</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <tree string="ab_inventory_header_tree" multi_edit="1">
+                    <field name="header_ref" optional="show"/>
+                    <field name="store_id" optional="show"/>
+                    <field name="pending_main_count"
+                           class="text-center h6"
+                           optional="show" decoration-info="pending_main_count&gt;0"/>
+                    <field name="pending_store_count"
+                           class="text-center h6"
+                           optional="show" decoration-success="pending_store_count&gt;0"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_inventory_header_view_form" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_form</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_inventory_header_form">
+                    <sheet>
+                        <group>
+                            <field name="header_ref"/>
+                            <field name="store_id"/>
+                            <field name="pending_main_count"/>
+                            <field name="pending_store_count"/>
+                            <button name="btn_open_header" type="object" string="Open Header"
+                                    class="btn-primary"/>
+                        </group>
+                        <notebook>
+                            <page name="line_ids" string="Lines">
+                                <group>
+                                    <field name="line_ids" nolabel="1">
+                                        <tree editable="bottom"
+                                              decoration-success="status=='saved'"
+                                              decoration-info="status=='pending_main'"
+                                              decoration-bf="status=='pending_store'"
+                                        >
+                                            <field name="product_id"/>
+                                            <field name="qty_in_source_unit"/>
+                                            <field name="source_uom_id"/>
+                                            <field name="price"/>
+                                            <field name="unit_cost" optional="hide"/>
+                                            <field name="unit_taxes_value" optional="hide"/>
+                                            <field name="status"/>
+                                            <button name="btn_saved_store" type="object" string="Save"
+                                                    class="btn-primary"
+                                                    attrs="{'invisible':[('status','in',['saved','pending_main'])]}"/>
+                                            <button name="btn_pending_main" type="object" string="To Main"
+                                                    class="btn-info"
+                                                    attrs="{'invisible':[('status','in',['saved','pending_main'])]}"/>
+                                            <button name="btn_pending_store" type="object" string="To Store"
+                                                    class="btn-success"
+                                                    attrs="{'invisible':[('status','in',['saved','pending_store'])]}"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_inventory_header_view_search" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_search</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_inventory_header_search">
+                    <field name="header_ref"/>
+                    <field name="store_id"/>
+                    <field name="has_pending_main"/>
+                    <field name="has_pending_store"/>
+                    <filter name="Has Pending Main" domain="[('has_pending_main','=',True)]"/>
+                    <filter name="Has Pending Store" domain="[('has_pending_store','=',True)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_inventory_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_pivot</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_inventory_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_inventory_header_action" model="ir.actions.act_window">
+            <field name="name">Pending Inventory</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_inventory_header</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_inventory_header_menu"
+                  name="Pending Inventory"
+                  groups="base.group_system"
+                  parent="ab_product_source.menu_root"
+                  action="ab_inventory_header_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

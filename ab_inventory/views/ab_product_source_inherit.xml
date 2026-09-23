@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_source_tree_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_source_tree_view_inherit</field>
+            <field name="model">ab_product_source</field>
+            <field name="inherit_id" ref="ab_product_source.ab_product_source_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//tagName[@attrName='']" position="after"> -->
+                <!--  <field name=""/> -->
+                <!-- </xpath> -->
+
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <field name="available_qty"/>
+                    <field name="total_qty"/>
+                </xpath>
+
+                <!-- <xpath expr="//field[last()]" position="after"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+                <!-- 1 or 2 or x will be field index -->
+                <!-- <xpath expr="//field[1]" position="before"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+
+            </field>
+        </record>
+
+        <record id="ab_product_source___view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_source___view_inherit</field>
+            <field name="model">ab_product_source</field>
+            <field name="inherit_id" ref="ab_product_source.ab_product_source_view_search"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <!-- <xpath expr="//tagName[@attrName='']" position="after"> -->
+                <!--  <field name=""/> -->
+                <!-- </xpath> -->
+
+                <!-- <xpath expr="//field[@name='']" position="after"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+                <xpath expr="//field[last()]" position="after">
+                    <filter string="Is Pending" name="filter_is_pending" domain="[('is_pending','=',True)]"/>
+                </xpath>
+
+                <!-- 1 or 2 or x will be field index -->
+                <!-- <xpath expr="//field[1]" position="before"> -->
+                <!-- <field name=""/> -->
+                <!-- </xpath> -->
+
+
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
