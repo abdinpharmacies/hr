@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_ob_header_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_ob_header_view_form</field>
+            <field name="model">ab_purchase_ob_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_ob_header_form">
+                    <header class="w-100">
+                        <button string="Submit" type="object" name="btn_submit_inventory" class="btn-info"
+                                attrs="{'invisible':[('status','=','saved')]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Price:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_price"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-truck"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Cost:</span>
+                                    <span class="o_stat_text">∑ Taxes:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_cost"/>
+                                    </span>
+                                    <span class="o_stat_value">
+                                        <field name="total_tax"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-list-ol"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Product:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="lines_count"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger"
+                                attrs="{'invisible': [('status', '!=', 'rejected')]}"/>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-success"
+                                attrs="{'invisible': [('status', '!=', 'saved')]}"/>
+                        <widget name="web_ribbon" title="Pending" bg_color="bg-info"
+                                attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                        <field name="status" invisible="1"/>
+                        <field name="total_price" invisible="1"/>
+                        <field name="total_cost" string="Total Cost" invisible="1"/>
+                        <field name="total_tax" invisible="1"/>
+                        <field name="lines_count" invisible="1"/>
+                        <group>
+                            <field name="store_id" attrs="{'readonly':[('status','=','saved')]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Opening Balance Detail">
+                                <field name="line_ids" attrs="{'readonly':[('status','=','saved')]}">
+                                    <tree editable="bottom">
+                                        <field name="header_status" invisible="1"/>
+                                        <field name="product_id" class="text-wrap" width="120px"/>
+                                        <field name="exp_date"/>
+                                        <field name="qty" string="Quantity" width="75px"/>
+                                        <field name="product_uom_ids" invisible="1"/>
+                                        <field name="uom_id" domain="[('id','in',product_uom_ids)]"
+                                               context="{'uom_only_type': 1}"
+                                               options="{&quot;always_reload&quot;: True}" string="Unit" width="65px"/>
+                                        <field name="price" string="Price" width="75px"/>
+                                        <field name="purchase_price"/>
+                                        <field name="taxes_ids" widget="many2many_tags" width="65px"/>
+                                        <field name="unit_cost"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description" nolabel="1" placeholder="Write your feedback here"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_ob_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_ob_header_view_tree</field>
+            <field name="model">ab_purchase_ob_header</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_ob_header_tree">
+                    <field name="store_id"/>
+                    <field name="total_price"/>
+                    <field name="total_cost"/>
+                    <field name="lines_count"/>
+                    <field name="status" widget="badge" decoration-info="status=='pending'"
+                           decoration-danger="status=='rejected'" decoration-warning="status=='prepending'"
+                           decoration-success="status=='saved'"/>
+                    <field name="description"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_ob_header_action" model="ir.actions.act_window">
+            <field name="name">Opening Balance</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_ob_header</field>
+            <field name="context">{'uom_only_type': 1}</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem id="ab_purchase_ob_header_menu" name="Opening Balance" parent="ab_product_source.menu_root"
+                  action="ab_purchase_ob_header_action" sequence="3"/>
+
+    </data>
+</odoo>

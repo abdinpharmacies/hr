@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_purchase_ob_header_admin,access_ab_purchase_ob_header_admin,ab_purchase_ob.model_ab_purchase_ob_header,base.group_system,1,1,1,1
+access_ab_purchase_ob_details_admin,access_ab_purchase_ob_details_admin,ab_purchase_ob.model_ab_purchase_ob_line,base.group_system,1,1,1,1
+access_ab_purchase_ob_header_entry,access_ab_purchase_ob_header_entry,model_ab_purchase_ob_header,base.group_system,1,1,1,1
+
