@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 import re
 import difflib
 import logging
@@ -34,7 +33,7 @@ class SupplierClaim(models.Model):
 
     costcenter_id = fields.Many2one('ab_costcenter', string='Supplier', index=True)
     je_header_ro_id = fields.Many2one(related='je_header_id', string='J.E. Header')
-    costcenter_id_domain = fields.Char(compute='_compute_costcenter_id_domain', compute_sudo=True)
+    costcenter_id_domain = fields.Binary(compute='_compute_costcenter_id_domain', compute_sudo=True)
 
     supplier_balance = fields.Float(compute='_compute_supplier_balance')
     is_closed = fields.Boolean(default=False)
@@ -148,13 +147,13 @@ class SupplierClaim(models.Model):
             if rec.instant_cash:
                 costcenter_ids = self.env['ab_supplier_bracket'].sudo().search([]).filtered(
                     lambda s: s.payment_type == 'instant_cash').mapped('supplier_id.id')
-                domain = [('id', 'in', costcenter_ids)]
+                domain = fields.Domain('id', 'in', costcenter_ids)
             else:
                 supplier_mo = self.env['ab_supplier'].with_context(active_test=False)
                 costcenter_ids = supplier_mo.search([]).mapped('costcenter_id.id')
-                domain = [('id', 'in', costcenter_ids)]
+                domain = fields.Domain('id', 'in', costcenter_ids)
 
-            rec.costcenter_id_domain = json.dumps(domain)
+            rec.costcenter_id_domain = list(domain)
 
     def _get_je_lines_search_ids_domain(self):
         supplier_account_id = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers').id

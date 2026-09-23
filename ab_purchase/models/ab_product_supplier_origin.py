@@ -33,7 +33,7 @@ class AbProductSupplierOrigin(models.Model):
         where org.product_id is null
         """)
         products_costcenters = cr.fetchall()
-        for prod_id, cc_id in self.web_progress_iter(products_costcenters):
+        for prod_id, cc_id in products_costcenters:
             self.create({
                 'product_id': prod_id,
                 'costcenter_id': cc_id,

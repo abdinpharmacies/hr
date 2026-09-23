@@ -90,7 +90,7 @@ class PurchaseNoticeHeader(models.Model):
             supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
             inventory_account = self.env.ref('ab_accounting.ab_accounting_account_guide_inventory')
             tax_account = self.env.ref('ab_accounting.ab_accounting_account_guide_vat')
-            for n in self.web_progress_iter(notices, msg='Looping Notices ...'):
+            for n in notices:
                 lines = n.je_header_id.line_ids
                 supplier_line = lines.filtered(lambda l: l.account_id == supplier_account)
                 inventory_line = lines.filtered(lambda l: l.account_id == inventory_account)

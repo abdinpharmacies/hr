@@ -1,6 +1,5 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
-import json
 
 
 class PurchaseNoticeLine(models.Model):
@@ -30,7 +29,7 @@ class PurchaseNoticeLine(models.Model):
     unit_taxes_value = fields.Float(related='source_id.unit_taxes_value')
     uom_id = fields.Many2one(related='source_id.uom_id')
 
-    source_id_domain = fields.Char(compute='_compute_source_id_domain')
+    source_id_domain = fields.Binary(compute='_compute_source_id_domain')
 
     # eplus fields
     eplus_serial = fields.Integer(index=True, readonly=True)
@@ -75,21 +74,21 @@ class PurchaseNoticeLine(models.Model):
             else:
                 rec.purchase_header_num = 0
 
-    @api.depends('header_id.purchase_header_id')
+    @api.depends('header_id.purchase_header_id.line_ids.source_id', 'header_id.line_ids.source_id')
     def _compute_source_id_domain(self):
-        domain = []
         for rec in self:
+            domain = fields.Domain.TRUE
             purchase_lines = rec.header_id.purchase_header_id.mapped('line_ids')
             if purchase_lines:
                 source_purchase_lines = [s._origin.id if getattr(s, '_origin', None) else s.id for s in
                                          purchase_lines.mapped('source_id')]
 
-                domain = [('id', 'in', source_purchase_lines)]
+                domain = fields.Domain('id', 'in', source_purchase_lines)
 
             entered_source_ids = rec.header_id.line_ids.mapped('source_id')
             entered_source_ids = [s._origin.id if getattr(s, '_origin', None) else s.id for s in entered_source_ids]
-            domain += [('id', 'not in', entered_source_ids)]
-            rec.source_id_domain = json.dumps(domain)
+            domain &= fields.Domain('id', 'not in', entered_source_ids)
+            rec.source_id_domain = list(domain)
 
     @api.depends('source_id')
     def _compute_last_inventory_id(self):

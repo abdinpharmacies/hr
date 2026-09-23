@@ -1,11 +1,21 @@
 {
     'name': 'Abdin Purchase',
+    'version': '19.0.1.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
+    'author': 'Abdin Pharmacies',
+    'developer': 'emadco88',
     'application': True,
-    'depends': ['base', 'mail', 'abdin_et',
-                'ab_accounting', 'ab_product_source', 'ab_store', 'ab_supplier',
-                'ab_inventory'],
+    'depends': [
+        'base',
+        'mail',
+        'abdin_et',
+        'ab_accounting',
+        'ab_product_source',
+        'ab_store',
+        'ab_supplier',
+        'ab_inventory',
+    ],
     'data': [
         'security/security_groups.xml',
         'security/record_rules_purchase_header.xml',
@@ -24,9 +34,7 @@
         'views_accounting/templates_balance_dist.xml',
         'views_accounting/pdf_supplier_balances.xml',
         'views_accounting/xlsx_supplier_balances.xml',
-        # 'views_accounting/ab_supplier_inherit.xml',
-        # 'views_accounting/ab_purchase_claim_line.xml',
-        # 'views_accounting/ab_purchase_claim_dist_line.xml',
     ],
-
+    'installable': True,
+    'auto_install': False,
 }

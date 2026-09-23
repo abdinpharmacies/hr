@@ -79,7 +79,7 @@ class AbPurchaseReportWizard(models.TransientModel):
             ('costcenter_id', 'in', credit_suppliers_ids),
         ], order='due_date DESC')
 
-        for je in self.web_progress_iter(je_lines_no_claim, 'looping ...'):
+        for je in je_lines_no_claim:
             costcenter_id = je.costcenter_id.id
             je_due_date = je.due_date
             account_name = je.account_id.name
@@ -189,7 +189,7 @@ class AbPurchaseReportWizard(models.TransientModel):
     #         ('costcenter_id', 'in', credit_suppliers_ids),
     #     ], order='due_date DESC')
     #
-    #     for je in self.web_progress_iter(je_lines, 'looping ...'):
+    #     for je in je_lines:
     #         costcenter_id = je.costcenter_id.id
     #         je_due_date = je.due_date
     #         account_name = je.account_id.name
