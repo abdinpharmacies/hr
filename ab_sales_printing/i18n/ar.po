@@ -1,0 +1,136 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_printing
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-23 06:54+0000\n"
+"PO-Revision-Date: 2026-09-23 06:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Could not open the receipt."
+msgstr "تعذر فتح الإيصال."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Direct print failed."
+msgstr "فشلت الطباعة المباشرة."
+
+#. module: ab_sales_printing
+#: model:ir.model.fields,field_description:ab_sales_printing.field_ab_sales_ui_api__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Failed to load printer options."
+msgstr "تعذر تحميل خيارات الطابعة."
+
+#. module: ab_sales_printing
+#: model:ir.model.fields,field_description:ab_sales_printing.field_ab_sales_ui_api__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/cups_print_dialog.xml:0
+msgid ""
+"Lists printers available to the server. Use System dialog for printers "
+"connected to your computer."
+msgstr ""
+"تعرض القائمة الطابعات المتاحة للخادم. استخدم مربع حوار النظام للطابعات "
+"المتصلة بجهازك."
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid "No lines to print."
+msgstr "لا توجد بنود للطباعة."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Nothing to print."
+msgstr "لا يوجد محتوى للطباعة."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Popup blocked. Allow popups to print."
+msgstr "تم حظر النافذة المنبثقة. اسمح بالنوافذ المنبثقة للطباعة."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Print preferences could not be saved in this browser."
+msgstr "تعذر حفظ تفضيلات الطباعة في هذا المتصفح."
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid "Sales Receipt"
+msgstr "إيصال مبيعات"
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid "Sales Return Receipt"
+msgstr "إيصال مرتجع مبيعات"
+
+#. module: ab_sales_printing
+#: model:ir.model,name:ab_sales_printing.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة المبيعات البرمجية"
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid "Select a bill to print."
+msgstr "حدد فاتورة للطباعة."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/cups_print_dialog.xml:0
+msgid "Select a printer"
+msgstr "حدد طابعة"
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid "Select a supported paper format."
+msgstr "حدد حجم ورق مدعومًا."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Sent to %(printer)s. CUPS job: %(job)s."
+msgstr "تم الإرسال إلى %(printer)s. مهمة CUPS: %(job)s."
+
+#. module: ab_sales_printing
+#. odoo-python
+#: code:addons/ab_sales_printing/models/ab_sales_ui_api.py:0
+msgid ""
+"The selected CUPS printer is no longer available. Refresh the printer list."
+msgstr "لم تعد طابعة CUPS المحددة متاحة. حدّث قائمة الطابعات."
+
+#. module: ab_sales_printing
+#. odoo-javascript
+#: code:addons/ab_sales_printing/static/src/bill_wizard/cups_print_dialog.xml:0
+msgid ""
+"The selected printer is unavailable. Choose another printer or select System"
+" dialog again."
+msgstr ""
+"الطابعة المحددة غير متاحة. اختر طابعة أخرى أو حدد مربع حوار النظام مرة أخرى."
