@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record model="ir.module.category" id="ab_purchase_category">
+            <field name="name">Abdin Purchase</field>
+            <field name="sequence">1</field>
+        </record>
+        <record id="group_ab_purchase_read_user" model="res.groups">
+            <field name="name">Read User</field>
+            <field name="category_id" ref="ab_purchase.ab_purchase_category"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_ab_purchase_data_entry" model="res.groups">
+            <field name="name">Data Entry</field>
+            <field name="category_id" ref="ab_purchase.ab_purchase_category"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('ab_purchase.group_ab_purchase_read_user'))]"/>
+        </record>
+        <record id="group_ab_purchase_branch_user" model="res.groups">
+            <field name="name">Branch user</field>
+            <field name="category_id" ref="ab_purchase.ab_purchase_category"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('ab_purchase.group_ab_purchase_read_user'))]"/>
+        </record>
+
+
+        <record id="group_ab_purchase_accounting_cash" model="res.groups">
+            <field name="name">Purchase Cash Accounting</field>
+            <field name="category_id" ref="ab_purchase.ab_purchase_category"/>
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('ab_purchase.group_ab_purchase_read_user')),
+                   (4, ref('ab_purchase.group_ab_purchase_data_entry')),
+                   (4, ref('ab_purchase.group_ab_purchase_branch_user')),
+                   ]"/>
+        </record>
+
+        <record id="group_ab_purchase_accounting" model="res.groups">
+            <field name="name">Purchase Accounting</field>
+            <field name="category_id" ref="ab_purchase.ab_purchase_category"/>
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('ab_purchase.group_ab_purchase_accounting_cash')),
+                   ]"/>
+        </record>
+
+
+        <record id="group_ab_purchase_manager" model="res.groups">
+            <field name="name">group_ab_purchase_manager</field>
+            <field name="category_id" ref="ab_purchase_category"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('ab_purchase.group_ab_purchase_accounting'))]"/>
+        </record>
+
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[
+            (4, ref('ab_purchase.group_ab_purchase_manager')),
+            ]"/>
+        </record>
+
+
+    </data>
+</odoo>

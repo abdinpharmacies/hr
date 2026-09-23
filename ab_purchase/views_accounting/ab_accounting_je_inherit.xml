@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_je_line_search_view_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line___view_inherit</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_search"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[last()]" position="after">
+                    <field name="claim_id"/>
+                    <field name="je_eplus_serial"/>
+                    <filter name="filter_not_has_claim" string="No Claim" domain="[('claim_id','=',False)]"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="ab_accounting_je_line_tree_view_inherit_pur" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_tree_view_inherit_pur</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[last()]" position="after">
+                    <field name="je_eplus_serial" optional="hide"/>
+                    <field name="claim_id" optional="hide"/>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record id="ab_accounting_je_line_qry_tree_view_inherit_pur" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_qry_tree_view_inherit_pur</field>
+            <field name="model">ab_accounting_je_line_qry</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_qry_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="claim_id" optional="hide"/>
+                    <field name="eplus_serial" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="ab_accounting_je_line_view_tree_check_inv_inherit" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_view_tree_check_inv_inherit</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='is_confirmed']" position="after">
+                    <field name="internal_type" invisible="1"/>
+                    <button name="btn_check_valid_invoice"
+                            type="object"
+                            string="Check Invoice"
+                            groups="ab_accounting.group_ab_accounting_accountant"
+                            class="btn-warning btn-block"
+                            attrs="{
+                            'invisible':[
+                            '!','&amp;',
+                            ('debit_val','&gt;',0),
+                            ('internal_type','=','payable'),
+                            ]}"
+                    />
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_notice_header_view_tree"
+                model="ir.ui.view">
+            <field name="name">ab_purchase_notice_header_view_tree</field>
+            <field name="model">ab_purchase_notice_header</field>
+            <field name="arch"
+                   type="xml">
+                <tree string="ab_purchase_notice_header_tree">
+                    <field name="supplier_id" optional="show"/>
+                    <field name="invoice_number" optional="show"/>
+                    <field name="eplus_serial_calc" optional="hide"/>
+                    <field name="pur_eplus_serial" optional="hide"/>
+                    <field name="eplus_g_header_serial" optional="hide"/>
+                    <field name="je_header_id" optional="hide"/>
+                    <field name="purchase_header_id" optional="show"/>
+                    <field name="notice_type" optional="show"/>
+                    <field name="doc_code" optional="show"/>
+                    <field name="doc_date" optional="show"/>
+                    <field name="total_cost" optional="show"/>
+                    <field name="lines_count" optional="show"/>
+                    <field name="status"
+                           widget="badge" decoration-success="status=='saved'" optional="show"/>
+                    <field name="description" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_notice_header_view_form"
+                model="ir.ui.view">
+            <field name="name">ab_purchase_notice_header_view_form</field>
+            <field name="model">ab_purchase_notice_header</field>
+            <field name="arch"
+                   type="xml">
+                <form string="ab_purchase_notice_header_form">
+                    <header class="w-100">
+                        <button string="Submit"
+                                type="object"
+                                name="btn_submit_inventory"
+                                class="btn-info"
+                                attrs="{'invisible':[('status','=','saved')]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box"
+                             name="button_box">
+                            <button name="compute_totals"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Cost:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_cost"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-truck"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Taxes:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_taxes_value"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-list-ol"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Lines Count:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="lines_count"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <field name="status"
+                               invisible="1"/>
+                        <widget name="web_ribbon"
+                                title="Saved"
+                                bg_color="bg-success"
+                                attrs="{'invisible': [('status', '!=', 'saved')]}"/>
+                        <group col="4">
+                            <field name="supplier_id" attrs="{'readonly':[('status','=','saved')]}"/>
+                            <field name="purchase_header_id"
+                                   force_save="1"
+                                   domain="[('status', 'in', ['rejected','pending'])]"
+                                   attrs="{'readonly':['|',('status','=','saved'),('lines_count','!=',0)]}"/>
+                            <field name="doc_code"/>
+                            <field name="doc_date"/>
+                            <field name="je_header_id" readonly="1" force_save="1"/>
+
+                            <field name="notice_type"
+                                   attrs="{'readonly':[('status','=','saved')]}"/>
+                            <button name="btn_get_all_line_ids"
+                                    type="object"
+                                    string="Get All Lines"
+                                    class="btn-warning"
+                                    attrs="{'invisible':[('status','=','saved')]}"/>
+                        </group>
+                        <notebook>
+                            <page string="Purchase Notice Lines">
+                                <field name="line_ids"
+                                       attrs="{'readonly':[('status','=','saved')]}">
+                                    <tree editable="bottom">
+                                        <field name="source_id_domain" invisible="1"/>
+                                        <field name="source_id"
+                                               domain="source_id_domain"
+                                               optional="show"/>
+                                        <field name="product_id" optional="hide"/>
+                                        <field name="qty"/>
+                                        <field name="bonus"/>
+                                        <field name="uom_id" context="{'uom_only_type': 1}"/>
+                                        <field name="available_qty"/>
+                                        <field name="available_bonus"/>
+                                        <field name="price"/>
+                                        <field name="line_cost" sum="Total Cost"/>
+                                        <field name="last_update_date" optional="hide"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description"
+                                           nolabel="1"
+                                           placeholder="Write your feedback here"
+                                           attrs="{'readonly':[('status','=','saved')]}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_notice_header_action"
+                model="ir.actions.act_window">
+            <field name="name">Notices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="context">{'uom_only_type': 1}</field>
+            <field name="res_model">ab_purchase_notice_header</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="ab_purchase_notice_header_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_header_view_search</field>
+            <field name="model">ab_purchase_notice_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_notice_header_search">
+                    <field name="supplier_id"/>
+                    <field name="invoice_number"/>
+                    <field name="eplus_serial_calc"/>
+                    <field name="pur_eplus_serial"/>
+                    <field name="eplus_g_header_serial"/>
+                    <field name="je_header_id"/>
+                    <field name="purchase_header_id"/>
+                    <field name="notice_type"/>
+                    <field name="doc_code"/>
+                    <field name="doc_date"/>
+                    <field name="total_cost"/>
+                    <field name="lines_count"/>
+                    <field name="status"/>
+                    <field name="description"/>
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                    <field name="write_uid"/>
+                    <field name="write_date"/>
+                </search>
+            </field>
+        </record>
+
+        <menuitem id="ab_purchase_notice_header_menu" name="Notices" parent="ab_purchase_notices_menu"
+                  action="ab_purchase_notice_header_action" sequence="2"/>
+
+    </data>
+</odoo>

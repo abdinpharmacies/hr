@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_notice_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_line_view_tree</field>
+            <field name="model">ab_purchase_notice_line</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_notice_line_tree" edit="0" create="0">
+                    <field name="supplier_id" optional="show"/>
+                    <field name="invoice_number" optional="show"/>
+                    <field name="doc_code" optional="hide"/>
+                    <field name="eplus_serial_calc" optional="show"/>
+                    <field name="pur_eplus_serial" optional="show"/>
+                    <field name="eplus_g_header_serial" optional="show"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="header_id" optional="show"/>
+                    <field name="je_header_id" optional="show"/>
+                    <field name="product_id" optional="show" class="text-wrap"/>
+                    <field name="invoice_qty" optional="show"/>
+                    <field name="invoice_bonus" optional="show"/>
+                    <field name="qty" optional="show" sum="Total Qty"/>
+                    <field name="bonus" optional="show"/>
+                    <field name="available_qty" optional="hide"/>
+                    <field name="available_bonus" optional="hide"/>
+                    <field name="unit_cost" optional="show"/>
+                    <field name="unit_taxes_value" optional="show"/>
+                    <field name="price" optional="show"/>
+                    <field name="line_cost" optional="show" sum="Total Cost"/>
+                    <field name="line_taxes_value" optional="show"/>
+                    <field name="line_price" optional="show"/>
+                    <field name="related_claim_id" optional="show"/>
+                    <field name="uom_id" optional="hide"/>
+                    <field name="eplus_serial" optional="hide"/>
+                    <field name="eplus_serial_g_return" optional="hide"/>
+                    <field name="last_update_date" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_notice_line_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_line_view_form</field>
+            <field name="model">ab_purchase_notice_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_notice_line_form">
+                    <sheet>
+                        <group col="4">
+                            <field name="supplier_id"/>
+                            <field name="costcenter_id"/>
+                            <field name="purchase_header_id"/>
+                            <field name="eplus_serial_calc"/>
+                            <field name="je_header_id"/>
+                            <field name="header_id"/>
+                            <field name="invoice_number"/>
+                            <field name="related_claim_id"/>
+                            <field name="purchase_header_num"/>
+                            <field name="source_id"/>
+                            <field name="product_id"/>
+                            <field name="available_qty"/>
+                            <field name="qty"/>
+                            <field name="bonus"/>
+                            <field name="invoice_bonus"/>
+                            <field name="available_bonus"/>
+                            <field name="price"/>
+                            <field name="line_price"/>
+                            <field name="line_cost"/>
+                            <field name="line_taxes_value"/>
+                            <field name="unit_cost"/>
+                            <field name="unit_taxes_value"/>
+                            <field name="uom_id"/>
+                            <field name="eplus_serial"/>
+                            <field name="eplus_serial_g_return"/>
+                            <field name="last_update_date"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_notice_line_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_line_view_search</field>
+            <field name="model">ab_purchase_notice_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_notice_line_search">
+                    <field name="supplier_id"/>
+                    <field name="invoice_number"/>
+                    <field name="eplus_serial_calc"/>
+                    <field name="pur_eplus_serial"/>
+                    <field name="eplus_g_header_serial"/>
+                    <field name="doc_code"/>
+                    <field name="costcenter_id"/>
+                    <field name="je_header_id"/>
+                    <field name="je_line_ids"/>
+                    <field name="source_id"/>
+                    <field name="product_id"/>
+                    <field name="available_qty"/>
+                    <field name="qty"/>
+                    <field name="bonus"/>
+                    <field name="invoice_bonus"/>
+                    <field name="available_bonus"/>
+                    <field name="price"/>
+                    <field name="line_price"/>
+                    <field name="line_cost"/>
+                    <field name="line_taxes_value"/>
+                    <field name="unit_cost"/>
+                    <field name="unit_taxes_value"/>
+                    <field name="uom_id"/>
+                    <field name="eplus_serial"/>
+                    <field name="eplus_serial_g_return"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_purchase_notice_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_purchase_notice_line_view_pivot</field>
+            <field name="model">ab_purchase_notice_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_purchase_notice_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_notice_line_action" model="ir.actions.act_window">
+            <field name="name">Ab purchase notice line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_notice_line</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_purchase_notice_line_menu"
+                  name="Purchase Notice Lines"
+                  parent="ab_purchase_notices_menu"
+                  action="ab_purchase_notice_line_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

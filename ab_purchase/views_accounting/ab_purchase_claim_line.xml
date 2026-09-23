@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_claim_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_line_view_tree</field>
+            <field name="model">ab_purchase_claim_line</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_claim_line_tree" multi_edit="1">
+                    <field name="id" optional="show"/>
+                    <field name="name" optional="show"/>
+                    <field name="debit_val" optional="show"/>
+                    <field name="credit_val" optional="show"/>
+                    <field name="doc_type" optional="show"/>
+                    <field name="other_type" optional="show"/>
+                    <field name="payment_type_id" optional="show"/>
+                    <field name="claim_supplier_id" optional="show"/>
+                    <field name="actual_supplier_id" optional="show"/>
+                    <field name="doc_auto_code" optional="show"/>
+                    <field name="claim_month" optional="show"/>
+                    <field name="event_month" optional="show"/>
+                    <field name="notes" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_claim_line_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_line_view_form</field>
+            <field name="model">ab_purchase_claim_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_claim_line_form">
+                    <sheet>
+                        <group>
+                            <field name="id"/>
+                            <field name="name"/>
+                            <field name="debit_val"/>
+                            <field name="credit_val"/>
+                            <field name="doc_type"/>
+                            <field name="other_type" attrs="{'invisible':[('doc_type','!=','other')]}"/>
+
+                            <field name="payment_type_id"
+                                   attrs="{'invisible':[('doc_type','!=','payment')]}"/>
+
+                            <field name="claim_supplier_id"/>
+                            <field name="actual_supplier_id"
+                                   attrs="{
+                                   'invisible':[('other_type','not in',['cash_compensation','later_goods_compensation','former_goods_compensation'])]
+                                   }"/>
+                            <field name="doc_auto_code"/>
+                            <field name="claim_month"
+                                   placeholder="MMMM-YYYY"
+                                   options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+                            <field name="event_month"
+                                   placeholder="MMMM-YYYY"
+                                   options="{'datepicker':
+                                                   {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_claim_line_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_line_view_search</field>
+            <field name="model">ab_purchase_claim_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_claim_line_search">
+                    <!-- <field name=""/> -->
+                </search>
+            </field>
+        </record>
+        <record id="ab_purchase_claim_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_line_view_pivot</field>
+            <field name="model">ab_purchase_claim_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_purchase_claim_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_claim_line_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting supplier deduction</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_claim_line</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_purchase_claim_line_menu"
+                  name="Claim Lines"
+                  parent="accounting_menu"
+                  action="ab_purchase_claim_line_action"
+                  sequence="200"/>
+
+
+    </data>
+</odoo>

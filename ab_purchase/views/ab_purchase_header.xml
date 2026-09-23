@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_header_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_header_view_form</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_header_form">
+                    <header class="w-100">
+                        <button string="Submit" type="object" name="btn_submit_inventory" class="btn-info"
+                                attrs="{'invisible':[('status','in',['pending', 'saved'])]}"
+                                groups="base.group_system"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar"
+                                    width="300px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Selling Price:</span>
+                                    <span class="o_stat_text">∑ Purchase Price:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_price"/>
+                                    </span>
+                                    <span class="o_stat_value">
+                                        <field name="total_purchase_price"/>
+                                    </span>
+                                </div>
+
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-truck"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Cost:</span>
+                                    <span class="o_stat_text">∑ Taxes:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_cost"/>
+                                    </span>
+                                    <span class="o_stat_value">
+                                        <field name="total_tax"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-list-ol"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Product:</span>
+                                    <span class="o_stat_text">Lines:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_products"/>
+                                    </span>
+                                    <span class="o_stat_value">
+                                        <field name="lines_count"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger"
+                                attrs="{'invisible': [('status', '!=', 'rejected')]}"/>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-success"
+                                attrs="{'invisible': [('status', '!=', 'saved')]}"/>
+                        <widget name="web_ribbon" title="Pending" bg_color="bg-info"
+                                attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                        <field name="status" invisible="1"/>
+                        <field name="total_price" invisible="1"/>
+                        <field name="total_cost" string="Total Cost" invisible="1"/>
+                        <field name="total_tax" invisible="1"/>
+                        <field name="number_of_products" invisible="1"/>
+                        <group>
+                            <group string="Basic Data">
+                                <field name="store_id"
+                                       domain="[('allow_purchase', '=', True)]"/>
+                                <field name="supplier_id"/>
+                                <field name="doc_code"/>
+                                <field name="doc_date"/>
+                                <field name="invoice_type"/>
+                            </group>
+                            <group string="Accounting Data">
+                                <field name="je_header_id" readonly="1" force_save="1"/>
+                                <field name="res_header_id" invisible="1" force_save="1"/>
+                                <field name="res_header_ref" invisible="1" force_save="1"/>
+                                <field name="net_invoice" attrs="{'readonly':['!',('status','=','prepending')]}"/>
+                                <field name="net_tax" attrs="{'readonly':['!',('status','=','prepending')]}"/>
+                                <field name="eplus_total_disc_on_inv"/>
+                                <label for="total_extra_discount"/>
+                                <div class="oe_inline d-flex justify-content-around">
+                                    <div>
+                                        <field name="total_extra_discount"
+                                               attrs="{'readonly':['!',('status','=','prepending')]}"/>
+                                    </div>
+                                    <div>
+                                        <field name="total_extra_discount_percentage"
+                                               attrs="{'readonly':['!',('status','=','prepending')]}"
+                                               widget="percentage" string="Extra Discount %"/>
+                                    </div>
+                                    <!--
+                                        <div>
+                                            <button string="Distribute discount" class="btn-info" type="object"
+                                                    confirm="Are You Sure?"
+                                                    name="distribution_extra_discount"
+                                                    attrs="{'invisible':['|',('status','not in',['prepending']),('total_extra_discount','=',0)]}"/>
+                                        </div>
+                                    -->
+                                </div>
+                            </group>
+
+                        </group>
+                        <notebook>
+                            <page string="Purchase Detail">
+                                <field name="line_ids"
+
+                                       attrs="{'readonly':['!',('status','=','prepending')],
+                                       'invisible':[
+                                       '|','|','|','&amp;',
+                                       ('net_invoice','=',0),
+                                       ('invoice_type','!=','bonus'),
+                                       ('store_id','=',False),
+                                       ('supplier_id','=',False),
+                                       ('doc_code','in',['',False])
+                                       ]}">
+                                    <tree editable="bottom">
+                                        <field name="header_status" invisible="1"/>
+                                        <field name="product_code" width="75px"/>
+                                        <field name="product_id" width="120px"/>
+                                        <field name="exp_date"
+                                               optional="hide"/>
+                                        <field name="qty" string="Quantity" width="75px"/>
+                                        <field name="bonus" width="65px"/>
+                                        <field name="product_uom_ids" invisible="1"/>
+                                        <field name="uom_id" domain="[('id','in',product_uom_ids)]"
+                                               context="{'uom_only_type': 1}"
+                                               options="{&quot;always_reload&quot;: True}" string="Unit" width="65px"/>
+                                        <field name="price" string="Price" width="75px"/>
+                                        <field name="purchase_price"/>
+                                        <field name="line_purchase_price" string="∑ Purchase Price"
+                                               sum="∑ Purchase"/>
+                                        <field name="extra_discount_percentage" string="Extra Discount %"/>
+                                        <field name="taxes_ids" widget="many2many_tags" width="65px"/>
+                                        <field name="unit_taxes_value"/>
+                                        <field name="line_taxes_value" sum="∑ Taxes"/>
+                                        <field name="line_cost" width="75px" string="∑ Cost" sum="∑ Cost"/>
+                                        <field name="notice_qty" width="75px" optional="hide"/>
+                                        <field name="net_qty" width="60px" optional="hide"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description" nolabel="1" placeholder="Write your feedback here"/>
+                                </group>
+                            </page>
+                        </notebook>
+                        <field name="net_invoice" invisible="1"/>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_header_view_tree</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_header_tree">
+                    <field name="store_id"/>
+                    <field name="supplier_id"/>
+                    <field name="doc_code"/>
+                    <field name="doc_date"/>
+                    <field name="lines_count"/>
+                    <field name="number_of_products"/>
+                    <field name="total_price"/>
+                    <field name="total_cost"/>
+                    <field name="total_tax"/>
+                    <field name="total_extra_discount"/>
+                    <field name="net_invoice"/>
+                    <field name="invoice_type"/>
+                    <field name="status" widget="badge" decoration-info="status=='pending'"
+                           decoration-danger="status=='rejected'" decoration-warning="status=='prepending'"
+                           decoration-success="status=='saved'"/>
+                    <field name="description"/>
+                    <field name="create_uid" widget="many2one_avatar_user"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_header_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_header_view_search</field>
+            <field name="model">ab_purchase_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_header_search">
+                    <field name="doc_code"/>
+                    <field name="store_id"/>
+                    <field name="supplier_id"/>
+                    <field name="id"/>
+                    <field name="doc_date"/>
+                    <field name="net_invoice"/>
+                    <field name="net_tax"/>
+                    <field name="description"/>
+                    <field name="status"/>
+                    <field name="invoice_type"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_header_action" model="ir.actions.act_window">
+            <field name="name">Purchase Invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_header</field>
+            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="context">{'uom_only_type': True}</field>
+            <field name="view_id" ref="ab_purchase_header_view_tree"/>
+        </record>
+        <menuitem id="ab_purchase_header_menu" name="Purchase Invoices" parent="purchase_sub_menu"
+                  action="ab_purchase_header_action" sequence="1"/>
+
+    </data>
+</odoo>

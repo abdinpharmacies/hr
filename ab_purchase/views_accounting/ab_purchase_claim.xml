@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_claim_list" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_view_list</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_claim_list"
+                      decoration-danger="all_confirmed"
+                      decoration-success="is_posted"
+                      decoration-muted="is_posted == False"
+                      edit="0"
+                >
+
+                    <field name="id" class="text-muted"/>
+                    <field name="je_header_ro_id" class="text-muted"/>
+                    <field name="description"/>
+                    <field name="claim_deliver_day"/>
+                    <field name="costcenter_id" class="text-wrap"/>
+                    <field name="claim_month"/>
+                    <field name="total_supplier_credit" optional="show"/>
+                    <field name="total_supplier_inv_debit"/>
+                    <field name="total_supplier_je_debit"/>
+                    <field name="total_claim" optional="show"/>
+                    <field name="create_uid" optional="show"/>
+                    <field name="create_date" optional="show"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="all_confirmed" optional="show"/>
+                    <field name="is_posted" optional="show"/>
+
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_claim_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_view_form</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+
+                <form string="ab_purchase_claim_form">
+                    <header>
+                        <button name="btn_post_je"
+                                invisible="0"
+                                type="object" string="Post Claim"
+                                class="btn-success px-2"/>
+                        <button name="btn_confirm_all_je"
+                                class="btn-danger px-2"
+                                confirm="Are you sure"
+                                type="object"
+                                string="Close Claim"/>
+
+                        <button name="btn_freeze"
+                                string="Freeze"
+                                type="object"
+                                class="btn-outline-info px-2"
+                                attrs="{'invisible':[('is_frozen','=',True)]}"
+                                confirm="You will prevent creator from editing this JE, are you sure?"/>
+                        <button name="btn_unfreeze"
+                                string="Unfreeze"
+                                type="object"
+                                class="btn-outline-info"
+                                attrs="{'invisible':[('is_frozen','=',False)]}"
+                                confirm="You will permit creator to edit this JE, are you sure?"/>
+                    </header>
+                    <sheet class="mx-auto">
+                        <field name="instant_cash" invisible="1"/>
+                        <field name="is_posted" invisible="1"/>
+                        <field name="is_frozen" invisible="1"/>
+                        <field name="all_confirmed" invisible="1"/>
+                        <widget name="web_ribbon" title="Posted" bg_color="bg-success"
+                                attrs="{'invisible': [('is_posted', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Frozen" bg_color="bg-info"
+                                attrs="{'invisible': [('is_frozen', '=', False)]}"/>
+                        <widget name="web_ribbon" title="Closed" bg_color="bg-danger"
+                                attrs="{'invisible': [('all_confirmed', '=', False)]}"/>
+
+                        <div class="text-center">
+                            <span class="h2">(----------- </span>
+                            <field name="id" class="h2 text-center text-muted"
+                                   nolabel="1"/>
+                            <span class="h2"> -----------)</span>
+                        </div>
+                        <div class="d-flex flex-column ">
+                            <div class="d-flex align-items-center">
+                                <field name="description" class="h2"
+                                       placeholder="Description"
+                                       nolabel="1"/>
+                            </div>
+                            <label for="costcenter_id" string="Supplier"/>
+                            <div class="d-flex ">
+                                <field name="costcenter_id_domain" invisible="1"/>
+                                <field name="costcenter_id" class="h2"
+                                       domain="costcenter_id_domain"
+                                       placeholder="Choose Supplier"
+                                       nolabel="1"/>
+                            </div>
+                            <label for="supplier_balance" string="Balance"/>
+                            <div class="d-flex ">
+                                <field name="supplier_balance" class="h2"
+                                       nolabel="1"/>
+                            </div>
+                            <!--
+                                <field name="claim_month" required="1"
+                                       placeholder="MMMM-YYYY"
+                                       options="{'datepicker':
+                                                       {'warn_future': true,'dtp_format': 'MMMM-YYYY',}}"/>
+
+                            -->
+                            <div class="card border-info" style="width: 75%;">
+                                <div class="card-header h4 text-white bg-info text-center ">Claim Detail</div>
+                                <div class="card-body">
+                                    <div class="card-title h4">Claim Rest =
+                                        <span class="h6 text-success">Total Credit</span>
+                                        -
+                                        <span class="h6 text-danger">Total Debit</span>
+                                    </div>
+                                    <hr/>
+                                    <div class="card-text">
+                                        <div>
+                                            <label for="total_supplier_credit" class="h6  text-muted"/>
+                                            <field name="total_supplier_credit" class="h6 text-danger"/>
+                                        </div>
+                                        <div>
+                                            <label for="total_supplier_inv_debit" class="h6  text-muted"/>
+                                            <field name="total_supplier_inv_debit" class="h6 text-success"/>
+                                        </div>
+                                        <div>
+                                            <label for="total_supplier_je_debit" class="h6  text-muted"/>
+                                            <field name="total_supplier_je_debit" class="h6 text-success"/>
+                                        </div>
+                                        <div>
+                                            <label for="total_claim"
+                                                   class="h6  text-muted"/>
+                                            <field name="total_claim" class="h6 text-success h5"/>
+                                        </div>
+                                        <div class="text-right">
+                                            <label for="total_taxes"
+                                                   class="h6  text-muted"/>
+                                            <field name="total_taxes" class="h6 text-success h5"/>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <button name="btn_generate_auto_jes"
+                                        class="btn-info m-2 pl-5 pr-5"
+                                        confirm="Are you sure"
+                                        type="object"
+                                        string="Generate Auto JEs"/>
+                                <button name="btn_delay_rest_claim"
+                                        class="btn-outline-warning m-2 pl-5 pr-5"
+                                        confirm="Are you sure"
+                                        type="object"
+                                        string="Delay Claim Rest"/>
+                            </div>
+
+                        </div>
+
+                        <notebook>
+                            <page name="je_line_ids" string="Journal Entries">
+                                <group col="4">
+                                    <field name="doc_date_start"/>
+                                    <field name="doc_date_end"/>
+                                    <field name="find_what"/>
+                                    <field name="find_by"/>
+                                </group>
+                                <group>
+                                    <field name="je_lines_search_ids"
+                                           context="{
+                                           'search_default_costcenter_id':costcenter_id,
+                                           'search_default_filter_not_has_claim':1,
+                                           }"
+                                           widget="many2many_tags"/>
+                                </group>
+                                <div>
+
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label for="excel_text" string="Paste From Excel"/>
+                                            <div class="abdin-textbox-container">
+                                                <field name="excel_text"
+                                                       class="abdin-textbox"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <br/>
+                                            <button name="btn_link_je_to_claim"
+                                                    class="btn-success btn-block"
+                                                    type="object"
+                                                    confirm="Are you sure?"
+                                                    string="Add"/>
+                                            <button name="btn_remove_invoices_from_claim"
+                                                    class="btn-danger btn-block"
+                                                    confirm="Are you sure?"
+                                                    type="object"
+                                                    string="Remove"/>
+                                            <button string="Filter Lines"
+                                                    type="object"
+                                                    name="btn_filter_claim_lines"
+                                                    class="btn-outline-success btn-block"/>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="excel_text" string="Possible Matches"/>
+                                            <div class="abdin-textbox-container">
+                                                <field name="excel_notes"
+                                                       class="abdin-textbox"/>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <field name="je_line_ids" nolabel="1">
+                                    <tree editable="bottom" delete="0" default_order="doc_no desc"
+                                          decoration-success="is_posted"
+                                          decoration-info="is_frozen"
+                                          decoration-danger="is_confirmed">
+                                        <field name="id" optional="show"/>
+                                        <field name="debit_val" class="h6" optional="show"
+                                               decoration-danger="debit_val&gt;0"/>
+                                        <field name="credit_val" class="h6" optional="show"
+                                               decoration-success="credit_val&gt;0"/>
+                                        <field name="due_date" optional="show"/>
+                                        <field name="doc_no" optional="show"/>
+                                        <field name="je_eplus_serial" optional="show"/>
+                                        <field name="explain" optional="show"/>
+                                        <field name="costcenter_id" optional="show"/>
+                                        <field name="store_id" optional="show"/>
+                                        <field name="is_posted" optional="hide"/>
+                                        <field name="is_confirmed" optional="hide"/>
+                                        <field name="is_frozen" optional="hide"/>
+                                        <button name="btn_unlink_claim_id" type="object" icon="fa-trash text-danger"/>
+                                        <!--
+                                                                                <button name="btn_remove_line_from_claim" type="object"
+                                                                                        icon="fa-trash text-danger"/>
+                                        -->
+
+                                    </tree>
+                                </field>
+
+
+                            </page>
+                            <page string="JE Lines">
+                                <field name="doctype_id" invisible="1"/>
+                                <field name="account_id" invisible="1"/>
+                                <group>
+                                    <field name="je_header_ro_id"/>
+                                </group>
+                                <field name="line_ids"
+                                       nolabel="1"
+                                       force_save="1"
+                                       context="{
+                                           'default_costcenter_id':costcenter_id,
+                                           'default_account_id':account_id,
+                                           }">
+                                    <tree editable="bottom"
+                                          decoration-success="is_posted"
+                                          decoration-danger="is_confirmed"
+                                    >
+                                        <field name="is_frozen" invisible="1"/>
+                                        <field name="id" optional="show"/>
+                                        <field name="account_id" optional="show"/>
+                                        <field name="debit_val" optional="show" sum="Total Debit"/>
+                                        <field name="credit_val" optional="show" sum="Total Credit"/>
+                                        <field name="net_val" optional="show" sum="Net Value"/>
+                                        <field name="costcenter_id" optional="hide"/>
+                                        <field name="due_date" optional="show"/>
+                                        <field name="doc_no" optional="show"/>
+                                        <field name="explain" optional="show"/>
+                                        <field name="is_confirmed" optional="hide"/>
+                                        <field name="is_posted" optional="hide"/>
+                                        <field name="store_id" optional="hide"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_purchase_claim_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_view_search</field>
+            <field name="model">ab_purchase_claim</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_claim_search">
+                    <field name="id"/>
+                    <field name="account_id"/>
+                    <field name="name"/>
+                    <field name="costcenter_id"/>
+                    <field name="invoice_number_search"/>
+                    <field name="eplus_serial_search"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_claim_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting supplier claim</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_claim</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                   (0, 0, {'view_mode': 'tree','view_id':ref('ab_purchase_claim_list')}),
+                   (0, 0, {'view_mode': 'form','view_id':ref('ab_purchase_claim_view_form')}),
+                   ]"/>
+        </record>
+
+        <record id="ab_purchase_claim_instant_cash_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting supplier claim</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_claim</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('instant_cash', '=', True)]</field>
+            <field name="context">{
+                'default_instant_cash': True,
+                'default_find_by': 'eplus_serial',
+            }</field>
+            <field name="view_ids"
+                   eval="[(5, 0, 0),
+                   (0, 0, {'view_mode': 'tree','view_id':ref('ab_purchase_claim_list')}),
+                   (0, 0, {'view_mode': 'form','view_id':ref('ab_purchase_claim_view_form')}),
+                   ]"/>
+        </record>
+
+        <menuitem id="ab_purchase_claim_menu"
+                  name="Claims"
+                  groups="ab_purchase.group_ab_purchase_accounting"
+                  parent="accounting_menu"
+                  action="ab_purchase_claim_action"
+                  sequence="100"/>
+
+        <menuitem id="ab_purchase_claim_instant_cash_menu"
+                  name="Instant Cash Claims"
+                  parent="accounting_menu"
+                  action="ab_purchase_claim_instant_cash_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

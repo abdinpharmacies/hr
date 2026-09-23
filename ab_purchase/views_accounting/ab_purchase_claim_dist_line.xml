@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_claim_dist_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_dist_line_view_tree</field>
+            <field name="model">ab_purchase_claim_dist_line</field>
+            <field name="priority">1</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_claim_dist_line_tree" multi_edit="1">
+                    <field name="claim_id" optional="show"/>
+                    <field name="value" optional="show"/>
+                    <field name="payment_type_id" optional="show"/>
+                    <field name="account_id" optional="show"/>
+                    <field name="credit_days" optional="show"/>
+                    <field name="claim_month" optional="show"/>
+                    <field name="due_date" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_claim_dist_line_view_one2many_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_dist_line_view_tree</field>
+            <field name="model">ab_purchase_claim_dist_line</field>
+            <field name="priority">2</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_claim_dist_line_tree" multi_edit="1" editable="bottom">
+                    <field name="supplier_payment_type_ids" invisible="1"/>
+                    <field name="payment_type_id" domain="[('id','in', supplier_payment_type_ids)]" optional="show"/>
+                    <field name="supplier_id" optional="hide"/>
+                    <field name="supplier_bracket_id" optional="show"/>
+                    <field name="value" optional="show"/>
+                    <field name="account_id" optional="show"/>
+                    <field name="credit_days" optional="show"/>
+                    <field name="due_date" optional="show"/>
+                    <field name="discount" optional="show"/>
+                    <field name="discount_value" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_claim_dist_line_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_dist_line_view_form</field>
+            <field name="model">ab_purchase_claim_dist_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_claim_dist_line_form">
+                    <sheet>
+                        <group>
+                            <field name="payment_type_id"/>
+                            <field name="value"/>
+                            <field name="account_id"/>
+                            <field name="credit_days"/>
+                            <field name="due_date"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_claim_dist_line_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_dist_line_view_search</field>
+            <field name="model">ab_purchase_claim_dist_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_claim_dist_line_search">
+                    <field name="claim_id"/>
+                    <field name="value"/>
+                    <field name="payment_type_id"/>
+                    <field name="account_id"/>
+                    <field name="credit_days"/>
+                    <field name="claim_month"/>
+                    <field name="due_date"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_purchase_claim_dist_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_purchase_claim_dist_line_view_pivot</field>
+            <field name="model">ab_purchase_claim_dist_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_purchase_claim_dist_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_claim_dist_line_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting supplier bracket line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_claim_dist_line</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_purchase_claim_dist_line_menu"
+                  name="Bracket Lines"
+                  parent="configuration_menu"
+                  action="ab_purchase_claim_dist_line_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

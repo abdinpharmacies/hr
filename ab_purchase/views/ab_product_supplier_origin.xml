@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_product_supplier_origin_view_tree" model="ir.ui.view">
+            <field name="name">ab_product_supplier_origin_view_tree</field>
+            <field name="model">ab_product_supplier_origin</field>
+            <field name="arch" type="xml">
+                <tree string="ab_product_supplier_origin_tree" multi_edit="1">
+                    <field name="product_id" optional="show"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="origin" optional="show"/>
+                    <field name="supplier_code" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_product_supplier_origin_view_form" model="ir.ui.view">
+            <field name="name">ab_product_supplier_origin_view_form</field>
+            <field name="model">ab_product_supplier_origin</field>
+            <field name="arch" type="xml">
+                <form string="ab_product_supplier_origin_form">
+                    <sheet>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="costcenter_id"/>
+                            <field name="origin"/>
+                            <field name="supplier_code"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_supplier_origin_view_search" model="ir.ui.view">
+            <field name="name">ab_product_supplier_origin_view_search</field>
+            <field name="model">ab_product_supplier_origin</field>
+            <field name="arch" type="xml">
+                <search string="ab_product_supplier_origin_search">
+                    <field name="product_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="origin"/>
+                    <field name="supplier_code"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_product_supplier_origin_view_pivot" model="ir.ui.view">
+            <field name="name">ab_product_supplier_origin_view_pivot</field>
+            <field name="model">ab_product_supplier_origin</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_product_supplier_origin_pivot">
+
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_product_supplier_origin_action" model="ir.actions.act_window">
+            <field name="name">Ab product supplier origin</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product_supplier_origin</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_product_supplier_origin_menu"
+                  name="Product Supplier Origin"
+                  parent="configuration_menu"
+                  action="ab_product_supplier_origin_action"
+                  sequence="300"/>
+
+
+    </data>
+</odoo>

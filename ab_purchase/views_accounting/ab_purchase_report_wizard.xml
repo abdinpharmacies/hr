@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_report_wizard_view_form</field>
+            <field name="model">ab_purchase_report_wizard</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_report_wizard_form">
+                    <sheet>
+                        <group>
+                            <button name="btn_browse_account_statement" type="object" string="Browse"
+                                    class="btn-warning"/>
+                            <button name="btn_export_excel_account_statement" type="object" string="Export Excel"
+                                    class="btn-success"/>
+                            <button name="btn_print_pdf_account_statement" type="object" string="Export PDF"
+                                    class="btn-info"/>
+                        </group>
+                        <notebook>
+                            <page name="statement" string="Statement">
+                                <group>
+                                    <field name="html" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_purchase_report_wizard_action" model="ir.actions.act_window">
+            <field name="name">Ab purchase report wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_report_wizard</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <menuitem id="ab_purchase_report_wizard_menu"
+                  name="Report Wizard"
+                  parent="configuration_menu"
+                  action="ab_purchase_report_wizard_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

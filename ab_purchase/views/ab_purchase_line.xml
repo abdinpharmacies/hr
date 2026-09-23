@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_purchase_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_line_view_tree</field>
+            <field name="model">ab_purchase_line</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_line_tree" multi_edit="1">
+                    <field name="header_status" optional="show"/>
+                    <field name="product_code" optional="show"/>
+                    <field name="product_id" optional="show"/>
+                    <field name="exp_date" optional="show"/>
+                    <field name="qty" optional="show"/>
+                    <field name="bonus" optional="show"/>
+                    <field name="uom_id" optional="show"/>
+                    <field name="price" optional="show"/>
+                    <field name="purchase_price" optional="show"/>
+                    <field name="line_purchase_price" optional="show"/>
+                    <field name="extra_discount_percentage" optional="show"/>
+                    <field name="taxes_ids" optional="show"/>
+                    <field name="unit_taxes_value" optional="show"/>
+                    <field name="line_taxes_value" optional="show"/>
+                    <field name="line_cost" optional="show"/>
+                    <field name="notice_qty" optional="show"/>
+                    <field name="net_qty" optional="show"/>
+                    <field name="confirm" optional="show"/>
+                    <field name="eplus_serial" optional="hide"/>
+                    <field name="eplus_serial_header" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_purchase_line_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_line_view_form</field>
+            <field name="model">ab_purchase_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_line_form">
+                    <sheet>
+                        <group col="4">
+                            <field name="header_status"/>
+                            <field name="product_code"/>
+                            <field name="product_id"/>
+                            <field name="exp_date"/>
+                            <field name="qty"/>
+                            <field name="bonus"/>
+                            <field name="uom_id"/>
+                            <field name="price"/>
+                            <field name="purchase_price"/>
+                            <field name="line_purchase_price"/>
+                            <field name="extra_discount_percentage"/>
+                            <field name="taxes_ids"/>
+                            <field name="unit_taxes_value"/>
+                            <field name="line_taxes_value"/>
+                            <field name="line_cost"/>
+                            <field name="notice_qty"/>
+                            <field name="net_qty"/>
+                            <field name="confirm"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_line_view_search" model="ir.ui.view">
+            <field name="name">ab_purchase_line_view_search</field>
+            <field name="model">ab_purchase_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_purchase_line_search">
+                    <field name="header_id"/>
+                    <field name="supplier_id"/>
+                    <field name="header_status"/>
+                    <field name="eplus_serial"/>
+                    <field name="eplus_serial_header"/>
+                    <field name="last_update_date"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_purchase_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_purchase_line_view_pivot</field>
+            <field name="model">ab_purchase_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_purchase_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_purchase_line_action" model="ir.actions.act_window">
+            <field name="name">Ab purchase line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_line</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_purchase_line_menu"
+                  name="Purchase Lines"
+                  parent="configuration_menu"
+                  action="ab_purchase_line_action"
+                  sequence="1"/>
+
+
+    </data>
+</odoo>
