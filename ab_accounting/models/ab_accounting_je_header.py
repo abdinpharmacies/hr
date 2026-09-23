@@ -356,7 +356,7 @@ class AbAccountingJeHeader(models.Model):
             elif rec.create_uid.id != self._uid and 'is_posted' in vals and vals['is_posted']:
                 raise UserError(_("You can not post JE you did not create"))
             if rec.is_posted and not self.env.context.get('no_calc_balance'):
-                for je in self.web_progress_iter(rec.line_ids, msg=_('Rechecking Balances ...')):
+                for je in rec.line_ids:
                     # ONLY FOR EMPLOYEE ACCOUNT سلف وعهد وخصومات
                     je.check_valid_deduction()
 

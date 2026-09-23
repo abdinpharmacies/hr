@@ -1,24 +1,29 @@
 {
-    'name': "Accounting",
-
+    'name': 'Accounting',
     'summary': """
         Accounting Module
         """,
-
     'description': """
         This module have entries table and double entries on validation,
         after validation you can edit only specific fields like branch or costcenter.
     """,
-
-    'author': "emadco88",
-    'website': "http://www.abdinpharmacies.com",
+    'version': '19.0.1.0.0',
     'license': 'LGPL-3',
     'category': 'Accounting',
-    'version': '0.1',
+    'author': 'Abdin Pharmacies',
+    'developer': 'emadco88',
+    'website': 'http://www.abdinpharmacies.com',
     'application': True,
-    'depends': ['base', 'ab_base_models_inherit', 'mail', 'abdin_et', 'ab_costcenter',
-                'report_xlsx', 'ab_store',
-                'ab_data_from_excel', 'web_domain_field'],
+    'depends': [
+        'base',
+        'ab_base_models_inherit',
+        'mail',
+        'abdin_et',
+        'ab_costcenter',
+        'report_xlsx',
+        'ab_store',
+        'ab_data_from_excel',
+    ],
     'data': [
         'security/security_groups.xml',
         'security/security_rules.xml',
@@ -46,5 +51,6 @@
         'report_wizard/templates/template_due_salaries_details.xml',
         'report_wizard/account_statement_view.xml',
     ],
+    'installable': True,
+    'auto_install': False,
 }
-# -*- coding: utf-8 -*-
