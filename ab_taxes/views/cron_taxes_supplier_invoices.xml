@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <data>
+        <record id="cron_taxes_supplier_invoices" model="ir.cron" forcecreate="True">
+            <field name="name">cron_taxes_supplier_invoices</field>
+            <field name="active">False</field>
+            <!--            <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="model_id" ref="model_ab_purchase_tax_invoices"/>
+            <field name="state">code</field>
+            <field name="code">model.btn_update_tax_invoices()</field>
+        </record>
+        <record id="cron_taxes_supplier_invoices_pdf" model="ir.cron" forcecreate="True">
+            <field name="name">cron_taxes_supplier_invoices_pdf</field>
+            <field name="active">False</field>
+            <!--            <field name="user_id" ref="base.user_root"/>-->
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="nextcall"
+                   eval="(DateTime.now().replace(hour=0, minute=0) + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S')"/>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="model_id" ref="model_ab_purchase_tax_invoices"/>
+            <field name="state">code</field>
+            <field name="code">model.get_invoice_pdf()</field>
+        </record>
+
+
+    </data>
+</odoo>

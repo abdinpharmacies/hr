@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ab_tax_14" model="ab_taxes">
+        <field name="name">VAT 14%</field>
+        <field name="status">all</field>
+        <field name="percentage">14</field>
+        <field name="active">True</field>
+        <field name="apply_on_total">True</field>
+    </record>
+    <record id="ab_tax_exempt" model="ab_taxes">
+        <field name="name">Exempt</field>
+        <field name="status">all</field>
+        <field name="percentage">0</field>
+        <field name="active">True</field>
+        <field name="apply_on_total">True</field>
+    </record>
+    <record id="ab_tax_stamp" model="ab_taxes">
+        <field name="name">Stamp</field>
+        <field name="status">purchase</field>
+        <field name="percentage">20</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_8" model="ab_taxes">
+        <field name="name">Schedule 8%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">8</field>
+        <field name="active">True</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_10" model="ab_taxes">
+        <field name="name">Schedule 10%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">10</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_withholding_05" model="ab_taxes">
+        <field name="name">Withholding -0.5%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">-0.5</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_" model="ab_taxes">
+        <field name="name">Withholding -1%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">-1</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_withholding_3" model="ab_taxes">
+        <field name="name">Withholding -3%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">-3</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_1" model="ab_taxes">
+        <field name="name">Schedule 1%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">1</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_15" model="ab_taxes">
+        <field name="name">Schedule 15%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">15</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_withholding_5" model="ab_taxes">
+        <field name="name">Withholding -5%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">-5</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_30" model="ab_taxes">
+        <field name="name">Schedule 30%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">30</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_05" model="ab_taxes">
+        <field name="name">Schedule 0.5%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">0.5</field>
+        <field name="active">False</field>
+        <field name="apply_on_total">False</field>
+    </record>
+    <record id="ab_tax_schedule_5" model="ab_taxes">
+        <field name="name">Schedule 5%</field>
+        <field name="status">purchase</field>
+        <field name="percentage">5</field>
+        <field name="active">True</field>
+        <field name="apply_on_total">False</field>
+    </record>
+</odoo>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_purchase_tax_invoices_view_tree" model="ir.ui.view">
+            <field name="name">ab_purchase_tax_invoices_view_tree</field>
+            <field name="model">ab_purchase_tax_invoices</field>
+            <field name="arch" type="xml">
+                <tree string="ab_purchase_tax_invoices_view_tree">
+                    <field name="internal_id" readonly="1"/>
+                    <field name="uuid" readonly="1"/>
+                    <field name="submission_uuid" optional="hide" readonly="1"/>
+                    <field name="long_id" optional="hide" readonly="1"/>
+                    <field name="public_url" widget="url" readonly="1"/>
+                    <field name="type_name" readonly="1"/>
+                    <field name="issuer_id" readonly="1"/>
+                    <field name="issuer_name" readonly="1"/>
+                    <field name="issuer_type" readonly="1"/>
+                    <field name="receiver_id" optional="hide" readonly="1"/>
+                    <field name="receiver_name" readonly="1"/>
+                    <field name="receiver_type" optional="hide" readonly="1"/>
+                    <field name="datetime_issued" readonly="1"/>
+                    <field name="datetime_received" optional="hide" readonly="1"/>
+                    <field name="total_sales" readonly="1"/>
+                    <field name="total_discount" readonly="1"/>
+                    <field name="net_amount" readonly="1"/>
+                    <!-- <field name="total_tax" readonly="1"/> -->
+                    <field name="total" readonly="1"/>
+                    <field name="reject_request_date" readonly="1"/>
+                    <field name="reject_request_delayed_date" optional="hide" readonly="1"/>
+                    <field name="decline_reject_request_date" readonly="1"/>
+                    <field name="status" readonly="1"/>
+                    <field name="pdf_file" readonly="1" widget="pdf_viewer"/>
+                    <button type="object" name="btn_reject_tax_invoice" class="btn-danger" icon="fa-times"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ab_purchase_tax_invoices_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_tax_invoices_view_form</field>
+            <field name="model">ab_purchase_tax_invoices</field>
+            <field name="arch" type="xml">
+                <form string="ab_purchase_tax_invoices_view_form">
+                    <header class="w-100">
+                        <button string="Update Tax Invoices" type="object" name="btn_update_tax_invoices"
+                                class="btn-info"/>
+                        <button string="Reject Invoice" type="object" name="btn_reject_tax_invoice" class="btn-danger"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="compute_total_tax" type="object" class="oe_stat_button" icon="fa-money"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Net+Tax:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total" readonly="1"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <!-- <button name="compute_total_tax" type="object" class="oe_stat_button" icon="fa-truck" width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Taxes:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_tax" readonly="1"/>
+                                    </span>
+                                </div>
+                            </button> -->
+                            <button name="compute_total_tax" type="object" class="oe_stat_button" icon="fa-inbox">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Net:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="net_amount" readonly="1"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_total_tax" type="object" class="oe_stat_button" icon="fa-dollar"
+                                    width="200px">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">∑ Price:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_sales" readonly="1"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <group col="4" string='Issuer Data'>
+                            <field name="issuer_id" readonly="1"/>
+                            <field name="issuer_name" readonly="1"/>
+                            <field name="issuer_type" readonly="1"/>
+                        </group>
+                        <group col="4" string='Receiver Data'>
+                            <field name="receiver_id" readonly="1"/>
+                            <field name="receiver_name" readonly="1"/>
+                            <field name="receiver_type" readonly="1"/>
+                        </group>
+                        <group col="4" string='Invoice Data'>
+                            <field name="internal_id" readonly="1"/>
+                            <field name="uuid" readonly="1"/>
+                            <field name="submission_uuid" readonly="1"/>
+                            <field name="long_id" readonly="1"/>
+                            <field name="public_url" widget="url" readonly="1"/>
+                            <field name="type_name" readonly="1"/>
+                            <field name="datetime_issued" readonly="1"/>
+                            <field name="datetime_received" readonly="1"/>
+                            <field name="reject_request_date" readonly="1"/>
+                            <field name="reject_request_delayed_date" readonly="1"/>
+                            <field name="decline_reject_request_date" readonly="1"/>
+                            <field name="status" readonly="1"/>
+                        </group>
+                        <group col="2" string='Invoice PDF'>
+                            <field name="pdf_file" readonly="1" widget="pdf_viewer"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_purchase_tax_invoices_action" model="ir.actions.act_window">
+            <field name="name">ab_purchase_tax_invoices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_tax_invoices</field>
+            <field name="view_mode">tree,form,graph,pivot,kanban</field>
+        </record>
+        <menuitem id="purchase_tax_invoices_menu_root" name="Tax Invoices"
+                  web_icon="ab_taxes,static/description/icon.png"/>
+        <menuitem id="ab_purchase_tax_invoices_menu" name="Purchase Tax Invoices"
+                  parent="purchase_tax_invoices_menu_root" action="ab_taxes.ab_purchase_tax_invoices_action"/>
+
+    </data>
+</odoo>
