@@ -1,21 +1,15 @@
 Current changes before commit:
 
-- Add a Get Received Qty button to the Smart Transfer wizard for purchase users in draft state.
-- Fetch received E-Plus Store_Trans quantities for the source store after the source-stock snapshot timestamp.
-- Store received source-stock deltas separately and overwrite them on each refresh to avoid double-counting repeated clicks.
-- Include received deltas in source stock cache reads so existing Source Stock, Expected Stock, and Smart Transfer planning use the adjusted source availability.
-- Show received source-stock diagnostics and add matching Arabic translations and regression coverage.
+- Acquire the base transfer operation lock before Smart Transfer stage transitions and final submission.
+- Prevent pre-submit and backward-stage line changes from racing with an active B-Connect submission.
+- Use the exact E-Plus serial saved by `ab_transfer` and remove the unsafe latest-notes-match lookup.
+- Update Smart Transfer regression coverage for the shared locked, idempotent submission flow.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
-- ab_transfer_smart/i18n/ar.po
-- ab_transfer_smart/i18n/ar_001.po
-- ab_transfer_smart/models/ab_transfer_smart_cache.py
-- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+- ab_transfer_smart/models/ab_transfer_header.py
 - ab_transfer_smart/tests/test_smart_transfer.py
-- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
-- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
 
 
 commit ef67934c75aa989216f2926cfe0fbf1728b65316

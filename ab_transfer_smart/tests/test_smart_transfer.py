@@ -1269,19 +1269,30 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(sent_action.paperformat_id.orientation, "Portrait")
         self.assertEqual(smart_action.paperformat_id.orientation, "Portrait")
 
-    def test_smart_submit_flow_syncs_eplus_serial_from_sent_transfer(self):
+    def test_submit_flow_uses_locked_idempotent_eplus_serial(self):
+        base_header_path = (
+            Path(__file__).resolve().parents[2]
+            / "ab_transfer"
+            / "models"
+            / "ab_transfer_header.py"
+        )
         smart_header_path = (
             Path(__file__).resolve().parents[1]
             / "models"
             / "ab_transfer_header.py"
         )
+        base_header_source = base_header_path.read_text(encoding="utf-8")
         smart_header_source = smart_header_path.read_text(encoding="utf-8")
 
-        self.assertIn("eplus_serial = fields.Integer", smart_header_source)
-        self.assertIn("_sync_smart_eplus_serial_from_sent_transfer()", smart_header_source)
-        self.assertIn("_write_smart_eplus_serial_after_submit(eplus_serial)", smart_header_source)
-        self.assertIn('models.Model.write(self.sudo(), {"eplus_serial": eplus_serial})', smart_header_source)
-        self.assertIn("SELECT TOP (1) stnh_id", smart_header_source)
+        self.assertIn("eplus_serial = fields.Integer", base_header_source)
+        self.assertIn("_lock_transfer_operation()", base_header_source)
+        self.assertIn("_find_existing_submitted_transfer", base_header_source)
+        self.assertIn("_mark_transfer_submitted(sql_header_id)", base_header_source)
+        self.assertIn("ODOO_TRANSFER:%s:%s", base_header_source)
+        self.assertIn("CHARINDEX(?, ISNULL(stnh_notes, ''))", base_header_source)
+        self.assertIn("_lock_transfer_operation()", smart_header_source)
+        self.assertNotIn("_sync_smart_eplus_serial_from_sent_transfer", smart_header_source)
+        self.assertNotIn("SELECT TOP (1) stnh_id", smart_header_source)
 
     def test_pdf_report_helpers_return_their_exact_line_models(self):
         header = self._create_smart_header_from_existing_records_or_skip()
