@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_command_type_form" model="ir.ui.view">
+        <field name="name">ab_deploy_command_type_form</field><field name="model">ab_deploy_command</field><field name="inherit_id" ref="view_command_form"/>
+        <field name="arch" type="xml"><field name="name" position="after"><field name="command_type"/></field></field>
+    </record>
+    <record id="view_command_type_list" model="ir.ui.view">
+        <field name="name">ab_deploy_command_type_list</field><field name="model">ab_deploy_command</field><field name="inherit_id" ref="view_command_list"/>
+        <field name="arch" type="xml"><field name="name" position="after"><field name="command_type"/></field></field>
+    </record>
+    <record id="view_request_command_types" model="ir.ui.view">
+        <field name="name">ab_deploy_request_command_types</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='command_ids']/list" position="attributes"><attribute name="default_order">command_type,sequence,id</attribute></xpath>
+            <xpath expr="//field[@name='command_ids']/list/field[@name='command_id']" position="after"><field name="command_type" readonly="1"/></xpath>
+            <xpath expr="//field[@name='command_ids']" position="before"><p>Deployment actions run first, followed by post-deployment checks. Sequence applies within each type. New submissions require at least one active check. Any nonzero exit code fails that server and stops later commands.</p></xpath>
+        </field>
+    </record>
+</odoo>

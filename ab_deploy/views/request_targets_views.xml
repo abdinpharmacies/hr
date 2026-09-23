@@ -11,12 +11,14 @@
                 <div class="mb-3" invisible="state != 'approved'" groups="ab_deploy.group_executor">
                     <button name="action_select_all_targets" string="Select All for Deployment" type="object" class="btn-secondary me-2"/>
                     <button name="action_select_all_ssh_failures" string="Select All SSH Failures" type="object" class="btn-secondary me-2"/>
+                    <button name="action_test_selected_ssh" string="Test Selected SSH" type="object" icon="fa-plug" class="btn-secondary me-2"/>
                     <button name="action_clear_target_selection" string="Clear Selection" type="object" class="btn-secondary"/>
                 </div>
                 <field name="target_ids" nolabel="1" invisible="state != 'draft'" readonly="queued">
                     <list editable="bottom" limit="80">
                         <field name="server_serial"/>
                         <field name="server_id" domain="[('active', '=', True), ('maintenance_mode', '=', False)]" options="{'no_create': True, 'no_create_edit': True}"/>
+                        <button name="action_test_ssh" string="Test SSH" type="object" icon="fa-plug" groups="ab_deploy.group_executor,ab_deploy.group_administrator"/>
                         <field name="server_area"/>
                         <field name="server_odoo_url" widget="url" readonly="1"/>
                         <field name="deployment_status"/>
@@ -26,6 +28,7 @@
                     <list editable="bottom" create="0" delete="0" limit="80">
                         <field name="server_serial"/>
                         <field name="server_id" readonly="1"/>
+                        <button name="action_test_ssh" string="Test SSH" type="object" icon="fa-plug" groups="ab_deploy.group_executor,ab_deploy.group_administrator"/>
                         <field name="server_area"/>
                         <field name="server_odoo_url" widget="url" readonly="1"/>
                         <field name="selection_eligible" column_invisible="True"/>

@@ -23,10 +23,23 @@ def validate_server(values):
 
 
 def render(commands):
-    # Each catalog command is independent, starts in HOME and inherits fail-fast.
-    # A command's explicit exit cannot skip later commands or wrapper status recording.
-    return '#!/usr/bin/env bash\nset -e -o pipefail\ncd "$HOME"\n' + '\n'.join(
-        '(\nset -e -o pipefail\n' + command['bash'] + '\n)\n' for command in commands)
+    # A separate Bash process preserves errexit even when its result is tested
+    # by the parent, and prevents an explicit exit from skipping final markers.
+    parts = ['#!/usr/bin/env bash', 'set -e -o pipefail', 'cd "$HOME"']
+    for index, command in enumerate(commands, 1):
+        label = ' '.join(command['name'].splitlines())
+        kind = command.get('command_type', 'action')
+        marker = '%s [%s] %s' % (index, kind, label)
+        delimiter = 'AB_DEPLOY_' + hashlib.sha256(command['bash'].encode()).hexdigest()
+        while delimiter in command['bash'].splitlines():
+            delimiter += '_'
+        parts += ["printf '%s\\n' " + shlex.quote('START ' + marker),
+                  "if bash -e -o pipefail /dev/fd/3 3<<'" + delimiter + "'",
+                  command['bash'], delimiter,
+                  'then command_rc=0; else command_rc=$?; fi',
+                  "printf '%s exit_code=%s\\n' " + shlex.quote('END ' + marker) + ' "$command_rc"',
+                  'if [ "$command_rc" -ne 0 ]; then exit "$command_rc"; fi']
+    return '\n'.join(parts) + '\n'
 
 
 def checksum(script):
@@ -41,6 +54,32 @@ def ssh(alias, script):
                            '-o', 'ServerAliveInterval=10', '-o', 'ServerAliveCountMax=2',
                            alias, 'bash', '-s'], input=script, text=True, capture_output=True,
                           timeout=35, check=False)
+
+
+def test_ssh(alias):
+    """Return a plain result code; safe for workers without an Odoo environment."""
+    try:
+        response = ssh(alias, 'true\n')
+        if response.returncode == 0:
+            return 'ok'
+        error = (response.stderr or '').lower()
+        for needles, code in [
+            (('permission denied', 'authentication failed'), 'authentication'),
+            (('timed out', 'timeout'), 'timeout'),
+            (('could not resolve hostname',), 'hostname'),
+            (('no route to host', 'network is unreachable'), 'unreachable'),
+            (('connection refused',), 'refused'),
+            (('host key verification failed', 'remote host identification has changed'), 'host_key'),
+        ]:
+            if any(needle in error for needle in needles):
+                return code
+        return 'failed'
+    except subprocess.TimeoutExpired:
+        return 'timeout'
+    except ValueError:
+        return 'alias'
+    except OSError:
+        return 'client'
 
 
 def launch_command(key, script, digest, log_settings=None):

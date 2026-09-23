@@ -3244,3 +3244,171 @@ msgstr "التراجع عن المعالجة اليدوية"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__manual_undo_note
 msgid "Undo Resolution Reason"
 msgstr "سبب التراجع عن المعالجة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Authentication failed."
+msgstr "فشلت المصادقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Connection timed out."
+msgstr "انتهت مهلة الاتصال."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH authentication and remote command execution succeeded."
+msgstr "نجحت مصادقة SSH وتنفيذ الأمر عن بُعد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH connection failed: %s"
+msgstr "فشل اتصال SSH: %s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH connection or remote shell check failed."
+msgstr "فشل اتصال SSH أو فحص الصدفة البعيدة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH connection successful: %s"
+msgstr "نجح اتصال SSH: %s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH host key verification failed."
+msgstr "فشل التحقق من مفتاح مضيف SSH."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Test SSH"
+msgstr "اختبار SSH"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The SSH client could not be started."
+msgstr "تعذر تشغيل عميل SSH."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The SSH hostname could not be resolved."
+msgstr "تعذر تحديد عنوان مضيف SSH."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The configured SSH alias is invalid."
+msgstr "الاسم المستعار لاتصال SSH غير صالح."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The server is unreachable."
+msgstr "يتعذر الوصول إلى الخادم."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "The server refused the SSH connection."
+msgstr "رفض الخادم اتصال SSH."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Select at least one server to test SSH."
+msgstr "حدد خادمًا واحدًا على الأقل لاختبار SSH."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Test Selected SSH"
+msgstr "اختبار SSH للمحدد"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "Tested: %(total)s; Successful: %(success)s; Failed: %(failed)s."
+msgstr "تم اختبار: %(total)s؛ نجح: %(success)s؛ فشل: %(failed)s."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Add at least one active Post-deployment Check before requesting approval."
+msgstr "أضف فحصًا نشطًا واحدًا على الأقل لما بعد النشر قبل طلب الموافقة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__approved_command_type
+msgid "Approved Command Type"
+msgstr "نوع الأمر المعتمد"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Approved command types cannot be edited manually."
+msgstr "لا يمكن تعديل أنواع الأوامر المعتمدة يدويًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__command_type
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__command_type
+msgid "Command Type"
+msgstr "نوع الأمر"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__command_type__action
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request_command__approved_command_type__action
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request_command__command_type__action
+msgid "Deployment Action"
+msgstr "إجراء النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_command_types
+msgid ""
+"Deployment actions run first, followed by post-deployment checks. Sequence "
+"applies within each type. New submissions require at least one active check."
+" Any nonzero exit code fails that server and stops later commands."
+msgstr ""
+"تُنفذ إجراءات النشر أولًا، ثم فحوص ما بعد النشر. يُطبق التسلسل داخل كل نوع. "
+"تتطلب الطلبات الجديدة فحصًا نشطًا واحدًا على الأقل. أي رمز خروج غير صفري "
+"يعني فشل الخادم ويوقف الأوامر التالية."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_command__command_type__check
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request_command__approved_command_type__check
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request_command__command_type__check
+msgid "Post-deployment Check"
+msgstr "فحص ما بعد النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"The approved post-deployment checks are missing or inconsistent. Return this"
+" request to draft and submit it again."
+msgstr ""
+"فحوص ما بعد النشر المعتمدة مفقودة أو غير متسقة. أعد الطلب إلى مسودة وقدمه "
+"مجددًا."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Write plain Bash. Deployment actions run before post-deployment checks, with"
+" sequence preserved within each type. Each command starts in the remote SSH "
+"user's home directory. Exit 0 to pass, 1 for an issue, or 2 if the check "
+"cannot complete. Any nonzero exit stops later commands."
+msgstr ""
+"اكتب أوامر Bash عادية. تُنفذ إجراءات النشر قبل فحوص ما بعد النشر، مع الحفاظ "
+"على التسلسل داخل كل نوع. يبدأ كل أمر في المجلد الرئيسي لمستخدم SSH البعيد. "
+"استخدم رمز الخروج 0 للنجاح، و1 عند وجود مشكلة، و2 عند تعذر إكمال الفحص. أي "
+"رمز خروج غير صفري يوقف الأوامر التالية."

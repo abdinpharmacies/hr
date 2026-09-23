@@ -1,7 +1,24 @@
 import json
+from concurrent.futures import ThreadPoolExecutor
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
+
+
+def _ssh_test_reason(code, env):
+    # Translation stays on the request thread; workers return plain codes only.
+    return {
+        'ok': False,
+        'authentication': env._('Authentication failed.'),
+        'timeout': env._('Connection timed out.'),
+        'hostname': env._('The SSH hostname could not be resolved.'),
+        'unreachable': env._('The server is unreachable.'),
+        'refused': env._('The server refused the SSH connection.'),
+        'host_key': env._('SSH host key verification failed.'),
+        'failed': env._('SSH connection or remote shell check failed.'),
+        'alias': env._('The configured SSH alias is invalid.'),
+        'client': env._('The SSH client could not be started.'),
+    }[code]
 
 
 ENVIRONMENTS = [('development', 'Development'), ('test', 'Test'),
@@ -225,6 +242,34 @@ class DeployRequest(models.Model):
     def action_add_production_servers(self):
         return self._add_environment_servers('production')
 
+    def action_test_selected_ssh(self):
+        self.ensure_one()
+        self.check_access('read')
+        if not (self.env.user.has_group('ab_deploy.group_administrator')
+                or self.env.user.has_group('ab_deploy.group_executor')):
+            raise AccessError(_('You do not have the required deployment role.'))
+        targets = self.target_ids.filtered('deploy').sorted('id')
+        targets.check_access('read')
+        targets.server_id.check_access('read')
+        if not targets:
+            return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                    'params': {'title': _('Test Selected SSH'),
+                               'message': _('Select at least one server to test SSH.'),
+                               'type': 'warning', 'sticky': False}}
+        # Materialize all ORM data before starting worker threads.
+        servers = [(target.server_id.name, target.server_id.ssh_alias or '') for target in targets]
+        from ..runner import engine
+        with ThreadPoolExecutor(max_workers=min(70, len(servers))) as pool:
+            results = list(pool.map(engine.test_ssh, [alias for name, alias in servers]))
+        failures = [(name, _ssh_test_reason(code, self.env)) for (name, alias), code in zip(servers, results) if code != 'ok']
+        message = _('Tested: %(total)s; Successful: %(success)s; Failed: %(failed)s.',
+                    total=len(servers), success=len(servers) - len(failures), failed=len(failures))
+        if failures:
+            message += ' ' + '; '.join('%s: %s' % failure for failure in failures)
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': _('Test Selected SSH'), 'message': message,
+                           'type': 'warning' if failures else 'success', 'sticky': bool(failures)}}
+
     def action_select_all_targets(self):
         return self._select_targets(True)
 
@@ -328,6 +373,7 @@ class DeployRequest(models.Model):
 
     def action_approve(self):
         self._decision()
+        self.target_ids._validate_check_snapshot()
         self._clear_activity()
         self._transition({'state': 'approved', 'approved_by': self.env.uid, 'approved_at': fields.Datetime.now()})
         return True
@@ -418,6 +464,21 @@ class DeployTarget(models.Model):
             target.deployment_status = latest.state if latest else (
                 'cancelled' if target.request_id.state == 'cancelled' else 'delayed')
 
+    def action_test_ssh(self):
+        self.ensure_one()
+        self.check_access('read')
+        self.request_id.check_access('read')
+        self.server_id.check_access('read')
+        if not (self.env.user.has_group('ab_deploy.group_administrator')
+                or self.env.user.has_group('ab_deploy.group_executor')):
+            raise AccessError(_('You do not have the required deployment role.'))
+        from ..runner import engine
+        reason = _ssh_test_reason(engine.test_ssh(self.server_id.ssh_alias or ''), self.env)
+        title = _('SSH connection failed: %s', self.server_id.name) if reason else _('SSH connection successful: %s', self.server_id.name)
+        return {'type': 'ir.actions.client', 'tag': 'display_notification',
+                'params': {'title': title, 'message': reason or _('SSH authentication and remote command execution succeeded.'),
+                           'type': 'danger' if reason else 'success', 'sticky': bool(reason)}}
+
     def _ssh_retry_job(self):
         self.ensure_one()
         latest = self.job_ids.sorted('id', reverse=True)[:1]
@@ -486,6 +547,21 @@ class DeployTarget(models.Model):
         if any(not t.server_id.active or t.server_id.maintenance_mode for t in self):
             raise ValidationError(_('Targets must be active and outside maintenance.'))
 
+    def _validate_check_snapshot(self):
+        from ..runner import engine
+        for target in self:
+            snapshot = target.snapshot or {}
+            if not snapshot.get('check_policy_version'):
+                continue  # Preserve pre-policy submissions and their frozen scripts.
+            commands = snapshot.get('commands', [])
+            types = [command.get('command_type') for command in commands]
+            if (snapshot['check_policy_version'] != 1 or not types or 'check' not in types
+                    or any(kind not in ('action', 'check') for kind in types)
+                    or types != sorted(types)
+                    or target.script != engine.render(commands)
+                    or target.script_hash != engine.checksum(target.script)):
+                raise ValidationError(_('The approved post-deployment checks are missing or inconsistent. Return this request to draft and submit it again.'))
+
     def _freeze(self):
         import uuid
         from ..runner import engine
@@ -493,13 +569,18 @@ class DeployTarget(models.Model):
         for target in self:
             if target.request_id.get_recent_odoo_log and any(not (target.server_id[name] or '').strip() for name in target.server_id._log_path_fields):
                 raise ValidationError(_('Complete all four Odoo paths for server %s before requesting log collection.', target.server_id.name))
-            lines = target.request_id.command_ids.sorted(lambda l: (l.sequence, l.id))
-            lines.mapped('command_id')._lock()
+            lines = target.request_id.command_ids
+            lines.mapped('command_id').sorted('id')._lock()
+            lines = lines.sorted(lambda l: (l.command_id.command_type, l.sequence, l.id))
             if any(not line.command_id.active for line in lines):
                 raise ValidationError(_('Select active commands before requesting approval.'))
-            commands = [{'name': l.command_id.name, 'bash': l.command_id.template} for l in lines]
+            if not any(line.command_id.command_type == 'check' for line in lines):
+                raise ValidationError(_('Add at least one active Post-deployment Check before requesting approval.'))
+            lines._freeze_type()
+            commands = [{'name': l.command_id.name, 'bash': l.command_id.template,
+                         'command_type': l.command_id.command_type, 'sequence': l.sequence} for l in lines]
             script = engine.render(commands)
-            snapshot = {'ssh_alias': target.server_id.ssh_alias,
+            snapshot = {'check_policy_version': 1, 'ssh_alias': target.server_id.ssh_alias,
                         'timeout': target.server_id.monitor_timeout_seconds, 'commands': commands}
             if target.request_id.get_recent_odoo_log:
                 snapshot['odoo_log'] = {name: target.server_id[name] for name in target.server_id._log_path_fields}
