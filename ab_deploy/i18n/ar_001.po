@@ -3412,3 +3412,86 @@ msgstr ""
 "على التسلسل داخل كل نوع. يبدأ كل أمر في المجلد الرئيسي لمستخدم SSH البعيد. "
 "استخدم رمز الخروج 0 للنجاح، و1 عند وجود مشكلة، و2 عند تعذر إكمال الفحص. أي "
 "رمز خروج غير صفري يوقف الأوامر التالية."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Action %s requires at least one active Post-deployment Check."
+msgstr "يتطلب الإجراء %s فحصًا نشطًا واحدًا على الأقل بعد النشر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__check_sequence
+msgid "Check Sequence"
+msgstr "ترتيب الفحص"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__execution_sequence
+msgid "Execution Order"
+msgstr "ترتيب التنفيذ"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid ""
+"Linked check rows are managed automatically. Edit the related action "
+"instead."
+msgstr ""
+"تتم إدارة سطور الفحوصات المرتبطة تلقائيًا. عدّل الإجراء المرتبط بدلًا من "
+"ذلك."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Only generated checks can be removed automatically."
+msgstr "يمكن إزالة الفحوصات المُنشأة تلقائيًا فقط بهذه الطريقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "Post-deployment checks cannot require other checks."
+msgstr "لا يمكن أن تتطلب فحوصات ما بعد النشر فحوصات أخرى."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_command_types
+msgid "Refresh Linked Checks"
+msgstr "تحديث الفحوصات المرتبطة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__parent_line_id
+msgid "Related Action"
+msgstr "الإجراء المرتبط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__required_check_ids
+msgid "Required Checks"
+msgstr "الفحوصات المطلوبة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_command_types
+msgid ""
+"Save or refresh to add each action's required checks immediately after it. "
+"Linked checks are read-only. Sequence orders actions; standalone checks run "
+"last. Any nonzero exit fails that server and stops later commands."
+msgstr ""
+"احفظ أو حدّث لإضافة الفحوصات المطلوبة لكل إجراء بعده مباشرة. الفحوصات "
+"المرتبطة للقراءة فقط. يحدد الترتيب تسلسل الإجراءات؛ وتُنفذ الفحوصات المستقلة"
+" أخيرًا. أي رمز خروج غير الصفر يعني فشل السرفر ويوقف الأوامر التالية."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/commands.py:0
+msgid "These checks are required by active actions: %s"
+msgstr "هذه الفحوصات مطلوبة للإجراءات النشطة التالية: %s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Write plain Bash. Each deployment action runs immediately before its "
+"required checks. Standalone checks run last. Each command starts in the "
+"remote SSH user's home directory. Exit 0 to pass, 1 for an issue, or 2 if "
+"the check cannot complete. Any nonzero exit stops later commands."
+msgstr ""
+"اكتب أوامر Bash عادية. يُنفذ كل إجراء نشر قبل فحوصاته المطلوبة مباشرة. تُنفذ"
+" الفحوصات المستقلة أخيرًا. يبدأ كل أمر في المجلد الرئيسي لمستخدم SSH على "
+"السرفر البعيد. استخدم رمز الخروج 0 للنجاح، أو 1 عند اكتشاف مشكلة، أو 2 إذا "
+"تعذر إكمال الفحص. أي رمز خروج غير الصفر يوقف الأوامر التالية."

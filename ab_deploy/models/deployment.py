@@ -555,32 +555,68 @@ class DeployTarget(models.Model):
                 continue  # Preserve pre-policy submissions and their frozen scripts.
             commands = snapshot.get('commands', [])
             types = [command.get('command_type') for command in commands]
-            if (snapshot['check_policy_version'] != 1 or not types or 'check' not in types
+            policy = snapshot['check_policy_version']
+            valid_order = types == sorted(types) if policy == 1 else self._valid_check_blocks(commands)
+            if (policy not in (1, 2) or not types or 'check' not in types
                     or any(kind not in ('action', 'check') for kind in types)
-                    or types != sorted(types)
+                    or not valid_order
                     or target.script != engine.render(commands)
                     or target.script_hash != engine.checksum(target.script)):
                 raise ValidationError(_('The approved post-deployment checks are missing or inconsistent. Return this request to draft and submit it again.'))
+
+    @staticmethod
+    def _valid_check_blocks(commands):
+        pending = []
+        parent = None
+        standalone = False
+        for command in commands:
+            if pending:
+                if (command.get('command_type') != 'check'
+                        or command.get('parent_line_id') != parent
+                        or command.get('command_id') != pending.pop(0)):
+                    return False
+            elif command.get('command_type') == 'action':
+                if standalone or command.get('parent_line_id') or not command.get('line_id'):
+                    return False
+                pending = list(command.get('required_check_ids') or [])
+                if not pending or len(pending) != len(set(pending)):
+                    return False
+                parent = command['line_id']
+            elif command.get('command_type') == 'check' and not command.get('parent_line_id'):
+                standalone = True
+            else:
+                return False
+        return not pending
 
     def _freeze(self):
         import uuid
         from ..runner import engine
         self._check_available()
+        requests = self.mapped('request_id')
+        commands = requests.command_ids.command_id
+        commands.sorted('id')._lock()
+        commands.with_context(active_test=False).required_check_ids.sorted('id')._lock()
+        commands._validate_required_checks()
+        requests._sync_linked_checks()
         for target in self:
             if target.request_id.get_recent_odoo_log and any(not (target.server_id[name] or '').strip() for name in target.server_id._log_path_fields):
                 raise ValidationError(_('Complete all four Odoo paths for server %s before requesting log collection.', target.server_id.name))
             lines = target.request_id.command_ids
             lines.mapped('command_id').sorted('id')._lock()
-            lines = lines.sorted(lambda l: (l.command_id.command_type, l.sequence, l.id))
+            lines = lines.sorted(lambda l: (l.execution_sequence, l.id))
             if any(not line.command_id.active for line in lines):
                 raise ValidationError(_('Select active commands before requesting approval.'))
             if not any(line.command_id.command_type == 'check' for line in lines):
                 raise ValidationError(_('Add at least one active Post-deployment Check before requesting approval.'))
             lines._freeze_type()
             commands = [{'name': l.command_id.name, 'bash': l.command_id.template,
-                         'command_type': l.command_id.command_type, 'sequence': l.sequence} for l in lines]
+                         'command_type': l.command_id.command_type, 'sequence': l.sequence,
+                         'line_id': l.id, 'command_id': l.command_id.id,
+                         'parent_line_id': l.parent_line_id.id or False,
+                         'required_check_ids': l.command_id.required_check_ids.sorted(
+                             lambda check: (check.check_sequence, check.id)).ids} for l in lines]
             script = engine.render(commands)
-            snapshot = {'check_policy_version': 1, 'ssh_alias': target.server_id.ssh_alias,
+            snapshot = {'check_policy_version': 2, 'ssh_alias': target.server_id.ssh_alias,
                         'timeout': target.server_id.monitor_timeout_seconds, 'commands': commands}
             if target.request_id.get_recent_odoo_log:
                 snapshot['odoo_log'] = {name: target.server_id[name] for name in target.server_id._log_path_fields}

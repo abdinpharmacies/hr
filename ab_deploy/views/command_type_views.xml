@@ -1,7 +1,10 @@
 <odoo>
     <record id="view_command_type_form" model="ir.ui.view">
         <field name="name">ab_deploy_command_type_form</field><field name="model">ab_deploy_command</field><field name="inherit_id" ref="view_command_form"/>
-        <field name="arch" type="xml"><field name="name" position="after"><field name="command_type"/></field></field>
+        <field name="arch" type="xml"><field name="name" position="after"><field name="command_type"/>
+            <field name="required_check_ids" widget="many2many_tags" invisible="command_type == 'check'" required="command_type == 'action' and active" options="{'no_create': True}"/>
+            <field name="check_sequence" invisible="command_type != 'check'"/>
+        </field></field>
     </record>
     <record id="view_command_type_list" model="ir.ui.view">
         <field name="name">ab_deploy_command_type_list</field><field name="model">ab_deploy_command</field><field name="inherit_id" ref="view_command_list"/>
@@ -10,9 +13,18 @@
     <record id="view_request_command_types" model="ir.ui.view">
         <field name="name">ab_deploy_request_command_types</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='command_ids']/list" position="attributes"><attribute name="default_order">command_type,sequence,id</attribute></xpath>
-            <xpath expr="//field[@name='command_ids']/list/field[@name='command_id']" position="after"><field name="command_type" readonly="1"/></xpath>
-            <xpath expr="//field[@name='command_ids']" position="before"><p>Deployment actions run first, followed by post-deployment checks. Sequence applies within each type. New submissions require at least one active check. Any nonzero exit code fails that server and stops later commands.</p></xpath>
+            <xpath expr="//field[@name='command_ids']/list" position="attributes"><attribute name="default_order">execution_sequence,command_type,sequence,id</attribute></xpath>
+            <xpath expr="//field[@name='command_ids']/list/field[@name='command_id']" position="after"><field name="command_type" readonly="1"/><field name="parent_line_id" column_invisible="True"/><field name="execution_sequence" readonly="1"/></xpath>
+            <xpath expr="//field[@name='command_ids']/list/field[@name='sequence']" position="replace">
+                <field name="sequence" readonly="parent_line_id"/>
+            </xpath>
+            <xpath expr="//field[@name='command_ids']/list/field[@name='command_id']" position="attributes">
+                <attribute name="readonly">parent_line_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='command_ids']" position="before">
+                <button name="action_refresh_linked_checks" type="object" string="Refresh Linked Checks" invisible="state != 'draft'" class="btn-secondary"/>
+                <p>Save or refresh to add each action's required checks immediately after it. Linked checks are read-only. Sequence orders actions; standalone checks run last. Any nonzero exit fails that server and stops later commands.</p>
+            </xpath>
         </field>
     </record>
 </odoo>

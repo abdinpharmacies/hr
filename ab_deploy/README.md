@@ -28,17 +28,25 @@ use **Send Deployment Report** to publish the current result when desired.
 
 ## Required post-deployment checks
 
-In Command Catalog, set **Command Type** to **Deployment Action** or **Post-deployment
-Check**. Existing commands default to Deployment Action; administrators choose which
-scripts are checks. Draft requests may be incomplete, but new submissions require at
-least one active check. Check-only requests are allowed.
+In Command Catalog, administrators create **Post-deployment Check** commands first,
+then link one or more under **Required Checks** on every **Deployment Action**.
+**Check Sequence** controls their order (record ID breaks ties). Referenced checks
+cannot be archived or converted into actions while an active action requires them.
+Existing unconfigured actions remain in the catalog, but must be configured before
+editing or submitting them for a new approval. Inactive actions may be archived.
 
-Actions run first, followed by checks. Sequence and record ID order apply within each
-category, matching the Commands list. At submission, command names, scripts, types and
-order are frozen in each target snapshot with check policy version 1. Approval validates
-that snapshot, not later catalog edits. Previously submitted/approved requests without
-the policy marker retain their existing scripts, later batches and retries. Resubmitting
-a draft applies the current policy; no checks are silently added to old deployments.
+Saving an action line automatically adds read-only linked check rows immediately
+after it. Edit **Sequence** on manual action rows to reorder whole blocks. Shared
+checks run after each action that requires them. Manual standalone checks run last;
+check-only requests are allowed. Removing or replacing an action removes its generated
+checks. Duplication copies manual lines and regenerates their checks.
+
+Use **Refresh Linked Checks** in a draft after catalog changes; opening a request does
+not modify its rows. Submission also refreshes and validates the complete blocks.
+Command names, scripts, types, links and execution order are frozen in each target
+snapshot with check policy version 2. Approval validates the frozen blocks rather than
+later catalog edits. Existing version 1 and pre-policy submissions, later batches and
+retries keep their frozen scripts. Resubmitting a draft applies the current policy.
 
 Print diagnostic output and exit 0 for success, 1 for a detected issue, or 2 when a check
 cannot complete reliably. All nonzero exit codes fail that server and stop later commands;
