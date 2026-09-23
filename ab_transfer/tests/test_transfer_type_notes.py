@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from unittest.mock import patch
 
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
@@ -24,11 +25,17 @@ class TestTransferTypeNotes(TransactionCase):
             "notes": "4 Existing warehouse notes",
         })
 
-        notes = header._build_submit_store_trans_h_notes()
+        with patch.object(
+                type(header),
+                "_get_submit_idempotency_key",
+                return_value="ODOO_TRANSFER:119:123",
+        ):
+            notes = header._build_submit_store_trans_h_notes()
 
         self.assertEqual(
             notes,
-            "4 Existing warehouse notes\nOdoo Transfer: %s" % header.display_name,
+            "4 Existing warehouse notes\nOdoo Transfer: %s\n[ODOO_TRANSFER:119:123]"
+            % header.display_name,
         )
 
     def test_submit_store_trans_h_notes_keeps_option_prefix_with_space(self):
@@ -36,9 +43,14 @@ class TestTransferTypeNotes(TransactionCase):
             "notes": "4",
         })
 
-        notes = header._build_submit_store_trans_h_notes()
+        with patch.object(
+                type(header),
+                "_get_submit_idempotency_key",
+                return_value="ODOO_TRANSFER:119:123",
+        ):
+            notes = header._build_submit_store_trans_h_notes()
 
         self.assertEqual(
             notes,
-            "4 Odoo Transfer: %s" % header.display_name,
+            "4 Odoo Transfer: %s [ODOO_TRANSFER:119:123]" % header.display_name,
         )

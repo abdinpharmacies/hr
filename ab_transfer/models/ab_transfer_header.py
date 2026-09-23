@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
+from collections import Counter
 from datetime import datetime, time
+
+import psycopg2
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -107,6 +110,13 @@ class AbTransferHeader(models.Model):
         string="Submitted?",
         default=False,
         copy=False,
+    )
+
+    eplus_serial = fields.Integer(
+        string="EPlus Serial",
+        copy=False,
+        readonly=True,
+        index=True,
     )
 
     sent_at = fields.Datetime(
@@ -411,9 +421,11 @@ class AbTransferHeader(models.Model):
     # =========================
     def action_submit(self):
         self.ensure_one()
+        self._lock_transfer_operation()
+        self.invalidate_recordset(["is_submitted", "selection", "sent_at", "eplus_serial"])
 
         if self.is_submitted:
-            raise ValidationError(_("تم إرسال هذا التحويل إلى إي بلس مسبقًا."))
+            raise ValidationError(_("This transfer was already sent to EPlus."))
 
         line_model = self.env["ab_transfer_line"]
         lines = line_model.search([("header_id", "=", self.id)])
@@ -427,15 +439,26 @@ class AbTransferHeader(models.Model):
             with self._get_sql_connection() as conn:
                 cursor = conn.cursor()
                 try:
+                    from_store_sql_id = self._get_ref_id(self.from_store_id, "المخزن المصدر")
+                    to_store_sql_id = self._get_ref_id(self.to_store_id, "المخزن الهدف")
+                    insert_user_sql_id = self._get_ref_id(self.user_id, "المستخدم")
+
+                    existing_sql_header_id = self._find_existing_submitted_transfer(
+                        cursor,
+                        lines,
+                        from_store_sql_id,
+                        to_store_sql_id,
+                    )
+                    if existing_sql_header_id:
+                        conn.rollback()
+                        self._mark_transfer_submitted(existing_sql_header_id)
+                        return True
+
                     # 1) Validations from SQL Server
                     sql_ctx = self._validate_sql_prerequisites(cursor, lines)
 
                     # 2) Write header
                     sql_flag = 'S'  # self._map_sql_flag(self.selection)
-
-                    from_store_sql_id = self._get_ref_id(self.from_store_id, "المخزن المصدر")
-                    to_store_sql_id = self._get_ref_id(self.to_store_id, "المخزن الهدف")
-                    insert_user_sql_id = self._get_ref_id(self.user_id, "المستخدم")
 
                     total_sell_price = self.total_sell_price or 0.0
                     items_count = self.items_count or len(lines)
@@ -721,12 +744,7 @@ class AbTransferHeader(models.Model):
 
                     conn.commit()
 
-                    self.write({
-                        "selection": "saved",
-                        "is_submitted": True,
-                        "sent_at": fields.Datetime.now(),
-                        "error_message": False,
-                    })
+                    self._mark_transfer_submitted(sql_header_id)
 
                     return True
                 except Exception:
@@ -743,7 +761,7 @@ class AbTransferHeader(models.Model):
                 "error_message": error_message,
             })
 
-            raise ValidationError(_("فشل إرسال التحويل إلى إي بلس:\n%s") % error_message)
+            raise ValidationError(_("Failed to send the transfer to EPlus:\n%s") % error_message)
 
         # =========================
         # Odoo Validations
@@ -752,12 +770,204 @@ class AbTransferHeader(models.Model):
     def _build_submit_store_trans_h_notes(self):
         self.ensure_one()
         transfer_reference = "Odoo Transfer: %s" % self.display_name
+        idempotency_marker = "[%s]" % self._get_submit_idempotency_key()
         notes = self.notes or ""
         if notes:
             if notes.strip() in {"1", "2", "3", "4"}:
-                return "%s %s" % (notes, transfer_reference)
-            return "%s\n%s" % (notes, transfer_reference)
-        return transfer_reference
+                value = "%s %s %s" % (notes, transfer_reference, idempotency_marker)
+            else:
+                value = "%s\n%s\n%s" % (notes, transfer_reference, idempotency_marker)
+        else:
+            value = "%s\n%s" % (transfer_reference, idempotency_marker)
+        if len(value) > 200:
+            raise ValidationError(
+                _("Transfer notes and the Odoo reference must not exceed 200 characters.")
+            )
+        return value
+
+    def _lock_transfer_operation(self):
+        self.ensure_one()
+        try:
+            with self.env.cr.savepoint():
+                self.env.cr.execute(
+                    "SELECT id FROM ab_transfer_header WHERE id = %s FOR UPDATE NOWAIT",
+                    [self.id],
+                )
+                row = self.env.cr.fetchone()
+        except psycopg2.errors.LockNotAvailable:
+            raise UserError(
+                _("This transfer is already being processed. Please refresh and try again.")
+            )
+        if not row:
+            raise UserError(_("The transfer no longer exists."))
+        return True
+
+    def _get_submit_idempotency_key(self):
+        self.ensure_one()
+        replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
+        if not replica_db or not replica_db.db_serial:
+            raise ValidationError(
+                _("Replica DB serial must be configured before submitting a transfer.")
+            )
+        return "ODOO_TRANSFER:%s:%s" % (int(replica_db.db_serial), self.id)
+
+    def _find_existing_submitted_transfer(
+            self,
+            cursor,
+            lines,
+            from_store_sql_id,
+            to_store_sql_id,
+    ):
+        self.ensure_one()
+        marker = self._get_submit_idempotency_key()
+        cursor.execute(
+            """
+            SELECT stnh_id, stnh_flag
+            FROM Store_Trans_h
+            WHERE stnh_f_Sto_id = ?
+              AND stnh_t_Sto_id = ?
+              AND CHARINDEX(?, ISNULL(stnh_notes, '')) > 0
+            ORDER BY stnh_id
+            """,
+            (from_store_sql_id, to_store_sql_id, marker),
+        )
+        matches = cursor.fetchall()
+        if not matches:
+            cursor.execute(
+                """
+                SELECT stnh_id, stnh_flag
+                FROM Store_Trans_h
+                WHERE stnh_f_Sto_id = ?
+                  AND stnh_t_Sto_id = ?
+                  AND ISNULL(stnh_notes, '') LIKE ?
+                ORDER BY stnh_id
+                """,
+                (
+                    from_store_sql_id,
+                    to_store_sql_id,
+                    "%%Odoo Transfer:%% %s" % self.id,
+                ),
+            )
+            matches = cursor.fetchall()
+
+        if not matches:
+            return 0
+        if len(matches) > 1:
+            raise ValidationError(
+                _(
+                    "Multiple EPlus transfers already reference this Odoo transfer. "
+                    "Inventory reconciliation is required before retrying."
+                )
+            )
+
+        sql_header_id = int(matches[0][0] or 0)
+        sql_flag = str(matches[0][1] or "").strip()
+        if sql_flag not in {"S", "R"}:
+            raise ValidationError(
+                _(
+                    "The existing EPlus transfer has status %(status)s. "
+                    "Manual reconciliation is required."
+                )
+                % {"status": sql_flag or _("empty")}
+            )
+        self._validate_existing_transfer_fingerprint(
+            cursor,
+            lines,
+            sql_header_id,
+            from_store_sql_id,
+            to_store_sql_id,
+        )
+        return sql_header_id
+
+    def _validate_existing_transfer_fingerprint(
+            self,
+            cursor,
+            lines,
+            sql_header_id,
+            from_store_sql_id,
+            to_store_sql_id,
+    ):
+        product_sql_ids = sorted({
+            self._get_ref_id(line.product_id, "الصنف")
+            for line in lines
+        })
+        placeholders = ", ".join("?" for _product_id in product_sql_ids)
+        cursor.execute(
+            """
+            SELECT itm_id, ISNULL(itm_purchase_unit, 1)
+            FROM item_catalog
+            WHERE itm_id IN (%s)
+            """ % placeholders,
+            tuple(product_sql_ids),
+        )
+        purchase_units = {
+            int(row[0]): int(row[1] or 1)
+            for row in cursor.fetchall()
+        }
+
+        expected = Counter()
+        for line in lines:
+            product_sql_id = self._get_ref_id(line.product_id, "الصنف")
+            expiry_date = fields.Date.to_string(line.expiry_date) if line.expiry_date else ""
+            expected[(
+                from_store_sql_id,
+                to_store_sql_id,
+                product_sql_id,
+                self._normalize_scalar(line.class_id, "التصنيف"),
+                round(self._line_qty_in_stock_uom(line), 4),
+                purchase_units.get(product_sql_id, 1),
+                round(float(line.requested_qty or 0.0), 4),
+                expiry_date,
+            )] += 1
+
+        cursor.execute(
+            """
+            SELECT st_from_store,
+                   st_to_store,
+                   st_itm_id,
+                   st_c_id,
+                   st_itm_quantity,
+                   st_itm_unit,
+                   st_requested_qty,
+                   st_itm_expiry
+            FROM Store_Trans
+            WHERE stnh_id = ?
+              AND st_from_store = ?
+              AND st_to_store = ?
+            """,
+            (sql_header_id, from_store_sql_id, to_store_sql_id),
+        )
+        actual = Counter()
+        for row in cursor.fetchall():
+            expiry_date = fields.Date.to_string(row[7].date() if hasattr(row[7], "date") else row[7]) if row[7] else ""
+            actual[(
+                int(row[0] or 0),
+                int(row[1] or 0),
+                int(row[2] or 0),
+                int(row[3] or 0),
+                round(float(row[4] or 0.0), 4),
+                int(row[5] or 0),
+                round(float(row[6] or 0.0), 4),
+                expiry_date,
+            )] += 1
+
+        if expected != actual:
+            raise ValidationError(
+                _(
+                    "An EPlus transfer already references this Odoo transfer, but its lines differ. "
+                    "Inventory reconciliation is required before retrying."
+                )
+            )
+
+    def _mark_transfer_submitted(self, sql_header_id):
+        self.ensure_one()
+        self.write({
+            "selection": "saved",
+            "is_submitted": True,
+            "sent_at": fields.Datetime.now(),
+            "error_message": False,
+            "eplus_serial": int(sql_header_id),
+        })
 
     def _validate_odoo_data(self, lines):
         self.ensure_one()
