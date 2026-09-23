@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_costcenter_deduction_month_prevented_view_tree" model="ir.ui.view">
+            <field name="name">ab_costcenter_deduction_month_prevented_view_tree</field>
+            <field name="model">ab_costcenter_deduction_month_prevented</field>
+            <field name="arch" type="xml">
+                <tree string="ab_costcenter_deduction_month_prevented_tree" multi_edit="1">
+                    <field name="costcenter_code" optional="show"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="till_month" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_costcenter_deduction_month_prevented_view_form" model="ir.ui.view">
+            <field name="name">ab_costcenter_deduction_month_prevented_view_form</field>
+            <field name="model">ab_costcenter_deduction_month_prevented</field>
+            <field name="arch" type="xml">
+                <form string="ab_costcenter_deduction_month_prevented_form">
+                    <sheet>
+                        <group>
+                            <field name="costcenter_code"/>
+                            <field name="costcenter_id"/>
+                            <field name="till_month"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_costcenter_deduction_month_prevented_view_search" model="ir.ui.view">
+            <field name="name">ab_costcenter_deduction_month_prevented_view_search</field>
+            <field name="model">ab_costcenter_deduction_month_prevented</field>
+            <field name="arch" type="xml">
+                <search string="ab_costcenter_deduction_month_prevented_search">
+                    <field name="costcenter_code"/>
+                    <field name="costcenter_id"/>
+                    <field name="till_month"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_costcenter_deduction_month_prevented_view_pivot" model="ir.ui.view">
+            <field name="name">ab_costcenter_deduction_month_prevented_view_pivot</field>
+            <field name="model">ab_costcenter_deduction_month_prevented</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_costcenter_deduction_month_prevented_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_costcenter_deduction_month_prevented_action" model="ir.actions.act_window">
+            <field name="name">Ab costcenter deduction month prevented</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_costcenter_deduction_month_prevented</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_costcenter_deduction_month_prevented_menu"
+                  name="Prevented Deduction Till Month"
+                  parent="ab_accounting.salaries"
+                  action="ab_costcenter_deduction_month_prevented_action"
+                  sequence="1000"/>
+
+    </data>
+</odoo>

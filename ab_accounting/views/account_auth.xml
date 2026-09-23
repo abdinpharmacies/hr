@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_account_auth_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_account_auth_view_tree</field>
+            <field name="model">ab_accounting_account_auth</field>
+            <field name="arch" type="xml">
+                <tree string="ab_accounting_account_auth_tree" editable="top" multi_edit="1">
+                    <field name="group_id"/>
+                    <field name="account_serial"/>
+                    <field name="parent_path"/>
+                    <field name="account_id"/>
+                    <field name="own_account"/>
+                    <field name="allow_account"/>
+                    <field name="always_show_account"/>
+                    <field name="prevent_enquiry"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_auth_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_account_auth_view_form</field>
+            <field name="model">ab_accounting_account_auth</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_account_auth_form">
+                    <sheet>
+                        <group col="4">
+                            <field name="account_id"/>
+                            <field name="group_id"/>
+                            <field name="own_account"/>
+                            <field name="allow_account"/>
+                            <field name="always_show_account"/>
+                            <field name="prevent_enquiry"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_account_auth_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_account_auth_view_search</field>
+            <field name="model">ab_accounting_account_auth</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_account_auth_search">
+                    <field name="group_id"/>
+                    <field name="account_serial"/>
+                    <field name="parent_path"/>
+                    <field name="account_id"/>
+                    <field name="own_account"/>
+                    <field name="allow_account"/>
+                    <field name="always_show_account"/>
+                    <field name="prevent_enquiry"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_account_auth_action" model="ir.actions.act_window">
+            <field name="name">Account Auth</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_account_auth</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ab_accounting_account_auth_menu" name="Accounts Auth" parent="ab_user_auth_category"
+                  action="ab_accounting_account_auth_action" sequence="2"/>
+
+
+    </data>
+</odoo>

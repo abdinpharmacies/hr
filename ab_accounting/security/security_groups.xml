@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data>
+        <record model="ir.module.category" id="ab_accounting_category">
+            <field name="name">Accounting</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record id="group_ab_accounting_accountant" model="res.groups">
+            <field name="name">Accountant</field>
+            <field name="category_id" ref="ab_accounting_category"/>
+        </record>
+
+        <record id="group_ab_accounting_reviewer" model="res.groups">
+            <field name="name">Reviewer</field>
+            <field name="implied_ids"
+                   eval="[(4, ref('group_ab_accounting_accountant')),]"/>
+            <field name="category_id" ref="ab_accounting_category"/>
+
+        </record>
+
+        <record id="group_ab_accounting_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="ab_accounting_category"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('group_ab_accounting_reviewer')),]"/>
+
+        </record>
+
+        <record id="group_ab_accounting_report" model="res.groups">
+            <field name="name">Reports</field>
+            <field name="category_id" ref="ab_accounting_category"/>
+            <field name="implied_ids"
+                   eval="[(4, ref('group_ab_accounting_accountant')),]"/>
+
+        </record>
+
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids"
+                   eval="[(4, ref('group_ab_accounting_manager')),]"/>
+        </record>
+
+        <record id="base.default_user" model="res.users">
+            <field name="groups_id" eval="[(6, 0, [ref('base.group_user')])]"/>
+        </record>
+
+
+    </data>
+</odoo>

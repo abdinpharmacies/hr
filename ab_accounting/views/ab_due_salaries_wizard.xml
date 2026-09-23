@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_due_salaries_payment_redirect_to_view_tree" model="ir.ui.view">
+            <field name="name">ab_due_salaries_payment_redirect_to_view_tree</field>
+            <field name="model">ab_due_salaries_payment_redirect_to</field>
+            <field name="arch" type="xml">
+                <tree string="ab_due_salaries_payment_redirect_to_view_tree" editable="bottom" multi_edit="1">
+                    <field name="costcenter_code"/>
+                    <field name="costcenter_id"/>
+                    <field name="user_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--   ########################################################    -->
+        <record id="ab_due_salaries_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_due_salaries_wizard_view_form</field>
+            <field name="model">ab_due_salaries_wizard</field>
+            <field name="arch" type="xml">
+                <form string="ab_due_salaries_wizard_form">
+                    <sheet>
+                        <notebook>
+                            <page string="Redirect Costcenters">
+                                <group>
+                                    <field name="user_id"/>
+                                </group>
+                                <label for="costcenter_codes"/>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="costcenter_codes" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'add_redirected_ids'}"
+                                                    string="Add costcenters" type="object"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'remove_redirected_ids'}"
+                                                    string="Remove costcenters" type="object"
+                                                    class="btn-outline-danger  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <field name="payment_redirect_to_ids"
+                                       context="{
+                                       'tree_view_ref':'ab_accounting.ab_due_salaries_payment_redirect_to_view_tree'
+                                       }"/>
+                            </page>
+                            <page string="Forbidden Deductions">
+                                <label for="costcenter_codes"/>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="costcenter_codes" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'add_forbidden_ids'}"
+                                                    string="Add costcenters" type="object"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'remove_forbidden_ids'}"
+                                                    string="Remove costcenters" type="object"
+                                                    class="btn-outline-danger  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <field name="costcenter_deduction_forbidden_ids">
+                                    <tree>
+                                        <field name="costcenter_code"/>
+                                        <field name="costcenter_id"/>
+                                    </tree>
+                                </field>
+
+                            </page>
+                            <page string="Prevent Deductions">
+                                <group>
+                                    <field name="till_month"/>
+                                </group>
+
+                                <label for="costcenter_codes"/>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="costcenter_codes" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'add_month_prevented_ids'}"
+                                                    string="Add costcenters" type="object"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-50">
+                                            <button name="btn_do_action"
+                                                    context="{'action_type':'remove_month_prevented_ids'}"
+                                                    string="Remove costcenters" type="object"
+                                                    class="btn-outline-danger  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <field name="costcenter_deduction_month_prevented_ids">
+                                    <tree>
+                                        <field name="costcenter_code"/>
+                                        <field name="costcenter_id"/>
+                                        <field name="till_month"/>
+                                    </tree>
+                                </field>
+
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_due_salaries_wizard_view_tree" model="ir.ui.view">
+            <field name="name">ab_due_salaries_wizard_view_tree</field>
+            <field name="model">ab_due_salaries_wizard</field>
+            <field name="arch" type="xml">
+                <tree string="ab_due_salaries_wizard_tree">
+                    <field name="user_id"/>
+                    <field name="costcenter_codes"/>
+                    <field name="payment_redirect_to_ids"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ab_due_salaries_wizard_action" model="ir.actions.act_window">
+            <field name="name">ab_due_salaries_wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_due_salaries_wizard</field>
+            <field name="view_mode">form</field>
+        </record>
+
+        <menuitem name="Salaries Wizard"
+                  id="ab_due_salaries_wizard_menu"
+                  action="ab_due_salaries_wizard_action"
+                  sequence="2"
+                  groups="ab_accounting.group_ab_accounting_manager"
+                  parent="salaries"/>
+
+
+        <record id="ab_due_salaries_payment_redirect_to_action" model="ir.actions.act_window">
+            <field name="name">Salaries Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_due_salaries_payment_redirect_to</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <menuitem name="Salaries settings"
+                  id="ab_due_salaries_payment_redirect_to_menu"
+                  action="ab_due_salaries_payment_redirect_to_action"
+                  sequence="3"
+                  groups="ab_accounting.group_ab_accounting_manager"
+                  parent="salaries"/>
+
+    </data>
+</odoo>

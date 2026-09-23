@@ -1,0 +1,106 @@
+<!-- Inherit Form View to Modify it -->
+<odoo>
+    <data>
+        <record id="user_auth_list" model="ir.ui.view">
+            <field name="name">ab_accounting.user_auth_list_view</field>
+            <field name="model">res.users</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <tree string="Abdin User Authority">
+                    <field name="name" readonly="True"/>
+                    <field name="account_auth_ids"/>
+                    <field name="doctype_ids"/>
+                    <field name="responsible_for_ids"/>
+                    <field name="allowed_field_ids"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <!-- .....................FORM VIEW............................-->
+
+        <record id="user_auth_form" model="ir.ui.view">
+            <field name="name">ab_accounting.user_auth_form</field>
+            <field name="mode">primary</field>
+            <field name="model">res.users</field>
+            <field name="arch" type="xml">
+                <form string="">
+                    <sheet>
+                        <group string="Name">
+                            <field name="name" nolabel='1' class="h1" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Account Auth">
+                                <br/>
+
+                                <field name="account_auth_ids" nolabel='1'>
+                                    <tree string="Account auths" editable="bottom">
+                                        <field name="account_id" width="120px"/>
+                                        <field name="own_account" width="80px"/>
+                                        <field name="allow_account" width="80px"/>
+                                        <field name="always_show_account" width="80px"/>
+                                        <field name="prevent_enquiry" width="80px"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Responsible For">
+                                <field name="responsible_for_ids"/>
+                            </page>
+                            <page string="⚠ Forbidden Stores ⚠">
+                                <div class="btn-group">
+                                    <button name="btn_all_branch_auth" string="All Branch Auth" type="object"
+                                            groups="base.group_system"
+                                            class="btn btn-info"/>
+                                    <button name="remove_branch_auth" string="Remove Branch Auth" type="object"
+                                            groups="base.group_system"
+                                            class="btn btn-danger"/>
+                                </div>
+                                <br/>
+                                <field name="store_ids" nolabel='1'
+                                       options="{'no_create': True, 'no_create_edit':True}"/>
+
+                            </page>
+                            <page string="Allowed Costcenters">
+                                <field name="costcenter_ids"/>
+                            </page>
+                            <page string="Doc Type">
+                                <br/>
+                                <field name="doctype_ids" nolabel='1' widget="many2many_tags"
+                                       options="{'no_create': True, 'no_create_edit':True}"/>
+                            </page>
+                            <page string="Allowed Fields">
+                                <br/>
+                                <field name="allowed_field_ids" nolabel='1'>
+                                    <tree string="Fields auths" editable="bottom">
+                                        <field name="allowed_field_id" width="120px"/>
+                                        <field name="allow_entry" width="80px"/>
+                                        <field name="allow_review" width="80px"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_user_auth_action" model="ir.actions.act_window">
+            <field name="name">User Authorities</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('share', '=', False)]</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+    (0, 0, {'view_mode': 'tree', 'view_id': ref('user_auth_list')}),
+    (0, 0, {'view_mode': 'form', 'view_id': ref('user_auth_form')})]"/>
+        </record>
+
+        <menuitem id="ab_user_auth_menu" name="Users Auths" parent="ab_user_auth_category"
+                  action="ab_user_auth_action" sequence="1"/>
+
+
+    </data>
+</odoo>
+
+
+        <!--'domain': [('id', 'in', self.packs.ids)],-->

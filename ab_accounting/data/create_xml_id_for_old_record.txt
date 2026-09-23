@@ -1,0 +1,10 @@
+UPDATE ir_model_data
+SET
+    name='ab_accounting_account_guide_fixed_asset',
+    module='ab_accounting'
+WHERE
+    model='ab_accounting_account_guide'
+    AND module='__export__'
+    AND res_id=556;
+
+

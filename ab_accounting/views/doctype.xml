@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="ab_accounting.ab_accounting_doctype_list">
+            <field name="name">Document Type</field>
+            <field name="model">ab_accounting_doctype</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="internal_type"/>
+
+                </tree>
+            </field>
+        </record>
+        <record id="ab_accounting_doctype_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_doctype_view_form</field>
+            <field name="model">ab_accounting_doctype</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_doctype_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="internal_type"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="ab_accounting_doctype_action">
+            <field name="name">Abdin Document Type</field>
+            <field name="res_model">ab_accounting_doctype</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Document Type" id="ab_accounting_doctype_menu"
+                  parent="accounting_menu"
+                  sequence="2"
+                  action="ab_accounting_doctype_action"/>
+
+    </data>
+</odoo>

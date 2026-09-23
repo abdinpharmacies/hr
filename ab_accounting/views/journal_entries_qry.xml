@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_accounting_je_line_qry_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_qry_view_tree</field>
+            <field name="model">ab_accounting_je_line_qry</field>
+            <field name="arch" type="xml">
+                <tree string="ab_accounting_je_line_qry_tree">
+                    <field name="credit_val" optional="show"/>
+                    <field name="debit_val" optional="show"/>
+                    <field name="net_val" optional="show"/>
+                    <field name="account_id" optional="show"/>
+                    <field name="linked_account_id" optional="show"/>
+                    <field name="store_code" optional="show"/>
+                    <field name="store_id" optional="show" class="text-wrap"/>
+                    <field name="costcenter_code" optional="show"/>
+                    <field name="costcenter_id" optional="show" class="text-wrap"/>
+                    <field name="due_date" optional="show"/>
+                    <field name="explain" optional="show"/>
+                    <field name="doc_no" optional="show"/>
+                    <field name="final_date" optional="show"/>
+                    <field name="posted_date" optional="show"/>
+                    <field name="parent_account_id" optional="show" class="text-wrap"/>
+                    <field name="with_account_id" optional="show"/>
+                    <field name="create_uid" optional="show" class="text-wrap"/>
+                    <field name="create_date" optional="show"/>
+                    <field name="internal_type" optional="hide"/>
+                    <field name="parent_path" optional="hide"/>
+                    <field name="reconcile" optional="hide"/>
+                    <field name="has_due_date" optional="hide"/>
+                    <field name="has_costcenter" optional="hide"/>
+                    <field name="has_store" optional="hide"/>
+                    <field name="header_id" optional="hide"/>
+                    <field name="is_frozen" optional="hide"/>
+                    <field name="is_posted" optional="hide"/>
+                    <field name="doctype_id" optional="hide"/>
+                    <field name="is_confirmed" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ab_accounting_je_line_qry_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_qry_view_form</field>
+            <field name="model">ab_accounting_je_line_qry</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_je_line_qry_form">
+                    <sheet>
+                        <div class="oe_title h4 text-center">
+                            <label for="header_id"/>
+                            <h1>
+                                <span>----------</span>
+                                <field name="header_id"/>
+                                <span>----------</span>
+                            </h1>
+                        </div>
+                        <group col="4" string="Header Status">
+                            <field name="is_frozen"/>
+                            <field name="is_posted"/>
+                            <field name="is_confirmed"/>
+                            <field name="active"/>
+                        </group>
+
+                        <group col="4" string="JE Values">
+                            <field name="debit_val"/>
+                            <field name="credit_val"/>
+                            <field name="net_val"/>
+                        </group>
+                        <group col="4" string="Account Detail">
+                            <field name="account_id"/>
+                            <field name="parent_account_id" class="text-wrap"/>
+                            <field name="with_account_id"/>
+                            <field name="internal_type"/>
+                            <field name="parent_path"/>
+                            <field name="has_due_date"/>
+                            <field name="has_costcenter"/>
+                            <field name="has_store"/>
+                        </group>
+                        <group col="4" string="Store">
+                            <field name="store_code"/>
+                            <field name="store_id" class="text-wrap"/>
+                        </group>
+                        <group col="4" string="Cost Center">
+                            <field name="costcenter_code"/>
+                            <field name="costcenter_id" class="text-wrap"/>
+                        </group>
+                        <group col="4" string="Date Data">
+                            <field name="due_date"/>
+                            <field name="final_date"/>
+                            <field name="posted_date"/>
+                        </group>
+                        <group col="4" string="Doc Data">
+                            <field name="doctype_id"/>
+                            <field name="doc_no"/>
+                            <field name="explain"/>
+                        </group>
+
+                        <group col="4" string="Creator and Editor Data">
+                            <field name="create_date"/>
+                            <field name="create_uid" class="text-wrap"/>
+
+                            <field name="write_date"/>
+                            <field name="write_uid" class="text-wrap"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="ab_accounting_je_line_view_qry_pivot" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_view_pivot</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_accounting_je_line_pivot">
+                    <field name="account_id" type="row"/>
+                    <field name="costcenter_id" type="col"/>
+                    <field name="net_val" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="ab_accounting_je_line_qry_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_qry_view_search</field>
+            <field name="model">ab_accounting_je_line_qry</field>
+            <field name="arch" type="xml">
+                <search string="JE Search">
+                    <field name="costcenter_space_sep"/>
+                    <field name="doc_no_space_sep"/>
+                    <field name="account_child_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="create_uid"/>
+                    <field name="id"/>
+                    <field name="due_date"/>
+                    <field name="posted_date"/>
+                    <field name="settlement_date"/>
+                    <field name="store_id"/>
+                    <field name="explain"/>
+                    <field name="doc_no"/>
+                    <field name="is_confirmed"/>
+                    <field name="header_id"/>
+                    <field name="parent_path"/>
+                    <filter name="filter_confirmed_je" string="Confirmed" domain="[('is_confirmed','=',True)]"/>
+                    <separator/>
+                    <filter name="filter_unconfirmed_je" string="Unconfirmed" domain="[('is_confirmed','=',False)]"/>
+                    <separator/>
+                    <filter name="filter_no_settlement" string="No Settlement Date"
+                            domain="[
+                            ('settlement_date','=',False),
+                            ('reconcile','=',True),
+                            ]"/>
+                    <separator/>
+                    <filter name="filter_has_value" string="Has Value"
+                            domain="[
+                            ('net_val','!=',0),
+                            ]"/>
+                    <separator/>
+                    <filter name="filter_past_due_date" string="Past Due Date"
+                            domain="[
+                            ('due_date','&lt;', (context_today()).strftime('%%Y-%%m-%%d') ),
+                            ]"/>
+                    <separator/>
+                    <filter name="filter_for_settlement" string="For Settlement"
+                            domain="[
+                            ('settlement_date','=',False),
+                            ('reconcile','=',True),
+                            ('net_val','!=',0),
+                            ('due_date','&lt;', (context_today()).strftime('%%Y-%%m-%%d') ),
+                            ]"/>
+
+                    <separator/>
+                    <filter name="filter_posted_je" string="Posted" domain="[('is_posted','=',True)]"/>
+                    <separator/>
+                    <filter name="filter_not_posted_je" string="Not Posted" domain="[('is_posted','=',False)]"/>
+                    <separator/>
+                    <filter name="filter_my_je" string="My JE"
+                            domain="[('create_uid','=',uid)]"/>
+                    <separator/>
+                    <separator/>
+                    <filter name="filter_salaries_deductions" string="Salaries Deductions"
+                            domain="[('account_id.salary_deduction', '=', True ),]"/>
+                    <field name="int_val" string="Value"/>
+                    <field name="abs_val"/>
+                    <field name="debit_val"/>
+                    <field name="credit_val"/>
+
+                    <separator/>
+                    <field name="abs_val" string="Value &gt;="
+                           filter_domain="[('abs_val','&gt;=',self)]"/>
+                    <field name="abs_val" string="Value &lt;="
+                           filter_domain="[('abs_val','&lt;=',self)]"/>
+                    <separator/>
+
+
+                    <group expand="0" string="Group By">
+                        <filter string="Journal Entry" name="group_by_header" domain="[]"
+                                context="{'group_by': 'header_id'}"/>
+                        <filter string="Account" name="group_by_account" domain="[]"
+                                context="{'group_by': 'account_id'}"/>
+                        <filter string="Costcenter" name="group_by_costcenter" domain="[]"
+                                context="{'group_by': 'costcenter_id'}"/>
+                        <filter string="Due Date" name="group_by_date" domain="[]" context="{'group_by': 'due_date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_je_line_qry_action" model="ir.actions.act_window">
+            <field name="name">Journal Entries Enquiry</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="domain">[(1, '=', 1)]</field>
+            <field name="res_model">ab_accounting_je_line_qry</field>
+            <field name="view_id" ref="ab_accounting.ab_accounting_je_line_qry_view_tree"/>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+        <menuitem id="ab_accounting_je_line_qry_menu" name="JE Enquiry" parent="reports"
+                  action="ab_accounting_je_line_qry_action" sequence="2"/>
+
+    </data>
+</odoo>

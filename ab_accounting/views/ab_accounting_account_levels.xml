@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_account_first_level_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_account_first_level_view_tree</field>
+            <field name="model">ab_accounting_account_first_level</field>
+            <field name="arch" type="xml">
+                <tree string="ab_accounting_account_first_level_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="internal_group" optional="show"/>
+                    <field name="nature" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_first_level_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_account_first_level_view_form</field>
+            <field name="model">ab_accounting_account_first_level</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_account_first_level_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="internal_group"/>
+                            <field name="nature"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_account_first_level_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_account_first_level_view_search</field>
+            <field name="model">ab_accounting_account_first_level</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_account_first_level_search">
+                    <field name="name"/>
+                    <field name="internal_group"/>
+                    <field name="nature"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_first_level_action" model="ir.actions.act_window">
+            <field name="name">Accounting account first level</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_account_first_level</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_accounting_account_first_level_menu"
+                  name="Accounts: First Level"
+                  parent="account_guide_levels_sub_menu"
+                  action="ab_accounting_account_first_level_action"
+                  sequence="100"/>
+
+        <record id="ab_accounting_account_second_level_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_account_second_level_view_tree</field>
+            <field name="model">ab_accounting_account_second_level</field>
+            <field name="arch" type="xml">
+                <tree string="ab_accounting_account_second_level_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="account_first_level_id" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_second_level_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_account_second_level_view_form</field>
+            <field name="model">ab_accounting_account_second_level</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_account_second_level_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="account_first_level_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_account_second_level_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_account_second_level_view_search</field>
+            <field name="model">ab_accounting_account_second_level</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_account_second_level_search">
+                    <field name="name"/>
+                    <field name="account_first_level_id"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_second_level_action" model="ir.actions.act_window">
+            <field name="name">Accounting account second level</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_account_second_level</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_accounting_account_second_level_menu"
+                  name="Accounts: Second Level"
+                  parent="account_guide_levels_sub_menu"
+                  action="ab_accounting_account_second_level_action"
+                  sequence="200"/>
+
+        <record id="ab_accounting_account_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_account_view_tree</field>
+            <field name="model">ab_accounting_account</field>
+            <field name="arch" type="xml">
+                <tree string="ab_accounting_account_tree" multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="account_second_level_id" optional="show"/>
+                    <field name="account_first_level_id" optional="show"/>
+                    <field name="internal_group" optional="show"/>
+                    <field name="nature" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="ab_accounting_account_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_account_view_form</field>
+            <field name="model">ab_accounting_account</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_account_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="account_second_level_id"/>
+                            <field name="account_first_level_id"/>
+                            <field name="internal_group"/>
+                            <field name="nature"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_accounting_account_view_search" model="ir.ui.view">
+            <field name="name">ab_accounting_account_view_search</field>
+            <field name="model">ab_accounting_account</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_account_search">
+                    <field name="name"/>
+                    <field name="account_second_level_id"/>
+                    <field name="account_first_level_id"/>
+                    <field name="internal_group"/>
+                    <field name="nature"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_accounting_account_view_pivot" model="ir.ui.view">
+            <field name="name">ab_accounting_account_view_pivot</field>
+            <field name="model">ab_accounting_account</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_accounting_account_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_accounting_account_action" model="ir.actions.act_window">
+            <field name="name">Ab accounting account</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_account</field>
+            <field name="view_mode">tree,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_accounting_account_menu"
+                  name="Accounts"
+                  parent="account_guide_levels_sub_menu"
+                  action="ab_accounting_account_action"
+                  sequence="300"/>
+
+    </data>
+</odoo>

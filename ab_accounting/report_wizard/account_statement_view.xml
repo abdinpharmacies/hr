@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="ab_accounting_account_statement_view_tree" model="ir.ui.view">
+        <field name="name">ab_accounting_account_statement_view_tree</field>
+        <field name="model">ab_accounting_account_statement</field>
+        <field name="arch" type="xml">
+            <tree string="ab_accounting_account_statement_tree">
+                <field name="parent_account_id" options="{'no_create': True}"/>
+                <field name="account_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                <field name="costcenter_id" options="{'no_create': True}"/>
+            </tree>
+        </field>
+    </record>
+    <record id="ab_accounting_account_statement_form" model="ir.ui.view">
+        <field name="name">print_je_report.form</field>
+        <field name="model">ab_accounting_account_statement</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group col="4">
+                        <field name="parent_account_id" options="{'no_create': True}" context="{'active_test':False}"/>
+                        <field name="account_ids" widget="many2many_tags" options="{'no_create': True}"
+                               context="{'active_test':False}"/>
+                        <field name="creator_ids" widget="many2many_tags" options="{'no_create': True}"
+                               context="{'active_test':False}"/>
+                        <field name="costcenter_id" options="{'no_create': True}" context="{'active_test':False}"/>
+                        <field name="store_id" options="{'no_create': True}" context="{'active_test':False}"/>
+                        <field name="is_posted"/>
+
+                    </group>
+                    <group col="3">
+                        <field name="start_date"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                        <field name="end_date" nolabel="1"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                    </group>
+                    <group col="3">
+                        <field name="start_date_due"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                        <field name="end_date_due" nolabel="1"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                    </group>
+                    <group col="3">
+                        <field name="start_date_posted"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                        <field name="end_date_posted" nolabel="1"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                    </group>
+                    <group col="3">
+                        <field name="start_date_sett"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                        <field name="end_date_sett" nolabel="1"
+                               options="{'datepicker':
+                                       {'dtp_format': 'DD-MM-YYYY',}}"/>
+                    </group>
+
+                    <group>
+                        <div class="btn-group">
+                            <button string="Export Excel" name="btn_export_excel_account_statement" type="object"
+                                    class="btn btn-success"/>
+                            <button string="Print PDF" name="btn_print_pdf_account_statement" type="object"
+                                    class="btn btn-info"/>
+                            <button string="Browse Here" name="btn_browse_account_statement" type="object"
+                                    class="btn btn-warning"/>
+                            <button string="Cancel" special="cancel"/>
+                        </div>
+                    </group>
+
+                    <notebook>
+                        <page string="Report">
+                            <field name="html" readonly="1"/>
+                        </page>
+                        <page string="Show Fields">
+                            <group>
+                                <field name="report_field_ids" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ______________ Action Window ________________ -->
+    <record model="ir.actions.act_window" id="ab_accounting_account_statement_action">
+        <field name="name">Abdin Journal Entries Report</field>
+        <field name="res_model">ab_accounting_account_statement</field>
+        <field name="view_mode">tree,form</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="ab_accounting_account_statement_menu" name="Account Statement" parent="reports"
+              action="ab_accounting_account_statement_action" sequence="1"/>
+
+</odoo>

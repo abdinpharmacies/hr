@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_doctype_auto_je" model="ab_accounting_doctype">
+            <field name="name">قيد اتوماتيك</field>
+        </record>
+    </data>
+</odoo>

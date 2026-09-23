@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ab_accounting_account_guide_all_account" model="ab_accounting_account_guide">
+            <field name="name">كل الحسابات</field>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_asset" model="ab_accounting_account_guide">
+            <field name="name">الاصول</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_liability" model="ab_accounting_account_guide">
+            <field name="name">الالتزامات</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_expense" model="ab_accounting_account_guide">
+            <field name="name">المصروفات</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">expense</field>
+            <field name="internal_type">other</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_income" model="ab_accounting_account_guide">
+            <field name="name">الايرادات</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">income</field>
+            <field name="internal_type">other</field>
+        </record>
+        <record id="ab_accounting_account_guide_equity" model="ab_accounting_account_guide">
+            <field name="name">حقوق الملكية</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">equity</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_off_balance" model="ab_accounting_account_guide">
+            <field name="name">حسابات اخري</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_all_account"/>
+            <field name="internal_group">off_balance</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_clearing" model="ab_accounting_account_guide">
+            <field name="name">المقاصة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_current_asset" model="ab_accounting_account_guide">
+            <field name="name">الاصول المتداولة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_the_fixed_asset" model="ab_accounting_account_guide">
+            <field name="name">الاصول الثابتة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_current_liability" model="ab_accounting_account_guide">
+            <field name="name">الالتزامات المتداولة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_liability"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_non_current_liability" model="ab_accounting_account_guide">
+            <field name="name">الالتزامات الغير متداولة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_liability"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_due_expense" model="ab_accounting_account_guide">
+            <field name="name">المصروفات المستحقة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_liability"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_suppliers" model="ab_accounting_account_guide">
+            <field name="name">حساب الموردين</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_liability"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_other_debit_accounts" model="ab_accounting_account_guide">
+            <field name="name">مدينون متنوعون وارصدة مدينة اخري</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_bank_and_cash" model="ab_accounting_account_guide">
+            <field name="name">خزائن وبنوك</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_customers" model="ab_accounting_account_guide">
+            <field name="name">العملاء</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_inventory" model="ab_accounting_account_guide">
+            <field name="name">المخزون</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_pos_cash_point" model="ab_accounting_account_guide">
+            <field name="name">درج الكاشيير</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_firing_parent" model="ab_accounting_account_guide">
+            <field name="name">سلف وعهد وخصومات</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_due_salaries_cash" model="ab_accounting_account_guide">
+            <field name="name">اجور عاملين مستحقة نقدي</field>
+            <field name="calc_balance">1</field>
+            <field name="has_costcenter">1</field>
+            <field name="internal_group">liability</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_due_expense"/>
+            <field name="internal_type">other</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+        <record id="ab_accounting_account_guide_due_salaries" model="ab_accounting_account_guide">
+            <field name="name">اجور عاملين مستحقة</field>
+            <field name="calc_balance">1</field>
+            <field name="has_costcenter">1</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_due_expense"/>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">other</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_fixed_assets_expense" model="ab_accounting_account_guide">
+            <field name="name">صيانة واهلاك الاصول الثابتة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_expense"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">expense</field>
+            <field name="internal_type">fixed_asset_je</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_depreciation" model="ab_accounting_account_guide">
+            <field name="name">الاهلاك</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_fixed_assets_expense"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">expense</field>
+            <field name="internal_type">fixed_asset_je</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_accumulated_depreciation" model="ab_accounting_account_guide">
+            <field name="name">مجمع الاهلاك</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_liability"/>
+            <field name="calc_balance">1</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">liability</field>
+            <field name="internal_type">fixed_asset_je</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_fixed_asset"
+                model="ab_accounting_account_guide">
+            <field name="name">اصول ثابتة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_the_fixed_asset"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="active" eval="0"/>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">fixed_asset</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_fixed_asset_inventory"
+                model="ab_accounting_account_guide">
+            <field name="name">مخزون اصول ثابتة</field>
+            <field name="calc_balance">1</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_current_asset"/>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">asset</field>
+            <field name="internal_type">other</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_sales"
+                model="ab_accounting_account_guide">
+            <field name="name">مبيعات</field>
+            <!--            <field name="parent_id" ref=""/>-->
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">income</field>
+            <field name="internal_type">other</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+
+
+        <record id="ab_accounting_account_guide_taxes"
+                model="ab_accounting_account_guide">
+            <field name="name">حسابات الضرائب</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_expense"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">expense</field>
+            <field name="internal_type">other</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+
+        <record id="ab_accounting_account_guide_vat"
+                model="ab_accounting_account_guide">
+            <field name="name">ضريبة القيمة المضافة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_taxes"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">expense</field>
+            <field name="internal_type">other</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+
+        <record id="ab_accounting.ab_accounting_account_guide_fixed_asset_reconcile"
+                model="ab_accounting_account_guide">
+            <field name="name">تسويات أصول ثابتة</field>
+            <field name="parent_id" ref="ab_accounting.ab_accounting_account_guide_off_balance"/>
+            <field name="calc_balance">0</field>
+            <field name="has_costcenter">0</field>
+            <field name="internal_group">off_balance</field>
+            <field name="internal_type">fixed_asset_je</field>
+            <field name="max_negative_value">5.0</field>
+        </record>
+    </data>
+</odoo>

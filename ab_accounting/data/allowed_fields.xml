@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_allowed_field_credit_val" model="ab_accounting_allowed_field">
+            <field name="name">credit_val</field>
+        </record>
+        <record id="ab_accounting_allowed_field_debit_val" model="ab_accounting_allowed_field">
+            <field name="name">debit_val</field>
+        </record>
+        <record id="ab_accounting_allowed_field_store_id" model="ab_accounting_allowed_field">
+            <field name="name">store_id</field>
+        </record>
+        <record id="ab_accounting_allowed_field_due_date" model="ab_accounting_allowed_field">
+            <field name="name">due_date</field>
+        </record>
+        <record id="ab_accounting_allowed_field_settlement_date" model="ab_accounting_allowed_field">
+            <field name="name">settlement_date</field>
+        </record>
+        <record id="ab_accounting_allowed_field_costcenter_id" model="ab_accounting_allowed_field">
+            <field name="name">costcenter_id</field>
+        </record>
+        <record id="ab_accounting_allowed_field_doc_no" model="ab_accounting_allowed_field">
+            <field name="name">doc_no</field>
+        </record>
+        <record id="ab_accounting_allowed_field_explain" model="ab_accounting_allowed_field">
+            <field name="name">explain</field>
+        </record>
+        <record id="ab_accounting_allowed_field_account_id" model="ab_accounting_allowed_field">
+            <field name="name">account_id</field>
+        </record>
+
+    </data>
+</odoo>

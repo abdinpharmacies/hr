@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Top menu item -->
+        <menuitem name="Accounting"
+                  web_icon="ab_accounting,static/description/icon.png"
+                  id="root_menu"/>
+        <!-- menu categories -->
+
+
+        <menuitem name="Configurations"
+                  id="accounting_menu"
+                  sequence="2"
+                  groups="ab_accounting.group_ab_accounting_accountant"
+                  parent="root_menu"/>
+
+        <menuitem id="account_guide_levels_sub_menu" name="Account Guide Levels" parent="accounting_menu"
+                  sequence="900"/>
+
+        <menuitem id="salaries" name="Salaries" parent="root_menu" sequence="5"/>
+
+
+        <menuitem name="Reports"
+                  id="reports"
+                  sequence="6"
+                  parent="root_menu"/>
+
+
+        <menuitem name="Cost Centers" id="ab_costcenter_menu"
+                  parent="accounting_menu"
+                  sequence="2"
+                  action="ab_costcenter.ab_costcenter_action"/>
+
+        <menuitem name="Stores" id="ab_store_menu"
+                  parent="accounting_menu"
+                  sequence="3"
+                  action="ab_store.ab_store_action"/>
+
+        <menuitem id="ab_store_ip_menu"
+                  name="Store IPs"
+                  parent="accounting_menu"
+                  action="ab_store.ab_store_ip_action"
+                  sequence="4"/>
+
+        <menuitem id="ab_user_auth_category" name="Authorities" parent="accounting_menu"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

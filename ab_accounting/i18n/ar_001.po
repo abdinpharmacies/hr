@@ -1,0 +1,2244 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_accounting
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-19 09:36+0000\n"
+"PO-Revision-Date: 2025-06-19 09:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"\n"
+"- Moves have been Posted before."
+msgstr "- تم رفع الحركات من قبل."
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"\n"
+"- No moves to add."
+msgstr ""
+"\n"
+"- لا توجد حركات لإضافتها."
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.template_account_statement_report
+msgid ""
+"<span class=\"m-4 text-danger\">\n"
+"                            To\n"
+"                        </span>"
+msgstr ""
+"<span class=\"m-4 text-danger\">\n"
+"                            إلى\n"
+"                        </span>"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.template_account_statement_report
+msgid ""
+"<span class=\"mr-4 text-danger\">\n"
+"                            From\n"
+"                        </span>"
+msgstr ""
+"<span class=\"mr-4 text-danger\">\n"
+"                            من\n"
+"                        </span>"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> lines added  \n"
+"        <span class='h4 text-success'>successfully</span>  \n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+"<span class='h4 text-success'>%s</span> سطر تم إضافتهم  \n"
+"        <span class='h4 text-success'>بنجاح</span>  \n"
+"        بواسطة <span class='h4 font-italic text-muted'>%s</span>"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"<span class='h4 text-success'>%s</span> lines updated  \n"
+"        <span class='h4 text-success'>successfully</span>  \n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+"<span class='h4 text-success'>%s</span> سطر تم تحديثهم  \n"
+"        <span class='h4 text-success'>بنجاح</span>  \n"
+"        بواسطة <span class='h4 font-italic text-muted'>%s</span>"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "<span>----------</span>"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_auth_ab_accounting_account_auth_group_account_unique
+msgid "ACCOUNT an USER must be unique"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_action
+msgid "Ab accounting account"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_costcenter_deduction_forbidden_action
+msgid "Ab costcenter deduction forbidden"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_costcenter_deduction_month_prevented_action
+msgid "Ab costcenter deduction month prevented"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_guide_action
+msgid "Abdin Accounts Guide"
+msgstr "الدليل المحاسبي"
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_doctype_action
+msgid "Abdin Document Type"
+msgstr "نوع الوثيقة"
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_statement_action
+msgid "Abdin Journal Entries Report"
+msgstr "تقارير الحسابات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_list
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_list
+msgid "Abdin User Authority"
+msgstr "صلاحيات المستخدمين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__abs_val
+msgid "Absolute Value"
+msgstr "دائن ومدين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__account_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__account_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_auth_action
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__account_auth_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__account_auth_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__account_auth_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Account Auth"
+msgstr "صلاحية الحسابات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__currency_id
+msgid "Account Currency"
+msgstr "عملة الحساب"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Account Detail"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__account_first_level_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__account_first_level_id
+msgid "Account First Level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.account_guide_levels_sub_menu
+msgid "Account Guide Levels"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__account_serial
+msgid "Account ID"
+msgstr "مسلسل الحساب"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__account_second_level_id
+msgid "Account Second Level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_statement_menu
+msgid "Account Statement"
+msgstr "كشف حساب"
+
+#. module: ab_accounting
+#: model:ir.actions.report,name:ab_accounting.action_print_account_statement_pdf
+msgid "Account Statement Report"
+msgstr "تقرير كشف حساب"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Account auths"
+msgstr "صلاحيات الحسابات"
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account_statement
+msgid "Account statement Report"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__account_child_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__account_child_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__account_child_id
+msgid "Account(s)"
+msgstr ""
+
+#. module: ab_accounting
+#: model:res.groups,name:ab_accounting.group_ab_accounting_accountant
+msgid "Accountant"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.module.category,name:ab_accounting.ab_accounting_category
+#: model:ir.ui.menu,name:ab_accounting.root_menu
+msgid "Accounting"
+msgstr "الحسابات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__accounting_auth_group_id
+msgid "Accounting Auth Group"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.res_users_view_inherit
+msgid "Accounting Security Config"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_first_level_action
+msgid "Accounting account first level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_second_level_action
+msgid "Accounting account second level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_menu
+msgid "Accounts"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_auth_menu
+msgid "Accounts Auth"
+msgstr "صلاحية الحسابات"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_guide_menu
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_search
+msgid "Accounts Guide"
+msgstr "دليل الحسابات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_list
+msgid "Accounts Guide List"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_first_level_menu
+msgid "Accounts: First Level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_second_level_menu
+msgid "Accounts: Second Level"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "Add costcenters"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Adding these lines, are you sure?"
+msgstr "إضافة السطور، هل أنت متأكد؟"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+msgid "All Auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "All Branch Auth"
+msgstr "كل الفروع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__all_confirmed
+msgid "All Confirmed"
+msgstr "تم تأكيد الكل"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_tree
+msgid "All Confirmed?"
+msgstr "الكل مؤكد؟"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+msgid "All Doc Auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__allow_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__allow_account
+msgid "Allow Account"
+msgstr "حساب اخر"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__allow_confirm
+msgid "Allow Confirm"
+msgstr "صلاحية المراجعة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__allow_entry
+msgid "Allow Entry"
+msgstr "صلاحية الحقل للمدخل"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__reconcile
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__reconcile
+msgid "Allow Reconciliation"
+msgstr "السماح بالتسوية"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__allow_reverse
+msgid "Allow Reverse"
+msgstr "السماح بعكس القيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__allow_review
+msgid "Allow Review"
+msgstr "صلاحية الحقل للمراجع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__costcenter_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Allowed Costcenters"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__allowed_field_id
+msgid "Allowed Field"
+msgstr "صلاحية الحقول"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__allowed_field_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__allowed_field_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Allowed Fields"
+msgstr "صلاحية الحقول"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__always_show_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__always_show_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__always_show_account
+msgid "Always Show Account"
+msgstr "اظهار الحساب دائما"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__asset
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__asset
+msgid "Asset"
+msgstr "اصول"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__att_file_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Attachments"
+msgstr "المرفقات"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_auth_group_menu
+msgid "Auth Groups"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_user_auth_category
+msgid "Authorities"
+msgstr "الصلاحيات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__available_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__available_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__available_balance
+msgid "Available Balance"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__balance
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__balance_confirmed
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__balance_confirmed
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__balance_confirmed
+msgid "Balance Confirmed"
+msgstr "الرصيد المؤكد"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "Balance Settings"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__has_costcenter
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__has_costcenter
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__has_costcenter
+msgid "Balance on Costcenter"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__has_store
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__has_store
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__has_store
+msgid "Balance on Store"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__balance_with_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__balance_with_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__balance_with_type
+msgid "Balance(Type)"
+msgstr "الرصيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__bank
+msgid "Bank"
+msgstr "بنك"
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_report_ab_accounting_account_statement_excel
+msgid "Bills Actions"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__related_to__branch
+msgid "Branch"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__include_initial_balance
+msgid "Bring Accounts Balance Forward"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Browse Here"
+msgstr "عرض هنا"
+
+#. module: ab_accounting
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_guide_ab_accounting_account_guide_code_unique
+msgid "CODE CAN NOT BE DUPLICATED."
+msgstr "لا يمكن تكرار الكود"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__calc_balance
+msgid "Calc Balance"
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid ""
+"Can not edit these fields from here,\n"
+"please edit them from there.\n"
+" You can double click 'HEADER ID' to goto that header"
+msgstr ""
+"لا يمكن تعديل هذه الحقول من هنا,\n"
+"قم بتعديل الحقول من رأس القيد.\n"
+" يمكنك الضغط على 'رأس القيد' للذهاب إليه"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__cash
+msgid "Cash"
+msgstr "نقدية"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__reconcile
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_line__reconcile
+msgid "Check this box if this account need manual reconcile."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__child_ids
+msgid "Child Accounts"
+msgstr "الحسابات المتفرعة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "Children"
+msgstr "المتفرعة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__children_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__children_ids
+msgid "Children of:"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__code
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__costcenter_code
+msgid "Code"
+msgstr "كود"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line_common.py:0
+#, python-format
+msgid "Code must not have spaces"
+msgstr "الكود يجب ألا يحتوي على مسافات."
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.accounting_menu
+msgid "Configurations"
+msgstr "اعدادات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Confirm All"
+msgstr "تأكيد الكل"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree
+msgid "Confirmed"
+msgstr "مؤكد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__contains_account
+msgid "Contains Account"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Cost Center"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_costcenter_menu
+msgid "Cost Centers"
+msgstr "مراكز التكلفة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__costcenter_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Costcenter"
+msgstr "مركز تكلفة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__costcenter_code
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__costcenter_code
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__costcenter_code
+msgid "Costcenter Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__costcenter_codes
+msgid "Costcenter Codes"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__costcenter_deduction_forbidden_ids
+msgid "Costcenter Deduction Forbidden"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__costcenter_deduction_month_prevented_ids
+msgid "Costcenter Deduction Month Prevented"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__costcenter_space_sep
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__costcenter_space_sep
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__costcenter_space_sep
+msgid "Costcenter Space Sep"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__create_date
+msgid "Create Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__create_uid
+msgid "Create Uid"
+msgstr "منشأ بواسطة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__create_uid
+msgid "Created by"
+msgstr "منشا بواسطة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__create_date
+msgid "Created on"
+msgstr "تاريخ الانشاء"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__creator_ids
+msgid "Creator"
+msgstr "المنشئ"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Creator and Editor Data"
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid ""
+"Creator – %s – cannot edit their records because the reviewer has frozen "
+"them."
+msgstr "المُنشئ – %s – لا يمكنه تعديل سجلاته لأن المُراجع قام بتجميدها."
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line_compute_balance.py:0
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__nature__credit
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__nature__credit
+#, python-format
+msgid "Credit"
+msgstr "دائن"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__credit_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__credit_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__credit_val
+msgid "Credit Val"
+msgstr "دائن"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Date Data"
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line_compute_balance.py:0
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__nature__debit
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__nature__debit
+#, python-format
+msgid "Debit"
+msgstr "مدين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__debit_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__debit_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__debit_val
+msgid "Debit Val"
+msgstr "مدين"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid "Debit and Credit Should NOT be less than 0"
+msgstr "لا يمكن ان يكون المدين او الدائن ياشارة سالبة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__note
+msgid "Description"
+msgstr "التوصيف"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__display_name
+msgid "Display Name"
+msgstr "الاسم"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Doc Data"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__doc_no
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__doc_no
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__doc_no
+msgid "Doc No"
+msgstr "كود المستند"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__doc_no_space_sep
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__doc_no_space_sep
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__doc_no_space_sep
+msgid "Doc No Space Sep"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Doc Type"
+msgstr "نوع المستند"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__doctype_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__doctype_ids
+msgid "Doc Type Auth"
+msgstr "صلاحية نوع المستند"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__doctype_id
+msgid "Doctype"
+msgstr "نوع المستند"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__doctype_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__doctype_id
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_doctype_menu
+msgid "Document Type"
+msgstr "نوع المستند"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date_due
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__due_date
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Due Date"
+msgstr "تاريخ الاستحقاق"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__end_date_due
+msgid "Due Date To"
+msgstr "حتى"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.template_account_statement_report
+msgid "End Balance:"
+msgstr "رصيد نهائي"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__equity
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__equity
+msgid "Equity"
+msgstr "حقوق ملكية"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__expense
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__expense
+msgid "Expense"
+msgstr "مصروفات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__explain
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__explain
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__explain
+msgid "Explain"
+msgstr "الشرح"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Export Excel"
+msgstr "تصدير إكسل"
+
+#. module: ab_accounting
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_allowed_field_auth_ab_user_allowed_field_group_unique
+msgid "Field an USER must be unique"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Fields auths"
+msgstr "صلاحيات الحقول"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Filter"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__final_date
+msgid "Final Date"
+msgstr "التاريخ النهائي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__end_date
+msgid "Final Date To"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__fixed_asset
+msgid "Fixed Asset"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__fixed_asset_je
+msgid "Fixed Asset JE"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "For Settlement"
+msgstr "قيود بنكية غير معتمدة"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_costcenter_deduction_forbidden_menu
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "Forbidden Deductions"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__store_ids
+msgid "Forbidden Store Auth"
+msgstr "الفروع الممنوعة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__currency_id
+msgid "Forces all moves for this account to have this account currency."
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Freeze"
+msgstr "تجميد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__from_excel
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "From Excel"
+msgstr "من ملف اكسل"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__group_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__group_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.res_users_view_inherit
+msgid "Group"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Group By"
+msgstr "تجميع ب"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__related_to__hq
+msgid "HQ"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__html
+msgid "HTML"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__has_costcenter
+msgid "Has Costcenter"
+msgstr "له مركز  تكلفة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__has_due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__has_due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__has_due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__has_due_date
+msgid "Has Due Date"
+msgstr "له تاريخ استحقاق"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__has_due_date
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__has_due_date
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_line__has_due_date
+msgid "Has Due Date Different Than Today's Date"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__has_store
+msgid "Has Store"
+msgstr "فرع اجباري"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Has Value"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__header_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__header_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_form
+msgid "Header"
+msgstr "رأس القيد"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid "Header Creator must be same as line Creator"
+msgstr "منشئ رأس القيد لابد أن يكون هو نفسه منشئ سطر القيد."
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__header_credit_val
+msgid "Header Credit Val"
+msgstr "دائن رأس القيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__header_debit_val
+msgid "Header Debit Val"
+msgstr "مدين رأس القيد"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Header Status"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__header_store_id
+msgid "Header Store"
+msgstr "الفرع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_needaction
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__costcenter_ids
+msgid "If this field is empty, then all costcenters allowed."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__image
+msgid "Image"
+msgstr "صورة"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__income
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__income
+msgid "Income"
+msgstr "دخول"
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_excel_writer
+msgid "Inherit this to call excel functions"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__int_val
+msgid "Integer Value"
+msgstr "القيمة بدون كسور"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__internal_group
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__internal_group
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__internal_group
+msgid "Internal Group"
+msgstr "مجموعة الحساب (اصول - التزامات - ...)"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__internal_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__internal_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__internal_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__internal_type
+msgid "Internal Type"
+msgstr "نوع الحساب (دفع - قبض - سيولة - ...)"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_confirmed
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__is_confirmed
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__is_confirmed
+msgid "Is Confirmed"
+msgstr "تأكيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__is_final
+msgid "Is Final"
+msgstr "حساب نهائي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__is_frozen
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_frozen
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__is_frozen
+msgid "Is Frozen"
+msgstr "مجمد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_header
+msgid "Is Header"
+msgstr "سطر قيد رئيسي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__is_posted
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__is_posted
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_posted
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__is_posted
+msgid "Is Posted"
+msgstr "تم"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header_delegate_common__je_header_ro_id
+msgid "J.E. Header"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_je_header_action
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_je_header_menu
+msgid "JE Creator"
+msgstr "انشاء القيود"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_je_line_qry_menu
+msgid "JE Enquiry"
+msgstr "تقرير القيود المزدوجة"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid "JE Must Posted First"
+msgstr "يجب رفع القيود أولا."
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "JE Search"
+msgstr "بحث القيود"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "JE Values"
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "JE must posted first."
+msgstr "يجب رفع القيود أولا."
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header_delegate_common__je_header_id
+msgid "Je Header"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__je_headers_search
+msgid "Je Headers Search"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__je_line_id
+msgid "Je Line"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_je_line_action
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_je_line_admin_action
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_je_line_menu
+msgid "Journal Entries"
+msgstr "القيود المزدوجة"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_je_line_admin_menu
+msgid "Journal Entries Admin"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_je_line_qry_action
+msgid "Journal Entries Enquiry"
+msgstr "تقرير القيود المزدوجة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Journal Entry"
+msgstr "القيود المزدوجة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to____last_update
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard____last_update
+msgid "Last Modified on"
+msgstr "تاريخ التحديث"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__write_uid
+msgid "Last Updated by"
+msgstr "تحديث بواسطة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__write_date
+msgid "Last Updated on"
+msgstr "تاريخ التحديث"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__liability
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__liability
+msgid "Liability"
+msgstr "التزامات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Lines"
+msgstr "سطور الحسابات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__linked_account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__linked_account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__linked_account_id
+msgid "Linked Account"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ab_accounting
+#: model:res.groups,name:ab_accounting.group_ab_accounting_manager
+msgid "Manager"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__max_negative_value
+msgid "Max Negative Value"
+msgstr "اقصى قيمة سالبة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__message
+msgid "Message"
+msgstr "رسالة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__line_ids
+msgid "Moves"
+msgstr "الحركات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "My JE"
+msgstr "قيودي"
+
+#. module: ab_accounting
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_ab_accounting_account_name_unique
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_guide_ab_accounting_account_guide_name_unique
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_doctype_ab_accounting_doctype_name_unique
+msgid "NAME CAN NOT BE DUPLICATED."
+msgstr "لا يمكن تكرار الاسم"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__name
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__nature
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__nature
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__nature
+msgid "Nature"
+msgstr "طبيعة الحساب"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__negative_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__negative_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__negative_balance
+msgid "Negative Balance"
+msgstr "رصيد سالب"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__net_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__net_val
+msgid "Net Val"
+msgstr "صافي القيمة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "No Settlement Date"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+msgid "Not Confirmed"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Not Posted"
+msgstr "غير مرفوعة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid "Number of rows is not equal number of lines"
+msgstr "عدد الصفوف المراد رفعها لا يساوي عدد السطور المراد تحديثها."
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_unread_counter
+msgid "Number of unread messages"
+msgstr "عدد الرسائل الغير مقروءة"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__internal_group__off_balance
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_group__off_balance
+msgid "Off Balance"
+msgstr "خارج الموازنة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__old_je_serial
+msgid "Old Je Serial"
+msgstr "مسلسل الحسابات القديم"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_account_guide.py:0
+#: code:addons/ab_accounting/models/ab_accounting_account_guide.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid "Operation not supported"
+msgstr "العملية غير متاحة."
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__other
+msgid "Other"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__own_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__own_account
+msgid "Own Account"
+msgstr "حساب رئيسي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__parent_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__parent_account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__parent_account_id
+msgid "Parent Account"
+msgstr "الحساب الاب"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__parent_path
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__parent_path
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__parent_path
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__parent_path
+msgid "Parent Path"
+msgstr "مسار الحساب الاب"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Past Due Date"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__payable
+msgid "Payable"
+msgstr "دفع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__payment_redirect_to_ids
+msgid "Payment Redirect To"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Post"
+msgstr "رفع"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree
+msgid "Posted"
+msgstr "مرفوعة"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date_posted
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__posted_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__posted_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__posted_date
+msgid "Posted Date"
+msgstr "تاريخ الرفع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__end_date_posted
+msgid "Posted Date To"
+msgstr "حتى"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__pre_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__pre_balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__pre_balance
+msgid "Pre Balance"
+msgstr "الرصيد اللحظي"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "Prevent Deductions"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__prevent_enquiry
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__prevent_enquiry
+msgid "Prevent Enquiry"
+msgstr "منع الاستعلام"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_costcenter_deduction_month_prevented_menu
+msgid "Prevented Deduction Till Month"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Print PDF"
+msgstr "طباعة PDF"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__receivable
+msgid "Receivable"
+msgstr "قبض"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__reconcile
+msgid "Reconcile"
+msgstr "تسوية"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "Reconciliation Settings"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "Redirect Costcenters"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__related_to
+msgid "Related To"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Remove All"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+msgid "Remove Auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Remove Branch Auth"
+msgstr "ازالة الصلاحيات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+msgid "Remove Doc Auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "Remove costcenters"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Report"
+msgstr "تقارير"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.reports
+#: model:res.groups,name:ab_accounting.group_ab_accounting_report
+msgid "Reports"
+msgstr "تقارير"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__res_header_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__res_header_id
+msgid "Res Header"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__res_header_id
+msgid "Res Header ID"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__res_header_ref
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__res_header_ref
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__res_header_ref
+msgid "Res Header Ref"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__responsibility
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__responsibility
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Responsibility"
+msgstr "قيود مسئولية المراجع الحالي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__responsible_for_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "Responsible For"
+msgstr "مسئول عن"
+
+#. module: ab_accounting
+#: model:res.groups,name:ab_accounting.group_ab_accounting_reviewer
+msgid "Reviewer"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.salaries
+msgid "Salaries"
+msgstr "المرتبات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+msgid "Salaries Deductions"
+msgstr "خصومات المرتبات"
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_due_salaries_payment_redirect_to_action
+msgid "Salaries Settings"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_due_salaries_wizard_menu
+msgid "Salaries Wizard"
+msgstr "معالج المرتبات"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_due_salaries_payment_redirect_to_menu
+msgid "Salaries settings"
+msgstr "اعدادات المرتبات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__salary_deduction
+msgid "Salary Deduction"
+msgstr "خصومات المرتبات"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "Settings"
+msgstr "اعدادات"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date_sett
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__settlement_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__settlement_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__settlement_date
+msgid "Settlement Date"
+msgstr "تاريخ الاعتماد"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+#, python-format
+msgid "Settlement Date Can not be in future"
+msgstr "تاريخ الإعتماد لا يمكن أن يكون مستقبلي."
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__end_date_sett
+msgid "Settlement Date To"
+msgstr "تاريخ الاعتماد حتى"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
+msgid "Show Fields"
+msgstr "إظهار الحقول"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.template_account_statement_report
+msgid "Start Balance:"
+msgstr "رصيد افتتاحي: "
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__store_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__store_code
+msgid "Store Code"
+msgstr "كود الفرع"
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_store_menu
+msgid "Stores"
+msgstr "الفروع"
+
+#. module: ab_accounting
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__nature__switch
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__nature__switch
+msgid "Switch"
+msgstr "سويتش"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account__internal_group
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_first_level__internal_group
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__internal_group
+msgid ""
+"The 'Internal Group' is used to filter accounts based on the internal group "
+"set on the account type."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__internal_type
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_line__internal_type
+msgid ""
+"The 'Internal Type' is used for features available on different types of "
+"accounts: cash bank accounts, payable/receivable is for vendor/customer "
+"accounts."
+msgstr ""
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"This action is not allowed for you (as you created JE).\n"
+" Only 'Reviewer' can edit this JE  ....."
+msgstr ""
+"لا يمكن السماح بهذه العملية (حيث أنك من قمت بإنشاءها).\n"
+" فقط 'المراجع' يمكنه تعديل القيود المحاسبية  ....."
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__till_month
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__till_month
+msgid "Till Month"
+msgstr "حتى شهر"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree_one2many
+msgid "Total Credit"
+msgstr "اجمالي دائن"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__total_credit_val
+msgid "Total Credit Val"
+msgstr "اجمالي دائن"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree_one2many
+msgid "Total Debit"
+msgstr "اجمالي مدين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__total_debit_val
+msgid "Total Debit Val"
+msgstr "اجمال مدين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__total_net_val
+msgid "Total Net Val"
+msgstr "اجمالي صافي"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree_one2many
+msgid "Total Value"
+msgstr "اجمالي القيمة"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Unconfirmed"
+msgstr "غير مؤكد"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+msgid "Unconfirmed For User"
+msgstr "غير مؤكد للمستخدم"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Unfreeze"
+msgstr "الغاء التجميد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Update"
+msgstr "تحديث"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "Updating current lines, are you sure?"
+msgstr "تحديث السطور، هل أنت متأكد؟"
+
+#. module: ab_accounting
+#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_account_guide__include_initial_balance
+msgid ""
+"Used in reports to know if we should consider journal items  from the "
+"beginning of time instead of from the fiscal year only. Account types that "
+"should be reset to zero at each new fiscal year (like expenses, revenue..) "
+"should not have this option set."
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__user_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__user_id
+msgid "User"
+msgstr "مستخدم"
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_auth_group_action
+#: model:ir.actions.act_window,name:ab_accounting.ab_user_auth_action
+msgid "User Authorities"
+msgstr "صلاحيات المستخدمين"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__user_line_owner
+msgid "User Line Owner"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_res_users
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__user_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+msgid "Users"
+msgstr "المستخدمين "
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_user_auth_menu
+msgid "Users Auths"
+msgstr "صلاحيات المستخدمين"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+msgid "Value"
+msgstr "القيمة بدون كسور"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+msgid "Value <="
+msgstr "القيمة أقل من أو يساوي"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+msgid "Value >="
+msgstr "القيمة أكبر من أو يساوي"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__with_account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__with_account_id
+msgid "With Account"
+msgstr "حساب رأس القيد"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__write_date
+msgid "Write Date"
+msgstr "تاريخ التعديل"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__write_uid
+msgid "Write Uid"
+msgstr "تعديل بواسطة"
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"You can not freeze JE (as you created it).\n"
+" Only 'Reviewer' can freeze ..."
+msgstr ""
+"لا يمكنك تجميد القيود (حيث أنك من قمت بإنشاءها).\n"
+" فقط 'المراجع' يمكنه تجميدها ..."
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#, python-format
+msgid ""
+"You can not unfreeze JE (as you created it).\n"
+" Only 'Reviewer' can unfreeze ..."
+msgstr ""
+"لا يمكنك تجميد القيود (حيث أنك من قمت بإنشاءها).\n"
+" فقط 'المراجع' يمكنه تجميدها ..."
+
+
+#. module: ab_accounting
+#: code:addons/ab_accounting/models/ab_accounting_je_line_common.py:0
+#, python-format
+msgid "You must enter code"
+msgstr "يجب إدخال الكود."
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "You will permit creator to edit this JE, are you sure?"
+msgstr "ستسمح لمنشئ القيد بالتعديل، هل أنت متأكد؟"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "You will prevent creator from editing this JE, are you sure?"
+msgstr "ستمنع لمنشئ القيد بالتعديل، هل أنت متأكد؟"
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account
+msgid "ab_accounting_account"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account_auth
+msgid "ab_accounting_account_auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_auth_view_form
+msgid "ab_accounting_account_auth_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_auth_view_search
+msgid "ab_accounting_account_auth_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_auth_view_tree
+msgid "ab_accounting_account_auth_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account_first_level
+msgid "ab_accounting_account_first_level"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_first_level_view_form
+msgid "ab_accounting_account_first_level_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_first_level_view_search
+msgid "ab_accounting_account_first_level_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_first_level_view_tree
+msgid "ab_accounting_account_first_level_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_view_form
+msgid "ab_accounting_account_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account_guide
+msgid "ab_accounting_account_guide"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_view_pivot
+msgid "ab_accounting_account_pivot"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_view_search
+msgid "ab_accounting_account_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_account_second_level
+msgid "ab_accounting_account_second_level"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_second_level_view_form
+msgid "ab_accounting_account_second_level_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_second_level_view_search
+msgid "ab_accounting_account_second_level_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_second_level_view_tree
+msgid "ab_accounting_account_second_level_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.report,name:ab_accounting.action_export_account_statement_excel
+msgid "ab_accounting_account_statement"
+msgstr "تقرير كشف حساب"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_view_tree
+msgid "ab_accounting_account_statement_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_view_tree
+msgid "ab_accounting_account_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_allowed_field
+msgid "ab_accounting_allowed_field"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_allowed_field_auth
+msgid "ab_accounting_allowed_field_auth"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_auth_group
+msgid "ab_accounting_auth_group"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_doctype
+msgid "ab_accounting_doctype"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_doctype_view_form
+msgid "ab_accounting_doctype_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_header
+msgid "ab_accounting_je_header"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_header_delegate_common
+msgid "ab_accounting_je_header_delegate_common"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "ab_accounting_je_header_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+msgid "ab_accounting_je_header_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_tree
+msgid "ab_accounting_je_header_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_line
+msgid "ab_accounting_je_line"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_line_common
+msgid "ab_accounting_je_line_common"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_line_compute_balance
+msgid "ab_accounting_je_line_compute_balance"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_form
+msgid "ab_accounting_je_line_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_pivot
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_qry_pivot
+msgid "ab_accounting_je_line_pivot"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_accounting_je_line_qry
+msgid "ab_accounting_je_line_qry"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
+msgid "ab_accounting_je_line_qry_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_tree
+msgid "ab_accounting_je_line_qry_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree
+msgid "ab_accounting_je_line_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_costcenter_deduction_forbidden
+msgid "ab_costcenter_deduction_forbidden"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_forbidden_view_form
+msgid "ab_costcenter_deduction_forbidden_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_forbidden_view_pivot
+msgid "ab_costcenter_deduction_forbidden_pivot"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_forbidden_view_search
+msgid "ab_costcenter_deduction_forbidden_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_forbidden_view_tree
+msgid "ab_costcenter_deduction_forbidden_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_costcenter_deduction_month_prevented
+msgid "ab_costcenter_deduction_month_prevented"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_month_prevented_view_form
+msgid "ab_costcenter_deduction_month_prevented_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_month_prevented_view_pivot
+msgid "ab_costcenter_deduction_month_prevented_pivot"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_month_prevented_view_search
+msgid "ab_costcenter_deduction_month_prevented_search"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_costcenter_deduction_month_prevented_view_tree
+msgid "ab_costcenter_deduction_month_prevented_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.model,name:ab_accounting.model_ab_due_salaries_payment_redirect_to
+msgid "ab_due_salaries_payment_redirect_to"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_payment_redirect_to_view_tree
+msgid "ab_due_salaries_payment_redirect_to_view_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_due_salaries_wizard_action
+#: model:ir.model,name:ab_accounting.model_ab_due_salaries_wizard
+msgid "ab_due_salaries_wizard"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_form
+msgid "ab_due_salaries_wizard_form"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_due_salaries_wizard_view_tree
+msgid "ab_due_salaries_wizard_tree"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_guide_form
+msgid "groups"
+msgstr ""
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "is_frozen"
+msgstr "مجمد؟"
+
+#. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__report_field_ids
+msgid "report Fields"
+msgstr "حقول التقرير"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
+msgid "⚠ Forbidden Stores ⚠"
+msgstr "⚠فروع ممنوعة ⚠"
+
+#. module: ab_accounting
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+msgid "⚠ this will remove all je form current, Are you sure?"
+msgstr ""

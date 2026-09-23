@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_accounting_je_line_view_tree_one2many" model="ir.ui.view">
+            <field name="name">ab_accounting_je_line_view_tree_one2many</field>
+            <field name="model">ab_accounting_je_line</field>
+            <field name="inherit_id" ref="ab_accounting.ab_accounting_je_line_view_tree"/>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">1</attribute>
+                    <attribute name="default_order">id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='account_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='debit_val']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="sum">Total Debit</attribute>
+                </xpath>
+                <xpath expr="//field[@name='costcenter_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//field[@name='credit_val']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                    <attribute name="force_save">1</attribute>
+                    <attribute name="sum">Total Credit</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='net_val']" position="attributes">
+                    <attribute name="sum">Total Value</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='is_confirmed']" position="after">
+                    <field name="balance" invisible="1"/>
+                    <field name="negative_balance" optional="hide"/>
+                    <field name="pre_balance" invisible="1"/>
+                    <field name="available_balance" optional="show" class="h6"
+                           widget="monetary"
+                           decoration-danger="negative_balance"
+                           decoration-success="not negative_balance"
+                    />
+
+                </xpath>
+                <xpath expr="//field[@name='header_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

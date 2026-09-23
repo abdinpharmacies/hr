@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="ab_accounting.ab_accounting_account_guide_list">
+            <field name="name">Accounts Guide List</field>
+            <field name="model">ab_accounting_account_guide</field>
+            <field name="arch" type="xml">
+                <tree string="Accounts Guide List" multi_edit="1">
+                    <field name="id" class="text-muted text-left"/>
+                    <field name="name" optional="show"/>
+                    <field name="linked_account_id" optional="show"/>
+                    <field name="currency_id" optional="hide"/>
+                    <field name="internal_type" optional="show"/>
+                    <field name="internal_group" optional="show"/>
+                    <field name="reconcile" optional="hide"/>
+                    <field name="note" optional="hide"/>
+                    <field name="has_costcenter" optional="hide"/>
+                    <field name="has_store" optional="hide"/>
+                    <field name="has_due_date" optional="hide"/>
+                    <field name="calc_balance" optional="hide"/>
+                    <field name="parent_id" optional="show"/>
+                    <field name="parent_path" optional="hide"/>
+                    <field name="child_ids" optional="hide"/>
+                    <field name="nature" optional="hide"/>
+                </tree>
+            </field>
+        </record>
+        <!--        .................................. Form View ......................-->
+        <record model="ir.ui.view" id="ab_accounting.ab_accounting_account_guide_form">
+            <field name="name">Accounts Guide Form</field>
+            <field name="model">ab_accounting_account_guide</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group class="h1 text-info text-center">
+                            <field name="name" nolabel="1"/>
+                        </group>
+                        <group col="4">
+                            <field name="is_final"/>
+                            <field name="linked_account_id"/>
+                            <field name="parent_id"/>
+                        </group>
+                        <notebook attrs="{'invisible':[('is_final','=',True)]}">
+                            <page string="Children">
+                                <field name="child_ids"/>
+                            </page>
+                        </notebook>
+                        <notebook attrs="{'invisible':[('is_final','=',False)]}">
+                            <page string="Settings">
+                                <group string="groups" col="4">
+                                    <field name="internal_type"/>
+                                    <field name="internal_group"/>
+                                    <field name="nature"/>
+                                </group>
+                                <group col="4" string="Reconciliation Settings">
+                                    <field name="reconcile"/>
+                                </group>
+                                <group string="Balance Settings">
+                                    <field name="calc_balance"/>
+                                    <field name="has_costcenter"/>
+                                    <field name="has_store"/>
+                                    <field name="has_due_date"/>
+                                    <field name="salary_deduction"/>
+                                    <field name="max_negative_value"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <field name="note"/>
+                            </page>
+                            <page string="Allowed Costcenters">
+                                <field name="costcenter_ids">
+                                    <tree editable="bottom">
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ______________ Search View ________________ -->
+        <record id="ab_accounting.ab_accounting_account_guide_search" model="ir.ui.view">
+            <field name="name">Accounts Guide Search</field>
+            <field name="model">ab_accounting_account_guide</field>
+            <field name="arch" type="xml">
+
+                <search string="Accounts Guide">
+                    <field name="name"/>
+                    <field name="linked_account_id"/>
+                    <field name="parent_id" filter_domain="[('children_ids','=',self),]"/>
+                    <field name="id"/>
+                    <field name="currency_id"/>
+                    <field name="internal_type"/>
+                    <field name="internal_group"/>
+                    <field name="reconcile"/>
+                    <field name="note"/>
+                    <field name="has_costcenter"/>
+                    <field name="has_due_date"/>
+                    <field name="child_ids"/>
+
+                </search>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="ab_accounting_account_guide_action">
+            <field name="name">Abdin Accounts Guide</field>
+            <field name="res_model">ab_accounting_account_guide</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem name="Accounts Guide" id="ab_accounting_account_guide_menu"
+                  parent="accounting_menu"
+                  sequence="1"
+                  action="ab_accounting_account_guide_action"/>
+
+    </data>
+</odoo>

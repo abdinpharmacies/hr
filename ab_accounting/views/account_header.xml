@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_accounting_je_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_accounting_je_header_view_tree</field>
+            <field name="model">ab_accounting_je_header</field>
+            <field name="arch" type="xml">
+                <tree
+                        string="ab_accounting_je_header_tree"
+                        decoration-info="is_frozen == True"
+                        decoration-danger="all_confirmed == True"
+                >
+                    <field name="is_frozen" invisible="1"/>
+                    <field name="id" class="text-muted"/>
+                    <field name="account_id"
+                           domain="[('own_account', '=', True)]"
+                           class="h6  text-right  text-wrap"/>
+                    <field name="costcenter_id" width="120px" class="text-wrap" optional="show"/>
+                    <field name="is_posted" optional="show" string="Posted"/>
+                    <field name="header_store_id" optional="show"/>
+                    <field name="header_debit_val" optional="show"/>
+                    <field name="header_credit_val" optional="show"/>
+                    <field name="line_ids"/>
+                    <field name="all_confirmed" optional="show" string="All Confirmed?"/>
+                    <field name="create_uid" optional="show"/>
+                    <field name="write_uid" optional="show"/>
+                    <field name="create_date" optional="show"/>
+                    <field name="write_date" optional="show"/>
+                </tree>
+            </field>
+        </record>
+        <record id="ab_accounting_je_header_view_form" model="ir.ui.view">
+            <field name="name">ab_accounting_je_header_view_form</field>
+            <field name="model">ab_accounting_je_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_accounting_je_header_form">
+                    <header>
+                        <button name="btn_post_je"
+                                invisible="0"
+                                type="object" string="Post"
+                                class="btn-primary"/>
+                        <button name="btn_freeze"
+                                string="Freeze"
+                                type="object"
+                                class="btn-outline-danger"
+                                attrs="{'invisible':[('is_frozen','=',True)]}"
+                                confirm="You will prevent creator from editing this JE, are you sure?"/>
+                        <button name="btn_unfreeze"
+                                string="Unfreeze"
+                                type="object"
+                                class="btn-outline-info"
+                                attrs="{'invisible':[('is_frozen','=',False)]}"
+                                confirm="You will permit creator to edit this JE, are you sure?"/>
+                    </header>
+                    <sheet>
+                        <field name="id" invisible="1"/>
+                        <widget name="web_ribbon" title="Posted" bg_color="bg-success"
+                                attrs="{'invisible': [('is_posted', '=', False)]}"/>
+                        <widget name="web_ribbon" title="is_frozen" bg_color="bg-info"
+                                attrs="{'invisible': [('is_frozen', '=', False)]}"/>
+                        <group class="h1 text-info text-center" id="ab-accounting-balances" string="Balance">
+                            <notebook>
+                                <page string="Balance">
+                                    <field name="balance_with_type" nolabel="1"/>
+                                </page>
+                                <page string="Confirmed">
+                                    <field name="balance_confirmed" nolabel="1"/>
+                                </page>
+                            </notebook>
+                        </group>
+                        <group col="4" class="h4">
+                            <field name="account_id"/>
+
+                            <field name="costcenter_id"/>
+                            <field name="doctype_id" class="text-center"/>
+                        </group>
+                        <field name="is_posted" invisible="1"/>
+                        <field name="is_frozen" invisible="1"/>
+
+                        <notebook>
+                            <page string="Lines">
+                                <group col="6">
+                                    <field name="total_debit_val"/>
+                                    <field name="total_credit_val"/>
+                                    <field name="total_net_val"/>
+                                </group>
+                                <group>
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <button name="%(ab_accounting_je_line_action)d"
+                                                    type="action"
+                                                    context="{'search_default_header_id': active_id}"
+                                                    string="Filter" class="btn-success your_class"/>
+                                        </div>
+                                        <div>
+                                            <button name="btn_confirm_all_je"
+                                                    confirm="Are you sure?"
+                                                    string="Confirm All" type="object"
+                                                    class="btn-outline-info"/>
+                                            <button name="btn_remove_all_je"
+                                                    confirm="⚠ this will remove all je form current, Are you sure?"
+                                                    string="Remove All" type="object"
+                                                    class="btn-outline-danger"
+                                                    attrs="{'invisible':[('is_posted','=',True)]}"/>
+                                        </div>
+                                    </div>
+                                </group>
+                                <field name="line_ids"
+                                       widget="one2many_search"
+                                       nolabel="1"
+                                       force_save="1"
+                                       attrs="{'invisible':['|',('doctype_id','=',False),('account_id','=',False)]}"
+                                       context="{
+                                       'tree_view_ref':'ab_accounting.ab_accounting_je_line_view_tree_one2many',
+                                       'default_costcenter_id':costcenter_id}">
+                                </field>
+
+                            </page>
+                            <page string="From Excel">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="from_excel" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button type="object" name="btn_add_data_from_excel"
+                                                    confirm="Adding these lines, are you sure?"
+                                                    string="Add"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-50">
+                                            <button type="object" name="btn_update_data_from_excel"
+                                                    confirm="Updating current lines, are you sure?"
+                                                    string="Update"
+                                                    class="btn-outline-warning  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </page>
+                            <page string="Attachments" name="att_file_ids">
+                                <field name="att_file_ids" widget="many2many_binary"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" groups="base.group_user"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_accounting_je_header_search" model="ir.ui.view">
+            <field name="name">ab_accounting_je_header_search</field>
+            <field name="model">ab_accounting_je_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_accounting_je_header_search">
+                    <field name="id"/>
+                    <field name="contains_account"/>
+                    <field name="je_headers_search"/>
+                    <field name="account_id"/>
+                    <field name="costcenter_id"/>
+                    <field name="doctype_id"/>
+                    <filter name="filter_posted_je" string="Posted" domain="[('is_posted','=',True)]"/>
+                    <separator/>
+                    <filter name="filter_not_posted_je" string="Not Posted" domain="[('is_posted','=',False)]"/>
+                    <separator/>
+                    <filter name="filter_not_confirmed_je" string="Not Confirmed"
+                            domain="[('all_confirmed','=',False)]"/>
+                    <separator/>
+                    <filter name="filter_my_je" string="My JE"
+                            domain="[('create_uid','=',uid)]"/>
+                    <separator/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_accounting_je_header_action" model="ir.actions.act_window">
+            <field name="name">JE Creator</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_accounting_je_header</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('always_show_account', '=', True)]</field>
+            <field name="context">{'search_default_filter_my_je': 0, }</field>
+        </record>
+        <menuitem id="ab_accounting_je_header_menu" name="JE Creator" parent="root_menu"
+                  action="ab_accounting_je_header_action" sequence="0"/>
+
+
+    </data>
+</odoo>
