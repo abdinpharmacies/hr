@@ -5,7 +5,6 @@
               eval="({
                   'ab_odoo_sync.report_url': '--- https://report.example.com',
                   'ab_odoo_sync.report_database': '--- report_db',
-                  'ab_odoo_sync.hdd_device_path': '--- /dev/disk/by-id/...',
                   'ab_odoo_sync.hdd_serial': '--- Optional loopback development serial',
                   'ab_odoo_sync.batch_size': '--- Optional, for example 1000',
               },)"/>
