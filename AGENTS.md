@@ -9,6 +9,13 @@ Scope:
 - JS and assets only when the module truly needs them
 - Testing and module packaging
 
+Runtime worktree map:
+
+- POS server code runs from `/opt/odoo19/worktrees/pos19` on branch `pos19`, with config `/opt/odoo19/conf/pos19.conf`, database `abdin_pos`, and port `4091`.
+- Callcenter server code runs from `/opt/odoo19/worktrees/callcenter19` on branch `callcenter19`, with config `/opt/odoo19/conf/callcenter19.conf`, database `callcenter`, and port `4092`.
+- `/opt/odoo19/custom-addons` is currently the `reports19` checkout. Do not assume it is the active POS or callcenter runtime source when diagnosing or editing the callcenter-to-POS sales flow.
+- For POS/callcenter sales-process work, inspect and operate on the matching runtime worktree first. Keep database/runtime fixes separate from source edits, and do not edit Odoo module files unless the user explicitly requests source changes.
+
 Module creation rules:
 
 - Follow the provided `ab_template` scaffold unless the module goal clearly requires extra files.
