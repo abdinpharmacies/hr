@@ -22,7 +22,6 @@ from odoo.tools.translate import _
 from .ab_odoo_sync_hardware import (
     normalize_hdd_serial,
     read_hdd_serial,
-    validate_hdd_device_path,
 )
 from .ab_odoo_sync_transport import ReportDeliveryError, parse_retry_after
 
@@ -52,7 +51,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
                     )
                 )
             return normalize_hdd_serial(configured_serial)
-        return read_hdd_serial(self._icp().get_param("ab_odoo_sync.hdd_device_path"))
+        return read_hdd_serial()
 
     @api.model
     def _is_loopback_report_url(self, report_url):
@@ -186,19 +185,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
         try:
             report_url = (self._icp().get_param("ab_odoo_sync.report_url") or "").strip()
             self._validate_report_url(report_url)
-            configured_serial = self._icp().get_param("ab_odoo_sync.hdd_serial")
-            if self.is_configured(configured_serial):
-                self.get_hdd_serial()
-            elif self.is_configured(self._icp().get_param("ab_odoo_sync.hdd_device_path")):
-                validate_hdd_device_path(
-                    self._icp().get_param("ab_odoo_sync.hdd_device_path")
-                )
-            else:
-                return _(
-                    "Set the hardware device path system parameter "
-                    "ab_odoo_sync.hdd_device_path, or set ab_odoo_sync.hdd_serial "
-                    "for loopback development."
-                )
+            self.get_hdd_serial()
         except ValueError as ex:
             return str(ex)
         return False

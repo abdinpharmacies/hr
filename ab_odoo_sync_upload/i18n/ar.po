@@ -803,6 +803,12 @@ msgstr "تعذرت قراءة الرقم التسلسلي للعتاد: %s"
 #. module: ab_odoo_sync_upload
 #. odoo-python
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Timed out while reading hardware serial with lsblk."
+msgstr "انتهت المهلة أثناء قراءة الرقم التسلسلي للعتاد باستخدام lsblk."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
 msgid "Could not read hardware serial with lsblk: %s"
 msgstr "تعذرت قراءة الرقم التسلسلي للعتاد باستخدام lsblk: %s"
 
@@ -811,6 +817,30 @@ msgstr "تعذرت قراءة الرقم التسلسلي للعتاد باست�
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
 msgid "lsblk returned invalid JSON while reading hardware serial."
 msgstr "أرجع lsblk صيغة JSON غير صالحة أثناء قراءة الرقم التسلسلي للعتاد."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "lsblk returned invalid disk data while reading hardware serial."
+msgstr "أرجع lsblk بيانات أقراص غير صالحة أثناء قراءة الرقم التسلسلي للعتاد."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "lsblk did not return any eligible internal disks for hardware serial discovery."
+msgstr "لم يرجع lsblk أي أقراص داخلية مؤهلة لاكتشاف الرقم التسلسلي للعتاد."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Selected internal disk %(device)s did not report a hardware serial."
+msgstr "لم يبلغ القرص الداخلي المحدد %(device)s عن رقم تسلسلي للعتاد."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_hardware.py:0
+msgid "Selected internal disk %(device)s has an invalid hardware serial: %(error)s"
+msgstr "يحتوي القرص الداخلي المحدد %(device)s على رقم تسلسلي غير صالح للعتاد: %(error)s"
 
 #. module: ab_odoo_sync_upload
 #. odoo-python
