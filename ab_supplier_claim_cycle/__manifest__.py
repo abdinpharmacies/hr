@@ -1,20 +1,20 @@
 {
     'name': 'Supplier Claim Cycle',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
+    'description': 'Supplier claims with parallel reviews, department decisions, and audited Secretarial closure.',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
+    'author': 'Abdin Pharmacies',
+    'developer': 'Alhassan Hossny',
     'application': True,
     'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter'],
-
     'data': [
         'security/groups.xml',
-        'security/ir.model.access.csv',
         'security/record_rules.xml',
+        'security/ir.model.access.csv',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
-
+        'views/ab_supplier.xml',
     ],
     'installable': True,
-
-
 }

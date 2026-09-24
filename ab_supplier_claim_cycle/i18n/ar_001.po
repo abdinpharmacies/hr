@@ -302,3 +302,606 @@ msgstr ""
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_reviewer
 msgid "supplier claim reviewer"
 msgstr ""
+
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "A cheque attachment is required before Bank Accounts."
+msgstr "يجب إرفاق الشيك قبل الإحالة إلى حسابات البنوك."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "A reason is required for rejection or deferral."
+msgstr "يجب إدخال سبب الرفض أو التأجيل."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_admin
+msgid "Administrator"
+msgstr "المسؤول"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.invoice_action
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.invoice_menu
+msgid "All Claims"
+msgstr "جميع المطالبات"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Approve"
+msgstr "موافقة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__approved
+msgid "Approved"
+msgstr "تمت الموافقة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Archive claims instead of deleting them."
+msgstr "يجب أرشفة المطالبات بدلاً من حذفها."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier.py:0
+msgid "Archive suppliers instead of deleting them."
+msgstr "يجب أرشفة الموردين بدلاً من حذفهم."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__archived
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__bank_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__bank_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__bank_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__bank_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__bank_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__bank_accounts
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_bank_accounts
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Bank Accounts"
+msgstr "حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_accounts_decision
+msgid "Bank Accounts Decision"
+msgstr "قرار حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_accounts_followup_date
+msgid "Bank Accounts Followup Date"
+msgstr "تاريخ متابعة حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_accounts_notes
+msgid "Bank Accounts Notes"
+msgstr "ملاحظات حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.queue_bank_accounts
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.queue_menu_bank_accounts
+msgid "Bank Accounts Queue"
+msgstr "قائمة عمل حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier__business_category
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__business_category
+msgid "Business Category"
+msgstr "فئة النشاط"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Cancelled because the parallel department rejected the claim."
+msgstr "أُلغي القرار لرفض القسم الموازي للمطالبة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__payment_nature__cash
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__cash
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_attachment
+msgid "Cheque Attachment"
+msgstr "مرفق الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_filename
+msgid "Cheque Filename"
+msgstr "اسم ملف الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.supplier_claim_cycle_sub_menu
+msgid "Claim Cycle"
+msgstr "دورة المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Close Claim"
+msgstr "إغلاق المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Closed or archived claims cannot be changed."
+msgstr "لا يمكن تعديل المطالبات المغلقة أو المؤرشفة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__business_category__cosmetics
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__business_category__cosmetics
+msgid "Cosmetics"
+msgstr "مستحضرات تجميل"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Create a draft claim without workflow values."
+msgstr "أنشئ المطالبة كمسودة دون تحديد قيم سير العمل."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__created
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__decision
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__decision
+msgid "Decision"
+msgstr "القرار"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Defer"
+msgstr "تأجيل"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Deferral requires a follow-up date today or later."
+msgstr "يتطلب التأجيل تاريخ متابعة اليوم أو بعده."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__deferred
+msgid "Deferred"
+msgstr "مؤجل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__department
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__draft
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__draft
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__draft
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__draft
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__event
+msgid "Event"
+msgstr "الحدث"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__followup_date
+msgid "Followup Date"
+msgstr "تاريخ المتابعة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__from_state
+msgid "From State"
+msgstr "من المرحلة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__history_ids
+msgid "History"
+msgstr "السجل"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/stage_history.py:0
+msgid "History is created only by workflow actions."
+msgstr "يُنشأ السجل من خلال إجراءات سير العمل فقط."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Invalid department decision."
+msgstr "قرار القسم غير صالح."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__inventory_decision
+msgid "Inventory Decision"
+msgstr "قرار المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__inventory_followup_date
+msgid "Inventory Followup Date"
+msgstr "تاريخ متابعة المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__inventory_notes
+msgid "Inventory Notes"
+msgstr "ملاحظات المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.queue_inventory
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.queue_menu_inventory
+msgid "Inventory Queue"
+msgstr "قائمة عمل المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__inventory_purchase
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__inventory_purchase
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__inventory_purchase
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__inventory_purchase
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Inventory and Purchasing"
+msgstr "المخازن والمشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__business_category__medicine
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__business_category__medicine
+msgid "Medicine"
+msgstr "أدوية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__payment_nature__non_cash
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__non_cash
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Non-cash"
+msgstr "غير نقدي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__non_tax_payment
+msgid "Non-tax Payment"
+msgstr "دفع غير ضريبي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__not_required
+msgid "Not Required"
+msgstr "غير مطلوب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__occurred_at
+msgid "Occurred At"
+msgstr "وقت الحدث"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Only claims ready to close can be closed."
+msgstr "يمكن إغلاق المطالبات الجاهزة للإغلاق فقط."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Only draft or returned claims can be submitted."
+msgstr "يمكن إرسال المسودات أو المطالبات المرتجعة فقط."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__business_category__other
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__business_category__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier__payment_nature
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__payment_nature
+msgid "Payment Nature"
+msgstr "طبيعة السداد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__purchasing
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__purchasing
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_purchasing
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Purchasing"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__purchasing_decision
+msgid "Purchasing Decision"
+msgstr "قرار المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__purchasing_followup_date
+msgid "Purchasing Followup Date"
+msgstr "تاريخ متابعة المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__purchasing_notes
+msgid "Purchasing Notes"
+msgstr "ملاحظات المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.queue_purchasing
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.queue_menu_purchasing
+msgid "Purchasing Queue"
+msgstr "قائمة عمل المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__ready_to_close
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__ready_to_close
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__ready_to_close
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__ready_to_close
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Ready to Close"
+msgstr "جاهزة للإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__inventory_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__rejection_department
+msgid "Rejection Department"
+msgstr "القسم الرافض"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__rejection_reason
+msgid "Rejection Reason"
+msgstr "سبب الرفض"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__restored
+msgid "Restored"
+msgstr "تمت الاستعادة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Resubmit"
+msgstr "إعادة الإرسال"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__resubmitted
+msgid "Resubmitted"
+msgstr "أُعيد الإرسال"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__resume_stage
+msgid "Resume Stage"
+msgstr "مرحلة استئناف المراجعة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__returned_secretarial
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__returned_secretarial
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__returned_secretarial
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__returned_secretarial
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Returned to Secretarial"
+msgstr "مرتجعة إلى السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__review_round
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__review_round
+msgid "Review Round"
+msgstr "جولة المراجعة"
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_reviewer
+msgid "Reviewer"
+msgstr "المراجع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
+msgid "Secretarial"
+msgstr "السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__secretarial_notes
+msgid "Secretarial Notes"
+msgstr "ملاحظات السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.queue_user
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.queue_menu_user
+msgid "Secretarial Queue"
+msgstr "قائمة عمل السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Select an active supplier."
+msgstr "اختر مورداً نشطاً."
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Stage History"
+msgstr "سجل المراحل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__submitted
+msgid "Submitted"
+msgstr "تم الإرسال"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__supplier_accounts
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Supplier Accounts"
+msgstr "حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_accounts_decision
+msgid "Supplier Accounts Decision"
+msgstr "قرار حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_accounts_followup_date
+msgid "Supplier Accounts Followup Date"
+msgstr "تاريخ متابعة حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_accounts_notes
+msgid "Supplier Accounts Notes"
+msgstr "ملاحظات حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.queue_supplier_accounts
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.queue_menu_supplier_accounts
+msgid "Supplier Accounts Queue"
+msgstr "قائمة عمل حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_cycle_history
+msgid "Supplier Claim Stage History"
+msgstr "سجل مراحل مطالبات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
+msgid "Tax Classification"
+msgstr "التصنيف الضريبي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__tax_payment
+msgid "Tax Payment"
+msgstr "دفع ضريبي"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "This department has no pending decision in the current stage."
+msgstr "لا يوجد قرار معلق لهذا القسم في المرحلة الحالية."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__through_supplier
+msgid "Through Supplier"
+msgstr "عن طريق المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__to_state
+msgid "To State"
+msgstr "إلى المرحلة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Use the validated workflow actions to change decisions or stages."
+msgstr "استخدم إجراءات سير العمل المعتمدة لتغيير القرارات أو المراحل."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/stage_history.py:0
+msgid "Workflow history cannot be deleted."
+msgstr "لا يمكن حذف سجل سير العمل."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/stage_history.py:0
+msgid "Workflow history cannot be modified."
+msgstr "لا يمكن تعديل سجل سير العمل."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "You are not authorized for this workflow action."
+msgstr "ليست لديك صلاحية تنفيذ هذا الإجراء."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "You may only edit the fields assigned to your current stage."
+msgstr "يمكنك تعديل الحقول المخصصة لمرحلتك الحالية فقط."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier
+msgid "ab_supplier"
+msgstr "المورد"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+#, python-format
+msgid "A deferred review must retain its follow-up date."
+msgstr "يجب الاحتفاظ بتاريخ المتابعة للمراجعة المؤجلة."

@@ -1,37 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <data noupdate="0">
-
-        <record model="ir.module.category" id="ab_supplier_claim_cycle_category">
-            <field name="name">Supplier Claim</field>
-            <field name="sequence">1</field>
-        </record>
-
-        <record id="privilege_ab_supplier_claim_cycle" model="res.groups.privilege">
-            <field name="name">Supplier Claim</field>
-            <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
-            <field name="sequence">10</field>
-        </record>
-
-        <!--  user -->
-        <record id="supplier_claim_group_user" model="res.groups">
-            <field name="name">supplier claim User</field>
-            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        </record>
-
-
-        <record id="supplier_claim_group_reviewer" model="res.groups">
-            <field name="name">supplier claim reviewer</field>
-            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-
-        </record>
-
-        <!--  admin -->
-        <record id="supplier_claim_group_admin" model="res.groups">
-            <field name="name">supplier claim admin</field>
-            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-        </record>
-    </data>
+    <record id="ab_supplier_claim_cycle_category" model="ir.module.category">
+        <field name="name">Supplier Claim</field>
+    </record>
+    <record id="privilege_ab_supplier_claim_cycle" model="res.groups.privilege">
+        <field name="name">Supplier Claim</field>
+        <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
+    </record>
+    <record id="supplier_claim_group_user" model="res.groups">
+        <field name="name">Secretarial</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_inventory" model="res.groups">
+        <field name="name">Inventory</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_purchasing" model="res.groups">
+        <field name="name">Purchasing</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_supplier_accounts" model="res.groups">
+        <field name="name">Supplier Accounts</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_bank_accounts" model="res.groups">
+        <field name="name">Bank Accounts</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_reviewer" model="res.groups">
+        <field name="name">Reviewer</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="supplier_claim_group_admin" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="base.group_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+    </record>
 </odoo>
-
-

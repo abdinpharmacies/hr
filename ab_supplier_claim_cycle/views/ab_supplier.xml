@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="supplier_claim_classification_form" model="ir.ui.view">
+        <field name="name">Supplier claim classifications</field>
+        <field name="model">ab_supplier</field>
+        <field name="inherit_id" ref="ab_supplier.ab_supplier_Form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tax_type']" position="before">
+                <field name="payment_nature"/>
+                <field name="business_category"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

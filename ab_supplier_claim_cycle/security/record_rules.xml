@@ -1,49 +1,218 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <data>
-
-        <record id="rule_suppliers_pervent" model="ir.rule">
-            <field name="name">rule_suppliers_pervent</field>
-            <field  name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
-            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1 )]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-            <!--<field name="global" eval="1"/> -->
-        </record>
-
-        <record id="rule_closed_allow" model="ir.rule">
-            <field name="name">rule_closed_allow</field>
-            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
-            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
-            <field name="domain_force">
-                [('status', '!=', 'closed'),('user_id', '=', user.id)]
-            </field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="0"/>
-            <!--<field name="global" eval="1"/> -->
-        </record>
-
-
-        <record id="rule_closed_status" model="ir.rule">
-            <field name="name">rule_closed_status</field>
-            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
-            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
-            <field name="domain_force">
-                [('status', '=', 'closed'),
-                ('user_id', '=', user.id)]
-            </field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <!--<field name="global" eval="1"/> -->
-        </record>
-
-
-    </data>
+    <record id="rule_suppliers_pervent" model="ir.rule">
+        <field name="name">Retired legacy claim rule</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="active" eval="False"/>
+    </record>
+    <record id="rule_closed_allow" model="ir.rule">
+        <field name="name">Retired legacy claim rule</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="active" eval="False"/>
+    </record>
+    <record id="rule_closed_status" model="ir.rule">
+        <field name="name">Retired legacy claim rule</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="active" eval="False"/>
+    </record>
+    <record id="claim_read_user" model="ir.rule">
+        <field name="name">claim_read_user</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_user" model="ir.rule">
+        <field name="name">history_read_user</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_user" model="ir.rule">
+        <field name="name">claim_write_user</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_inventory" model="ir.rule">
+        <field name="name">claim_read_inventory</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
+        <field name="domain_force">['|', ('state', '=', 'inventory_purchase'), ('inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_inventory" model="ir.rule">
+        <field name="name">history_read_inventory</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory_purchase'), ('claim_id.inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_inventory" model="ir.rule">
+        <field name="name">claim_write_inventory</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory_purchase"), ("inventory_decision", "in", ["pending", "deferred"])]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_purchasing" model="ir.rule">
+        <field name="name">claim_read_purchasing</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
+        <field name="domain_force">['|', ('state', '=', 'inventory_purchase'), ('purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_purchasing" model="ir.rule">
+        <field name="name">history_read_purchasing</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory_purchase'), ('claim_id.purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_purchasing" model="ir.rule">
+        <field name="name">claim_write_purchasing</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory_purchase"), ("purchasing_decision", "in", ["pending", "deferred"])]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_supplier_accounts" model="ir.rule">
+        <field name="name">claim_read_supplier_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
+        <field name="domain_force">['|', ('state', '=', 'supplier_accounts'), ('supplier_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_supplier_accounts" model="ir.rule">
+        <field name="name">history_read_supplier_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'supplier_accounts'), ('claim_id.supplier_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_supplier_accounts" model="ir.rule">
+        <field name="name">claim_write_supplier_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "supplier_accounts"), ("supplier_accounts_decision", "in", ["pending", "deferred"])]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_bank_accounts" model="ir.rule">
+        <field name="name">claim_read_bank_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
+        <field name="domain_force">['|', ('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_bank_accounts" model="ir.rule">
+        <field name="name">history_read_bank_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'bank_accounts'), ('claim_id.bank_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_bank_accounts" model="ir.rule">
+        <field name="name">claim_write_bank_accounts</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "bank_accounts"), ("bank_accounts_decision", "in", ["pending", "deferred"])]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_reviewer" model="ir.rule">
+        <field name="name">claim_read_reviewer</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_reviewer'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_reviewer" model="ir.rule">
+        <field name="name">history_read_reviewer</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_reviewer'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_admin" model="ir.rule">
+        <field name="name">claim_read_admin</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_admin" model="ir.rule">
+        <field name="name">history_read_admin</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_write_admin" model="ir.rule">
+        <field name="name">claim_write_admin</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
+        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 </odoo>
