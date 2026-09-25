@@ -222,6 +222,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
             method="POST",
         )
         request.add_header("Content-Type", "application/json")
+        request.add_header("User-Agent", "AB-Odoo-Sync/19.0")
         request.add_header("X-AB-Sync-Key", api_key)
         request.add_header("X-Odoo-Database", report_database)
 
