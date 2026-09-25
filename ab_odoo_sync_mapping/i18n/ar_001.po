@@ -1539,6 +1539,12 @@ msgid "Authenticated request used an unapproved hardware serial."
 msgstr "استخدم طلب موثق رقماً تسلسلياً غير معتمد للعتاد."
 
 #. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Hardware automatically bound on first authenticated request."
+msgstr "تم ربط العتاد تلقائياً عند أول طلب موثّق."
+
+#. module: ab_odoo_sync_mapping
 #: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_branch_registry_form
 msgid "Generate API Key"
 msgstr "إنشاء مفتاح API"

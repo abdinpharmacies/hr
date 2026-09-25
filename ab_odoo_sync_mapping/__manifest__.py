@@ -1,7 +1,7 @@
 {
     "name": "AB Odoo Sync Mapping",
     "summary": "Receive branch uploads and apply reporting mappings",
-    "version": "19.0.1.4.0",
+    "version": "19.0.1.4.1",
     "license": "LGPL-3",
     "category": "Tools",
     "author": "Abdin Pharmacies",

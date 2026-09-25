@@ -167,10 +167,12 @@ class AbOdooSyncBranchRegistry(models.Model):
     def _lock_for_update(self):
         if not self.ids:
             return
+        self.flush_recordset(list(_SECURITY_MANAGED_FIELDS))
         self.env.cr.execute(
             "SELECT id FROM ab_odoo_sync_branch_registry WHERE id IN %s FOR UPDATE",
             (tuple(self.ids),),
         )
+        self.invalidate_recordset(list(_SECURITY_MANAGED_FIELDS), flush=False)
 
     def _audit(self, event_type, **values):
         self.ensure_one()
@@ -182,7 +184,7 @@ class AbOdooSyncBranchRegistry(models.Model):
             or self.pending_hdd_serial
             or False,
             "reason": values.get("reason") or False,
-            "user_id": values.get("user_id") or self.env.uid,
+            "user_id": values.get("user_id", self.env.uid),
         }
         return self.env["ab_odoo_sync_branch_audit"].sudo().create(vals)
 
@@ -390,25 +392,17 @@ class AbOdooSyncBranchRegistry(models.Model):
         except (SyncConfigurationError, ValueError):
             return False
 
+    @api.private
     def enroll_pending_hardware(self, hdd_serial):
         self.ensure_one()
         hdd_serial = normalize_hdd_serial(hdd_serial)
         self._lock_for_update()
         branch = self.sudo()
         if not branch.hdd_serial:
-            if not branch.pending_hdd_serial:
-                branch.with_context(ab_odoo_sync_security_write=True).write(
-                    {
-                        "pending_hdd_serial": hdd_serial,
-                        "hardware_binding_state": "pending",
-                    }
-                )
-                branch._audit(
-                    "hardware_pending",
-                    pending_hdd_serial=hdd_serial,
-                )
-            return False, "hardware_pending"
-        if branch.hdd_serial != hdd_serial:
+            if branch.hardware_binding_state not in {"unbound", "pending"}:
+                return False, "hardware_pending"
+        expected_serial = branch.hdd_serial or branch.pending_hdd_serial
+        if expected_serial and expected_serial != hdd_serial:
             branch.with_context(ab_odoo_sync_security_write=True).write(
                 {"last_hardware_mismatch_at": fields.Datetime.now()}
             )
@@ -419,4 +413,20 @@ class AbOdooSyncBranchRegistry(models.Model):
                 reason=_("Authenticated request used an unapproved hardware serial."),
             )
             return False, "hardware_mismatch"
+        if not branch.hdd_serial:
+            branch.with_context(ab_odoo_sync_security_write=True).write(
+                {
+                    "hdd_serial": hdd_serial,
+                    "pending_hdd_serial": False,
+                    "hardware_binding_state": "approved",
+                    "hardware_approved_by_id": False,
+                    "hardware_approved_at": fields.Datetime.now(),
+                }
+            )
+            branch._audit(
+                "hardware_approved",
+                hdd_serial=hdd_serial,
+                reason=_("Hardware automatically bound on first authenticated request."),
+                user_id=False,
+            )
         return True, False
