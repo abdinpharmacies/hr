@@ -51,6 +51,9 @@ class AbOdooSyncOutbox(models.Model):
     )
     attempt_count = fields.Integer(string="Attempt Count", default=0, readonly=True)
     last_error = fields.Text(string="Last Error", readonly=True)
+    delivery_job_uuid = fields.Char(
+        string="Delivery Job UUID", readonly=True, index=True, copy=False,
+    )
     sent_at = fields.Datetime(string="Sent At", readonly=True)
     active = fields.Boolean(default=True, index=True)
 
@@ -58,6 +61,16 @@ class AbOdooSyncOutbox(models.Model):
         "UNIQUE(event_uuid)",
         "Upload outbox event UUID must be unique.",
     )
+
+    def _lock_delivery(self):
+        if not self:
+            return
+        self.flush_recordset()
+        self.env.cr.execute(
+            "SELECT id FROM ab_odoo_sync_outbox WHERE id IN %s ORDER BY id FOR UPDATE",
+            (tuple(self.ids),),
+        )
+        self.invalidate_recordset(flush=False)
 
     @api.model
     def prepare_record_snapshot(self, record):
@@ -181,7 +194,9 @@ class AbOdooSyncOutbox(models.Model):
         return self.capture_prepared_snapshots(snapshots, operation=operation)
 
     def action_send_now(self):
-        result = self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(self)
+        result = self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(
+            self, retry_owned=True,
+        )
         return self._notification(
             _("Odoo Sync Upload"),
             _("Queued %(count)s outbox event(s) for sending.")
@@ -193,17 +208,7 @@ class AbOdooSyncOutbox(models.Model):
 
     def action_retry(self):
         retry_records = self.filtered(lambda record: record.status == "failed")
-        retry_records.sudo().write(
-            {
-                "status": "pending",
-                "last_error": False,
-            }
-        )
-        return self._notification(
-            _("Odoo Sync Upload"),
-            _("Reset %(count)s failed outbox event(s) to Pending.") % {"count": len(retry_records)},
-            "success" if retry_records else "warning",
-        )
+        return retry_records.action_send_now()
 
     def action_mark_not_sync(self):
         records = self.filtered(lambda record: record.status in {"pending", "failed"})
