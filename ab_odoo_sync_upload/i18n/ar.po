@@ -875,3 +875,32 @@ msgstr "يجب أن يحتوي رابط خادم التقارير على مضي�
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
 msgid "Report URL must use HTTPS unless it points to a loopback development host."
 msgstr "يجب أن يستخدم رابط خادم التقارير HTTPS ما لم يكن يشير إلى مضيف تطوير محلي حلقي."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__delivery_job_uuid
+msgid "Delivery Job UUID"
+msgstr "المعرّف الفريد لمهمة الإرسال"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API rejected %(failed)s record(s): %(error)s"
+msgstr "رفضت واجهة التقارير %(failed)s سجلًا: %(error)s"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API returned an invalid upload response."
+msgstr "أعادت واجهة التقارير استجابة غير صالحة للرفع."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Upload delivery must run through the queue."
+msgstr "يجب تنفيذ إرسال الرفع عبر قائمة الانتظار."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Upload job records do not match its queued arguments."
+msgstr "سجلات مهمة الرفع لا تطابق المعاملات المحفوظة في قائمة الانتظار."

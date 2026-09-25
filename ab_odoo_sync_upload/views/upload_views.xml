@@ -144,6 +144,7 @@
                         <group>
                             <field name="status" widget="badge"/>
                             <field name="event_uuid"/>
+                            <field name="delivery_job_uuid"/>
                             <field name="db_serial"/>
                             <field name="model_name"/>
                             <field name="rec_id"/>

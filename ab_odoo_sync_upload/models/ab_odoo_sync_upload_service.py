@@ -1,15 +1,21 @@
 import base64
 import datetime
 import hashlib
+import http.client
 import ipaddress
 import json
 import logging
+import ssl
 import urllib.error
 import urllib.request
 from collections import defaultdict
 from urllib.parse import urlsplit
 
+import psycopg2
+
 from odoo import api, fields, models
+from odoo.addons.queue_job.exception import FailedJobError, RetryableJobError
+from odoo.addons.queue_job.job import Job
 from odoo.tools import config
 from odoo.tools.translate import _
 
@@ -17,6 +23,7 @@ from .ab_odoo_sync_hardware import (
     normalize_hdd_serial,
     read_hdd_serial,
 )
+from .ab_odoo_sync_transport import ReportDeliveryError, parse_retry_after
 
 _logger = logging.getLogger(__name__)
 _SENSITIVE_SNAPSHOT_FIELDS = {"password"}
@@ -237,19 +244,30 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 )
             ) from ex
         except urllib.error.HTTPError as ex:
-            error_body = ex.read().decode("utf-8", errors="ignore")
-            raise ValueError(
+            error_body = ex.read(4096).decode("utf-8", errors="replace")
+            raise ReportDeliveryError(
                 _("Report API HTTP %(status)s: %(error)s")
-                % {"status": ex.code, "error": error_body}
+                % {"status": ex.code, "error": error_body},
+                retryable=ex.code in {408, 429} or 500 <= ex.code < 600,
+                retry_after=parse_retry_after(ex.headers.get("Retry-After")),
             ) from ex
         except urllib.error.URLError as ex:
-            raise ValueError(_("Report API connection error: %s") % ex) from ex
+            raise ReportDeliveryError(
+                _("Report API connection error: %s") % ex,
+                retryable=not isinstance(ex.reason, ssl.SSLCertVerificationError),
+            ) from ex
+        except (TimeoutError, ConnectionError, http.client.HTTPException) as ex:
+            raise ReportDeliveryError(
+                _("Report API connection error: %s") % ex, retryable=True,
+            ) from ex
 
         try:
             result = json.loads(body or "{}")
         except json.JSONDecodeError as ex:
             raise ValueError(_("Report API returned an invalid JSON response.")) from ex
-        if not result.get("ok"):
+        if not isinstance(result, dict):
+            raise ValueError(_("Report API returned an invalid JSON response."))
+        if result.get("ok") is not True:
             raise ValueError(result.get("error") or _("Report API returned failure."))
         return result
 
@@ -269,17 +287,9 @@ class AbOdooSyncUploadService(models.AbstractModel):
             },
         )
 
+    @api.private
     @api.model
     def send_branch_upload_batch(self, outbox_records=None):
-        configuration_error = self._get_upload_configuration_error()
-        if configuration_error:
-            return {
-                "status": "skipped",
-                "sent": 0,
-                "failed": 0,
-                "reason": configuration_error,
-            }
-
         Outbox = self.env["ab_odoo_sync_outbox"].sudo()
         if outbox_records is None:
             outbox_records = Outbox.search(
@@ -317,6 +327,10 @@ class AbOdooSyncUploadService(models.AbstractModel):
 
         try:
             response = self.push_upload_records(rows)
+            errors_by_index = self._validate_upload_response(response, len(rows))
+        except psycopg2.Error:
+            # Let the queue runner handle database rollback/concurrency retries.
+            raise
         except Exception as ex:
             for record in outbox_records:
                 record.write(
@@ -331,13 +345,10 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 "sent": 0,
                 "failed": len(outbox_records),
                 "error": str(ex),
+                "retryable": isinstance(ex, ReportDeliveryError) and ex.retryable,
+                "retry_after": getattr(ex, "retry_after", None),
             }
 
-        errors_by_index = {
-            int(error.get("index")): error.get("error") or _("Unknown upload error")
-            for error in response.get("errors", [])
-            if isinstance(error, dict) and str(error.get("index", "")).isdigit()
-        }
         now = fields.Datetime.now()
         sent = 0
         failed = 0
@@ -361,11 +372,46 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 )
                 sent += 1
             record.write(values)
-        return {
+        result = {
             "status": "ok" if not failed else "partial",
             "sent": sent,
             "failed": failed,
         }
+        if failed:
+            result["error"] = _(
+                "Report API rejected %(failed)s record(s): %(error)s"
+            ) % {
+                "failed": failed,
+                "error": "; ".join(dict.fromkeys(errors_by_index.values()))[:4096],
+            }
+        return result
+
+    @api.model
+    def _validate_upload_response(self, response, count):
+        error_message = _("Report API returned an invalid upload response.")
+        if not isinstance(response, dict) or response.get("ok") is not True:
+            raise ValueError(error_message)
+        errors = response.get("errors")
+        accepted = response.get("accepted")
+        failed = response.get("failed")
+        if (
+            not isinstance(errors, list)
+            or type(accepted) is not int
+            or type(failed) is not int
+            or min(accepted, failed) < 0
+            or accepted + failed != count
+            or failed != len(errors)
+        ):
+            raise ValueError(error_message)
+        errors_by_index = {}
+        for error in errors:
+            if not isinstance(error, dict):
+                raise ValueError(error_message)
+            index = error.get("index")
+            if type(index) is not int or not 0 <= index < count or index in errors_by_index:
+                raise ValueError(error_message)
+            errors_by_index[index] = str(error.get("error") or _("Unknown upload error"))
+        return errors_by_index
 
     @api.model
     def _normalize_outbox_queue_channel(self, queue_channel):
@@ -394,13 +440,28 @@ class AbOdooSyncUploadService(models.AbstractModel):
         return f"ab_odoo_sync_branch_upload_sender:{channel}:{digest}"
 
     @api.model
-    def _queue_branch_upload_sender_jobs(self, outbox_records, description):
+    def _queue_branch_upload_sender_jobs(self, outbox_records, description, retry_owned=False):
+        outbox_records = outbox_records.sudo().exists().sorted("id")
+        outbox_records._lock_delivery()
+        outbox_records = outbox_records.filtered(
+            lambda record: record.active and record.status in {"pending", "failed"}
+        )
         queued = 0
+        if retry_owned:
+            for owner in sorted(set(outbox_records.mapped("delivery_job_uuid")) - {False}):
+                owned = outbox_records.filtered(lambda record: record.delivery_job_uuid == owner)
+                job = self.env["queue.job"].sudo().search([("uuid", "=", owner)], limit=1)
+                if not job:
+                    owned.write({"delivery_job_uuid": False})
+                elif job.state in {"failed", "done", "cancelled"}:
+                    job.requeue()
+                    queued += len(owned)
+        outbox_records = outbox_records.filtered(lambda record: not record.delivery_job_uuid)
         for queue_channel, channel_records in sorted(
             self._group_outbox_by_queue_channel(outbox_records).items()
         ):
             channel_records = channel_records.sorted("id")
-            self.sudo().with_delay(
+            job = self.sudo().with_delay(
                 identity_key=self._branch_upload_sender_identity_key(
                     channel_records,
                     queue_channel,
@@ -409,21 +470,19 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 max_retries=0,
                 channel=queue_channel,
             ).job_send_branch_upload_batch(channel_records.ids)
+            channel_records.write({"delivery_job_uuid": job.uuid})
             queued += len(channel_records)
         return queued
 
     @api.model
-    def queue_branch_upload_batch(self, outbox_records=None):
-        configuration_error = self._get_upload_configuration_error()
-        if configuration_error:
-            return {"status": "skipped", "queued": 0, "reason": configuration_error}
-
+    def queue_branch_upload_batch(self, outbox_records=None, retry_owned=False):
         Outbox = self.env["ab_odoo_sync_outbox"].sudo()
         if outbox_records is None:
             outbox_records = Outbox.search(
                 [
                     ("status", "in", ["pending", "failed"]),
                     ("active", "=", True),
+                    ("delivery_job_uuid", "=", False),
                 ],
                 order="id",
                 limit=self.get_batch_size(),
@@ -445,14 +504,12 @@ class AbOdooSyncUploadService(models.AbstractModel):
         queued = self._queue_branch_upload_sender_jobs(
             outbox_records,
             _("Send branch upload outbox events to the report server"),
+            retry_owned=retry_owned,
         )
         return {"status": "queued", "queued": queued}
 
     @api.model
     def queue_historical_upload_batch(self, outbox_records):
-        configuration_error = self._get_upload_configuration_error()
-        if configuration_error:
-            return {"status": "skipped", "queued": 0, "reason": configuration_error}
         if not outbox_records:
             return {"status": "ok", "queued": 0}
 
@@ -470,12 +527,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
 
     @api.model
     def job_send_branch_upload_batch(self, outbox_ids=None):
-        outbox_records = (
-            self.env["ab_odoo_sync_outbox"].sudo().browse(outbox_ids)
-            if outbox_ids
-            else None
-        )
-        result = self.send_branch_upload_batch(outbox_records)
+        result = self._run_upload_delivery(outbox_ids)
         _logger.info("AB Odoo Sync upload sender result: %s", result)
         return result
 
@@ -485,9 +537,61 @@ class AbOdooSyncUploadService(models.AbstractModel):
             result = {"status": "ok", "sent": 0, "failed": 0}
             _logger.info("AB Odoo Sync historical upload sender result: %s", result)
             return result
-        outbox_records = self.env["ab_odoo_sync_outbox"].sudo().browse(outbox_ids)
-        result = self.send_branch_upload_batch(outbox_records)
+        result = self._run_upload_delivery(outbox_ids)
         _logger.info("AB Odoo Sync historical upload sender result: %s", result)
+        return result
+
+    @api.model
+    def _run_upload_delivery(self, outbox_ids):
+        job_uuid = self.env.context.get("job_uuid")
+        if not job_uuid:
+            raise FailedJobError(_("Upload delivery must run through the queue."))
+        # This cursor owns only delivery metadata. Committing here cannot commit
+        # a caller's business transaction, and queue exception rollback cannot
+        # erase an accepted receipt or an unsuccessful delivery attempt.
+        with self.env.registry.cursor() as delivery_cr:
+            delivery_env = api.Environment(delivery_cr, self.env.uid, dict(self.env.context))
+            service = delivery_env[self._name]
+            job = Job.load(delivery_env, job_uuid)
+            if job.state != "started" or job.model_name != self._name or job.method_name not in {
+                "job_send_branch_upload_batch", "job_send_historical_upload_batch",
+            }:
+                raise FailedJobError(_("Upload delivery must run through the queue."))
+            expected_ids = job.args[0] if job.args else job.kwargs.get("outbox_ids")
+            if outbox_ids != expected_ids:
+                raise FailedJobError(_("Upload job records do not match its queued arguments."))
+            Outbox = delivery_env["ab_odoo_sync_outbox"].sudo()
+            if outbox_ids:
+                records = Outbox.browse(outbox_ids).exists().sorted("id")
+            else:
+                # Support old sender jobs that did not carry an explicit batch.
+                records = Outbox.with_context(active_test=False).search([
+                    ("delivery_job_uuid", "=", job_uuid),
+                ], order="id")
+                if not records:
+                    records = Outbox.search([
+                        ("active", "=", True), ("status", "in", ["pending", "failed"]),
+                        ("delivery_job_uuid", "=", False),
+                    ], order="id", limit=service.get_batch_size())
+            records._lock_delivery()
+            records = records.filtered(
+                lambda record: record.active and record.status in {"pending", "failed"}
+                and record.delivery_job_uuid in {False, job_uuid}
+            )
+            records.filtered(lambda record: not record.delivery_job_uuid).write(
+                {"delivery_job_uuid": job_uuid}
+            )
+            result = service.send_branch_upload_batch(records)
+            job.retry += 1
+            retry_seconds = job._get_retry_seconds()
+            delivery_cr.commit()
+        if result["status"] != "ok":
+            message = result.get("error") or _("Report API returned failure.")
+            if result.get("retryable"):
+                raise RetryableJobError(
+                    message, seconds=max(retry_seconds, result.get("retry_after") or 0),
+                )
+            raise FailedJobError(message)
         return result
 
     @api.model
