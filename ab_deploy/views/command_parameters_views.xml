@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_command_parameters_form" model="ir.ui.view">
+        <field name="name">ab_deploy_command_parameters_form</field>
+        <field name="model">ab_deploy_command</field>
+        <field name="inherit_id" ref="view_command_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Server Parameters" groups="ab_deploy.group_administrator">
+                    <p>Ordinary values only. Values are visible in approved scripts and audit history; do not store secrets.</p>
+                    <p>Reference variables as "${DEPLOY_MODULES}". Names must start with DEPLOY_ and use uppercase letters, digits or underscores. Missing referenced values block submission. DEPLOY_ references in comments and literal text are also checked.</p>
+                    <p>Automatic server variables: DEPLOY_DATABASE, DEPLOY_PYTHON, DEPLOY_CONFIG, DEPLOY_SERVER_PATH, DEPLOY_LOG_PATH and DEPLOY_ODOO_BIN (Odoo Server Path + /server/odoo-bin). These names cannot be overridden.</p>
+                    <field name="parameter_ids" nolabel="1">
+                        <list editable="bottom">
+                            <field name="server_id" options="{'no_create': True}"/>
+                            <field name="bash_placeholder"/>
+                            <field name="value"/>
+                        </list>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

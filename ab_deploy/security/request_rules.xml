@@ -1,0 +1,57 @@
+<odoo>
+    <record id="rule_request_participants" model="ir.rule">
+        <field name="name">Deployment request: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_request"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('developer_id', '=', user.id), ('approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_target_participants" model="ir.rule">
+        <field name="name">Deployment target: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_target"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('request_id.developer_id', '=', user.id), ('request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_request_command_participants" model="ir.rule">
+        <field name="name">Deployment request command: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_request_command"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('request_id.developer_id', '=', user.id), ('request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_job_participants" model="ir.rule">
+        <field name="name">Deployment job: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_job"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('request_id.developer_id', '=', user.id), ('request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_run_participants" model="ir.rule">
+        <field name="name">Deployment run: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_run"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('request_id.developer_id', '=', user.id), ('request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_attempt_participants" model="ir.rule">
+        <field name="name">Deployment attempt: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_attempt"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('job_id.request_id.developer_id', '=', user.id), ('job_id.request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('job_id.request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('job_id.request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_log_part_participants" model="ir.rule">
+        <field name="name">Deployment log part: request participants</field>
+        <field name="model_id" ref="model_ab_deploy_log_part"/>
+        <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('job_id.request_id.developer_id', '=', user.id), ('job_id.request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('job_id.request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('job_id.request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_audit_administrators" model="ir.rule">
+        <field name="name">Deployment audit: administrators only</field>
+        <field name="model_id" ref="model_ab_deploy_audit_log"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else [(0, '=', 1)]</field>
+    </record>
+    <record id="rule_deployment_queue_administrators" model="ir.rule">
+        <field name="name">Deployment queue internals: administrators only</field>
+        <field name="model_id" ref="queue_job.model_queue_job"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else [('model_name', 'not in', ['ab_deploy_request', 'ab_deploy_run', 'ab_deploy_job'])]</field>
+    </record>
+    <record id="rule_deployment_message_participants" model="ir.rule">
+        <field name="name">Deployment message: request participants</field>
+        <field name="model_id" ref="mail.model_mail_message"/>
+        <field name="domain_force">['|', ('ab_deploy_request_id', '=', False)] + (['&amp;'] if 'company_id' in user.env['ab_deploy_request']._fields else []) + ([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('ab_deploy_request_id.developer_id', '=', user.id), ('ab_deploy_request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('ab_deploy_request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('ab_deploy_request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+    <record id="rule_deployment_attachment_participants" model="ir.rule">
+        <field name="name">Deployment attachment: request participants</field>
+        <field name="model_id" ref="base.model_ir_attachment"/>
+        <field name="domain_force">['|', ('ab_deploy_request_id', '=', False)] + (['&amp;'] if 'company_id' in user.env['ab_deploy_request']._fields else []) + ([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('ab_deploy_request_id.developer_id', '=', user.id), ('ab_deploy_request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('ab_deploy_request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('ab_deploy_request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+    </record>
+</odoo>

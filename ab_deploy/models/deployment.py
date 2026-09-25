@@ -129,6 +129,8 @@ class DeployServer(models.Model):
     monitor_timeout_seconds = fields.Integer(default=600, required=True)
     odoo_log_path = fields.Char(string='Odoo Log Path', default='/opt/odoo19/odoo.log')
     odoo_server_path = fields.Char(string='Odoo Server Path', default='/opt/odoo19')
+    database_name = fields.Char(string='Database Name', default='abdin_replica19',
+                                help='Odoo database name used for the -d argument, for example abdin_replica19.')
     odoo_config_path = fields.Char(string='Odoo Server Config', default='/opt/odoo19/odoo19.conf')
     odoo_python_path = fields.Char(string='Odoo Python Venv', default='/opt/odoo19/venv19/bin/python')
 
@@ -245,9 +247,7 @@ class DeployRequest(models.Model):
     def action_test_selected_ssh(self):
         self.ensure_one()
         self.check_access('read')
-        if not (self.env.user.has_group('ab_deploy.group_administrator')
-                or self.env.user.has_group('ab_deploy.group_executor')):
-            raise AccessError(_('You do not have the required deployment role.'))
+        self._require_role('executor')
         targets = self.target_ids.filtered('deploy').sorted('id')
         targets.check_access('read')
         targets.server_id.check_access('read')
@@ -273,8 +273,11 @@ class DeployRequest(models.Model):
     def action_select_all_targets(self):
         return self._select_targets(True)
 
-    def action_select_all_ssh_failures(self):
+    def action_select_all_failures(self):
         return self._select_targets(True, retry=True)
+
+    def action_select_all_ssh_failures(self):
+        return self.action_select_all_failures()
 
     def action_clear_target_selection(self):
         return self._select_targets(False)
@@ -286,7 +289,7 @@ class DeployRequest(models.Model):
             raise UserError(_('Deployment selection requires an approved request.'))
         self.target_ids._clear_selection()
         if selected:
-            targets = self.target_ids.filtered(lambda target: target._ssh_retry_job() if retry else not target.job_ids)
+            targets = self.target_ids.filtered(lambda target: target._retry_job() if retry else not target.job_ids)
             targets.write({'deploy': True})
         return True
 
@@ -294,11 +297,12 @@ class DeployRequest(models.Model):
         self.ensure_one()
         if self.state != 'approved':
             raise UserError(_('Only approved requests can queue selected servers.'))
+        self._validate_executor()
         targets = self.target_ids.filtered('deploy')
         if not targets:
             raise UserError(_('Select at least one delayed server for deployment.'))
         if any(target.job_ids for target in targets):
-            raise UserError(_('Queue Selected Servers accepts only delayed servers. Clear SSH failures or other executed servers from the selection.'))
+            raise UserError(_('Queue Selected Servers accepts only delayed servers. Clear failures or other executed servers from the selection.'))
         return targets
 
     def _draft(self):
@@ -351,7 +355,7 @@ class DeployRequest(models.Model):
             approver = record.approver_id
             if not approver.active or not (approver.has_group('ab_deploy.group_approver') or approver.has_group('ab_deploy.group_administrator')):
                 raise ValidationError(_('Choose an active user with the Approver or Administrator role.'))
-            if approver == self.env.user:
+            if approver == self.env.user or approver == record.developer_id:
                 raise ValidationError(_('A deployment request must be approved by a different user.'))
             record.target_ids._freeze()
             record._transition({'state': 'requested', 'requested_by': self.env.uid, 'requested_at': fields.Datetime.now(),
@@ -366,7 +370,7 @@ class DeployRequest(models.Model):
         self._lock()
         if any(r.state != 'requested' for r in self):
             raise UserError(_('Only requested deployments can be approved or rejected.'))
-        if any(r.requested_by == self.env.user for r in self):
+        if any(r.requested_by == self.env.user or r.developer_id == self.env.user for r in self):
             raise AccessError(_('You cannot approve or reject your own deployment request.'))
         if not self.env.user.has_group('ab_deploy.group_administrator') and any(r.approver_id != self.env.user for r in self):
             raise AccessError(_('Only the assigned approver or a deployment administrator can decide this request.'))
@@ -469,9 +473,7 @@ class DeployTarget(models.Model):
         self.check_access('read')
         self.request_id.check_access('read')
         self.server_id.check_access('read')
-        if not (self.env.user.has_group('ab_deploy.group_administrator')
-                or self.env.user.has_group('ab_deploy.group_executor')):
-            raise AccessError(_('You do not have the required deployment role.'))
+        self.request_id._require_role('executor')
         from ..runner import engine
         reason = _ssh_test_reason(engine.test_ssh(self.server_id.ssh_alias or ''), self.env)
         title = _('SSH connection failed: %s', self.server_id.name) if reason else _('SSH connection successful: %s', self.server_id.name)
@@ -479,15 +481,19 @@ class DeployTarget(models.Model):
                 'params': {'title': title, 'message': reason or _('SSH authentication and remote command execution succeeded.'),
                            'type': 'danger' if reason else 'success', 'sticky': bool(reason)}}
 
-    def _ssh_retry_job(self):
+    def _retry_job(self):
         self.ensure_one()
         latest = self.job_ids.sorted('id', reverse=True)[:1]
-        return latest.filtered(lambda job: job.failure_kind == 'ssh' and job.state in ('failed', 'unknown'))
+        return latest.filtered(lambda job: (job.failure_kind == 'ssh' and job.state in ('failed', 'unknown'))
+                               or (job.failure_kind == 'script' and job.state == 'failed'))
+
+    def _ssh_retry_job(self):
+        return self._retry_job().filtered(lambda job: job.failure_kind == 'ssh')
 
     @api.depends('job_ids.state', 'job_ids.failure_kind')
     def _compute_selection_eligible(self):
         for target in self:
-            target.selection_eligible = not target.job_ids or bool(target._ssh_retry_job())
+            target.selection_eligible = not target.job_ids or bool(target._retry_job())
 
     def _clear_selection(self):
         return super(DeployTarget, self).write({'deploy': False})
@@ -528,8 +534,8 @@ class DeployTarget(models.Model):
             if any(r.state != 'approved' for r in requests):
                 raise UserError(_('Deployment selection requires an approved request.'))
             self.job_ids.sorted('id')._lock()
-            if vals['deploy'] and any(t.job_ids and not t._ssh_retry_job() for t in self):
-                raise UserError(_('Only delayed servers or SSH failures can be selected.'))
+            if vals['deploy'] and any(t.job_ids and not t._retry_job() for t in self):
+                raise UserError(_('Only delayed servers or retryable SSH and script failures can be selected.'))
             return super().write(vals)
         if set(vals) - {'server_id'}:
             raise AccessError(_('The target request and workflow fields cannot be changed.'))
@@ -609,7 +615,7 @@ class DeployTarget(models.Model):
             if not any(line.command_id.command_type == 'check' for line in lines):
                 raise ValidationError(_('Add at least one active Post-deployment Check before requesting approval.'))
             lines._freeze_type()
-            commands = [{'name': l.command_id.name, 'bash': l.command_id.template,
+            commands = [{'name': l.command_id.name, 'bash': l.command_id._resolve_server_script(target.server_id),
                          'command_type': l.command_id.command_type, 'sequence': l.sequence,
                          'line_id': l.id, 'command_id': l.command_id.id,
                          'parent_line_id': l.parent_line_id.id or False,

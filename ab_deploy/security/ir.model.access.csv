@@ -2,7 +2,7 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_server_viewer,server viewer,model_ab_deploy_server,group_viewer,1,0,0,0
 access_request_viewer,request viewer,model_ab_deploy_request,group_viewer,1,0,0,0
 access_target_viewer,target viewer,model_ab_deploy_target,group_viewer,1,0,0,0
-access_audit_log_viewer,audit_log viewer,model_ab_deploy_audit_log,group_viewer,1,0,0,0
+access_audit_log_viewer,audit_log viewer,model_ab_deploy_audit_log,group_administrator,1,0,0,0
 access_server_administrator,server administrator,model_ab_deploy_server,group_administrator,1,1,1,0
 access_request_developer,request developer,model_ab_deploy_request,group_developer,1,1,1,0
 access_request_approver,request approver,model_ab_deploy_request,group_approver,1,1,0,0
@@ -25,3 +25,4 @@ access_conflict_executor,conflict executor,model_ab_deploy_conflict,group_execut
 access_target_executor,target executor,model_ab_deploy_target,group_executor,1,1,0,0
 
 access_manual_resolution_executor,manual resolution executor,model_ab_deploy_manual_resolution,group_executor,1,1,1,1
+access_command_parameter_administrator,command parameter administrator,model_ab_deploy_command_parameter,group_administrator,1,1,1,1

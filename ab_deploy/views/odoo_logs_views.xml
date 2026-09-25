@@ -3,8 +3,16 @@
         <field name="name">ab_deploy_server_odoo_logs</field><field name="model">ab_deploy_server</field>
         <field name="inherit_id" ref="view_server_form"/>
         <field name="arch" type="xml"><xpath expr="//sheet" position="inside">
-            <group string="Odoo Paths"><field name="odoo_log_path"/><field name="odoo_server_path"/><field name="odoo_config_path"/><field name="odoo_python_path"/></group>
+            <group string="Odoo Paths"><field name="odoo_log_path"/><field name="odoo_server_path"/><field name="odoo_config_path"/><field name="database_name"/><field name="odoo_python_path"/></group>
         </xpath></field>
+    </record>
+    <record id="view_server_database_list" model="ir.ui.view">
+        <field name="name">ab_deploy_server_database_list</field>
+        <field name="model">ab_deploy_server</field>
+        <field name="inherit_id" ref="view_server_list"/>
+        <field name="arch" type="xml">
+            <field name="ssh_alias" position="after"><field name="database_name" optional="hide"/></field>
+        </field>
     </record>
     <record id="view_request_odoo_logs" model="ir.ui.view">
         <field name="name">ab_deploy_request_odoo_logs</field><field name="model">ab_deploy_request</field>

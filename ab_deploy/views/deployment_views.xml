@@ -25,7 +25,7 @@
             <button name="action_withdraw" string="Return to Draft" type="object" groups="ab_deploy.group_developer" invisible="state == 'draft' or queued"/>
             <button name="action_cancel" string="Cancel" type="object" groups="ab_deploy.group_developer" invisible="state == 'cancelled'" confirm="Cancel pending executions? Running commands will continue."/>
             <field name="state" widget="statusbar"/>
-        </header><sheet><field name="queued" invisible="1"/><field name="active" invisible="1"/>
+        </header><sheet><field name="can_manage_request" invisible="1"/><field name="can_execute" invisible="1"/><field name="can_assign_executor" invisible="1"/><field name="queued" invisible="1"/><field name="active" invisible="1"/>
             <h1><field name="name"/></h1>
             <group><group><field name="title" readonly="state != 'draft'"/><field name="description" readonly="state != 'draft'"/></group>
                 <group><field name="developer_id" readonly="state != 'draft'"/><field name="approver_id" readonly="state != 'draft'"/><field name="decision_note"/></group></group>
@@ -54,5 +54,5 @@
     <record id="action_audit" model="ir.actions.act_window"><field name="name">Audit Logs</field><field name="res_model">ab_deploy_audit_log</field><field name="view_mode">list,form</field></record>
     <menuitem id="menu_request" name="Deployment Requests" parent="menu_deploy_root" action="action_request" sequence="1"/>
     <menuitem id="menu_server" name="Servers" parent="menu_deploy_config" action="action_server" sequence="10"/>
-    <menuitem id="menu_audit" name="Audit Logs" parent="menu_deploy_reports" action="action_audit" sequence="20"/>
+    <menuitem groups="ab_deploy.group_administrator" id="menu_audit" name="Audit Logs" parent="menu_deploy_reports" action="action_audit" sequence="20"/>
 </odoo>

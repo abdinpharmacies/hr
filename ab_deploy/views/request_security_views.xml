@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_request_security" model="ir.ui.view">
+        <field name="name">ab_deploy_request_security</field><field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="view_request_form"/><field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='target_ids'][@invisible=&quot;state != 'draft'&quot;]" position="attributes"><attribute name="readonly" add="not can_manage_request" separator=" or "/></xpath>
+            <xpath expr="//field[@name='target_ids'][@invisible=&quot;state == 'draft'&quot;]" position="attributes"><attribute name="readonly" add="not can_execute" separator=" or "/></xpath>
+            <field name="approver_id" position="after"><field name="executor_id" readonly="not can_assign_executor" options="{'no_create': True}"/></field>
+            <field name="command_ids" position="attributes"><attribute name="readonly" add="not can_manage_request" separator=" or "/></field>
+            <xpath expr="//button[@name='action_queue']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_retry_failure']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_resume']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_submit']" position="attributes"><attribute name="invisible" add="not can_manage_request" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_withdraw']" position="attributes"><attribute name="invisible" add="not can_manage_request" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_cancel']" position="attributes"><attribute name="invisible" add="not can_manage_request" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_refresh_linked_checks']" position="attributes"><attribute name="invisible" add="not can_manage_request" separator=" or "/></xpath>
+        </field>
+    </record>
+    <record id="view_job_security" model="ir.ui.view">
+        <field name="name">ab_deploy_job_security</field><field name="model">ab_deploy_job</field>
+        <field name="inherit_id" ref="view_job_form"/><field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside"><field name="can_execute" invisible="1"/></xpath>
+            <xpath expr="//button[@name='action_retry_failure']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_resume']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+            <xpath expr="//button[@name='action_manual_resolve']" position="attributes"><attribute name="invisible" add="not can_execute" separator=" or "/></xpath>
+        </field>
+    </record>
+</odoo>

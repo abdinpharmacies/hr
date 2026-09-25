@@ -7,7 +7,7 @@
                 <aside class="ab_deploy_command_help" aria-label="Bash command help">
                     <h3 class="ab_deploy_command_help_title">Custom Bash commands</h3>
                     <p>Write plain Bash. Each deployment action runs immediately before its required checks. Standalone checks run last. Each command starts in the remote SSH user's home directory. Exit 0 to pass, 1 for an issue, or 2 if the check cannot complete. Any nonzero exit stops later commands.</p>
-                    <p>No placeholders or automatic backups, restarts, module upgrades, or Git checks are applied. Submitted requests retain their approved script.</p>
+                    <p>Use quoted DEPLOY_ variables for server data and ordinary command parameters. No automatic backups, restarts, module upgrades, or Git checks are applied. Submitted requests retain their approved script.</p>
                 </aside>
                 <label for="template" string="Bash Script" class="ab_deploy_command_editor_label"/>
                 <field name="template" nolabel="1" class="ab_deploy_bash_input"/>

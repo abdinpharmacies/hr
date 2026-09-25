@@ -7,12 +7,12 @@
         <field name="name">ab_deploy_job_batch_form</field><field name="model">ab_deploy_job</field><field name="inherit_id" ref="view_job_form"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
-                <button name="action_retry_ssh" type="object" string="Retry SSH Failure" groups="ab_deploy.group_executor" invisible="failure_kind != 'ssh' or state not in ('failed', 'unknown')"/>
+                <button name="action_retry_failure" type="object" string="Retry Failure" groups="ab_deploy.group_executor" invisible="not (failure_kind == 'ssh' and state in ('failed', 'unknown') or failure_kind == 'script' and state == 'failed')"/>
                 <button name="action_resume" type="object" string="Resume Monitoring" groups="ab_deploy.group_executor" invisible="state == 'cancelled'"/>
             </xpath>
             <field name="error" position="before">
                 <group><field name="stage"/><field name="failure_kind"/><field name="last_checked_at"/><field name="waiting_for_ids" widget="many2many_tags"/>
-                    <field name="command_log_status"/><field name="command_log_offset"/><field name="cancelled_by_id"/><field name="superseded_by_id"/></group>
+                    <field name="command_log_status"/><field name="command_log_offset"/><field name="retry_of_id"/><field name="cancelled_by_id"/><field name="superseded_by_id"/></group>
             </field>
             <xpath expr="//sheet" position="inside">
                 <group string="Command Output"><field name="command_log_part_ids" nolabel="1"><list create="0" edit="0" delete="0"><field name="name"/><field name="byte_offset"/><field name="byte_size"/><field name="data" widget="binary" filename="name"/></list></field></group>
@@ -24,11 +24,11 @@
         <field name="name">ab_deploy_request_batch_form</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_execution_form"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
-                <button name="action_retry_ssh" type="object" string="Retry Selected SSH Failures" groups="ab_deploy.group_executor" invisible="not queued"/>
+                <button name="action_retry_failure" type="object" string="Retry Selected Failures" groups="ab_deploy.group_executor" invisible="not queued"/>
                 <button name="action_resume" type="object" string="Resume Monitoring" groups="ab_deploy.group_executor" invisible="not queued"/>
             </xpath>
             <field name="job_ids" position="inside"><list create="0" edit="0" delete="0"><field name="server_id"/><field name="state"/><field name="stage"/><field name="failure_kind"/><field name="last_checked_at"/><field name="waiting_for_ids" widget="many2many_tags"/></list></field>
-            <xpath expr="//notebook" position="inside"><page string="Queue Runs"><field name="run_ids"><list create="0" edit="0" delete="0"><field name="requested_by_id"/><field name="queue_state"/><field name="queue_job_id" groups="queue_job.group_queue_job_manager"/><field name="started_at"/><field name="finished_at"/></list></field></page></xpath>
+            <xpath expr="//notebook" position="inside"><page string="Queue Runs"><field name="run_ids"><list create="0" edit="0" delete="0"><field name="requested_by_id"/><field name="queue_state"/><field name="queue_job_id" groups="ab_deploy.group_administrator"/><field name="started_at"/><field name="finished_at"/></list></field></page></xpath>
             <xpath expr="//page[field[@name='command_ids']]" position="before">
                 <xpath expr="//page[field[@name='target_ids']]" position="move"/>
             </xpath>

@@ -85,25 +85,39 @@ class DeployJobProgress(models.Model):
 
     @api.depends('state', 'server_id')
     def _compute_waiting(self):
-        older = self.sudo().search(fields.Domain('server_id', 'in', self.server_id.ids)
+        older = self.search(fields.Domain('server_id', 'in', self.server_id.ids)
                                   & fields.Domain('state', 'in', ['queued', 'running', 'unknown']), order='id')
         for job in self:
             job.waiting_for_ids = older.filtered(lambda o: o.server_id == job.server_id and o.id != job.id
                 and (o.state in ('running', 'unknown') or o.id < job.id)) if job.state == 'queued' else False
 
     def action_retry_ssh(self):
+        return self.action_retry_failure()
+
+    def action_retry_failure(self):
         requests = self.request_id
         requests._require_role('executor')
         requests.sorted('id')._lock()
+        self.target_id.sorted('id')._lock()
+        self.server_id.sorted('id')._lock()
         self.sorted('id')._lock()
-        if any(j.failure_kind != 'ssh' or j.state not in ('failed', 'unknown') for j in self):
-            raise UserError(_('Only SSH failures can be retried. Other command failures require a new deployment.'))
+        if any(request.state != 'approved' for request in requests):
+            raise UserError(_('Deployment selection requires an approved request.'))
+        requests._validate_executor()
+        if any(job.target_id._retry_job() != job for job in self):
+            raise UserError(_('Only the latest SSH or script failure can be retried.'))
         self._check_not_busy()
+        selected = self.env['ab_deploy_job']
         for job in self:
-            job._set({'state': 'unknown' if job.launch_intent else 'queued', 'error': False,
-                      'stage': 'needs_check' if job.launch_intent else 'waiting', 'finished_at': False})
+            if job.failure_kind == 'script':
+                selected |= self.env['ab_deploy_job']._make(job.target_id, retry_of=job)
+            else:
+                job._set({'state': 'unknown' if job.launch_intent else 'queued', 'error': False,
+                          'stage': 'needs_check' if job.launch_intent else 'waiting', 'finished_at': False})
+                selected |= job
         for request in requests:
-            request._schedule_run(self.filtered(lambda j: j.request_id == request), retry=True)
+            request._schedule_run(selected.filtered(lambda j: j.request_id == request), retry=True)
+        self.target_id._clear_selection()
         return True
 
     def action_resume(self):
@@ -140,12 +154,12 @@ class DeployRequestBatch(models.Model):
             selected = jobs if jobs is not None else request.job_ids.filtered(
                 lambda j: j.state in ('queued', 'running', 'unknown') or j._needs_logs())
             selected = selected.filtered(lambda j: j.request_id == request and j.state not in ('cancelled', 'manually_resolved'))
-            active = request.run_ids.filtered(lambda r: r.queue_job_id.state in ACTIVE_QUEUE)
+            active = request.run_ids.sudo().filtered(lambda r: r.queue_job_id.state in ACTIVE_QUEUE)
             selected -= active.job_ids
             if selected:
                 run = self.env['ab_deploy_run']._make(request, selected)
                 pending = run.sudo().with_delay(channel='root.deployment', identity_key=f'ab_deploy:run:{run.id}',
-                    max_retries=5, description=_('%s: SSH retry', request.name) if retry else _('%s: execute and monitor', request.name))._execute()
+                    max_retries=5, description=_('%s: failure retry', request.name) if retry else _('%s: execute and monitor', request.name))._execute()
                 run._update({'queue_job_id': pending.db_record().id})
                 selected._set({'queue_job_id': pending.db_record().id})
 
@@ -159,6 +173,9 @@ class DeployRequestBatch(models.Model):
         return True
 
     def action_retry_ssh(self):
+        return self.action_retry_failure()
+
+    def action_retry_failure(self):
         self._require_role('executor')
         self.ensure_one()
         self._lock()
@@ -166,15 +183,15 @@ class DeployRequestBatch(models.Model):
             raise UserError(_('Deployment selection requires an approved request.'))
         targets = self.target_ids.filtered('deploy')
         if not targets:
-            raise UserError(_('Select at least one SSH-failed server to retry.'))
+            raise UserError(_('Select at least one SSH or script failure to retry.'))
         targets.sorted('id')._lock()
         targets.job_ids.sorted('id')._lock()
-        if any(not target._ssh_retry_job() for target in targets):
-            raise UserError(_('Retry Selected SSH Failures accepts only SSH failures. Clear delayed or other ineligible servers from the selection.'))
+        if any(not target._retry_job() for target in targets):
+            raise UserError(_('Retry Selected Failures accepts only SSH or script failures. Clear delayed or other ineligible servers from the selection.'))
         jobs = self.env['ab_deploy_job']
         for target in targets:
-            jobs |= target._ssh_retry_job()
-        result = jobs.action_retry_ssh()
+            jobs |= target._retry_job()
+        result = jobs.action_retry_failure()
         targets._clear_selection()
         return result
 

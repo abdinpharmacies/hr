@@ -1,4 +1,5 @@
 import subprocess
+import uuid
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
@@ -37,7 +38,7 @@ class DeployJob(models.Model):
     last_checked_at = fields.Datetime(readonly=True)
     monitor_deadline = fields.Datetime(readonly=True)
 
-    _unique_target = models.Constraint('UNIQUE(target_id)', 'A target can have only one execution job.')
+    retry_of_id = fields.Many2one('ab_deploy_job', string='Retry Of', readonly=True, copy=False, ondelete='restrict', index=True)
     _unique_key = models.Constraint('UNIQUE(job_key)', 'Job identifier must be unique.')
 
     @api.model_create_multi
@@ -59,12 +60,13 @@ class DeployJob(models.Model):
         return super(DeployJob, self.sudo()).write(vals)
 
     @api.model
-    def _make(self, targets):
+    def _make(self, targets, retry_of=None):
         for target in targets:
             if not target.script or engine.checksum(target.script) != target.script_hash:
                 raise UserError(_('The approved script is missing or its checksum is invalid.'))
         return super(DeployJob, self.sudo()).create([
-            {'target_id': target.id, 'job_key': target.job_key,
+            {'target_id': target.id, 'job_key': uuid.uuid4().hex if retry_of else target.job_key,
+             'retry_of_id': retry_of.id if retry_of else False,
              'odoo_log_status': 'pending' if target.snapshot.get('odoo_log') else 'disabled'} for target in targets])
 
     def _schedule(self, delay=0):

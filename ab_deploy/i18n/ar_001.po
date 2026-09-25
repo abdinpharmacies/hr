@@ -3495,3 +3495,309 @@ msgstr ""
 " الفحوصات المستقلة أخيرًا. يبدأ كل أمر في المجلد الرئيسي لمستخدم SSH على "
 "السرفر البعيد. استخدم رمز الخروج 0 للنجاح، أو 1 عند اكتشاف مشكلة، أو 2 إذا "
 "تعذر إكمال الفحص. أي رمز خروج غير الصفر يوقف الأوامر التالية."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "%s: failure retry"
+msgstr "%s: إعادة محاولة الفشل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Only delayed servers or retryable SSH and script failures can be selected."
+msgstr ""
+"يمكن تحديد السرفرات المؤجلة أو حالات فشل SSH والسكربت القابلة لإعادة "
+"المحاولة فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Only the latest SSH or script failure can be retried."
+msgstr "يمكن إعادة محاولة أحدث تنفيذ فاشل بسبب SSH أو السكربت فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid ""
+"Queue Selected Servers accepts only delayed servers. Clear failures or other"
+" executed servers from the selection."
+msgstr ""
+"تقبل إضافة السرفرات المحددة إلى قائمة الانتظار السرفرات المؤجلة فقط. ألغِ "
+"تحديد السرفرات الفاشلة أو التي سبق تنفيذها."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_batch_form
+msgid "Retry Failure"
+msgstr "إعادة محاولة الفشل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__retry_of_id
+msgid "Retry Of"
+msgstr "إعادة محاولة للتنفيذ"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_batch_form
+msgid "Retry Selected Failures"
+msgstr "إعادة محاولة حالات الفشل المحددة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Retry Selected Failures accepts only SSH or script failures. Clear delayed "
+"or other ineligible servers from the selection."
+msgstr ""
+"تقبل إعادة محاولة حالات الفشل المحددة فشل SSH أو السكربت فقط. ألغِ تحديد "
+"السرفرات المؤجلة أو غير المؤهلة."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_targets_form
+msgid "Select All Failures"
+msgstr "تحديد جميع حالات الفشل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Select at least one SSH or script failure to retry."
+msgstr "حدد سرفرًا واحدًا على الأقل فشل بسبب SSH أو السكربت لإعادة المحاولة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_server__database_name
+msgid ""
+"Odoo database name used for the -d argument, for example abdin_replica19."
+msgstr "اسم قاعدة بيانات أودو المستخدم مع الوسيط -d، مثل abdin_replica19."
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_command_parameter_unique_parameter
+msgid "A command can define a variable only once per server."
+msgstr "يمكن تعريف المتغير مرة واحدة فقط لكل أمر وسرفر."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid ""
+"Automatic server variables: DEPLOY_DATABASE, DEPLOY_PYTHON, DEPLOY_CONFIG, "
+"DEPLOY_SERVER_PATH, DEPLOY_LOG_PATH and DEPLOY_ODOO_BIN (Odoo Server Path + "
+"/server/odoo-bin). These names cannot be overridden."
+msgstr ""
+"متغيرات السرفر التلقائية: DEPLOY_DATABASE وDEPLOY_PYTHON وDEPLOY_CONFIG "
+"وDEPLOY_SERVER_PATH وDEPLOY_LOG_PATH وDEPLOY_ODOO_BIN (مسار سرفر أودو + "
+"/server/odoo-bin). لا يمكن تجاوز هذه الأسماء."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid ""
+"Command %(command)s on server %(server)s is missing values for: "
+"%(variables)s"
+msgstr ""
+"الأمر %(command)s على السرفر %(server)s يفتقد قيم المتغيرات التالية: "
+"%(variables)s"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_command_parameter
+msgid "Deployment Command Parameter"
+msgstr "معامل أمر النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter__value
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid ""
+"Ordinary values only. Values are visible in approved scripts and audit "
+"history; do not store secrets."
+msgstr ""
+"للقيم العادية فقط. تظهر القيم في السكربتات المعتمدة وسجل التدقيق؛ لا تخزن "
+"أسرارًا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid "Parameter values cannot contain null bytes or exceed 65536 characters."
+msgstr ""
+"لا يمكن أن تحتوي قيم المعاملات على محارف فارغة أو أن تتجاوز 65536 حرفًا."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid ""
+"Reference variables as \"${DEPLOY_MODULES}\". Names must start with DEPLOY_ "
+"and use uppercase letters, digits or underscores. Missing referenced values "
+"block submission. DEPLOY_ references in comments and literal text are also "
+"checked."
+msgstr ""
+"استخدم المتغيرات بالشكل \"${DEPLOY_MODULES}\". يجب أن تبدأ الأسماء بـ "
+"DEPLOY_ وأن تستخدم حروفًا إنجليزية كبيرة أو أرقامًا أو شرطات سفلية. تمنع "
+"القيم المفقودة تقديم الطلب. تُفحص أيضًا إشارات DEPLOY_ في التعليقات والنصوص "
+"الحرفية."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__parameter_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid "Server Parameters"
+msgstr "معاملات السرفر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter__bash_placeholder
+msgid ""
+"Use DEPLOY_ followed by uppercase letters, digits or underscores, for "
+"example DEPLOY_MODULES."
+msgstr ""
+"استخدم DEPLOY_ متبوعة بحروف إنجليزية كبيرة أو أرقام أو شرطات سفلية، مثل "
+"DEPLOY_MODULES."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid ""
+"Use a valid DEPLOY_ variable name that is not reserved for server fields."
+msgstr "استخدم اسم متغير DEPLOY_ صالحًا وغير محجوز لحقول السرفر."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
+msgid ""
+"Use quoted DEPLOY_ variables for server data and ordinary command "
+"parameters. No automatic backups, restarts, module upgrades, or Git checks "
+"are applied. Submitted requests retain their approved script."
+msgstr ""
+"استخدم متغيرات DEPLOY_ بين علامتي اقتباس لبيانات السرفر ومعاملات الأوامر "
+"العادية. لا يتم تطبيق نسخ احتياطية أو إعادة تشغيل أو ترقية موديولات أو "
+"فحوصات Git تلقائيًا. تحتفظ الطلبات المقدمة بالسكربت المعتمد."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__bash_placeholder
+msgid "Variable Name"
+msgstr "اسم المتغير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ir_attachment__ab_deploy_request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_mail_mail__ab_deploy_request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_mail_message__ab_deploy_request_id
+msgid "Ab Deploy Request"
+msgstr "طلب النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__executor_id
+msgid "Assigned Executor"
+msgstr "المنفذ المعيّن"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ir_attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__can_assign_executor
+msgid "Can Assign Executor"
+msgstr "يمكن تعيين المنفذ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__can_execute
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__can_execute
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__can_execute
+msgid "Can Execute"
+msgstr "يمكن التنفيذ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__can_manage_request
+msgid "Can Manage Request"
+msgstr "يمكن إدارة الطلب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__can_replace
+msgid "Can Replace"
+msgstr "يمكن الاستبدال"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "Choose an active user with the Executor role before approving."
+msgstr "اختر مستخدمًا نشطًا لديه دور المنفذ قبل الموافقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "Deployment access links are managed automatically."
+msgstr "تتم إدارة روابط صلاحيات النشر تلقائيًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__has_hidden_conflicts
+msgid "Has Hidden Conflicts"
+msgstr "توجد تعارضات مخفية"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_mail_message
+msgid "Message"
+msgstr "رسالة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid ""
+"Only an assigned executor or administrator can replace conflicting "
+"deployments."
+msgstr ""
+"يمكن للمنفذ المعيّن أو مسؤول النشر فقط استبدال عمليات النشر المتعارضة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid ""
+"Only the assigned executor or a deployment administrator can execute this "
+"request."
+msgstr "يمكن للمنفذ المعيّن أو مسؤول النشر فقط تنفيذ هذا الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid ""
+"Only the request owner or a deployment administrator can change this "
+"request."
+msgstr "يمكن لصاحب الطلب أو مسؤول النشر فقط تعديل هذا الطلب."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid ""
+"Other deployments are using these servers. Their details are restricted. You"
+" can queue after them."
+msgstr ""
+"توجد عمليات نشر أخرى تستخدم هذه السرفرات. تفاصيلها محجوبة حسب الصلاحيات. "
+"يمكنك إضافة الطلب إلى قائمة الانتظار بعدها."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "Ownership and executor assignment cannot be set for another user."
+msgstr "لا يمكن تعيين ملكية الطلب والمنفذ نيابة عن مستخدم آخر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "Request ownership cannot be changed."
+msgstr "لا يمكن تغيير صاحب الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "Save executor assignment separately from other changes."
+msgstr "احفظ تعيين المنفذ بشكل منفصل عن التغييرات الأخرى."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid "The assigned executor must have access to the deployment company."
+msgstr "يجب أن يكون للمنفذ المعيّن صلاحية الوصول إلى شركة النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/request_security.py:0
+msgid ""
+"Wait for active executions and queue runs to finish before reassigning the "
+"executor."
+msgstr ""
+"انتظر انتهاء عمليات التنفيذ ومهام قائمة الانتظار النشطة قبل إعادة تعيين "
+"المنفذ."
