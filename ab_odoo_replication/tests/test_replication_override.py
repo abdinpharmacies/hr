@@ -732,7 +732,7 @@ class TestForceIdReplication(TransactionCase):
         finally:
             self._restore_replication_share(previous)
 
-    def test_other_models_retain_orm_update_behavior(self):
+    def test_other_models_update_sql_and_request_postcommit_replay(self):
         category = self.env['res.partner.category'].sudo().create({
             'name': 'Before ORM Replication',
         })
@@ -765,9 +765,10 @@ class TestForceIdReplication(TransactionCase):
 
             self.assertEqual(operation, 'write')
             self.assertEqual(local_id, category.id)
-            self.assertFalse(replay_write)
+            self.assertTrue(replay_write)
             self.assertEqual(values['name'], 'After ORM Replication')
             self.assertEqual(changed_values, {'name': 'After ORM Replication'})
-            write.assert_called_once()
+            write.assert_not_called()
+            self.assertEqual(category.name, 'After ORM Replication')
         finally:
             self._restore_replication_share(previous)

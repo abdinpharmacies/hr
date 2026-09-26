@@ -2,6 +2,8 @@
 import datetime
 import math
 import re
+from copy import deepcopy
+from functools import partial
 from odoo import _, models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import SQL, config
@@ -9,8 +11,70 @@ from odoo.addons.ab_odoo_connect import OdooConnectionSingleton
 import logging
 from typing import List, Dict
 from psycopg2.errors import ForeignKeyViolation
+from psycopg2.extras import Json
 
 _logger = logging.getLogger(__name__)
+
+
+def _replay_committed_records(registry, uid, context, model_name, changes):
+    """Best-effort replay, with one independent transaction per record.
+
+    Only immutable transaction metadata and copied payloads cross the commit
+    boundary; never reuse the importing environment or its ReplShare state.
+    """
+    for operation, record_id, values, changed_values in changes:
+        stage = 'open cursor'
+        try:
+            with registry.cursor() as cr:
+                env = api.Environment(cr, uid, context)
+                replication = env['ab_odoo_replication'].sudo()
+                model = env[model_name].sudo().with_context(replication=True)
+                stage = 'lock record'
+                cr.execute(SQL(
+                    'SELECT id FROM %s WHERE id = %s FOR UPDATE',
+                    SQL.identifier(model._table), record_id,
+                ))
+                if not cr.fetchone():
+                    raise ValueError('Committed replication record no longer exists')
+
+                # A caller may commit several updates to the same record at
+                # once. Replay its latest committed values, never an older
+                # payload (including a temporarily unresolved Many2one).
+                record = model.browse(record_id)
+                replay_values = replication._get_force_id_replay_values(model, changed_values)
+                replay_values = {
+                    name: record._fields[name].convert_to_write(record[name], record)
+                    for name in replay_values
+                }
+                audit_values = {
+                    name: record[name]
+                    for name in ('create_date', 'write_date')
+                    if name in model._fields
+                }
+                stage = 'refresh and recompute'
+                replication._refresh_force_id_record(
+                    model, record_id, changed_fields=changed_values,
+                    created=operation == 'create',
+                )
+                stage = 'ORM write'
+                replication._replay_force_id_writes(model, {record_id: replay_values})
+                stage = 'replication callback'
+                callback_values = dict(changed_values)
+                callback_values.update(replay_values)
+                record._after_force_id_replication(operation, {record_id: callback_values})
+                stage = 'flush and restore audit dates'
+                env.flush_all()
+                replication._restore_force_id_audit_values(model, {record_id: audit_values})
+                stage = 'commit replay'
+        except Exception:
+            # The fresh cursor rolls back this record's ORM side effects. The
+            # source SQL transaction has already committed and is unaffected.
+            _logger.exception(
+                'Post-commit replication replay failed: model=%s local_id=%s '
+                'source_id=%s operation=%s fields=%s stage=%s',
+                model_name, record_id, values.get('id', record_id), operation,
+                sorted(changed_values), stage,
+            )
 
 
 class Base(models.AbstractModel):
@@ -143,6 +207,25 @@ class OdooReplication(models.AbstractModel):
 
     def replicate_model(self, model_name: str, limit=10000, commit=True, extra_fields=None,
                         replicate_all=False, extra_domain=None):
+        # Recursive relation imports must not replace the outer model's state
+        # or commit a caller-controlled transaction.
+        share_fields = (
+            'conn', 'model_name', 'table_name', 'has_main_rec_id',
+            'missing_many2one_flds', 'fld__type_rel_dict', 'source_major_version',
+        )
+        previous_share = {name: getattr(self.ReplShare, name) for name in share_fields}
+        previous_groups = list(self._group_xml_ids)
+        try:
+            return self.with_context(_replication_commit=commit)._replicate_model(
+                model_name, limit, commit, extra_fields, replicate_all, extra_domain,
+            )
+        finally:
+            for name, value in previous_share.items():
+                setattr(self.ReplShare, name, value)
+            self._group_xml_ids[:] = previous_groups
+
+    def _replicate_model(self, model_name, limit, commit, extra_fields,
+                         replicate_all, extra_domain):
 
         if model_name not in self.env.registry:
             _logger.warning(
@@ -284,7 +367,7 @@ class OdooReplication(models.AbstractModel):
 
                 processed += 1
                 if processed % 100 == 0:
-                    if model_name == 'res.users':
+                    if model_name == 'res.users' and commit:
                         self.env.cr.commit()
                     _logger.info(f"{msg} , --- record {processed}/{server_updates_count}")
 
@@ -326,7 +409,7 @@ class OdooReplication(models.AbstractModel):
         # 🔄 تحديث كيرسور التكرار بعد انتهاء كل الـ batches
         if last_write_date:
             self._update_replication_cursor(model_name, last_write_date, last_id)
-        if commit and deferred_changes:
+        if commit:
             self.env.cr.commit()
 
     def _get_remotedb_flds_set(self):
@@ -481,11 +564,12 @@ class OdooReplication(models.AbstractModel):
         domain = [('main_rec_id', '=', rec.get('id', 0))] if has_main_rec_id else [('id', '=', rec.get('id', 0))]
         existing_rec = model.with_context(active_test=False).search(domain)
 
-        insert_str = ','.join(k for k in rec)
-        vals_tuple = tuple(val for val in rec.values())
-
         if existing_rec:
-            if model_name in self._sql_only_replication_models:
+            if not has_main_rec_id or model_name in self._sql_only_replication_models:
+                changed_values = (
+                    self._get_changed_force_id_replay_values(existing_rec, rec)
+                    if model_name not in self._sql_only_replication_models else {}
+                )
                 update_values = {
                     field_name: value
                     for field_name, value in rec.items()
@@ -494,17 +578,16 @@ class OdooReplication(models.AbstractModel):
                 self._update_replication_row(
                     table_name,
                     existing_rec.id,
-                    update_values,
+                    self._get_replication_sql_values(model, update_values, updating=True),
                 )
                 if update_values:
                     existing_rec.invalidate_recordset(
                         list(update_values),
                         flush=False,
                     )
-                return 'write', existing_rec.id, dict(rec), False, {}
+                return 'write', existing_rec.id, dict(rec), bool(changed_values), changed_values
 
-            # Other models retain the ORM lifecycle introduced for forced-ID
-            # replication.
+            # Keep the main_rec_id path's existing ORM lifecycle.
             changed_values = self._get_changed_force_id_replay_values(existing_rec, rec)
             if changed_values:
                 existing_rec.with_context(replication=True).write(changed_values)
@@ -515,8 +598,8 @@ class OdooReplication(models.AbstractModel):
             res = model.create(rec)
             create_date = rec.get('create_date')
             write_date = rec.get('write_date')
-            create_uid = False  # rec.get('create_uid')
-            write_uid = False  # rec.get('write_uid')
+            create_uid = None  # SQL NULL for the integer audit columns.
+            write_uid = None
             sql = f"""UPDATE {table_name}
                       SET create_date=%s, write_date=%s, create_uid=%s, write_uid=%s
                       WHERE id=%s"""
@@ -524,11 +607,13 @@ class OdooReplication(models.AbstractModel):
 
         # create for exact_copy models
         else:
-            sql = f"""
-               INSERT INTO {table_name}({insert_str})
-               VALUES ({','.join(['%s'] * len(rec))})
-               RETURNING id"""
-            self.env.cr.execute(sql, vals_tuple)
+            sql_values = self._get_replication_sql_values(model, rec)
+            self.env.cr.execute(SQL(
+                'INSERT INTO %s (%s) VALUES (%s) RETURNING id',
+                SQL.identifier(table_name),
+                SQL(', ').join(SQL.identifier(name) for name in rec),
+                SQL(', ').join(SQL('%s', value) for value in sql_values.values()),
+            ))
             forced_id = self.env.cr.fetchone()[0]
             if forced_id != rec_id:
                 raise UserError(
@@ -540,6 +625,29 @@ class OdooReplication(models.AbstractModel):
             return 'create', forced_id, dict(rec), replay_write, changed_values
 
         return None
+
+    @api.model
+    def _get_replication_sql_values(self, model, values, updating=False):
+        """Adapt ORM values to columns without running ORM business logic."""
+        converted = {}
+        for name, value in values.items():
+            field = model._fields[name]
+            column_value = field.convert_to_column_insert(value, model, values, validate=False)
+            if updating and field.translate and column_value is not None:
+                # Preserve translations for languages absent from this import.
+                column_value = SQL(
+                    'COALESCE(%s, %s::jsonb) || %s::jsonb',
+                    SQL.identifier(name), column_value,
+                    Json({model.env.lang or 'en_US': field.convert_to_column(value, model, validate=False)}),
+                )
+            elif updating and field.company_dependent:
+                column_value = SQL(
+                    "COALESCE(%s, '{}'::jsonb) || %s::jsonb",
+                    SQL.identifier(name),
+                    Json({str(model.env.company.id): field.convert_to_column(value, model, validate=False)}),
+                )
+            converted[name] = column_value
+        return converted
 
     @api.model
     def _update_replication_row(self, table_name, record_id, values):
@@ -623,7 +731,7 @@ class OdooReplication(models.AbstractModel):
 
     @api.model
     def _replay_force_id_writes(self, model, replicated_values):
-        """Trigger normal write overrides for records inserted through SQL."""
+        """Trigger normal write overrides for records replicated through SQL."""
         for record_id, values in replicated_values.items():
             replay_values = self._get_force_id_replay_values(model, values)
             if replay_values:
@@ -703,9 +811,14 @@ class OdooReplication(models.AbstractModel):
 
     @api.model
     def _finalize_force_id_batch(self, model, changes):
-        """Refresh records, replay ORM writes, and invoke lifecycle hooks."""
+        """Schedule exact-copy replay; retain the mapped-record lifecycle."""
         has_changes = any(changes.get(operation) for operation in ('create', 'write'))
         if not has_changes:
+            return
+
+        if not hasattr(model, 'main_rec_id'):
+            self._schedule_force_id_replay(model, changes)
+            self._sync_force_id_sequence(model)
             return
 
         all_replicated_values = {}
@@ -756,8 +869,28 @@ class OdooReplication(models.AbstractModel):
 
         model.flush_model()
         self._restore_force_id_audit_values(model, all_replicated_values)
-        if not hasattr(model, 'main_rec_id'):
-            self._sync_force_id_sequence(model)
+
+    @api.model
+    def _schedule_force_id_replay(self, model, changes):
+        """Invalidate SQL caches now, run model side effects only after commit."""
+        pending = []
+        for operation in ('create', 'write'):
+            for record_id, payload in (changes.get(operation) or {}).items():
+                values = payload['values']
+                changed_values = payload.get('changed_values', values)
+                field_names = [name for name in values if name != 'id' and name in model._fields]
+                model.browse(record_id).invalidate_recordset(field_names, flush=False)
+                if (
+                    model._name not in self._sql_only_replication_models
+                    and payload['replay_write'] and changed_values
+                ):
+                    pending.append((operation, record_id, values, changed_values))
+        if pending:
+            self.env.cr.postcommit.add(partial(
+                _replay_committed_records,
+                self.env.registry, self.env.uid,
+                deepcopy(dict(self.env.context)), model._name, deepcopy(pending),
+            ))
 
     def _replicate_extra_fields(self, extra_fields, rec):
         for fld, ttype in extra_fields.items():
@@ -833,7 +966,10 @@ class OdooReplication(models.AbstractModel):
 
                 if len(safe_ids) != len(other_ids):
                     missing = set(other_ids) - set(safe_ids)
-                    self.replicate_model(related_model, replicate_all=True, extra_domain=[('id', 'in', list(missing))])
+                    self.replicate_model(
+                        related_model, commit=self.env.context.get('_replication_commit', True),
+                        replicate_all=True, extra_domain=[('id', 'in', list(missing))],
+                    )
 
                 # Write safely without FK errors
                 model.browse(rec_id).write({fld: [(6, 0, other_ids)]})
@@ -897,7 +1033,7 @@ class OdooReplication(models.AbstractModel):
         # Replicate external not replicated many2one models manually
         #  to make many2one record id available (existed)
         for mo in missing_models:
-            self.replicate_model(mo)
+            self.replicate_model(mo, commit=self.env.context.get('_replication_commit', True))
 
         # Now we can update external many2one field, after many2one model was replicated.
         for many2one_name, many2one_value, rec_id, m2o_model_name in external_many2one_flds:
@@ -926,7 +1062,9 @@ class OdooReplication(models.AbstractModel):
                     safe_ids = self._filter_existing_ids(related_model, [many2one_value])
 
                 if not safe_ids:
-                    self.replicate_model(related_model, replicate_all=True,
+                    self.replicate_model(related_model,
+                                         commit=self.env.context.get('_replication_commit', True),
+                                         replicate_all=True,
                                          extra_domain=[('id', 'in', [many2one_value])])
                     if hasattr(related_model_records, 'main_rec_id'):
                         related_record = related_model_records.search([
@@ -979,10 +1117,17 @@ class OdooReplication(models.AbstractModel):
             changed_values = self._get_changed_force_id_replay_values(record, values)
             if not changed_values:
                 continue
-            record.with_context(replication=True).write(changed_values)
+            if has_main_rec_id:
+                record.with_context(replication=True).write(changed_values)
+            else:
+                self._update_replication_row(
+                    target_model._table, local_id,
+                    self._get_replication_sql_values(target_model, values, updating=True),
+                )
+                record.invalidate_recordset(list(values), flush=False)
             deferred_changes[local_id] = {
                 'values': values,
-                'replay_write': False,
+                'replay_write': not has_main_rec_id,
                 'changed_values': changed_values,
             }
 
