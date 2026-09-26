@@ -575,6 +575,9 @@ class OdooReplication(models.AbstractModel):
                     for field_name, value in rec.items()
                     if field_name != 'id'
                 }
+                # Clear pending ORM writes before SQL becomes authoritative;
+                # invalidation must never discard values still due to flush.
+                existing_rec.flush_recordset(list(update_values))
                 self._update_replication_row(
                     table_name,
                     existing_rec.id,
@@ -620,6 +623,9 @@ class OdooReplication(models.AbstractModel):
                     f'Forced-ID replication expected {model_name}({rec_id}) '
                     f'but PostgreSQL inserted ID {forced_id}.'
                 )
+            model.browse(forced_id).invalidate_recordset(
+                [name for name in rec if name != 'id'], flush=False,
+            )
             replay_write = model_name not in self._sql_only_replication_models
             changed_values = dict(rec) if replay_write else {}
             return 'create', forced_id, dict(rec), replay_write, changed_values
@@ -817,6 +823,15 @@ class OdooReplication(models.AbstractModel):
             return
 
         if not hasattr(model, 'main_rec_id'):
+            # Extra-field ORM writes may dirty audit fields and trigger
+            # dependent writes. Finish them before restoring source dates.
+            self.env.flush_all()
+            replicated_values = {
+                record_id: payload['values']
+                for operation in ('create', 'write')
+                for record_id, payload in (changes.get(operation) or {}).items()
+            }
+            self._restore_force_id_audit_values(model, replicated_values)
             self._schedule_force_id_replay(model, changes)
             self._sync_force_id_sequence(model)
             return
@@ -872,14 +887,12 @@ class OdooReplication(models.AbstractModel):
 
     @api.model
     def _schedule_force_id_replay(self, model, changes):
-        """Invalidate SQL caches now, run model side effects only after commit."""
+        """Capture replay payloads without touching pending ORM cache values."""
         pending = []
         for operation in ('create', 'write'):
             for record_id, payload in (changes.get(operation) or {}).items():
                 values = payload['values']
                 changed_values = payload.get('changed_values', values)
-                field_names = [name for name in values if name != 'id' and name in model._fields]
-                model.browse(record_id).invalidate_recordset(field_names, flush=False)
                 if (
                     model._name not in self._sql_only_replication_models
                     and payload['replay_write'] and changed_values
@@ -1085,7 +1098,6 @@ class OdooReplication(models.AbstractModel):
 
         deferred_changes = {}
         if model_name in self._sql_only_replication_models:
-            changed_fields = set()
             for local_id, values in deferred_values.items():
                 record = target_model.browse(local_id).exists()
                 if not record:
@@ -1093,18 +1105,13 @@ class OdooReplication(models.AbstractModel):
                         f'Replication could not load {model_name}({local_id}) '
                         'for deferred Many2one resolution.'
                     )
+                record.flush_recordset(list(values))
                 self._update_replication_row(
                     target_model._table,
                     local_id,
                     values,
                 )
-                changed_fields.update(values)
-
-            if deferred_values and changed_fields:
-                target_model.browse(list(deferred_values)).invalidate_recordset(
-                    sorted(changed_fields),
-                    flush=False,
-                )
+                record.invalidate_recordset(list(values), flush=False)
             return deferred_changes
 
         for local_id, values in deferred_values.items():
@@ -1120,6 +1127,7 @@ class OdooReplication(models.AbstractModel):
             if has_main_rec_id:
                 record.with_context(replication=True).write(changed_values)
             else:
+                record.flush_recordset(list(values))
                 self._update_replication_row(
                     target_model._table, local_id,
                     self._get_replication_sql_values(target_model, values, updating=True),
