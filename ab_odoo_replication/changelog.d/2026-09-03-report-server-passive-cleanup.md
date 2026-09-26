@@ -1,5 +1,17 @@
 Recent relevant commits:
 
+- Commit: `40e9b25576015b4c52b0d7422d57d8ef388031cf`
+- Author: emadco88
+- Date: 2026-09-26T18:52:44+03:00
+- Original subject: ab_odoo_replication/ UPD sql update/insert then write
+- User-facing changes:
+  - Commit exact-copy SQL changes before independent, best-effort ORM replay per record.
+  - Preserve changed-field replay, audit dates, nested import state, SQL-only exceptions, and caller-controlled commit behavior.
+- Files changed:
+  - ab_odoo_replication/models/ab_odoo_replication.py
+  - ab_odoo_replication/tests/test_replication_override.py
+  - ab_odoo_replication/changelog.d/2026-09-03-report-server-passive-cleanup.md
+
 - Commit: `933028c84489619fb9bfd5140f2ef51b9065c7cf`
 - Author: emadco88
 - Date: 2026-09-15T10:21:12+03:00
@@ -38,19 +50,17 @@ Recent relevant commits:
 Current changes before commit:
 
 - User-facing changes:
-  - Commit exact-copy SQL inserts/updates before attempting ORM write replay. Replay each affected record in an independent transaction; log errors and continue without losing committed SQL values.
-  - Replay only changed writable fields for existing records, with isolated recomputation, replication callbacks, and source audit-date restoration. Read the latest committed values under a row lock so older pending callbacks cannot overwrite newer imports.
-  - Preserve SQL-only users/contacts and ORM creation/update for main_rec_id models. Correct SQL NULL values for integer audit fields on mapped creation.
-  - Adapt translated and company-dependent column values for SQL while preserving other languages and companies.
-  - Resolve exact-copy deferred Many2one values through SQL before replay. Preserve outer import state across nested imports and propagate caller-controlled commit behavior; rollback discards pending replay.
-  - Advance replication cursors with SQL progress, maintain sequences, and commit deferred SQL-only relations even when no ORM replay is scheduled.
-  - Update the existing regression assertion for SQL-first updates; keep new integration probes and validation scripts outside the addon.
+  - Fix pre-commit cache assertions during barcode product-link and contract allowed-store replication. Replay scheduling now only captures payloads; it does not discard pending ORM cache values.
+  - Flush pending field writes before SQL updates and invalidate inserted/updated values immediately, before extra-field relation writes. Apply the same ordering to deferred Many2one SQL updates.
+  - Flush relation writes and their dependent changes at exact-copy batch finalization, then restore source audit dates before scheduling post-commit replay.
+  - Preserve relation-only updates, SQL cursor progress, rollback behavior, and per-record replay error isolation.
 - Validation:
-  - Fresh installation and targeted upgrade passed in an isolated Odoo 19 database with HTTP and cron execution disabled; all 33 existing module tests passed.
-  - Real transaction checks passed for SQL visibility before replay, validation/database/callback/recompute error isolation, successful continuation, changed-only writes, cursor progress, audit dates, commit/rollback, repeated pending updates, deferred relations, sequence safety, archived records, Arabic preservation, nested imports, extra-domain preservation, and main_rec_id creation/update.
-  - SQL-stage failures still propagate; failed replay has no automatic retry. A process interruption after SQL commit can leave ORM side effects unfinished, and write overrides see values already applied by SQL.
-  - User-facing string review found only new server diagnostics and internal docstrings/comments; no new or changed UI strings require ar.po/ar_001.po entries.
+  - Reproduced the previous assertion in an isolated Odoo 19 database before applying the fix.
+  - Installed actual ab_product and ab_contract modules in the isolated database. Runtime checks passed for barcode product_ids and contract allowed_store_ids: SQL insert/update, consecutive batches, populated/empty/changed/unchanged relations, relation-only updates, source dates, caller commit/rollback, nested missing-store imports, and persistence after forced replay failure.
+  - Reran transaction checks for changed-only replay, validation/database/callback/recompute failures, unchanged records, audit dates, cursor progress, deferred relations, sequence safety, archived records, translation preservation, SQL errors, nested imports, and main_rec_id creation/update.
+  - Targeted module upgrade and all 33 existing module tests passed with HTTP and cron execution disabled; Python syntax and git diff whitespace checks passed.
+  - Regression scripts and fixtures remain outside the addon under /tmp/replication_postcommit_e8hf1_7k; no production database writes or service restart were performed.
+  - No new or changed UI strings; ar.po and ar_001.po require no translation changes.
 - Files changed:
   - ab_odoo_replication/models/ab_odoo_replication.py
-  - ab_odoo_replication/tests/test_replication_override.py
   - ab_odoo_replication/changelog.d/2026-09-03-report-server-passive-cleanup.md
