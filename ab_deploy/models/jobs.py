@@ -131,7 +131,8 @@ class DeployJob(models.Model):
             raise UserError(_('Only unknown executions can be resolved.'))
         return {'type': 'ir.actions.act_window', 'name': _('Resolve Execution'),
                 'res_model': 'ab_deploy_resolution', 'view_mode': 'form', 'target': 'new',
-                'context': {'default_job_id': self.id}}
+                'context': {'default_job_id': self.id,
+                            'default_conflict_id': self.env.context.get('ab_deploy_conflict_id', False)}}
 
     def _resolve(self, note):
         self._require_role('administrator')
@@ -151,7 +152,7 @@ class DeployJob(models.Model):
         if report['alive']:
             raise UserError(_('The remote tmux session is still running. Wait for it to finish.'))
         state = report['state'] if report['state'] in ('succeeded', 'failed') else 'failed'
-        self._set({'state': state, 'exit_code': report.get('exit_code', 1), 'resolution_note': note,
+        self._set({'state': state, 'stage': 'finished', 'exit_code': report.get('exit_code', 1), 'resolution_note': note.strip(),
                    'log_tail': report.get('log', '')[-65536:], 'error': False})
         if self.odoo_log_status in ('pending', 'error'):
             self._set({'odoo_log_status': 'pending', 'odoo_log_failures': 0})

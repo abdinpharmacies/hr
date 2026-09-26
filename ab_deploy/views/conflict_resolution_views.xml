@@ -1,0 +1,41 @@
+<odoo>
+    <record id="view_conflict_resolution_form" model="ir.ui.view">
+        <field name="name">ab_deploy_conflict_resolution_form</field>
+        <field name="model">ab_deploy_conflict</field>
+        <field name="inherit_id" ref="view_conflict_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='conflict_ids']/list/field[@name='stage']" position="after">
+                <field name="last_checked_at"/>
+                <button name="action_resolve" type="object" string="Check and Resolve"
+                        groups="ab_deploy.group_administrator" invisible="state != 'unknown'"
+                        context="{'ab_deploy_conflict_id': parent.id}"/>
+            </xpath>
+            <field name="conflict_ids" position="before">
+                <p>Running executions must finish. Unknown executions require inspection by a Deployment Administrator.</p>
+            </field>
+        </field>
+    </record>
+    <record id="view_request_conflict_resolution_form" model="ir.ui.view">
+        <field name="name">ab_deploy_request_conflict_resolution_form</field>
+        <field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="view_request_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_ids']/list" position="inside">
+                <button name="action_resolve" type="object" string="Check and Resolve"
+                        groups="ab_deploy.group_administrator" invisible="state != 'unknown'"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_resolution_guidance_form" model="ir.ui.view">
+        <field name="name">ab_deploy_resolution_guidance_form</field>
+        <field name="model">ab_deploy_resolution</field>
+        <field name="inherit_id" ref="view_resolution_form"/>
+        <field name="arch" type="xml">
+            <field name="job_id" position="after"><field name="conflict_id" invisible="1"/></field>
+            <xpath expr="//footer" position="before">
+                <p>Check the server before confirming and describe your inspection. If completion evidence is missing and the execution session is no longer running, resolution records Failed. SSH or response errors leave the execution unchanged.</p>
+                <p>Resolution does not queue a new deployment. Review the refreshed conflicts and confirm queuing separately. For an already queued deployment with no active queue run, use Resume Monitoring.</p>
+            </xpath>
+        </field>
+    </record>
+</odoo>

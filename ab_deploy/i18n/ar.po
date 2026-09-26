@@ -3801,3 +3801,91 @@ msgid ""
 msgstr ""
 "انتظر انتهاء عمليات التنفيذ ومهام قائمة الانتظار النشطة قبل إعادة تعيين "
 "المنفذ."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_resolution_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_conflict_resolution_form
+msgid "Check and Resolve"
+msgstr "فحص وحسم الحالة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_guidance_form
+msgid ""
+"Check the server before confirming and describe your inspection. If "
+"completion evidence is missing and the execution session is no longer "
+"running, resolution records Failed. SSH or response errors leave the "
+"execution unchanged."
+msgstr ""
+"افحص الخادم قبل التأكيد وسجّل تفاصيل الفحص. إذا لم يوجد دليل على اكتمال "
+"التنفيذ ولم تعد جلسة التنفيذ تعمل، يُسجّل التنفيذ كفاشل. أخطاء اتصال SSH أو "
+"الاستجابة تترك التنفيذ دون تغيير."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_resolution__conflict_id
+msgid "Conflict"
+msgstr "تعارض"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid "Deployment Queue"
+msgstr "قائمة انتظار النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid "Deployment queued. Older waiting executions canceled: %s."
+msgstr ""
+"تمت إضافة النشر إلى قائمة الانتظار. عدد عمليات التنفيذ القديمة المنتظرة التي"
+" تم إلغاؤها: %s."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid "No older executions are blocking this deployment."
+msgstr "لا توجد عمليات تنفيذ أقدم تعطل هذا النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid ""
+"Other deployments are blocking these servers. Their details are restricted."
+msgstr "توجد عمليات نشر أخرى تعطل هذه الخوادم. تفاصيلها غير متاحة لصلاحياتك."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+msgid "Remaining blockers: %s"
+msgstr "عمليات التنفيذ التي لا تزال تعطل النشر: %s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_resolution_guidance_form
+msgid ""
+"Resolution does not queue a new deployment. Review the refreshed conflicts "
+"and confirm queuing separately. For an already queued deployment with no "
+"active queue run, use Resume Monitoring."
+msgstr ""
+"حسم الحالة لا يضيف نشراً جديداً إلى قائمة الانتظار. راجع التعارضات المحدّثة "
+"وأكّد الإضافة إلى قائمة الانتظار بشكل منفصل. إذا كان النشر في قائمة الانتظار"
+" بالفعل دون مهمة نشطة، فاستخدم استئناف المراقبة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/conflict.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_resolution_form
+msgid ""
+"Running executions must finish. Unknown executions require inspection by a "
+"Deployment Administrator."
+msgstr ""
+"يجب أن تنتهي عمليات التنفيذ الجارية. عمليات التنفيذ مجهولة الحالة تتطلب "
+"فحصاً بواسطة مسؤول النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/resolution.py:0
+msgid ""
+"This execution is no longer a conflict. Reopen the deployment queue to "
+"review current blockers."
+msgstr ""
+"لم يعد هذا التنفيذ ضمن التعارضات. أعد فتح قائمة انتظار النشر لمراجعة "
+"العمليات التي تعطل النشر حالياً."

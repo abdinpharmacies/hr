@@ -1,5 +1,22 @@
 # Deployment Manager
 
+## Cancel waiting deployments and resolve blockers
+
+**Cancel Older Waiting Executions and Queue** cancels only waiting executions on
+the selected servers. A persistent notification lists remaining visible blockers;
+restricted deployments receive a generic notice. Running executions must finish.
+
+For an Unknown execution, a Deployment Administrator can choose **Check and Resolve**
+from the conflict list or the request's Execution Jobs list. Inspect the server and
+enter an inspection note. Confirmation checks SSH again and refuses while the
+execution's tmux session is alive. Missing completion evidence with no live session
+records Failed; connection or malformed-response errors leave the job unchanged.
+
+Resolution from the conflict screen returns to refreshed conflicts and preserves
+the selected targets. Confirm queuing separately. Already queued deployments with
+an active queue run can proceed once their blockers are resolved; use **Resume
+Monitoring** if there is no active run. Resolution never replays the old script.
+
 ## Manually resolve a failed server
 
 Open the failed record under **Execution Jobs** and choose **Mark as Manually Resolved**.

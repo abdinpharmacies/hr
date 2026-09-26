@@ -293,6 +293,8 @@ class DeployRun(models.Model):
             job._set({'launch_intent': True})
             return True
         if kind == 'stage':
+            if job.state in ('succeeded', 'failed'):
+                return False
             job._set({'stage': event['stage'], 'last_checked_at': fields.Datetime.now()})
             attempt._update({'stage': event['stage']})
             return True

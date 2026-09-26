@@ -1,6 +1,6 @@
 {
     'name': 'Deployment Manager',
-    'version': '19.0.4.8.0',
+    'version': '19.0.4.9.0',
     'license': 'LGPL-3',
     'category': 'Administration',
     'author': 'Abdin Pharmacies',
@@ -29,6 +29,7 @@
         'wizard/recovery_views.xml',
         'wizard/conflict_views.xml',
         'views/request_security_views.xml',
+        'views/conflict_resolution_views.xml',
     ],
     'assets': {
         'web.assets_backend': [

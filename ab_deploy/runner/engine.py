@@ -182,6 +182,8 @@ def parse_monitor(output):
         key, sep, value = line.partition(':')
         if not sep or key not in {'status', 'started_at', 'finished_at', 'log', 'alive'} or key in result:
             raise ValueError('Invalid remote status response')
+        if key == 'alive' and value not in ('0', '1'):
+            raise ValueError('Invalid remote session response')
         result[key] = value == '1' if key == 'alive' else base64.b64decode(value, validate=True).decode(errors='replace')
     if set(result) != {'status', 'started_at', 'finished_at', 'log', 'alive'}:
         raise ValueError('Incomplete remote status response')
