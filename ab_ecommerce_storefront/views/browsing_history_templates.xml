@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="browsing_history_cards" name="Abdin Browsing History Cards">
+        <t t-foreach="products" t-as="product">
+            <div class="ab-storefront-history-card"
+                 t-att-data-ab-history-product-id="product.id"
+                 t-att-data-ab-history-product-name="product.name">
+                <t t-set="ab_card_variants" t-value="ab_history_variants"/>
+                <t t-set="ab_card_prices" t-value="ab_history_prices"/>
+                <t t-set="ab_card_offer_product_ids" t-value="[]"/>
+                <t t-set="ab_card_wishlist_product_ids" t-value="ab_history_wishlist_product_ids"/>
+                <t t-set="ab_card_is_wishlisted_override"
+                   t-value="ab_card_variants.get(product.id) and ab_card_variants[product.id].id in ab_card_wishlist_product_ids"/>
+                <t t-set="ab_card_history_actions" t-value="True"/>
+                <t t-call="ab_ecommerce_storefront.product_card"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="browsing_history_rail" name="Abdin Recently Viewed Rail">
+        <section class="ab-storefront-history-rail d-none"
+                 data-ab-history-rail=""
+                 t-att-data-ab-history-limit="ab_history_limit or 10"
+                 t-att-data-ab-history-exclude-current="ab_history_exclude_current or ''"
+                 aria-labelledby="abStorefrontHistoryRailTitle">
+            <div class="container">
+                <div class="ab-storefront-section-heading ab-storefront-history-heading d-flex align-items-end justify-content-between gap-3 mb-4">
+                    <div>
+                        <span class="ab-storefront-kicker">Recently Viewed</span>
+                        <h2 id="abStorefrontHistoryRailTitle" class="mb-0">Recently Viewed</h2>
+                        <p class="mb-0">Products you recently viewed</p>
+                    </div>
+                    <a href="/my/browsing-history" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">
+                        View all
+                        <i class="fa fa-arrow-right ms-1" aria-hidden="true" title="View all"/>
+                    </a>
+                </div>
+                <div class="ab-storefront-history-status" data-ab-history-status="" role="status" aria-live="polite"/>
+                <div class="ab-storefront-history-skeleton" data-ab-history-skeleton="" aria-hidden="true">
+                    <span/><span/><span/><span/>
+                </div>
+                <div class="ab-storefront-history-rail-track" data-ab-history-products="" tabindex="0"/>
+            </div>
+        </section>
+    </template>
+
+    <template id="browsing_history_page" name="Abdin Browsing History Page">
+        <t t-call="website.layout">
+            <t t-set="body_classname" t-value="'ab-storefront-history-page-body'"/>
+            <div id="wrap" class="ab-storefront-history-page" data-ab-history-page="" t-att-data-ab-history-limit="ab_history_limit">
+                <section class="ab-storefront-history-hero">
+                    <div class="container">
+                        <nav class="ab-storefront-history-breadcrumb" aria-label="Breadcrumb">
+                            <a href="/">Home</a>
+                            <i class="fa fa-angle-right" aria-hidden="true" title="Breadcrumb separator"/>
+                            <span aria-current="page">Your Browsing History</span>
+                        </nav>
+                        <div class="ab-storefront-history-hero-content">
+                            <div>
+                                <span class="ab-storefront-kicker">Recently Viewed</span>
+                                <h1>Your Browsing History</h1>
+                                <p>Products you've recently viewed</p>
+                            </div>
+                            <button type="button"
+                                    class="btn ab-storefront-history-clear"
+                                    data-ab-history-clear=""
+                                    disabled="disabled">
+                                <i class="fa fa-trash-o me-1" aria-hidden="true" title="Clear history"/>
+                                Clear history
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="ab-storefront-history-content">
+                    <div class="container">
+                        <div class="ab-storefront-history-toolbar">
+                            <label class="visually-hidden" for="abStorefrontHistorySearch">Search in history</label>
+                            <div class="ab-storefront-history-search">
+                                <i class="fa fa-search" aria-hidden="true" title="Search"/>
+                                <input id="abStorefrontHistorySearch"
+                                       type="search"
+                                       placeholder="Search in history..."
+                                       aria-label="Search in history"
+                                       data-ab-history-search=""/>
+                            </div>
+                        </div>
+
+                        <div class="ab-storefront-history-section-title">
+                            <h2>Recently Viewed</h2>
+                            <span data-ab-history-count=""/>
+                        </div>
+
+                        <div class="ab-storefront-history-status" data-ab-history-status="" role="status" aria-live="polite"/>
+                        <div class="ab-storefront-history-skeleton ab-storefront-history-page-skeleton" data-ab-history-skeleton="" aria-hidden="true">
+                            <span/><span/><span/><span/><span/><span/><span/><span/>
+                        </div>
+                        <div class="ab-storefront-history-grid" data-ab-history-products=""/>
+
+                        <div class="ab-storefront-history-empty d-none" data-ab-history-empty="">
+                            <span aria-hidden="true"><i class="fa fa-history" title="Browsing history"/></span>
+                            <h2>Nothing here yet</h2>
+                            <p>Products you view will appear here so you can easily find them again.</p>
+                            <a href="/shop" class="btn btn-primary" role="button">Explore Products</a>
+                        </div>
+
+                        <div class="ab-storefront-history-empty ab-storefront-history-no-results d-none" data-ab-history-no-results="">
+                            <span aria-hidden="true"><i class="fa fa-search" title="Search"/></span>
+                            <h2>No matching products</h2>
+                            <p>Try another search term within your recently viewed products.</p>
+                        </div>
+
+                        <div class="ab-storefront-history-actions">
+                            <button type="button" class="btn btn-outline-primary d-none" data-ab-history-load-more="">
+                                Load more
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
