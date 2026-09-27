@@ -3,6 +3,25 @@
 from odoo import _, api, fields, models
 
 
+def _employee_hours_dependencies(model, employee_path):
+    """Register optional HR inputs only when their owning module is installed."""
+    employee_fields = model.env['ab_hr_employee']._fields
+    dependencies = [employee_path]
+    if 'day_off' in employee_fields:
+        # Reuse the basic-effect inverse relation for ORM triggers only. Its UI
+        # domain excludes hours effects; the hours helper still searches all
+        # effects. Odoo follows the unfiltered employee_id inverse for triggers.
+        dependencies.extend(
+            f'{employee_path}.day_off.{name}'
+            for name in ('effect_value', 'active', 'effect_type_id.basic_working_hour_number')
+        )
+    if 'daily_working_hours' in employee_fields:
+        dependencies.append(f'{employee_path}.daily_working_hours')
+    if 'resource_calendar_id' in employee_fields:
+        dependencies.append(f'{employee_path}.resource_calendar_id.hours_per_day')
+    return dependencies
+
+
 class ManpowerHourNeed(models.Model):
     _name = 'ab_hr_manpower_hour_need'
     _inherit = ['mail.thread', 'mail.activity.mixin']
@@ -51,6 +70,8 @@ class ManpowerHourNeed(models.Model):
     )
     actual_available_hours = fields.Float(
         string='Actual Hours',
+        compute='_compute_actual_available_hours',
+        store=True,
     )
     shortage_hours = fields.Float(
         string='Shortage Hours',
@@ -123,6 +144,21 @@ class ManpowerHourNeed(models.Model):
             rec.employee_shortage_count = rec.current_employee_count - rec.required_employee_count
             rec.employee_capacity_status = rec._get_capacity_status(rec.employee_shortage_count)
 
+    @api.depends(lambda self: [
+        'employee_line_ids.actual_hours',
+        'default_actual_daily_hours',
+        *_employee_hours_dependencies(self, 'actual_employee_ids'),
+    ])
+    def _compute_actual_available_hours(self):
+        for rec in self:
+            if rec.employee_line_ids:
+                rec.actual_available_hours = sum(rec.employee_line_ids.mapped('actual_hours'))
+            else:
+                rec.actual_available_hours = sum(
+                    rec._get_employee_actual_hours(employee)
+                    for employee in rec.actual_employee_ids
+                )
+
     @api.depends('required_operating_hours', 'actual_available_hours')
     def _compute_shortage_hours(self):
         for rec in self:
@@ -193,8 +229,6 @@ class ManpowerHourNeed(models.Model):
             values = rec._get_actual_capacity_values()
             rec.actual_employee_ids = values['actual_employee_ids']
             rec.employee_line_ids = values['employee_line_ids']
-            rec.actual_available_hours = values['actual_available_hours']
-            rec.shortage_hours = values['actual_available_hours'] - rec.required_operating_hours
 
     @api.depends('workplace.name', 'job_title.name')
     def _compute_display_name(self):
@@ -256,46 +290,14 @@ class ManpowerHourNeed(models.Model):
         self.ensure_one()
         employees = self._get_actual_employees()
         line_commands = [(5, 0, 0)]
-        actual_hours = 0.0
         for employee in employees:
-            employee_hours = self._get_employee_actual_hours(employee)
-            actual_hours += employee_hours
             line_commands.append((0, 0, {
                 'employee_id': employee.id,
-                'actual_hours': employee_hours,
             }))
         return {
             'actual_employee_ids': [(6, 0, employees.ids)],
             'employee_line_ids': line_commands,
-            'actual_available_hours': actual_hours,
         }
-
-    @api.model
-    def _refresh_actual_hours_for_employees(self, employees):
-        if not employees:
-            return
-        plans = self.sudo().search([
-            '|',
-            ('employee_line_ids.employee_id', 'in', employees.ids),
-            ('actual_employee_ids', 'in', employees.ids),
-        ])
-        for plan in plans:
-            if plan.employee_line_ids:
-                for line in plan.employee_line_ids:
-                    line.actual_hours = plan._get_employee_actual_hours(line.employee_id)
-                line_employees = plan.employee_line_ids.mapped('employee_id')
-                plan.write({
-                    'actual_employee_ids': [(6, 0, line_employees.ids)],
-                    'actual_available_hours': sum(plan.employee_line_ids.mapped('actual_hours')),
-                })
-                continue
-
-            plan.write({
-                'actual_available_hours': sum(
-                    plan._get_employee_actual_hours(employee)
-                    for employee in plan.actual_employee_ids
-                ),
-            })
 
     def _get_employee_actual_hours(self, employee):
         self.ensure_one()
@@ -307,7 +309,7 @@ class ManpowerHourNeed(models.Model):
     def _get_employee_basic_working_hour_effect(self, employee):
         self.ensure_one()
         if 'ab_hr_basic_effect' not in self.env.registry.models:
-            return self.env['ab_hr_basic_effect']
+            return False
         return self.env['ab_hr_basic_effect'].sudo().search([
             ('employee_id', '=', employee.id),
             ('effect_type_id.basic_working_hour_number', '=', True),
@@ -339,4 +341,17 @@ class ManpowerHourNeedLine(models.Model):
     user_id = fields.Many2one(related='employee_id.user_id', string='User')
     job_title = fields.Many2one(related='employee_id.job_id', string='Job Title')
     department_id = fields.Many2one(related='employee_id.department_id', string='Department')
-    actual_hours = fields.Float(string='Actual Hours')
+    actual_hours = fields.Float(
+        string='Actual Hours', compute='_compute_actual_hours', store=True,
+    )
+
+    @api.depends(lambda self: [
+        'manpower_hour_need_id.default_actual_daily_hours',
+        *_employee_hours_dependencies(self, 'employee_id'),
+    ])
+    def _compute_actual_hours(self):
+        for line in self:
+            line.actual_hours = (
+                line.manpower_hour_need_id._get_employee_actual_hours(line.employee_id)
+                if line.manpower_hour_need_id and line.employee_id else 0.0
+            )

@@ -76,14 +76,13 @@ class TestManpowerHourNeed(TransactionCase):
         capacity_values = {
             'actual_employee_ids': [(6, 0, [])],
             'employee_line_ids': [(5, 0, 0)],
-            'actual_available_hours': 60.0,
         }
 
         with patch.object(type(plan), '_get_actual_capacity_values', return_value=capacity_values):
             plan._onchange_capacity_inputs()
 
-        self.assertEqual(plan.actual_available_hours, 60.0)
-        self.assertEqual(plan.shortage_hours, -20.0)
+        self.assertEqual(plan.actual_available_hours, 0.0)
+        self.assertEqual(plan.shortage_hours, -80.0)
 
     def test_shortage_filter_targets_negative_variance(self):
         view = self.env.ref('ab_manpower_need.manpower_hour_need_search')
@@ -120,7 +119,6 @@ class TestManpowerHourNeed(TransactionCase):
                 'workplace': department.id,
                 'required_employee_count': 2,
                 'required_operating_hours': 80.0,
-                'actual_available_hours': 60.0,
             })
             self.assertEqual(auto_fetch.call_count, 1)
 
