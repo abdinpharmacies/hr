@@ -7,5 +7,7 @@
                   'ab_odoo_sync.report_database': '--- report_db',
                   'ab_odoo_sync.hdd_serial': '--- Optional loopback development serial',
                   'ab_odoo_sync.batch_size': '--- Optional, for example 1000',
+                  'ab_odoo_sync.upload_batch_delay_seconds': '5',
+                  'ab_odoo_sync.use_branch_tokens': 'True',
               },)"/>
 </odoo>

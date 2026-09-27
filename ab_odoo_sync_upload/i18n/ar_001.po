@@ -125,6 +125,7 @@ msgstr "رقم قاعدة البيانات"
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_service__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_orm_hook__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_client_token__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -149,6 +150,7 @@ msgstr "البيانات"
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_service__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_orm_hook__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_client_token__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -904,3 +906,52 @@ msgstr "يجب تنفيذ إرسال الرفع عبر قائمة الانتظا
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
 msgid "Upload job records do not match its queued arguments."
 msgstr "سجلات مهمة الرفع لا تطابق المعاملات المحفوظة في قائمة الانتظار."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Another branch upload is active"
+msgstr "توجد عملية رفع أخرى نشطة للفرع"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model,name:ab_odoo_sync_upload.model_ab_odoo_sync_client_token
+msgid "Branch Sync Client Token"
+msgstr "رمز عميل مزامنة الفرع"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.constraint,message:ab_odoo_sync_upload.constraint_ab_odoo_sync_client_token_unique_fingerprint
+msgid "Connection fingerprint must be unique."
+msgstr "يجب أن تكون بصمة الاتصال فريدة."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_client_token__expires_at
+msgid "Expires At"
+msgstr "تنتهي الصلاحية في"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_client_token__fingerprint
+msgid "Fingerprint"
+msgstr "بصمة الاتصال"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_client_token.py:0
+msgid "Invalid sync token response"
+msgstr "استجابة رمز المزامنة غير صالحة"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Live branch uploads take priority"
+msgstr "عمليات الرفع المباشرة للفروع لها الأولوية"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_client_token.py:0
+msgid "Sync token refresh is busy"
+msgstr "تحديث رمز المزامنة قيد التنفيذ"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_client_token__token
+msgid "Token"
+msgstr "الرمز"
