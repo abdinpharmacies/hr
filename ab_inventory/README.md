@@ -53,20 +53,18 @@ movement without posting it twice; changing a saved effect is rejected.
 3. Call `self.env['ab_inventory_process']` from trusted server-side business
    methods. Do not inherit `ab_inventory_process` into the business model.
 4. Give relevant users the Inventory User or Inventory Manager role through
-   security XML. Ensure the store authorization is correct before posting.
+   security XML. Ensure the store authorization is correct before posting::
 
-```python
-from odoo import fields, models
+       from odoo import fields, models
 
 
-class InventoryMovement(models.Model):
-    _inherit = 'ab_inventory'
+       class InventoryMovement(models.Model):
+           _inherit = 'ab_inventory'
 
-    model_ref = fields.Selection(
-        selection_add=[('my_sale_line', 'Sale Line')],
-        ondelete={'my_sale_line': 'set default'},
-    )
-```
+           model_ref = fields.Selection(
+               selection_add=[('my_sale_line', 'Sale Line')],
+               ondelete={'my_sale_line': 'set default'},
+           )
 
 The business line must already exist and have a `source_id` and `uom_id`.
 Pass a **positive** quantity in the line's unit; use `sign=1` for a receipt
@@ -75,21 +73,19 @@ and rejects an invalid factor or fractional smallest-unit result. It does
 not round stock quantities. It never reads a `bonus` field: each business
 module decides the quantity to post. For example, a normal line may pass
 `line.qty`, while `ab_purchase` intentionally passes
-`purchase_line.qty + purchase_line.bonus`.
+`purchase_line.qty + purchase_line.bonus`::
 
-```python
-process = self.env['ab_inventory_process']
+    process = self.env['ab_inventory_process']
 
-# Observe an expected receipt without increasing on-hand stock.
-process.inventory_write(line, line.qty, header.store_id.id, status='pending')
+    # Observe an expected receipt without increasing on-hand stock.
+    process.inventory_write(line, line.qty, header.store_id.id, status='pending')
 
-# Save the same line when the receipt is approved.
-process.inventory_write(line, line.qty, header.store_id.id, status='saved')
+    # Save the same line when the receipt is approved.
+    process.inventory_write(line, line.qty, header.store_id.id, status='saved')
 
-# Issue stock from a sale line. The batch cannot go below zero.
-process.inventory_write(sale_line, sale_line.qty, sale.store_id.id,
-                        status='saved', sign=-1)
-```
+    # Issue stock from a sale line. The batch cannot go below zero.
+    process.inventory_write(sale_line, sale_line.qty, sale.store_id.id,
+                            status='saved', sign=-1)
 
 The line's model name and database ID become `(model_ref, res_id)`. Reusing one
 line for two sources is not supported: create two business lines if a sale or
@@ -99,11 +95,11 @@ document. Do not commit between lines or call the process through `sudo()`.
 
 ## Read on-hand stock
 
-```python
-process = self.env['ab_inventory_process']
-product_qty = process.get_balance(store.id, product_id=product.id)
-batch_quantities = process.get_source_balances(store.id, product_id=product.id)
-```
+::
+
+    process = self.env['ab_inventory_process']
+    product_qty = process.get_balance(store.id, product_id=product.id)
+    batch_quantities = process.get_source_balances(store.id, product_id=product.id)
 
 These are two methods. `get_balance()` returns one smallest-unit integer;
 pass `source_id=source.id` instead of `product_id` to read one batch. A

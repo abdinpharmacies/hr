@@ -59,7 +59,7 @@
                 <field name="source_id"/>
                 <filter name="saved" string="Saved" domain="[('status','=','saved')]"/>
                 <filter name="pending" string="Pending" domain="[('status','=','pending')]"/>
-                <filter name="today" string="Today" date="saved_at" default_period="today"/>
+                <filter name="today" string="Today" date="saved_at"/>
                 <group>
                     <filter name="group_store" string="Store" context="{'group_by':'store_id'}"/>
                     <filter name="group_item" string="Item" context="{'group_by':'product_id'}"/>
