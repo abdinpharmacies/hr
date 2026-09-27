@@ -108,6 +108,31 @@ $ab-cc-surface: #f6f9f8;
     }
 }
 
+.ab_cc_public_reference {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 7px 0 2px;
+    padding: 4px 8px;
+    border: 1px solid rgba($ab-cc-green, 0.2);
+    border-radius: 999px;
+    color: $ab-cc-green;
+    background: $ab-cc-green-soft;
+    font-size: 12px;
+
+    span {
+        color: $ab-cc-muted;
+        font-weight: 650;
+    }
+
+    strong {
+        direction: ltr;
+        unicode-bidi: isolate;
+        font-weight: 800;
+    }
+}
+
 .ab_cc_eyebrow,
 .ab_cc_section_head > div > span,
 .ab_cc_panel > div > span,
@@ -571,6 +596,64 @@ $ab-cc-surface: #f6f9f8;
     }
 }
 
+.ab_cc_prescription_image_button {
+    position: relative;
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    overflow: hidden;
+    color: $ab-cc-green;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    cursor: zoom-in;
+
+    &:hover,
+    &:focus-visible {
+        outline: 2px solid rgba($ab-cc-green, .36);
+        outline-offset: 2px;
+
+        .ab_cc_prescription_zoom {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    img {
+        display: block;
+    }
+}
+
+.ab_cc_prescription_zoom {
+    position: absolute;
+    inset-inline-end: 4px;
+    inset-block-end: 4px;
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border-radius: 50%;
+    background: rgba($ab-cc-green, .92);
+    opacity: 0;
+    transform: translateY(3px);
+    transition:
+        opacity .16s ease,
+        transform .16s ease;
+
+    svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+    }
+}
+
 .ab_call_center_order_list {
     .o_data_cell.o_field_cell[name="name"] {
         color: $ab-cc-green;
@@ -583,6 +666,94 @@ $ab-cc-surface: #f6f9f8;
 
     .o_data_row:hover {
         background-color: rgba($ab-cc-green, 0.035);
+    }
+}
+
+.ab_cc_prescription_image_dialog {
+    border-radius: 8px;
+
+    .modal-body {
+        padding: 0;
+    }
+}
+
+.ab_cc_prescription_image_viewer {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+
+    header {
+        display: grid;
+        gap: 2px;
+
+        span {
+            color: $ab-cc-green;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        strong {
+            color: $ab-cc-text;
+            font-size: 18px;
+            line-height: 1.25;
+        }
+
+        small {
+            color: $ab-cc-muted;
+            font-size: 13px;
+        }
+    }
+}
+
+.ab_cc_prescription_image_frame {
+    display: flex;
+    min-height: 420px;
+    max-height: 68vh;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    overflow: hidden;
+    border: 1px solid $ab-cc-border;
+    border-radius: 8px;
+    background: $ab-cc-surface;
+
+    &.is-zoomed .ab_cc_prescription_image_stage {
+        cursor: zoom-out;
+
+        img {
+            transform: scale(2.25);
+        }
+    }
+}
+
+.ab_cc_prescription_image_stage {
+    position: relative;
+    display: inline-flex;
+    max-width: 100%;
+    max-height: 66vh;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 6px;
+    cursor: zoom-in;
+
+    &:focus-visible {
+        outline: 3px solid rgba($ab-cc-blue, .28);
+        outline-offset: 3px;
+    }
+
+    img {
+        display: block;
+        max-width: 100%;
+        max-height: 66vh;
+        object-fit: contain;
+        border: 1px solid rgba($ab-cc-border, .8);
+        border-radius: 6px;
+        background: #fff;
+        box-shadow: 0 18px 44px rgba(17, 61, 48, .16);
+        transition: transform .18s ease;
+        will-change: transform;
     }
 }
 

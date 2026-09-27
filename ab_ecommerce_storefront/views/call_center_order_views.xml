@@ -17,6 +17,7 @@
                 <field name="currency_id" column_invisible="True"/>
                 <field name="state" column_invisible="True"/>
                 <field name="name" string="Order" readonly="1" decoration-bf="1"/>
+                <field name="ab_public_reference" string="Tracking Ref" readonly="1" optional="show"/>
                 <field name="partner_id" string="Customer" readonly="1"/>
                 <field name="ab_call_center_order_type"
                        widget="badge"
@@ -60,8 +61,8 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <field name="name" position="attributes">
-                <attribute name="string">Order, Customer, Phone or Email</attribute>
-                <attribute name="filter_domain">['|', '|', '|', '|', ('name', 'ilike', self), ('client_order_ref', 'ilike', self), ('partner_id', 'child_of', self), ('partner_id.phone', 'ilike', self), ('partner_id.email', 'ilike', self)]</attribute>
+                <attribute name="string">Order, Tracking Ref, Customer, Phone or Email</attribute>
+                <attribute name="filter_domain">['|', '|', '|', '|', ('ab_public_reference', 'ilike', self), ('name', 'ilike', self), ('partner_id', 'child_of', self), ('partner_id.phone', 'ilike', self), ('partner_id.email', 'ilike', self)]</attribute>
             </field>
             <field name="partner_id" position="after">
                 <field name="ab_call_center_order_type"/>
@@ -179,6 +180,12 @@
                         class="btn-primary"
                         groups="sales_team.group_sale_manager"
                         invisible="state != 'sale' or ab_call_center_delivery_status != 'warehouse_done' or ab_last_mile_status == 'delivered'"/>
+                <button name="action_ab_prescription_confirm_customer_call"
+                        string="Customer Call Confirmed"
+                        type="object"
+                        class="btn-primary"
+                        groups="sales_team.group_sale_salesman"
+                        invisible="ab_call_center_order_type != 'prescription' or ab_prescription_stage != 'waiting_call_center'"/>
             </xpath>
             <xpath expr="//form" position="attributes">
                 <attribute name="class" add="ab_call_center_order_form" separator=" "/>
@@ -194,6 +201,7 @@
                 <field name="ab_call_center_status" invisible="1"/>
                 <field name="ab_call_center_delivery_status" invisible="1"/>
                 <field name="ab_call_center_payment_status" invisible="1"/>
+                <field name="ab_prescription_stage" invisible="1"/>
                 <field name="ab_last_mile_status" invisible="1"/>
                 <field name="ab_call_center_workspace_data"
                        widget="ab_call_center_order_workspace"
@@ -201,8 +209,9 @@
                        readonly="1"
                        nolabel="1"/>
                 <group name="ab_call_center_coordination" class="ab_cc_coordination">
-                    <group string="Customer &amp; Delivery" name="ab_call_center_customer">
-                        <field name="partner_id"
+	                    <group string="Customer &amp; Delivery" name="ab_call_center_customer">
+	                        <field name="ab_public_reference" readonly="1"/>
+	                        <field name="partner_id"
                                widget="res_partner_many2one"
                                context="{'display_website': True, 'res_partner_search_mode': 'customer', 'show_address': 1, 'show_vat': True}"
                                placeholder="Type to find a customer..."

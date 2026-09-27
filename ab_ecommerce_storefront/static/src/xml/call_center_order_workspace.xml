@@ -6,6 +6,10 @@
                 <div class="ab_cc_identity_main">
                     <span class="ab_cc_eyebrow">Call Center order workspace</span>
                     <h1 id="abCcOrderTitle" t-esc="data.name || 'New'"/>
+                    <p t-if="data.public_reference" class="ab_cc_public_reference">
+                        <span>Tracking reference</span>
+                        <strong t-esc="data.public_reference"/>
+                    </p>
                     <strong t-esc="data.customer?.name"/>
                     <div class="ab_cc_badges">
                         <span t-attf-class="ab_cc_badge ab_cc_badge--#{data.order_type?.value || 'normal'}"
@@ -26,7 +30,11 @@
                     <span class="ab_cc_relation_icon" aria-hidden="true">
                         <svg viewBox="0 0 24 24"><path d="M7 4h10v16H7z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
                     </span>
-                    <div><small>Order</small><strong t-esc="data.name"/></div>
+                    <div>
+                        <small>Order</small>
+                        <strong t-esc="data.name"/>
+                        <span t-if="data.public_reference" t-esc="data.public_reference"/>
+                    </div>
                 </div>
                 <span class="ab_cc_relation_arrow" aria-hidden="true">›</span>
                 <div t-attf-class="ab_cc_relation_node is-payment is-#{data.payment?.status || 'unpaid'}">
@@ -145,7 +153,16 @@
                     </section>
 
                     <section t-if="data.prescription" class="ab_cc_panel ab_cc_prescription" aria-labelledby="abCcPrescriptionTitle">
-                        <img t-att-src="data.prescription.image_url" alt="Prescription preview"/>
+                        <button type="button"
+                                class="ab_cc_prescription_image_button"
+                                t-on-click="openPrescriptionImage"
+                                title="Open prescription image">
+                            <img t-att-src="data.prescription.image_url" alt="Prescription preview"/>
+                            <span class="ab_cc_prescription_zoom" aria-hidden="true">
+                                <svg viewBox="0 0 24 24"><path d="M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12Z"/><path d="m16 16 4 4M8 11h6M11 8v6"/></svg>
+                            </span>
+                            <span class="visually-hidden">Open prescription image</span>
+                        </button>
                         <div>
                             <span>Prescription</span>
                             <h2 id="abCcPrescriptionTitle" t-esc="data.prescription.name"/>
@@ -199,6 +216,40 @@
                 </article>
             </div>
             <t t-set-slot="footer">
+                <button type="button" class="btn btn-secondary" t-on-click="props.close">Close</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_ecommerce_storefront.CallCenterPrescriptionImageDialog">
+        <Dialog title="props.title" size="'lg'" contentClass="'ab_cc_prescription_image_dialog'">
+            <div class="ab_cc_prescription_image_viewer">
+                <header>
+                    <span>Prescription</span>
+                    <strong t-esc="props.name"/>
+                    <small t-if="props.publicReference" t-esc="props.publicReference"/>
+                </header>
+                <div t-att-class="'ab_cc_prescription_image_frame' + (zoom.active ? ' is-zoomed' : '')">
+                    <div class="ab_cc_prescription_image_stage"
+                         t-on-mousemove="onImageMove"
+                         t-on-click="toggleImageZoom"
+                         t-on-keydown="onImageKeydown"
+                         role="button"
+                         tabindex="0"
+                         aria-label="Open prescription image">
+                        <img t-att-src="props.imageUrl"
+                             t-att-alt="props.name"
+                             t-att-style="imageStyle"/>
+                    </div>
+                </div>
+            </div>
+            <t t-set-slot="footer">
+                <a class="btn btn-outline-primary"
+                   t-att-href="props.imageUrl"
+                   target="_blank"
+                   rel="noopener">
+                    Open in new tab
+                </a>
                 <button type="button" class="btn btn-secondary" t-on-click="props.close">Close</button>
             </t>
         </Dialog>

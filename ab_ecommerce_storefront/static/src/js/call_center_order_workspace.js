@@ -26,6 +26,59 @@ class AbCallCenterDeliveryDialog extends Component {
 }
 
 
+class AbCallCenterPrescriptionImageDialog extends Component {
+    static template = "ab_ecommerce_storefront.CallCenterPrescriptionImageDialog";
+    static components = { Dialog };
+    static props = {
+        close: Function,
+        imageUrl: String,
+        name: String,
+        publicReference: { type: String, optional: true },
+        title: String,
+    };
+
+    setup() {
+        this.zoom = useState({
+            active: false,
+            x: 50,
+            y: 50,
+        });
+    }
+
+    get imageStyle() {
+        return `transform-origin: ${this.zoom.x}% ${this.zoom.y}%;`;
+    }
+
+    onImageMove(event) {
+        const image = event.currentTarget.querySelector("img");
+        const imageRect = (image || event.currentTarget).getBoundingClientRect();
+        if (!imageRect.width || !imageRect.height) {
+            return;
+        }
+        const x = Math.max(0, Math.min(100, ((event.clientX - imageRect.left) / imageRect.width) * 100));
+        const y = Math.max(0, Math.min(100, ((event.clientY - imageRect.top) / imageRect.height) * 100));
+        this.zoom.x = x;
+        this.zoom.y = y;
+    }
+
+    toggleImageZoom(event) {
+        if (event.button && event.button !== 0) {
+            return;
+        }
+        this.onImageMove(event);
+        this.zoom.active = !this.zoom.active;
+    }
+
+    onImageKeydown(event) {
+        if (!["Enter", " "].includes(event.key)) {
+            return;
+        }
+        event.preventDefault();
+        this.zoom.active = !this.zoom.active;
+    }
+}
+
+
 export class AbCallCenterOrderWorkspace extends Component {
     static template = "ab_ecommerce_storefront.CallCenterOrderWorkspace";
     static props = standardFieldProps;
@@ -78,6 +131,19 @@ export class AbCallCenterOrderWorkspace extends Component {
             res_id: pickingId,
             views: [[false, "form"]],
             target: "current",
+        });
+    }
+
+    openPrescriptionImage() {
+        const prescription = this.data.prescription;
+        if (!prescription?.image_url) {
+            return;
+        }
+        this.dialog.add(AbCallCenterPrescriptionImageDialog, {
+            imageUrl: prescription.image_url,
+            name: prescription.name || _t("Prescription"),
+            publicReference: prescription.public_reference || "",
+            title: _t("Prescription image"),
         });
     }
 }
