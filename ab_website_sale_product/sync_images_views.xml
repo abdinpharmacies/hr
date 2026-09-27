@@ -7,14 +7,38 @@
             <field name="arch" type="xml">
                 <form string="Sync Images">
                     <sheet>
-                        <group>
+                        <group string="Configuration">
                             <field name="directory_path"
                                    required="1"
                                    placeholder="/opt/odoo19/product_images"/>
                         </group>
+                        <group string="Results" invisible="not image_sync_summary">
+                            <field name="image_sync_summary" nolabel="1" readonly="1"/>
+                        </group>
+                        <group string="Replacement Confirmation" invisible="not image_sync_confirmation_required">
+                            <field name="image_sync_confirmation_message" nolabel="1" readonly="1"/>
+                            <field name="image_sync_replacement_count" invisible="1"/>
+                            <field name="image_sync_replacement_signature" invisible="1"/>
+                        </group>
+                        <field name="image_sync_line_ids" nolabel="1" readonly="1" invisible="not image_sync_line_ids">
+                            <list string="Image Synchronization Report" create="0" edit="0" delete="0">
+                                <field name="product_code"/>
+                                <field name="product_name"/>
+                                <field name="relative_path"/>
+                                <field name="match_method"/>
+                                <field name="status"/>
+                                <field name="reason"/>
+                                <field name="replaces_existing" optional="hide"/>
+                                <field name="current_checksum" optional="hide"/>
+                                <field name="checksum" optional="hide"/>
+                            </list>
+                        </field>
                     </sheet>
                     <footer>
-                        <button name="action_sync_images" type="object" string="Sync Images" class="btn-primary"/>
+                        <button name="action_preview_images" type="object" string="Scan / Preview" class="btn-secondary" groups="base.group_system"/>
+                        <button name="action_sync_images" type="object" string="Synchronize Images" class="btn-primary" groups="base.group_system" invisible="image_sync_confirmation_required"/>
+                        <button name="action_confirm_replace_images" type="object" string="Replace Existing Images" class="btn-primary" groups="base.group_system" invisible="not image_sync_confirmation_required"/>
+                        <button name="action_sync_new_images_only" type="object" string="Keep Existing Images" class="btn-secondary" groups="base.group_system" invisible="not image_sync_confirmation_required"/>
                         <button string="Cancel" class="btn-secondary" special="cancel"/>
                     </footer>
                 </form>
@@ -42,6 +66,7 @@
                             type="object"
                             string="Sync Images"
                             class="btn-secondary"
+                            groups="base.group_system"
                             display="always"/>
                 </xpath>
             </field>
@@ -57,6 +82,7 @@
                             type="object"
                             string="Sync Images"
                             class="btn-secondary"
+                            groups="base.group_system"
                             display="always"/>
                 </xpath>
             </field>
@@ -71,7 +97,7 @@
                     <field name="website_image_file_found"/>
                     <field name="website_image_file_path" invisible="not website_image_file_found"/>
                 </xpath>
-                <xpath expr="//div[contains(@class, 'abdin_ecommerce_page_actions')]/button[@name='action_open_website_product_page']" position="after">
+                <xpath expr="//div[hasclass('abdin_ecommerce_page_actions')]/button[@name='action_open_website_product_page']" position="after">
                     <button name="action_check_website_product_image" type="object"
                             class="btn abdin_ecommerce_btn_outline btn-block"
                             title="Check Image File">

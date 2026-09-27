@@ -1,4 +1,4 @@
-import os
+import hashlib
 import re
 
 from odoo import _, fields, models
@@ -17,6 +17,20 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
         string="Images Directory",
         default=lambda self: self.env["ab_product"]._get_default_website_image_directory(),
         help="Server directory containing image files named by product code, for example CODE001.jpg.",
+    )
+    image_sync_summary = fields.Text(readonly=True)
+    image_sync_confirmation_required = fields.Boolean(readonly=True)
+    image_sync_confirmation_message = fields.Text(
+        string="Replacement Confirmation",
+        readonly=True,
+    )
+    image_sync_replacement_count = fields.Integer(readonly=True)
+    image_sync_replacement_signature = fields.Char(readonly=True)
+    image_sync_line_ids = fields.One2many(
+        "ab.website.sale.image.sync.report.line",
+        "wizard_id",
+        string="Image Synchronization Report",
+        readonly=True,
     )
 
     def action_sync_codes(self):
@@ -66,63 +80,112 @@ class AbWebsiteSaleAddManyByCodesWizard(models.TransientModel):
 
     def _get_directory_path(self):
         self.ensure_one()
-        directory_path = (self.directory_path or "").strip()
-        if not directory_path:
-            raise UserError(_("Enter an images directory."))
-        directory_path = os.path.abspath(os.path.expanduser(directory_path))
-        if not os.path.isdir(directory_path):
-            raise UserError(_("Directory does not exist: %s") % directory_path)
-        if not os.access(directory_path, os.R_OK):
-            raise UserError(_("Directory is not readable by the Odoo server: %s") % directory_path)
-        return directory_path
+        return self.env["ab.website.product.image.sync.service"].normalize_image_root(self.directory_path)
 
-    def action_sync_images(self):
+    def _check_image_sync_access(self):
+        self.env["ab.website.product.image.sync.service"].check_image_sync_access()
+
+    def _open_image_sync_wizard(self):
         self.ensure_one()
+        self._check_image_sync_access()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Sync Images"),
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "view_id": self.env.ref("ab_website_sale_product.view_sync_images_wizard_form").id,
+            "target": "new",
+        }
+
+    def _replacement_signature(self, plan):
+        replacements = sorted(
+            "%s:%s:%s" % (
+                line["product_id"],
+                line.get("checksum", ""),
+                line.get("current_checksum", ""),
+            )
+            for line in plan["report"]
+            if line["status"] == "matched" and line.get("replaces_existing")
+        )
+        return hashlib.sha256("\n".join(replacements).encode()).hexdigest()
+
+    def _write_image_sync_report(self, plan, confirmation_required=False):
+        self.ensure_one()
+        Service = self.env["ab.website.product.image.sync.service"]
+        Line = self.env["ab.website.sale.image.sync.report.line"].sudo()
+        replacement_count = plan["summary"].get("replacements", 0)
+        confirmation_message = ""
+        if confirmation_required:
+            confirmation_message = _(
+                "%(replacement_count)s matched image(s) belong to products that already have images. "
+                "Do you want to replace them? %(new_count)s new image(s) can be added without replacing existing images."
+            ) % {
+                "replacement_count": replacement_count,
+                "new_count": plan["summary"].get("new_images", 0),
+            }
+        self.image_sync_line_ids.unlink()
+        self.write({
+            "directory_path": plan["image_root"],
+            "image_sync_summary": Service.format_summary(plan),
+            "image_sync_confirmation_required": confirmation_required,
+            "image_sync_confirmation_message": confirmation_message,
+            "image_sync_replacement_count": replacement_count if confirmation_required else 0,
+            "image_sync_replacement_signature": (
+                self._replacement_signature(plan) if confirmation_required else False
+            ),
+        })
+        for index in range(0, len(plan["report"]), 1000):
+            Line.create([
+                dict(line, wizard_id=self.id)
+                for line in plan["report"][index:index + 1000]
+            ])
+        return self._open_image_sync_wizard()
+
+    def action_preview_images(self):
+        self.ensure_one()
+        self._check_image_sync_access()
         directory_path = self._get_directory_path()
         self.env["ir.config_parameter"].sudo().set_param(
             "ab_website_sale_product.image_directory",
             directory_path,
         )
+        plan = self.env["ab.website.product.image.sync.service"].prepare_sync_plan(directory_path)
+        return self._write_image_sync_report(plan)
 
-        products = self.env["ab_product"].sudo().with_context(active_test=False).search([
-            ("website_product_tmpl_id", "!=", False),
-        ])
-        synced_count = 0
-        missing_codes = []
-        failed_codes = []
-        for product in products:
-            image_path = product._find_website_image_file(directory_path)
-            if not image_path:
-                if product.code:
-                    missing_codes.append(product.code)
-                continue
-            try:
-                product._sync_website_product_image_from_file(image_path)
-                synced_count += 1
-            except OSError:
-                failed_codes.append(product.code or str(product.id))
+    def _prepare_image_sync_plan(self):
+        self.ensure_one()
+        self._check_image_sync_access()
+        directory_path = self._get_directory_path()
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_website_sale_product.image_directory",
+            directory_path,
+        )
+        Service = self.env["ab.website.product.image.sync.service"]
+        return Service, Service.prepare_sync_plan(directory_path)
 
-        message = _("Synced %(synced)s image(s). Missing: %(missing)s. Failed: %(failed)s.") % {
-            "synced": synced_count,
-            "missing": len(missing_codes),
-            "failed": len(failed_codes),
-        }
-        if missing_codes[:10]:
-            message += _(" First missing codes: %s.") % ", ".join(missing_codes[:10])
-        if failed_codes[:10]:
-            message += _(" Failed codes: %s.") % ", ".join(failed_codes[:10])
+    def action_sync_images(self):
+        self.ensure_one()
+        Service, plan = self._prepare_image_sync_plan()
+        if plan["summary"].get("replacements"):
+            return self._write_image_sync_report(plan, confirmation_required=True)
+        result = Service.apply_sync_plan(plan)
+        return self._write_image_sync_report(result)
 
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": _("Sync Product Images"),
-                "message": message,
-                "type": "success" if synced_count else "warning",
-                "sticky": bool(missing_codes or failed_codes),
-                "next": {"type": "ir.actions.client", "tag": "reload"},
-            },
-        }
+    def action_confirm_replace_images(self):
+        self.ensure_one()
+        Service, plan = self._prepare_image_sync_plan()
+        replacement_count = plan["summary"].get("replacements", 0)
+        if replacement_count and self._replacement_signature(plan) != self.image_sync_replacement_signature:
+            return self._write_image_sync_report(plan, confirmation_required=True)
+        result = Service.apply_sync_plan(plan, replace_existing=True)
+        return self._write_image_sync_report(result)
+
+    def action_sync_new_images_only(self):
+        self.ensure_one()
+        Service, plan = self._prepare_image_sync_plan()
+        result = Service.apply_sync_plan(plan, replace_existing=False)
+        return self._write_image_sync_report(result)
 
 
 class AbProduct(models.Model):
@@ -138,6 +201,7 @@ class AbProduct(models.Model):
         }
 
     def action_open_sync_images_wizard(self):
+        self.env["ab.website.product.image.sync.service"].check_image_sync_access()
         return {
             "type": "ir.actions.act_window",
             "name": _("Sync Images"),
@@ -146,3 +210,39 @@ class AbProduct(models.Model):
             "view_id": self.env.ref("ab_website_sale_product.view_sync_images_wizard_form").id,
             "target": "new",
         }
+
+
+class AbWebsiteSaleImageSyncReportLine(models.TransientModel):
+    _name = "ab.website.sale.image.sync.report.line"
+    _description = "Product Image Synchronization Report Line"
+    _order = "id"
+
+    wizard_id = fields.Many2one(
+        "ab.website.sale.add.many.by.codes.wizard",
+        required=True,
+        ondelete="cascade",
+    )
+    product_code = fields.Char(readonly=True)
+    product_name = fields.Char(readonly=True)
+    product_id = fields.Integer(readonly=True)
+    matched_identifier = fields.Char(readonly=True)
+    image_path = fields.Char(readonly=True)
+    relative_path = fields.Char(readonly=True)
+    match_method = fields.Char(readonly=True)
+    status = fields.Selection(
+        selection=[
+            ("matched", "Matched"),
+            ("updated", "Updated"),
+            ("unchanged", "Unchanged"),
+            ("kept", "Kept Existing"),
+            ("missing", "Missing"),
+            ("ambiguous", "Ambiguous"),
+            ("invalid", "Invalid"),
+            ("error", "Error"),
+        ],
+        readonly=True,
+    )
+    reason = fields.Char(readonly=True)
+    checksum = fields.Char(readonly=True)
+    current_checksum = fields.Char(readonly=True)
+    replaces_existing = fields.Boolean(readonly=True)

@@ -1086,3 +1086,250 @@ msgstr "تم تحديث مخزون إي بلس حسب الفروع: %(total)s ص
 #: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
 msgid "Prepared %(total)s product(s). %(unchanged)s already matched, %(pending)s pending, %(skipped)s skipped."
 msgstr "تم تجهيز %(total)s منتج: %(unchanged)s مطابق بالفعل، %(pending)s قيد التنفيذ، %(skipped)s متخطى."
+
+#. module: ab_website_sale_product
+msgid "Scan / Preview"
+msgstr "فحص / معاينة"
+
+#. module: ab_website_sale_product
+msgid "Synchronize Images"
+msgstr "مزامنة الصور"
+
+#. module: ab_website_sale_product
+msgid "Image Synchronization Report"
+msgstr "تقرير مزامنة الصور"
+
+#. module: ab_website_sale_product
+msgid "Image Synchronization Report Line"
+msgstr "سطر تقرير مزامنة الصور"
+
+#. module: ab_website_sale_product
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_website_sale_product
+msgid "Results"
+msgstr "النتائج"
+
+#. module: ab_website_sale_product
+msgid "Matched Identifier"
+msgstr "المعرف المطابق"
+
+#. module: ab_website_sale_product
+msgid "Image Path"
+msgstr "مسار الصورة"
+
+#. module: ab_website_sale_product
+msgid "Relative Path"
+msgstr "المسار النسبي"
+
+#. module: ab_website_sale_product
+msgid "Match Method"
+msgstr "طريقة المطابقة"
+
+#. module: ab_website_sale_product
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_website_sale_product
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_website_sale_product
+msgid "Checksum"
+msgstr "بصمة الملف"
+
+#. module: ab_website_sale_product
+msgid "Updated"
+msgstr "تم التحديث"
+
+#. module: ab_website_sale_product
+msgid "Unchanged"
+msgstr "بدون تغيير"
+
+#. module: ab_website_sale_product
+msgid "Missing"
+msgstr "مفقود"
+
+#. module: ab_website_sale_product
+msgid "Ambiguous"
+msgstr "غير حاسم"
+
+#. module: ab_website_sale_product
+msgid "Invalid"
+msgstr "غير صالح"
+
+#. module: ab_website_sale_product
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_website_sale_product
+msgid "Products scanned"
+msgstr "المنتجات التي تم فحصها"
+
+#. module: ab_website_sale_product
+msgid "Images found"
+msgstr "الصور التي تم العثور عليها"
+
+#. module: ab_website_sale_product
+msgid "Matched products"
+msgstr "المنتجات المطابقة"
+
+#. module: ab_website_sale_product
+msgid "Missing images"
+msgstr "الصور المفقودة"
+
+#. module: ab_website_sale_product
+msgid "Ambiguous matches"
+msgstr "المطابقات غير الحاسمة"
+
+#. module: ab_website_sale_product
+msgid "Invalid image files"
+msgstr "ملفات الصور غير الصالحة"
+
+#. module: ab_website_sale_product
+msgid "Already synchronized"
+msgstr "تمت مزامنتها بالفعل"
+
+#. module: ab_website_sale_product
+msgid "Images requiring update"
+msgstr "الصور التي تحتاج إلى تحديث"
+
+#. module: ab_website_sale_product
+msgid "Updated images"
+msgstr "الصور المحدثة"
+
+#. module: ab_website_sale_product
+msgid "Errors"
+msgstr "الأخطاء"
+
+#. module: ab_website_sale_product
+msgid "Empty image file."
+msgstr "ملف الصورة فارغ."
+
+#. module: ab_website_sale_product
+msgid "No matching image was found. Existing Odoo image, if any, will be kept."
+msgstr "لم يتم العثور على صورة مطابقة. سيتم الاحتفاظ بصورة أودو الحالية إن وجدت."
+
+#. module: ab_website_sale_product
+msgid "Multiple matching images were found without a deterministic primary image."
+msgstr "تم العثور على أكثر من صورة مطابقة بدون صورة رئيسية محددة بشكل حاسم."
+
+#. module: ab_website_sale_product
+msgid "Image file does not exist."
+msgstr "ملف الصورة غير موجود."
+
+#. module: ab_website_sale_product
+msgid "Image file is not readable."
+msgstr "ملف الصورة غير قابل للقراءة."
+
+#. module: ab_website_sale_product
+msgid "Image file is empty."
+msgstr "ملف الصورة فارغ."
+
+#. module: ab_website_sale_product
+msgid "Invalid image file: %s"
+msgstr "ملف صورة غير صالح: %s"
+
+#. module: ab_website_sale_product
+msgid "The current Odoo image already matches the source file checksum."
+msgstr "صورة أودو الحالية تطابق بالفعل بصمة ملف المصدر."
+
+#. module: ab_website_sale_product
+msgid "Image is ready to synchronize."
+msgstr "الصورة جاهزة للمزامنة."
+
+#. module: ab_website_sale_product
+msgid "Image synchronized."
+msgstr "تمت مزامنة الصورة."
+
+#. module: ab_website_sale_product
+msgid "Only administrators can synchronize product images."
+msgstr "يمكن للمسؤولين فقط مزامنة صور المنتجات."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+msgid ""
+"%(replacement_count)s matched image(s) belong to products that already have "
+"images. Do you want to replace them? %(new_count)s new image(s) can be added "
+"without replacing existing images."
+msgstr ""
+"توجد %(replacement_count)s صورة مطابقة لمنتجات لديها صور بالفعل. هل تريد "
+"استبدالها؟ يمكن إضافة %(new_count)s صورة جديدة دون استبدال الصور الحالية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "A different source image matches this product's existing image."
+msgstr "توجد صورة مصدر مختلفة تطابق الصورة الحالية لهذا المنتج."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__current_checksum
+msgid "Current Checksum"
+msgstr "البصمة الحالية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Existing Odoo image kept by user choice."
+msgstr "تم الاحتفاظ بصورة أودو الحالية بناءً على اختيار المستخدم."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Existing images kept"
+msgstr "الصور الحالية التي تم الاحتفاظ بها"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Existing images requiring replacement"
+msgstr "الصور الحالية التي تحتاج إلى استبدال"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_confirmation_required
+msgid "Image Sync Confirmation Required"
+msgstr "مطلوب تأكيد مزامنة الصور"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_replacement_count
+msgid "Image Sync Replacement Count"
+msgstr "عدد الصور المطلوب استبدالها"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_replacement_signature
+msgid "Image Sync Replacement Signature"
+msgstr "بصمة تأكيد استبدال الصور"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__kept
+msgid "Kept Existing"
+msgstr "تم الاحتفاظ بالصورة الحالية"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
+msgid "Keep Existing Images"
+msgstr "الاحتفاظ بالصور الحالية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "New images"
+msgstr "الصور الجديدة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
+msgid "Replace Existing Images"
+msgstr "استبدال الصور الحالية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_confirmation_message
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
+msgid "Replacement Confirmation"
+msgstr "تأكيد استبدال الصور"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__replaces_existing
+msgid "Replaces Existing"
+msgstr "يستبدل صورة حالية"

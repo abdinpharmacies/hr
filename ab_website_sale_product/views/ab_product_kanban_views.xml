@@ -27,7 +27,12 @@
                         <div class="oe_kanban_card abdin_ecommerce_card">
                             <div class="abdin_ecommerce_card_image_section">
                                 <div class="abdin_ecommerce_image_wrapper">
-                                    <div class="abdin_ecommerce_icon_placeholder">
+                                    <img t-if="record.website_product_tmpl_id.raw_value"
+                                         t-att-src="'/web/image/product.template/' + record.website_product_tmpl_id.raw_value + '/image_256'"
+                                         t-att-alt="record.name.value"
+                                         class="w-100 h-100 object-fit-contain p-3"
+                                         loading="lazy"/>
+                                    <div t-else="" class="abdin_ecommerce_icon_placeholder">
                                         <i class="fa fa-cube" title="Product"/>
                                     </div>
                                 </div>

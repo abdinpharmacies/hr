@@ -451,24 +451,15 @@ class AbProduct(models.Model):
 
     def _find_website_image_file(self, directory_path):
         self.ensure_one()
-        if not directory_path:
+        if not directory_path or not self.website_product_tmpl_id:
             return False
-        candidates = self._get_website_image_filename_candidates()
-        for filename in candidates:
-            image_path = os.path.join(directory_path, filename)
-            if os.path.isfile(image_path):
-                return image_path
-
-        candidate_names = {filename.lower() for filename in candidates}
-        try:
-            directory_names = os.listdir(directory_path)
-        except OSError:
-            return False
-        for filename in directory_names:
-            if filename.lower() in candidate_names:
-                image_path = os.path.join(directory_path, filename)
-                if os.path.isfile(image_path):
-                    return image_path
+        plan = self.env["ab.website.product.image.sync.service"].prepare_sync_plan(
+            directory_path,
+            products=self,
+        )
+        for line in plan["report"]:
+            if line.get("product_id") == self.id and line.get("image_path"):
+                return line["image_path"]
         return False
 
     def _sync_website_product_image_from_file(self, image_path):
@@ -555,6 +546,7 @@ class AbProduct(models.Model):
         return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
 
     def action_open_sync_images_wizard(self):
+        self.env["ab.website.product.image.sync.service"].check_image_sync_access()
         return {
             "type": "ir.actions.act_window",
             "name": _("Sync Images"),
