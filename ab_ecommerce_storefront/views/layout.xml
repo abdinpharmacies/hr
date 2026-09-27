@@ -422,10 +422,11 @@
                             <i class="fa fa-file-text-o" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['prescription']"/>
                         </a>
-                        <a href="/track-order"
+                        <a t-att-href="'/track-order' if request.env.user._is_public() else '/my/orders'"
                            class="ab-storefront-track-link nav-link d-inline-flex align-items-center gap-1 text-nowrap">
                             <i class="fa fa-search" aria-hidden="true"/>
-                            <span t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
+                            <span t-if="request.env.user._is_public()" t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
+                            <span t-else="" t-out="ab_header_nav_labels.get('your_orders', 'Your orders')"/>
                         </a>
                     </nav>
                 </div>
@@ -476,9 +477,11 @@
                             <i class="fa fa-heart-o" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['wishlist']"/>
                         </a>
-                        <a href="/track-order" class="ab-storefront-mobile-secondary-link">
+                        <a t-att-href="'/track-order' if request.env.user._is_public() else '/my/orders'"
+                           class="ab-storefront-mobile-secondary-link">
                             <i class="fa fa-search" aria-hidden="true"/>
-                            <span t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
+                            <span t-if="request.env.user._is_public()" t-out="ab_header_nav_labels.get('track_order', 'Track order')"/>
+                            <span t-else="" t-out="ab_header_nav_labels.get('your_orders', 'Your orders')"/>
                         </a>
                         <div class="ab-storefront-location ab-storefront-location--mobile-menu"
                              data-ab-current-location="true"
@@ -551,13 +554,18 @@
                                 Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt.
                             </p>
                             <div class="d-flex flex-wrap gap-2">
-                                <a href="/website/social/facebook" class="ab-storefront-social" target="_blank" aria-label="Facebook">
+                                <a href="https://www.facebook.com/AbdinPharmaciesOfficial" class="ab-storefront-social" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                                     <i class="fa fa-facebook" aria-hidden="true"/>
                                 </a>
-                                <a href="/website/social/instagram" class="ab-storefront-social" target="_blank" aria-label="Instagram">
+                                <a href="https://www.instagram.com/abdinpharmacies" class="ab-storefront-social" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                                     <i class="fa fa-instagram" aria-hidden="true"/>
                                 </a>
-                                <a href="/website/social/linkedin" class="ab-storefront-social" target="_blank" aria-label="LinkedIn">
+                                <a href="https://www.tiktok.com/@abdinpharmacies" class="ab-storefront-social" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                                    <svg viewBox="0 0 24 24" role="img" aria-hidden="true" focusable="false">
+                                        <path fill="currentColor" d="M19.6 7.2c-1.6-.1-3-1-3.8-2.4-.4-.7-.6-1.5-.6-2.3h-3.3v12.2c0 1.8-1.4 3.2-3.2 3.2-1.1 0-2.1-.6-2.7-1.5-.6-.9-.7-2.1-.2-3.1.5-1 1.5-1.7 2.7-1.8.4 0 .8 0 1.1.1V8.3c-.4-.1-.8-.1-1.2-.1-3.6 0-6.5 2.9-6.5 6.5 0 2.4 1.3 4.6 3.4 5.7 2.1 1.1 4.7 1 6.7-.4 2-1.2 3.2-3.3 3.2-5.7V8.1c1.3 1.2 3 1.9 4.8 1.9V7.2h-.4z"/>
+                                    </svg>
+                                </a>
+                                <a href="https://www.linkedin.com/company/abdin-pharmacies-official-page/" class="ab-storefront-social" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                                     <i class="fa fa-linkedin" aria-hidden="true"/>
                                 </a>
                             </div>
@@ -573,7 +581,7 @@
                             <h2 class="h6">Customer Service</h2>
                             <ul class="list-unstyled">
                                 <li><a href="/contactus">Contact us</a></li>
-                                <li><a href="/my/orders">Track Order</a></li>
+                                <li><a href="/track-order">Track Order</a></li>
                                 <li><a href="/return-policy">Return Policy</a></li>
                             </ul>
                         </div>

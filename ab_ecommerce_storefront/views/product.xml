@@ -15,6 +15,7 @@
         </xpath>
         <xpath expr="//section[@id='product_detail']" position="attributes">
             <attribute name="class" add="ab-storefront-product-detail" separator=" "/>
+            <attribute name="t-att-data-ab-history-product-id">product.id</attribute>
         </xpath>
         <xpath expr="//div[@id='o_wsale_product_details_content']" position="attributes">
             <attribute name="class" add="ab-storefront-product-content" separator=" "/>
@@ -89,6 +90,9 @@
                     </div>
                 </section>
             </t>
+            <t t-set="ab_history_limit" t-value="10"/>
+            <t t-set="ab_history_exclude_current" t-value="product.id"/>
+            <t t-call="ab_ecommerce_storefront.browsing_history_rail"/>
         </xpath>
     </template>
 
@@ -99,8 +103,10 @@
         <t t-set="ab_card_variants"
            t-value="{product.id: ab_recommendation_variant_id and request.env['product.product'].sudo().browse(ab_recommendation_variant_id)}"/>
         <t t-set="ab_card_prices" t-value="ab_recommendation_prices"/>
+        <t t-set="ab_card_offer_product_ids" t-value="[]"/>
         <t t-set="ab_card_wishlist_product_ids" t-value="ab_recommendation_wishlist_product_ids"/>
         <t t-set="ab_card_is_wishlisted_override" t-value="ab_card_variants.get(product.id) and ab_card_variants[product.id].id in ab_card_wishlist_product_ids"/>
+        <t t-set="ab_card_history_actions" t-value="False"/>
         <t t-call="ab_ecommerce_storefront.product_card"/>
     </template>
 

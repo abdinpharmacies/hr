@@ -3,8 +3,10 @@
     <template id="home_product_card" name="Abdin Home Product Card">
         <t t-set="ab_card_variants" t-value="ab_catalog['variants']"/>
         <t t-set="ab_card_prices" t-value="ab_catalog['prices']"/>
+        <t t-set="ab_card_offer_product_ids" t-value="ab_catalog['offer_product_ids']"/>
         <t t-set="ab_card_wishlist_product_ids" t-value="ab_catalog['wishlist_product_ids']"/>
         <t t-set="ab_card_is_wishlisted_override" t-value="ab_card_variants.get(product.id) and ab_card_variants[product.id].id in ab_card_wishlist_product_ids"/>
+        <t t-set="ab_card_history_actions" t-value="False"/>
         <t t-call="ab_ecommerce_storefront.product_card"/>
     </template>
 
@@ -16,6 +18,7 @@
         <t t-set="ab_card_data" t-value="product._ab_storefront_card_data(ab_card_price)"/>
         <t t-set="ab_card_options" t-value="ab_card_data['purchase_options']"/>
         <t t-set="ab_card_default_option" t-value="ab_card_options[0]"/>
+        <t t-set="ab_card_is_offer" t-value="product.id in ab_card_offer_product_ids"/>
         <t t-set="ab_card_discount"
            t-value="ab_card_price.get('base_price', 0) and max(0, round((ab_card_price.get('base_price', 0) - ab_card_price.get('price_reduce', 0)) * 100 / ab_card_price.get('base_price', 0))) or 0"/>
         <t t-set="ab_card_requires_configuration"
@@ -62,11 +65,12 @@
                     </svg>
                 </button>
                 <span t-if="ab_card_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
-                <span t-elif="ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
+                <span t-elif="ab_card_is_offer and ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
                       class="ab-storefront-offer-badge">
                     <t t-if="ab_card_discount">-<t t-out="ab_card_discount"/>%</t>
                     <t t-else="">Offer</t>
                 </span>
+                <span t-elif="ab_card_is_offer" class="ab-storefront-offer-badge">Offer</span>
             </div>
 
             <div class="ab-storefront-product-body d-flex flex-column flex-grow-1">
@@ -103,8 +107,16 @@
                         </button>
                     </div>
                 </fieldset>
-                <div class="ab-storefront-product-purchase mt-auto">
-                    <div class="ab-storefront-product-price" aria-label="Price information">
+                <div t-attf-class="ab-storefront-product-purchase mt-auto #{ab_card_history_actions and 'ab-storefront-product-purchase-history' or ''}">
+                    <button t-if="ab_card_history_actions"
+                            type="button"
+                            class="ab-storefront-history-remove btn"
+                            t-att-data-ab-history-remove="product.id"
+                            aria-label="Remove from history">
+                        <i class="fa fa-trash-o" aria-hidden="true" title="Remove"/>
+                        <span>Remove</span>
+                    </button>
+                    <div t-if="not ab_card_history_actions" class="ab-storefront-product-price" aria-label="Price information">
                         <div t-foreach="ab_card_options" t-as="ab_option"
                              t-attf-class="ab-storefront-unit-price #{ab_option_index == 0 and 'is-selected' or ''}"
                              t-att-data-unit-price="ab_option['key']">
@@ -112,13 +124,13 @@
                                   class="ab-storefront-sale-price"
                                   t-out="ab_option['price_reduce']"
                                   t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                            <del t-if="ab_option['base_price'] &gt; ab_option['price_reduce']"
+                            <del t-if="ab_card_is_offer and ab_option['base_price'] &gt; ab_option['price_reduce']"
                                  class="ab-storefront-base-price"
                                  t-out="ab_option['base_price']"
                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                         </div>
                     </div>
-                    <div t-if="ab_card_can_quick_add" class="ab-storefront-card-quantity" aria-label="Quantity">
+                    <div t-if="not ab_card_history_actions and ab_card_can_quick_add" class="ab-storefront-card-quantity" aria-label="Quantity">
                         <button type="button" data-ab-card-quantity="decrease" aria-label="Decrease quantity">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg>
                         </button>
@@ -128,7 +140,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="ab-storefront-product-actions mt-3">
+                <div t-if="not ab_card_history_actions" class="ab-storefront-product-actions mt-3">
                     <div t-if="ab_card_can_quick_add" class="ab-storefront-card-purchase-buttons">
                         <a href="/shop/cart?ab_buy_now=1"
                            class="ab-storefront-card-buy-now btn btn-primary"
@@ -400,6 +412,10 @@
                     </div>
                 </section>
 
+                <t t-set="ab_history_limit" t-value="10"/>
+                <t t-set="ab_history_exclude_current" t-value="False"/>
+                <t t-call="ab_ecommerce_storefront.browsing_history_rail"/>
+
                 <section class="ab-storefront-feedback py-5" data-name="Customer Feedback">
                     <div class="container">
                         <div class="ab-storefront-feedback-panel">
@@ -451,33 +467,48 @@
                     </div>
                 </section>
 
-                <section class="ab-storefront-testimonials py-5" data-name="Testimonials">
+                <t t-set="ab_customer_testimonials" t-value="website._ab_storefront_customer_testimonials()"/>
+                <section t-if="ab_customer_testimonials" class="ab-storefront-testimonials py-5" data-name="Social Comments">
                     <div class="container">
                         <div class="ab-storefront-section-heading mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Testimonials</span>
-                                <h2 class="mb-0">Trusted by pharmacy customers</h2>
+                                <span class="ab-storefront-kicker">CUSTOMER FEEDBACK</span>
+                                <h2 class="mb-0">Our customers' reviews</h2>
+                                <p class="mb-0">Real feedback shared by our customers on social platforms</p>
                             </div>
                         </div>
-                        <div class="row g-3 g-lg-4">
-                            <div class="col-12 col-md-4">
-                                <article class="ab-storefront-testimonial-card">
-                                    <p>Ordering daily pharmacy essentials is fast, clear, and easy to follow.</p>
-                                    <strong>Online customer</strong>
-                                </article>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <article class="ab-storefront-testimonial-card">
-                                    <p>The hotline support makes it easier to choose the right product.</p>
-                                    <strong>Family care customer</strong>
-                                </article>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <article class="ab-storefront-testimonial-card">
-                                    <p>The store feels organized across medicine, beauty, baby, and wellness needs.</p>
-                                    <strong>Wellness shopper</strong>
-                                </article>
-                            </div>
+                        <div class="ab-storefront-testimonial-rail" aria-label="Customer comments from social platforms">
+                            <article t-foreach="ab_customer_testimonials"
+                                     t-as="ab_testimonial"
+                                     t-attf-class="ab-storefront-testimonial-card ab-storefront-testimonial-#{ab_testimonial.platform}">
+                                <div class="ab-storefront-testimonial-source">
+                                    <span class="ab-storefront-testimonial-source-badge">
+                                        <i t-att-class="ab_testimonial._ab_storefront_platform_icon_class()" aria-hidden="true"/>
+                                        <span t-out="ab_testimonial._ab_storefront_platform_label()"/>
+                                    </span>
+                                    <span class="ab-storefront-testimonial-source-type">
+                                        <span>Customer comment</span>
+                                        <strong t-if="ab_testimonial.customer_name" t-out="ab_testimonial.customer_name"/>
+                                    </span>
+                                </div>
+                                <div class="ab-storefront-testimonial-media">
+                                    <img loading="lazy"
+                                         decoding="async"
+                                         t-att-src="'/web/image/ab_ecommerce_customer_testimonial/%s/image_1024' % ab_testimonial.id"
+                                         t-att-alt="ab_testimonial._ab_storefront_image_alt()"/>
+                                </div>
+                                <div class="ab-storefront-testimonial-footer">
+                                    <a t-if="ab_testimonial.source_url"
+                                       t-att-href="ab_testimonial.source_url"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       t-att-aria-label="ab_testimonial._ab_storefront_source_action_aria_label()"
+                                       class="ab-storefront-testimonial-link">
+                                        <span t-out="ab_testimonial._ab_storefront_source_action_label()"/>
+                                        <i class="fa fa-external-link" aria-hidden="true"/>
+                                    </a>
+                                </div>
+                            </article>
                         </div>
                     </div>
                 </section>

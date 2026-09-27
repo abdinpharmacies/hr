@@ -4,7 +4,11 @@ from . import ir_http
 from . import product_wishlist
 from . import res_partner
 from . import res_users
+from . import mail_template
+from . import mail_compose_message
 from . import sale_order
 from . import prescription_order
 from . import contact_message
 from . import business_partnership
+from . import browsing_history
+from . import customer_testimonial

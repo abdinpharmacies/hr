@@ -17,10 +17,256 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_ecommerce_storefront
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_root
+msgid "Abdin Management"
+msgstr "إدارة عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_contact
+msgid "Contact Us"
+msgstr "تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_style_ads
+msgid "Style / Ads"
+msgstr "الشكل / الإعلانات"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Abdin Pharmacies"
 msgstr "صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:product.tag,name:ab_ecommerce_storefront.product_tag_offer_beauty
+msgid "Abdin Beauty Loyalty Offer"
+msgstr "عرض ولاء عابدين للتجميل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.tag,name:ab_ecommerce_storefront.product_tag_offer_baby_care
+msgid "Abdin Baby Care Offer"
+msgstr "عرض عابدين للعناية بالأطفال"
+
+#. module: ab_ecommerce_storefront
+#: model:product.tag,name:ab_ecommerce_storefront.product_tag_offer_personal_care
+msgid "Abdin Personal Care Offer"
+msgstr "عرض عابدين للعناية الشخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:loyalty.program,portal_point_name:ab_ecommerce_storefront.loyalty_program_beauty_points
+msgid "Beauty point(s)"
+msgstr "نقاط التجميل"
+
+#. module: ab_ecommerce_storefront
+#: model:loyalty.program,name:ab_ecommerce_storefront.loyalty_program_baby_buy_two_get_one
+msgid "Website Baby Care Buy 2 Get 1"
+msgstr "عرض الموقع للعناية بالأطفال: اشتري 2 واحصل على 1"
+
+#. module: ab_ecommerce_storefront
+#: model:loyalty.program,name:ab_ecommerce_storefront.loyalty_program_beauty_points
+msgid "Website Beauty Loyalty Points"
+msgstr "نقاط ولاء الموقع للتجميل"
+
+#. module: ab_ecommerce_storefront
+#: model:loyalty.program,name:ab_ecommerce_storefront.loyalty_program_ewallet_topup
+msgid "Website eWallet Top-up"
+msgstr "شحن المحفظة الإلكترونية من الموقع"
+
+#. module: ab_ecommerce_storefront
+#: model:loyalty.program,name:ab_ecommerce_storefront.loyalty_program_personal_care_discount
+msgid "Website Personal Care 12% Off"
+msgstr "خصم 12% على العناية الشخصية من الموقع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "CUSTOMER FEEDBACK"
+msgstr "آراء العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Our customers' reviews"
+msgstr "آراء عملائنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Real feedback shared by our customers on social platforms"
+msgstr "آراء حقيقية شاركها عملاؤنا على منصات التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.customer_testimonial_action
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.customer_testimonial_menu
+msgid "Social Comments"
+msgstr "تعليقات التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Social comment"
+msgstr "تعليق من منصة تواصل"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__image_1920
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Social Comment Screenshot"
+msgstr "لقطة شاشة لتعليق اجتماعي"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__source_url
+msgid "Source URL"
+msgstr "رابط المصدر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Source:"
+msgstr "المصدر:"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__platform
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_search
+msgid "Platform"
+msgstr "المنصة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_kanban
+msgid "Published"
+msgstr "منشور"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_kanban
+msgid "Unpublished"
+msgstr "غير منشور"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Publish"
+msgstr "نشر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Unpublish"
+msgstr "إلغاء النشر"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+#, python-format
+msgid "Please enter a valid Facebook, Instagram, or TikTok source URL."
+msgstr "يرجى إدخال رابط مصدر صحيح من Facebook أو Instagram أو TikTok."
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+#, python-format
+msgid "Customer social comment screenshot"
+msgstr "لقطة شاشة لتعليق عميل من منصات التواصل"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+#, python-format
+msgid "Social comment from %s"
+msgstr "تعليق من منصة تواصل للعميل %s"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_ecommerce_customer_testimonial
+msgid "Storefront Social Comment"
+msgstr "تعليق اجتماعي في واجهة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__image_1024
+msgid "Social Comment Screenshot 1024"
+msgstr "لقطة شاشة لتعليق اجتماعي بحجم 1024"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_list
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Publishing"
+msgstr "النشر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Storefront Preview"
+msgstr "معاينة واجهة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Status:"
+msgstr "الحالة:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Order:"
+msgstr "الترتيب:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_action
+msgid "Create a social customer comment"
+msgstr "إنشاء تعليق عميل من منصة تواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_action
+msgid "Upload a real social comment screenshot, add the source link, then publish it on the storefront."
+msgstr "ارفع لقطة شاشة حقيقية لتعليق من منصة تواصل، وأضف رابط المصدر، ثم انشرها في واجهة المتجر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_search
+msgid "Has Source"
+msgstr "له مصدر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Customer comments from social platforms"
+msgstr "تعليقات العملاء من منصات التواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Detected Platform"
+msgstr "المنصة المكتشفة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_form
+msgid "Comment platform:"
+msgstr "منصة التعليق:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_kanban
+msgid "View source"
+msgstr "عرض المصدر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Customer comment"
+msgstr "تعليق عميل"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+#, python-format
+msgid "View on %s"
+msgstr "مشاهدة على %s"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+#, python-format
+msgid "Open original comment on %s"
+msgstr "فتح التعليق الأصلي على %s"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/customer_testimonial.py:0
+msgid "Social platform"
+msgstr "منصة تواصل"
+
+#. module: ab_ecommerce_storefront
+#: selection:ab_ecommerce_customer_testimonial,platform:0
+msgid "Instagram"
+msgstr "Instagram"
+
+#. module: ab_ecommerce_storefront
+#: selection:ab_ecommerce_customer_testimonial,platform:0
+msgid "TikTok"
+msgstr "TikTok"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
@@ -713,6 +959,7 @@ msgstr "العناية بالطفل"
 msgid "Wellness"
 msgstr "الصحة والعافية"
 
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "About Abdin"
 msgstr "عن عابدين"
@@ -1256,6 +1503,12 @@ msgid "Continue shopping"
 msgstr "الاستمرار في التسوق"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_shell_abdin
+msgid "Continue browsing"
+msgstr "تابع التصفح"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_navigation_button_abdin_skin
 msgid "Continue to payment"
 msgstr "المتابعة إلى الدفع"
@@ -1517,7 +1770,7 @@ msgstr "تم إنشاء الطلب"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.guest_order_tracking
 msgid "Order reference"
-msgstr "رقم الطلب"
+msgstr "مرجع التتبع"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.confirmation_abdin_order_summary
@@ -1682,6 +1935,18 @@ msgstr "طلبات الروشتة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "Prescription image"
 msgstr "صورة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open prescription image"
+msgstr "فتح صورة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+msgid "Open in new tab"
+msgstr "فتح في تبويب جديد"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2314,11 +2579,6 @@ msgstr "معلومات العميل"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 msgid "Order Information"
 msgstr "معلومات الطلب"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
-msgid "Customer Reference"
-msgstr "مرجع العميل"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
@@ -3378,6 +3638,11 @@ msgid "Order summary"
 msgstr "ملخص الطلب"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
+msgid "Order date"
+msgstr "تاريخ الطلب"
+
+#. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 msgid "Order total"
@@ -3892,6 +4157,7 @@ msgstr "توفر المنتجات يحتاج إلى مراجعة."
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_products
 msgid "Products"
 msgstr "المنتجات"
 
@@ -4202,3 +4468,343 @@ msgstr "خرج الطلب من الصيدلية للتوصيل. تابع مع ا
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "The order cycle is closed after customer delivery."
 msgstr "تم إغلاق دورة الطلب بعد التسليم للعميل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "Your orders"
+msgstr "طلباتك"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__partnership_type__new_contract
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "New Contract"
+msgstr "تعاقد جديد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_footer_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Business Contracts"
+msgstr "تعاقدات الشركات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Submit a new contracting request for your company to work with Abdin Pharmacies."
+msgstr "قدّم طلب تعاقد جديد لشركتك للعمل مع صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+msgid "Submit a new contract request <i class=\"fa fa-external-link\" aria-hidden=\"true\"/>"
+msgstr "قدّم طلب تعاقد جديد <i class=\"fa fa-external-link\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Business Contracts | Abdin Pharmacies"
+msgstr "تعاقدات الشركات | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Submit a new company contracting request to Abdin Pharmacies. Our business team will review your request and contact you."
+msgstr "قدّم طلب تعاقد جديد لشركتك مع صيدليات عابدين. سيراجع فريق الأعمال طلبك ويتواصل معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "We welcome companies interested in starting a new contract with Abdin Pharmacies."
+msgstr "نرحب بالشركات المهتمة ببدء تعاقد جديد مع صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Submit a new contract request <i class=\"fa fa-angle-down\" aria-hidden=\"true\"/>"
+msgstr "قدّم طلب تعاقد جديد <i class=\"fa fa-angle-down\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "New contract request"
+msgstr "طلب تعاقد جديد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Tell us about your company and the requested contract. Our business team will review your request and contact you."
+msgstr "أخبرنا عن شركتك والتعاقد المطلوب. سيراجع فريق الأعمال طلبك ويتواصل معك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Requested Contract"
+msgstr "التعاقد المطلوب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Request type"
+msgstr "نوع الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships
+msgid "Submit contract request"
+msgstr "إرسال طلب التعاقد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships_thanks
+msgid "Thank you for your contract request"
+msgstr "شكرًا على طلب التعاقد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnerships_thanks
+msgid "Thank you for your interest in contracting with Abdin Pharmacies"
+msgstr "شكرًا لاهتمامك بالتعاقد مع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__ab_public_reference
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_public_reference
+msgid "Public Tracking Reference"
+msgstr "مرجع التتبع العام"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_sale_order__ab_public_reference
+msgid "Customer-facing reference used for storefront order tracking."
+msgstr "مرجع يظهر للعميل ويستخدم لتتبع طلب المتجر."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__ab_public_reference
+msgid "Customer-facing reference used for storefront prescription tracking."
+msgstr "مرجع يظهر للعميل ويستخدم لتتبع طلب الروشتة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid "The public tracking reference must be unique."
+msgstr "يجب أن يكون مرجع التتبع العام فريدًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+msgid "Tracking Ref"
+msgstr "مرجع التتبع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_search
+msgid "Order, Tracking Ref, Customer, Phone or Email"
+msgstr "الطلب أو مرجع التتبع أو العميل أو الهاتف أو البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status
+msgid "Copy order reference"
+msgstr "نسخ مرجع التتبع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.CallCenterOrderWorkspace
+msgid "Tracking reference"
+msgstr "مرجع التتبع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_rail
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Recently Viewed"
+msgstr "منتجات شاهدتها مؤخرًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_rail
+msgid "Products you recently viewed"
+msgstr "منتجات شاهدتها مؤخرًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Your Browsing History"
+msgstr "سجل التصفح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Products you've recently viewed"
+msgstr "المنتجات التي شاهدتها مؤخرًا - حد أقصى 30 عنصر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Clear history"
+msgstr "مسح السجل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+msgid "Remove from history"
+msgstr "إزالة من السجل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Search in history"
+msgstr "البحث في السجل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Search in history..."
+msgstr "ابحث في السجل..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Nothing here yet"
+msgstr "لا توجد منتجات بعد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Products you view will appear here so you can easily find them again."
+msgstr "المنتجات التي تشاهدها ستظهر هنا لتتمكن من الرجوع إليها بسهولة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Explore Products"
+msgstr "تصفح المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "No matching products"
+msgstr "لا توجد منتجات مطابقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Try another search term within your recently viewed products."
+msgstr "جرّب كلمة بحث أخرى داخل المنتجات التي شاهدتها مؤخرًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+msgid "Load more"
+msgstr "عرض المزيد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Loading recently viewed products..."
+msgstr "جاري تحميل المنتجات التي شاهدتها مؤخرًا..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "We could not load your browsing history. Please try again later."
+msgstr "تعذر تحميل سجل التصفح. حاول مرة أخرى لاحقًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Could not clear your browsing history. Please try again."
+msgstr "تعذر مسح سجل التصفح. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Could not remove this product. Please try again."
+msgstr "تعذرت إزالة هذا المنتج. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Removed from history."
+msgstr "تمت الإزالة من السجل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Successfully removed - Product removed from your list"
+msgstr "تم الحذف بنجاح - تم إزالة المنتج من قائمتك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Successfully removed"
+msgstr "تم الحذف بنجاح"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Product removed from your list"
+msgstr "تم إزالة المنتج من قائمتك"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "Click again to clear"
+msgstr "اضغط مرة أخرى للمسح"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/browsing_history.js:0
+msgid "%s products"
+msgstr "%s منتجات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Add to wishlist"
+msgstr "أضف إلى المفضلة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Could not update wishlist. Please try again."
+msgstr "تعذر تحديث المفضلة. حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_card.js:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/product_image_zoom.js:0
+msgid "Remove from wishlist"
+msgstr "إزالة من المفضلة"
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,subject:ab_ecommerce_storefront.mail_template_prescription_request_received
+msgid "Prescription request reviewed (Ref {{ object._ab_storefront_prescription_display_reference() }})"
+msgstr "تمت مراجعة الطلب (المرجع {{ object._ab_storefront_prescription_display_reference() }})"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_prescription_stage
+msgid "Prescription Stage"
+msgstr "مرحلة الروشتة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
+msgid "Customer Call Confirmed"
+msgstr "تم تأكيد مكالمة العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:mail.template,body_html:ab_ecommerce_storefront.mail_template_prescription_request_received
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Hello,\n"
+"        <br/><br/>\n"
+"        Your prescription request\n"
+"        <span style=\"font-weight: bold;\" t-out=\"object._ab_storefront_prescription_display_reference()\">RX-000000-ABC123</span>\n"
+"        has been reviewed.\n"
+"        <br/><br/>\n"
+"        Our Call Center team will contact you to confirm the required items, availability, delivery details, and the final total.\n"
+"        <br/><br/>\n"
+"        Please keep this reference for support.\n"
+"        <br/><br/>\n"
+"        Do not hesitate to contact us if you have any questions.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\">\n"
+"            <div>--<br/><t t-out=\"object.user_id.signature or ''\">Abdin Pharmacies</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>"
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px; direction: rtl; text-align: right;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        مرحباً،\n"
+"        <br/><br/>\n"
+"        تمت مراجعة الطلب الخاص بك\n"
+"        <span style=\"font-weight: bold;\" t-out=\"object._ab_storefront_prescription_display_reference()\">RX-000000-ABC123</span>.\n"
+"        <br/><br/>\n"
+"        سيتواصل معك فريق خدمة العملاء لتأكيد الأصناف المطلوبة والتوافر وبيانات التوصيل والإجمالي النهائي.\n"
+"        <br/><br/>\n"
+"        يرجى الاحتفاظ بهذا المرجع عند التواصل مع الدعم.\n"
+"        <br/><br/>\n"
+"        لا تتردد في التواصل معنا إذا كانت لديك أي أسئلة أو استفسارات.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\">\n"
+"            <div>--<br/><t t-out=\"object.user_id.signature or ''\">صيدليات عابدين</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>"

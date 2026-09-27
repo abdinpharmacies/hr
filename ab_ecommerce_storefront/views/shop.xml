@@ -46,7 +46,7 @@
 
     <template id="shop_category_navigation" name="Abdin Shop Category Navigation">
         <nav class="ab-storefront-side-categories" aria-label="Shop categories">
-            <h2>All categories</h2>
+            <h2 t-if="not ab_hide_category_heading">All categories</h2>
             <ul class="ab-storefront-side-category-list list-unstyled mb-0">
                 <li class="ab-storefront-side-category-item">
                     <a t-att-href="keep(shop_path)"
@@ -73,6 +73,9 @@
         </xpath>
         <xpath expr="//t[@t-set='wsale_has_filters_btn']" position="attributes">
             <attribute name="t-value">categories or opt_wsale_categories or opt_wsale_attributes or opt_wsale_attributes_top</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='opt_wsale_categories_top']" position="attributes">
+            <attribute name="t-value">False</attribute>
         </xpath>
         <xpath expr="//div[@id='wrap']" position="attributes">
             <attribute name="class" add="ab-storefront-shop" separator=" "/>
@@ -119,11 +122,15 @@
         </xpath>
         <xpath expr="//aside[@id='products_grid_before']//t[@t-if='show_price_filter' and @t-call='website_sale.filter_products_price']" position="after">
             <t t-if="categories">
+                <t t-set="ab_hide_category_heading" t-value="False"/>
                 <t t-set="ab_category_tree_id_prefix" t-value="'desktop'"/>
                 <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
             </t>
         </xpath>
         <xpath expr="//div[@id='o_wsale_container']" position="after">
+            <t t-set="ab_history_limit" t-value="10"/>
+            <t t-set="ab_history_exclude_current" t-value="False"/>
+            <t t-call="ab_ecommerce_storefront.browsing_history_rail"/>
             <section class="ab-storefront-shop-assurance">
                 <div class="container py-4">
                     <div class="row g-3 text-center text-md-start">
@@ -160,7 +167,7 @@
                             data-bs-target="#ab_storefront_offcanvas_categories"
                             aria-expanded="false"
                             aria-controls="ab_storefront_offcanvas_categories">
-                        <b>All categories</b>
+                        <b>Categories</b>
                     </button>
                 </h2>
                 <div id="ab_storefront_offcanvas_categories"
@@ -168,6 +175,7 @@
                      aria-labelledby="ab_storefront_offcanvas_categories_header">
                     <div class="accordion-body py-3">
                         <t t-set="ab_category_tree_id_prefix" t-value="'mobile'"/>
+                        <t t-set="ab_hide_category_heading" t-value="True"/>
                         <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
                     </div>
                 </div>
@@ -191,10 +199,12 @@
             <t t-set="ab_shop_variant" t-value="ab_shop_variant_id and request.env['product.product'].sudo().browse(ab_shop_variant_id)"/>
             <t t-set="ab_card_variants" t-value="{product.id: ab_shop_variant}"/>
             <t t-set="ab_card_prices" t-value="{product.id: get_product_prices(product)}"/>
+            <t t-set="ab_card_offer_product_ids" t-value="[]"/>
             <t t-set="ab_card_wishlist_product_ids"
                t-value="request.env['product.wishlist'].current().product_id.ids"/>
             <t t-set="ab_card_is_wishlisted_override"
                t-value="ab_shop_variant and ab_shop_variant.id in ab_card_wishlist_product_ids"/>
+            <t t-set="ab_card_history_actions" t-value="False"/>
             <t t-call="ab_ecommerce_storefront.product_card"/>
         </xpath>
     </template>

@@ -3,3 +3,8 @@ access_ab_prescription_order_internal,ab.prescription.order.internal,model_ab_pr
 access_ab_prescription_order_portal,ab.prescription.order.portal,model_ab_prescription_order,base.group_portal,1,0,0,0
 access_ab_contact_message_designer,ab.contact.message.designer,model_ab_contact_message,website.group_website_designer,1,1,1,0
 access_ab_business_partnership_designer,ab.business.partnership.designer,model_ab_business_partnership,website.group_website_designer,1,1,1,0
+access_ab_ecommerce_browsing_history_internal,ab.ecommerce.browsing.history.internal,model_ab_ecommerce_browsing_history,base.group_user,1,1,1,1
+access_ab_ecommerce_browsing_history_portal,ab.ecommerce.browsing.history.portal,model_ab_ecommerce_browsing_history,base.group_portal,1,1,1,1
+access_ab_ecommerce_customer_testimonial_designer,ab.ecommerce.customer.testimonial.designer,model_ab_ecommerce_customer_testimonial,website.group_website_designer,1,1,1,1
+access_ab_ecommerce_customer_testimonial_public,ab.ecommerce.customer.testimonial.public,model_ab_ecommerce_customer_testimonial,base.group_public,1,0,0,0
+access_ab_ecommerce_customer_testimonial_portal,ab.ecommerce.customer.testimonial.portal,model_ab_ecommerce_customer_testimonial,base.group_portal,1,0,0,0

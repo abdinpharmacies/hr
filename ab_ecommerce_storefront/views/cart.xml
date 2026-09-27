@@ -149,7 +149,10 @@
         <xpath expr="//div[@id='shop_checkout']" position="attributes">
             <attribute name="class" add="ab-storefront-delivery-step" separator=" "/>
         </xpath>
+        <!-- Delivery method selector intentionally kept in code but hidden from the storefront.
+             Do not auto-select or prefer a carrier here; native Odoo delivery state remains unchanged. -->
         <xpath expr="//div[@id='shop_checkout']/t[@t-if='order._has_deliverable_products()']/div[t[@t-call='website_sale.delivery_form']]" position="attributes">
+            <attribute name="t-if">False</attribute>
             <attribute name="class" add="ab-storefront-delivery-section ab-storefront-delivery-method-section" separator=" "/>
         </xpath>
         <xpath expr="//div[@id='shop_checkout']/t[@t-if='order._has_deliverable_products()']/div[t[@t-call='website_sale.delivery_address_list']]" position="attributes">
