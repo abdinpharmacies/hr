@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="customer_testimonial_list" model="ir.ui.view">
+        <field name="name">ab.ecommerce.customer.testimonial.list</field>
+        <field name="model">ab_ecommerce_customer_testimonial</field>
+        <field name="arch" type="xml">
+            <list default_order="sequence, id" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="image_1024" string="Preview" widget="image" options="{'size': [72, 72]}"/>
+                <field name="platform" string="Platform" widget="badge"/>
+                <field name="customer_name" string="Customer"/>
+                <field name="name"/>
+                <field name="source_url" widget="url"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="website_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="customer_testimonial_kanban" model="ir.ui.view">
+        <field name="name">ab.ecommerce.customer.testimonial.kanban</field>
+        <field name="model">ab_ecommerce_customer_testimonial</field>
+        <field name="arch" type="xml">
+            <kanban default_order="sequence, id" quick_create="false" class="o_kanban_mobile">
+                <field name="active"/>
+                <field name="image_1024"/>
+                <field name="name"/>
+                <field name="customer_name"/>
+                <field name="source_url"/>
+                <field name="platform"/>
+                <templates>
+                    <t t-name="card">
+                        <div t-attf-class="#{!record.active.raw_value ? 'opacity-50' : ''}">
+                            <field name="image_1024" widget="image" class="w-100 rounded mb-2"/>
+                            <field name="platform" widget="badge"/>
+                            <div class="fw-bold">
+                                <field name="name"/>
+                            </div>
+                            <div t-if="record.customer_name.raw_value" class="text-muted">
+                                <field name="customer_name"/>
+                            </div>
+                            <a t-if="record.source_url.raw_value"
+                               t-att-href="record.source_url.raw_value"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="d-inline-flex align-items-center gap-1 mt-2">
+                                <span>View source</span>
+                                <i class="fa fa-external-link" aria-hidden="true"/>
+                            </a>
+                            <footer>
+                                <span t-if="record.active.raw_value" class="badge text-bg-success">Published</span>
+                                <span t-else="" class="badge text-bg-secondary">Unpublished</span>
+                            </footer>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="customer_testimonial_form" model="ir.ui.view">
+        <field name="name">ab.ecommerce.customer.testimonial.form</field>
+        <field name="model">ab_ecommerce_customer_testimonial</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_publish" string="Publish" type="object" class="btn-primary" invisible="active"/>
+                    <button name="action_unpublish" string="Unpublish" type="object" invisible="not active"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Unpublished" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Social comment"/></h1>
+                    </div>
+                    <group>
+                        <group string="Social Comment">
+                            <field name="image_1920" widget="image" class="oe_avatar" options="{'preview_image': 'image_1024'}"/>
+                        </group>
+                        <group string="Publishing">
+                            <field name="source_url" widget="url" placeholder="https://www.instagram.com/..."/>
+                            <field name="platform" string="Detected Platform" widget="badge" readonly="1"/>
+                            <field name="customer_name"/>
+                            <field name="sequence"/>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="website_id"/>
+                        </group>
+                    </group>
+                    <group string="Storefront Preview">
+                        <div class="d-flex flex-column gap-2">
+                            <strong>Social Comment Screenshot</strong>
+                            <field name="image_1024" widget="image" nolabel="1" readonly="1" options="{'size': [420, 420]}"/>
+                            <div>
+                                <strong>Source:</strong>
+                                <field name="source_url" widget="url" nolabel="1" readonly="1"/>
+                            </div>
+                            <div>
+                                <strong>Comment platform:</strong>
+                                <field name="platform" widget="badge" nolabel="1" readonly="1"/>
+                            </div>
+                            <div>
+                                <strong>Status:</strong>
+                                <span invisible="not active">Published</span>
+                                <span invisible="active">Unpublished</span>
+                            </div>
+                            <div>
+                                <strong>Order:</strong>
+                                <field name="sequence" nolabel="1" readonly="1"/>
+                            </div>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="customer_testimonial_search" model="ir.ui.view">
+        <field name="name">ab.ecommerce.customer.testimonial.search</field>
+        <field name="model">ab_ecommerce_customer_testimonial</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="customer_name"/>
+                <field name="source_url"/>
+                <field name="platform"/>
+                <filter name="published" string="Published" domain="[('active', '=', True)]"/>
+                <filter name="unpublished" string="Unpublished" domain="[('active', '=', False)]"/>
+                <filter name="has_source" string="Has Source" domain="[('source_url', '!=', False)]"/>
+                <group>
+                    <filter name="by_platform" string="Platform" context="{'group_by': 'platform'}"/>
+                    <filter name="by_website" string="Website" context="{'group_by': 'website_id'}"/>
+                    <filter name="by_status" string="Published" context="{'group_by': 'active'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="customer_testimonial_action" model="ir.actions.act_window">
+        <field name="name">Social Comments</field>
+        <field name="res_model">ab_ecommerce_customer_testimonial</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="customer_testimonial_search"/>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a social customer comment</p>
+            <p>Upload a real social comment screenshot, add the source link, then publish it on the storefront.</p>
+        </field>
+    </record>
+
+    <menuitem id="customer_testimonial_menu"
+              name="Social Comments"
+              parent="menu_abdin_management_style_ads"
+              action="customer_testimonial_action"
+              sequence="30"
+              groups="website.group_website_designer"/>
+</odoo>
