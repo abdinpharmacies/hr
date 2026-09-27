@@ -1,8 +1,33 @@
 Current changes before commit:
 
-- Standardize Odoo 19 manifest version, company author, developer, and explicit application/install/auto-install flags; preserve active data-file order and remaining dependencies.
-- Remove the web_progress dependency and use ordinary iteration for tax-invoice import and PDF retrieval.
-- Preserve the user-supplied untracked addon; this pass modifies only its manifest, tax-invoice iteration, and this changelog.
+- Add an Odoo 19 security privilege for taxes and move tax groups from the removed `category_id` field to `privilege_id`.
+- Convert the active tax list view and action from legacy `tree` to Odoo 19 `list`.
+- Add minimal Arabic catalogs for the active tax labels touched in this activation fix.
+- Keep the inactive government tax-invoice screens untouched; the active tax setup still avoids requiring the tax-invoice service during purchase or inventory activation.
+
+Files changed:
+
+- ab_taxes/changelog.d
+- ab_taxes/i18n/ar.po
+- ab_taxes/i18n/ar_001.po
+- ab_taxes/security/security_groups.xml
+- ab_taxes/views/ab_taxes.xml
+
+Validation:
+
+- XML parsing passed for the edited security and view files.
+- `msgfmt --check-format` passed for `ab_taxes/i18n/ar.po` and `ab_taxes/i18n/ar_001.po`.
+- `git diff --check -- ab_taxes ab_inventory ab_purchase` passed.
+- Targeted Odoo 19 activation/upgrade passed with `-u ab_taxes,ab_inventory,ab_purchase --without-demo --stop-after-init --no-http`.
+
+commit e2bca1f
+Author: emadco88 <emadco88@gmail.com>
+Date:   2026-09-23
+
+    ab_taxes/ ADD legacy module with updated manifest and no web_progress dependency
+
+- Add the legacy taxes module with an Odoo 19 manifest, security, tax data, tax configuration views, and purchase-tax invoice helpers.
+- Remove the legacy `web_progress` dependency while preserving tax-invoice iteration behavior.
 
 Files changed:
 
@@ -22,26 +47,3 @@ Files changed:
 - ab_taxes/wizard/__init__.py
 - ab_taxes/wizard/download_tax_invoices_pdf.py
 - ab_taxes/wizard/download_tax_invoices_pdf.xml
-
-Validation:
-
-- Manifest metadata/data-file checks, Python parsing, and remaining dependency resolution passed without database or external-service access.
-- AST comparison confirmed that progress-wrapper removal preserves loop bodies and surrounding behavior.
-- No new or edited user-facing source strings; existing translation entries were preserved. Installation and UI validation remain pending the separate Odoo 19 port.
-
-Reference history from origin/abdin15 (the current branch has no committed ab_taxes files):
-
-commit 53a8387f7cd325e3339e30d23daa20f1d25b58b8
-Author: emadco88 <emadco88@gmail.com>
-Date:   2024-05-30T03:22:31+03:00
-
-    ab_taxes/ delete old files
-
-- Remove legacy tax/purchase integration files from the reference branch. This historical change was not applied by this cleanup.
-
-Files changed:
-
-- ab_taxes/models/join_tax_eplus_purchase.py
-- ab_taxes/models/pur_trans_h_inherit.py
-- ab_taxes/views/cron_taxes_vendor_invoices.xml
-- ab_taxes/views/pur_trans_h_inherit.xml
