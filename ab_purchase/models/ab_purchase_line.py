@@ -6,6 +6,7 @@ class AbdinPurchaseDetails(models.Model):
     _name = "ab_purchase_line"
     _description = "Abdin Purchase Details"
     _rec_name = "product_id"
+    _inherits = {'ab_product_source': 'source_id'}
 
     source_id = fields.Many2one(
         'ab_product_source', required=True, delegate=True, index=True, ondelete='cascade', auto_join=True)

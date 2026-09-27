@@ -4,128 +4,174 @@ msgstr ""
 "Language: ar_001\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
+#. module: ab_purchase
+msgid "Abdin Purchase"
+msgstr "مشتريات العابدين"
+
+#. module: ab_purchase
 msgid "Purchase Overview"
 msgstr "نظرة عامة على المشتريات"
 
+#. module: ab_purchase
 msgid "Invoice progress and inbound stock at a glance"
 msgstr "متابعة الفواتير والمخزون الوارد في لمحة"
 
+#. module: ab_purchase
 msgid "Refresh"
 msgstr "تحديث"
 
+#. module: ab_purchase
 msgid "Loading"
 msgstr "جارٍ التحميل"
 
+#. module: ab_purchase
 msgid "Pending invoices"
 msgstr "الفواتير المعلقة"
 
+#. module: ab_purchase
 msgid "Observed inbound only"
 msgstr "وارد متوقع فقط"
 
+#. module: ab_purchase
 msgid "Saved invoices"
 msgstr "الفواتير المحفوظة"
 
+#. module: ab_purchase
 msgid "Completed documents"
 msgstr "مستندات مكتملة"
 
+#. module: ab_purchase
 msgid "Posted receipt movements"
 msgstr "حركات الاستلام المحفوظة"
 
+#. module: ab_purchase
 msgid "Saved inventory entries"
 msgstr "قيود مخزون محفوظة"
 
+#. module: ab_purchase
 msgid "Observed inbound lines"
 msgstr "بنود الوارد المتوقع"
 
+#. module: ab_purchase
 msgid "Pending; not saleable"
 msgstr "معلق؛ غير متاح للبيع"
 
+#. module: ab_purchase
 msgid "No pending lines"
 msgstr "لا توجد بنود معلقة"
 
+#. module: ab_purchase
 msgid "Bonus:"
 msgstr "الكمية المجانية:"
 
+#. module: ab_purchase
 msgid "Recent invoices"
 msgstr "أحدث الفواتير"
 
+#. module: ab_purchase
 msgid "View all"
 msgstr "عرض الكل"
 
+#. module: ab_purchase
 msgid "No invoices to show"
 msgstr "لا توجد فواتير للعرض"
 
+#. module: ab_purchase
 msgid "Purchase overview could not load."
 msgstr "تعذر تحميل نظرة المشتريات العامة."
 
+#. module: ab_purchase
 msgid "Purchase Invoices"
 msgstr "فواتير المشتريات"
 
+#. module: ab_purchase
 msgid "Draft"
 msgstr "مسودة"
 
+#. module: ab_purchase
 msgid "Pending"
 msgstr "معلق"
 
+#. module: ab_purchase
 msgid "Saved"
 msgstr "محفوظ"
 
+#. module: ab_purchase
 msgid "Rejected"
 msgstr "مرفوض"
 
+#. module: ab_purchase
 msgid "Pending purchase quantities are observed inbound only. Stock becomes on-hand after an inventory movement is saved."
 msgstr "كميات المشتريات المعلقة وارد متوقع فقط. تصبح الكمية مخزوناً فعلياً بعد حفظ حركة المخزون."
 
+#. module: ab_purchase
 msgid "Invoice Totals"
 msgstr "إجماليات الفاتورة"
 
+#. module: ab_purchase
 msgid "Save & Receive"
 msgstr "حفظ واستلام"
 
+#. module: ab_purchase
 msgid "Only draft purchase invoices with lines can be submitted."
 msgstr "يمكن إرسال فواتير المشتريات المسودة التي تحتوي على بنود فقط."
 
+#. module: ab_purchase
 msgid "Only purchase managers can save receipts into stock."
 msgstr "يمكن لمديري المشتريات فقط حفظ الاستلام في المخزون."
 
+#. module: ab_purchase
 msgid "Submit a purchase invoice with lines before receiving stock."
 msgstr "أرسل فاتورة مشتريات تحتوي على بنود قبل استلام المخزون."
 
+#. module: ab_purchase
 msgid "Saved purchase invoice lines cannot be changed."
 msgstr "لا يمكن تعديل بنود فاتورة المشتريات المحفوظة."
 
+#. module: ab_purchase
 msgid "Only purchase managers can save notices into stock."
 msgstr "يمكن لمديري المشتريات فقط حفظ الإشعارات في المخزون."
 
+#. module: ab_purchase
 msgid "Link a purchase invoice and store before saving the notice."
 msgstr "اربط فاتورة مشتريات ومتجراً قبل حفظ الإشعار."
 
+#. module: ab_purchase
 msgid "Add a notice line with a positive quantity."
 msgstr "أضف بند إشعار بكمية موجبة."
 
+#. module: ab_purchase
 msgid "Use the purchase inventory actions to change status."
 msgstr "استخدم إجراءات مخزون المشتريات لتغيير الحالة."
 
+#. module: ab_purchase
 msgid "Use the notice Submit action to save inventory."
 msgstr "استخدم إجراء إرسال الإشعار لحفظ المخزون."
 
+#. module: ab_purchase
 msgid "Only purchase managers can submit invoices for inventory."
 msgstr "يمكن لمديري المشتريات فقط إرسال الفواتير إلى المخزون."
 
+#. module: ab_purchase
 msgid "Purchase quantities and bonuses cannot be negative."
 msgstr "لا يمكن أن تكون كميات المشتريات أو الكميات المجانية سالبة."
 
+#. module: ab_purchase
 msgid "Purchase lines cannot be added or deleted after submission."
 msgstr "لا يمكن إضافة بنود المشتريات أو حذفها بعد الإرسال."
 
+#. module: ab_purchase
 msgid "Saved notice lines cannot be changed."
 msgstr "لا يمكن تعديل بنود الإشعار المحفوظ."
 
+#. module: ab_purchase
 msgid "Create purchase invoices as drafts."
 msgstr "أنشئ فواتير المشتريات بحالة مسودة."
 
+#. module: ab_purchase
 msgid "Create purchase notices as pending."
 msgstr "أنشئ إشعارات المشتريات بحالة معلقة."
 
+#. module: ab_purchase
 msgid "Save the purchase receipt before posting a notice."
 msgstr "احفظ استلام المشتريات قبل ترحيل الإشعار."
