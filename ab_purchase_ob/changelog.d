@@ -1,10 +1,12 @@
 Current changes before commit:
 
 - Standardize Odoo 19 manifest version, company author, developer, and explicit application/install/auto-install flags; preserve active data-file order and remaining dependencies.
+- Call `ab_inventory_process` directly when submitting opening balances instead of inheriting the old forwarding mixin.
 
 Files changed:
 
 - ab_purchase_ob/__manifest__.py
+- ab_purchase_ob/models/opening_balance_header.py
 - ab_purchase_ob/changelog.d
 
 Validation:
