@@ -4,8 +4,8 @@ import base64
 
 import werkzeug
 from odoo import _, http
-from odoo.addons.auth_signup.controllers.main import AuthSignupHome
 from odoo.addons.auth_signup.models.res_users import SignupError
+from odoo.addons.auth_oauth.controllers.main import OAuthLogin
 from odoo.addons.web.controllers.home import (
     SIGN_UP_REQUEST_PARAMS,
 )
@@ -75,7 +75,7 @@ def _read_custom_avatar_upload(field_name="ab_storefront_avatar_upload"):
     return encoded
 
 
-class AbStorefrontAuth(AuthSignupHome):
+class AbStorefrontAuth(OAuthLogin):
     def _is_backend_login_request(self, redirect=None):
         target = redirect or request.params.get("redirect") or ""
         return target.startswith(("/odoo", "/web"))
@@ -87,6 +87,15 @@ class AbStorefrontAuth(AuthSignupHome):
 
     def _friendly_error(self, fallback=None):
         return fallback or _("The phone number or password is incorrect.")
+
+    def list_providers(self):
+        providers = super().list_providers()
+        if self._is_backend_login_request():
+            return providers
+        google_provider = request.env.ref("auth_oauth.provider_google", raise_if_not_found=False)
+        if not google_provider:
+            return providers
+        return [provider for provider in providers if provider.get("id") == google_provider.id]
 
     def _prepare_phone_login_params(self):
         login = request.params.get("login") or request.params.get("phone")

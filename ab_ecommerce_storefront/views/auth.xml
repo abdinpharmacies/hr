@@ -116,13 +116,13 @@
                 </p>
                 <div class="oe_login_buttons ab-auth-actions">
                     <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="Signing in...">Sign in</button>
+                    <t t-call="web.login_oauth"/>
                     <div class="ab-auth-divider"><span>or</span></div>
                     <p>Do not have an account?</p>
                     <a t-if="signup_enabled" class="btn ab-auth-secondary" t-attf-href="/web/signup?{{ keep_query() }}" data-ab-auth-nav="signup" onmousedown="event.preventDefault()">Create account</a>
                     <t t-if="debug">
                         <button type="submit" name="redirect" value="/web/become" class="btn btn-link btn-sm">Log in as superuser</button>
                     </t>
-                    <t t-call="web.login_oauth"/>
                 </div>
                 <input type="hidden" name="type" value="password"/>
                 <input type="hidden" name="redirect" t-att-value="redirect"/>
@@ -294,9 +294,9 @@
                 <input type="hidden" name="token" t-att-value="token"/>
                 <div class="oe_login_buttons ab-auth-actions">
                     <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="Creating account...">Create account</button>
+                    <t t-call="web.login_oauth"/>
                     <p>Already have an account?</p>
                     <a t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" role="button" data-ab-auth-nav="login">Sign in</a>
-                    <t t-call="web.login_oauth"/>
                 </div>
             </form>
         </xpath>

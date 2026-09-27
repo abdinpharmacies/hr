@@ -352,7 +352,11 @@ export class AbStorefrontAuth extends Interaction {
         if (this.isNavigatingAuthMode || ev.relatedTarget?.closest?.("[data-ab-auth-nav]")) {
             return;
         }
-        this.validatePhone(ev.currentTarget, true);
+        const input = ev.currentTarget;
+        const normalized = normalizeEgyptianPhone(input.value);
+        if (normalized && EGYPT_MOBILE_RE.test(normalized)) {
+            input.value = normalized;
+        }
     }
 
     onPasswordToggle(ev) {
