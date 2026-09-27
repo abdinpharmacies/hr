@@ -529,6 +529,9 @@ class EplusStockSnapshotStore(models.Model):
         "Each Eplus item can only appear once per branch in the eCommerce branch stock snapshot.",
     )
 
+    def action_refresh_branch_stock_from_eplus(self):
+        return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_branch_stock_from_eplus()
+
     @api.model
     def _refresh_from_eplus_rows(self, rows, products_by_serial=None, products_by_code=None, sync_date=None):
         rows = rows or []

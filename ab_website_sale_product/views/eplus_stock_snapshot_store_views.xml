@@ -5,6 +5,13 @@
         <field name="model">ab_eplus_stock_snapshot_store</field>
         <field name="arch" type="xml">
             <list string="Eplus Branch Stock" create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_refresh_branch_stock_from_eplus"
+                            type="object"
+                            string="Refresh Branch Stock"
+                            class="btn-primary"
+                            display="always"/>
+                </header>
                 <field name="itm_id"/>
                 <field name="itm_code"/>
                 <field name="product_id"/>
@@ -25,6 +32,12 @@
         <field name="model">ab_eplus_stock_snapshot_store</field>
         <field name="arch" type="xml">
             <form string="Eplus Branch Stock" create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_refresh_branch_stock_from_eplus"
+                            type="object"
+                            string="Refresh Branch Stock"
+                            class="btn-primary"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
