@@ -6,6 +6,15 @@ import { registry } from "@web/core/registry";
 import { Interaction } from "@web/public/interaction";
 import wishlistUtils from "@website_sale_wishlist/js/website_sale_wishlist_utils";
 import { animateQuantityChange, getQuantityInputNumber } from "@ab_ecommerce_storefront/js/quantity_motion";
+import {
+    claimFavoriteRemoval,
+    collapseWishlistCard,
+    releaseFavoriteRemoval,
+    requestFavoriteRemoval,
+    setFavoriteButtonsPending,
+    startFavoriteBreak,
+    wishlistProductIdsFromResponse,
+} from "@ab_ecommerce_storefront/js/wishlist_removal";
 
 const CARD_FLY_DURATION = 760;
 
@@ -49,25 +58,46 @@ export class AbStorefrontProductCard extends Interaction {
         ev.stopImmediatePropagation();
         const isWishlisted = button.classList.contains("o_in_wishlist")
             || wishlistUtils.getWishlistProductIds().includes(productId);
-        button.classList.add("is-loading");
-        button.disabled = true;
+        if (isWishlisted && !claimFavoriteRemoval(productId)) {
+            return;
+        }
+        const favoriteAnimation = isWishlisted ? startFavoriteBreak(button) : null;
+        if (isWishlisted) {
+            setFavoriteButtonsPending(productId, true);
+        } else {
+            button.classList.add("is-loading");
+            button.disabled = true;
+        }
         try {
             if (isWishlisted) {
-                const wishId = await this.waitFor(this.getWishlistId(productId));
-                if (!wishId) {
-                    throw new Error("Wishlist entry not found");
+                const [response] = await Promise.all([
+                    this.waitFor(requestFavoriteRemoval(productId)),
+                    favoriteAnimation.finished,
+                ]);
+                const productIds = wishlistProductIdsFromResponse(response);
+                if (productIds.includes(productId)) {
+                    throw new Error("Wishlist product was not removed");
                 }
-                await this.waitFor(rpc(`/shop/wishlist/remove/${wishId}`));
-                wishlistUtils.removeWishlistProduct(productId);
+                wishlistUtils.setWishlistProductIds(productIds);
                 this.updateWishlistButtons(productId, false);
+                wishlistUtils.updateWishlistNavBar();
+                const wishlistArticle = button.closest(".wishlist-section article.o_wishlist_item");
+                if (wishlistArticle) {
+                    await collapseWishlistCard(wishlistArticle);
+                    wishlistUtils.updateWishlistView();
+                }
             } else {
                 this.showActionFeedback(button, "wishlist");
                 await this.waitFor(rpc("/shop/wishlist/add", { product_id: productId }));
                 wishlistUtils.addWishlistProduct(productId);
                 this.updateWishlistButtons(productId, true);
+                wishlistUtils.updateWishlistNavBar();
             }
-            wishlistUtils.updateWishlistNavBar();
         } catch {
+            favoriteAnimation?.cancel();
+            if (isWishlisted) {
+                this.updateWishlistButtons(productId, true);
+            }
             button.classList.add("is-error");
             const errorLabel = _t("Could not update wishlist. Please try again.");
             button.setAttribute("aria-label", errorLabel);
@@ -83,26 +113,13 @@ export class AbStorefrontProductCard extends Interaction {
                 button.title = label;
             }, 1800);
         } finally {
+            if (isWishlisted) {
+                releaseFavoriteRemoval(productId);
+                setFavoriteButtonsPending(productId, false);
+            }
             button.classList.remove("is-loading");
             button.disabled = false;
         }
-    }
-
-    async getWishlistId(productId) {
-        const response = await fetch("/shop/wishlist", {
-            credentials: "same-origin",
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
-        if (!response.ok) {
-            return 0;
-        }
-        const html = await response.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        return parseInt(
-            doc.querySelector(`article[data-product-id="${productId}"][data-wish-id]`)
-                ?.dataset.wishId,
-            10,
-        ) || 0;
     }
 
     updateWishlistButtons(productId, isWishlisted) {
@@ -110,11 +127,21 @@ export class AbStorefrontProductCard extends Interaction {
             `.ab-storefront-wishlist[data-product-product-id="${productId}"]`,
         ).forEach((button) => {
             button.classList.toggle("o_in_wishlist", isWishlisted);
+            button.classList.remove("is-favorite-removing", "is-loading", "is-error");
             button.disabled = false;
+            button.setAttribute("aria-busy", "false");
             button.setAttribute("aria-pressed", isWishlisted ? "true" : "false");
             const label = isWishlisted ? _t("Remove from wishlist") : _t("Add to wishlist");
             button.setAttribute("aria-label", label);
             button.title = label;
+            if (!isWishlisted) {
+                button.querySelectorAll(".ab-storefront-favorite-source-icon").forEach((icon) => {
+                    icon.classList.remove("ab-storefront-favorite-source-icon");
+                });
+                if (document.activeElement === button) {
+                    button.blur();
+                }
+            }
         });
     }
 

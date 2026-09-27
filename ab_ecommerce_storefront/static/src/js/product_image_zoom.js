@@ -8,6 +8,15 @@ import { patch } from "@web/core/utils/patch";
 import { CartService } from "@website_sale/js/cart_service";
 import wishlistUtils from "@website_sale_wishlist/js/website_sale_wishlist_utils";
 import { animateQuantityChange } from "@ab_ecommerce_storefront/js/quantity_motion";
+import {
+    claimFavoriteRemoval,
+    collapseWishlistCard,
+    releaseFavoriteRemoval,
+    requestFavoriteRemoval,
+    setFavoriteButtonsPending,
+    startFavoriteBreak,
+    wishlistProductIdsFromResponse,
+} from "@ab_ecommerce_storefront/js/wishlist_removal";
 
 const MIN_VIEWPORT_WIDTH = 992;
 const LENS_SIZE = 230;
@@ -849,7 +858,7 @@ registry
     .add("ab_ecommerce_storefront.mobile_search", AbStorefrontMobileSearch);
 
 export class AbStorefrontWishlistToggle extends Interaction {
-    static selector = "body";
+    static selector = "#wrap";
 
     setup() {
         this.observer = null;
@@ -881,6 +890,9 @@ export class AbStorefrontWishlistToggle extends Interaction {
         if (!button || !this.el.contains(button)) {
             return;
         }
+        if (button.matches(".ab-storefront-wishlist") && button.closest(".ab-storefront-product-card")) {
+            return;
+        }
         const productId = parseInt(button.dataset.productProductId);
         if (!productId || !this.isWishlisted(button, productId)) {
             return;
@@ -888,43 +900,51 @@ export class AbStorefrontWishlistToggle extends Interaction {
 
         ev.preventDefault();
         ev.stopImmediatePropagation();
-
-        const wishId = await this.waitFor(this.getWishId(productId));
-        if (!wishId) {
-            this.updateProductButtons(productId, true);
+        if (!claimFavoriteRemoval(productId)) {
             return;
         }
-        await this.waitFor(rpc(`/shop/wishlist/remove/${wishId}`));
-        if (button.closest(".wishlist-section")) {
-            const article = button.closest("article");
-            if (article) {
-                article.style.display = "none";
+        setFavoriteButtonsPending(productId, true);
+        const favoriteAnimation = startFavoriteBreak(button);
+        try {
+            const [response] = await Promise.all([
+                this.waitFor(requestFavoriteRemoval(productId)),
+                favoriteAnimation.finished,
+            ]);
+            const productIds = wishlistProductIdsFromResponse(response);
+            if (productIds.includes(productId)) {
+                throw new Error("Wishlist product was not removed");
             }
+            wishlistUtils.setWishlistProductIds(productIds);
+            wishlistUtils.updateWishlistNavBar();
+            this.updateProductButtons(productId, false);
+            const wishlistArticle = button.closest(".wishlist-section article.o_wishlist_item");
+            if (wishlistArticle) {
+                await collapseWishlistCard(wishlistArticle);
+                wishlistUtils.updateWishlistView();
+            }
+        } catch {
+            favoriteAnimation.cancel();
+            this.updateProductButtons(productId, true);
+            this.showWishlistError(button);
+        } finally {
+            releaseFavoriteRemoval(productId);
+            setFavoriteButtonsPending(productId, false);
         }
-        wishlistUtils.removeWishlistProduct(productId);
-        wishlistUtils.updateWishlistNavBar();
-        this.updateProductButtons(productId, false);
     }
 
-    async getWishId(productId) {
-        const response = await fetch("/shop/wishlist", {
-            credentials: "same-origin",
-            headers: { "X-Requested-With": "XMLHttpRequest" },
-        });
-        if (!response.ok) {
-            return null;
-        }
-        const html = await response.text();
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const item = doc.querySelector(`article[data-product-id="${productId}"][data-wish-id]`);
-        if (!item?.dataset.wishId) {
-            return null;
-        }
-        const wishId = parseInt(item.dataset.wishId);
-        if (!Number.isFinite(wishId)) {
-            return null;
-        }
-        return wishId;
+    showWishlistError(button) {
+        button.classList.add("is-error");
+        const errorLabel = _t("Could not update wishlist. Please try again.");
+        button.setAttribute("aria-label", errorLabel);
+        button.title = errorLabel;
+        window.setTimeout(() => {
+            if (!button.isConnected) {
+                return;
+            }
+            button.classList.remove("is-error");
+            button.setAttribute("aria-label", this.getWishlistTitle(true));
+            button.title = this.getWishlistTitle(true);
+        }, 1800);
     }
 
     isWishlisted(button, productId) {
