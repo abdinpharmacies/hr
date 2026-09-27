@@ -7,10 +7,6 @@
 
         <menuitem id="purchase_sub_menu" name="Purchase" parent="ab_product_source.menu_root" sequence="1"/>
 
-        <menuitem id="reports_menu" name="Reports" parent="ab_product_source.menu_root" sequence="4"
-                  groups="ab_purchase.group_ab_purchase_manager"
-        />
-
         <menuitem id="configuration_menu" name="Configuration"
                   groups="ab_purchase.group_ab_purchase_manager"
                   parent="ab_product_source.menu_root" sequence="5"/>
@@ -58,8 +54,6 @@
                   parent="ab_supplier_sub_menu"
                   action="ab_supplier.ab_supplier_payment_type_action"
                   sequence="8"/>
-
-        <menuitem id="accounting_menu" name="Suppliers Accounting" sequence="4" parent="ab_product_source.menu_root"/>
 
 
         <menuitem id="ab_supplier_bracket_menu"

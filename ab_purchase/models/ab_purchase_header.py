@@ -1,13 +1,13 @@
 from datetime import datetime
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 import re
 
 
 class AbdinPurchaseHeader(models.Model):
     _name = 'ab_purchase_header'
     _description = "Abdin Purchase Header"
-    _inherit = ['ab_purchase_je_header_delegate_common', "mail.thread", "mail.activity.mixin", "ab_inventory_process"]
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _rec_name = "doc_code"
     _order = "create_date desc"
 
@@ -68,8 +68,10 @@ class AbdinPurchaseHeader(models.Model):
             rec.total_extra_discount = (sum(rec.line_ids.mapped('disc_tax_no_effect_value'))
                                         + rec.eplus_total_disc_on_inv)
 
-    _sql_constraints = [
-        ('ab_purchase_header_eplus_serial_unique', 'unique(eplus_serial)', 'ePlus Serial CAN NOT BE DUPLICATED!')]
+    _eplus_serial_unique = models.Constraint(
+        'UNIQUE(eplus_serial)',
+        'ePlus Serial CAN NOT BE DUPLICATED!',
+    )
 
     @api.constrains("doc_code")
     def constrains_ab_purchase_header(self):
@@ -179,36 +181,55 @@ class AbdinPurchaseHeader(models.Model):
     #         rec.confirm = not rec.confirm
 
     def btn_to_store(self):
-        header_ref = f"PUR-{self.id}"
-        inventory_lines = self.env['ab_inventory'].search([('header_ref', '=', header_ref)])
-        for line in inventory_lines:
-            if line.status == 'pending_main':
-                line.write({'status': 'pending_store'})
+        return self.btn_save_inventory()
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if any(vals.get('status', 'prepending') != 'prepending' for vals in vals_list):
+            raise ValidationError(_("Create purchase invoices as drafts."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if 'status' in vals:
+            raise ValidationError(_("Use the purchase inventory actions to change status."))
+        return super().write(vals)
 
     def btn_submit_inventory(self):
-        inventory_mo = self.env["ab_inventory"].sudo()
+        self.ensure_one()
+        if not (self.env.user.has_group('base.group_system')
+                or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
+            raise AccessError(_("Only purchase managers can submit invoices for inventory."))
         if not self.line_ids or self.status != 'prepending':
-            return
-
-        try:
-
+            raise ValidationError(_("Only draft purchase invoices with lines can be submitted."))
+        with self.env.cr.savepoint():
             for rec in self.line_ids:
-                inventory_line = inventory_mo.search(
-                    [('model_ref', '=', rec._name), ('res_id', '=', rec.id)]
-                )
+                if rec.qty < 0 or rec.bonus < 0:
+                    raise ValidationError(_("Purchase quantities and bonuses cannot be negative."))
                 qty_total = rec.qty + rec.bonus
-                store_id = self.store_id.id
-                # self.inventory_write(rec, qty_total, store_id)
+                self.env['ab_inventory_process'].inventory_write(
+                    rec, qty_total, self.store_id.id, status='pending',
+                )
+            super(AbdinPurchaseHeader, self).write({'status': 'pending'})
+        return True
 
-                if len(inventory_line) == 0:
-                    self.inventory_write(rec, qty_total, store_id, inventory_line=None)
-                else:
-                    self.inventory_write(
-                        rec, qty_total, store_id, inventory_line=inventory_line, status='pending_main'
-                    )
-            self.status = "pending"
-        except ValidationError as ve:
-            raise ValidationError(str(ve) + f"\nIN INVOICE ID: {self.id}.")
+    def btn_save_inventory(self):
+        self.ensure_one()
+        if not (self.env.user.has_group('base.group_system')
+                or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
+            raise AccessError(_("Only purchase managers can save receipts into stock."))
+        if self.status == 'saved':
+            return True
+        if self.status != 'pending' or not self.line_ids:
+            raise ValidationError(_("Submit a purchase invoice with lines before receiving stock."))
+        with self.env.cr.savepoint():
+            for line in self.line_ids:
+                if line.qty < 0 or line.bonus < 0:
+                    raise ValidationError(_("Purchase quantities and bonuses cannot be negative."))
+                self.env['ab_inventory_process'].inventory_write(
+                    line, line.qty + line.bonus, self.store_id.id, status='saved',
+                )
+            super(AbdinPurchaseHeader, self).write({'status': 'saved'})
+        return True
 
     @api.depends("line_ids", "line_ids.line_price", "line_ids.line_cost", "line_ids.line_taxes_value",
                  "line_ids.extra_discount_percentage")
@@ -221,36 +242,3 @@ class AbdinPurchaseHeader(models.Model):
                 rec.line_purchase_price * (1 - rec.extra_discount_percentage / 100) for rec in rec.line_ids)
             rec.number_of_products = sum(rec.qty for rec in rec.line_ids)
             rec.lines_count = self.env['ab_purchase_line'].sudo().search_count([('header_id', '=', rec.id)])
-
-    # def write(self, vals):
-    #     self = self.with_context(sudo_confirm=True, from_header=True)
-    #     pur_mo = self.env['ab_purchase_header'].sudo()
-    #     pur_notice_mo = self.env['ab_purchase_notice_header'].sudo()
-    #
-    #     res = super().write(vals)
-    #     inventory = self.env["ab_inventory"]
-    #     for rec in self:
-    #         pur_notices = pur_notice_mo.search([('purchase_header_id', '=', rec.id)])
-    #         je_headers_notice = pur_notices.mapped('je_header_id')
-    #         je_headers_pur = pur_mo.browse(rec.id).je_header_id
-    #         je_headers = je_headers_pur | je_headers_notice
-    #
-    #         if "store_id" in vals:
-    #             inventory_lines = inventory.search(
-    #                 [("source_id", "=", rec.line_ids.mapped("source_id.id"))]
-    #             )
-    #             inventory_lines.store_id = rec.store_id.id
-    #         if je_headers.mapped('line_ids'):
-    #             je_vals = {}
-    #             if "supplier_id" in vals:
-    #                 pur_notices.update({'supplier_id': rec.supplier_id.id})
-    #                 je_vals.update({'costcenter_id': rec.supplier_id.costcenter_id.id})
-    #             if "doc_code" in vals:
-    #                 je_vals.update({'doc_no': rec.doc_code})
-    #             if "store_id" in vals:
-    #                 je_vals.update({'store_id': rec.store_id.id})
-    #
-    #             if je_vals:
-    #                 je_headers.line_ids.write(je_vals)
-    #
-    #     return res

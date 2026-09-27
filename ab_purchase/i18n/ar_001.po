@@ -1,0 +1,131 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ar_001\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+msgid "Purchase Overview"
+msgstr "نظرة عامة على المشتريات"
+
+msgid "Invoice progress and inbound stock at a glance"
+msgstr "متابعة الفواتير والمخزون الوارد في لمحة"
+
+msgid "Refresh"
+msgstr "تحديث"
+
+msgid "Loading"
+msgstr "جارٍ التحميل"
+
+msgid "Pending invoices"
+msgstr "الفواتير المعلقة"
+
+msgid "Observed inbound only"
+msgstr "وارد متوقع فقط"
+
+msgid "Saved invoices"
+msgstr "الفواتير المحفوظة"
+
+msgid "Completed documents"
+msgstr "مستندات مكتملة"
+
+msgid "Posted receipt movements"
+msgstr "حركات الاستلام المحفوظة"
+
+msgid "Saved inventory entries"
+msgstr "قيود مخزون محفوظة"
+
+msgid "Observed inbound lines"
+msgstr "بنود الوارد المتوقع"
+
+msgid "Pending; not saleable"
+msgstr "معلق؛ غير متاح للبيع"
+
+msgid "No pending lines"
+msgstr "لا توجد بنود معلقة"
+
+msgid "Bonus:"
+msgstr "الكمية المجانية:"
+
+msgid "Recent invoices"
+msgstr "أحدث الفواتير"
+
+msgid "View all"
+msgstr "عرض الكل"
+
+msgid "No invoices to show"
+msgstr "لا توجد فواتير للعرض"
+
+msgid "Purchase overview could not load."
+msgstr "تعذر تحميل نظرة المشتريات العامة."
+
+msgid "Purchase Invoices"
+msgstr "فواتير المشتريات"
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "Pending"
+msgstr "معلق"
+
+msgid "Saved"
+msgstr "محفوظ"
+
+msgid "Rejected"
+msgstr "مرفوض"
+
+msgid "Pending purchase quantities are observed inbound only. Stock becomes on-hand after an inventory movement is saved."
+msgstr "كميات المشتريات المعلقة وارد متوقع فقط. تصبح الكمية مخزوناً فعلياً بعد حفظ حركة المخزون."
+
+msgid "Invoice Totals"
+msgstr "إجماليات الفاتورة"
+
+msgid "Save & Receive"
+msgstr "حفظ واستلام"
+
+msgid "Only draft purchase invoices with lines can be submitted."
+msgstr "يمكن إرسال فواتير المشتريات المسودة التي تحتوي على بنود فقط."
+
+msgid "Only purchase managers can save receipts into stock."
+msgstr "يمكن لمديري المشتريات فقط حفظ الاستلام في المخزون."
+
+msgid "Submit a purchase invoice with lines before receiving stock."
+msgstr "أرسل فاتورة مشتريات تحتوي على بنود قبل استلام المخزون."
+
+msgid "Saved purchase invoice lines cannot be changed."
+msgstr "لا يمكن تعديل بنود فاتورة المشتريات المحفوظة."
+
+msgid "Only purchase managers can save notices into stock."
+msgstr "يمكن لمديري المشتريات فقط حفظ الإشعارات في المخزون."
+
+msgid "Link a purchase invoice and store before saving the notice."
+msgstr "اربط فاتورة مشتريات ومتجراً قبل حفظ الإشعار."
+
+msgid "Add a notice line with a positive quantity."
+msgstr "أضف بند إشعار بكمية موجبة."
+
+msgid "Use the purchase inventory actions to change status."
+msgstr "استخدم إجراءات مخزون المشتريات لتغيير الحالة."
+
+msgid "Use the notice Submit action to save inventory."
+msgstr "استخدم إجراء إرسال الإشعار لحفظ المخزون."
+
+msgid "Only purchase managers can submit invoices for inventory."
+msgstr "يمكن لمديري المشتريات فقط إرسال الفواتير إلى المخزون."
+
+msgid "Purchase quantities and bonuses cannot be negative."
+msgstr "لا يمكن أن تكون كميات المشتريات أو الكميات المجانية سالبة."
+
+msgid "Purchase lines cannot be added or deleted after submission."
+msgstr "لا يمكن إضافة بنود المشتريات أو حذفها بعد الإرسال."
+
+msgid "Saved notice lines cannot be changed."
+msgstr "لا يمكن تعديل بنود الإشعار المحفوظ."
+
+msgid "Create purchase invoices as drafts."
+msgstr "أنشئ فواتير المشتريات بحالة مسودة."
+
+msgid "Create purchase notices as pending."
+msgstr "أنشئ إشعارات المشتريات بحالة معلقة."
+
+msgid "Save the purchase receipt before posting a notice."
+msgstr "احفظ استلام المشتريات قبل ترحيل الإشعار."

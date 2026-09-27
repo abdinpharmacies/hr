@@ -6,6 +6,24 @@ class PurchaseNoticeLine(models.Model):
     _name = 'ab_purchase_notice_line'
     _description = 'Abdin Purchase Notice Line'
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            header = self.env['ab_purchase_notice_header'].browse(vals.get('header_id'))
+            if header.exists() and header.status == 'saved':
+                raise ValidationError(_("Saved notice lines cannot be changed."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if any(line.header_id.status == 'saved' for line in self):
+            raise ValidationError(_("Saved notice lines cannot be changed."))
+        return super().write(vals)
+
+    def unlink(self):
+        if any(line.header_id.status == 'saved' for line in self):
+            raise ValidationError(_("Saved notice lines cannot be changed."))
+        return super().unlink()
+
     header_id = fields.Many2one(
         'ab_purchase_notice_header', required=True, ondelete='cascade', auto_join=True)
 
@@ -17,7 +35,6 @@ class PurchaseNoticeLine(models.Model):
     available_qty = fields.Float(compute='_compute_invoice_available_qty')
     qty = fields.Float(default=0, digits=(16, 2))
     bonus = fields.Integer(default=0)
-    last_inventory_id = fields.Many2one('ab_inventory', compute='_compute_last_inventory_id')
     invoice_bonus = fields.Integer(related='source_id.bonus', string="Invoice Bonus")
     invoice_qty = fields.Float(related='source_id.qty', string="Invoice Qty")
     available_bonus = fields.Integer(compute='_compute_invoice_available_bonus')
@@ -40,13 +57,9 @@ class PurchaseNoticeLine(models.Model):
 
     # header related
     supplier_id = fields.Many2one(related='header_id.supplier_id')
-    costcenter_id = fields.Many2one(related='supplier_id.costcenter_id')
-    je_header_id = fields.Many2one(related='header_id.je_header_id')
     doc_code = fields.Char(related='header_id.doc_code')
     eplus_g_header_serial = fields.Integer(related='header_id.eplus_g_header_serial')
     eplus_serial_calc = fields.Integer(related='header_id.eplus_serial_calc')
-    je_line_ids = fields.One2many(related='header_id.line_ids')
-    related_claim_id = fields.Many2one(related='header_id.related_claim_id')
     purchase_header_id = fields.Many2one(related='header_id.purchase_header_id')
     invoice_number = fields.Char(related='purchase_header_id.doc_code', string='Invoice Number')
     pur_eplus_serial = fields.Integer(
@@ -54,15 +67,14 @@ class PurchaseNoticeLine(models.Model):
         string='Pur ePlus Serial'
     )
 
-    _sql_constraints = [
-        ('eplus_serial_unique', 'unique(eplus_serial)', 'ePlus Serial For Notice CAN NOT BE DUPLICATED!'),
-        ('eplus_serial_g_return_unique', 'unique(eplus_serial_g_return)',
-         'ePlus Serial For G.Notice CAN NOT BE DUPLICATED!'),
-    ]
-
-    def _get_source_id_domain(self):
-        pending = self.env['ab_product_source_pending'].search([])
-        return [('id', 'in', pending.ids)]
+    _eplus_serial_unique = models.Constraint(
+        'UNIQUE(eplus_serial)',
+        'ePlus Serial For Notice CAN NOT BE DUPLICATED!',
+    )
+    _eplus_serial_g_return_unique = models.Constraint(
+        'UNIQUE(eplus_serial_g_return)',
+        'ePlus Serial For G.Notice CAN NOT BE DUPLICATED!',
+    )
 
     @api.depends('source_id')
     def _compute_purchase_header_id(self):
@@ -89,18 +101,6 @@ class PurchaseNoticeLine(models.Model):
             entered_source_ids = [s._origin.id if getattr(s, '_origin', None) else s.id for s in entered_source_ids]
             domain &= fields.Domain('id', 'not in', entered_source_ids)
             rec.source_id_domain = list(domain)
-
-    @api.depends('source_id')
-    def _compute_last_inventory_id(self):
-        for rec in self:
-            last_inventory = self.env['ab_inventory'].search([
-                ('source_id', '=', rec.source_id.id),
-                ('status', '=', 'pending_main'),
-            ],
-                limit=1,
-                order='id desc')
-
-            rec.last_inventory_id = last_inventory.id
 
     @api.depends('source_id', 'source_id.qty', 'source_id.bonus', 'source_id.unit_taxes_value',
                  'source_id.unit_cost', 'source_id.price')
@@ -129,40 +129,23 @@ class PurchaseNoticeLine(models.Model):
 
                 rec.available_bonus = rec.invoice_bonus - total_return_bonus
 
-    @api.depends('product_id', 'source_id', 'uom_id')
+    @api.depends('product_id', 'source_id', 'uom_id', 'header_id.purchase_header_id.store_id')
     def _compute_invoice_available_qty(self):
         for rec in self:
-            inventory_pending = self.env['ab_inventory'].search(
-                [('source_id', '=', rec.source_id.id), ('status', '=', 'pending_main')])
-
-            inventory_all = self.env['ab_inventory'].search([('source_id', '=', rec.source_id.id), ])
-
-            # get min(pending , all) qty
-            # EXAMPLE OF EQUATION AT END OF FILE
-            available_qty_pending_s_unit = sum(inv.qty for inv in inventory_pending)
-            available_qty_all_s_unit = sum(inv.qty for inv in inventory_all)
-            available_qty_s_unit = min(available_qty_pending_s_unit, available_qty_all_s_unit)
-
-            available_qty_with_bonus = rec.product_id.qty_from_small(available_qty_s_unit, rec.uom_id.unit_size)
-
-            # check if this line was returned before (to define actual rest of bonus)
-            rec.available_qty = available_qty_with_bonus - rec.available_bonus
-
-    # def unlink(self):
-    #     for rec in self:
-    #         if rec.header_id.status == 'saved':
-    #             raise ValidationError(
-    #                 "Can not delete, Notice is saved")
-    #         if self.env['ab_inventory'].search_count([('model_ref', '=', rec._name), ('res_id', '=', rec.id)]):
-    #             raise ValidationError(
-    #                 "Can not delete, Item is returned before ")
-    #     return super().unlink()
-
-# source_id	qty	status
-# 123	30	saved	        pur_line
-# 123  -10	store_pending	pur_notice-
-# 123	10	store_pending	pur_notice+
-# 123  -10	saved	        sales
-# 123  -20	saved	        transfer
-# 123	10	main_pending	transfer
-# 123	10	store_pending	transfer
+            store = rec.header_id.purchase_header_id.store_id
+            if not store or not rec.source_id or not rec.product_id:
+                rec.available_qty = 0
+                continue
+            balance = self.env['ab_inventory_process'].get_balance(
+                store.id, source_id=rec.source_id.id,
+            )
+            unit_size = rec.uom_id.unit_size
+            smallest_per_large = rec.product_id.unit_s_id.unit_no or 0
+            if unit_size == 'large':
+                rec.available_qty = balance / smallest_per_large if smallest_per_large else 0
+            elif unit_size == 'medium':
+                medium_per_large = rec.product_id.unit_m_id.unit_no or 0
+                rec.available_qty = (balance * medium_per_large / smallest_per_large
+                                     if smallest_per_large else 0)
+            else:
+                rec.available_qty = balance

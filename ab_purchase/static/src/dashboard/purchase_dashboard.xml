@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_purchase.PurchaseDashboard">
+        <div class="o_ab_purchase_dashboard">
+            <header class="o_ab_purchase_dashboard_header">
+                <div>
+                    <h1>Purchase Overview</h1>
+                    <p>Invoice progress and inbound stock at a glance</p>
+                </div>
+                <button class="btn btn-outline-primary" type="button" t-on-click="refresh" t-att-disabled="state.loading">
+                    <i class="fa fa-refresh me-2" aria-hidden="true"/>Refresh
+                </button>
+            </header>
+            <t t-if="state.loading">
+                <div class="o_ab_purchase_dashboard_loading"><i class="fa fa-spinner fa-spin me-2" aria-hidden="true"/>Loading</div>
+            </t>
+            <t t-else="">
+                <div class="o_ab_purchase_dashboard_notice" role="note">
+                    <i class="fa fa-info-circle" aria-hidden="true"/>
+                    <span t-esc="state.data.notice"/>
+                </div>
+                <div class="o_ab_purchase_dashboard_cards">
+                    <button type="button" class="o_ab_purchase_dashboard_card is-observed" t-on-click="() => this.openInvoices([['status', '=', 'pending']])">
+                        <span>Pending invoices</span><strong t-esc="state.data.pending_count"/><small>Observed inbound only</small>
+                    </button>
+                    <button type="button" class="o_ab_purchase_dashboard_card is-saved" t-on-click="() => this.openInvoices([['status', '=', 'saved']])">
+                        <span>Saved invoices</span><strong t-esc="state.data.saved_count"/><small>Completed documents</small>
+                    </button>
+                    <div class="o_ab_purchase_dashboard_card is-posted">
+                        <span>Posted receipt movements</span><strong t-esc="state.data.posted_receipts"/><small>Saved inventory entries</small>
+                    </div>
+                </div>
+                <div class="o_ab_purchase_dashboard_columns">
+                    <section class="o_ab_purchase_dashboard_panel">
+                        <div class="o_ab_purchase_dashboard_panel_head"><h2>Observed inbound lines</h2><span>Pending; not saleable</span></div>
+                        <t t-if="!state.data.observed.length"><p class="o_ab_purchase_dashboard_empty">No pending lines</p></t>
+                        <t t-else="">
+                            <div class="o_ab_purchase_dashboard_rows">
+                                <t t-foreach="state.data.observed" t-as="line" t-key="line.id">
+                                    <button type="button" class="o_ab_purchase_dashboard_row" t-on-click="() => this.openInvoice(line.invoice_id)">
+                                        <span><strong t-esc="line.product"/><small t-esc="line.invoice + ' · ' + line.store"/></span>
+                                        <span class="o_ab_purchase_dashboard_qty"><t t-esc="line.qty"/> <t t-esc="line.unit"/><small t-if="line.bonus">Bonus: <t t-esc="line.bonus"/></small></span>
+                                    </button>
+                                </t>
+                            </div>
+                        </t>
+                    </section>
+                    <section class="o_ab_purchase_dashboard_panel">
+                        <div class="o_ab_purchase_dashboard_panel_head"><h2>Recent invoices</h2><button type="button" class="btn btn-link" t-on-click="() => this.openInvoices()">View all</button></div>
+                        <t t-if="!state.data.recent.length"><p class="o_ab_purchase_dashboard_empty">No invoices to show</p></t>
+                        <t t-else="">
+                            <div class="o_ab_purchase_dashboard_rows">
+                                <t t-foreach="state.data.recent" t-as="invoice" t-key="invoice.id">
+                                    <button type="button" class="o_ab_purchase_dashboard_row" t-on-click="() => this.openInvoice(invoice.id)">
+                                        <span><strong t-esc="invoice.code"/><small t-esc="invoice.supplier + ' · ' + invoice.store"/></span>
+                                        <span t-att-class="'o_ab_purchase_dashboard_status is-' + invoice.status" t-esc="statusLabel(invoice.status)"/>
+                                    </button>
+                                </t>
+                            </div>
+                        </t>
+                    </section>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>
