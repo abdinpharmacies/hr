@@ -22,6 +22,7 @@ class AbBusinessPartnership(models.Model):
     website_url = fields.Char(string="Website / Social Media")
     city = fields.Char(string="City / Governorate")
     partnership_type = fields.Selection([
+        ("new_contract", "New Contract"),
         ("marketing", "Advertising & Marketing"),
         ("product", "Product Partnership"),
         ("other", "Other"),
@@ -62,7 +63,7 @@ class AbBusinessPartnership(models.Model):
         phone = (values.get("phone") or "").translate(str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789"))
         if phone and (not re.fullmatch(r"\+?[0-9 ()-]+", phone) or not 7 <= len(re.sub(r"\D", "", phone)) <= 15):
             errors["phone"] = _("Enter a valid phone number, including the country code when needed.")
-        if values.get("partnership_type") not in ("marketing", "product", "other"):
+        if values.get("partnership_type") not in ("new_contract", "marketing", "product", "other"):
             errors["partnership_type"] = _("Choose a partnership type.")
         if values.get("message") and len(values["message"].strip()) < 10:
             errors["message"] = _("Please provide at least 10 characters describing your request.")

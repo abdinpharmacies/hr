@@ -59,8 +59,9 @@ class AbBusinessWebsiteForm(WebsiteForm):
         if any(not isinstance(kwargs.get(name, ""), str) for name in model._SUBMISSION_FIELDS):
             return json.dumps({"error": _("Please enter text in the form fields. File uploads are not supported.")})
         values = {name: (kwargs.get(name) or "").strip() for name in model._SUBMISSION_FIELDS}
-        if values["partnership_type"] != "product":
-            values["product_category"] = ""
+        if values["partnership_type"] not in ("new_contract", "other"):
+            values["partnership_type"] = ""
+        values["product_category"] = ""
         errors = model._submission_errors(values)
         if errors:
             return json.dumps({"error": " ".join(dict.fromkeys(errors.values())),

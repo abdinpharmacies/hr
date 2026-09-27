@@ -38,7 +38,8 @@ export class AbBusinessPartnershipForm extends Interaction {
     }
 
     syncFields() {
-        const type = this.el.querySelector('[name="partnership_type"]:checked')?.value;
+        const type = this.el.querySelector('[name="partnership_type"]:checked')?.value
+            || this.el.querySelector('[name="partnership_type"]')?.value;
         this.el.querySelector("#ab_business_details").hidden = !type;
         const productFields = this.el.querySelector("[data-ab-product-fields]");
         productFields.hidden = type !== "product";
