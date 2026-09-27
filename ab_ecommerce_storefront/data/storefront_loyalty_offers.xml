@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_tag_offer_personal_care" model="product.tag">
+        <field name="name">Abdin Personal Care Offer</field>
+    </record>
+    <record id="product_tag_offer_baby_care" model="product.tag">
+        <field name="name">Abdin Baby Care Offer</field>
+    </record>
+    <record id="product_tag_offer_beauty" model="product.tag">
+        <field name="name">Abdin Beauty Loyalty Offer</field>
+    </record>
+
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', 'in', [
+            ref('ab_ecommerce_storefront.product_evasline_hand_cream'),
+            ref('ab_ecommerce_storefront.product_sensodyne_original'),
+        ])]"/>
+        <value eval="{'product_tag_ids': [Command.link(ref('ab_ecommerce_storefront.product_tag_offer_personal_care'))]}"/>
+    </function>
+
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', 'in', [
+            ref('ab_ecommerce_storefront.product_eva_bebe_rash_cream'),
+            ref('ab_ecommerce_storefront.product_johnsons_no_more_tangles'),
+        ])]"/>
+        <value eval="{'product_tag_ids': [Command.link(ref('ab_ecommerce_storefront.product_tag_offer_baby_care'))]}"/>
+    </function>
+
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', 'in', [
+            ref('ab_ecommerce_storefront.product_eva_rose_water'),
+            ref('ab_ecommerce_storefront.product_loreal_hyaluron_serum'),
+        ])]"/>
+        <value eval="{'product_tag_ids': [Command.link(ref('ab_ecommerce_storefront.product_tag_offer_beauty'))]}"/>
+    </function>
+
+    <record id="loyalty_program_personal_care_discount" model="loyalty.program">
+        <field name="name">Website Personal Care 12% Off</field>
+        <field name="program_type">promotion</field>
+        <field name="applies_on">current</field>
+        <field name="trigger">auto</field>
+        <field name="portal_visible">False</field>
+        <field name="portal_point_name">Promo point(s)</field>
+        <field name="sale_ok">True</field>
+        <field name="ecommerce_ok">True</field>
+        <field name="website_id" ref="website.default_website"/>
+    </record>
+    <record id="loyalty_rule_personal_care_discount" model="loyalty.rule">
+        <field name="program_id" ref="loyalty_program_personal_care_discount"/>
+        <field name="mode">auto</field>
+        <field name="minimum_qty">1</field>
+        <field name="minimum_amount">0</field>
+        <field name="reward_point_mode">unit</field>
+        <field name="reward_point_amount">1</field>
+        <field name="product_tag_id" eval="False"/>
+        <field name="product_domain">[('product_tmpl_id.default_code', 'in', ['AB-WEB-005', 'AB-WEB-006'])]</field>
+    </record>
+    <record id="loyalty_reward_personal_care_discount" model="loyalty.reward">
+        <field name="program_id" ref="loyalty_program_personal_care_discount"/>
+        <field name="reward_type">discount</field>
+        <field name="discount">12</field>
+        <field name="discount_mode">percent</field>
+        <field name="discount_applicability">specific</field>
+        <field name="discount_product_tag_id" eval="False"/>
+        <field name="discount_product_domain">[('product_tmpl_id.default_code', 'in', ['AB-WEB-005', 'AB-WEB-006'])]</field>
+        <field name="required_points">1</field>
+    </record>
+
+    <record id="loyalty_program_baby_buy_two_get_one" model="loyalty.program">
+        <field name="name">Website Baby Care Buy 2 Get 1</field>
+        <field name="program_type">buy_x_get_y</field>
+        <field name="applies_on">current</field>
+        <field name="trigger">auto</field>
+        <field name="portal_visible">False</field>
+        <field name="portal_point_name">Credit(s)</field>
+        <field name="sale_ok">True</field>
+        <field name="ecommerce_ok">True</field>
+        <field name="website_id" ref="website.default_website"/>
+    </record>
+    <record id="loyalty_rule_baby_buy_two_get_one" model="loyalty.rule">
+        <field name="program_id" ref="loyalty_program_baby_buy_two_get_one"/>
+        <field name="mode">auto</field>
+        <field name="minimum_qty">2</field>
+        <field name="minimum_amount">0</field>
+        <field name="reward_point_mode">unit</field>
+        <field name="reward_point_amount">1</field>
+        <field name="product_tag_id" eval="False"/>
+        <field name="product_domain">[('product_tmpl_id.default_code', 'in', ['AB-WEB-013', 'AB-WEB-014'])]</field>
+    </record>
+    <record id="loyalty_reward_baby_buy_two_get_one" model="loyalty.reward">
+        <field name="program_id" ref="loyalty_program_baby_buy_two_get_one"/>
+        <field name="reward_type">product</field>
+        <field name="reward_product_id" search="[('product_tmpl_id', '=', ref('product_johnsons_no_more_tangles'))]"/>
+        <field name="reward_product_qty">1</field>
+        <field name="required_points">2</field>
+    </record>
+
+    <record id="loyalty_program_beauty_points" model="loyalty.program">
+        <field name="name">Website Beauty Loyalty Points</field>
+        <field name="program_type">loyalty</field>
+        <field name="applies_on">both</field>
+        <field name="trigger">auto</field>
+        <field name="portal_visible">True</field>
+        <field name="portal_point_name">Beauty point(s)</field>
+        <field name="sale_ok">True</field>
+        <field name="ecommerce_ok">True</field>
+        <field name="website_id" ref="website.default_website"/>
+    </record>
+    <record id="loyalty_rule_beauty_points" model="loyalty.rule">
+        <field name="program_id" ref="loyalty_program_beauty_points"/>
+        <field name="mode">auto</field>
+        <field name="minimum_qty">1</field>
+        <field name="minimum_amount">0</field>
+        <field name="reward_point_mode">money</field>
+        <field name="reward_point_amount">1</field>
+        <field name="product_tag_id" eval="False"/>
+        <field name="product_domain">[('product_tmpl_id.default_code', 'in', ['AB-WEB-011', 'AB-WEB-012'])]</field>
+    </record>
+    <record id="loyalty_reward_beauty_points" model="loyalty.reward">
+        <field name="program_id" ref="loyalty_program_beauty_points"/>
+        <field name="reward_type">discount</field>
+        <field name="discount">30</field>
+        <field name="discount_mode">per_order</field>
+        <field name="discount_applicability">order</field>
+        <field name="required_points">300</field>
+    </record>
+
+    <record id="loyalty_program_ewallet_topup" model="loyalty.program">
+        <field name="name">Website eWallet Top-up</field>
+        <field name="program_type">ewallet</field>
+        <field name="applies_on">future</field>
+        <field name="trigger">auto</field>
+        <field name="portal_visible">True</field>
+        <field name="portal_point_name">LE</field>
+        <field name="sale_ok">True</field>
+        <field name="ecommerce_ok">True</field>
+        <field name="website_id" ref="website.default_website"/>
+    </record>
+    <record id="loyalty_rule_ewallet_topup" model="loyalty.rule">
+        <field name="program_id" ref="loyalty_program_ewallet_topup"/>
+        <field name="mode">auto</field>
+        <field name="minimum_qty">1</field>
+        <field name="minimum_amount">0</field>
+        <field name="reward_point_mode">money</field>
+        <field name="reward_point_amount">1</field>
+        <field name="reward_point_split">False</field>
+        <field name="product_ids" eval="[Command.link(ref('loyalty.ewallet_product_50'))]"/>
+    </record>
+    <record id="loyalty_reward_ewallet_topup" model="loyalty.reward">
+        <field name="program_id" ref="loyalty_program_ewallet_topup"/>
+        <field name="reward_type">discount</field>
+        <field name="discount_mode">per_point</field>
+        <field name="discount">1</field>
+        <field name="discount_applicability">order</field>
+        <field name="required_points">1</field>
+    </record>
+
+    <function model="loyalty.rule" name="write">
+        <value model="loyalty.rule" search="[('id', '=', ref('ab_ecommerce_storefront.loyalty_rule_personal_care_discount'))]"/>
+        <value eval="{'product_tag_id': False, 'product_domain': &quot;[('product_tmpl_id.default_code', 'in', ['AB-WEB-005', 'AB-WEB-006'])]&quot;}"/>
+    </function>
+    <function model="loyalty.reward" name="write">
+        <value model="loyalty.reward" search="[('id', '=', ref('ab_ecommerce_storefront.loyalty_reward_personal_care_discount'))]"/>
+        <value eval="{'discount_product_tag_id': False, 'discount_product_domain': &quot;[('product_tmpl_id.default_code', 'in', ['AB-WEB-005', 'AB-WEB-006'])]&quot;}"/>
+    </function>
+    <function model="loyalty.rule" name="write">
+        <value model="loyalty.rule" search="[('id', '=', ref('ab_ecommerce_storefront.loyalty_rule_baby_buy_two_get_one'))]"/>
+        <value eval="{'product_tag_id': False, 'product_domain': &quot;[('product_tmpl_id.default_code', 'in', ['AB-WEB-013', 'AB-WEB-014'])]&quot;}"/>
+    </function>
+    <function model="loyalty.rule" name="write">
+        <value model="loyalty.rule" search="[('id', '=', ref('ab_ecommerce_storefront.loyalty_rule_beauty_points'))]"/>
+        <value eval="{'product_tag_id': False, 'product_domain': &quot;[('product_tmpl_id.default_code', 'in', ['AB-WEB-011', 'AB-WEB-012'])]&quot;}"/>
+    </function>
+
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', '=', ref('loyalty.gift_card_product_50_product_template'))]"/>
+        <value eval="{'is_published': True, 'website_sequence': 160}"/>
+    </function>
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', '=', ref('loyalty.ewallet_product_50_product_template'))]"/>
+        <value eval="{'is_published': True, 'website_sequence': 170}"/>
+    </function>
+</odoo>

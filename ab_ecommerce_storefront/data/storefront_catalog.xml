@@ -6,7 +6,7 @@
         later without a module upgrade overwriting their work.
     -->
 
-    <!-- Enable Odoo's native compare-at price display for storefront offers. -->
+    <!-- Enable Odoo's native compare-at price display for catalog managers. -->
     <record id="base.group_user" model="res.groups">
         <field name="implied_ids" eval="[Command.link(ref('website_sale.group_product_price_comparison'))]"/>
     </record>
@@ -98,8 +98,6 @@
         <field name="name">Evasline Hand Cream Passion | 60 g</field>
         <field name="default_code">AB-WEB-005</field>
         <field name="list_price">59.0</field>
-        <field name="compare_list_price">70.0</field>
-        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
         <field name="website_sequence">50</field>
         <field name="is_published" eval="True"/>
         <field name="type">consu</field>
@@ -112,8 +110,6 @@
         <field name="name">Sensodyne Original Toothpaste | 100 ml</field>
         <field name="default_code">AB-WEB-006</field>
         <field name="list_price">109.0</field>
-        <field name="compare_list_price">125.0</field>
-        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
         <field name="website_sequence">60</field>
         <field name="is_published" eval="True"/>
         <field name="type">consu</field>
@@ -189,8 +185,6 @@
         <field name="name">L'Oréal Hyaluron Expert Serum | 30 ml</field>
         <field name="default_code">AB-WEB-012</field>
         <field name="list_price">549.0</field>
-        <field name="compare_list_price">625.0</field>
-        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
         <field name="website_sequence">120</field>
         <field name="is_published" eval="True"/>
         <field name="type">consu</field>
@@ -216,8 +210,6 @@
         <field name="name">Johnson's No More Tangles Baby Shampoo | 500 ml</field>
         <field name="default_code">AB-WEB-014</field>
         <field name="list_price">129.0</field>
-        <field name="compare_list_price">145.0</field>
-        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
         <field name="website_sequence">140</field>
         <field name="is_published" eval="True"/>
         <field name="type">consu</field>

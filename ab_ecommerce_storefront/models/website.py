@@ -2,6 +2,8 @@ from markupsafe import Markup
 from werkzeug.urls import url_encode
 
 from odoo import _, _lt, fields, models
+from odoo.fields import Domain
+from odoo.http import request
 
 
 _CATEGORY_LABELS = {
@@ -223,6 +225,7 @@ class Website(models.Model):
             "signin": self.env._("Sign in"),
             "wishlist": self.env._("Wishlist"),
             "track_order": self.env._("Track order"),
+            "your_orders": self.env._("Your orders"),
             "store": self.env._("Store navigation"),
             "category": self.env._("Shop by Category"),
             "need": self.env._("Shop by Need"),
@@ -319,13 +322,7 @@ class Website(models.Model):
             limit=candidate_limit,
         )
         prices = candidates._get_sales_prices(self)
-        offers = candidates.filtered(
-            lambda product: (
-                prices.get(product.id, {}).get("base_price", 0)
-                > prices.get(product.id, {}).get("price_reduce", 0)
-            )
-            or product.website_ribbon_id
-        )[:product_limit]
+        offers = self._ab_storefront_offer_products(candidates)[:product_limit]
         best_sellers = candidates[:product_limit]
         displayed_products = best_sellers | offers
         category_ids = set(categories.ids)
@@ -358,8 +355,91 @@ class Website(models.Model):
             "offers": offers,
             "prices": prices,
             "variants": variants_by_template,
+            "offer_product_ids": set(offers.ids),
             "wishlist_product_ids": wishlist_product_ids,
         }
+
+    def _ab_storefront_offer_products(self, candidates):
+        self.ensure_one()
+        if not candidates:
+            return candidates
+
+        programs = self.env["loyalty.program"].sudo().search(
+            self._ab_storefront_offer_program_domain()
+        )
+        if not programs:
+            return candidates.browse()
+
+        candidate_variants = candidates.product_variant_ids
+        offer_products = candidates.browse()
+        for program in programs:
+            if program.program_type in ("gift_card", "ewallet"):
+                offer_products |= program.trigger_product_ids.product_tmpl_id & candidates
+                continue
+
+            program_products = candidates.browse()
+            rules = program.rule_ids.filtered("active")
+            constrained_rules = rules.filtered(
+                lambda rule: rule.product_ids
+                or rule.product_category_id
+                or rule.product_tag_id
+                or (rule.product_domain and rule.product_domain != "[]")
+            )
+            for rule in constrained_rules or rules:
+                rule_products = candidate_variants.filtered_domain(
+                    rule._get_valid_product_domain()
+                ).product_tmpl_id
+                program_products |= rule_products
+
+            for reward in program.reward_ids.filtered("active"):
+                if reward.reward_type == "product":
+                    program_products |= reward.reward_product_ids.product_tmpl_id
+                elif reward.discount_applicability == "specific":
+                    program_products |= candidate_variants.filtered_domain(
+                        reward._get_discount_product_domain()
+                    ).product_tmpl_id
+                elif (
+                    not program_products
+                    and program.program_type not in ("gift_card", "ewallet")
+                ):
+                    program_products |= candidates
+
+            offer_products |= program_products & candidates
+        return offer_products.sorted(key=lambda product: (product.website_sequence, -product.id))
+
+    def _ab_storefront_offer_program_domain(self):
+        self.ensure_one()
+        today = fields.Date.context_today(self)
+        domain = [
+            ("active", "=", True),
+            ("ecommerce_ok", "=", True),
+            *self.env["loyalty.program"]._check_company_domain(
+                [self.company_id.id, self.company_id.parent_id.id]
+            ),
+            "|",
+                ("website_id", "=", False),
+                ("website_id", "=", self.id),
+            "|",
+                ("date_from", "=", False),
+                ("date_from", "<=", today),
+            "|",
+                ("date_to", "=", False),
+                ("date_to", ">=", today),
+        ]
+        try:
+            pricelist = getattr(request, "pricelist", False)
+        except RuntimeError:
+            pricelist = False
+        if pricelist:
+            domain = Domain.AND([
+                domain,
+                [
+                    "|",
+                        ("pricelist_ids", "=", False),
+                        ("pricelist_ids", "in", [pricelist.id]),
+                ],
+            ])
+        return domain
 
     def _ab_storefront_carousel_slides(self):
         self.ensure_one()
@@ -367,6 +447,16 @@ class Website(models.Model):
         domain &= fields.Domain("image_1920", "!=", False)
         domain &= fields.Domain("website_id", "=", False) | fields.Domain("website_id", "=", self.id)
         return self.env["ab_website_carousel_slide"].sudo().search(
+            domain,
+            order="sequence, id",
+        )
+
+    def _ab_storefront_customer_testimonials(self):
+        self.ensure_one()
+        domain = fields.Domain("active", "=", True)
+        domain &= fields.Domain("image_1920", "!=", False)
+        domain &= fields.Domain("website_id", "=", False) | fields.Domain("website_id", "=", self.id)
+        return self.env["ab_ecommerce_customer_testimonial"].sudo().search(
             domain,
             order="sequence, id",
         )
