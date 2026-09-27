@@ -23,12 +23,15 @@ export class AbPaymentReferenceCopy extends Interaction {
 
     async onClick(ev) {
         const button = ev.target.closest("[data-ab-copy-value]");
-        if (!button || !navigator.clipboard) {
+        if (!button) {
             return;
         }
         ev.preventDefault();
         const copiedValue = button.dataset.abCopyValue || "";
-        await navigator.clipboard.writeText(copiedValue);
+        if (!copiedValue) {
+            return;
+        }
+        await this.copyText(copiedValue);
         const label = button.querySelector("span");
         const originalLabel = label?.textContent || "";
         button.classList.add("is-copied");
@@ -51,6 +54,29 @@ export class AbPaymentReferenceCopy extends Interaction {
                 label.textContent = originalLabel || _t("Copy");
             }
         }, 1600);
+    }
+
+    async copyText(value) {
+        if (navigator.clipboard?.writeText && window.isSecureContext) {
+            await navigator.clipboard.writeText(value);
+            return;
+        }
+        const input = document.createElement("textarea");
+        input.value = value;
+        input.setAttribute("readonly", "");
+        input.style.position = "fixed";
+        input.style.inset = "0 auto auto 0";
+        input.style.width = "1px";
+        input.style.height = "1px";
+        input.style.opacity = "0";
+        document.body.appendChild(input);
+        input.select();
+        input.setSelectionRange(0, value.length);
+        try {
+            document.execCommand("copy");
+        } finally {
+            input.remove();
+        }
     }
 
     showCopyToast({ title, detail, value }) {

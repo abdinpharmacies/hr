@@ -59,102 +59,9 @@
                                 </div>
                                 <p class="ab-prescription-form-error d-none" data-ab-prescription-error="" role="alert"/>
 
-                                <section t-if="request.env.user._is_public()" class="ab-prescription-guest" aria-labelledby="abPrescriptionGuestTitle">
-                                    <div class="ab-prescription-section-head">
-                                        <span class="ab-prescription-step" aria-hidden="true">1</span>
-                                        <div>
-                                            <h2 id="abPrescriptionGuestTitle">Customer information</h2>
-                                            <p>We use these details to confirm the prescription and secure tracking.</p>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <label for="abPrescriptionGuestName">Full name</label>
-                                            <input id="abPrescriptionGuestName"
-                                                   name="guest_name"
-                                                   type="text"
-                                                   class="form-control"
-                                                   autocomplete="name"
-                                                   t-att-value="guest_name or ''"
-                                                   required="required"/>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label for="abPrescriptionGuestPhone">Mobile number</label>
-                                            <input id="abPrescriptionGuestPhone"
-                                                   name="guest_phone"
-                                                   type="tel"
-                                                   class="form-control"
-                                                   inputmode="tel"
-                                                   autocomplete="tel"
-                                                   placeholder="010xxxxxxxx"
-                                                   t-att-value="guest_phone or ''"
-                                                   required="required"/>
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label for="abPrescriptionGuestEmail">Email</label>
-                                            <input id="abPrescriptionGuestEmail"
-                                                   name="guest_email"
-                                                   type="email"
-                                                   class="form-control"
-                                                   autocomplete="email"
-                                                   t-att-value="guest_email or ''"/>
-                                        </div>
-                                    </div>
-                                    <section class="ab-prescription-delivery-address" aria-labelledby="abPrescriptionDeliveryTitle">
-                                        <div class="ab-prescription-section-head">
-                                            <span class="ab-prescription-step" aria-hidden="true">2</span>
-                                            <div>
-                                                <h2 id="abPrescriptionDeliveryTitle">Delivery address</h2>
-                                                <p>Enter the details needed to reach your address.</p>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 ab-prescription-location-fields">
-                                            <div class="col-12 col-md-6 ab-prescription-location-field">
-                                                <label for="abPrescriptionGuestState">Governorate</label>
-                                                <select id="abPrescriptionGuestState"
-                                                        name="guest_state_id"
-                                                        class="form-select"
-                                                        autocomplete="address-level1"
-                                                        required="required">
-                                                    <option value="">Select governorate</option>
-                                                    <option t-foreach="prescription_country_states"
-                                                            t-as="state"
-                                                            t-att-value="state.id"
-                                                            t-att-selected="str(state.id) == str(guest_state_id or '')"
-                                                            t-out="state.name"/>
-                                                </select>
-                                            </div>
-                                            <div class="col-12 col-md-6 ab-prescription-location-field">
-                                                <label for="abPrescriptionGuestCity">City</label>
-                                                <input id="abPrescriptionGuestCity"
-                                                       name="guest_city"
-                                                       type="text"
-                                                       class="form-control"
-                                                       maxlength="256"
-                                                       autocomplete="address-level2"
-                                                       placeholder="Enter your city or area"
-                                                       t-att-value="guest_city or ''"
-                                                       required="required"/>
-                                            </div>
-                                        </div>
-                                        <div class="ab-prescription-address-field">
-                                            <label for="abPrescriptionGuestAddress">Detailed address</label>
-                                            <textarea id="abPrescriptionGuestAddress"
-                                                      name="guest_address"
-                                                      class="form-control"
-                                                      rows="4"
-                                                      maxlength="512"
-                                                      autocomplete="street-address"
-                                                      placeholder="Street, building, floor, apartment, and landmark"
-                                                      required="required"><t t-out="guest_address or ''"/></textarea>
-                                            <small class="form-text">Include the street, building, floor, apartment, and a nearby landmark.</small>
-                                        </div>
-                                    </section>
-                                </section>
-
                                 <section class="ab-prescription-upload" aria-labelledby="abPrescriptionUploadTitle">
                                     <div class="ab-prescription-section-head">
-                                        <span><i class="fa fa-file-image-o" aria-hidden="true"/></span>
+                                        <span class="ab-prescription-step" aria-hidden="true">1</span>
                                         <div>
                                             <h2 id="abPrescriptionUploadTitle">Prescription image</h2>
                                             <p>Use a clear image that shows the full prescription.</p>
@@ -215,16 +122,111 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <section class="ab-prescription-notes" aria-labelledby="abPrescriptionNotesTitle">
+                                        <label for="abPrescriptionNote" id="abPrescriptionNotesTitle">Prescription notes</label>
+                                        <textarea id="abPrescriptionNote"
+                                                  name="customer_note"
+                                                  rows="5"
+                                                  maxlength="2000"
+                                                  placeholder="Write any extra instructions..."><t t-out="customer_note or ''"/></textarea>
+                                        <small>Notes are reviewed by the pharmacy team and do not automatically change prescription contents.</small>
+                                    </section>
                                 </section>
 
-                                <section class="ab-prescription-notes" aria-labelledby="abPrescriptionNotesTitle">
-                                    <label for="abPrescriptionNote" id="abPrescriptionNotesTitle">Prescription notes</label>
-                                    <textarea id="abPrescriptionNote"
-                                              name="customer_note"
-                                              rows="5"
-                                              maxlength="2000"
-                                              placeholder="Write any extra instructions..."><t t-out="customer_note or ''"/></textarea>
-                                    <small>Notes are reviewed by the pharmacy team and do not automatically change prescription contents.</small>
+                                <section t-if="request.env.user._is_public()" class="ab-prescription-guest" aria-labelledby="abPrescriptionGuestTitle">
+                                    <div class="ab-prescription-section-head">
+                                        <span class="ab-prescription-step" aria-hidden="true">2</span>
+                                        <div>
+                                            <h2 id="abPrescriptionGuestTitle">Customer information</h2>
+                                            <p>We use these details to confirm the prescription and secure tracking.</p>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestName">Full name</label>
+                                            <input id="abPrescriptionGuestName"
+                                                   name="guest_name"
+                                                   type="text"
+                                                   class="form-control"
+                                                   autocomplete="name"
+                                                   t-att-value="guest_name or ''"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestPhone">Mobile number</label>
+                                            <input id="abPrescriptionGuestPhone"
+                                                   name="guest_phone"
+                                                   type="tel"
+                                                   class="form-control"
+                                                   inputmode="tel"
+                                                   autocomplete="tel"
+                                                   placeholder="010xxxxxxxx"
+                                                   t-att-value="guest_phone or ''"
+                                                   required="required"/>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <label for="abPrescriptionGuestEmail">Email</label>
+                                            <input id="abPrescriptionGuestEmail"
+                                                   name="guest_email"
+                                                   type="email"
+                                                   class="form-control"
+                                                   autocomplete="email"
+                                                   t-att-value="guest_email or ''"/>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section class="ab-prescription-delivery-address" aria-labelledby="abPrescriptionDeliveryTitle">
+                                        <div class="ab-prescription-section-head">
+                                            <span class="ab-prescription-step" aria-hidden="true">
+                                                <t t-out="3 if request.env.user._is_public() else 2"/>
+                                            </span>
+                                            <div>
+                                                <h2 id="abPrescriptionDeliveryTitle">Delivery address</h2>
+                                                <p>Enter the details needed to reach your address.</p>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3 ab-prescription-location-fields">
+                                            <div class="col-12 col-md-6 ab-prescription-location-field">
+                                                <label for="abPrescriptionGuestState">Governorate</label>
+                                                <select id="abPrescriptionGuestState"
+                                                        name="guest_state_id"
+                                                        class="form-select"
+                                                        autocomplete="address-level1"
+                                                        required="required">
+                                                    <option value="">Select governorate</option>
+                                                    <option t-foreach="prescription_country_states"
+                                                            t-as="state"
+                                                            t-att-value="state.id"
+                                                            t-att-selected="str(state.id) == str(guest_state_id or '')"
+                                                            t-out="state.name"/>
+                                                </select>
+                                            </div>
+                                            <div class="col-12 col-md-6 ab-prescription-location-field">
+                                                <label for="abPrescriptionGuestCity">City</label>
+                                                <input id="abPrescriptionGuestCity"
+                                                       name="guest_city"
+                                                       type="text"
+                                                       class="form-control"
+                                                       maxlength="256"
+                                                       autocomplete="address-level2"
+                                                       placeholder="Enter your city or area"
+                                                       t-att-value="guest_city or ''"
+                                                       required="required"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab-prescription-address-field">
+                                            <label for="abPrescriptionGuestAddress">Detailed address</label>
+                                            <textarea id="abPrescriptionGuestAddress"
+                                                      name="guest_address"
+                                                      class="form-control"
+                                                      rows="4"
+                                                      maxlength="512"
+                                                      autocomplete="street-address"
+                                                      placeholder="Street, building, floor, apartment, and landmark"
+                                                      required="required"><t t-out="guest_address or ''"/></textarea>
+                                            <small class="form-text">Include the street, building, floor, apartment, and a nearby landmark.</small>
+                                        </div>
                                 </section>
 
                                 <button type="submit" class="btn btn-primary ab-prescription-submit" data-ab-prescription-submit="" disabled="disabled">
@@ -256,7 +258,7 @@
                                        t-as="prescription"
                                        t-att-href="prescription.get_portal_url()"
                                        class="ab-prescription-mini-card">
-                                        <strong t-out="prescription.name"/>
+                                        <strong t-out="prescription._ab_storefront_display_reference()"/>
                                         <span>
                                             <t t-set="state" t-value="prescription.state"/>
                                             <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
@@ -291,7 +293,7 @@
                        t-att-href="prescription.get_portal_url()"
                        class="ab-prescription-list-item">
                         <div>
-                            <strong t-out="prescription.name"/>
+                            <strong t-out="prescription._ab_storefront_display_reference()"/>
                             <small><span t-field="prescription.create_date"/></small>
                         </div>
                         <span class="ab-prescription-state-pill">
@@ -322,7 +324,7 @@
                 <header class="ab-prescription-track-head">
                     <div>
                         <span>Prescription request</span>
-                        <h1 t-out="prescription.name"/>
+                        <h1 t-out="prescription._ab_storefront_display_reference()"/>
                         <p>
                             <t t-set="state" t-value="prescription.state"/>
                             <t t-call="ab_ecommerce_storefront.prescription_state_description"/>

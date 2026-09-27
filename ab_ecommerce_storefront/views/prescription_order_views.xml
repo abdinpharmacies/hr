@@ -6,6 +6,7 @@
         <field name="arch" type="xml">
             <list string="Prescription Orders" create="0" delete="0">
                 <field name="name"/>
+                <field name="ab_public_reference" string="Tracking Ref"/>
                 <field name="partner_id"/>
                 <field name="state" widget="badge"/>
                 <field name="payment_method_id" optional="show"/>
@@ -22,6 +23,7 @@
         <field name="arch" type="xml">
             <search string="Prescription Orders">
                 <field name="name"/>
+                <field name="ab_public_reference"/>
                 <field name="partner_id"/>
                 <field name="sale_order_id"/>
                 <filter name="new" string="New" domain="[('state', '=', 'new')]"/>
@@ -62,6 +64,7 @@
                     </div>
                     <group>
                         <group string="Customer">
+                            <field name="ab_public_reference" readonly="1"/>
                             <field name="partner_id"/>
                             <field name="user_id"/>
                             <field name="sale_order_id" domain="[('partner_id', 'child_of', partner_id), ('company_id', '=', company_id)]"/>

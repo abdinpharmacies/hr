@@ -64,9 +64,7 @@ class AbPrescriptionOrderPortal(CustomerPortal):
 
     def _prescription_page_values(self, **values):
         PrescriptionOrder = request.env["ab.prescription.order"]
-        country = request.website.company_id.country_id or request.env["res.country"].sudo().search(
-            [("code", "=", "EG")], limit=1,
-        )
+        country = self._prescription_country()
         recent_prescriptions = PrescriptionOrder if request.env.user._is_public() else PrescriptionOrder.search(
             self._prescription_domain(),
             order="create_date desc, id desc",
@@ -74,8 +72,7 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         )
         values.setdefault("error_code", False)
         values.setdefault("customer_note", "")
-        values.setdefault("guest_city", "")
-        values.setdefault("guest_state_id", "")
+        values.update(self._prescription_default_address_values(values))
         country_states = (
             country.state_ids.sorted("name")
             if country
@@ -89,43 +86,103 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         })
         return values
 
-    def _prescription_partner_values(self, post):
-        if not request.env.user._is_public():
+    def _prescription_country(self):
+        return request.website.company_id.country_id or request.env["res.country"].sudo().search(
+            [("code", "=", "EG")], limit=1,
+        )
+
+    def _prescription_default_address_values(self, values):
+        if values.get("guest_address") or values.get("guest_city") or values.get("guest_state_id"):
             return {
-                "partner_id": request.env.user.partner_id.id,
-                "user_id": request.env.user.id,
+                "guest_address": values.get("guest_address", ""),
+                "guest_city": values.get("guest_city", ""),
+                "guest_state_id": values.get("guest_state_id", ""),
             }
-        name = (post.get("guest_name") or "").strip()
-        phone = normalize_egyptian_phone(post.get("guest_phone"))
+        if request.env.user._is_public():
+            return {"guest_address": "", "guest_city": "", "guest_state_id": ""}
+
+        partner = request.env.user.partner_id
+        address = partner.child_ids.filtered(
+            lambda item: item.type in ("delivery", "other")
+            and (item.street or item.city or item.state_id)
+        )[:1] or partner
+        return {
+            "guest_address": address.street or "",
+            "guest_city": address.city or "",
+            "guest_state_id": address.state_id.id if address.state_id else "",
+        }
+
+    def _prescription_delivery_address_values(self, post):
         address = (post.get("guest_address") or "").strip()
         city = (post.get("guest_city") or "").strip()
         state_value = (post.get("guest_state_id") or "").strip()
-        if not name:
-            raise UserError("missing_name")
-        if not is_valid_egyptian_mobile(phone):
-            raise UserError("missing_phone")
         if not state_value.isdigit():
             raise UserError("missing_state")
         if not city:
             raise UserError("missing_city")
         if not address:
             raise UserError("missing_address")
-        country = request.website.company_id.country_id or request.env["res.country"].sudo().search(
-            [("code", "=", "EG")], limit=1,
-        )
+
+        country = self._prescription_country()
         state = request.env["res.country.state"].sudo().browse(int(state_value)).exists()
         if not state or (country and state.country_id != country):
             raise UserError("missing_state")
+        return {
+            "street": address[:512],
+            "city": city[:256],
+            "state_id": state.id,
+            "country_id": (country or state.country_id).id,
+        }
+
+    def _find_or_create_prescription_delivery_partner(self, owner, vals):
+        commercial_partner = owner.commercial_partner_id
+        domain = [
+            ("parent_id", "=", commercial_partner.id),
+            ("type", "in", ("delivery", "other")),
+            ("street", "=", vals["street"]),
+            ("city", "=", vals["city"]),
+            ("state_id", "=", vals["state_id"]),
+            ("country_id", "=", vals["country_id"]),
+        ]
+        partner = request.env["res.partner"].sudo().search(domain, limit=1)
+        if partner:
+            return partner
+
+        return request.env["res.partner"].sudo().create({
+            "name": owner.name,
+            "parent_id": commercial_partner.id,
+            "type": "delivery",
+            "phone": owner.phone or owner.mobile,
+            "email": owner.email,
+            "lang": request.env.lang,
+            **vals,
+        })
+
+    def _prescription_partner_values(self, post):
+        address_vals = self._prescription_delivery_address_values(post)
+        if not request.env.user._is_public():
+            partner = self._find_or_create_prescription_delivery_partner(
+                request.env.user.partner_id.sudo(),
+                address_vals,
+            )
+            return {
+                "partner_id": partner.id,
+                "user_id": request.env.user.id,
+            }
+        name = (post.get("guest_name") or "").strip()
+        phone = normalize_egyptian_phone(post.get("guest_phone"))
+        if not name:
+            raise UserError("missing_name")
+        if not is_valid_egyptian_mobile(phone):
+            raise UserError("missing_phone")
         # A supplied phone number is not proof of ownership of an existing partner.
         partner = request.env["res.partner"].sudo().create({
             "name": name[:256],
             "phone": phone,
             "email": (post.get("guest_email") or "").strip()[:256] or False,
-            "street": address[:512],
-            "city": city[:256],
-            "state_id": state.id,
-            "country_id": (country or state.country_id).id,
+            "type": "delivery",
             "lang": request.env.lang,
+            **address_vals,
         })
         return {
             "partner_id": partner.id,

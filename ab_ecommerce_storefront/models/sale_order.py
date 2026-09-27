@@ -1,3 +1,5 @@
+import secrets
+
 from odoo import api, fields, models
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import format_amount, format_datetime, formatLang
@@ -7,6 +9,16 @@ from odoo.tools.urls import urljoin
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    _AB_PUBLIC_REFERENCE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+
+    ab_public_reference = fields.Char(
+        string="Public Tracking Reference",
+        readonly=True,
+        copy=False,
+        index=True,
+        tracking=True,
+        help="Customer-facing reference used for storefront order tracking.",
+    )
     ab_prescription_order_ids = fields.One2many(
         "ab.prescription.order", "sale_order_id", string="Prescription Requests",
     )
@@ -65,6 +77,23 @@ class SaleOrder(models.Model):
         store=True,
         index=True,
     )
+    ab_prescription_stage = fields.Selection(
+        [
+            ("new", "New"),
+            ("under_review", "Under Review"),
+            ("waiting_call_center", "Waiting for Call Center"),
+            ("confirmed", "Confirmed"),
+            ("preparing", "Preparing"),
+            ("out_for_delivery", "Out for Delivery"),
+            ("delivered", "Delivered"),
+            ("cancelled", "Cancelled"),
+            ("rejected", "Rejected"),
+        ],
+        string="Prescription Stage",
+        compute="_compute_ab_prescription_stage",
+        store=True,
+        index=True,
+    )
     ab_call_center_workspace_data = fields.Json(
         compute="_compute_ab_call_center_workspace_data",
     )
@@ -91,12 +120,74 @@ class SaleOrder(models.Model):
         readonly=True,
     )
 
+    _ab_public_reference_unique = models.Constraint(
+        "unique(ab_public_reference)",
+        "The public tracking reference must be unique.",
+    )
+
+    @api.model
+    def _ab_storefront_make_public_reference(self, prefix="NO"):
+        date_code = fields.Date.context_today(self).strftime("%d%m%y")
+        token = "".join(
+            secrets.choice(self._AB_PUBLIC_REFERENCE_ALPHABET) for _index in range(6)
+        )
+        return f"{prefix}-{date_code}-{token}"
+
+    @api.model
+    def _ab_storefront_new_public_reference(self, prefix="NO"):
+        for _attempt in range(20):
+            reference = self._ab_storefront_make_public_reference(prefix)
+            if not self.sudo().search_count([("ab_public_reference", "=", reference)]):
+                return reference
+        return self._ab_storefront_make_public_reference(prefix)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get("ab_public_reference"):
+                vals["ab_public_reference"] = self._ab_storefront_new_public_reference()
+        return super().create(vals_list)
+
+    def _ab_storefront_display_reference(self):
+        self.ensure_one()
+        return self.ab_public_reference or self.name
+
+    def _ab_storefront_primary_prescription_order(self):
+        self.ensure_one()
+        return self.ab_prescription_order_ids[:1]
+
+    def _ab_storefront_prescription_display_reference(self):
+        self.ensure_one()
+        prescription = self._ab_storefront_primary_prescription_order()
+        return (
+            prescription._ab_storefront_display_reference()
+            if prescription
+            else self._ab_storefront_display_reference()
+        )
+
+    def _find_mail_template(self):
+        self.ensure_one()
+        if self.website_id and self.state != "sale" and self.ab_prescription_order_ids:
+            template = self.env.ref(
+                "ab_ecommerce_storefront.mail_template_prescription_request_received",
+                raise_if_not_found=False,
+            )
+            if template:
+                return template
+        return super()._find_mail_template()
+
     @api.depends("ab_prescription_order_ids")
     def _compute_ab_call_center_order_type(self):
         for order in self:
             order.ab_call_center_order_type = (
                 "prescription" if order.ab_prescription_order_ids else "normal"
             )
+
+    @api.depends("ab_prescription_order_ids.state")
+    def _compute_ab_prescription_stage(self):
+        for order in self:
+            prescription = order._ab_storefront_latest_prescription()
+            order.ab_prescription_stage = prescription.state if prescription else False
 
     def _ab_call_center_outgoing_pickings(self):
         self.ensure_one()
@@ -322,6 +413,8 @@ class SaleOrder(models.Model):
             current_key = "preparing"
         elif self.state == "sale" or prescription.state == "confirmed":
             current_key = "confirmed"
+        elif prescription.state == "new":
+            current_key = "under_review"
         elif prescription.state in stage_keys[:3]:
             current_key = prescription.state
         else:
@@ -347,6 +440,13 @@ class SaleOrder(models.Model):
                 "state": state,
             })
         return steps
+
+    def action_ab_prescription_confirm_customer_call(self):
+        for order in self:
+            prescription = order._ab_storefront_latest_prescription()
+            if prescription and prescription.state == "waiting_call_center":
+                prescription.action_confirmed()
+        return True
 
     def _ab_call_center_timeline(self):
         self.ensure_one()
@@ -493,6 +593,7 @@ class SaleOrder(models.Model):
 
     @api.depends(
         "name",
+        "ab_public_reference",
         "state",
         "create_date",
         "date_order",
@@ -511,6 +612,7 @@ class SaleOrder(models.Model):
         "ab_last_mile_delivered_date",
         "ab_last_mile_delivered_by_id",
         "ab_prescription_order_ids.name",
+        "ab_prescription_order_ids.ab_public_reference",
         "ab_prescription_order_ids.state",
         "ab_prescription_order_ids.payment_method_id",
         "picking_ids.state",
@@ -543,6 +645,7 @@ class SaleOrder(models.Model):
             order.ab_call_center_workspace_data = {
                 "order_id": order.id,
                 "name": order.name,
+                "public_reference": order._ab_storefront_display_reference(),
                 "customer": {
                     "name": order.partner_id.name or order.env._("Not specified"),
                     "phone": phone or False,
@@ -573,7 +676,7 @@ class SaleOrder(models.Model):
                 "next_action": order._ab_call_center_next_action(last_mile_gap),
                 "prescription": {
                     "id": prescription.id,
-                    "name": prescription.name,
+                    "name": prescription._ab_storefront_display_reference(),
                     "state": prescription.state_label,
                     "image_url": (
                         f"/web/image/ab.prescription.order/{prescription.id}/prescription_image"

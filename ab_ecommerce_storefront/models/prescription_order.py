@@ -13,7 +13,17 @@ class AbPrescriptionOrder(models.Model):
     _inherit = ["portal.mixin", "mail.thread", "mail.activity.mixin"]
     _order = "create_date desc, id desc"
 
+    _AB_PUBLIC_REFERENCE_ALPHABET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ"
+
     name = fields.Char(default="New", readonly=True, copy=False, tracking=True)
+    ab_public_reference = fields.Char(
+        string="Public Tracking Reference",
+        readonly=True,
+        copy=False,
+        index=True,
+        tracking=True,
+        help="Customer-facing reference used for storefront prescription tracking.",
+    )
     partner_id = fields.Many2one("res.partner", required=True, readonly=True, tracking=True)
     user_id = fields.Many2one("res.users", readonly=True, tracking=True)
     prescription_image = fields.Binary(required=True, attachment=True, readonly=True)
@@ -98,6 +108,31 @@ class AbPrescriptionOrder(models.Model):
         "delivered",
     ]
 
+    _ab_public_reference_unique = models.Constraint(
+        "unique(ab_public_reference)",
+        "The public tracking reference must be unique.",
+    )
+
+    @api.model
+    def _ab_storefront_make_public_reference(self, prefix="RX"):
+        date_code = fields.Date.context_today(self).strftime("%d%m%y")
+        token = "".join(
+            secrets.choice(self._AB_PUBLIC_REFERENCE_ALPHABET) for _index in range(6)
+        )
+        return f"{prefix}-{date_code}-{token}"
+
+    @api.model
+    def _ab_storefront_new_public_reference(self, prefix="RX"):
+        for _attempt in range(20):
+            reference = self._ab_storefront_make_public_reference(prefix)
+            if not self.sudo().search_count([("ab_public_reference", "=", reference)]):
+                return reference
+        return self._ab_storefront_make_public_reference(prefix)
+
+    def _ab_storefront_display_reference(self):
+        self.ensure_one()
+        return self.ab_public_reference or self.name
+
     @api.model
     def _ab_storefront_cash_on_delivery_method(self, company=None):
         company = company or self.env.company
@@ -124,6 +159,8 @@ class AbPrescriptionOrder(models.Model):
                     vals["payment_method_id"] = payment_method.id
             if not vals.get("name") or vals.get("name") == "New":
                 vals["name"] = sequence.next_by_code("ab.prescription.order") or _("New")
+            if not vals.get("ab_public_reference"):
+                vals["ab_public_reference"] = self._ab_storefront_new_public_reference()
             if not vals.get("access_token"):
                 vals["access_token"] = secrets.token_urlsafe(32)
         return super().create(vals_list)
@@ -146,7 +183,7 @@ class AbPrescriptionOrder(models.Model):
             "partner_invoice_id": self.partner_id.id,
             "partner_shipping_id": self.partner_id.id,
             "origin": self.name,
-            "client_order_ref": self.name,
+            "ab_public_reference": self.ab_public_reference,
             "company_id": self.company_id.id,
             "website_id": self.website_id.id,
         })
@@ -175,9 +212,9 @@ class AbPrescriptionOrder(models.Model):
         self.ensure_one()
         linked_order = self.sale_order_id
         if include_order and linked_order:
-            return linked_order._ab_storefront_tracking_steps()
+            return linked_order._ab_storefront_prescription_tracking_steps(self)
         keys = self._STATE_SEQUENCE[:4] if linked_order else self._STATE_SEQUENCE
-        current = self._ab_storefront_state_index()
+        current = 1 if self.state == "new" else self._ab_storefront_state_index()
         terminal = self.state in ("cancelled", "rejected")
         steps = []
         for index, key in enumerate(keys):

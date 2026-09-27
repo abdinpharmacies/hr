@@ -26,10 +26,10 @@
                 <t t-set="is_arabic" t-value="(doc.partner_id.lang or env.lang or '').startswith('ar')"/>
                 <t t-set="is_proforma" t-value="env.context.get('proforma', False) or is_pro_forma"/>
                 <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()"/>
-                <t t-set="display_discount" t-value="any(l.discount for l in lines_to_report)"/>
-                <t t-set="display_taxes" t-value="any(l._has_taxes() for l in lines_to_report)"/>
                 <t t-set="delivery_lines" t-value="lines_to_report.filtered(lambda line: 'is_delivery' in line._fields and line.is_delivery)"/>
                 <t t-set="product_lines" t-value="lines_to_report.filtered(lambda line: not ('is_delivery' in line._fields and line.is_delivery))"/>
+                <t t-set="display_discount" t-value="any(l.discount for l in product_lines)"/>
+                <t t-set="display_taxes" t-value="any(l._has_taxes() for l in product_lines)"/>
                 <t t-set="delivery_amount" t-value="doc.amount_delivery if 'amount_delivery' in doc._fields else sum(delivery_lines.mapped('price_subtotal'))"/>
                 <t t-set="discount_amount" t-value="doc._ab_storefront_report_discount_amount()"/>
                 <t t-set="terms_url" t-value="doc._ab_storefront_report_terms_url()"/>
@@ -454,10 +454,6 @@
                                         <th>Salesperson</th>
                                         <td><span t-field="doc.user_id"/></td>
                                     </tr>
-                                    <tr t-if="doc.client_order_ref">
-                                        <th>Customer Reference</th>
-                                        <td><span t-field="doc.client_order_ref"/></td>
-                                    </tr>
                                     <tr t-if="doc.validity_date and doc.state in ['draft', 'sent']">
                                         <th>Expiration</th>
                                         <td><span t-field="doc.validity_date"/></td>
@@ -500,7 +496,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="lines_to_report" t-as="line">
+                                <t t-foreach="product_lines" t-as="line">
                                     <t t-set="is_delivery_line" t-value="'is_delivery' in line._fields and line.is_delivery"/>
                                     <t t-set="is_note" t-value="line.display_type == 'line_note'"/>
                                     <t t-set="is_section" t-value="line.display_type in ('line_section', 'line_subsection')"/>

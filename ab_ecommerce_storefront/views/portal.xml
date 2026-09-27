@@ -143,7 +143,7 @@
                     <t t-elif="order.state == 'sale'">Your order is confirmed</t>
                     <t t-else="">Your order was received</t>
                 </h1>
-                <p><span>Order reference</span> <strong t-out="order.name"/></p>
+                <p><span>Order reference</span> <strong t-out="order._ab_storefront_display_reference()"/></p>
                 <p t-if="request.website.is_public_user()">Keep your order reference to track your order with your mobile number.</p>
                 <dl class="ab-order-facts">
                     <t t-if="tx_sudo">
@@ -164,8 +164,10 @@
                        t-att-href="order.get_portal_url(query_string='&amp;payment=True')" class="btn btn-outline-primary">
                         <i class="fa fa-refresh" aria-hidden="true"/> <span>Retry payment</span>
                     </a>
-                    <a href="/shop" class="btn btn-outline-primary">
-                        <i class="fa fa-shopping-bag" aria-hidden="true"/> <span>Continue shopping</span>
+                    <a t-att-href="'/' if order.state == 'cancel' else '/shop'" class="btn btn-outline-primary">
+                        <i t-att-class="'fa fa-home' if order.state == 'cancel' else 'fa fa-shopping-bag'" aria-hidden="true"/>
+                        <span t-if="order.state == 'cancel'">Continue browsing</span>
+                        <span t-else="">Continue shopping</span>
                     </a>
                 </div>
             </section>
@@ -177,8 +179,21 @@
     </template>
 
     <template id="sale_order_portal_shell_abdin" name="Abdin Storefront Order Details" inherit_id="sale.sale_order_portal_template" priority="120">
+        <xpath expr="//div[@t-if=&quot;sale_order.state == 'cancel'&quot;]" position="replace">
+            <div t-if="sale_order.state == 'cancel'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                <strong>This order was cancelled.</strong>
+                <a role="button" href="/">
+                    <i class="fa fa-home" aria-hidden="true"/>
+                    <span>Continue browsing</span>
+                </a>
+            </div>
+        </xpath>
         <xpath expr="//div[hasclass('o_portal_sale_sidebar')]" position="attributes">
             <attribute name="t-att-class">'row o_portal_sale_sidebar ab-storefront-order-portal' if sale_order.website_id else 'row o_portal_sale_sidebar'</attribute>
+        </xpath>
+        <xpath expr="//div[@id='quote_content']" position="attributes">
+            <attribute name="t-att-class">'col-12 mt-0' if sale_order.website_id else 'col-12 col-lg-8 col-xxl-9 mt-5 mt-lg-0'</attribute>
         </xpath>
         <xpath expr="//a[@id='print_invoice_report']" position="replace">
             <a t-if="sale_order.website_id"
@@ -229,8 +244,9 @@
                 <t t-set="current_step" t-value="current_steps and current_steps[-1] or (tracking_steps and tracking_steps[-1])"/>
                 <t t-set="current_tx" t-value="sale_order.get_portal_last_transaction()"/>
                 <t t-set="lines_to_report" t-value="sale_order._get_order_lines_to_report()"/>
-                <t t-set="display_discount" t-value="any(line.discount > 0 for line in lines_to_report)"/>
-                <t t-set="display_taxes" t-value="any(line._has_taxes() for line in lines_to_report)"/>
+                <t t-set="product_lines" t-value="lines_to_report.filtered(lambda line: not ('is_delivery' in line._fields and line.is_delivery))"/>
+                <t t-set="display_discount" t-value="any(line.discount > 0 for line in product_lines)"/>
+                <t t-set="display_taxes" t-value="any(line._has_taxes() for line in product_lines)"/>
                 <t t-set="tracking_record" t-value="sale_order"/>
 
                 <div id="content" class="ab-order-dashboard" dir="auto">
@@ -239,7 +255,7 @@
                             <span class="ab-order-eyebrow">Track your pharmacy order</span>
                             <h1>
                                 <span>Your order</span>
-                                <strong t-out="sale_order.name"/>
+                                <strong t-out="sale_order._ab_storefront_display_reference()"/>
                             </h1>
                             <p t-if="current_step" t-out="current_step['description']"/>
                             <p t-else="">We received your order details. We will contact you soon.</p>
@@ -264,95 +280,58 @@
                     <t t-call="ab_ecommerce_storefront.order_tracking_timeline"/>
 
                     <div class="ab-order-main-grid">
-                        <section class="ab-order-products-card" aria-labelledby="abOrderProductsTitle">
-                            <header class="ab-order-section-head">
-                                <span>What you ordered</span>
-                                <h2 id="abOrderProductsTitle">Your products</h2>
-                            </header>
-                            <div class="ab-order-products">
-                                <t t-foreach="lines_to_report" t-as="line">
-                                    <t t-set="is_note" t-value="line.display_type == 'line_note'"/>
-                                    <t t-set="is_section" t-value="line.display_type in ('line_section', 'line_subsection')"/>
-                                    <article t-if="not line.display_type and not line.is_downpayment" class="ab-order-product-row">
-                                        <a t-if="line.product_id.website_published"
-                                           t-att-href="line.product_id.website_url"
-                                           class="ab-order-product-media"
-                                           t-att-aria-label="line.product_id.display_name">
-                                            <img t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"
-                                                 t-att-alt="line.product_id.display_name"
-                                                 loading="lazy"/>
-                                        </a>
-                                        <span t-else="" class="ab-order-product-media">
-                                            <img t-attf-src="/web/image/product.product/#{line.product_id.id}/image_128"
-                                                 t-att-alt="line.product_id.display_name or line.name"
-                                                 loading="lazy"/>
-                                        </span>
-                                        <div class="ab-order-product-copy">
-                                            <t t-set="line_parts" t-value="line._ab_storefront_report_line_parts()"/>
-                                            <h3>
-                                                <a t-if="line.product_id.website_published" t-att-href="line.product_id.website_url" t-out="line_parts['name']"/>
-                                                <span t-else="" t-out="line_parts['name']"/>
-                                            </h3>
-                                            <p t-if="line_parts['description']" t-out="line_parts['description']"/>
-                                            <dl>
-                                                <div>
-                                                    <dt>Quantity</dt>
-                                                    <dd>
-                                                        <span t-field="line.product_uom_qty"/>
-                                                        <span t-field="line.product_uom_id"/>
-                                                    </dd>
-                                                </div>
-                                                <div>
-                                                    <dt>Unit price</dt>
-                                                    <dd>
-                                                        <span t-field="line.price_unit" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
-                                                    </dd>
-                                                </div>
-                                                <div t-if="display_discount and line.discount">
-                                                    <dt>Discount</dt>
-                                                    <dd><t t-out="((line.discount % 1) and '%s' or '%d') % line.discount"/>%</dd>
-                                                </div>
-                                                <div t-if="display_taxes and line.tax_ids">
-                                                    <dt>Taxes</dt>
-                                                    <dd t-out="', '.join(map(lambda tax: tax.tax_label or tax.name, line.tax_ids))"/>
-                                                </div>
-                                            </dl>
-                                        </div>
-                                        <strong class="ab-order-product-total" t-field="line.price_subtotal" t-options="{'widget': 'monetary', 'display_currency': line.currency_id}"/>
-                                    </article>
-                                    <div t-elif="is_section" class="ab-order-product-section" t-out="line.name"/>
-                                    <p t-elif="is_note" class="ab-order-product-note" t-out="line.name"/>
-                                </t>
+                        <section class="ab-order-address-card" aria-labelledby="abOrderAddressTitle">
+                            <span class="ab-order-mini-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                            </span>
+                            <div class="ab-order-address-content">
+                                <header class="ab-order-section-head">
+                                    <h2 id="abOrderAddressTitle">Delivery address</h2>
+                                    <span t-translation="off">DELIVERY DESTINATION</span>
+                                </header>
+                                <div class="ab-order-address-body"
+                                     t-field="sale_order.partner_shipping_id"
+                                     t-options="{'widget': 'contact', 'fields': ['name', 'address', 'phone'], 'no_marker': True, 'phone_icons': True}"/>
+                                <a t-if="sale_order.partner_id == sale_order.partner_shipping_id == sale_order.env.user.partner_id"
+                                   class="ab-order-secondary-link"
+                                   t-attf-href="/my/account?redirect={{sale_order.get_portal_url()}}">
+                                    Edit address
+                                </a>
                             </div>
                         </section>
 
-                        <aside class="ab-order-side-stack">
-                            <section class="ab-order-summary-card" aria-labelledby="abOrderSummaryTitle">
-                                <header class="ab-order-section-head">
-                                    <span>Order total</span>
-                                    <h2 id="abOrderSummaryTitle">Order summary</h2>
-                                </header>
-                                <div class="ab-order-totals">
-                                    <t t-call="sale.sale_order_portal_content_totals_table"/>
-                                </div>
-                            </section>
+                        <aside class="ab-order-summary-panel" aria-labelledby="abOrderSummaryTitle">
+                            <header class="ab-order-summary-head">
+                                <h2 id="abOrderSummaryTitle">Order summary</h2>
+                                <span t-translation="off">ORDER SUMMARY</span>
+                            </header>
 
-                            <section class="ab-order-payment-card" aria-labelledby="abOrderPaymentTitle">
+                            <div class="ab-order-summary-panel-section ab-order-total-section" aria-labelledby="abOrderTotalTitle">
+                                <header class="ab-order-section-head">
+                                    <h3 id="abOrderTotalTitle">Total</h3>
+                                    <span t-translation="off">ORDER TOTAL</span>
+                                </header>
+                                <strong class="ab-order-summary-total" t-field="sale_order.amount_total" t-options="{'widget': 'monetary', 'display_currency': sale_order.currency_id}"/>
+                            </div>
+
+                            <div class="ab-order-summary-panel-section ab-order-payment-card" aria-labelledby="abOrderPaymentTitle">
                                 <span class="ab-order-mini-icon" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/><path d="M7 15h3"/></svg>
                                 </span>
                                 <div>
-                                    <h2 id="abOrderPaymentTitle">Payment method</h2>
+                                    <header class="ab-order-section-head">
+                                        <h3 id="abOrderPaymentTitle">Payment method</h3>
+                                        <span t-translation="off">PAYMENT METHOD</span>
+                                    </header>
                                     <strong t-if="current_tx and current_tx.provider_id" t-out="current_tx.provider_id.name"/>
                                     <strong t-else="" t-out="sale_order._ab_storefront_payment_label()"/>
-                                    <p t-out="sale_order._ab_storefront_payment_label()"/>
                                 </div>
-                            </section>
+                            </div>
 
-                            <section class="ab-order-info-card" aria-labelledby="abOrderInfoTitle">
+                            <div class="ab-order-summary-panel-section ab-order-info-card" aria-labelledby="abOrderInfoTitle">
                                 <header class="ab-order-section-head">
-                                    <span>Order details</span>
-                                    <h2 id="abOrderInfoTitle">Details</h2>
+                                    <h3 id="abOrderInfoTitle">Details</h3>
+                                    <span t-translation="off">ORDER DETAILS</span>
                                 </header>
                                 <dl>
                                     <div>
@@ -363,37 +342,14 @@
                                         <dt>Offer valid until</dt>
                                         <dd><span t-field="sale_order.validity_date" t-options="{'widget': 'date'}"/></dd>
                                     </div>
-                                    <div t-if="sale_order.client_order_ref">
-                                        <dt>Your reference</dt>
-                                        <dd><span t-field="sale_order.client_order_ref"/></dd>
-                                    </div>
                                     <div t-if="sale_order.commitment_date and sale_order.state in ['sent', 'sale']">
                                         <dt>Expected delivery</dt>
                                         <dd><span t-field="sale_order.commitment_date" t-options="{'widget': 'date'}"/></dd>
                                     </div>
                                 </dl>
-                            </section>
+                            </div>
                         </aside>
                     </div>
-
-                    <section class="ab-order-address-card" aria-labelledby="abOrderAddressTitle">
-                        <span class="ab-order-mini-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 21s7-5.2 7-11a7 7 0 0 0-14 0c0 5.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-                        </span>
-                        <div>
-                            <header class="ab-order-section-head">
-                                <span>Delivery destination</span>
-                                <h2 id="abOrderAddressTitle">Delivery address</h2>
-                            </header>
-                            <div t-field="sale_order.partner_shipping_id"
-                                 t-options="{'widget': 'contact', 'fields': ['name', 'address', 'phone'], 'no_marker': True, 'phone_icons': False}"/>
-                            <a t-if="sale_order.partner_id == sale_order.partner_shipping_id == sale_order.env.user.partner_id"
-                               class="ab-order-secondary-link"
-                               t-attf-href="/my/account?redirect={{sale_order.get_portal_url()}}">
-                                Edit address
-                            </a>
-                        </div>
-                    </section>
 
                     <t t-call="ab_ecommerce_storefront.order_customer_invoices"/>
 
@@ -637,7 +593,7 @@
                             <div t-if="recent_prescriptions" class="ab-account-orders">
                                 <a t-foreach="recent_prescriptions" t-as="prescription" t-att-href="prescription.get_portal_url()" class="ab-account-order-card">
                                     <div>
-                                        <strong t-out="prescription.name"/>
+                                        <strong t-out="prescription._ab_storefront_display_reference()"/>
                                         <span class="ab-account-status-pill">
                                             <t t-set="state" t-value="prescription.state"/>
                                             <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
@@ -669,7 +625,7 @@
                             <div t-if="recent_orders" class="ab-account-orders">
                                 <a t-foreach="recent_orders" t-as="order" t-att-href="order.get_portal_url()" class="ab-account-order-card">
                                     <div>
-                                        <strong>Order <t t-out="order.name"/></strong>
+                                        <strong>Order <t t-out="order._ab_storefront_display_reference()"/></strong>
                                         <span class="ab-account-status-pill">In progress</span>
                                     </div>
                                     <small><span t-field="order.date_order"/></small>
@@ -816,14 +772,14 @@
                                             </dd>
                                         </div>
                                         <div t-if="order">
-                                            <dt>Order number</dt>
+                                            <dt>Order reference</dt>
                                             <dd class="ab-payment-order-number">
                                                 <span class="ab-payment-order-code">
-                                                    <code t-out="order.name"/>
+                                                    <code t-out="order._ab_storefront_display_reference()"/>
                                                     <button type="button"
                                                             class="ab-payment-copy ab-payment-order-copy"
-                                                            t-att-data-ab-copy-value="order.name"
-                                                            aria-label="Copy order number">
+                                                            t-att-data-ab-copy-value="order._ab_storefront_display_reference()"
+                                                            aria-label="Copy order reference">
                                                         <i class="fa fa-copy" aria-hidden="true"/>
                                                         <span class="visually-hidden">Copy</span>
                                                     </button>

@@ -12,14 +12,18 @@ from .auth import is_valid_egyptian_mobile, normalize_egyptian_phone
 class AbStorefrontCustomerPortal(CustomerPortal):
     def _ab_storefront_verify_order(self, order_reference, phone):
         normalized_phone = normalize_egyptian_phone(phone)
-        reference = (order_reference or "").strip()
+        reference = (order_reference or "").strip().upper()
         if not reference or len(reference) > 128 or not normalized_phone.isascii() or not is_valid_egyptian_mobile(normalized_phone):
             return request.env["sale.order"].sudo().browse()
 
         domain = (
             fields.Domain("website_id", "=", request.website.id)
             & fields.Domain("company_id", "=", request.website.company_id.id)
-            & (fields.Domain("name", "=", reference) | fields.Domain("client_order_ref", "=", reference))
+            & (
+                fields.Domain("ab_public_reference", "=", reference)
+                | fields.Domain("name", "=", reference)
+                | fields.Domain("client_order_ref", "=", reference)
+            )
         )
         orders = request.env["sale.order"].sudo().search(domain, limit=2)
         if len(orders) != 1:
@@ -40,8 +44,12 @@ class AbStorefrontCustomerPortal(CustomerPortal):
         normalized = normalize_egyptian_phone(phone)
         if not normalized.isascii() or not is_valid_egyptian_mobile(normalized):
             return request.env["ab.prescription.order"].browse()
+        reference = (reference or "").strip().upper()
         prescriptions = request.env["ab.prescription.order"].sudo().search(
-            fields.Domain("name", "=", (reference or "").strip())
+            (
+                fields.Domain("ab_public_reference", "=", reference)
+                | fields.Domain("name", "=", reference)
+            )
             & fields.Domain("website_id", "=", request.website.id)
             & fields.Domain("company_id", "=", request.website.company_id.id),
             limit=2,
