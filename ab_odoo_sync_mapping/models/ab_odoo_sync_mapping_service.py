@@ -52,7 +52,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
             raise SyncAuthorizationError()
         return branches
 
-    @api.model
+    @api.private
     def authenticate_branch_request(self, payload, received_key):
         if not isinstance(payload, dict):
             raise SyncAuthorizationError()
@@ -79,7 +79,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
             raise SyncHardwarePendingError()
         raise SyncHardwareMismatchError()
 
-    @api.model
+    @api.private
     def receive_upload_batch(self, payload):
         if not isinstance(payload, dict):
             raise ValueError(_("Upload payload must be a JSON object."))
@@ -158,7 +158,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
                     }
                 )
 
-        branch.write({"last_upload_at": fields.Datetime.now()})
+        branch._touch_last_upload()
         return result
 
     @api.model

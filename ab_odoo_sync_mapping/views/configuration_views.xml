@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <function model="ab_odoo_sync_service" name="_ensure_config_parameter_defaults"
+              eval="({'ab_odoo_sync.token_ttl_seconds': '900', 'ab_odoo_sync.allow_legacy_key_auth': 'True'},)"/>
     <record id="action_ab_odoo_sync_report_configuration" model="ir.actions.act_window">
         <field name="name">Report Sync Configuration</field>
         <field name="res_model">ab_odoo_sync_branch_registry</field>

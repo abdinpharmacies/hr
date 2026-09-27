@@ -253,6 +253,10 @@ msgstr "قيمة مباشرة"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -316,6 +320,10 @@ msgstr "الحقل الذي يتم البحث به في نموذج العلاق�
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -1309,6 +1317,7 @@ msgstr "تدقيق الأمان"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__branch_id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__branch_id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__branch_id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__branch_id
 msgid "Branch"
 msgstr "الفرع"
 
@@ -1606,3 +1615,43 @@ msgstr ""
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
 msgid "Source model %(model)s is an internal sync security model and cannot be uploaded from branches."
 msgstr "نموذج المصدر %(model)s هو نموذج أمان داخلي للمزامنة ولا يمكن رفعه من الفروع."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_token
+msgid "Branch Sync Token"
+msgstr "رمز مزامنة الفرع"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__digest
+msgid "Digest"
+msgstr "البصمة الرقمية"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__expires_at
+msgid "Expires At"
+msgstr "تنتهي الصلاحية في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__scope
+msgid "Scope"
+msgstr "نطاق الصلاحية"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__sync_token_version
+msgid "Sync Token Version"
+msgstr "إصدار رمز المزامنة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__token_version
+msgid "Token Version"
+msgstr "إصدار الرمز"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_token_unique_digest
+msgid "Token digest must be unique."
+msgstr "يجب أن تكون بصمة الرمز فريدة."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_token__scope__upload_health
+msgid "Upload and health"
+msgstr "الرفع وفحص الاتصال"

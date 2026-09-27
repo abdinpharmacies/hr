@@ -1,4 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_odoo_sync_token_system,ab_odoo_sync_token system,model_ab_odoo_sync_token,base.group_system,1,0,0,1
 access_ab_odoo_sync_branch_registry_system,ab_odoo_sync_branch_registry system,model_ab_odoo_sync_branch_registry,base.group_system,1,1,1,0
 access_ab_odoo_sync_branch_audit_system,ab_odoo_sync_branch_audit system,model_ab_odoo_sync_branch_audit,base.group_system,1,0,0,0
 access_ab_odoo_sync_branch_hardware_reject_wizard_system,ab_odoo_sync_branch_hardware_reject_wizard system,model_ab_odoo_sync_branch_hardware_reject_wizard,base.group_system,1,1,1,1

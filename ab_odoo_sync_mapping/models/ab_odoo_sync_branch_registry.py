@@ -1,5 +1,7 @@
 import secrets
 
+from psycopg2.errors import SerializationFailure
+
 from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
@@ -121,6 +123,7 @@ class AbOdooSyncBranchRegistry(models.Model):
     )
     last_upload_at = fields.Datetime(string="Last Upload At", readonly=True)
     active = fields.Boolean(default=True, index=True)
+    sync_token_version = fields.Integer(default=1, readonly=True, copy=False, groups="base.group_system")
 
     _uniq_db_serial = models.Constraint(
         "UNIQUE(db_serial)",
@@ -150,12 +153,42 @@ class AbOdooSyncBranchRegistry(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        if "sync_token_version" in vals:
+            raise UserError(_("Use branch security actions to update sync credentials."))
         if (
             not self.env.context.get("ab_odoo_sync_security_write")
             and _SECURITY_MANAGED_FIELDS.intersection(vals)
         ):
             raise UserError(_("Use branch security actions to update sync credentials."))
+        if {"api_key_hash", "hdd_serial", "pending_hdd_serial", "hardware_binding_state", "active", "db_serial"}.intersection(vals):
+            self._lock_for_update()
+            self.invalidate_recordset(["sync_token_version"])
+            for branch in self:
+                super(AbOdooSyncBranchRegistry, branch).write(dict(vals, sync_token_version=branch.sync_token_version + 1))
+            return True
         return super().write(vals)
+
+    def _touch_last_upload(self):
+        """Best-effort telemetry must not block uploads or security actions."""
+        self.ensure_one()
+        try:
+            with self.env.cr.savepoint(flush=False):
+                self.env.cr.execute("""
+                    WITH candidate AS (
+                        SELECT id FROM ab_odoo_sync_branch_registry
+                        WHERE id = %s AND (last_upload_at IS NULL OR
+                            last_upload_at < (now() AT TIME ZONE 'UTC') - interval '1 minute')
+                        FOR UPDATE SKIP LOCKED
+                    )
+                    UPDATE ab_odoo_sync_branch_registry b
+                    SET last_upload_at = now() AT TIME ZONE 'UTC'
+                    FROM candidate c WHERE b.id = c.id
+                """, (self.id,))
+        except SerializationFailure:
+            # Another upload/security action changed the row since our snapshot.
+            # This approximate timestamp can wait until the next request.
+            return
+        self.invalidate_recordset(["last_upload_at"], flush=False)
 
     def unlink(self):
         raise UserError(_("Archive branch registrations instead of deleting them."))
@@ -396,6 +429,8 @@ class AbOdooSyncBranchRegistry(models.Model):
     def enroll_pending_hardware(self, hdd_serial):
         self.ensure_one()
         hdd_serial = normalize_hdd_serial(hdd_serial)
+        if self.hdd_serial == hdd_serial and self.hardware_binding_state == "approved":
+            return True, False
         self._lock_for_update()
         branch = self.sudo()
         if not branch.hdd_serial:
