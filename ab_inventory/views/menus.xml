@@ -5,5 +5,14 @@
                   name="Inventory"
                   web_icon="ab_inventory,static/description/icon.png"
                   sequence="101"/>
+        <menuitem id="menu_inventory_movements" name="Movement Schedule"
+                  parent="menu_root" action="action_inventory_movements"
+                  groups="ab_inventory.group_inventory_user,base.group_system" sequence="10"/>
+        <menuitem id="menu_inventory_reports" name="Reports" parent="menu_root"
+                  groups="ab_inventory.group_inventory_user,base.group_system" sequence="20"/>
+        <menuitem id="menu_inventory_balance_report" name="Current Stock Balance"
+                  parent="menu_inventory_reports" action="action_inventory_balance_report" sequence="10"/>
+        <menuitem id="menu_inventory_period_report" name="Period Report"
+                  parent="menu_inventory_reports" action="action_inventory_period_report" sequence="20"/>
     </data>
 </odoo>

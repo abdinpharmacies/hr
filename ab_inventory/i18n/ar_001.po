@@ -1,0 +1,441 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ab_inventory 19.0.1.0.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar_001\n"
+
+msgid "Inventory"
+msgstr "المخزون"
+
+msgid "Abdin Inventory"
+msgstr "مخزون العابدين"
+
+msgid "Inventory Access"
+msgstr "صلاحيات المخزون"
+
+msgid "Inventory User"
+msgstr "مستخدم المخزون"
+
+msgid "Inventory Manager"
+msgstr "مدير المخزون"
+
+msgid "Inventory Stores"
+msgstr "متاجر المخزون"
+
+msgid "Only administrators can assign inventory stores."
+msgstr "يمكن للمسؤولين فقط تعيين متاجر المخزون."
+
+msgid "Inventory Movements"
+msgstr "حركات المخزون"
+
+msgid "Inventory Movement"
+msgstr "حركة مخزون"
+
+msgid "Legacy Inventory Integration"
+msgstr "ربط المخزون السابق"
+
+msgid "Movements"
+msgstr "الحركات"
+
+msgid "Movement"
+msgstr "الحركة"
+
+msgid "Movement Type"
+msgstr "نوع الحركة"
+
+msgid "Posting Date"
+msgstr "تاريخ الترحيل"
+
+msgid "Opening Balance"
+msgstr "الرصيد الافتتاحي"
+
+msgid "Receipt"
+msgstr "استلام"
+
+msgid "Issue"
+msgstr "صرف"
+
+msgid "Transfer"
+msgstr "تحويل"
+
+msgid "Return"
+msgstr "مرتجع"
+
+msgid "Adjustment"
+msgstr "تسوية"
+
+msgid "Quantity (Smallest Unit)"
+msgstr "الكمية (أصغر وحدة)"
+
+msgid "Posted"
+msgstr "مرحّل"
+
+msgid "Pending"
+msgstr "معلّق"
+
+msgid "Inventory Period Report"
+msgstr "تقرير المخزون للفترة"
+
+msgid "Inventory Period Report Line"
+msgstr "سطر تقرير المخزون للفترة"
+
+msgid "Inventory Period Movement Line"
+msgstr "سطر حركة المخزون للفترة"
+
+msgid "Period Report"
+msgstr "تقرير الفترة"
+
+msgid "Period Balances"
+msgstr "أرصدة الفترة"
+
+msgid "Item Movements"
+msgstr "حركات الصنف"
+
+msgid "Generate Report"
+msgstr "إنشاء التقرير"
+
+msgid "From Date"
+msgstr "من تاريخ"
+
+msgid "To Date"
+msgstr "إلى تاريخ"
+
+msgid "Store"
+msgstr "المتجر"
+
+msgid "Item"
+msgstr "الصنف"
+
+msgid "Batch / Source"
+msgstr "الدفعة / المصدر"
+
+msgid "Opening"
+msgstr "افتتاحي"
+
+msgid "Incoming"
+msgstr "وارد"
+
+msgid "Outgoing"
+msgstr "صادر"
+
+msgid "Closing"
+msgstr "ختامي"
+
+msgid "From Date cannot be later than To Date."
+msgstr "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية."
+
+msgid "Inventory movement requires a store and item source."
+msgstr "تتطلب حركة المخزون متجراً ومصدر صنف."
+
+msgid "Inventory movement requires a source document header."
+msgstr "تتطلب حركة المخزون رأس مستند مصدر."
+
+msgid "Select a valid store."
+msgstr "اختر متجراً صالحاً."
+
+msgid "You are not allowed to access this store's inventory."
+msgstr "ليس لديك صلاحية الوصول إلى مخزون هذا المتجر."
+
+msgid "This inventory operation was already recorded."
+msgstr "سُجّلت عملية المخزون هذه مسبقاً."
+
+msgid "An inventory document for this source and store already exists."
+msgstr "يوجد مستند مخزون لهذا المصدر والمتجر مسبقاً."
+
+msgid "Posted inventory movements cannot be changed. Create a reversal instead."
+msgstr "لا يمكن تعديل حركات المخزون المرحّلة. أنشئ حركة عكسية بدلاً من ذلك."
+
+msgid "Only movements pending at the store can be posted."
+msgstr "يمكن ترحيل الحركات المعلّقة لدى المتجر فقط."
+
+msgid "Posted inventory movements cannot be deleted."
+msgstr "لا يمكن حذف حركات المخزون المرحّلة."
+
+msgid "Inventory: assigned stores"
+msgstr "المخزون: المتاجر المعيّنة"
+
+msgid "Inventory: manager all stores"
+msgstr "المخزون: المدير لجميع المتاجر"
+
+msgid "Inventory headers: assigned stores"
+msgstr "رؤوس المخزون: المتاجر المعيّنة"
+
+msgid "Inventory headers: manager all stores"
+msgstr "رؤوس المخزون: المدير لجميع المتاجر"
+
+msgid "Pending inventory: assigned stores"
+msgstr "المخزون المعلّق: المتاجر المعيّنة"
+
+msgid "Pending inventory: manager all stores"
+msgstr "المخزون المعلّق: المدير لجميع المتاجر"
+
+msgid "Reference"
+msgstr "المرجع"
+
+msgid "Status"
+msgstr "الحالة"
+
+msgid "Operation Key"
+msgstr "مفتاح العملية"
+
+msgid "Other Incoming"
+msgstr "وارد آخر"
+
+msgid "Other Outgoing"
+msgstr "صادر آخر"
+
+msgid "Positive for incoming stock; negative for outgoing stock."
+msgstr "أدخل رقماً موجباً للوارد ورقماً سالباً للصادر."
+
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "Manual"
+msgstr "يدوي"
+
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+msgid "Source Record ID"
+msgstr "معرّف سجل المصدر"
+
+msgid "Note"
+msgstr "ملاحظة"
+
+msgid "Reversal Of"
+msgstr "عكس الحركة"
+
+msgid "Post"
+msgstr "ترحيل"
+
+msgid "Reverse"
+msgstr "عكس"
+
+msgid "This inventory movement was already reversed."
+msgstr "تم عكس حركة المخزون هذه مسبقاً."
+
+msgid "Movement quantity cannot be zero."
+msgstr "لا يمكن أن تكون كمية الحركة صفراً."
+
+msgid "This movement type requires an incoming quantity."
+msgstr "يتطلب نوع الحركة هذا كمية واردة."
+
+msgid "This movement type requires an outgoing quantity."
+msgstr "يتطلب نوع الحركة هذا كمية صادرة."
+
+msgid "Post movements through the Post action."
+msgstr "رحّل الحركات باستخدام إجراء ترحيل."
+
+msgid "Posted movements are immutable; create a reversal."
+msgstr "لا يمكن تعديل الحركات المرحّلة؛ أنشئ حركة عكسية."
+
+msgid "Posted movements cannot be deleted."
+msgstr "لا يمكن حذف الحركات المرحّلة."
+
+msgid "Only inventory managers can post movements."
+msgstr "يمكن لمديري المخزون فقط ترحيل الحركات."
+
+msgid "Posting would create negative stock in a store or batch."
+msgstr "سيؤدي الترحيل إلى رصيد مخزون سالب في متجر أو دفعة."
+
+msgid "Only posted movements can be reversed."
+msgstr "يمكن عكس الحركات المرحّلة فقط."
+
+msgid "Only inventory managers can reverse movements."
+msgstr "يمكن لمديري المخزون فقط عكس الحركات."
+
+msgid "Reversal of %s"
+msgstr "عكس الحركة %s"
+
+msgid "The item and unit cannot change after stock movements are posted."
+msgstr "لا يمكن تغيير الصنف أو الوحدة بعد ترحيل حركات المخزون."
+
+msgid "Item unit definitions cannot change after stock movements are posted."
+msgstr "لا يمكن تغيير تعريفات وحدات الصنف بعد ترحيل حركات المخزون."
+
+msgid "Inventory report: assigned stores"
+msgstr "تقرير المخزون: المتاجر المعيّنة"
+
+msgid "Inventory report: manager all stores"
+msgstr "تقرير المخزون: المدير لجميع المتاجر"
+
+msgid "Inventory report lines: assigned stores"
+msgstr "سطور تقرير المخزون: المتاجر المعيّنة"
+
+msgid "Inventory report lines: manager all stores"
+msgstr "سطور تقرير المخزون: المدير لجميع المتاجر"
+
+msgid "Inventory report movements: assigned stores"
+msgstr "حركات تقرير المخزون: المتاجر المعيّنة"
+
+msgid "Inventory report movements: manager all stores"
+msgstr "حركات تقرير المخزون: المدير لجميع المتاجر"
+
+msgid "Movement Schedule"
+msgstr "جدول حركة المخزون"
+
+msgid "Current Stock Balance"
+msgstr "الرصيد الحالي للمخزون"
+
+msgid "Current Stock Balance Report"
+msgstr "تقرير الرصيد الحالي للمخزون"
+
+msgid "Current Stock Balance Line"
+msgstr "سطر الرصيد الحالي للمخزون"
+
+msgid "Reports"
+msgstr "التقارير"
+
+msgid "Include Zero Balances"
+msgstr "إظهار الأرصدة الصفرية"
+
+msgid "Calculated At"
+msgstr "وقت احتساب الرصيد"
+
+msgid "Refresh Balances"
+msgstr "تحديث الأرصدة"
+
+msgid "Total Balance"
+msgstr "إجمالي الرصيد"
+
+msgid "Balance (Smallest Unit)"
+msgstr "الرصيد (أصغر وحدة)"
+
+msgid "Net"
+msgstr "الصافي"
+
+msgid "Today"
+msgstr "اليوم"
+
+msgid "Stock balance: assigned stores"
+msgstr "رصيد المخزون: المتاجر المعينة"
+
+msgid "Stock balance: manager all stores"
+msgstr "رصيد المخزون: جميع المتاجر للمدير"
+
+msgid "Stock balance lines: assigned stores"
+msgstr "سطور رصيد المخزون: المتاجر المعينة"
+
+msgid "Stock balance lines: manager all stores"
+msgstr "سطور رصيد المخزون: جميع المتاجر للمدير"
+
+msgid "Provide at least one inventory movement."
+msgstr "أدخل حركة مخزون واحدة على الأقل."
+
+msgid "Invalid inventory movement values."
+msgstr "بيانات حركة المخزون غير صالحة."
+
+msgid "A linked movement needs a reference, source, quantity, and unique key."
+msgstr "تتطلب الحركة المرتبطة مرجعًا ومصدرًا وكمية ومفتاحًا فريدًا."
+
+msgid "Each movement must have a unique operation key."
+msgstr "يجب أن يكون لكل حركة مفتاح عملية فريد."
+
+msgid "Only draft movements can be posted."
+msgstr "يمكن ترحيل حركات المخزون المسودة فقط."
+
+msgid "Closing Balance"
+msgstr "الرصيد الختامي"
+
+msgid "Movement #%s"
+msgstr "حركة رقم %s"
+
+msgid "A linked movement needs a store, source, type, source record, and unique key."
+msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوعًا وسجل مصدر ومفتاحًا فريدًا."
+
+msgid "A linked movement needs a store, source, source type, source record, and unique key."
+msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوع مصدر وسجل مصدر ومفتاحًا فريدًا."
+
+msgid "Incoming and outgoing quantities cannot be negative."
+msgstr "لا يمكن أن تكون كميات الوارد أو الصادر سالبة."
+
+msgid "Enter either incoming or outgoing quantity, not both."
+msgstr "أدخل كمية للوارد أو للصادر فقط، وليس لكليهما."
+
+msgid "Saved"
+msgstr "محفوظ"
+
+msgid "Saved At"
+msgstr "وقت الحفظ"
+
+msgid "Saved movements are immutable; create a reversal."
+msgstr "لا يمكن تعديل الحركات المحفوظة؛ أنشئ حركة عكسية."
+
+msgid "Saved movements cannot be edited."
+msgstr "لا يمكن تعديل حركات المخزون المحفوظة."
+
+msgid "Saved movements cannot be deleted."
+msgstr "لا يمكن حذف الحركات المحفوظة."
+
+msgid "Only pending movements can be saved."
+msgstr "يمكن حفظ الحركات المعلقة فقط."
+
+msgid "Only saved movements can be reversed."
+msgstr "يمكن عكس الحركات المحفوظة فقط."
+
+msgid "Item unit definitions cannot change after stock movements are saved."
+msgstr "لا يمكن تغيير تعريفات وحدات الصنف بعد حفظ حركات المخزون."
+
+msgid "The item and unit cannot change after stock movements are saved."
+msgstr "لا يمكن تغيير الصنف أو الوحدة بعد حفظ حركات المخزون."
+
+msgid "This integration uses the previous inventory workflow. Update it to create pending ab_inventory movements and save them explicitly."
+msgstr "يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون معلقة وحفظها صراحةً."
+
+msgid "Source Record ID must be a positive integer."
+msgstr "يجب أن يكون معرّف سجل المصدر عددًا صحيحًا موجبًا."
+
+msgid "This source record already has an inventory movement."
+msgstr "يوجد بالفعل حركة مخزون لهذا السجل المصدر."
+
+msgid "A movement's source record cannot be changed."
+msgstr "لا يمكن تغيير السجل المصدر لحركة المخزون."
+
+msgid "A linked movement needs a store, source, source type, and source record."
+msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوع مصدر وسجل مصدر."
+
+msgid "This integration uses the previous inventory workflow. Update it to create draft ab_inventory movements and post them explicitly."
+msgstr "يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون مسودة وترحيلها صراحةً."
+
+msgid "Quantity Change"
+msgstr "تغير الكمية"
+
+msgid "Quantity change must be a non-zero integer in the smallest unit."
+msgstr "يجب أن يكون تغير الكمية عدداً صحيحاً غير صفري بأصغر وحدة للصنف."
+
+msgid "Use a signed quantity change instead of incoming or outgoing fields."
+msgstr "استخدم تغير كمية موجباً أو سالباً بدلاً من حقلي الوارد والصادر."
+
+msgid "Inventory Integration Helper"
+msgstr "مساعد ربط المخزون"
+
+msgid "Inventory direction must be +1 or -1."
+msgstr "يجب أن يكون اتجاه حركة المخزون +1 أو -1."
+
+msgid "Inventory quantity must be positive."
+msgstr "يجب أن تكون كمية المخزون موجبة."
+
+msgid "The source item and unit are required for inventory."
+msgstr "يلزم تحديد مصدر الصنف ووحدته للمخزون."
+
+msgid "The item unit conversion is not configured."
+msgstr "تحويل وحدات الصنف غير مُعدّ."
+
+msgid "Quantity cannot be represented exactly in the smallest unit."
+msgstr "لا يمكن تمثيل الكمية بدقة بأصغر وحدة للصنف."
+
+msgid "Provide one saved business line for inventory."
+msgstr "حدد بند عملية محفوظاً واحداً للمخزون."
+
+msgid "Inventory status must be Pending or Saved."
+msgstr "يجب أن تكون حالة المخزون معلقة أو محفوظة."
+
+msgid "The inventory line does not match the business line."
+msgstr "بند المخزون لا يطابق بند العملية."
+
+msgid "Saved movements cannot return to Pending."
+msgstr "لا يمكن إعادة حركة مخزون محفوظة إلى الحالة المعلقة."
+
+msgid "Linked movements must be saved through their business document."
+msgstr "يجب حفظ حركات المخزون المرتبطة من خلال مستند العملية الخاص بها."

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_inventory_period_report_form" model="ir.ui.view">
+        <field name="name">ab_inventory.period.report.form</field>
+        <field name="model">ab_inventory_period_report</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Period Report">
+                <sheet>
+                    <group>
+                        <field name="store_id"/>
+                        <field name="product_id"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <button name="action_generate" type="object" string="Generate Report" class="btn-primary"/>
+                    <notebook>
+                        <page string="Period Balances">
+                            <field name="line_ids" nolabel="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="product_id"/>
+                                    <field name="source_id"/>
+                                    <field name="opening_qty" sum="Opening"/>
+                                    <field name="incoming_qty" sum="Incoming"/>
+                                    <field name="outgoing_qty" sum="Outgoing"/>
+                                    <field name="closing_qty" sum="Closing"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Item Movements" invisible="not product_id">
+                            <field name="movement_line_ids" nolabel="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="saved_at"/>
+                                    <field name="movement_id"/>
+                                    <field name="source_id"/>
+                                    <field name="opening_qty"/>
+                                    <field name="incoming_qty"/>
+                                    <field name="outgoing_qty"/>
+                                    <field name="closing_qty"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_inventory_period_report" model="ir.actions.act_window">
+        <field name="name">Inventory Period Report</field>
+        <field name="res_model">ab_inventory_period_report</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

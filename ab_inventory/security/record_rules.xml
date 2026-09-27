@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_inventory_branch" model="ir.rule">
+        <field name="name">Inventory: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_inventory_manager" model="ir.rule">
+        <field name="name">Inventory: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_report_branch" model="ir.rule">
+        <field name="name">Inventory report: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_report"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_report_manager" model="ir.rule">
+        <field name="name">Inventory report: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_report"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_report_line_branch" model="ir.rule">
+        <field name="name">Inventory report lines: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_report_line"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('report_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_report_line_manager" model="ir.rule">
+        <field name="name">Inventory report lines: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_report_line"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_report_movement_branch" model="ir.rule">
+        <field name="name">Inventory report movements: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_movement_line"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('report_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_report_movement_manager" model="ir.rule">
+        <field name="name">Inventory report movements: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory_period_movement_line"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_balance_report_branch" model="ir.rule">
+        <field name="name">Stock balance: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_balance_report_manager" model="ir.rule">
+        <field name="name">Stock balance: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_balance_line_branch" model="ir.rule">
+        <field name="name">Stock balance lines: assigned stores</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report_line"/>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        <field name="domain_force">[('report_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_balance_line_manager" model="ir.rule">
+        <field name="name">Stock balance lines: manager all stores</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report_line"/>
+        <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

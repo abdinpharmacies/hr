@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_inventory_movement_list" model="ir.ui.view">
+        <field name="name">ab_inventory.movement.list</field>
+        <field name="model">ab_inventory</field>
+        <field name="arch" type="xml">
+            <list string="Movement Schedule" delete="0">
+                <field name="saved_at" optional="show"/>
+                <field name="store_id" optional="show"/>
+                <field name="product_id" optional="show"/>
+                <field name="source_id" optional="show"/>
+                <field name="model_ref" optional="show"/>
+                <field name="qty" optional="hide"/>
+                <field name="incoming_qty" optional="show"/>
+                <field name="outgoing_qty" optional="show"/>
+                <field name="closing_balance" optional="show"/>
+                <field name="status" optional="show"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_inventory_movement_form" model="ir.ui.view">
+        <field name="name">ab_inventory.movement.form</field>
+        <field name="model">ab_inventory</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Movement" delete="0">
+                <header>
+                    <button name="action_post" type="object" string="Post" class="btn-primary"
+                            groups="ab_inventory.group_inventory_manager,base.group_system"
+                            invisible="status != 'pending'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,saved"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="store_id" readonly="status == 'saved'"/>
+                            <field name="source_id" readonly="status == 'saved'"/>
+                            <field name="product_id"/>
+                        </group>
+                        <group>
+                            <field name="model_ref" readonly="status == 'saved'"/>
+                            <field name="qty" readonly="status == 'saved'"/>
+                            <field name="incoming_qty" readonly="1"/>
+                            <field name="outgoing_qty" readonly="1"/>
+                            <field name="closing_balance" invisible="status != 'saved'"/>
+                            <field name="saved_at"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_inventory_movement_search" model="ir.ui.view">
+        <field name="name">ab_inventory.movement.search</field>
+        <field name="model">ab_inventory</field>
+        <field name="arch" type="xml">
+            <search string="Movement Schedule">
+                <field name="store_id"/>
+                <field name="product_id"/>
+                <field name="source_id"/>
+                <filter name="saved" string="Saved" domain="[('status','=','saved')]"/>
+                <filter name="pending" string="Pending" domain="[('status','=','pending')]"/>
+                <filter name="today" string="Today" date="saved_at" default_period="today"/>
+                <group>
+                    <filter name="group_store" string="Store" context="{'group_by':'store_id'}"/>
+                    <filter name="group_item" string="Item" context="{'group_by':'product_id'}"/>
+                    <filter name="group_source" string="Source Type" context="{'group_by':'model_ref'}"/>
+                    <filter name="group_date" string="Saved At" context="{'group_by':'saved_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_inventory_movements" model="ir.actions.act_window">
+        <field name="name">Movement Schedule</field>
+        <field name="res_model">ab_inventory</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_saved': 1}</field>
+    </record>
+</odoo>
