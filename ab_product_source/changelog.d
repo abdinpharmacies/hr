@@ -1,16 +1,36 @@
 Current changes before commit:
 
-- Standardize Odoo 19 manifest version, company author, developer, and explicit application/install/auto-install flags; preserve active data-file order and remaining dependencies.
+- Replace the Odoo 15 tree view and action mode with the Odoo 19 list view type.
+- Replace legacy `name_get` behavior with an Odoo 19 computed display name.
+- Update product-source name search to the Odoo 19 signature and compose its filters with `fields.Domain`.
+- Preserve existing price, cost, tax, expiry, and unit-conversion behavior.
+- Preserve existing English source strings; no user-facing text required translation updates.
+
+Files changed:
+
+- ab_product_source/changelog.d
+- ab_product_source/models/ab_product_source.py
+- ab_product_source/views/ab_product_source.xml
+
+Validation:
+
+- All module XML files parse successfully.
+- Legacy Odoo 15 view/API scans pass.
+- `git diff --check` passes.
+- Python compilation and an Odoo database upgrade remain pending because a working Python/Odoo runtime is unavailable in this shell.
+
+commit 4786f546e25101fcf835b0d15e032b177343258e
+Author: emadco88 <emadco88@gmail.com>
+Date:   2026-09-23T16:34:25+03:00
+
+    ab_product_source/ FIX Odoo 19 manifest metadata
+
+- Standardize the Odoo 19 manifest metadata while preserving dependencies and data-file order.
 
 Files changed:
 
 - ab_product_source/__manifest__.py
 - ab_product_source/changelog.d
-
-Validation:
-
-- Manifest metadata/data-file checks, Python parsing, and remaining dependency resolution passed without database or external-service access.
-- No new or edited user-facing source strings; existing translation entries were preserved. Installation and UI validation remain pending the separate Odoo 19 port.
 
 commit 3600e7503ecc50ab89eb8b48ead075cb9d3287fc
 Author: emadco88 <emadco88@gmail.com>
