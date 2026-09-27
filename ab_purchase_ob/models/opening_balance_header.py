@@ -5,7 +5,7 @@ from odoo.exceptions import UserError, ValidationError
 class OpeningBalanceHeader(models.Model):
     _name = 'ab_purchase_ob_header'
     _description = 'opening_balance_header'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'ab_inventory_process']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     store_id = fields.Many2one(
         'ab_store', domain=[('allow_purchase', '=', True)], required=True, tracking=True)
@@ -30,7 +30,7 @@ class OpeningBalanceHeader(models.Model):
             )
             if len(inventory_line) == 0:
                 store_id = self.store_id.id
-                self.inventory_write(line, line.qty, store_id)
+                self.env['ab_inventory_process'].inventory_write(line, line.qty, store_id)
         self.status = 'saved'
 
     @api.depends('line_ids', 'line_ids.qty', 'line_ids.price', 'line_ids.taxes_ids', 'line_ids.unit_cost')
