@@ -199,6 +199,8 @@ class AbOdooSyncOutbox(models.Model):
                 "last_error": False,
             }
         )
+        if retry_records:
+            self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(retry_records)
         return self._notification(
             _("Odoo Sync Upload"),
             _("Reset %(count)s failed outbox event(s) to Pending.") % {"count": len(retry_records)},
