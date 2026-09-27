@@ -6,10 +6,12 @@ from email.utils import parsedate_to_datetime
 class ReportDeliveryError(ValueError):
     """Transport failure with retry policy independent of its displayed text."""
 
-    def __init__(self, message, *, retryable=False, retry_after=None):
+    def __init__(self, message, *, retryable=False, retry_after=None, status=None, code=None):
         super().__init__(message)
         self.retryable = retryable
         self.retry_after = retry_after
+        self.status = status
+        self.code = code
 
 
 def parse_retry_after(value):
