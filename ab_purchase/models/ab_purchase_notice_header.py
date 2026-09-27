@@ -2,18 +2,16 @@ import datetime
 
 import re
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class PurchaseNoticeHeader(models.Model):
     _name = 'ab_purchase_notice_header'
     _description = 'Abdin Purchase Notice Header'
-    _inherit = ['ab_purchase_je_header_delegate_common',
-                'mail.thread', 'mail.activity.mixin', 'ab_inventory_process']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_names_search = ['doc_code', 'purchase_header_id.doc_code']
 
     supplier_id = fields.Many2one("ab_supplier", required=True, tracking=True)
-
-    related_claim_id = fields.Many2one('ab_purchase_claim', compute='_compute_related_claim_id')
 
     purchase_header_ids = fields.Many2many('ab_purchase_header', string='Invoice Numbers')
 
@@ -50,17 +48,6 @@ class PurchaseNoticeHeader(models.Model):
 
     line_ids = fields.One2many(comodel_name='ab_purchase_notice_line',
                                inverse_name='header_id', required=True)
-
-    @api.depends('je_header_id')
-    def _compute_related_claim_id(self):
-        supplier_account = self.env.ref('ab_accounting.ab_accounting_account_guide_suppliers')
-        for rec in self:
-            claim = False
-
-            je_supplier_line = rec.je_header_id.line_ids.filtered(lambda je: je.account_id == supplier_account)
-            if je_supplier_line:
-                claim = je_supplier_line[0].claim_id
-            rec.related_claim_id = claim and claim.id
 
     def _compute_eplus_serial_calc(self):
         for rec in self:
@@ -111,9 +98,8 @@ class PurchaseNoticeHeader(models.Model):
     #         rec.lines_count = len(rec.line_ids)
     #
     def btn_get_all_line_ids(self):
-        purchase_source_ids = self.purchase_header_id.line_ids.mapped('source_id.id')
-        source_ids = self.env['ab_product_source_pending'].search([('id', 'in', purchase_source_ids)]).ids
-
+        self.ensure_one()
+        source_ids = self.purchase_header_id.line_ids.mapped('source_id').ids
         current_line_ids = self.line_ids.mapped('source_id.id')
         self.write({'line_ids': [(0, 0, {'source_id': source_id})
                                  for source_id in source_ids
@@ -139,73 +125,44 @@ class PurchaseNoticeHeader(models.Model):
     def validate_doc_code(self, doc_code):
         return re.match(r'^[a-zA-Z0-9-]+$', doc_code)
 
-    def _validate_notice(self):
-        for rec in self.line_ids:
-            unit_size = rec.uom_id.unit_size
-
-            # if user enter product on more than one line
-            notice_qty_s = sum(line.product_id.qty_to_small(line.qty, unit_size)
-                               for line in self.line_ids if line.source_id.id == rec.source_id.id)
-
-            available_qty_s = rec.product_id.qty_to_small(rec.available_qty, unit_size)
-            # @todo: activate this condition again
-            # if notice_qty_s > available_qty_s or rec.bonus > rec.available_bonus:
-            #     raise ValidationError(_(f"Not Enough Pending Balance For {rec.source_id.product_id.name}"))
-
     def btn_submit_inventory(self):
-        # remove zero qty zero bonus lines
-        self.line_ids.filtered(lambda l: (l.qty == 0 and l.bonus == 0)).unlink()
-
-        inventory = self.env['ab_inventory']
-        self._validate_notice()
-        purchase_notice_lines = self.line_ids
-        print(self.line_ids)
-
-        # negative will be true if credit_notice
+        self.ensure_one()
+        if not (self.env.user.has_group('base.group_system')
+                or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
+            raise AccessError(_("Only purchase managers can save notices into stock."))
+        if self.status == 'saved':
+            return True
+        if not self.purchase_header_id or not self.purchase_header_id.store_id:
+            raise ValidationError(_("Link a purchase invoice and store before saving the notice."))
+        if self.purchase_header_id.status != 'saved':
+            raise ValidationError(_("Save the purchase receipt before posting a notice."))
+        if any(line.qty < 0 or line.bonus < 0 for line in self.line_ids):
+            raise ValidationError(_("Purchase quantities and bonuses cannot be negative."))
+        lines = self.line_ids.filtered(lambda line: line.qty + line.bonus > 0)
+        if not lines:
+            raise ValidationError(_("Add a notice line with a positive quantity."))
         sign = -1 if self.notice_type == 'credit_notice' else 1
-        for line in purchase_notice_lines:
-            inventory_line = inventory.search(
-                [('model_ref', '=', line._name), ('res_id', '=', line.id)])
-            if len(inventory_line) == 1:
-                raise ValidationError(_("Product is returned before."))
-            elif len(inventory_line) == 0:
-                qty_total = line.qty + line.bonus
-                store_id = line.last_inventory_id.store_id.id
-                self.inventory_write(line, qty_total, store_id, sign=sign, status='pending_main')
+        with self.env.cr.savepoint():
+            for line in lines:
+                self.env['ab_inventory_process'].inventory_write(
+                    line, line.qty + line.bonus,
+                    self.purchase_header_id.store_id.id,
+                    sign=sign, status='saved',
+                )
+            super(PurchaseNoticeHeader, self).write({'status': 'saved'})
+        return True
 
-            else:
-                raise UserError(_("Error in Invoice, Contact Support"))
-
-        self.status = 'saved'
+    @api.model_create_multi
+    def create(self, vals_list):
+        if any(vals.get('status', 'pending') != 'pending' for vals in vals_list):
+            raise ValidationError(_("Create purchase notices as pending."))
+        return super().create(vals_list)
 
     def write(self, vals):
-        res = super().write(vals)
-        if self.je_header_id.line_ids:
-            je_vals = {}
-            pur_doc_code = self.purchase_header_id.doc_code
-            doc_code = pur_doc_code if pur_doc_code else self.doc_code
-            if "supplier_id" in vals:
-                je_vals.update({'costcenter_id': self.supplier_id.costcenter_id.id})
-            if "doc_code" in vals:
-                je_vals.update({'doc_no': doc_code})
-            if je_vals:
-                self.sudo().je_header_id.line_ids.write(je_vals)
+        if 'status' in vals:
+            raise ValidationError(_("Use the notice Submit action to save inventory."))
+        return super().write(vals)
 
-        return res
-
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
         for rec in self:
-            res.append((rec.id, f"{rec.purchase_header_id.doc_code} - [{rec.doc_code}]"))
-        return res
-
-    @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = list(args or [])
-        args += ['|',
-                 ('doc_code', operator, name),
-                 ('purchase_header_id.doc_code', operator, name),
-                 ]
-
-        ids = self._search(args, limit=limit, access_rights_uid=name_get_uid)
-        return ids
+            rec.display_name = f"{rec.purchase_header_id.doc_code or ''} - [{rec.doc_code or ''}]"

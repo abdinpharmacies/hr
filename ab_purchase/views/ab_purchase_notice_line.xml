@@ -6,16 +6,14 @@
             <field name="name">ab_purchase_notice_line_view_tree</field>
             <field name="model">ab_purchase_notice_line</field>
             <field name="arch" type="xml">
-                <tree string="ab_purchase_notice_line_tree" edit="0" create="0">
+                <list string="ab_purchase_notice_line_tree" edit="0" create="0">
                     <field name="supplier_id" optional="show"/>
                     <field name="invoice_number" optional="show"/>
                     <field name="doc_code" optional="hide"/>
                     <field name="eplus_serial_calc" optional="show"/>
                     <field name="pur_eplus_serial" optional="show"/>
                     <field name="eplus_g_header_serial" optional="show"/>
-                    <field name="costcenter_id" optional="show"/>
                     <field name="header_id" optional="show"/>
-                    <field name="je_header_id" optional="show"/>
                     <field name="product_id" optional="show" class="text-wrap"/>
                     <field name="invoice_qty" optional="show"/>
                     <field name="invoice_bonus" optional="show"/>
@@ -29,12 +27,11 @@
                     <field name="line_cost" optional="show" sum="Total Cost"/>
                     <field name="line_taxes_value" optional="show"/>
                     <field name="line_price" optional="show"/>
-                    <field name="related_claim_id" optional="show"/>
                     <field name="uom_id" optional="hide"/>
                     <field name="eplus_serial" optional="hide"/>
                     <field name="eplus_serial_g_return" optional="hide"/>
                     <field name="last_update_date" optional="hide"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -46,13 +43,10 @@
                     <sheet>
                         <group col="4">
                             <field name="supplier_id"/>
-                            <field name="costcenter_id"/>
                             <field name="purchase_header_id"/>
                             <field name="eplus_serial_calc"/>
-                            <field name="je_header_id"/>
                             <field name="header_id"/>
                             <field name="invoice_number"/>
-                            <field name="related_claim_id"/>
                             <field name="purchase_header_num"/>
                             <field name="source_id"/>
                             <field name="product_id"/>
@@ -87,9 +81,6 @@
                     <field name="pur_eplus_serial"/>
                     <field name="eplus_g_header_serial"/>
                     <field name="doc_code"/>
-                    <field name="costcenter_id"/>
-                    <field name="je_header_id"/>
-                    <field name="je_line_ids"/>
                     <field name="source_id"/>
                     <field name="product_id"/>
                     <field name="available_qty"/>
@@ -123,7 +114,7 @@
             <field name="name">Ab purchase notice line</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_notice_line</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">list,form,pivot</field>
         </record>
 
         <menuitem id="ab_purchase_notice_line_menu"

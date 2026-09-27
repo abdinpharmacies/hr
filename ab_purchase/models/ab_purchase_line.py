@@ -1,12 +1,11 @@
-from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError, ValidationError
 
 
 class AbdinPurchaseDetails(models.Model):
     _name = "ab_purchase_line"
     _description = "Abdin Purchase Details"
     _rec_name = "product_id"
-    _inherit = ['ab_inventory_process']
 
     source_id = fields.Many2one(
         'ab_product_source', required=True, delegate=True, index=True, ondelete='cascade', auto_join=True)
@@ -32,8 +31,10 @@ class AbdinPurchaseDetails(models.Model):
     last_update_date = fields.Datetime(index=True, readonly=True)
 
     disc_tax_no_effect_value = fields.Float(default=0.0)
-    _sql_constraints = [
-        ('ab_purchase_line_eplus_serial_unique', 'unique(eplus_serial)', 'ePlus Serial CAN NOT BE DUPLICATED!')]
+    _eplus_serial_unique = models.Constraint(
+        'UNIQUE(eplus_serial)',
+        'ePlus Serial CAN NOT BE DUPLICATED!',
+    )
 
     @api.onchange('product_id')
     def _onchange_product(self):
@@ -44,11 +45,9 @@ class AbdinPurchaseDetails(models.Model):
         for rec in self:
             rec.line_taxes_value = rec.unit_taxes_value * (rec.qty + rec.bonus)
 
-    def name_get(self):
-        res = []
+    def _compute_display_name(self):
         for rec in self:
-            res.append((rec.id, f"[{rec.id}] - {rec.product_id.name}"))
-        return res
+            rec.display_name = f"[{rec.id}] - {rec.product_id.display_name}"
 
     @api.depends('line_purchase_price', 'line_taxes_value', 'source_id.extra_discount_percentage')
     def _compute_line_cost(self):
@@ -119,22 +118,27 @@ class AbdinPurchaseDetails(models.Model):
                 )
 
     def write(self, vals):
-        for rec in self:
-            # if "confirm" in vals:
-            #     msg = f"{rec.env.user.name} Change Confirm"
-            #     rec.header_id.message_post(body=msg)
-            if rec.header_id.status == "saved":
-                raise UserError("Cannot be saved because the invoice header is not saved.")
-            if not rec.confirm and rec.header_id.status != "prepending":
-                inventory = rec.env["ab_inventory"]
-                inventory_line = inventory.search(
-                    [('model_ref', '=', rec._name), ('res_id', '=', rec.id)]
-                )
-                store_id = rec.header_id.store_id.id
-                if len(inventory_line) == 1:
-                    qty_total = rec.source_id.qty + rec.source_id.bonus
-                    rec.inventory_write(
-                        rec, qty_total, store_id, inventory_line=inventory_line
+        if any(rec.header_id.status == 'saved' for rec in self):
+            raise UserError(_("Saved purchase invoice lines cannot be changed."))
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+            if {'qty', 'bonus', 'source_id', 'uom_id'} & vals.keys():
+                for rec in self.filtered(lambda line: line.header_id.status == 'pending'):
+                    rec.env['ab_inventory_process'].inventory_write(
+                        rec, rec.qty + rec.bonus, rec.header_id.store_id.id,
+                        status='pending',
                     )
+        return result
 
-        return super().write(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            header = self.env['ab_purchase_header'].browse(vals.get('header_id'))
+            if header.exists() and header.status != 'prepending':
+                raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
+        return super().create(vals_list)
+
+    def unlink(self):
+        if any(line.header_id.status != 'prepending' for line in self):
+            raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
+        return super().unlink()

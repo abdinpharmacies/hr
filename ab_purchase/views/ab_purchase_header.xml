@@ -8,8 +8,11 @@
                 <form string="ab_purchase_header_form">
                     <header class="w-100">
                         <button string="Submit" type="object" name="btn_submit_inventory" class="btn-info"
-                                attrs="{'invisible':[('status','in',['pending', 'saved'])]}"
-                                groups="base.group_system"/>
+                                invisible="status in ['pending', 'saved']"
+                                groups="ab_purchase.group_ab_purchase_manager,base.group_system"/>
+                        <button string="Save &amp; Receive" type="object" name="btn_save_inventory"
+                                class="btn-primary" invisible="status != 'pending'"
+                                groups="ab_purchase.group_ab_purchase_manager,base.group_system"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -61,11 +64,11 @@
                             </button>
                         </div>
                         <widget name="web_ribbon" title="Rejected" bg_color="bg-danger"
-                                attrs="{'invisible': [('status', '!=', 'rejected')]}"/>
+                                invisible="status != 'rejected'"/>
                         <widget name="web_ribbon" title="Saved" bg_color="bg-success"
-                                attrs="{'invisible': [('status', '!=', 'saved')]}"/>
+                                invisible="status != 'saved'"/>
                         <widget name="web_ribbon" title="Pending" bg_color="bg-info"
-                                attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                                invisible="status != 'pending'"/>
                         <field name="status" invisible="1"/>
                         <field name="total_price" invisible="1"/>
                         <field name="total_cost" string="Total Cost" invisible="1"/>
@@ -80,32 +83,21 @@
                                 <field name="doc_date"/>
                                 <field name="invoice_type"/>
                             </group>
-                            <group string="Accounting Data">
-                                <field name="je_header_id" readonly="1" force_save="1"/>
-                                <field name="res_header_id" invisible="1" force_save="1"/>
-                                <field name="res_header_ref" invisible="1" force_save="1"/>
-                                <field name="net_invoice" attrs="{'readonly':['!',('status','=','prepending')]}"/>
-                                <field name="net_tax" attrs="{'readonly':['!',('status','=','prepending')]}"/>
+                            <group string="Invoice Totals">
+                                <field name="net_invoice" readonly="status != 'prepending'"/>
+                                <field name="net_tax" readonly="status != 'prepending'"/>
                                 <field name="eplus_total_disc_on_inv"/>
                                 <label for="total_extra_discount"/>
                                 <div class="oe_inline d-flex justify-content-around">
                                     <div>
                                         <field name="total_extra_discount"
-                                               attrs="{'readonly':['!',('status','=','prepending')]}"/>
+                                               readonly="status != 'prepending'"/>
                                     </div>
                                     <div>
                                         <field name="total_extra_discount_percentage"
-                                               attrs="{'readonly':['!',('status','=','prepending')]}"
+                                               readonly="status != 'prepending'"
                                                widget="percentage" string="Extra Discount %"/>
                                     </div>
-                                    <!--
-                                        <div>
-                                            <button string="Distribute discount" class="btn-info" type="object"
-                                                    confirm="Are You Sure?"
-                                                    name="distribution_extra_discount"
-                                                    attrs="{'invisible':['|',('status','not in',['prepending']),('total_extra_discount','=',0)]}"/>
-                                        </div>
-                                    -->
                                 </div>
                             </group>
 
@@ -114,16 +106,9 @@
                             <page string="Purchase Detail">
                                 <field name="line_ids"
 
-                                       attrs="{'readonly':['!',('status','=','prepending')],
-                                       'invisible':[
-                                       '|','|','|','&amp;',
-                                       ('net_invoice','=',0),
-                                       ('invoice_type','!=','bonus'),
-                                       ('store_id','=',False),
-                                       ('supplier_id','=',False),
-                                       ('doc_code','in',['',False])
-                                       ]}">
-                                    <tree editable="bottom">
+                                       readonly="status != 'prepending'"
+                                       invisible="(net_invoice == 0 and invoice_type != 'bonus') or not store_id or not supplier_id or not doc_code">
+                                    <list editable="bottom">
                                         <field name="header_status" invisible="1"/>
                                         <field name="product_code" width="75px"/>
                                         <field name="product_id" width="120px"/>
@@ -146,7 +131,7 @@
                                         <field name="line_cost" width="75px" string="∑ Cost" sum="∑ Cost"/>
                                         <field name="notice_qty" width="75px" optional="hide"/>
                                         <field name="net_qty" width="60px" optional="hide"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
                             <page string="Description">
@@ -168,7 +153,7 @@
             <field name="name">ab_purchase_header_view_tree</field>
             <field name="model">ab_purchase_header</field>
             <field name="arch" type="xml">
-                <tree string="ab_purchase_header_tree">
+                <list string="ab_purchase_header_tree">
                     <field name="store_id"/>
                     <field name="supplier_id"/>
                     <field name="doc_code"/>
@@ -187,7 +172,7 @@
                     <field name="description"/>
                     <field name="create_uid" widget="many2one_avatar_user"/>
                     <field name="create_date"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -215,7 +200,7 @@
             <field name="name">Purchase Invoices</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_header</field>
-            <field name="view_mode">tree,form,graph,pivot</field>
+            <field name="view_mode">list,form,graph,pivot</field>
             <field name="context">{'uom_only_type': True}</field>
             <field name="view_id" ref="ab_purchase_header_view_tree"/>
         </record>

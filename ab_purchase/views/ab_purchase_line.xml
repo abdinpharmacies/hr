@@ -6,7 +6,7 @@
             <field name="name">ab_purchase_line_view_tree</field>
             <field name="model">ab_purchase_line</field>
             <field name="arch" type="xml">
-                <tree string="ab_purchase_line_tree" multi_edit="1">
+                <list string="ab_purchase_line_tree" multi_edit="1">
                     <field name="header_status" optional="show"/>
                     <field name="product_code" optional="show"/>
                     <field name="product_id" optional="show"/>
@@ -27,7 +27,7 @@
                     <field name="confirm" optional="show"/>
                     <field name="eplus_serial" optional="hide"/>
                     <field name="eplus_serial_header" optional="hide"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -89,7 +89,7 @@
             <field name="name">Ab purchase line</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_line</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">list,form,pivot</field>
         </record>
 
         <menuitem id="ab_purchase_line_menu"
