@@ -33,22 +33,24 @@ class AbdinProductsSource(models.Model):
 
     source_model = fields.Char(index=True)
 
-    def name_get(self):
-        return [(rec.id, f"{rec.product_id.name} [{rec.id}]") for rec in self]
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = f"{rec.product_id.display_name} [{rec.id}]"
 
-    @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
-        # products = self.env['ab_product']
+    def _name_search(self, name='', domain=None, operator='ilike', limit=None, order=None):
+        domain = fields.Domain(domain or [])
         pattern = r"\*|  "
         new_name = re.sub(pattern, "%", name) + '%'
-        domain = [('product_id.name', '=ilike', new_name)] + args
+        name_domain = fields.Domain('product_id.name', '=ilike', new_name)
         if name:
-            product_ids = self.search(
-                ['|', ('product_id.barcode_ids', '=ilike', name), ('product_id.code', '=ilike', name)])
+            product_domain = (
+                fields.Domain('product_id.barcode_ids', '=ilike', name)
+                | fields.Domain('product_id.code', '=ilike', name)
+            )
+            product_ids = self.search(product_domain)
             if product_ids:
-                domain = [('product_id.id', 'in', product_ids.ids)] + args
-        return self._search(domain, limit=limit, access_rights_uid=name_get_uid)
+                name_domain = fields.Domain('id', 'in', product_ids.ids)
+        return self._search(domain & name_domain, limit=limit, order=order)
 
     def _compute_unit_cost(self):
         for rec in self:
