@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <menuitem id="menu_accounting" name="Accounting" sequence="30" groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+    <menuitem id="menu_je_header" parent="menu_accounting" action="action_je_header" sequence="10"/>
+    <menuitem id="menu_je_line" parent="menu_accounting" action="action_je_line" sequence="11"/>
+    <menuitem id="menu_opening_run" parent="menu_accounting" action="action_opening_run" sequence="12"/>
+    <menuitem id="menu_report" parent="menu_accounting" action="action_report" sequence="13"/>
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_accounting" sequence="90" groups="ab_accounting.group_ab_accounting_manager"/>
+    <menuitem id="menu_account_guide" parent="menu_configuration" action="action_account_guide" sequence="1"/>
+    <menuitem id="menu_doctype" parent="menu_configuration" action="action_doctype" sequence="2"/>
+    <menuitem id="menu_auth_group" parent="menu_configuration" action="action_auth_group" sequence="3"/>
+    <menuitem id="menu_period" parent="menu_configuration" action="action_period" sequence="4"/>
+    <menuitem id="menu_account_first_level" parent="menu_configuration" action="action_account_first_level" sequence="5"/>
+    <menuitem id="menu_account_second_level" parent="menu_configuration" action="action_account_second_level" sequence="6"/>
+    <menuitem id="menu_account" parent="menu_configuration" action="action_account" sequence="7"/>
+</odoo>

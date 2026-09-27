@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="view_account_first_level_list" model="ir.ui.view">
+        <field name="name">view_account_first_level_list</field>
+        <field name="model">ab_accounting_account_first_level</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="internal_group"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_account_first_level_form" model="ir.ui.view">
+        <field name="name">view_account_first_level_form</field>
+        <field name="model">ab_accounting_account_first_level</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="internal_group"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_first_level" model="ir.actions.act_window">
+        <field name="name">Account First Levels</field>
+        <field name="res_model">ab_accounting_account_first_level</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_account_second_level_list" model="ir.ui.view">
+        <field name="name">view_account_second_level_list</field>
+        <field name="model">ab_accounting_account_second_level</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="account_first_level_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_account_second_level_form" model="ir.ui.view">
+        <field name="name">view_account_second_level_form</field>
+        <field name="model">ab_accounting_account_second_level</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="account_first_level_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_second_level" model="ir.actions.act_window">
+        <field name="name">Account Second Levels</field>
+        <field name="res_model">ab_accounting_account_second_level</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_account_list" model="ir.ui.view">
+        <field name="name">view_account_list</field>
+        <field name="model">ab_accounting_account</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="account_second_level_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_account_form" model="ir.ui.view">
+        <field name="name">view_account_form</field>
+        <field name="model">ab_accounting_account</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="account_second_level_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_account" model="ir.actions.act_window">
+        <field name="name">Account Classifications</field>
+        <field name="res_model">ab_accounting_account</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_account_guide_list" model="ir.ui.view">
+        <field name="name">view_account_guide_list</field>
+        <field name="model">ab_accounting_account_guide</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="company_id"/>
+                <field name="parent_id"/>
+                <field name="is_final"/>
+                <field name="internal_group"/>
+                <field name="internal_type"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_account_guide_form" model="ir.ui.view">
+        <field name="name">view_account_guide_form</field>
+        <field name="model">ab_accounting_account_guide</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="code"/>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                        <field name="parent_id"/>
+                        <field name="is_final"/>
+                        <field name="internal_group"/>
+                        <field name="internal_type"/>
+                        <field name="active"/>
+                    </group>
+                    <group>
+                        <field name="linked_account_id"/>
+                        <field name="has_costcenter"/>
+                        <field name="has_partner"/>
+                        <field name="has_due_date"/>
+                        <field name="costcenter_ids" widget="many2many_tags"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_account_guide" model="ir.actions.act_window">
+        <field name="name">Accounts</field>
+        <field name="res_model">ab_accounting_account_guide</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_doctype_list" model="ir.ui.view">
+        <field name="name">view_doctype_list</field>
+        <field name="model">ab_accounting_doctype</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="internal_type"/>
+                <field name="company_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_doctype_form" model="ir.ui.view">
+        <field name="name">view_doctype_form</field>
+        <field name="model">ab_accounting_doctype</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="internal_type"/>
+                        <field name="company_id"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_doctype" model="ir.actions.act_window">
+        <field name="name">Document Types</field>
+        <field name="res_model">ab_accounting_doctype</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_auth_group_list" model="ir.ui.view">
+        <field name="name">view_auth_group_list</field>
+        <field name="model">ab_accounting_auth_group</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_auth_group_form" model="ir.ui.view">
+        <field name="name">view_auth_group_form</field>
+        <field name="model">ab_accounting_auth_group</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                    </group>
+                    <field name="doctype_ids" widget="many2many_tags"/>
+                    <field name="account_auth_ids">
+                        <list editable="bottom">
+                            <field name="account_id"/>
+                            <field name="own_account"/>
+                            <field name="allow_account"/>
+                            <field name="prevent_enquiry"/>
+                            <field name="always_show_account"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_auth_group" model="ir.actions.act_window">
+        <field name="name">Authorization Profiles</field>
+        <field name="res_model">ab_accounting_auth_group</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_period_list" model="ir.ui.view">
+        <field name="name">view_period_list</field>
+        <field name="model">ab_accounting_period</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <field name="company_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_period_form" model="ir.ui.view">
+        <field name="name">view_period_form</field>
+        <field name="model">ab_accounting_period</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_close" type="object" string="Close Period" invisible="state != 'open'"/>
+                    <button name="action_reopen" type="object" string="Reopen Period" invisible="state != 'closed'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="branch_id"/>
+                        <field name="company_id"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="state"/>
+                    </group>
+                    <group>
+                        <field name="reopen_reason"/>
+                        <field name="reopened_by"/>
+                        <field name="reopened_at"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="action_period" model="ir.actions.act_window">
+        <field name="name">Accounting Periods</field>
+        <field name="res_model">ab_accounting_period</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="view_users_accounting" model="ir.ui.view">
+        <field name="name">Users Accounting Access</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Accounting" groups="ab_accounting.group_ab_accounting_manager">
+                    <group>
+                        <field name="accounting_branch_ids" widget="many2many_tags"/>
+                        <field name="accounting_auth_group_id"/>
+                        <field name="responsible_for_ids" widget="many2many_tags"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
