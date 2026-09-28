@@ -14,7 +14,6 @@ $scc-ink: #20242a;
 $scc-muted: #667085;
 $scc-border: rgba(32, 36, 42, 0.1);
 $scc-surface: rgba(255, 255, 255, 0.92);
-$scc-surface-soft: rgba(248, 250, 252, 0.86);
 $scc-shadow: 0 14px 34px rgba(32, 36, 42, 0.08);
 $scc-shadow-soft: 0 8px 22px rgba(32, 36, 42, 0.06);
 $scc-radius: 8px;
@@ -339,31 +338,7 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
         margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid $scc-border;
         color: $scc-ink; font-size: .82rem; font-weight: 780; text-transform: uppercase;
     }
-    .o_scc_history .o_kanban_renderer {
-        display: flex; flex-direction: column; gap: 0; background: transparent;
-        padding: 0; --KanbanRecord-width: 100%;
-    }
-    .o_scc_history .o_kanban_record {
-        width: 100% !important; margin: 0; border: 0; border-bottom: 1px solid #eef0f3;
-        box-shadow: none; background: transparent; padding: 0; cursor: default;
-    }
-    .o_scc_history .o_kanban_ghost { display: none !important; }
-    .o_scc_history_event { position: relative; width: 100%; padding: 9px 0; padding-inline-start: 20px; }
-    .o_scc_history_line { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: .875rem; }
-    .o_scc_history_dot {
-        position: absolute; inset-inline-start: 1px; top: 15px;
-        width: 9px; height: 9px; border-radius: 50%; background: $scc-timeline-value-blue;
-    }
-    .o_scc_event_approved .o_scc_history_dot, .o_scc_event_closed .o_scc_history_dot { background: $scc-success; }
-    .o_scc_event_deferred .o_scc_history_dot { background: $scc-timeline-yellow; }
-    .o_scc_event_rejected .o_scc_history_dot { background: $scc-danger; }
-    .o_scc_history_meta { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-inline-start: auto; color: $scc-muted; font-size: .8rem; }
-    .o_scc_history_note { display: block; margin-top: 3px; white-space: pre-wrap; overflow-wrap: anywhere; color: $scc-ink; font-size: .875rem; line-height: 1.4; }
-    .o_scc_history_followup { display: flex; gap: 4px; margin-top: 3px; font-size: .8rem; color: $scc-warning; }
-    .o_scc_history_transition { display: flex; flex-wrap: wrap; gap: 6px; font-size: .8rem; color: $scc-muted; }
-    .o_scc_history_decision { color: $scc-muted; font-weight: 500; }
     @media (max-width: 767px) {
-        .o_scc_history_meta { flex-basis: 100%; margin-inline-start: 0; }
         .o_form_sheet { padding: 16px; margin: 8px; }
         .o_scc_top_tracking, .o_scc_panel, .o_scc_history_section { padding: 12px; }
         .o_scc_top_timeline { flex-direction: column; gap: 16px; overflow: visible; }
@@ -379,7 +354,6 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
         *, *::before { animation: none !important; transition: none !important; }
     }
 }
-[dir="rtl"] .o_scc_form .o_scc_transition_arrow { transform: scaleX(-1); }
 
 // Shipment badge palette, scoped to the supplier claim list's State column.
 .o_scc_claim_list td[name="state"] {
@@ -467,7 +441,7 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
 .o_scc_form .o_scc_history_table {
     .o_list_table { table-layout: fixed; }
     th[data-name="user_id"], td[name="user_id"] { width: 28%; }
-    td[name="user_id"], td[name="reason"] {
+    td[name="user_id"], td[name="display_note"] {
         white-space: pre-wrap !important; overflow-wrap: anywhere; vertical-align: top;
         text-overflow: clip;
         .text-truncate, a, span { white-space: normal !important; text-overflow: clip; }

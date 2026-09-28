@@ -231,7 +231,7 @@
       <xpath expr="//field[@name='history_ids']/list" position="replace">
         <list create="false" edit="false" delete="false" no_open="True" default_order="id desc">
           <field name="user_id" string="User" options="{'no_open': True}"/>
-          <field name="reason" string="Note"/>
+          <field name="display_note" string="Note"/>
           <field name="occurred_at" string="Note Date"/>
           <field name="cheque_filename" column_invisible="True"/>
           <field name="cheque_attachment" string="Cheque Attachment" widget="binary" filename="cheque_filename"/>

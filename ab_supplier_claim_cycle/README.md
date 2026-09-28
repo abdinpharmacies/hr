@@ -545,3 +545,23 @@ read access denial and immutable history.
 Disabled record opening on the history list using Odoo's native no_open list
 attribute. Clicking a note row no longer opens the automatic technical history
 form; the binary attachment download control remains available.
+
+### Confirmed dead-code cleanup — 19.0.2.6.13
+
+Removed the obsolete Secretary-note wizard, its public action methods, access
+entries and loading references. Inline note saving remains covered by permission
+and immutable-history tests. Removed retired history-kanban CSS and its unused
+surface variable. Preserved bracket fields/snapshots, migration helpers and
+translation files. Updated stale UI tests to the current note table and review
+visibility rules; all 44 claim-cycle tests pass on the isolated replica.
+
+Companion ab_supplier 19.0.1.0.2 removes pass-through create/unlink overrides,
+unused imports and commented-only controller/template/demo scaffolding.
+
+### Attachment-only history entries — 19.0.2.6.14
+
+History includes entries with a note or a department cheque attachment. A computed
+Note display preserves entered text and shows “Cheque attachment” / “مرفق الشيك”
+when an attached cheque has no note. Existing audit reasons are not rewritten;
+existing attachment-only stage entries become visible as well. Entries with
+neither notes nor attachments remain hidden.

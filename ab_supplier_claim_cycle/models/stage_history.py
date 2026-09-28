@@ -48,6 +48,15 @@ class SupplierClaimHistory(models.Model):
             entry.cheque_attachment = attachment
             entry.cheque_filename = (filename or 'cheque') if attachment else False
 
+    display_note = fields.Text(string='Note', compute='_compute_display_note')
+
+    @api.depends('reason', 'cheque_attachment')
+    @api.depends_context('lang')
+    def _compute_display_note(self):
+        for entry in self:
+            entry.display_note = (entry.reason if (entry.reason or '').strip()
+                                  else _('Cheque attachment') if entry.cheque_attachment else False)
+
     @api.model_create_multi
     def create(self, vals_list):
         raise AccessError(_('History is created only by workflow actions.'))

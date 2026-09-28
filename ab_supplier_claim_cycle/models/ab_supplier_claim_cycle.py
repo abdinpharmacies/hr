@@ -92,10 +92,11 @@ class SupplierClaimCycle(models.Model):
     note_history_ids = fields.One2many(
         'ab_supplier_claim_cycle.history', compute='_compute_note_history', readonly=True)
 
-    @api.depends('history_ids', 'history_ids.reason')
+    @api.depends('history_ids', 'history_ids.reason', 'history_ids.cheque_attachment')
     def _compute_note_history(self):
         for claim in self:
-            claim.note_history_ids = claim.history_ids.filtered(lambda entry: (entry.reason or '').strip())
+            claim.note_history_ids = claim.history_ids.filtered(
+                lambda entry: (entry.reason or '').strip() or entry.cheque_attachment)
 
     timeline_draft = fields.Text(compute='_compute_timeline_details')
     timeline_draft_date = fields.Datetime(compute='_compute_timeline_details')
@@ -332,28 +333,6 @@ class SupplierClaimCycle(models.Model):
         self.env['ab_supplier_claim_cycle.history']._append([
             claim._history_values('secretarial_note', department='secretarial', reason=claim.secretarial_notes.strip())
             for claim in self if (claim.secretarial_notes or '').strip()])
-
-    def _check_secretarial_note_access(self):
-        self._require_role('user')
-        self._prepare_action()
-        if any(claim.state not in ('draft', 'returned_secretarial') for claim in self):
-            raise UserError(_('Secretarial notes can only be added in Draft or when returned to Secretarial.'))
-
-    def action_open_secretarial_note(self):
-        self.ensure_one()
-        self._check_secretarial_note_access()
-        return {
-            'type': 'ir.actions.act_window', 'name': _('Add Secretarial Note'),
-            'res_model': 'ab_supplier_claim_cycle.note.wizard', 'view_mode': 'form', 'target': 'new',
-            'context': {'default_claim_id': self.id},
-        }
-
-    def action_add_secretarial_note(self, note):
-        self._check_secretarial_note_access()
-        if not isinstance(note, str) or not note.strip():
-            raise ValidationError(_('Enter a note before saving.'))
-        self._log('secretarial_note', department='secretarial', reason=note.strip())
-        return True
 
     def action_restart_legacy_review(self):
         self._require_role('admin')

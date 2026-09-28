@@ -1523,3 +1523,9 @@ msgstr "انتقال المرحلة"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Note Date"
 msgstr "تاريخ الملاحظة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/stage_history.py:0
+msgid "Cheque attachment"
+msgstr "مرفق الشيك"

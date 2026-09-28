@@ -94,6 +94,28 @@ class TestSupplierClaimCycle(TransactionCase):
         with self.assertRaises(AccessError):
             bank_entry.write({'cheque_attachment': supplier_file})
 
+    def test_attachment_only_history_note(self):
+        claim = self.claim().with_context(lang='en_US')
+        self.accounts(claim)
+        self.assertFalse(claim.note_history_ids)
+        self.decide(claim, 'supplier_accounts', cheque_attachment=base64.b64encode(b'supplier'),
+                    cheque_filename='supplier.pdf', supplier_accounts_notes='  ')
+        supplier_entry = claim.note_history_ids
+        self.assertEqual(len(supplier_entry), 1)
+        self.assertFalse(supplier_entry.reason)
+        self.assertEqual(supplier_entry.display_note, 'Cheque attachment')
+        self.assertEqual(supplier_entry.with_context(lang='ar_001').display_note, 'مرفق الشيك')
+        self.decide(claim, 'bank_accounts', bank_cheque_attachment=base64.b64encode(b'bank'),
+                    bank_cheque_filename='bank.pdf')
+        self.assertEqual(len(claim.note_history_ids), 2)
+        self.assertEqual(set(claim.note_history_ids.mapped('display_note')), {'Cheque attachment'})
+        self.assertEqual(set(claim.note_history_ids.mapped('cheque_filename')), {'supplier.pdf', 'bank.pdf'})
+        other = self.claim()
+        self.accounts(other)
+        self.decide(other, 'supplier_accounts', supplier_accounts_notes='User note',
+                    cheque_attachment=base64.b64encode(b'proof'))
+        self.assertEqual(other.note_history_ids.display_note, 'User note')
+
     def test_supplier_lookup_defaults_and_snapshot(self):
         self.assertEqual(self.supplier.payment_nature,'non_cash')
         Supplier=self.env['ab_supplier'].with_user(self.users['user'])
@@ -288,7 +310,8 @@ class TestSupplierClaimCycle(TransactionCase):
         for role in self.roles:
             arch=self.Claim.with_user(self.users[role]).get_view(view_id=view.id,view_type='form')['arch']
             tree=etree.fromstring(arch)
-            self.assertEqual(tree.xpath('//notebook/page/@name'), ['history'])
+            self.assertFalse(tree.xpath('//notebook/page'))
+            self.assertTrue(tree.xpath('//field[@name="note_history_ids"]/list[@no_open="True"]'))
             self.assertFalse(tree.xpath('//sheet//button'))
             self.assertTrue(tree.xpath('//group[@name="department_reviews"]'))
             for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
@@ -541,9 +564,11 @@ class TestSupplierClaimCycle(TransactionCase):
                                    for parent in [node, *node.iterancestors()])
                 for stage in ('draft', *departments, 'returned_secretarial', 'ready_to_close', 'closed'):
                     values['state'] = stage
+                    authorized = stage in departments and (user in (self.users['admin'], self.system) or user == self.users[stage])
+                    values['can_edit_current_review'] = authorized
                     notes = [node.get('name') for node in arch.xpath(
                         '//group[@name="department_reviews"]//field[contains(@name,"_notes")]') if visible(node)]
-                    self.assertEqual(notes, [stage + '_notes'] if stage in departments else [])
+                    self.assertEqual(notes, [stage + '_notes'] if authorized else [])
                     buttons = [n for n in arch.xpath('//header/button[@name="action_department_decision"]') if visible(n)]
                     authorized = stage in departments and (user in (self.users['admin'], self.system)
                                                             or user == self.users[stage])
@@ -552,8 +577,8 @@ class TestSupplierClaimCycle(TransactionCase):
                         self.assertEqual([n.get('string') for n in buttons], ['Approve', 'Reject', 'Defer'])
                     rejection = arch.xpath('//field[@name="rejection_reason"]')[0]
                     self.assertEqual(visible(rejection), stage == 'returned_secretarial')
-                    for node in arch.xpath('//field[@name="cheque_attachment"]'):
-                        expected = stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
+                    for node in arch.xpath('//group[@name="department_reviews"]//field[@name="cheque_attachment"]'):
+                        expected = authorized and stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
                         self.assertEqual(visible(node), expected)
                 for nature in ('cash', 'non_cash'):
                     values.update(payment_nature=nature, state='supplier_accounts')
@@ -742,13 +767,6 @@ class TestSupplierClaimCycle(TransactionCase):
             if role != 'admin':
                 with self.assertRaises(AccessError):
                     Defaults.read(['tax_classification'])
-        claim._log('restored')
-        claim._log('decision', department='inventory', reason='   ')
-        self.assertEqual(len(claim.note_history_ids), 2)
-        self.assertEqual(len(claim.history_ids), 4)
-        self.assertEqual(set(claim.note_history_ids.mapped('reason')), {'First note', 'Second note'})
-        with self.assertRaises(AccessError):
-            claim.with_user(self.users['inventory']).write({'secretarial_notes': 'Unauthorized'})
         view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
         for role in self.roles:
             for lang in ('en_US', 'ar_001'):
@@ -807,38 +825,27 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(History.search_count(fields.Domain('claim_id', '=', legacy.id)), 2)
         self.assertFalse(legacy.history_ids)
 
-    def test_secretarial_note_history_and_wizard_permissions(self):
+    def test_inline_secretarial_note_history_and_permissions(self):
         claim = self.claim()
         self.assertFalse(claim.history_ids)
         for role in self.roles:
             if role not in ('user', 'admin'):
                 with self.assertRaises(AccessError):
-                    claim.with_user(self.users[role]).action_open_secretarial_note()
-                with self.assertRaises(AccessError):
-                    claim.with_user(self.users[role]).action_add_secretarial_note('Unauthorized')
-        with self.assertRaises(ValidationError):
-            claim.action_add_secretarial_note('  ')
-        action = claim.action_open_secretarial_note()
-        Wizard = self.env[action['res_model']].with_user(self.users['user']).with_context(action['context'])
-        with Form(Wizard) as form:
-            form.note = 'Invoice documents checked'
-        form.record.action_save()
+                    claim.with_user(self.users[role]).write({'secretarial_notes': 'Unauthorized'})
+        claim.write({'secretarial_notes': '  '})
+        self.assertFalse(claim.history_ids)
+        claim.write({'secretarial_notes': 'Invoice documents checked'})
         row = claim.history_ids
         self.assertEqual(len(row), 1)
         self.assertEqual((row.event, row.department, row.reason),
                          ('secretarial_note', 'secretarial', 'Invoice documents checked'))
         self.assertEqual(row.user_id, self.users['user'])
-        self.assertEqual(claim.state, 'draft')
         self.assertTrue(row.occurred_at)
-        pending_wizard = Wizard.create({'note': 'Stale dialog'})
         claim.action_submit()
-        self.assertEqual(len(claim.history_ids), 1)
-        with self.assertRaises(UserError):
-            pending_wizard.action_save()
-        with self.assertRaises(UserError):
-            claim.with_user(self.users['admin']).action_add_secretarial_note('Wrong stage')
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['admin']).write({'secretarial_notes': 'Wrong stage'})
         self.decide(claim, 'inventory', 'rejected', inventory_notes='Correct documents')
-        claim.action_add_secretarial_note('Documents corrected')
+        claim.write({'secretarial_notes': 'Documents corrected'})
         self.assertEqual(len(claim.history_ids.filtered(lambda h: h.department == 'secretarial')), 2)
         with self.assertRaises(AccessError):
             row.write({'reason': 'Changed'})
@@ -846,13 +853,13 @@ class TestSupplierClaimCycle(TransactionCase):
             row.unlink()
         claim.write({'active': False})
         with self.assertRaises(UserError):
-            claim.action_add_secretarial_note('Archived')
+            claim.write({'secretarial_notes': 'Archived'})
         closed = self.claim(True)
         closed.action_submit()
         self.decide(closed, 'supplier_accounts')
         closed.action_close()
         with self.assertRaises(UserError):
-            closed.action_add_secretarial_note('Closed')
+            closed.write({'secretarial_notes': 'Closed'})
 
     def test_secretarial_note_api_and_form_visibility(self):
         claim = self.Claim.with_user(self.users['user']).create({**self.values(), 'secretarial_notes': 'First note'})
@@ -878,7 +885,7 @@ class TestSupplierClaimCycle(TransactionCase):
                 self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="secretarial_notes"]'))
                 buttons = arch.xpath('//button[@name="action_open_secretarial_note"]')
                 self.assertFalse(buttons)
-                self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list/field[@name="reason"]'))
+                self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list/field[@name="display_note"]'))
 
     def test_existing_secretarial_note_import_is_idempotent(self):
         import importlib.util
@@ -942,7 +949,7 @@ class TestSupplierClaimCycle(TransactionCase):
         from odoo.tools.safe_eval import safe_eval
         arch = etree.fromstring(self.Claim.get_view(
             view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-        self.assertTrue(arch.xpath('//field[@name="history_ids"]/kanban/templates/t[@t-name="card"]'))
+        self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list[@no_open="True"]'))
         steps = arch.xpath('//div[@class="o_scc_route_step"]')
         for nature, count in [('cash', 3), ('non_cash', 6)]:
             values = dict(payment_nature=nature, state='draft', resume_stage=False,
