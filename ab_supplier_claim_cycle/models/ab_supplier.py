@@ -4,9 +4,14 @@ from odoo.exceptions import UserError
 PAYMENT_NATURE = [('cash', 'Cash'), ('non_cash', 'Non-cash')]
 BUSINESS_CATEGORY = [('medicine', 'Medicine'), ('cosmetics', 'Cosmetics'), ('other', 'Other')]
 TAX_CLASSIFICATION = [
-    ('through_supplier', 'Through Supplier'),
+    ('through_supplier', 'Advance Payments'),
     ('tax_payment', 'Tax Payment'),
     ('non_tax_payment', 'Non-tax Payment'),
+]
+SUPPLIER_SECTION = [
+    ('cosmo', 'Cosmetics'), ('medical', 'Medicine'), ('supplies', 'Supplies'),
+    ('imp_med', 'Imported Medicine'), ('imp_cosmo', 'Imported Cosmetics'),
+    ('medical_preparations', 'Medical Preparations'), ('other', 'Other'),
 ]
 
 
@@ -15,6 +20,8 @@ class Supplier(models.Model):
 
     payment_nature = fields.Selection(PAYMENT_NATURE, required=True, default='non_cash')
     business_category = fields.Selection(BUSINESS_CATEGORY, required=True, default='other')
+    tax_type = fields.Selection(selection=TAX_CLASSIFICATION)
+    section = fields.Selection(selection=SUPPLIER_SECTION)
 
     @api.model
     def _search_display_name(self, operator, value):

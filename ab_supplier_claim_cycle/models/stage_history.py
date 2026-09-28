@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 from .ab_supplier_claim_cycle import STATES, DECISIONS, DEPARTMENTS
+from .ab_supplier import TAX_CLASSIFICATION, SUPPLIER_SECTION
 
 
 class SupplierClaimHistory(models.Model):
@@ -9,15 +10,19 @@ class SupplierClaimHistory(models.Model):
     _order = 'id desc'
 
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True, ondelete='restrict', index=True)
-    event = fields.Selection([(e, e.title()) for e in ('created', 'submitted', 'resubmitted', 'decision', 'closed', 'archived', 'restored')], required=True)
+    event = fields.Selection([(e, e.title()) for e in ('created', 'submitted', 'resubmitted', 'decision', 'closed', 'archived', 'restored', 'migrated')] + [('secretarial_note', 'Secretarial Note'),
+        ('imported_secretarial_note', 'Imported Secretarial Note')], required=True)
     from_state = fields.Selection(STATES)
     to_state = fields.Selection(STATES, required=True)
-    department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS])
+    department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS] + [('secretarial', 'Secretarial')])
     decision = fields.Selection(DECISIONS)
     inventory_decision = fields.Selection(DECISIONS)
     purchasing_decision = fields.Selection(DECISIONS)
     supplier_accounts_decision = fields.Selection(DECISIONS)
     bank_accounts_decision = fields.Selection(DECISIONS)
+    tax_classification = fields.Selection(TAX_CLASSIFICATION)
+    section = fields.Selection(SUPPLIER_SECTION)
+    bracket_snapshot = fields.Json()
     reason = fields.Text()
     followup_date = fields.Date()
     review_round = fields.Integer(required=True)

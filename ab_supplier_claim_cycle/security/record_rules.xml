@@ -49,7 +49,7 @@
         <field name="name">claim_read_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'inventory_purchase'), ('inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '=', 'inventory'), ('inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -59,7 +59,7 @@
         <field name="name">history_read_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory_purchase'), ('claim_id.inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory'), ('claim_id.inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -69,7 +69,7 @@
         <field name="name">claim_write_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory_purchase"), ("inventory_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory"), ("inventory_decision", "in", ["pending", "deferred"])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -79,7 +79,7 @@
         <field name="name">claim_read_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'inventory_purchase'), ('purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '=', 'purchasing'), ('purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -89,7 +89,7 @@
         <field name="name">history_read_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory_purchase'), ('claim_id.purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '=', 'purchasing'), ('claim_id.purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -99,7 +99,7 @@
         <field name="name">claim_write_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory_purchase"), ("purchasing_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[("active", "=", True), ("state", "=", "purchasing"), ("purchasing_decision", "in", ["pending", "deferred"])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>

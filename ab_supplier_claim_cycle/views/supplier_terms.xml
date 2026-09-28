@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="invoice_form_supplier_terms" model="ir.ui.view">
+    <field name="name">supplier.claim.form.supplier.terms</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_view_form_simple"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header/button[@name='action_close']" position="before">
+        <button name="action_open_secretarial_note" string="Add Secretarial Note" type="object"
+                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                invisible="state not in ('draft', 'returned_secretarial') or not active"/>
+      </xpath>
+      <xpath expr="//field[@name='history_ids']/list/field[@name='reason']" position="attributes">
+        <attribute name="string">Notes / Reason</attribute>
+      </xpath>
+      <xpath expr="//sheet/group[field[@name='supplier_id']]" position="replace">
+        <group name="claim_entry" col="2">
+          <group name="supplier_classification" string="Supplier &amp; Classification">
+            <field name="supplier_id" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/><field name="supplier_id" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/>
+            <field name="tax_classification" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="tax_classification" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="section" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="section" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="payment_nature" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="payment_nature" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+          </group>
+          <group name="claim_details" string="Claim Details">
+            <field name="num_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="num_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="amount_of_check" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="amount_of_check" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="area" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="area" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="type_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+          </group>
+        </group>
+        <group name="claim_rejection" string="Returned for Correction" invisible="state != 'returned_secretarial'">
+          <field name="rejection_department" readonly="True"/>
+          <field name="rejection_reason" readonly="True"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+  <record id="invoice_list_supplier_terms" model="ir.ui.view">
+    <field name="name">supplier.claim.list.supplier.terms</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_view_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='supplier_id']" position="after">
+        <field name="tax_classification" optional="hide"/>
+        <field name="section" optional="hide"/>
+        <field name="bracket_id" optional="hide"/>
+      </xpath>
+    </field>
+  </record>
+  <record id="invoice_search_supplier_terms" model="ir.ui.view">
+    <field name="name">supplier.claim.search.supplier.terms</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_view_search"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='supplier_id']" position="after">
+        <field name="tax_classification"/>
+        <field name="section"/>
+      </xpath>
+    </field>
+  </record>
+</odoo>
