@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <record id="invoice_form_shipment_design" model="ir.ui.view">
+    <field name="name">supplier.claim.shipment.design</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_form_supplier_terms"/>
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="attributes">
+        <attribute name="class" add="o_scc_form" separator=" "/>
+      </xpath>
+      <xpath expr="//header" position="attributes">
+        <attribute name="class" add="o_scc_workflow_header" separator=" "/>
+      </xpath>
+      <xpath expr="//header/button[@name='action_submit' or @name='action_close']" position="attributes">
+        <attribute name="class">btn-primary</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_entry']" position="attributes">
+        <attribute name="class" add="o_scc_entry_grid" separator=" "/>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']" position="before">
+        <field name="can_edit_current_review" invisible="True"/>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']" position="attributes">
+        <attribute name="class" add="o_scc_panel" separator=" "/>
+        <attribute name="invisible">not can_edit_current_review</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_rejection']" position="attributes">
+        <attribute name="class" add="o_scc_panel" separator=" "/>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]" position="inside">
+        <field name="cheque_attachment" string="Supplier Cheque Attachment" readonly="True" filename="cheque_filename" invisible="not cheque_attachment"/>
+        <field name="cheque_filename" invisible="True"/>
+        <field name="bank_cheque_attachment" filename="bank_cheque_filename" readonly="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+        <field name="bank_cheque_attachment" filename="bank_cheque_filename" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+        <field name="bank_cheque_filename" invisible="True"/>
+      </xpath>
+      <xpath expr="//field[@name='cheque_filename']" position="attributes">
+        <attribute name="invisible">True</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_entry']" position="before">
+        <field name="resume_stage" invisible="True"/>
+        <div class="o_scc_top_tracking" invisible="state == 'legacy_review'">
+          <div class="o_scc_top_tracking_header">
+            <strong>Claim Timeline</strong>
+            <span class="text-muted">Follow the claim through each review stage</span>
+          </div>
+          <div class="o_scc_top_timeline" role="list" aria-label="Claim review stages">
+            <div class="o_scc_route_step" role="listitem">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (state not in ('draft', 'returned_secretarial'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Draft</summary>
+                  <field name="timeline_draft_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_draft_date"/>
+                </details>
+                <span class="o_scc_step_status">Completed</span>
+                <field name="timeline_draft" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_draft"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state in ('draft', 'returned_secretarial'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Draft</summary>
+                  <field name="timeline_draft_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_draft_date"/>
+                </details>
+                <span class="o_scc_step_status">Current</span>
+                <field name="timeline_draft" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_draft"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (state not in ('draft', 'returned_secretarial')) and not (state in ('draft', 'returned_secretarial')))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Draft</summary>
+                  <field name="timeline_draft_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_draft_date"/>
+                </details>
+                <span class="o_scc_step_status">Upcoming</span>
+                <field name="timeline_draft" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_draft"/>
+              </div>
+            </div>
+            <div class="o_scc_route_step" role="listitem" invisible="payment_nature == 'cash'">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (inventory_decision == 'approved')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Inventory</summary>
+                  <field name="timeline_inventory_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_inventory_date"/>
+                </details>
+                <field name="inventory_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_inventory" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_inventory"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state == 'inventory' or (state == 'returned_secretarial' and resume_stage == 'inventory'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Inventory</summary>
+                  <field name="timeline_inventory_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_inventory_date"/>
+                </details>
+                <field name="inventory_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_inventory" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_inventory"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (inventory_decision == 'approved') and not (state == 'inventory' or (state == 'returned_secretarial' and resume_stage == 'inventory')))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Inventory</summary>
+                  <field name="timeline_inventory_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_inventory_date"/>
+                </details>
+                <field name="inventory_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_inventory" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_inventory"/>
+              </div>
+            </div>
+            <div class="o_scc_route_step" role="listitem" invisible="payment_nature == 'cash'">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (purchasing_decision == 'approved')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Purchasing</summary>
+                  <field name="timeline_purchasing_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_purchasing_date"/>
+                </details>
+                <field name="purchasing_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_purchasing" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_purchasing"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state == 'purchasing' or (state == 'returned_secretarial' and resume_stage == 'purchasing'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Purchasing</summary>
+                  <field name="timeline_purchasing_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_purchasing_date"/>
+                </details>
+                <field name="purchasing_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_purchasing" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_purchasing"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (purchasing_decision == 'approved') and not (state == 'purchasing' or (state == 'returned_secretarial' and resume_stage == 'purchasing')))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Purchasing</summary>
+                  <field name="timeline_purchasing_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_purchasing_date"/>
+                </details>
+                <field name="purchasing_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_purchasing" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_purchasing"/>
+              </div>
+            </div>
+            <div class="o_scc_route_step" role="listitem">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (supplier_accounts_decision == 'approved')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Supplier Accounts</summary>
+                  <field name="timeline_supplier_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_supplier_accounts_date"/>
+                </details>
+                <field name="supplier_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_supplier_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_supplier_accounts"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state == 'supplier_accounts' or (state == 'returned_secretarial' and resume_stage == 'supplier_accounts'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Supplier Accounts</summary>
+                  <field name="timeline_supplier_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_supplier_accounts_date"/>
+                </details>
+                <field name="supplier_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_supplier_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_supplier_accounts"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (supplier_accounts_decision == 'approved') and not (state == 'supplier_accounts' or (state == 'returned_secretarial' and resume_stage == 'supplier_accounts')))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Supplier Accounts</summary>
+                  <field name="timeline_supplier_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_supplier_accounts_date"/>
+                </details>
+                <field name="supplier_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_supplier_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_supplier_accounts"/>
+              </div>
+            </div>
+            <div class="o_scc_route_step" role="listitem" invisible="payment_nature == 'cash'">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (bank_accounts_decision == 'approved')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Bank Accounts</summary>
+                  <field name="timeline_bank_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_bank_accounts_date"/>
+                </details>
+                <field name="bank_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_bank_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_bank_accounts"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state == 'bank_accounts' or (state == 'returned_secretarial' and resume_stage == 'bank_accounts'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Bank Accounts</summary>
+                  <field name="timeline_bank_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_bank_accounts_date"/>
+                </details>
+                <field name="bank_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_bank_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_bank_accounts"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (bank_accounts_decision == 'approved') and not (state == 'bank_accounts' or (state == 'returned_secretarial' and resume_stage == 'bank_accounts')))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Bank Accounts</summary>
+                  <field name="timeline_bank_accounts_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_bank_accounts_date"/>
+                </details>
+                <field name="bank_accounts_decision" nolabel="1" readonly="True"/>
+                <field name="timeline_bank_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_bank_accounts"/>
+              </div>
+            </div>
+            <div class="o_scc_route_step" role="listitem">
+              <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (state == 'closed')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Closure</summary>
+                  <field name="timeline_closure_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_closure_date"/>
+                </details>
+                <span class="o_scc_step_status">Completed</span>
+                <field name="timeline_closure" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_closure"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not (state == 'ready_to_close')">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Closure</summary>
+                  <field name="timeline_closure_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_closure_date"/>
+                </details>
+                <span class="o_scc_step_status">Current</span>
+                <field name="timeline_closure" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_closure"/>
+              </div>
+              <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="not (not (state == 'closed') and not (state == 'ready_to_close'))">
+                <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                <details class="o_scc_stage_date_toggle">
+                  <summary>Closure</summary>
+                  <field name="timeline_closure_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_closure_date"/>
+                </details>
+                <span class="o_scc_step_status">Upcoming</span>
+                <field name="timeline_closure" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_closure"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </xpath>
+      <xpath expr="//field[@name='history_ids']" position="attributes">
+        <attribute name="mode">list</attribute>
+      </xpath>
+      <xpath expr="//field[@name='history_ids']" position="attributes">
+        <attribute name="class">o_scc_history_table</attribute>
+      </xpath>
+      <xpath expr="//field[@name='history_ids']/list" position="replace">
+        <list create="false" edit="false" delete="false" no_open="True" default_order="id desc">
+          <field name="user_id" string="User" options="{'no_open': True}"/>
+          <field name="reason" string="Note"/>
+          <field name="occurred_at" string="Note Date"/>
+          <field name="cheque_filename" column_invisible="True"/>
+          <field name="cheque_attachment" string="Cheque Attachment" widget="binary" filename="cheque_filename"/>
+        </list>
+      </xpath>
+      <xpath expr="//notebook[page[@name='history']]" position="before">
+        <div class="o_scc_history_section">
+          <h3>Stage History</h3>
+        </div>
+      </xpath>
+      <xpath expr="//div[@class='o_scc_history_section']" position="inside">
+        <xpath expr="//field[@name='history_ids']" position="move"/>
+      </xpath>
+      <xpath expr="//notebook[page[@name='history']]" position="replace"/>
+      <xpath expr="//div[hasclass('o_scc_history_section')]/field[@name='history_ids']" position="attributes">
+        <attribute name="name">note_history_ids</attribute>
+      </xpath>
+
+      <xpath expr="//group[@name='supplier_classification']" position="attributes">
+        <attribute name="class" add="o_scc_panel o_scc_classification" separator=" "/>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']" position="attributes">
+        <attribute name="class" add="o_scc_panel o_scc_details" separator=" "/>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']" position="attributes">
+        <attribute name="class" add="o_scc_reviews" separator=" "/>
+      </xpath>
+      <xpath expr="//group[@name='claim_rejection']" position="attributes">
+        <attribute name="class" add="o_scc_rejection" separator=" "/>
+      </xpath>
+    </field>
+  </record>
+  <record id="invoice_list_state_colors" model="ir.ui.view">
+    <field name="name">supplier.claim.list.state.colors</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_view_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//list" position="attributes">
+        <attribute name="class" add="o_scc_claim_list" separator=" "/>
+      </xpath>
+      <xpath expr="//field[@name='state']" position="attributes">
+        <attribute name="decoration-muted">state == 'draft'</attribute>
+        <attribute name="decoration-info">state in ('inventory', 'inventory_purchase')</attribute>
+        <attribute name="decoration-primary">state == 'purchasing'</attribute>
+        <attribute name="decoration-warning">state in ('supplier_accounts', 'bank_accounts')</attribute>
+        <attribute name="decoration-success">state in ('ready_to_close', 'closed')</attribute>
+        <attribute name="decoration-danger">state in ('returned_secretarial', 'legacy_review')</attribute>
+      </xpath>
+    </field>
+  </record>
+</odoo>

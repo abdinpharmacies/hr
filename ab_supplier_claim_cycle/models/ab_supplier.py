@@ -8,11 +8,13 @@ TAX_CLASSIFICATION = [
     ('tax_payment', 'Tax Payment'),
     ('non_tax_payment', 'Non-tax Payment'),
 ]
-SUPPLIER_SECTION = [
+LEGACY_SUPPLIER_SECTION = [
     ('cosmo', 'Cosmetics'), ('medical', 'Medicine'), ('supplies', 'Supplies'),
     ('imp_med', 'Imported Medicine'), ('imp_cosmo', 'Imported Cosmetics'),
     ('medical_preparations', 'Medical Preparations'), ('other', 'Other'),
 ]
+
+SUPPLIER_SECTION = [('medical', 'Medicine'), ('cosmo', 'Cosmetics'), ('other', 'Other')]
 
 
 class Supplier(models.Model):

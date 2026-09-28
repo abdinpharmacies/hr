@@ -58,6 +58,8 @@ class SupplierClaimCycle(models.Model):
     # Inline binary storage protects evidence from direct ir.attachment mutations.
     cheque_attachment = fields.Binary(attachment=False, copy=False)
     cheque_filename = fields.Char(copy=False)
+    bank_cheque_attachment = fields.Binary(string='Cheque Attachment', attachment=False, copy=False)
+    bank_cheque_filename = fields.Char(copy=False)
     history_ids = fields.One2many(
         'ab_supplier_claim_cycle.history', 'claim_id', readonly=True, copy=False,
         domain=fields.Domain('event', 'not in', ['created', 'submitted']))
@@ -73,6 +75,69 @@ class SupplierClaimCycle(models.Model):
     purchasing_followup_date = fields.Date(copy=False)
     supplier_accounts_followup_date = fields.Date(copy=False)
     bank_accounts_followup_date = fields.Date(copy=False)
+
+    can_edit_current_review = fields.Boolean(compute='_compute_can_edit_current_review')
+
+    @api.depends('state', 'active', *(f'{department}_decision' for department in DEPARTMENTS))
+    @api.depends_context('uid')
+    def _compute_can_edit_current_review(self):
+        is_admin = self._is_admin()
+        allowed = {department for department in DEPARTMENTS
+                   if is_admin or self.env.user.has_group(GROUP_PREFIX + department)}
+        for claim in self:
+            claim.can_edit_current_review = bool(
+                claim.active and claim.state in allowed
+                and claim[f'{claim.state}_decision'] in ('pending', 'deferred'))
+
+    note_history_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_note_history', readonly=True)
+
+    @api.depends('history_ids', 'history_ids.reason')
+    def _compute_note_history(self):
+        for claim in self:
+            claim.note_history_ids = claim.history_ids.filtered(lambda entry: (entry.reason or '').strip())
+
+    timeline_draft = fields.Text(compute='_compute_timeline_details')
+    timeline_draft_date = fields.Datetime(compute='_compute_timeline_details')
+    timeline_inventory = fields.Text(compute='_compute_timeline_details')
+    timeline_inventory_date = fields.Datetime(compute='_compute_timeline_details')
+    timeline_purchasing = fields.Text(compute='_compute_timeline_details')
+    timeline_purchasing_date = fields.Datetime(compute='_compute_timeline_details')
+    timeline_supplier_accounts = fields.Text(compute='_compute_timeline_details')
+    timeline_supplier_accounts_date = fields.Datetime(compute='_compute_timeline_details')
+    timeline_bank_accounts = fields.Text(compute='_compute_timeline_details')
+    timeline_bank_accounts_date = fields.Datetime(compute='_compute_timeline_details')
+    timeline_closure = fields.Text(compute='_compute_timeline_details')
+    timeline_closure_date = fields.Datetime(compute='_compute_timeline_details')
+
+    @api.depends('history_ids', 'history_ids.user_id.name', 'history_ids.occurred_at',
+                 'history_ids.event', 'history_ids.department', 'create_uid.name', 'create_date')
+    @api.depends_context('lang', 'tz')
+    def _compute_timeline_details(self):
+        for claim in self:
+            latest = {}
+            for event in claim.history_ids.sorted('id', reverse=True):
+                stage = False
+                if event.event == 'decision' and event.department in DEPARTMENTS:
+                    stage = event.department
+                elif event.event == 'closed':
+                    stage = 'closure'
+                elif event.event in ('resubmitted', 'secretarial_note', 'imported_secretarial_note'):
+                    stage = 'draft'
+                if stage and stage not in latest:
+                    latest[stage] = event
+            for stage in ('draft', *DEPARTMENTS, 'closure'):
+                event = latest.get(stage)
+                lines = []
+                date = False
+                if event:
+                    lines = [event.user_id.display_name]
+                    date = event.occurred_at
+                elif stage == 'draft' and claim.create_date:
+                    lines = [claim.create_uid.display_name]
+                    date = claim.create_date
+                claim['timeline_' + stage + '_date'] = date
+                claim['timeline_' + stage] = '\n'.join(lines) or False
 
     @api.model
     def _supplier_classifications_by_id(self, supplier_ids):
@@ -166,7 +231,8 @@ class SupplierClaimCycle(models.Model):
         defaults = dict(state='draft', legacy_status=False, user_id=self.env.uid, review_round=0,
                         business_category=False, bracket_snapshot=False, resume_stage=False,
                         rejection_department=False, rejection_reason=False, active=True,
-                        cheque_attachment=False, cheque_filename=False)
+                        cheque_attachment=False, cheque_filename=False,
+                        bank_cheque_attachment=False, bank_cheque_filename=False)
         for d in DEPARTMENTS:
             defaults.update({f'{d}_decision': 'not_required', f'{d}_notes': False, f'{d}_followup_date': False})
         supplier_ids = {vals.get('supplier_id') or self.env.context.get('default_supplier_id') for vals in vals_list}
@@ -224,6 +290,8 @@ class SupplierClaimCycle(models.Model):
                             allowed |= {f'{d}_notes', f'{d}_followup_date'}
                             if d == 'supplier_accounts':
                                 allowed |= {'cheque_attachment', 'cheque_filename'}
+                            elif d == 'bank_accounts':
+                                allowed |= {'bank_cheque_attachment', 'bank_cheque_filename'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
         if 'supplier_id' in vals:
@@ -378,8 +446,6 @@ class SupplierClaimCycle(models.Model):
                     if claim.payment_nature == 'cash':
                         vals['state'] = 'ready_to_close'
                     else:
-                        if not claim.cheque_attachment:
-                            raise ValidationError(_('A cheque attachment is required before Bank Accounts.'))
                         vals.update(state='bank_accounts', bank_accounts_decision='pending')
                 else:
                     vals['state'] = 'ready_to_close'

@@ -5,11 +5,6 @@
     <field name="model">ab_supplier_claim_cycle</field>
     <field name="inherit_id" ref="invoice_view_form_simple"/>
     <field name="arch" type="xml">
-      <xpath expr="//header/button[@name='action_close']" position="before">
-        <button name="action_open_secretarial_note" string="Add Secretarial Note" type="object"
-                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                invisible="state not in ('draft', 'returned_secretarial') or not active"/>
-      </xpath>
       <xpath expr="//field[@name='history_ids']/list/field[@name='reason']" position="attributes">
         <attribute name="string">Notes / Reason</attribute>
       </xpath>
@@ -27,6 +22,12 @@
             <field name="amount_of_check" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="amount_of_check" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="area" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="area" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="type_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+          </group>
+        </group>
+        <group name="claim_secretarial_review" class="o_scc_panel o_scc_secretarial_review" invisible="state not in ('draft', 'returned_secretarial')">
+          <group string="Secretarial">
+            <field name="secretarial_notes" readonly="not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="secretarial_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
           </group>
         </group>
         <group name="claim_rejection" string="Returned for Correction" invisible="state != 'returned_secretarial'">

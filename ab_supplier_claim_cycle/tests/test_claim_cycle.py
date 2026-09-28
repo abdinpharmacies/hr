@@ -43,6 +43,57 @@ class TestSupplierClaimCycle(TransactionCase):
         self.accounts(claim)
         self.decide(claim,'supplier_accounts',cheque_attachment=base64.b64encode(b'cheque'),cheque_filename='cheque.pdf')
 
+    def test_timeline_details_follow_each_stage(self):
+        claim = self.claim().with_context(lang='en_US', tz='UTC')
+        self.assertFalse(claim.timeline_inventory)
+        self.bank(claim)
+        self.assertIn(self.users['inventory'].display_name, claim.timeline_inventory)
+        self.assertTrue(claim.timeline_inventory_date)
+        self.assertNotIn('→', claim.timeline_inventory)
+        self.assertTrue(claim.timeline_supplier_accounts_date)
+        self.assertNotIn('→', claim.timeline_supplier_accounts)
+        self.assertFalse(claim.timeline_closure)
+        self.decide(claim, 'bank_accounts')
+        self.assertTrue(claim.timeline_bank_accounts_date)
+        self.assertNotIn('→', claim.timeline_bank_accounts)
+        claim.action_close()
+        self.assertTrue(claim.timeline_closure_date)
+        self.assertNotIn('→', claim.timeline_closure)
+        self.assertIn(self.users['user'].display_name, claim.timeline_closure)
+        self.assertIn(self.users['bank_accounts'].display_name, claim.timeline_bank_accounts)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.outsider).read(['timeline_inventory'])
+
+    def test_review_panel_visibility_and_note_attachments(self):
+        claim = self.claim()
+        self.assertFalse(claim.can_edit_current_review)
+        claim.action_submit()
+        self.assertFalse(claim.can_edit_current_review)
+        self.assertTrue(claim.with_user(self.users['inventory']).can_edit_current_review)
+        self.assertTrue(claim.with_user(self.users['admin']).can_edit_current_review)
+        self.decide(claim, 'inventory')
+        self.assertFalse(claim.with_user(self.users['inventory']).can_edit_current_review)
+        self.decide(claim, 'purchasing')
+        supplier_file = base64.b64encode(b'supplier evidence')
+        bank_file = base64.b64encode(b'bank evidence')
+        self.decide(claim, 'supplier_accounts', supplier_accounts_notes='Supplier note',
+                    cheque_attachment=supplier_file, cheque_filename='supplier.pdf')
+        self.decide(claim, 'bank_accounts', bank_accounts_notes='Bank note',
+                    bank_cheque_attachment=bank_file, bank_cheque_filename='bank.pdf')
+        entries = claim.note_history_ids
+        supplier_entry = entries.filtered(lambda entry: entry.department == 'supplier_accounts')
+        bank_entry = entries.filtered(lambda entry: entry.department == 'bank_accounts')
+        self.assertEqual(supplier_entry.cheque_attachment, supplier_file)
+        self.assertEqual(supplier_entry.cheque_filename, 'supplier.pdf')
+        self.assertEqual(bank_entry.cheque_attachment, bank_file)
+        self.assertEqual(bank_entry.cheque_filename, 'bank.pdf')
+        self.assertTrue(supplier_entry.occurred_at)
+        self.assertFalse(claim.with_user(self.users['admin']).can_edit_current_review)
+        with self.assertRaises(AccessError):
+            bank_entry.with_user(self.outsider).read(['cheque_attachment'])
+        with self.assertRaises(AccessError):
+            bank_entry.write({'cheque_attachment': supplier_file})
+
     def test_supplier_lookup_defaults_and_snapshot(self):
         self.assertEqual(self.supplier.payment_nature,'non_cash')
         Supplier=self.env['ab_supplier'].with_user(self.users['user'])
@@ -136,9 +187,7 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(claim.state, 'purchasing')
         self.decide(claim, 'purchasing')
         self.assertEqual(claim.state, 'supplier_accounts')
-        with self.assertRaises(ValidationError):
-            self.decide(claim, 'supplier_accounts')
-        self.decide(claim, 'supplier_accounts', cheque_attachment=base64.b64encode(b'cheque'))
+        self.decide(claim, 'supplier_accounts')
         self.assertEqual(claim.state, 'bank_accounts')
         self.decide(claim, 'bank_accounts')
         claim.action_close()
@@ -292,6 +341,30 @@ class TestSupplierClaimCycle(TransactionCase):
             self.supplier.sudo().with_context(_force_unlink=True).unlink()
         with self.assertRaises(AccessError):
             claim.history_ids.sudo().with_context(_force_unlink=True).unlink()
+
+    def test_optional_cheques_and_bank_upload_access(self):
+        claim = self.claim()
+        self.accounts(claim)
+        self.decide(claim, 'supplier_accounts')
+        self.assertEqual(claim.state, 'bank_accounts')
+        self.assertFalse(claim.cheque_attachment)
+        for role in ('user', 'inventory', 'purchasing', 'supplier_accounts', 'reviewer'):
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users[role]).write({'bank_cheque_attachment': base64.b64encode(b'bank')})
+        claim.with_user(self.users['bank_accounts']).write({
+            'bank_cheque_attachment': base64.b64encode(b'bank'), 'bank_cheque_filename': 'bank.pdf'})
+        self.assertTrue(claim.bank_cheque_attachment)
+        self.assertFalse(claim.cheque_attachment)
+        self.decide(claim, 'bank_accounts')
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': False})
+        claim.action_close()
+        other = self.claim()
+        self.accounts(other)
+        self.decide(other, 'supplier_accounts')
+        self.decide(other, 'bank_accounts')
+        other.action_close()
+        self.assertEqual(other.state, 'closed')
 
     def test_evidence_and_archived_claim_protection(self):
         claim = self.claim()
@@ -460,8 +533,8 @@ class TestSupplierClaimCycle(TransactionCase):
             for lang in ('en_US', 'ar_001'):
                 arch = etree.fromstring(self.Claim.with_user(user).with_context(lang=lang).get_view(
                     view_id=view.id, view_type='form')['arch'])
-                self.assertFalse(arch.xpath('//div | //details | //section'))
-                values = dict(state='draft', payment_nature='non_cash', active=True,
+                self.assertTrue(arch.xpath("//div[@class='o_scc_top_tracking']"))
+                values = dict(state='draft', payment_nature='non_cash', active=True, cheque_attachment=False, resume_stage=False,
                               **{d + '_decision': 'pending' for d in departments})
                 def visible(node):
                     return not any(safe_eval(parent.get('invisible', 'False'), values)
@@ -480,7 +553,8 @@ class TestSupplierClaimCycle(TransactionCase):
                     rejection = arch.xpath('//field[@name="rejection_reason"]')[0]
                     self.assertEqual(visible(rejection), stage == 'returned_secretarial')
                     for node in arch.xpath('//field[@name="cheque_attachment"]'):
-                        self.assertEqual(visible(node), stage == 'supplier_accounts')
+                        expected = stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
+                        self.assertEqual(visible(node), expected)
                 for nature in ('cash', 'non_cash'):
                     values.update(payment_nature=nature, state='supplier_accounts')
                     bars = [n for n in arch.xpath('//header/field[@widget="statusbar"]') if visible(n)]
@@ -564,16 +638,16 @@ class TestSupplierClaimCycle(TransactionCase):
         first = self.claim()
         self.assertFalse(first.tax_classification)
         self.assertFalse(first.section)
-        first.write({'tax_classification': 'through_supplier', 'section': 'supplies'})
+        first.write({'tax_classification': 'through_supplier', 'section': 'other'})
         # Drafts must not become other claims' defaults.
         self.assertFalse(self.claim().tax_classification)
         first.action_submit()
         later = self.claim()
-        self.assertEqual((later.tax_classification, later.section), ('through_supplier', 'supplies'))
-        later.write({'tax_classification': 'non_tax_payment', 'section': 'medical_preparations'})
+        self.assertEqual((later.tax_classification, later.section), ('through_supplier', 'other'))
+        later.write({'tax_classification': 'non_tax_payment', 'section': 'medical'})
         later.action_submit()
         third = self.claim()
-        self.assertEqual((third.tax_classification, third.section), ('through_supplier', 'supplies'))
+        self.assertEqual((third.tax_classification, third.section), ('through_supplier', 'other'))
         self.assertFalse(self.supplier.tax_type)
         self.assertFalse(self.supplier.section)
         # Master data takes precedence per field, without replacing the fallback.
@@ -581,7 +655,7 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(self.claim().section, 'medical')
         self.assertEqual(self.claim().tax_classification, 'through_supplier')
         self.supplier.write({'section': False})
-        self.assertEqual(self.claim().section, 'supplies')
+        self.assertEqual(self.claim().section, 'other')
 
     def test_classification_empty_choices_and_independent_memory(self):
         claim = self.Claim.with_user(self.users['user']).create({
@@ -591,19 +665,19 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertFalse(claim.section)
         self.supplier.write({'tax_type': False})
         first = self.claim()
-        first.write({'section': 'imp_cosmo'})
+        first.write({'section': 'cosmo'})
         first.action_submit()
         self.assertFalse(self.claim().tax_classification)
         second = self.claim()
         second.write({'tax_classification': 'tax_payment'})
         second.action_submit()
         self.assertEqual(self.claim().tax_classification, 'tax_payment')
-        self.assertEqual(self.claim().section, 'imp_cosmo')
+        self.assertEqual(self.claim().section, 'cosmo')
         self.decide(second, 'inventory', 'rejected', inventory_notes='Correct invoice')
         with self.assertRaises(AccessError):
             second.write({'section': 'medical'})
         second.action_submit()
-        self.assertEqual(second.section, 'imp_cosmo')
+        self.assertEqual(second.section, 'cosmo')
 
     def test_bracket_eligibility_snapshot_and_permissions(self):
         center = self.env['ab_costcenter'].with_context(install_mode=True).create({'name': 'Terms Test', 'code': 'SCC-TERMS'})
@@ -668,6 +742,13 @@ class TestSupplierClaimCycle(TransactionCase):
             if role != 'admin':
                 with self.assertRaises(AccessError):
                     Defaults.read(['tax_classification'])
+        claim._log('restored')
+        claim._log('decision', department='inventory', reason='   ')
+        self.assertEqual(len(claim.note_history_ids), 2)
+        self.assertEqual(len(claim.history_ids), 4)
+        self.assertEqual(set(claim.note_history_ids.mapped('reason')), {'First note', 'Second note'})
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['inventory']).write({'secretarial_notes': 'Unauthorized'})
         view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
         for role in self.roles:
             for lang in ('en_US', 'ar_001'):
@@ -682,25 +763,25 @@ class TestSupplierClaimCycle(TransactionCase):
             form.supplier_id = self.supplier
             self.assertEqual(form.tax_classification, 'non_tax_payment')
             form.tax_classification = False
-            form.section = 'medical_preparations'
+            form.section = 'medical'
             form.num_of_invoice = 1
             form.area = 'north'
             form.amount_of_check = '100'
             form.type_of_invoice = 'original'
         self.assertFalse(form.record.tax_classification)
-        self.assertEqual(form.record.section, 'medical_preparations')
+        self.assertEqual(form.record.section, 'medical')
 
     def test_multi_create_defaults_and_multi_submit_first_choice(self):
         self.supplier.write({'tax_type': False, 'section': False})
         claims = self.Claim.with_user(self.users['user']).create([
-            {**self.values(), 'tax_classification': 'through_supplier', 'section': 'supplies'},
+            {**self.values(), 'tax_classification': 'through_supplier', 'section': 'other'},
             {**self.values(), 'tax_classification': 'tax_payment', 'section': 'medical'},
         ])
         claims.action_submit()
         defaults = self.env['ab_supplier_claim_cycle.defaults'].search(
             fields.Domain('supplier_id', '=', self.supplier.id))
         self.assertEqual(len(defaults), 1)
-        self.assertEqual((defaults.tax_classification, defaults.section), ('through_supplier', 'supplies'))
+        self.assertEqual((defaults.tax_classification, defaults.section), ('through_supplier', 'other'))
         later = self.Claim.with_user(self.users['user']).create([self.values(), self.values(True)])
         self.assertEqual(later[0].tax_classification, 'through_supplier')
         self.assertFalse(later[1].tax_classification)
@@ -782,15 +863,22 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(len(claim.history_ids), 2)
         claim.write({'secretarial_notes': False})
         self.assertEqual(len(claim.history_ids), 2)
+        claim._log('restored')
+        claim._log('decision', department='inventory', reason='   ')
+        self.assertEqual(len(claim.note_history_ids), 2)
+        self.assertEqual(len(claim.history_ids), 4)
+        self.assertEqual(set(claim.note_history_ids.mapped('reason')), {'First note', 'Second note'})
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['inventory']).write({'secretarial_notes': 'Unauthorized'})
         view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
         for role in self.roles:
             for lang in ('en_US', 'ar_001'):
                 arch = etree.fromstring(self.Claim.with_user(self.users[role]).with_context(lang=lang).get_view(
                     view_id=view.id, view_type='form')['arch'])
-                self.assertFalse(arch.xpath('//group[@name="claim_notes"] | //field[@name="secretarial_notes"]'))
+                self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="secretarial_notes"]'))
                 buttons = arch.xpath('//button[@name="action_open_secretarial_note"]')
-                self.assertEqual(bool(buttons), role in ('user', 'admin'))
-                self.assertTrue(arch.xpath('//field[@name="history_ids"]/list/field[@name="reason"]'))
+                self.assertFalse(buttons)
+                self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list/field[@name="reason"]'))
 
     def test_existing_secretarial_note_import_is_idempotent(self):
         import importlib.util
@@ -819,3 +907,48 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertFalse(sample.history_ids)
         migration.migrate(self.env.cr, '19.0.2.3.0')
         self.assertEqual(claim.history_ids.filtered(lambda h: h.event == 'imported_secretarial_note'), imported)
+
+    def test_section_normalization_preserves_historical_classification(self):
+        import importlib.util
+        from pathlib import Path
+        path = Path(__file__).parents[1] / 'migrations/19.0.2.6.0/post-migrate.py'
+        spec = importlib.util.spec_from_file_location('scc_section_migration', path)
+        migration = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(migration)
+        for old, new in migration.SECTION_MAPPING.items():
+            with self.subTest(section=old):
+                claim = self.claim()
+                claim.write({'section': 'medical'})
+                claim.action_submit()
+                history = self.env['ab_supplier_claim_cycle.history']._append([
+                    dict(claim._history_values('decision', department='inventory', decision='approved'), section=old)])
+                self.env.flush_all()
+                # Legacy database fixture: values no longer accepted by the current ORM.
+                self.env.cr.execute('UPDATE ab_supplier_claim_cycle SET section=%s WHERE id=%s', [old, claim.id])
+                self.env.cr.execute('UPDATE ab_supplier SET section=%s WHERE id=%s', [old, self.supplier.id])
+                claim.invalidate_recordset(); self.supplier.invalidate_recordset()
+                migration.migrate(self.env.cr, '19.0.2.5.0')
+                self.assertEqual(claim.section, new)
+                self.assertEqual(self.supplier.section, new)
+                self.assertEqual(history.section, old)
+                self.assertEqual(claim.state, 'inventory')
+                migration.migrate(self.env.cr, '19.0.2.5.0')
+                self.assertEqual(history.section, old)
+        for model in ('ab_supplier', 'ab_supplier_claim_cycle', 'ab_supplier_claim_cycle.defaults'):
+            self.assertEqual(self.env[model].fields_get(['section'])['section']['selection'],
+                             [('medical', 'Medicine'), ('cosmo', 'Cosmetics'), ('other', 'Other')])
+
+    def test_timeline_cash_and_non_cash_routes(self):
+        from odoo.tools.safe_eval import safe_eval
+        arch = etree.fromstring(self.Claim.get_view(
+            view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
+        self.assertTrue(arch.xpath('//field[@name="history_ids"]/kanban/templates/t[@t-name="card"]'))
+        steps = arch.xpath('//div[@class="o_scc_route_step"]')
+        for nature, count in [('cash', 3), ('non_cash', 6)]:
+            values = dict(payment_nature=nature, state='draft', resume_stage=False,
+                          **{d + '_decision': 'not_required' for d in ('inventory','purchasing','supplier_accounts','bank_accounts')})
+            visible = [node for node in steps if not safe_eval(node.get('invisible', 'False'), values)]
+            self.assertEqual(len(visible), count)
+            for node in visible:
+                variants = [part for part in node if not safe_eval(part.get('invisible', 'False'), values)]
+                self.assertEqual(len(variants), 1)

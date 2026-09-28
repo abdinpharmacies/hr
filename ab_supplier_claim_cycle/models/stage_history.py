@@ -1,7 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
 from .ab_supplier_claim_cycle import STATES, DECISIONS, DEPARTMENTS
-from .ab_supplier import TAX_CLASSIFICATION, SUPPLIER_SECTION
+from .ab_supplier import TAX_CLASSIFICATION, LEGACY_SUPPLIER_SECTION
 
 
 class SupplierClaimHistory(models.Model):
@@ -21,13 +21,32 @@ class SupplierClaimHistory(models.Model):
     supplier_accounts_decision = fields.Selection(DECISIONS)
     bank_accounts_decision = fields.Selection(DECISIONS)
     tax_classification = fields.Selection(TAX_CLASSIFICATION)
-    section = fields.Selection(SUPPLIER_SECTION)
+    section = fields.Selection(LEGACY_SUPPLIER_SECTION)
     bracket_snapshot = fields.Json()
     reason = fields.Text()
     followup_date = fields.Date()
     review_round = fields.Integer(required=True)
     user_id = fields.Many2one('res.users', required=True, ondelete='restrict')
     occurred_at = fields.Datetime(required=True)
+
+    cheque_attachment = fields.Binary(
+        compute='_compute_cheque_attachment', compute_sudo=False,
+        help='Current cheque uploaded on this claim by the department that wrote the note.')
+    cheque_filename = fields.Char(compute='_compute_cheque_attachment', compute_sudo=False)
+
+    @api.depends('department', 'claim_id.cheque_attachment', 'claim_id.cheque_filename',
+                 'claim_id.bank_cheque_attachment', 'claim_id.bank_cheque_filename')
+    def _compute_cheque_attachment(self):
+        for entry in self:
+            attachment = filename = False
+            if entry.department == 'supplier_accounts':
+                attachment = entry.claim_id.cheque_attachment
+                filename = entry.claim_id.cheque_filename
+            elif entry.department == 'bank_accounts':
+                attachment = entry.claim_id.bank_cheque_attachment
+                filename = entry.claim_id.bank_cheque_filename
+            entry.cheque_attachment = attachment
+            entry.cheque_filename = (filename or 'cheque') if attachment else False
 
     @api.model_create_multi
     def create(self, vals_list):

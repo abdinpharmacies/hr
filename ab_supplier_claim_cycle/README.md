@@ -399,3 +399,149 @@ Live rollback-only verification confirmed the Arabic choices, saving the supplie
 preference, reuse by new claims, and preservation of the submitted claim's route.
 All existing business rows were unchanged by the targeted upgrade. Backup and
 verification logs: `/opt/odoo19/codex-backups/scc-payment-nature-20260928/`.
+
+### Shipment-style claim timeline — 19.0.2.6.0
+
+Section now offers Medicine, Cosmetics, and Other only. The targeted migration
+maps Imported Medicine and Medical Preparations to Medicine, Imported Cosmetics
+to Cosmetics, and Supplies to Other on suppliers, claims, and remembered defaults.
+Existing immutable history retains its original section labels and values.
+
+Supplier Accounts can approve non-cash claims without a cheque attachment.
+Bank Accounts has a separate optional Cheque Attachment and can view the supplier
+attachment without replacing it. Each department can edit only its own upload in
+its pending/deferred stage; archived and closed records remain protected.
+
+An inherited XML view adds the shipment-style route timeline and renders Stage
+History as chronological event cards (newest first), including secretarial notes,
+actors, timestamps, decisions, and conditional follow-up dates. Cash routes omit
+Inventory, Purchasing, and Bank Accounts. Blue actions, white panels, green
+completed steps, yellow current steps, and gray upcoming steps match Shipments.
+Styles are scoped to this module, with Arabic/RTL and mobile layouts; no dependency
+on Shipments or shared frontend override was added. Existing automatic
+Created/Submitted rows remain hidden.
+
+All 42 module tests passed on the isolated replica, including migration
+idempotency, preserved historical classifications, attachment permissions,
+approval without attachments, and cash/non-cash timeline routing.
+
+Deployed to `abdin_replica19` on 2026-09-28. Verified normalization changed only
+Section (and ORM write metadata) on 1 supplier, 6 claims, and 2 default records;
+all other original business values and history rows were preserved. Live
+rollback-only checks completed the non-cash route without attachments and verified
+the separate bank upload. Desktop/mobile browser checks rendered the timeline
+cards without JavaScript errors. Arabic XML translation terms were loaded and
+verified in the compiled form. Backup and verification logs:
+`/opt/odoo19/codex-backups/scc-shipment-design-20260928/`.
+
+### Compact history — 19.0.2.6.1
+
+Stage History uses compact rows with a colored status dot, department/event,
+decision, author, and time. Notes and follow-up dates appear only when present;
+stage transitions expand through the native Stage change disclosure. Removed the
+large card panels, repeated Decision labels, empty ghost rows, and the single-tab
+notebook header. Full notes and all historical records remain available. This is
+a view/style-only change with no workflow or business-data migration.
+
+Deployed to `abdin_replica19` after the targeted test upgrade and Arabic desktop/
+mobile browser checks. Plain history entries measure about 39px high; full notes
+wrap naturally. Stage-change disclosures open successfully, with no browser
+JavaScript errors. Upgrade verification confirmed all business and history rows
+unchanged. Backup: `/opt/odoo19/codex-backups/scc-compact-history-20260928/`.
+
+### List state colors — 19.0.2.6.2
+
+The State column uses the Shipment badge shape, status dot, tinted background,
+and colored text. Draft is gray; Inventory is light blue; Purchasing is blue;
+Supplier/Bank Accounts are amber; Ready to Close/Closed are green; Returned and
+Legacy Review are red. Native XML decorations cover every state and keep labels
+translated. Styles apply only to the claim list's State cells. No business fields
+or workflow rules changed.
+
+Deployed to `abdin_replica19`. Verified all ten state decorations, rendered
+badge text/background colors in the isolated browser, and live availability.
+All original business records were unchanged. Backup and screenshot:
+`/opt/odoo19/codex-backups/scc-state-colors-20260928/`.
+
+State color refinement: removed the cell background tint; colors apply only to the status badge. Standard table row backgrounds remain in place.
+
+Shipment panel/table refinement: compact Stage History now shares the Shipment card border, radius, surface, padding and hover shadow with classification panels. The claims table uses the Shipment request-list row hover, centered State badges and primary-column sizing. State color remains badge-only.
+
+### Panel alignment — 19.0.2.6.3
+
+Hide the department-review container outside active review stages, removing the
+empty bordered box in Draft, Returned, Ready to Close, and Closed. Reset Bootstrap
+row side margins on claim panels so their left/right edges match the timeline
+and history panel. No workflow or business data changes.
+
+### Section accents and row text — 19.0.2.6.4
+
+Each main form section uses the Shipment card's 3px colored top border: timeline
+blue, Supplier & Classification cyan, Claim Details purple, current reviews
+amber, returned corrections red, and history green. Classification and details
+are individual cards within the aligned responsive entry grid. Native list-row
+decorations use the same expressions and palette as the State badge; row text
+follows the stage color while row backgrounds remain neutral.
+
+### Softer sections and plain history — 19.0.2.6.5
+
+Reverted stage-based list row text colors; State badges retain their colors.
+Section top borders now use faint 25% opacity accents. A 16px margin separates
+active reviews from the classification/details cards. History decisions are plain
+text, with stage transitions displayed directly and no capsules or expandable
+controls. Notes, authors, dates, and follow-ups remain visible.
+
+### Timeline event details — 19.0.2.6.6
+
+Moved event authors, timestamps, and stage transitions into compact plain rows
+below the Claim Timeline indicators. Stage History retains decisions, notes,
+and follow-ups without repeating those details. Both displays use existing
+read-only history records; no workflow or audit data changes.
+
+### Per-stage timeline details — 19.0.2.6.7
+
+Removed the separate timeline event list. Each stage now shows the latest action's
+person, localized time, and transition directly below its marker, matching the
+Shipment layout. Draft falls back to creation attribution when no Secretarial
+history exists; Closure shows the actual closing action. Computed display fields
+are non-stored and preserve existing history and permissions. Verified stage
+attribution, closure, denied outsider access, and desktop/mobile rendering.
+
+### Optional timeline dates — 19.0.2.6.8
+
+Removed repeated from/to transition labels under the timeline markers. Each stage
+name is now a native keyboard-accessible disclosure: click to show its date/time,
+click again to hide it. Dates start hidden; person and decision remain visible.
+The stage markers and underlying workflow/history are preserved.
+
+### History note table — 19.0.2.6.9
+
+Stage History now uses a read-only native list with only User and Note columns.
+Each existing history entry remains a row, with full note text wrapping on
+narrow screens. Timeline behavior and stored audit data are unchanged.
+
+### Inline Secretary notes and styled note history — 19.0.2.6.10
+
+Replaced the Add Secretarial Note header button with the existing inline note
+field during Draft/Returned stages, using existing role restrictions and audited
+save behavior. History displays a computed read-only subset of entries with
+nonblank notes; no audit records are deleted or omitted from timeline computation.
+The User/Note table now uses soft row surfaces, rounded corners, light accents,
+and wrapping text to match the surrounding panels. Verified note saving,
+duplicate prevention, blank-note filtering, and unauthorized edit rejection.
+
+### Review visibility and note evidence — 19.0.2.6.11
+
+The active review panel is visible only when the current user can edit that
+stage: the responsible department or an administrator, with an active claim and
+pending/deferred decision. History adds Note Date and a downloadable Cheque
+Attachment. Attachments resolve to the current supplier/bank upload for the
+note's department, with no sudo and no copying of historical files. Notes-only
+filtering remains. Tests cover role/stage visibility, department file mapping,
+read access denial and immutable history.
+
+### Inline-only note history — 19.0.2.6.12
+
+Disabled record opening on the history list using Odoo's native no_open list
+attribute. Clicking a note row no longer opens the automatic technical history
+form; the binary attachment download control remains available.

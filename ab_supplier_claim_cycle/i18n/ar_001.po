@@ -126,6 +126,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__inventory
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__inventory
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__inventory
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Inventory"
 msgstr "المخزون"
 
@@ -259,6 +260,7 @@ msgstr ""
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__user_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "User"
 msgstr "الموظف"
 
@@ -382,6 +384,7 @@ msgstr "مؤرشف"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Bank Accounts"
 msgstr "حسابات البنوك"
 
@@ -437,6 +440,9 @@ msgstr "نقدي"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_attachment
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_cheque_attachment
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Cheque Attachment"
 msgstr "مرفق الشيك"
 
@@ -521,6 +527,7 @@ msgstr "القسم"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__draft
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Draft"
 msgstr "مسودة"
 
@@ -678,6 +685,7 @@ msgstr "قيد الانتظار"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__purchasing
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Purchasing"
 msgstr "المشتريات"
 
@@ -790,6 +798,7 @@ msgstr "خطأ في تسليم الرسالة النصية"
 #. module: ab_supplier_claim_cycle
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__secretarial
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
 msgid "Secretarial"
 msgstr "السكرتارية"
 
@@ -817,6 +826,7 @@ msgstr "المرحلة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Stage History"
 msgstr "سجل المراحل"
 
@@ -847,6 +857,7 @@ msgstr "تم الإرسال"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Supplier Accounts"
 msgstr "حسابات الموردين"
 
@@ -1033,11 +1044,13 @@ msgstr "قيد المراجعة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Upcoming"
 msgstr "لاحقاً"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Closure"
 msgstr "الإغلاق"
 
@@ -1312,6 +1325,7 @@ msgstr "معاد للتصحيح"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_note_wizard__note
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Note"
 msgstr "الملاحظة"
 
@@ -1348,3 +1362,164 @@ msgstr "أدخل ملاحظة قبل الحفظ."
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "Select a payment nature before submitting the claim."
 msgstr "اختر طبيعة الدفع قبل إرسال المطالبة."
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Claim Timeline"
+msgstr "مسار المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Follow the claim through each review stage"
+msgstr "تابع المطالبة عبر مراحل المراجعة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Claim review stages"
+msgstr "مراحل مراجعة المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Current"
+msgstr "الحالي"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Follow-up: "
+msgstr "المتابعة: "
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Supplier Cheque Attachment"
+msgstr "مرفق شيك حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Bank Accounts</strong>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>حسابات البنوك</strong>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Closure</strong>\n"
+"                <span class=\"o_scc_step_status\">Completed</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>الإغلاق</strong>\n"
+"                <span class=\"o_scc_step_status\">مكتمل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Closure</strong>\n"
+"                <span class=\"o_scc_step_status\">Current</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>الإغلاق</strong>\n"
+"                <span class=\"o_scc_step_status\">الحالي</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Closure</strong>\n"
+"                <span class=\"o_scc_step_status\">Upcoming</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>الإغلاق</strong>\n"
+"                <span class=\"o_scc_step_status\">قادم</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Draft</strong>\n"
+"                <span class=\"o_scc_step_status\">Completed</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>مسودة</strong>\n"
+"                <span class=\"o_scc_step_status\">مكتمل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Draft</strong>\n"
+"                <span class=\"o_scc_step_status\">Current</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>مسودة</strong>\n"
+"                <span class=\"o_scc_step_status\">الحالي</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Draft</strong>\n"
+"                <span class=\"o_scc_step_status\">Upcoming</span>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>مسودة</strong>\n"
+"                <span class=\"o_scc_step_status\">قادم</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Inventory</strong>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>المخزون</strong>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Purchasing</strong>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>المشتريات</strong>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>Supplier Accounts</strong>"
+msgstr ""
+"<span class=\"o_scc_top_timeline_dot\" aria-hidden=\"true\"/>\n"
+"                <strong>حسابات الموردين</strong>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "<span>Follow-up: </span>"
+msgstr "<span>المتابعة: </span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid ""
+"<strong>Claim Timeline</strong>\n"
+"            <span class=\"text-muted\">Follow the claim through each review stage</span>"
+msgstr ""
+"<strong>مسار المطالبة</strong>\n"
+"            <span class=\"text-muted\">تابع المطالبة عبر مراحل المراجعة</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Stage change"
+msgstr "انتقال المرحلة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Note Date"
+msgstr "تاريخ الملاحظة"
