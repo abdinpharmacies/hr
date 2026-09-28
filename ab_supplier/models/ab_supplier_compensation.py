@@ -1,5 +1,4 @@
-from odoo import api, fields, models
-from odoo.tools.translate import _
+from odoo import fields, models
 
 
 class AbSupplierCompensation(models.Model):

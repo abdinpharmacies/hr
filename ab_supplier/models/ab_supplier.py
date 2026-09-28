@@ -91,10 +91,3 @@ class Supplier(models.Model):
         if code_ids:
             return [('id', 'in', code_ids)]
         return [('name', operator, value)]
-
-    @api.model
-    def create(self, vals):
-        return super().create(vals)
-
-    def unlink(self):
-        return super().unlink()
