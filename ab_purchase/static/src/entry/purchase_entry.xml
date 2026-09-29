@@ -18,7 +18,7 @@
                         <section class="o_ab_entry_document">
                             <div class="o_ab_entry_section_head"><div><span class="o_ab_entry_kicker">Document details</span><h2 t-if="state.kind === 'purchase'">Purchase invoice</h2><h2 t-else="">Supplier return</h2></div><span class="o_ab_entry_doc_ref" t-esc="state.doc.id ? '#' + state.doc.id : '—'"/></div>
                             <div class="o_ab_entry_header_grid">
-                                <label><span>Store</span><select class="form-select" required="required" t-att-value="state.doc.store_id" t-att-disabled="state.kind === 'return' &amp;&amp; !!state.doc.id" t-on-change="(event) => this.setHeader('store_id', event)"><option value="">Select store</option><option t-foreach="state.config.stores" t-as="store" t-key="store.id" t-att-value="store.id" t-att-selected="store.id === state.doc.store_id" t-esc="store.name"/></select></label>
+                                <label class="o_ab_entry_lookup o_ab_entry_store" t-on-keydown.capture="storeKeydown"><span>Store</span><input t-if="state.kind === 'return' &amp;&amp; !!state.doc.id" class="form-control" readonly="readonly" t-att-value="storeLabel(currentStore())"/><AutoComplete t-else="" t-props="storeAutocompleteProps"/></label>
                                 <label class="o_ab_entry_lookup o_ab_entry_supplier" t-if="state.kind === 'purchase'"><span>Supplier</span><AutoComplete t-props="supplierAutocompleteProps"/></label>
                                 <label class="o_ab_entry_lookup" t-else=""><span>Original invoice</span><input class="form-control" required="required" autocomplete="off" placeholder="Search saved invoices" t-att-value="state.invoiceQuery" t-att-disabled="!!state.doc.id" t-on-input="(event) => this.lookup('invoice', event)"/><div t-if="state.invoices.length" class="o_ab_entry_results"><button type="button" t-foreach="state.invoices" t-as="invoice" t-key="invoice.id" t-on-click="() => this.selectInvoice(invoice)"><strong t-esc="invoice.name"/><small t-esc="invoice.supplier"/></button></div></label>
                                 <label><span>Document number</span><input class="form-control" required="required" t-ref="documentNumber" t-att-value="state.doc.doc_code" t-on-keydown="documentKeydown" t-on-input="(event) => this.setHeader('doc_code', event)"/></label>
@@ -57,9 +57,9 @@
         </div>
     </t>
     <t t-name="ab_purchase.EntryTaxes">
-        <details class="o_ab_entry_tax_picker">
-            <summary aria-label="Select taxes"><span t-if="!line.taxes_ids.length" class="o_ab_entry_muted">Select taxes</span><span t-foreach="selectedTaxes(line)" t-as="tax" t-key="tax.id" class="o_ab_entry_tax_tag" t-esc="tax.name"/><i class="fa fa-angle-down"/></summary>
-            <div class="o_ab_entry_tax_options"><span t-if="!state.config.taxes.length" class="o_ab_entry_muted">No purchase taxes available</span><label t-foreach="state.config.taxes" t-as="tax" t-key="tax.id"><input type="checkbox" t-att-checked="line.taxes_ids.includes(tax.id)" t-on-change="(event) => this.toggleTax(line, tax, event)"/><span t-esc="tax.name"/></label></div>
-        </details>
+        <select class="form-select o_ab_entry_tax_select" aria-label="Taxes" t-on-change="(event) => this.setTax(line, event)">
+            <option value="" t-att-selected="!selectedTaxId(line)">No tax</option>
+            <option t-foreach="state.config.taxes" t-as="tax" t-key="tax.id" t-att-value="tax.id" t-att-selected="tax.id === selectedTaxId(line)" t-esc="tax.name"/>
+        </select>
     </t>
 </templates>

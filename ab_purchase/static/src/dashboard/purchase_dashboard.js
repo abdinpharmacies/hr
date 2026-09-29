@@ -41,6 +41,7 @@ class PurchaseDashboard extends Component {
             name: _t("Purchase Invoices"),
             res_model: "ab_purchase_header",
             view_mode: "list,form",
+            views: [[false, "list"], [false, "form"]],
             domain: [...storeDomain, ...domain],
         });
     }
@@ -51,6 +52,7 @@ class PurchaseDashboard extends Component {
             res_model: "ab_purchase_header",
             res_id: id,
             view_mode: "form",
+            views: [[false, "form"]],
         });
     }
 

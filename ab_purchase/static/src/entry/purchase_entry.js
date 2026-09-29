@@ -22,7 +22,7 @@ export class PurchaseDataEntry extends Component {
         this.refs = Object.fromEntries(["productSearch", "documentNumber", "quickQty", "quickPurchase", "quickSelling"].map((name) => [name, useRef(name)]));
         onPatched(() => { if (this.pendingFocus) { const name = this.pendingFocus; this.pendingFocus = null; setTimeout(() => this.focus(name), 0); } });
         this.state = useState({ loading: true, error: false, saving: false, dirty: false, kind: "purchase",
-            config: { stores: [], taxes: [], drafts: [] }, doc: {}, productQuery: "", supplierQuery: "", invoiceQuery: "",
+            config: { stores: [], taxes: [], drafts: [] }, doc: {}, storeQuery: "", productQuery: "", supplierQuery: "", invoiceQuery: "",
             products: [], suppliers: [], invoices: [], productIndex: 0, quick: null });
         useSetupAction({ beforeLeave: () => this.confirmDiscard(), beforeUnload: (event) => {
             if (this.state.dirty) { event.preventDefault(); event.returnValue = ""; }
@@ -37,9 +37,11 @@ export class PurchaseDataEntry extends Component {
         finally { this.state.loading = false; }
     }
     reset() {
-        this.state.doc = { id: false, store_id: this.state.doc.store_id || this.state.config.stores[0]?.id || false,
+        const storeId = this.state.doc.store_id || this.state.config.stores[0]?.id || false;
+        this.state.doc = { id: false, store_id: storeId,
             supplier_id: false, supplier: "", doc_code: "", doc_date: this.state.config.date, invoice_type: "medical",
             net_invoice: 0, net_tax: 0, total_extra_discount: 0, description: "", purchase_header_id: false, lines: [] };
+        this.state.storeQuery = this.storeLabel(this.storeById(storeId));
         this.state.dirty = false;
         this.state.productQuery = this.state.supplierQuery = this.state.invoiceQuery = "";
         this.state.products = []; this.state.suppliers = []; this.state.invoices = [];
@@ -69,15 +71,76 @@ export class PurchaseDataEntry extends Component {
     }
     setDocument(doc) {
         this.state.doc = { ...this.state.doc, ...doc, lines: doc.lines.map((line) => ({ ...line, key: ++this.key })) };
+        this.state.storeQuery = this.storeLabel(this.storeById(this.state.doc.store_id));
         this.state.supplierQuery = doc.supplier || ""; this.state.invoiceQuery = doc.invoice || ""; this.state.dirty = false;
+    }
+    storeById(id) {
+        return this.state.config.stores.find((store) => store.id === Number(id));
+    }
+    currentStore() {
+        return this.storeById(this.state.doc.store_id);
+    }
+    storeLabel(store) {
+        return store?.name || "";
+    }
+    findStoreByInput(value) {
+        const query = String(value || "").trim();
+        if (!query) { return null; }
+        return this.state.config.stores.find((store) => String(store.code || "").trim() === query)
+            || this.state.config.stores.find((store) => String(store.name || "").trim() === query)
+            || null;
+    }
+    assignStoreFromInput(value, warn = true) {
+        const query = String(value || "").trim();
+        const store = this.findStoreByInput(query);
+        if (store) {
+            this.selectStore(store);
+            return true;
+        }
+        if (warn && query) {
+            this.notification.add(_t("Enter an exact store code or select a store name."), { type: "warning" });
+        }
+        return false;
+    }
+    storeKeydown(event) {
+        if (event.key !== "Enter") { return; }
+        if (this.state.kind === "return" && this.state.doc.id) { return; }
+        if (this.assignStoreFromInput(event.target.value)) {
+            event.target.value = this.state.storeQuery;
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation?.();
+        }
+    }
+    clearReturnInvoiceSelection() {
+        if (this.state.kind === "return") {
+            this.state.doc.purchase_header_id = false; this.state.doc.lines = [];
+            this.state.doc.supplier_id = false; this.state.doc.supplier = ""; this.state.invoiceQuery = "";
+        }
+    }
+    selectStore(store) {
+        const changed = this.state.doc.store_id !== store.id;
+        this.state.doc.store_id = store.id;
+        this.state.storeQuery = this.storeLabel(store);
+        this.state.dirty = true;
+        if (changed) { this.clearReturnInvoiceSelection(); }
+    }
+    setStoreQuery(inputValue) {
+        this.state.storeQuery = inputValue;
+        if (inputValue !== this.storeLabel(this.currentStore())) {
+            if (this.state.doc.store_id) {
+                this.state.doc.store_id = false;
+                this.clearReturnInvoiceSelection();
+            }
+            this.state.dirty = true;
+        }
     }
     setHeader(name, event) {
         const numeric = ["store_id", "net_invoice", "net_tax", "total_extra_discount"].includes(name);
         this.state.doc[name] = numeric ? Number(event.target.value) : event.target.value;
         this.state.dirty = true;
         if (name === "store_id" && this.state.kind === "return") {
-            this.state.doc.purchase_header_id = false; this.state.doc.lines = [];
-            this.state.doc.supplier_id = false; this.state.doc.supplier = ""; this.state.invoiceQuery = "";
+            this.clearReturnInvoiceSelection();
         }
     }
     documentKeydown(event) {
@@ -89,12 +152,14 @@ export class PurchaseDataEntry extends Component {
         line[name] = name === "exp_date" ? event.target.value : Number(event.target.value);
         this.state.dirty = true;
     }
-    toggleTax(line, tax, event) {
-        line.taxes_ids = event.target.checked ? [...new Set([...line.taxes_ids, tax.id])]
-            : line.taxes_ids.filter((id) => id !== tax.id);
+    setTax(line, event) {
+        const taxId = Number(event.target.value || 0);
+        line.taxes_ids = taxId ? [taxId] : [];
         this.state.dirty = true;
     }
-    selectedTaxes(line) { return this.state.config.taxes.filter((tax) => line.taxes_ids.includes(tax.id)); }
+    selectedTaxId(line) {
+        return line.taxes_ids[0] || 0;
+    }
     async lookup(kind, event) {
         const query = event.target.value;
         this.state[`${kind}Query`] = query;
@@ -110,6 +175,22 @@ export class PurchaseDataEntry extends Component {
         this.state.doc.supplier_id = supplier.id; this.state.doc.supplier = supplier.name;
         this.state.supplierQuery = supplier.name; this.state.suppliers = []; this.state.dirty = true;
         this.pendingFocus = this.state.doc.doc_code ? "productSearch" : "documentNumber";
+    }
+    get storeAutocompleteProps() {
+        return { value: this.state.storeQuery, placeholder: _t("Search store name or enter code"), autoSelect: true,
+            selectOnBlur: false, inputDebounceDelay: 0,
+            onChange: ({ inputValue }) => this.setStoreQuery(inputValue),
+            onInput: ({ inputValue }) => this.setStoreQuery(inputValue),
+            sources: [{ options: (query) => {
+                const needle = String(query || "").trim().toLowerCase();
+                return this.state.config.stores
+                    .filter((store) => {
+                        if (!needle) { return true; }
+                        return String(store.name || "").toLowerCase().includes(needle);
+                    })
+                    .slice(0, 30)
+                    .map((store) => ({ label: store.name, onSelect: () => this.selectStore(store) }));
+            } }] };
     }
     get supplierAutocompleteProps() {
         return { value: this.state.supplierQuery, placeholder: _t("Search supplier name or code"), autoSelect: true,
@@ -192,6 +273,7 @@ export class PurchaseDataEntry extends Component {
             const doc = await this.orm.call("ab_purchase_header", "entry_invoice", [invoice.id]);
             Object.assign(this.state.doc, { purchase_header_id: doc.id, supplier_id: doc.supplier_id,
                 supplier: doc.supplier, store_id: doc.store_id, lines: doc.lines.map((line) => ({ ...line, key: ++this.key })) });
+            this.state.storeQuery = this.storeLabel(this.storeById(doc.store_id));
             this.state.invoiceQuery = doc.code; this.state.invoices = []; this.state.dirty = true;
         } catch (error) { this.showError(error); }
         finally { this.state.saving = false; }
@@ -217,6 +299,12 @@ export class PurchaseDataEntry extends Component {
     async save(next = false) {
         if (this.state.saving) { return; }
         if (!this.commitProduct()) { return; }
+        if (!this.state.doc.store_id && this.assignStoreFromInput(this.state.storeQuery, false)) {
+            this.state.storeQuery = this.storeLabel(this.currentStore());
+        }
+        if (!this.state.doc.store_id) {
+            this.notification.add(_t("Select a store from the suggestions."), { type: "warning" }); return;
+        }
         if (this.state.kind === "purchase" && !this.state.doc.supplier_id) {
             this.notification.add(_t("Select a supplier from the suggestions."), { type: "warning" }); return;
         }

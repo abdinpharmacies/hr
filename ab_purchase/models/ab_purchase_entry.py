@@ -28,7 +28,7 @@ class PurchaseEntry(models.Model):
                        & fields.Domain('store_id', 'in', stores.ids), order='write_date desc', limit=20)
             drafts.extend({'id': rec.id, 'kind': kind, 'code': rec.doc_code,
                            'supplier': rec.supplier_id.display_name, 'store': rec.store_id.display_name} for rec in records)
-        return {'stores': [{'id': rec.id, 'name': rec.display_name} for rec in stores],
+        return {'stores': [{'id': rec.id, 'name': rec.display_name, 'code': rec.code or ''} for rec in stores],
                 'expiry': str(self.env['ab_product_source'].default_get(['exp_date']).get('exp_date') or ''),
                 'taxes': self.env['ab_taxes'].search_read([('status', 'in', ['purchase', 'all'])],
                     ['name', 'percentage', 'apply_on_total']), 'drafts': drafts, 'date': str(fields.Date.context_today(self))}
@@ -47,9 +47,13 @@ class PurchaseEntry(models.Model):
                      'units': [{'id': unit.id, 'name': unit.display_name} for unit in rec.uom_ids]}
                     for rec in self.env['ab_product'].search(domain, limit=15)]
         if kind == 'supplier':
+            Supplier = self.env['ab_supplier']
+            if query:
+                records = Supplier.search(fields.Domain('code', '=ilike', query), limit=15)
+                if records:
+                    return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in records]
             domain = fields.Domain('name', 'ilike', query) | fields.Domain('code', 'ilike', query)
-            return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in
-                    self.env['ab_supplier'].search(domain, limit=15)]
+            return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in Supplier.search(domain, limit=15)]
         if kind == 'invoice':
             domain = fields.Domain('status', '=', 'saved') & fields.Domain('store_id', '=', int(store_id or 0))
             if query:
