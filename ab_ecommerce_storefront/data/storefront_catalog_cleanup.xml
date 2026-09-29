@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="product.template" name="write">
+        <value model="product.template" search="[('id', 'in', [
+            ref('product_panadol_extra'),
+            ref('product_brufen_400'),
+            ref('product_limitless_man_max'),
+            ref('product_limitless_woman_max'),
+            ref('product_evasline_hand_cream'),
+            ref('product_sensodyne_original'),
+            ref('product_betadine_60ml'),
+            ref('product_dettol_50ml'),
+            ref('product_accu_chek_active'),
+            ref('product_one_touch_select_plus'),
+            ref('product_eva_rose_water'),
+            ref('product_loreal_hyaluron_serum'),
+            ref('product_eva_bebe_rash_cream'),
+            ref('product_johnsons_no_more_tangles'),
+            ref('product_isis_anise'),
+            ref('product_isis_ginger_cinnamon'),
+        ]), ('default_code', '=like', 'AB-WEB-%')]"/>
+        <value eval="{
+            'is_published': False,
+            'sale_ok': False,
+            'allow_out_of_stock_order': False,
+        }"/>
+    </function>
+</odoo>

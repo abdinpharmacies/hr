@@ -22,6 +22,7 @@
         "security/record_rules.xml",
         "security/business_partnership.xml",
         "data/storefront_catalog.xml",
+        "data/storefront_catalog_cleanup.xml",
         "data/storefront_loyalty_offers.xml",
         "data/prescription_sequence.xml",
         "data/mail_template_data.xml",
