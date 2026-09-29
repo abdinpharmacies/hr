@@ -26,9 +26,14 @@
                     <button type="button" class="o_ab_purchase_dashboard_card is-saved" t-on-click="() => this.openInvoices([['status', '=', 'saved']])">
                         <span>Saved invoices</span><strong t-esc="state.data.saved_count"/><small>Completed documents</small>
                     </button>
-                    <div class="o_ab_purchase_dashboard_card is-posted">
-                        <span>Posted receipt movements</span><strong t-esc="state.data.posted_receipts"/><small>Saved inventory entries</small>
-                    </div>
+                    <button type="button" class="o_ab_purchase_dashboard_card is-posted" t-on-click="openReturns">
+                        <span>Saved returns</span><strong t-esc="state.data.return_count"/><small><t t-esc="state.data.pending_returns"/> pending returns</small>
+                    </button>
+                </div>
+                <div class="o_ab_purchase_dashboard_cards">
+                    <div class="o_ab_purchase_dashboard_card"><span>Received Value</span><strong t-esc="money(state.data.received_value)"/><small><t t-esc="state.data.posted_receipts"/> receipt movements</small></div>
+                    <div class="o_ab_purchase_dashboard_card"><span>Returned Value</span><strong t-esc="money(state.data.returned_value)"/><small><t t-esc="state.data.posted_returns"/> return movements</small></div>
+                    <div class="o_ab_purchase_dashboard_card"><span>Retained Value</span><strong t-esc="money(state.data.retained_value)"/><small>Received value less saved returns</small></div>
                 </div>
                 <div class="o_ab_purchase_dashboard_columns">
                     <section class="o_ab_purchase_dashboard_panel">

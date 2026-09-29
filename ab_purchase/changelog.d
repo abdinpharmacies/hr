@@ -1,9 +1,73 @@
 Current changes before commit:
 
-- Add an Odoo 19 security privilege for purchase and move purchase groups from the removed `category_id` field to `privilege_id`.
-- Declare the explicit `_inherits` mapping for the delegated `source_id` product-source field so purchase lines load under Odoo 19 while preserving existing source-field behavior.
-- Add required Odoo module comments to both Arabic PO files and translate the existing Abdin Purchase security label.
-- Preserve the Odoo-only purchase/inventory flow from the plan; this fix does not restore accounting or B-Connect behavior.
+- Add a separate Data Entry client-action window with purchase/return tabs, supplier and product search, an editable line grid, live reconciliation totals, draft queue, and Save and new. Restore the standard Odoo form views.
+- Search suppliers by name or code with native autocomplete and keyboard selection; move focus to the document number after selection.
+- Add a product entry strip with Enter navigation through quantity and prices, Ctrl+Enter addition, automatic focus back to search, and keyboard navigation in the existing line grid.
+- Display many2many taxes as tags with checkbox selection in the entry strip and line grid; preserve all selected taxes when saving and reopening drafts.
+- Verify all purchase view tags and action view modes use list; preserve existing external IDs.
+- Enable branch-scoped draft creation and editing for the data entry team; keep posting manager-only and guard product-source changes after submission.
+- Enable vertical dashboard scrolling inside the action viewport.
+- Link each return to its original purchase invoice and line; inherit its store, supplier, product source, and unit.
+- Track paid and bonus quantities separately; prevent cumulative over-returns and changes to posted documents.
+- Allocate invoice discounts proportionally to partial returns; post returns through the existing inventory API under the store lock.
+- Extend the existing overview dashboard with received, returned, and retained values and receipt/return movement counts. Drilldowns open standard Odoo views.
+- Restrict purchase and return records to assigned stores for ordinary users; preserve manager and administrator access.
+- Validate invoice and tax totals before submission and receipt; correct compound-tax line-cost inversion and zero-quantity handling.
+- Keep purchase details visible, replace legacy chatter fields with Odoo 19 chatter, and use master prices for first purchases.
+- Preserve the working-tree change allowing draft-only store editing.
+- Append translations from the Odoo-exported POT to both Arabic catalogs while preserving existing entries.
+
+Files changed:
+
+- ab_purchase/__manifest__.py
+- ab_purchase/changelog.d
+- ab_purchase/i18n/ar.po
+- ab_purchase/i18n/ar_001.po
+- ab_purchase/models/__init__.py
+- ab_purchase/models/ab_purchase_dashboard.py
+- ab_purchase/models/ab_purchase_header.py
+- ab_purchase/models/ab_purchase_line.py
+- ab_purchase/models/ab_purchase_links.py
+- ab_purchase/models/ab_purchase_source_guard.py
+- ab_purchase/models/ab_purchase_entry.py
+- ab_purchase/security/ir.model.access.csv
+- ab_purchase/security/record_rules_purchase_header.xml
+- ab_purchase/security/record_rules_purchase_notice_header.xml
+- ab_purchase/security/record_rules_data_entry.xml
+- ab_purchase/static/src/dashboard/purchase_dashboard.js
+- ab_purchase/static/src/dashboard/purchase_dashboard.xml
+- ab_purchase/static/src/dashboard/purchase_dashboard.scss
+- ab_purchase/static/src/entry/purchase_entry.js
+- ab_purchase/static/src/entry/purchase_entry.xml
+- ab_purchase/static/src/entry/purchase_entry.scss
+- ab_purchase/views/ab_purchase_header.xml
+- ab_purchase/views/ab_purchase_links_views.xml
+- ab_purchase/views/ab_purchase_entry_views.xml
+
+Validation:
+
+- Targeted ab_purchase upgrade passed on abdin_replica19.
+- Rollback-only ORM checks passed for receipt posting, partial/full returns, discount allocation, cumulative quantity limits, repeated submission, stock balances, and dashboard access.
+- Branch-scoped purchase/return reads and rejection of another store's dashboard passed.
+- Compound-tax inversion passed within the purchase-price field's rounding precision.
+- Python syntax, XML parsing, JavaScript syntax, SCSS compilation, and git diff --check passed.
+- Both PO catalogs passed Babel format checks; Arabic action translation differed from English during rollback-only language activation. GNU msgfmt is unavailable locally.
+- Data entry role tests passed: create/edit drafts, reject posting and pending-source changes, and manager receipt/return posting.
+- The standalone OWL window mounted in headless Chrome; product search, quantity edits, live totals, draft saving/reloading, and return calculations passed with mocked RPC.
+- Headless keyboard checks passed using the native supplier autocomplete: selection with Enter, quantity/price focus navigation, Ctrl+Enter, validation, and multiple-tax save/reload; RPC and layout/service hooks were mocked.
+- Rollback-only window API checks passed for draft saving/reloading, stale-save rejection, excess-return rejection, store isolation, restored native forms, and Arabic action translation. Earlier dashboard scrolling check passed in Chrome.
+- Supplier code lookup and many2many tax save/load/clear passed in rollback-only ORM checks.
+- Full interaction in the authenticated Odoo browser remains manual. Restart the running Odoo process to load Python changes.
+
+commit bd69753cc9e683a44834ffa142d25840a241d400
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   2026-09-27T16:01:18+03:00
+
+    ab_purchase/fix: Odoo 19 activation for delegated source lines
+
+- Use Odoo 19 privileges for purchase security groups.
+- Declare the delegated product-source inheritance mapping for purchase lines.
+- Add module comments to both Arabic translation files and translate the Abdin Purchase security label.
 
 Files changed:
 
@@ -12,84 +76,3 @@ Files changed:
 - ab_purchase/i18n/ar_001.po
 - ab_purchase/models/ab_purchase_line.py
 - ab_purchase/security/security_groups.xml
-
-Validation:
-
-- `python3 -m py_compile ab_purchase/models/ab_purchase_line.py` passed.
-- `msgfmt --check-format` passed for `ab_purchase/i18n/ar.po` and `ab_purchase/i18n/ar_001.po`.
-- `git diff --check -- ab_taxes ab_inventory ab_purchase` passed.
-- Targeted Odoo 19 activation passed with `-i ab_purchase --without-demo --stop-after-init --no-http`.
-- Targeted Odoo 19 upgrade passed with `-u ab_taxes,ab_inventory,ab_purchase --without-demo --stop-after-init --no-http`.
-
-commit 2489552473da4af55f186744537a0b2210ed3b4a
-Author: emadco88 <emadco88@gmail.com>
-Date:   2026-09-23T16:34:39+03:00
-
-    ab_purchase/ FIX manifest and replace legacy progress and domain helpers
-
-- Standardize the Odoo 19 manifest metadata and dependency declarations.
-- Replace legacy progress and domain helpers while preserving purchase and claim behavior.
-
-Files changed:
-
-- ab_purchase/__manifest__.py
-- ab_purchase/changelog.d
-- ab_purchase/models/ab_product_supplier_origin.py
-- ab_purchase/models/ab_purchase_notice_line.py
-- ab_purchase/models_accounting/ab_purchase__notice_inherit.py
-- ab_purchase/models_accounting/ab_purchase_claim.py
-- ab_purchase/models_accounting/ab_purchase_report_wizard.py
-
-commit 5aa34f6d2e03f9710c018e0fe7b154c8fdaa568a
-Author: emadco88 <emadco88@gmail.com>
-Date:   2026-09-23T15:55:32+03:00
-
-    ab_purchase/ NEED FIX , STILL ODOO15
-
-- Import the existing Odoo 15 module as a foundation; full Odoo 19 compatibility remains pending.
-
-Files changed:
-
-- ab_purchase/__init__.py
-- ab_purchase/__manifest__.py
-- ab_purchase/models/__init__.py
-- ab_purchase/models/ab_inventory_inherit.py
-- ab_purchase/models/ab_product_supplier_origin.py
-- ab_purchase/models/ab_purchase_header.py
-- ab_purchase/models/ab_purchase_je_header_delegate_common.py
-- ab_purchase/models/ab_purchase_line.py
-- ab_purchase/models/ab_purchase_notice_header.py
-- ab_purchase/models/ab_purchase_notice_line.py
-- ab_purchase/models/xxx_ab_purchase_reject_wizard.py
-- ab_purchase/models_accounting/__init__.py
-- ab_purchase/models_accounting/ab_accounting_je_inherit.py
-- ab_purchase/models_accounting/ab_purchase__header_inherit.py
-- ab_purchase/models_accounting/ab_purchase__notice_inherit.py
-- ab_purchase/models_accounting/ab_purchase_claim.py
-- ab_purchase/models_accounting/ab_purchase_claim_dist_line.py
-- ab_purchase/models_accounting/ab_purchase_claim_line.py
-- ab_purchase/models_accounting/ab_purchase_je_line_data.py
-- ab_purchase/models_accounting/ab_purchase_report_wizard.py
-- ab_purchase/models_accounting/ab_supplier_inherit.py
-- ab_purchase/models_accounting/export_xlsx.py
-- ab_purchase/security/ir.model.access.csv
-- ab_purchase/security/record_rules_purchase_claim.xml
-- ab_purchase/security/record_rules_purchase_header.xml
-- ab_purchase/security/record_rules_purchase_notice_header.xml
-- ab_purchase/security/security_groups.xml
-- ab_purchase/static/description/icon.png
-- ab_purchase/views/ab_product_supplier_origin.xml
-- ab_purchase/views/ab_purchase_header.xml
-- ab_purchase/views/ab_purchase_line.xml
-- ab_purchase/views/ab_purchase_notice_header.xml
-- ab_purchase/views/ab_purchase_notice_line.xml
-- ab_purchase/views/menus.xml
-- ab_purchase/views_accounting/ab_accounting_je_inherit.xml
-- ab_purchase/views_accounting/ab_purchase_claim.xml
-- ab_purchase/views_accounting/ab_purchase_claim_dist_line.xml
-- ab_purchase/views_accounting/ab_purchase_claim_line.xml
-- ab_purchase/views_accounting/ab_purchase_report_wizard.xml
-- ab_purchase/views_accounting/ab_supplier_inherit.xml
-- ab_purchase/views_accounting/pdf_supplier_balances.xml
-- ab_purchase/views_accounting/templates_balance_dist.xml
-- ab_purchase/views_accounting/xlsx_supplier_balances.xml

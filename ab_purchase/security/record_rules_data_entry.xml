@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="rule_purchase_draft_edit" model="ir.rule">
+        <field name="name">Purchase draft editing</field><field name="model_id" ref="model_ab_purchase_header"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('status', '=', 'prepending')]</field>
+        <field name="perm_read" eval="False"/><field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_purchase_line_draft_edit" model="ir.rule">
+        <field name="name">Purchase line draft editing</field><field name="model_id" ref="model_ab_purchase_line"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('header_id.status', '=', 'prepending')]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_return_draft_edit" model="ir.rule">
+        <field name="name">Return draft editing</field><field name="model_id" ref="model_ab_purchase_notice_header"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('status', '=', 'pending')]</field>
+        <field name="perm_read" eval="False"/><field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="rule_return_line_draft_edit" model="ir.rule">
+        <field name="name">Return line draft editing</field><field name="model_id" ref="model_ab_purchase_notice_line"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('header_id.status', '=', 'pending')]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_purchase_data_entry_drafts" model="ir.rule">
+        <field name="name">Data entry purchase drafts</field><field name="model_id" ref="model_ab_purchase_header"/>
+        <field name="groups" eval="[(4, ref('group_ab_purchase_data_entry'))]"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('status', '=', 'prepending')]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+    <record id="rule_return_data_entry_drafts" model="ir.rule">
+        <field name="name">Data entry return drafts</field><field name="model_id" ref="model_ab_purchase_notice_header"/>
+        <field name="groups" eval="[(4, ref('group_ab_purchase_data_entry'))]"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('status', '=', 'pending')]</field>
+        <field name="perm_read" eval="False"/>
+    </record>
+</odoo>

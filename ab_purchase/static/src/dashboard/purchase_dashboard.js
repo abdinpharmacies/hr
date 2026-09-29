@@ -4,6 +4,7 @@ import { Component, onWillStart, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { formatFloat } from "@web/views/fields/formatters";
 
 class PurchaseDashboard extends Component {
     static template = "ab_purchase.PurchaseDashboard";
@@ -51,6 +52,18 @@ class PurchaseDashboard extends Component {
             res_id: id,
             view_mode: "form",
         });
+    }
+
+    openReturns() {
+        return this.action.doAction({
+            type: "ir.actions.act_window", name: _t("Returns"),
+            res_model: "ab_purchase_notice_header", views: [[false, "list"], [false, "form"]],
+            domain: [["store_id", "in", this.state.data.store_ids || []]],
+        });
+    }
+
+    money(value) {
+        return formatFloat(value || 0, { digits: [16, 3] });
     }
 
     statusLabel(status) {

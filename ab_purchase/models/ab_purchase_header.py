@@ -108,17 +108,12 @@ class AbdinPurchaseHeader(models.Model):
                 }
             )
 
-    @api.depends('status', 'net_invoice')
+    @api.depends('status', 'net_invoice', 'total_cost')
     def _compute_net_invoice_eq_total_cost(self):
         for rec in self:
-            if rec.status == 'prepending' or abs(rec.net_invoice - rec.total_cost) <= 2:
-                # set to True if (net_invoice_eq_total_cost=False)
-                if not rec.net_invoice_eq_total_cost:
-                    rec.net_invoice_eq_total_cost = True
-            else:
-                # set to False if (net_invoice_eq_total_cost=True)
-                if rec.net_invoice_eq_total_cost:
-                    rec.net_invoice_eq_total_cost = False
+            rec.net_invoice_eq_total_cost = (
+                rec.status == 'prepending' or abs(rec.net_invoice - rec.total_cost) <= 0.5
+            )
 
     def validate_doc_code(self, doc_code):
         is_matched = re.match(r"^[a-zA-Z0-9-]+$", doc_code)
@@ -155,6 +150,7 @@ class AbdinPurchaseHeader(models.Model):
     #     self.total_extra_discount = 0.0
 
     def _validate_ven_invoice(self):
+        self.ensure_one()
         purchase_details = self.line_ids
         if not purchase_details:
             raise UserError(_("Error: No products found on the supplier invoice."))
@@ -202,6 +198,7 @@ class AbdinPurchaseHeader(models.Model):
         if not self.line_ids or self.status != 'prepending':
             raise ValidationError(_("Only draft purchase invoices with lines can be submitted."))
         with self.env.cr.savepoint():
+            self._validate_ven_invoice()
             for rec in self.line_ids:
                 if rec.qty < 0 or rec.bonus < 0:
                     raise ValidationError(_("Purchase quantities and bonuses cannot be negative."))
@@ -222,6 +219,7 @@ class AbdinPurchaseHeader(models.Model):
         if self.status != 'pending' or not self.line_ids:
             raise ValidationError(_("Submit a purchase invoice with lines before receiving stock."))
         with self.env.cr.savepoint():
+            self._validate_ven_invoice()
             for line in self.line_ids:
                 if line.qty < 0 or line.bonus < 0:
                     raise ValidationError(_("Purchase quantities and bonuses cannot be negative."))
@@ -232,7 +230,7 @@ class AbdinPurchaseHeader(models.Model):
         return True
 
     @api.depends("line_ids", "line_ids.line_price", "line_ids.line_cost", "line_ids.line_taxes_value",
-                 "line_ids.extra_discount_percentage")
+                 "line_ids.extra_discount_percentage", "line_ids.qty", "total_extra_discount")
     def compute_totals(self):
         for rec in self:
             rec.total_price = sum(rec.line_price for rec in rec.line_ids)
@@ -241,4 +239,4 @@ class AbdinPurchaseHeader(models.Model):
             rec.total_purchase_price = sum(
                 rec.line_purchase_price * (1 - rec.extra_discount_percentage / 100) for rec in rec.line_ids)
             rec.number_of_products = sum(rec.qty for rec in rec.line_ids)
-            rec.lines_count = self.env['ab_purchase_line'].sudo().search_count([('header_id', '=', rec.id)])
+            rec.lines_count = len(rec.line_ids)

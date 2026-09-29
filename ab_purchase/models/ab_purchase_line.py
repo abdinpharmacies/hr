@@ -63,16 +63,14 @@ class AbdinPurchaseDetails(models.Model):
     def _inverse_line_cost(self):
         for rec in self:
             if rec.qty > 0:
-                b = rec.bonus
-                q = rec.qty
-                d = rec.source_id.extra_discount_percentage
+                discount_factor = 1 - rec.extra_discount_percentage / 100
                 t2 = sum(tax.percentage / 100 for tax in rec.taxes_ids if tax.apply_on_total)
                 t1 = sum(tax.percentage / 100 for tax in rec.taxes_ids if not tax.apply_on_total)
-                c = rec.line_cost
-                p = c / (q + t1 * (b + q) + t2 * (b + q) + t1 * t2 * q * (b + q))
-                net_purchase_price = p / (1 - d / 100)
-
-                rec.purchase_price = net_purchase_price
+                tax_rate = t1 + t2 * (1 + t1)
+                purchase_base = discount_factor * (rec.qty + (rec.qty + rec.bonus) * tax_rate)
+                if purchase_base <= 0:
+                    raise ValidationError(_("Cannot set a line cost when its purchase base is zero or negative."))
+                rec.purchase_price = rec.line_cost / purchase_base
 
     @api.depends("source_id.price", "source_id.qty")
     def _compute_line_price(self):
@@ -87,7 +85,8 @@ class AbdinPurchaseDetails(models.Model):
     @api.onchange("line_purchase_price")
     def _inverse_line_purchase_price(self):
         for line in self:
-            line.update({"purchase_price": line.line_purchase_price / line.source_id.qty})
+            if line.qty:
+                line.purchase_price = line.line_purchase_price / line.qty
 
     @api.depends("source_id.qty_large", "source_id.qty", "source_id.product_id")
     def _compute_qty(self):
@@ -117,10 +116,20 @@ class AbdinPurchaseDetails(models.Model):
                         ),
                     }
                 )
+            else:
+                self.update({
+                    'price': self.product_id.default_price,
+                    'purchase_price': self.product_id.default_cost,
+                    'taxes_ids': False,
+                })
 
     def write(self, vals):
         if any(rec.header_id.status == 'saved' for rec in self):
             raise UserError(_("Saved purchase invoice lines cannot be changed."))
+        if 'header_id' in vals:
+            destination = self.env['ab_purchase_header'].browse(vals['header_id'])
+            if destination.status != 'prepending' or any(line.header_id.status != 'prepending' for line in self):
+                raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
         with self.env.cr.savepoint():
             result = super().write(vals)
             if {'qty', 'bonus', 'source_id', 'uom_id'} & vals.keys():

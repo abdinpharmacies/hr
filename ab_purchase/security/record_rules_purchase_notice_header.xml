@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        <record id="rule_return_store_scope" model="ir.rule">
+            <field name="name">Returns: assigned stores</field>
+            <field name="model_id" ref="model_ab_purchase_notice_header"/>
+            <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+        </record>
+        <record id="rule_return_line_store_scope" model="ir.rule">
+            <field name="name">Return lines: assigned stores</field>
+            <field name="model_id" ref="model_ab_purchase_notice_line"/>
+            <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [('header_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+        </record>
 
         <record id="rule_ab_purchase_notice_header_prevent_all" model="ir.rule">
             <field name="name">rule_ab_purchase_notice_header_prevent_all</field>
             <field name="model_id" ref="model_ab_purchase_notice_header"/>
             <field name="groups" eval="[(4, ref('group_ab_purchase_read_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_purchase.group_ab_purchase_manager') else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>

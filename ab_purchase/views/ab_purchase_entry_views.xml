@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_data_entry" model="ir.actions.client">
+        <field name="name">Data Entry</field><field name="tag">ab_purchase.data_entry</field>
+    </record>
+    <menuitem id="menu_data_entry" name="Data Entry" parent="ab_product_source.menu_root"
+              action="action_data_entry" sequence="0" groups="ab_purchase.group_ab_purchase_data_entry"/>
+</odoo>

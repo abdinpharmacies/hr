@@ -21,6 +21,9 @@ msgid "Refresh"
 msgstr "تحديث"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
 msgid "Loading"
 msgstr "جارٍ التحميل"
 
@@ -85,18 +88,39 @@ msgid "Purchase Invoices"
 msgstr "فواتير المشتريات"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.js:0
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
 msgid "Draft"
 msgstr "مسودة"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.js:0
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__status__pending
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_notice_header__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
 msgid "Pending"
 msgstr "معلق"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.js:0
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__status__saved
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_notice_header__status__saved
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_notice_header_view_form
 msgid "Saved"
 msgstr "محفوظ"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.js:0
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__status__rejected
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
 msgid "Rejected"
 msgstr "مرفوض"
 
@@ -175,3 +199,855 @@ msgstr "أنشئ إشعارات المشتريات بحالة معلقة."
 #. module: ab_purchase
 msgid "Save the purchase receipt before posting a notice."
 msgstr "احفظ استلام المشتريات قبل ترحيل الإشعار."
+
+#. module: ab_purchase
+#: model:ir.model.constraint,message:ab_purchase.constraint_ab_purchase_notice_line_unique_purchase_line
+msgid "A purchase line can appear only once in a return."
+msgstr "لا يمكن إضافة بند الشراء أكثر من مرة في المرتجع."
+
+#. module: ab_purchase
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_form_links
+msgid "Create Return"
+msgstr "إنشاء مرتجع"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_form_links
+#: model_terms:ir.ui.view,arch_db:ab_purchase.return_form_links
+msgid "Inventory Movements"
+msgstr "حركات المخزون"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Only purchase returns are supported by this workflow."
+msgstr "هذا المسار يدعم مرتجعات المشتريات فقط."
+
+#. module: ab_purchase
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_form_links
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Purchase Invoice"
+msgstr "فاتورة شراء"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__purchase_line_id
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_inventory__model_ref__ab_purchase_line
+msgid "Purchase Line"
+msgstr "بند الشراء"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+#: model_terms:ir.ui.view,arch_db:ab_purchase.return_form_links
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Purchase Return"
+msgstr "مرتجع شراء"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "Received Value"
+msgstr "قيمة المشتريات المستلمة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "Received value less saved returns"
+msgstr "قيمة المستلم بعد خصم المرتجعات المحفوظة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__retained_value
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_list_links
+msgid "Retained Value"
+msgstr "القيمة المتبقية"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Return quantities cannot exceed the unreturned purchase quantities."
+msgstr "لا يمكن أن تتجاوز كميات المرتجع كميات الشراء التي لم يتم إرجاعها."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__returnable_bonus
+msgid "Returnable Bonus"
+msgstr "الكمية المجانية المتاحة للإرجاع"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__returnable_qty
+msgid "Returnable Quantity"
+msgstr "الكمية المتاحة للإرجاع"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__returned_bonus
+msgid "Returned Bonus"
+msgstr "الكمية المجانية المرتجعة"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__returned_qty
+msgid "Returned Quantity"
+msgstr "الكمية المرتجعة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__returned_value
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_list_links
+msgid "Returned Value"
+msgstr "قيمة المرتجعات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.js:0
+#: model:ir.actions.act_window,name:ab_purchase.ab_purchase_notice_header_action
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__notice_ids
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__return_count
+#: model:ir.ui.menu,name:ab_purchase.ab_purchase_notice_header_menu
+#: model:ir.ui.menu,name:ab_purchase.ab_purchase_notices_menu
+#: model_terms:ir.ui.view,arch_db:ab_purchase.return_form_links
+msgid "Returns"
+msgstr "المرتجعات"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Save the purchase receipt before creating a return."
+msgstr "احفظ استلام المشتريات قبل إنشاء مرتجع."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Saved purchase invoice totals cannot be changed."
+msgstr "لا يمكن تعديل إجماليات فاتورة الشراء المحفوظة."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "Saved returns"
+msgstr "المرتجعات المحفوظة"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Saved returns cannot be changed."
+msgstr "لا يمكن تعديل المرتجعات المحفوظة."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__status
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__header_status
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__store_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__store_id
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__supplier_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__supplier_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__supplier_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__supplier_id
+#: model:ir.ui.menu,name:ab_purchase.ab_supplier_menu
+#: model:ir.ui.menu,name:ab_purchase.ab_supplier_sub_menu
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "pending returns"
+msgstr "مرتجعات معلقة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "receipt movements"
+msgstr "حركات استلام"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/dashboard/purchase_dashboard.xml:0
+msgid "return movements"
+msgstr "حركات إرجاع"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "The purchase store and supplier cannot change after submission."
+msgstr "لا يمكن تغيير مخزن الشراء أو المورد بعد الإرسال."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "The return line must belong to the selected purchase invoice."
+msgstr "يجب أن ينتمي بند المرتجع إلى فاتورة الشراء المحددة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "The return supplier must match the purchase invoice."
+msgstr "يجب أن يكون مورد المرتجع هو مورد فاتورة الشراء."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_dashboard.py:0
+msgid "The selected store is not available to you."
+msgstr "المخزن المحدد غير متاح لك."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_dashboard.py:0
+msgid "The start date must not be after the end date."
+msgstr "يجب ألا يكون تاريخ البداية بعد تاريخ النهاية."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_links.py:0
+msgid "Remove draft return lines before changing its purchase invoice or supplier."
+msgstr "احذف بنود مسودة المرتجع قبل تغيير فاتورة الشراء أو المورد."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_line.py:0
+msgid "Cannot set a line cost when its purchase base is zero or negative."
+msgstr "لا يمكن تحديد تكلفة البند عندما تكون قاعدة الشراء صفراً أو سالبة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: No products found on the supplier invoice."
+msgstr "خطأ: لا توجد منتجات في فاتورة المورد."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: Net invoice amount does not match the total cost of the products."
+msgstr "خطأ: صافي الفاتورة لا يطابق إجمالي تكلفة المنتجات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: Net tax amount does not match the total tax of the products."
+msgstr "خطأ: صافي الضريبة لا يطابق إجمالي ضريبة المنتجات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: Total cost cannot be equal to or greater than the total selling price of the products."
+msgstr "خطأ: لا يمكن أن تساوي التكلفة الإجمالية إجمالي سعر بيع المنتجات أو تتجاوزه."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Supplier documents"
+msgstr "مستندات الموردين"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter the invoice, add products, and reconcile the totals."
+msgstr "أدخل الفاتورة وأضف المنتجات وطابق الإجماليات."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Select the original invoice and enter quantities to return."
+msgstr "حدد الفاتورة الأصلية وأدخل الكميات المطلوب إرجاعها."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Save draft"
+msgstr "حفظ المسودة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Save and new"
+msgstr "حفظ وإنشاء جديد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Document totals"
+msgstr "إجماليات المستند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Lines"
+msgstr "البنود"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Invoice difference"
+msgstr "فرق الفاتورة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Tax difference"
+msgstr "فرق الضريبة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Original invoice"
+msgstr "الفاتورة الأصلية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Saving a draft does not change stock. A manager posts the return."
+msgstr "حفظ المسودة لا يغير المخزون. يعتمد المدير المرتجع."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Totals match. Save the draft for manager review."
+msgstr "الإجماليات متطابقة. احفظ المسودة لمراجعة المدير."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Check the invoice and tax differences before manager review."
+msgstr "راجع فروق الفاتورة والضريبة قبل مراجعة المدير."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Alt+S: save"
+msgstr "Alt+S: حفظ"
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_source_guard.py:0
+msgid "Only product sources belonging to your store purchase drafts can be edited."
+msgstr "يمكن تعديل مصادر المنتجات التابعة لمسودات الشراء في مخزنك فقط."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__total_cost
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__total_cost
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_notice_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_notice_line_view_tree
+msgid "Total Cost"
+msgstr "إجمالي التكلفة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__taxes_ids
+#: model:ir.ui.menu,name:ab_purchase.taxes_menu
+msgid "Taxes"
+msgstr "الضرائب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.actions.client,name:ab_purchase.action_data_entry
+#: model:ir.ui.menu,name:ab_purchase.menu_data_entry
+#: model:res.groups,name:ab_purchase.group_ab_purchase_data_entry
+msgid "Data Entry"
+msgstr "إدخال البيانات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Purchases and supplier returns"
+msgstr "المشتريات ومرتجعات الموردين"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Unsaved changes"
+msgstr "تغييرات غير محفوظة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Draft workspace"
+msgstr "مساحة المسودات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Could not load Data Entry."
+msgstr "تعذر تحميل إدخال البيانات."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry type"
+msgstr "نوع الإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Recent drafts"
+msgstr "أحدث المسودات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "New document"
+msgstr "مستند جديد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "No drafts yet"
+msgstr "لا توجد مسودات بعد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Drafts only. Managers review and post stock."
+msgstr "مسودات فقط. يراجع المديرون المستندات ويعتمدون حركات المخزون."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Document details"
+msgstr "بيانات المستند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Purchase invoice"
+msgstr "فاتورة شراء"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Supplier return"
+msgstr "مرتجع مورد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Select store"
+msgstr "حدد المخزن"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Search suppliers"
+msgstr "ابحث عن الموردين"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Search saved invoices"
+msgstr "ابحث عن الفواتير المعتمدة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Document number"
+msgstr "رقم المستند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Invoice type"
+msgstr "نوع الفاتورة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__invoice_type__medical
+msgid "Medical"
+msgstr "أدوية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__invoice_type__cosmetics
+msgid "Cosmetics"
+msgstr "مستحضرات تجميل"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__bonus
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__bonus
+#: model:ir.model.fields.selection,name:ab_purchase.selection__ab_purchase_header__invoice_type__bonus
+msgid "Bonus"
+msgstr "كمية مجانية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Supplier invoice total"
+msgstr "إجمالي فاتورة المورد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Supplier tax total"
+msgstr "إجمالي ضريبة المورد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Invoice discount"
+msgstr "خصم الفاتورة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Product lines"
+msgstr "بنود المنتجات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "lines"
+msgstr "بنود"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Search product name or code"
+msgstr "ابحث باسم المنتج أو الكود"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Add your first product"
+msgstr "أضف المنتج الأول"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Search for a product above to begin entering the invoice."
+msgstr "ابحث عن منتج بالأعلى لبدء إدخال الفاتورة."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Select a saved purchase invoice to load its returnable products."
+msgstr "حدد فاتورة شراء معتمدة لتحميل المنتجات المتاحة للإرجاع."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__product_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__qty
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Selling price"
+msgstr "سعر البيع"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Purchase price"
+msgstr "سعر الشراء"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Discount %"
+msgstr "الخصم %"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Discount percent"
+msgstr "نسبة الخصم"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Expiry"
+msgstr "الصلاحية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Available"
+msgstr "المتاح"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Line cost"
+msgstr "تكلفة البند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "bonus"
+msgstr "مجاني"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Remove line"
+msgstr "إزالة البند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Total cost"
+msgstr "إجمالي التكلفة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Total taxes"
+msgstr "إجمالي الضرائب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Unsaved entry"
+msgstr "إدخال غير محفوظ"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Discard the changes you have not saved?"
+msgstr "هل تريد تجاهل التغييرات غير المحفوظة؟"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Discard"
+msgstr "تجاهل"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Draft saved. Stock is unchanged."
+msgstr "تم حفظ المسودة دون تغيير المخزون."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Could not complete the entry."
+msgstr "تعذر إكمال الإدخال."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Select a purchase or return."
+msgstr "حدد شراءً أو مرتجعاً."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Invalid lookup."
+msgstr "بحث غير صالح."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Only drafts can be opened in Data Entry."
+msgstr "يمكن فتح المسودات فقط في إدخال البيانات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "This draft no longer exists."
+msgstr "هذه المسودة لم تعد موجودة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "This draft changed in another window. Reload it before saving."
+msgstr "تم تعديل هذه المسودة في نافذة أخرى. أعد تحميلها قبل الحفظ."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Enter between 1 and 500 product lines."
+msgstr "أدخل من بند واحد إلى 500 بند منتجات."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Enter the document number and date."
+msgstr "أدخل رقم المستند وتاريخه."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Start a new return to select another invoice."
+msgstr "ابدأ مرتجعاً جديداً لتحديد فاتورة أخرى."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Enter valid non-negative quantities and prices."
+msgstr "أدخل كميات وأسعاراً صحيحة وغير سالبة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Select a purchasable product and one of its units."
+msgstr "حدد منتجاً مسموحاً بشرائه وإحدى وحداته."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Line discount must be between 0 and 100 percent."
+msgstr "يجب أن يكون خصم البند بين 0 و100 بالمائة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "The entry line does not belong to this draft."
+msgstr "بند الإدخال لا ينتمي إلى هذه المسودة."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_entry.py:0
+msgid "Select valid purchase taxes."
+msgstr "حدد ضرائب مشتريات صالحة."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.ui.menu,name:ab_purchase.purchase_sub_menu
+msgid "Purchase"
+msgstr "شراء"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Return"
+msgstr "مرتجع"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Search supplier name or code"
+msgstr "ابحث باسم المورد أو الكود"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter: quantity → purchase price → selling price → add. Ctrl+Enter: add with current values."
+msgstr "Enter: الكمية ← سعر الشراء ← سعر البيع ← إضافة. Ctrl+Enter: إضافة بالقيم الحالية."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry quantity"
+msgstr "كمية الإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry purchase price"
+msgstr "سعر الشراء للإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry selling price"
+msgstr "سعر البيع للإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry bonus"
+msgstr "الكمية المجانية للإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry unit"
+msgstr "وحدة الإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Add line"
+msgstr "إضافة بند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Enter a positive quantity or bonus and valid non-negative prices."
+msgstr "أدخل كمية أو كمية مجانية موجبة وأسعاراً صحيحة وغير سالبة."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Select a supplier from the suggestions."
+msgstr "حدد مورداً من الاقتراحات."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Select taxes"
+msgstr "حدد الضرائب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "No purchase taxes available"
+msgstr "لا توجد ضرائب مشتريات متاحة"
