@@ -17,7 +17,6 @@ class AbWebsiteSeoComponentController(http.Controller):
     )
     def seo_component_suggest(self, res_model, res_id, lang=None, url=None, title=None, description=None, keywords=None, page_text=None):
         record = self._get_editable_record(res_model, res_id)
-        assistant = self._get_available_ai_assistant()
         lang_code = lang or request.env.context.get("lang") or request.website.default_lang_id.code or "en_US"
         component_name = self._get_component_name(record, title=title, url=url)
         context = self._build_component_context(
@@ -28,10 +27,10 @@ class AbWebsiteSeoComponentController(http.Controller):
             keywords=keywords,
             page_text=page_text,
         )
-        suggestion = assistant.generate_seo_component_content(
+        suggestion = request.env["ab.seo.assistant"].sudo()._suggest_component(
             component_name,
             lang_code,
-            component_context=context,
+            context,
         )
         suggestion["slug"] = request.env["ir.http"]._slugify(suggestion.get("slug") or component_name)
         return suggestion

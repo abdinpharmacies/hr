@@ -1,0 +1,671 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo noupdate="1">
+  <record id="seo_template_medicine" model="ab_seo_template">
+    <field name="name">Medicine</field>
+    <field name="code">medicine</field>
+    <field name="product_type">medicine</field>
+    <field name="source_domain">drug</field>
+    <field name="priority" eval="100"/>
+    <field name="category_names" eval="['Medicines', 'Medications', 'Allergy', 'Analgesics', 'Brain And Nervous System', 'Ear', 'Eye', 'Heart And Blood Vessels', 'Hormones']"/>
+    <field name="name_signals" eval="['vial', 'tab', 'caps', 'syrup', 'amp']"/>
+    <field name="required_facts" eval="['name', 'active_ingredients', 'strength', 'dosage_form', 'package']"/>
+    <field name="rationale">Medicines are the second largest catalog family. Do not infer OTC or prescription status.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_medicine_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_medicine_active_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">active_ingredients</field>
+    <field name="title">Active Ingredients</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['active_ingredients']"/>
+  </record>
+  <record id="seo_template_medicine_strength_form_package" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">strength_form_package</field>
+    <field name="title">Strength, Form and Package</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['strength', 'dosage_form', 'package']"/>
+  </record>
+  <record id="seo_template_medicine_uses" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">uses</field>
+    <field name="title">Uses</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['indications']"/>
+  </record>
+  <record id="seo_template_medicine_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_medicine_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_medicine_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_medicine_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer']"/>
+  </record>
+  <record id="seo_template_medicine_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_medicine"/>
+    <field name="sequence" eval="90"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_supplement" model="ab_seo_template">
+    <field name="name">Vitamins and Supplements</field>
+    <field name="code">supplement</field>
+    <field name="product_type">supplement</field>
+    <field name="source_domain">supplement</field>
+    <field name="priority" eval="90"/>
+    <field name="category_names" eval="['Vitamins And Supplements', 'Vitamins &amp; Supplements', 'Vitamins']"/>
+    <field name="name_signals" eval="['multivitamins', 'omega 3', 'gummies']"/>
+    <field name="required_facts" eval="['name', 'ingredients', 'package']"/>
+    <field name="rationale">Vitamins, minerals and supplements share label-based content; no treatment claims.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_supplement_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_supplement_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Ingredients</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['ingredients', 'active_ingredients']"/>
+  </record>
+  <record id="seo_template_supplement_nutrition" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">nutrition</field>
+    <field name="title">Nutritional Information</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['nutrition']"/>
+  </record>
+  <record id="seo_template_supplement_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_supplement_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_supplement_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_supplement_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_supplement_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_supplement"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_skincare" model="ab_seo_template">
+    <field name="name">Skin and Face Care</field>
+    <field name="code">skincare</field>
+    <field name="product_type">skincare</field>
+    <field name="source_domain">cosmetic</field>
+    <field name="priority" eval="80"/>
+    <field name="category_names" eval="['Skin Care', 'Face Care', 'Skin Treatment', 'Sun Care', 'Body Care', 'Beauty &amp; Skin Care']"/>
+    <field name="name_signals" eval="['facial mask', 'cleanser', 'sunscreen', 'sun screen', 'body lotion', 'toner']"/>
+    <field name="required_facts" eval="['name', 'package']"/>
+    <field name="rationale">Skin, face, sun and body care form a large related group. Category labels do not establish clinical benefits.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_skincare_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_skincare_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Key Ingredients</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['ingredients']"/>
+  </record>
+  <record id="seo_template_skincare_suitable_for" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">suitable_for</field>
+    <field name="title">Suitable For</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['suitable_for']"/>
+  </record>
+  <record id="seo_template_skincare_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_skincare_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_skincare_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_skincare_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_skincare_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_skincare"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_haircare" model="ab_seo_template">
+    <field name="name">Hair Care</field>
+    <field name="code">haircare</field>
+    <field name="product_type">haircare</field>
+    <field name="source_domain">cosmetic</field>
+    <field name="priority" eval="85"/>
+    <field name="category_names" eval="['Hair Care']"/>
+    <field name="name_signals" eval="['shampoo', 'conditioner', 'hair mask', 'hair brush', 'hair serum']"/>
+    <field name="required_facts" eval="['name', 'package']"/>
+    <field name="rationale">Hair products and accessories need hair-specific ordering without hair-loss treatment claims.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_haircare_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_haircare_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Key Ingredients</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['ingredients']"/>
+  </record>
+  <record id="seo_template_haircare_suitable_for" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">suitable_for</field>
+    <field name="title">Suitable For</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['suitable_for']"/>
+  </record>
+  <record id="seo_template_haircare_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_haircare_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_haircare_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_haircare_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_haircare_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_haircare"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_beauty" model="ab_seo_template">
+    <field name="name">Beauty and Fragrance</field>
+    <field name="code">beauty</field>
+    <field name="product_type">beauty</field>
+    <field name="source_domain">cosmetic</field>
+    <field name="priority" eval="70"/>
+    <field name="category_names" eval="['Beauty', 'Beauty Care', 'Make-Up', 'Makeup &amp; Nails', 'Perfumes']"/>
+    <field name="name_signals" eval="['perfume', 'perfumes', 'nail polish']"/>
+    <field name="required_facts" eval="['name', 'package']"/>
+    <field name="rationale">Makeup, nail and fragrance products are distinct from medicinal skincare.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_beauty_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_beauty_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Key Ingredients</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['ingredients']"/>
+  </record>
+  <record id="seo_template_beauty_suitable_for" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">suitable_for</field>
+    <field name="title">Suitable For</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['suitable_for']"/>
+  </record>
+  <record id="seo_template_beauty_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_beauty_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_beauty_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_beauty_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_beauty_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_beauty"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_personal" model="ab_seo_template">
+    <field name="name">Personal and Household Care</field>
+    <field name="code">personal</field>
+    <field name="product_type">personal</field>
+    <field name="source_domain">general</field>
+    <field name="priority" eval="60"/>
+    <field name="category_names" eval="['Personal Care', 'Hygiene &amp; Household', 'Hygenic And Household Products', 'Woman Care', 'Men Care', 'Medical Soap']"/>
+    <field name="name_signals" eval="['tissues', 'soap', 'deodorant', 'air freshener', 'cotton pads']"/>
+    <field name="required_facts" eval="['name', 'package']"/>
+    <field name="rationale">Personal hygiene and household goods share practical product information without health promises.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_personal_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_personal_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Key Ingredients</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['ingredients']"/>
+  </record>
+  <record id="seo_template_personal_suitable_for" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">suitable_for</field>
+    <field name="title">Suitable For</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['suitable_for']"/>
+  </record>
+  <record id="seo_template_personal_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_personal_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_personal_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_personal_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_personal_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_personal"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_baby" model="ab_seo_template">
+    <field name="name">Mother and Baby</field>
+    <field name="code">baby</field>
+    <field name="product_type">baby</field>
+    <field name="source_domain">general</field>
+    <field name="priority" eval="65"/>
+    <field name="category_names" eval="['Mother &amp; Baby', 'Mom And Baby Care', 'Baby Care']"/>
+    <field name="name_signals" eval="['diapers', 'baby feeding', 'baby sponge', 'babies rattle']"/>
+    <field name="required_facts" eval="['name', 'package']"/>
+    <field name="rationale">Baby feeding equipment, diapers and maternal accessories require source-backed suitability and directions.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_baby_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_baby_ingredients" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">ingredients</field>
+    <field name="title">Key Ingredients</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['ingredients']"/>
+  </record>
+  <record id="seo_template_baby_suitable_for" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">suitable_for</field>
+    <field name="title">Suitable For</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['suitable_for']"/>
+  </record>
+  <record id="seo_template_baby_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_baby_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_baby_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_baby_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_baby_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_baby"/>
+    <field name="sequence" eval="80"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_device" model="ab_seo_template">
+    <field name="name">Devices and Supplies</field>
+    <field name="code">device</field>
+    <field name="product_type">device</field>
+    <field name="source_domain">general</field>
+    <field name="priority" eval="75"/>
+    <field name="category_names" eval="['Health Devices &amp; Supplies', 'Medical Supplies', 'Health Devices', 'First Aid', 'Home Patient Care', 'Mobility', 'Fittness And Sport']"/>
+    <field name="name_signals" eval="['belt', 'collar', 'accu chek', 'thermometer', 'first aid kit']"/>
+    <field name="required_facts" eval="['name', 'specifications']"/>
+    <field name="rationale">Diagnostic devices, supports and patient supplies require verified specifications; no accuracy or certification claims.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_device_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_device_specifications" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">specifications</field>
+    <field name="title">Specifications</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['specifications']"/>
+  </record>
+  <record id="seo_template_device_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_device_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_device_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_device_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_device_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_device"/>
+    <field name="sequence" eval="70"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+  <record id="seo_template_general" model="ab_seo_template">
+    <field name="name">General Product</field>
+    <field name="code">general</field>
+    <field name="product_type">general</field>
+    <field name="source_domain">general</field>
+    <field name="priority" eval="0"/>
+    <field name="category_names" eval="['Everyday Essentials']"/>
+    <field name="name_signals" eval="[]"/>
+    <field name="required_facts" eval="['name', 'product_code']"/>
+    <field name="rationale">The largest category is mixed and unreliable. Keep ambiguous goods factual until reviewed; no food or beverage family is justified by the audit.</field>
+    <field name="generation_instructions">Use only trusted facts. Keep the configured section order. Omit optional sections without evidence. Never infer claims from categories.</field>
+  </record>
+  <record id="seo_template_general_about_product" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="10"/>
+    <field name="key">about_product</field>
+    <field name="title">About the Product</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['name']"/>
+  </record>
+  <record id="seo_template_general_directions" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="20"/>
+    <field name="key">directions</field>
+    <field name="title">Directions</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['directions']"/>
+  </record>
+  <record id="seo_template_general_warnings" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="30"/>
+    <field name="key">warnings</field>
+    <field name="title">Warnings</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['warnings']"/>
+  </record>
+  <record id="seo_template_general_storage" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="40"/>
+    <field name="key">storage</field>
+    <field name="title">Storage</field>
+    <field name="policy">optional</field>
+    <field name="fact_keys" eval="['storage']"/>
+  </record>
+  <record id="seo_template_general_product_information" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="50"/>
+    <field name="key">product_information</field>
+    <field name="title">Product Information</field>
+    <field name="policy">required</field>
+    <field name="fact_keys" eval="['product_code', 'brand', 'manufacturer', 'package', 'dosage_form']"/>
+  </record>
+  <record id="seo_template_general_medical_claims" model="ab_seo_template_section">
+    <field name="template_id" ref="seo_template_general"/>
+    <field name="sequence" eval="60"/>
+    <field name="key">medical_claims</field>
+    <field name="title">Unsupported Medical Claims</field>
+    <field name="policy">forbidden</field>
+    <field name="fact_keys" eval="[]"/>
+  </record>
+</odoo>

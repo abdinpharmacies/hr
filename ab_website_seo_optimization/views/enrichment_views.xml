@@ -1,0 +1,449 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+    <record id="view_enrichment_provider_form" model="ir.ui.view">
+        <field name="name">SEO provider enrichment configuration</field>
+        <field name="model">ab.seo.assistant</field>
+        <field name="inherit_id" ref="view_ab_seo_assistant_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='api_key_name']" position="after">
+                <field name="allow_remote"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_test_connection" type="object" string="Test Connection" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_test_lookup" type="object" string="Test Lookup" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_sync_dataset" type="object" string="Sync Dataset" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_rebuild_index" type="object" string="Rebuild Index" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_reset_usage" type="object" string="Reset Usage" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_disable_provider" type="object" string="Disable Provider" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_move_up" type="object" string="Move Up" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                <button name="action_move_down" type="object" string="Move Down" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <notebook>
+                    <page string="Provider Capabilities">
+                        <group>
+                            <group>
+                                <field name="provider_type"/>
+                                <field name="source_scope"/>
+                                <field name="supports_bulk"/>
+                                <field name="supports_api"/>
+                                <field name="supported_domains"/>
+                                <field name="api_key_configured"/>
+                            </group>
+                            <group>
+                                <field name="official_url" widget="url"/>
+                                <field name="health"/>
+                                <field name="last_success"/>
+                                <field name="last_failure"/>
+                                <field name="last_error"/>
+                                <field name="error_count"/>
+                                <field name="disabled_until"/>
+                            </group>
+                        </group>
+                        <field name="metadata"/>
+                        <field name="reliability"/>
+                    </page>
+                    <page string="Quotas and Retries">
+                        <group>
+                            <group>
+                                <field name="monthly_limit"/>
+                                <field name="token_limit"/>
+                                <field name="monthly_token_limit"/>
+                                <field name="rpm_limit"/>
+                                <field name="tpm_limit"/>
+                                <field name="quota_group_id"/>
+                                <field name="daily_unit_limit"/>
+                                <field name="units_per_input_token"/>
+                                <field name="units_per_output_token"/>
+                            </group>
+                            <group>
+                                <field name="requests_used"/>
+                                <field name="monthly_requests_used"/>
+                                <field name="monthly_tokens_used"/>
+                                <field name="units_used_today"/>
+                                <field name="quota_remaining"/>
+                                <field name="last_reset"/>
+                                <field name="timeout_seconds"/>
+                                <field name="retry_count"/>
+                                <field name="backoff_seconds"/>
+                                <field name="cooldown_seconds"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Models and Cache">
+                        <group>
+                            <field name="model_names"/>
+                            <field name="models_endpoint"/>
+                            <field name="account_id"/>
+                            <field name="region"/>
+                            <field name="authentication_required"/>
+                            <field name="models_checked_at"/>
+                            <field name="cache_days"/>
+                            <field name="failure_cache_minutes"/>
+                        </group>
+                        <button name="action_refresh_models" type="object" string="Refresh Available Models" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        <button name="action_purge_stale_cache" type="object" string="Purge Stale Cache" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        <field name="model_metadata"/>
+                    </page>
+                    <page string="Dataset Setup">
+                        <group>
+                            <field name="dataset_url"/>
+                            <field name="dataset_format_name"/>
+                            <field name="dataset_json_prefix"/>
+                            <field name="dataset_version"/>
+                            <field name="dataset_checksum"/>
+                            <field name="sync_interval_days"/>
+                            <field name="next_sync_at"/>
+                            <field name="last_successful_sync"/>
+                            <field name="index_revision"/>
+                        </group>
+                        <field name="lookup_identity"/>
+                        <field name="last_lookup_result"/>
+                    </page>
+                    <page string="License Review">
+                        <group>
+                            <field name="license_name"/>
+                            <field name="attribution_required"/>
+                            <field name="redistribution_allowed"/>
+                            <field name="license_reviewed" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                            <field name="commercial_permission" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                            <field name="license_review_note" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        </group>
+                    </page>
+                </notebook>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_enrichment_provider_list" model="ir.ui.view">
+        <field name="name">SEO provider enrichment list</field>
+        <field name="model">ab.seo.assistant</field>
+        <field name="inherit_id" ref="view_ab_seo_assistant_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_seo_provider_list" separator=" "/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="provider_type"/>
+                <field name="health"/>
+                <field name="api_key_configured"/>
+                <field name="quota_remaining"/>
+                <field name="supports_bulk" optional="show"/>
+                <field name="supports_api" optional="hide"/>
+                <field name="monthly_limit" optional="hide"/>
+                <field name="license_name" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_enrichment_pipeline_form" model="ir.ui.view">
+        <field name="name">Enrichment pipeline</field>
+        <field name="model">ab_seo_pipeline</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="active"/>
+                        <field name="sequence"/>
+                        <field name="domain"/>
+                        <field name="ai_mode"/>
+                        <field name="prompt_version"/>
+                        <field name="category_ids" widget="many2many_tags"/>
+                    </group>
+                    <field name="line_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="provider_id"/>
+                            <field name="provider_type"/>
+                            <field name="active"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_enrichment_pipeline_list" model="ir.ui.view">
+        <field name="name">Enrichment pipelines</field>
+        <field name="model">ab_seo_pipeline</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="domain"/>
+                <field name="ai_mode"/>
+                <field name="prompt_version"/>
+                <field name="category_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_enrichment_dataset_form" model="ir.ui.view">
+        <field name="name">Dataset import</field>
+        <field name="model">ab_seo_dataset</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_validate_dataset" type="object" string="Validate Dataset"/>
+                    <button name="action_queue_import" type="object" string="Queue Import"/>
+                    <button name="action_resume" type="object" string="Resume Import"/>
+                    <button name="action_rebuild_index" type="object" string="Rebuild Index"/>
+                    <button name="action_verify_manual" type="object" string="Record Manual Verification"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="provider_id"/>
+                            <field name="source_version"/>
+                            <field name="url"/>
+                            <field name="filename"/>
+                            <field name="upload" filename="filename" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                            <field name="json_prefix"/>
+                            <field name="expected_checksum"/>
+                            <field name="max_download_mb"/>
+                        </group>
+                        <group>
+                            <field name="checksum"/>
+                            <field name="etag"/>
+                            <field name="last_modified"/>
+                            <field name="downloaded_at"/>
+                            <field name="record_count"/>
+                            <field name="imported_count"/>
+                            <field name="failed_record_count"/>
+                            <field name="download_bytes"/>
+                            <field name="last_successful_sync"/>
+                            <field name="duplicate_of_id"/>
+                        </group>
+                    </group>
+                    <field name="last_error"/>
+                    <group string="Manual Verification">
+                        <field name="verification_note"/>
+                        <field name="manual_verified_by"/>
+                        <field name="manual_verified_at"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_enrichment_dataset_list" model="ir.ui.view">
+        <field name="name">Dataset imports</field>
+        <field name="model">ab_seo_dataset</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="state"/>
+                <field name="record_count"/>
+                <field name="imported_count"/>
+                <field name="failed_record_count"/>
+                <field name="last_successful_sync"/>
+                <field name="last_error"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_enrichment_bulk_form" model="ir.ui.view">
+        <field name="name">Bulk enrichment progress</field>
+        <field name="model">ab.product.seo.bulk.optimization</field>
+        <field name="inherit_id" ref="view_ab_website_seo_optimization_bulk_optimization_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_resume_job" type="object" string="Resume Job" invisible="not enrichment_enabled"/>
+                <button name="action_retry_failures" type="object" string="Retry Failures" invisible="not enrichment_enabled"/>
+            </xpath>
+            <xpath expr="//field[@name='assistant_id']" position="after">
+                <field name="enrichment_enabled" readonly="state != 'draft'"/>
+                <field name="pipeline_id" readonly="state != 'draft'"/>
+                <field name="items_per_tick"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="Enrichment Progress" invisible="not enrichment_enabled">
+                    <field name="total_count"/>
+                    <field name="queued_count"/>
+                    <field name="processing_count"/>
+                    <field name="review_required_count"/>
+                    <field name="provider_exhausted_count"/>
+                    <field name="discovery_done"/>
+                </group>
+                <field name="provider_progress" invisible="not enrichment_enabled"/>
+                <field name="work_item_ids" invisible="not enrichment_enabled">
+                    <list>
+                        <field name="product_id"/>
+                        <field name="state"/>
+                        <field name="attempts"/>
+                        <field name="next_attempt_at"/>
+                        <field name="seo_id"/>
+                        <field name="last_error"/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_enrichment_item_form" model="ir.ui.view">
+        <field name="name">Enrichment item and evidence</field>
+        <field name="model">ab_seo_work_item</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <field name="job_id"/>
+                        <field name="product_id"/>
+                        <field name="state"/>
+                        <field name="pipeline_id"/>
+                        <field name="seo_id"/>
+                        <field name="last_error"/>
+                        <field name="normalized_input_hash"/>
+                    </group>
+                    <notebook>
+                        <page string="Source Evidence">
+                            <field name="fact_ids">
+                                <list>
+                                    <field name="field_name"/>
+                                    <field name="provider_id"/>
+                                    <field name="content_kind"/>
+                                    <field name="matched_by"/>
+                                    <field name="match_score"/>
+                                    <field name="accepted"/>
+                                    <field name="source_record_id"/>
+                                    <field name="source_version"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Generated Drafts">
+                            <field name="result"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_enrichment_fact_form" model="ir.ui.view">
+        <field name="name">Field provenance</field>
+        <field name="model">ab_seo_enrichment_fact</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0">
+                <sheet>
+                    <group>
+                        <field name="field_name"/>
+                        <field name="product_id"/>
+                        <field name="provider_id"/>
+                        <field name="content_kind"/>
+                        <field name="accepted"/>
+                        <field name="source_record_id"/>
+                        <field name="source_version"/>
+                        <field name="source_url" widget="url"/>
+                        <field name="matched_by"/>
+                        <field name="matched_identifier"/>
+                        <field name="match_score"/>
+                        <field name="retrieved_at"/>
+                        <field name="verified_at"/>
+                        <field name="lang_code"/>
+                        <field name="model_name"/>
+                        <field name="prompt_version"/>
+                    </group>
+                    <field name="value"/>
+                    <field name="input_sources"/>
+                    <field name="source_metadata"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_enrichment_calls_list" model="ir.ui.view">
+        <field name="name">Provider call audit</field>
+        <field name="model">ab_seo_provider_call</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0">
+                <field name="job_id"/>
+                <field name="product_id"/>
+                <field name="provider_id"/>
+                <field name="operation"/>
+                <field name="started_at"/>
+                <field name="duration"/>
+                <field name="success"/>
+                <field name="status_code"/>
+                <field name="error_type"/>
+                <field name="fallback_triggered"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_enrichment_translation_form" model="ir.ui.view">
+        <field name="name">Review enrichment evidence</field>
+        <field name="model">ab.product.seo.translation</field>
+        <field name="inherit_id" ref="view_ab_website_seo_optimization_translation_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='review_notes']" position="after">
+                <field name="enrichment_item_id"/>
+                <field name="review_required"/>
+                <field name="reviewed_by"/>
+                <field name="reviewed_at"/>
+                <field name="prompt_version"/>
+                <field name="search_phrases"/>
+                <field name="structured_bullets"/>
+                <button name="action_review_evidence" type="object" string="Confirm Evidence Review" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_enrichment_seo_form" model="ir.ui.view">
+        <field name="name">Review enrichment drafts</field>
+        <field name="model">ab.product.seo</field>
+        <field name="inherit_id" ref="view_ab_website_seo_optimization_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_submit_review" type="object" string="Submit for Review" invisible="state not in ('draft', 'generated', 'rejected')"/>
+                <button name="action_approve" type="object" string="Approve" invisible="state != 'under_review'" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer"/>
+                <button name="action_reject" type="object" string="Reject" invisible="state != 'under_review'" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer"/>
+                <button name="action_publish" type="object" string="Publish Approved Content" invisible="state != 'approved'" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Translation Review">
+                    <field name="translation_ids">
+                        <list>
+                            <field name="lang_code"/>
+                            <field name="meta_title"/>
+                            <field name="review_required"/>
+                            <field name="enrichment_item_id"/>
+                            <field name="reviewed_by"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_enrichment_product_form" model="ir.ui.view">
+        <field name="name">Product enrichment identity</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Enrichment Identity" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager">
+                    <group>
+                        <field name="ab_enrichment_domain"/>
+                        <field name="ab_enrichment_identity"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_enrichment_pipelines" model="ir.actions.act_window">
+        <field name="name">Enrichment Pipelines</field>
+        <field name="res_model">ab_seo_pipeline</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_enrichment_datasets" model="ir.actions.act_window">
+        <field name="name">Dataset Imports</field>
+        <field name="res_model">ab_seo_dataset</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_enrichment_calls" model="ir.actions.act_window">
+        <field name="name">Provider Call Audit</field>
+        <field name="res_model">ab_seo_provider_call</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_enrichment_sources" model="ir.actions.act_window">
+        <field name="name">Local Source Index</field>
+        <field name="res_model">ab_seo_source_record</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_enrichment_pipelines" name="Enrichment Pipelines" parent="ab_website_seo_optimization_menu_settings" action="action_enrichment_pipelines" sequence="30"/>
+    <menuitem id="menu_enrichment_datasets" name="Dataset Imports" parent="ab_website_seo_optimization_menu_settings" action="action_enrichment_datasets" sequence="40"/>
+    <menuitem id="menu_enrichment_calls" name="Provider Call Audit" parent="ab_website_seo_optimization_menu_settings" action="action_enrichment_calls" sequence="50"/>
+    <menuitem id="menu_enrichment_sources" name="Local Source Index" parent="ab_website_seo_optimization_menu_settings" action="action_enrichment_sources" sequence="60"/>
+</odoo>

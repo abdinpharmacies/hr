@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_seo_template_list" model="ir.ui.view">
+        <field name="name">SEO templates</field>
+        <field name="model">ab_seo_template</field>
+        <field name="arch" type="xml">
+            <list><field name="name"/><field name="code"/><field name="product_type"/><field name="version"/><field name="priority"/><field name="active"/></list>
+        </field>
+    </record>
+    <record id="view_seo_template_form" model="ir.ui.view">
+        <field name="name">SEO template configuration</field>
+        <field name="model">ab_seo_template</field>
+        <field name="arch" type="xml">
+            <form><sheet>
+                <group><group><field name="name"/><field name="code"/><field name="product_type"/><field name="source_domain"/><field name="version"/></group><group><field name="active"/><field name="priority"/><field name="prompt_version"/><field name="category_ids" widget="many2many_tags"/></group></group>
+                <notebook>
+                    <page string="Structure"><field name="section_ids"><list editable="bottom"><field name="sequence" widget="handle"/><field name="key"/><field name="title"/><field name="policy"/><field name="fact_keys"/></list></field></page>
+                    <page string="Selection"><group><field name="category_names"/><field name="name_signals"/><field name="rationale"/></group></page>
+                    <page string="Facts and Validation"><group><field name="required_facts"/><field name="optional_facts"/><field name="validation_rules"/></group></page>
+                    <page string="Generation Rules"><group><field name="generation_instructions"/><field name="language_rules"/></group></page>
+                </notebook>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="action_seo_templates" model="ir.actions.act_window">
+        <field name="name">SEO Templates</field><field name="res_model">ab_seo_template</field><field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_seo_templates" name="SEO Templates" parent="ab_website_seo_optimization_menu_settings" action="action_seo_templates" sequence="5"/>
+    <record id="view_template_bulk_form" model="ir.ui.view">
+        <field name="name">SEO template bulk controls</field><field name="model">ab.product.seo.bulk.optimization</field><field name="inherit_id" ref="view_enrichment_bulk_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_template_dry_run" type="object" string="Dry Run" invisible="not enrichment_enabled"/>
+                <button name="action_validate_pilot" type="object" string="Validate Pilot" invisible="state != 'done' or not enrichment_enabled"/>
+            </xpath>
+            <xpath expr="//field[@name='pipeline_id']" position="after">
+                <field name="generation_mode" readonly="state != 'draft'"/><field name="regeneration_mode" readonly="state != 'draft'"/>
+                <field name="product_selection_ids" widget="many2many_tags" readonly="state != 'draft'"/><field name="category_filter_id" readonly="state != 'draft'"/>
+                <field name="template_filter_id" readonly="state != 'draft'"/><field name="dry_run"/><field name="pilot_job_id"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="Pilot Review"><field name="pilot_review_notes"/><field name="pilot_validated_by"/><field name="pilot_validated_at"/></group>
+                <group string="Dry Run Report"><field name="dry_run_report" nolabel="1"/></group>
+            </xpath>
+            <xpath expr="//field[@name='work_item_ids']/list/field[@name='state']" position="after"><field name="template_id"/><field name="template_version"/><field name="data_confidence"/><field name="validation_status"/></xpath>
+        </field>
+    </record>
+    <record id="view_template_item_form" model="ir.ui.view">
+        <field name="name">SEO template item validation</field><field name="model">ab_seo_work_item</field><field name="inherit_id" ref="view_enrichment_item_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before"><header><button name="action_apply_proposal" type="object" string="Apply Regeneration Proposal" confirm="Replace the review draft with this proposal? Published website content and approved versions remain until a new approval and publication." groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager" invisible="not seo_id or proposal_applied or validation_status == 'rejected'"/></header></xpath>
+            <xpath expr="//field[@name='pipeline_id']" position="after"><field name="template_id"/><field name="template_version"/><field name="data_confidence"/><field name="validation_status"/><field name="generated_at"/><field name="proposal_applied"/></xpath>
+            <xpath expr="//notebook" position="inside"><page string="Template Validation"><field name="validation_report"/><field name="category_context"/><field name="trusted_facts"/><field name="template_snapshot"/></page></xpath>
+        </field>
+    </record>
+    <record id="view_template_translation_form" model="ir.ui.view">
+        <field name="name">SEO translation template provenance</field><field name="model">ab.product.seo.translation</field><field name="inherit_id" ref="view_enrichment_translation_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside"><page string="Template Validation"><group><field name="seo_template_id"/><field name="template_version"/><field name="template_outdated"/><field name="data_confidence"/><field name="validation_status"/><field name="generation_provider_id"/><field name="generation_model"/><field name="generated_at"/></group><field name="validation_report"/><field name="structured_sections"/><field name="trusted_facts"/><field name="template_snapshot"/></page></xpath>
+        </field>
+    </record>
+    <record id="view_template_seo_form" model="ir.ui.view">
+        <field name="name">SEO record template status</field><field name="model">ab.product.seo</field><field name="inherit_id" ref="view_enrichment_seo_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='lang_mode']" position="after"><field name="template_generation_mode"/></xpath>
+            <xpath expr="//sheet" position="inside"><group string="Template Status"><field name="template_outdated"/><field name="translation_ids" readonly="1"><list><field name="lang_code"/><field name="seo_template_id"/><field name="template_version"/><field name="data_confidence"/><field name="validation_status"/><field name="review_required"/><field name="generation_provider_id"/><field name="generation_model"/></list></field></group></xpath>
+        </field>
+    </record>
+    <record id="view_template_product_form" model="ir.ui.view">
+        <field name="name">Product SEO template override</field><field name="model">product.template</field><field name="inherit_id" ref="view_enrichment_product_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ab_enrichment_domain']" position="after"><field name="ab_seo_template_id" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/></xpath>
+        </field>
+    </record>
+</odoo>

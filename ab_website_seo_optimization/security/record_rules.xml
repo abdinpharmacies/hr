@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+        <record id="rule_enrichment_seo_company" model="ir.rule">
+            <field name="name">SEO Seo by Company</field>
+            <field name="model_id" ref="model_ab_product_seo"/>
+            <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_translation_company" model="ir.rule">
+            <field name="name">SEO Translation by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_translation"/>
+            <field name="domain_force">['|', ('seo_id.company_id', '=', False), ('seo_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_version_company" model="ir.rule">
+            <field name="name">SEO Version by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_version"/>
+            <field name="domain_force">['|', ('seo_id.company_id', '=', False), ('seo_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_publish_log_company" model="ir.rule">
+            <field name="name">SEO Publish Log by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_publish_log"/>
+            <field name="domain_force">['|', ('seo_id.company_id', '=', False), ('seo_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_match_company" model="ir.rule">
+            <field name="name">SEO Match by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_match"/>
+            <field name="domain_force">['|', ('seo_id.company_id', '=', False), ('seo_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_snapshot_company" model="ir.rule">
+            <field name="name">SEO Snapshot by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_source_snapshot"/>
+            <field name="domain_force">['|', ('seo_id.company_id', '=', False), ('seo_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_job_line_company" model="ir.rule">
+            <field name="name">SEO Job Line by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_bulk_optimization_line"/>
+            <field name="domain_force">['|', ('bulk_id.company_id', '=', False), ('bulk_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_job_company" model="ir.rule">
+            <field name="name">Enrichment Jobs by Company</field>
+            <field name="model_id" ref="model_ab_product_seo_bulk_optimization"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_item_company" model="ir.rule">
+            <field name="name">Enrichment Items by Company</field>
+            <field name="model_id" ref="model_ab_seo_work_item"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_fact_company" model="ir.rule">
+            <field name="name">Enrichment Evidence by Company</field>
+            <field name="model_id" ref="model_ab_seo_enrichment_fact"/>
+            <field name="domain_force">[('job_id.company_id', 'in', company_ids)]</field>
+        </record>
+        <record id="rule_enrichment_call_company" model="ir.rule">
+            <field name="name">Enrichment Calls by Company</field>
+            <field name="model_id" ref="model_ab_seo_provider_call"/>
+            <field name="domain_force">['|', ('job_id', '=', False), ('job_id.company_id', 'in', company_ids)]</field>
+        </record>
         <record id="rule_ab_website_seo_optimization_user" model="ir.rule">
             <field name="name">Website SEO User Access</field>
             <field name="model_id" ref="model_ab_product_seo"/>

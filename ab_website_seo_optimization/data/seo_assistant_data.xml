@@ -22,7 +22,7 @@
             <field name="sequence">20</field>
             <field name="assistant_type">ai</field>
             <field name="provider">groq</field>
-            <field name="model_name">llama-3.1-8b-instant</field>
+            <field name="model_name">openai/gpt-oss-20b</field>
             <field name="base_url">https://api.groq.com/openai/v1</field>
             <field name="endpoint_path">/chat/completions</field>
             <field name="api_key_name">GROQ_API_KEY</field>
@@ -38,7 +38,7 @@
             <field name="sequence">30</field>
             <field name="assistant_type">ai</field>
             <field name="provider">openrouter</field>
-            <field name="model_name">nex-agi/nex-n2-pro:free</field>
+            <field name="model_name">openrouter/free</field>
             <field name="base_url">https://openrouter.ai/api/v1</field>
             <field name="endpoint_path">/chat/completions</field>
             <field name="api_key_name">OPENROUTER_API_KEY</field>
@@ -55,8 +55,8 @@
             <field name="assistant_type">ai</field>
             <field name="provider">huggingface</field>
             <field name="model_name">meta-llama/Llama-3.1-8B-Instruct</field>
-            <field name="base_url">https://api-inference.huggingface.co/models</field>
-            <field name="endpoint_path">/{model}</field>
+            <field name="base_url">https://router.huggingface.co/v1</field>
+            <field name="endpoint_path">/chat/completions</field>
             <field name="api_key_name">HF_TOKEN</field>
             <field name="free_tier">1</field>
             <field name="daily_limit">300</field>
@@ -70,8 +70,8 @@
             <field name="sequence">45</field>
             <field name="assistant_type">ai</field>
             <field name="provider">alibaba_qwen</field>
-            <field name="model_name">Qwen</field>
-            <field name="base_url">https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1</field>
+            <field name="model_name">qwen-plus</field>
+            <field name="base_url">https://dashscope-intl.aliyuncs.com/compatible-mode/v1</field>
             <field name="endpoint_path">/chat/completions</field>
             <field name="api_key_name">ALIBABA_QWEN_API_KEY</field>
             <field name="free_tier">1</field>
@@ -107,7 +107,7 @@
             <field name="endpoint_path">/drug/label.json</field>
             <field name="api_key_name">OPENFDA_API_KEY</field>
             <field name="free_tier">1</field>
-            <field name="daily_limit">120000</field>
+            <field name="daily_limit">1000</field>
             <field name="temperature">0.2</field>
             <field name="max_output_tokens">800</field>
             <field name="notes">openFDA drug label source. API key is passed as api_key query parameter. Use for OTC/Rx label enrichment only, not as product source of truth. Standard limits: 240 requests/minute and 120,000 requests/day with API key.</field>
@@ -123,7 +123,7 @@
             <field name="endpoint_path">/cosmetic/event.json</field>
             <field name="api_key_name">OPENFDA_API_KEY</field>
             <field name="free_tier">1</field>
-            <field name="daily_limit">120000</field>
+            <field name="daily_limit">1000</field>
             <field name="temperature">0.2</field>
             <field name="max_output_tokens">800</field>
             <field name="notes">openFDA cosmetic adverse-event reports. API key is passed as api_key query parameter. Use only for safety signal context; this is not a cosmetic product catalog and does not provide ingredients, benefits, or official product descriptions. Falls back to the downloaded JSON file when the API is unavailable.</field>

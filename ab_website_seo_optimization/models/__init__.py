@@ -9,3 +9,9 @@ from . import product_seo_optimize_confirm_wizard
 from . import product_drug_data
 from . import drug_eg_import_dashboard
 from . import seo_assistant
+from . import enrichment_provider
+from . import enrichment_dataset
+from . import enrichment_pipeline
+
+from . import seo_template
+from . import seo_template_workflow

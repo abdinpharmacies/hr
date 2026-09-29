@@ -1,6 +1,6 @@
 {
     "name": "SEO Optimization",
-    "version": "19.0.1.0.0",
+    "version": "19.0.3.0.0",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "author": "Alhassan Hossny",
@@ -19,6 +19,9 @@
         "views/menus.xml",
         "data/seo_assistant_data.xml",
         "data/seo_bulk_cron.xml",
+        "data/enrichment_providers.xml",
+        "data/enrichment_cron.xml",
+        "data/seo_templates.xml",
         "views/product_seo_optimize_confirm_wizard_views.xml",
         "views/product_seo_views.xml",
         "views/product_seo_translation_views.xml",
@@ -30,11 +33,17 @@
         "views/product_drug_data_views.xml",
         "views/drug_eg_import_dashboard_views.xml",
         "views/seo_assistant_views.xml",
+        "views/enrichment_views.xml",
+        "views/seo_template_views.xml",
     ],
     "assets": {
+        "web.assets_backend": [
+            "ab_website_seo_optimization/static/src/scss/seo_provider_list.scss",
+        ],
         "website.assets_editor": [
             "ab_website_seo_optimization/static/src/js/seo_dialog_ai_patch.js",
         ],
     },
+    "external_dependencies": {"python": ["requests", "ijson"]},
     "installable": True,
 }

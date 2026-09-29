@@ -1,0 +1,33 @@
+.ab_seo_provider_list .o_list_renderer {
+    overflow-x: auto;
+
+    .o_list_table {
+        width: max-content !important;
+        min-width: 100%;
+        table-layout: auto !important;
+
+        th,
+        td {
+            width: auto !important;
+            max-width: none;
+            white-space: nowrap;
+        }
+
+        .o_data_cell,
+        .o_field_widget,
+        .text-truncate {
+            max-width: none;
+            white-space: nowrap;
+            text-overflow: clip;
+        }
+
+        th .text-truncate {
+            overflow: visible;
+            flex-shrink: 0 !important;
+        }
+
+        .o_resize {
+            display: none;
+        }
+    }
+}

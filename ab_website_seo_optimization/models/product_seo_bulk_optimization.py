@@ -469,6 +469,8 @@ class AbProductSeoBulkOptimization(models.Model):
         self.ensure_one()
         Seo = self.env["ab.product.seo"].sudo()
         domain = [("ab_product_id", "=", template.ab_product_id.id), ("active", "=", True)]
+        if self.enrichment_enabled:
+            domain.append(("company_id", "in", [False, self.company_id.id]))
         if self.website_id:
             domain.append(("website_id", "=", self.website_id.id))
         else:
@@ -578,6 +580,7 @@ class AbProductSeoBulkOptimization(models.Model):
 
     def _generate_internal_product_content(self, template, lang_code):
         self.ensure_one()
+        _ = self.with_context(lang=lang_code).env._
         product = template.ab_product_id.sudo()
         context = self._get_product_generation_context(template)
         product_name = self._get_product_name_for_generation(template)

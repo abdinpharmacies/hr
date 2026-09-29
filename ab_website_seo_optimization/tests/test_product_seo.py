@@ -11,6 +11,7 @@ class TestProductSeo(TransactionCase):
 
     def setUp(self):
         super().setUp()
+        self.env = self.env(context=dict(self.env.context, default_enrichment_enabled=False, legacy_internal_seo=True))
         self.product_card = self.env["ab_product_card"].create({
             "name": "Panadol Extra",
             "description": "Pain relief product.",
@@ -567,10 +568,10 @@ class TestProductSeo(TransactionCase):
         assistant.action_apply_provider_defaults()
 
         self.assertEqual(assistant.assistant_type, "ai")
-        self.assertEqual(assistant.model_name, "Qwen")
+        self.assertEqual(assistant.model_name, "qwen-plus")
         self.assertEqual(
             assistant.base_url,
-            "https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+            "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
         )
         self.assertEqual(assistant.endpoint_path, "/chat/completions")
 
@@ -586,7 +587,7 @@ class TestProductSeo(TransactionCase):
         self.assertEqual(assistant.base_url, "https://api.fda.gov")
         self.assertEqual(assistant.endpoint_path, "/drug/label.json")
         self.assertEqual(assistant.api_key_name, "OPENFDA_API_KEY")
-        self.assertEqual(assistant.daily_limit, 120000)
+        self.assertEqual(assistant.daily_limit, 100)
 
     def test_cosmetic_event_defaults_use_openfda_endpoint(self):
         assistant = self.env["ab.seo.assistant"].create({
@@ -600,7 +601,7 @@ class TestProductSeo(TransactionCase):
         self.assertEqual(assistant.base_url, "https://api.fda.gov")
         self.assertEqual(assistant.endpoint_path, "/cosmetic/event.json")
         self.assertEqual(assistant.api_key_name, "OPENFDA_API_KEY")
-        self.assertEqual(assistant.daily_limit, 120000)
+        self.assertEqual(assistant.daily_limit, 100)
 
     def test_cosmetic_event_file_fallback_summarizes_reactions(self):
         payload = {
@@ -631,9 +632,9 @@ class TestProductSeo(TransactionCase):
             )._request_cosmetic_event_file_product("Dove Powder Stick 74g")
 
         self.assertEqual(status, "ready", message)
-        self.assertIn("Dove Powder Stick 74g", result["meta_title"])
-        self.assertIn("Inflammation", result["warnings"])
-        self.assertIn("safety signal", result["public_description"])
+        self.assertNotIn("public_description", result)
+        self.assertNotIn("meta_title", result)
+        self.assertIn("Inflammation", result["safety_context"][0]["reactions"])
 
     def test_openrouter_404_error_mentions_model(self):
         assistant = self.env["ab.seo.assistant"].create({

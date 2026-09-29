@@ -1,0 +1,689 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1">
+    <record id="assistant_enrichment_eda_eddb" model="ab.seo.assistant">
+      <field name="name">Egyptian Drug Authority EDDB</field>
+      <field name="provider">eda_eddb</field>
+      <field name="sequence">10</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">eda_eddb</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Official search/manual verification; no documented public bulk API verified.</field>
+    </record>
+    <record id="assistant_enrichment_egypt_a" model="ab.seo.assistant">
+      <field name="name">Egyptian Drug Database Dataset A</field>
+      <field name="provider">egypt_a</field>
+      <field name="sequence">20</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">egypt_a</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Public CSV/JSON release; Arabic names are transliterated search aliases.</field>
+      <field name="dataset_url">https://raw.githubusercontent.com/karem505/egyptian-drug-database/main/data/egyptian-drugs.csv</field>
+      <field name="dataset_format_name">dataset.csv</field>
+      <field name="dataset_version">2026-06</field>
+    </record>
+    <record id="assistant_enrichment_egypt_b" model="ab.seo.assistant">
+      <field name="name">Egyptian Drug Database Dataset B</field>
+      <field name="provider">egypt_b</field>
+      <field name="sequence">30</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">egypt_b</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Public release. Generated usage summaries and safety flags remain unverified context.</field>
+      <field name="dataset_url">https://raw.githubusercontent.com/mahmoudfalous/eg-drugs/main/data/eg_drugs.csv</field>
+      <field name="dataset_format_name">dataset.csv</field>
+      <field name="dataset_version">2026-06</field>
+    </record>
+    <record id="assistant_enrichment_dailymed" model="ab.seo.assistant">
+      <field name="name">DailyMed</field>
+      <field name="provider">dailymed</field>
+      <field name="sequence">40</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">dailymed</field>
+      <field name="base_url">https://dailymed.nlm.nih.gov/dailymed/services/v2</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Multipart full SPL ZIP releases and daily/weekly/monthly updates; choose a release download URL.</field>
+    </record>
+    <record id="assistant_enrichment_fda_ndc" model="ab.seo.assistant">
+      <field name="name">FDA NDC</field>
+      <field name="provider">fda_ndc</field>
+      <field name="sequence">60</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">fda_ndc</field>
+      <field name="base_url">https://api.fda.gov/drug/ndc.json</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Same openFDA account/IP quotas; NDC listing is not approval.</field>
+      <field name="quota_group_id" ref="assistant_openfda_drug_label"/>
+    </record>
+    <record id="assistant_enrichment_rxnorm" model="ab.seo.assistant">
+      <field name="name">RxNorm</field>
+      <field name="provider">rxnorm</field>
+      <field name="sequence">70</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">rxnorm</field>
+      <field name="base_url">https://rxnav.nlm.nih.gov/REST</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Monthly full release plus ordered weekly RRF updates; public prescribable subset available.</field>
+    </record>
+    <record id="assistant_enrichment_drugcentral" model="ab.seo.assistant">
+      <field name="name">DrugCentral</field>
+      <field name="provider">drugcentral</field>
+      <field name="sequence">80</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">drugcentral</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">No guaranteed allowance; configure a conservative local cap.</field>
+    </record>
+    <record id="assistant_enrichment_dsld" model="ab.seo.assistant">
+      <field name="name">NIH Dietary Supplement Label Database</field>
+      <field name="provider">dsld</field>
+      <field name="sequence">90</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">dsld</field>
+      <field name="base_url">https://dsldapi.od.nih.gov/dsld/v9</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Bulk label downloads preferred; no guaranteed unlimited API quota.</field>
+    </record>
+    <record id="assistant_enrichment_openbeautyfacts" model="ab.seo.assistant">
+      <field name="name">Open Beauty Facts</field>
+      <field name="provider">openbeautyfacts</field>
+      <field name="sequence">100</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">openbeautyfacts</field>
+      <field name="base_url">https://world.openbeautyfacts.org/api/v2/product</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">No guaranteed allowance; configure a conservative local cap.</field>
+    </record>
+    <record id="assistant_enrichment_cosing" model="ab.seo.assistant">
+      <field name="name">CosIng</field>
+      <field name="provider">cosing</field>
+      <field name="sequence">110</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">cosing</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Official ingredient search/export; no documented public API verified. Inventory entry is not an approval.</field>
+    </record>
+    <record id="assistant_enrichment_cir" model="ab.seo.assistant">
+      <field name="name">Cosmetic Ingredient Review</field>
+      <field name="provider">cir</field>
+      <field name="sequence">120</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">cir</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Manual ingredient review with scientific references; no public bulk API verified.</field>
+    </record>
+    <record id="assistant_enrichment_openfoodfacts" model="ab.seo.assistant">
+      <field name="name">Open Food Facts</field>
+      <field name="provider">openfoodfacts</field>
+      <field name="sequence">130</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">openfoodfacts</field>
+      <field name="base_url">https://world.openfoodfacts.org/api/v2/product</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Product reads 100/minute; searches 10/minute. Bulk recommended for large collections.</field>
+    </record>
+    <record id="assistant_enrichment_openproductsfacts" model="ab.seo.assistant">
+      <field name="name">Open Products Facts</field>
+      <field name="provider">openproductsfacts</field>
+      <field name="sequence">140</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">openproductsfacts</field>
+      <field name="base_url">https://world.openproductsfacts.org/api/v2/product</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">No guaranteed allowance; configure a conservative local cap.</field>
+    </record>
+    <record id="assistant_enrichment_usda_fdc" model="ab.seo.assistant">
+      <field name="name">USDA FoodData Central</field>
+      <field name="provider">usda_fdc</field>
+      <field name="sequence">150</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">usda_fdc</field>
+      <field name="base_url">https://api.nal.usda.gov/fdc/v1</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Default 1,000 requests/hour/IP; bulk has no API-key requirement.</field>
+    </record>
+    <record id="assistant_enrichment_pubchem" model="ab.seo.assistant">
+      <field name="name">PubChem</field>
+      <field name="provider">pubchem</field>
+      <field name="sequence">160</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">pubchem</field>
+      <field name="base_url">https://pubchem.ncbi.nlm.nih.gov/rest/pug</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">At most 5 requests/second; dynamic throttling also applies.</field>
+    </record>
+    <record id="assistant_enrichment_chembl" model="ab.seo.assistant">
+      <field name="name">ChEMBL</field>
+      <field name="provider">chembl</field>
+      <field name="sequence">170</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">chembl</field>
+      <field name="base_url">https://www.ebi.ac.uk/chembl/api/data</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">No guaranteed allowance; configure a conservative local cap.</field>
+    </record>
+    <record id="assistant_enrichment_gs1" model="ab.seo.assistant">
+      <field name="name">GS1 Verified by GS1</field>
+      <field name="provider">gs1</field>
+      <field name="sequence">180</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">gs1</field>
+      <field name="base_url"></field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Public UI: 30 single GTIN queries/24h. Automated/bulk access requires separate service terms.</field>
+    </record>
+    <record id="assistant_enrichment_upcitemdb" model="ab.seo.assistant">
+      <field name="name">UPCitemdb</field>
+      <field name="provider">upcitemdb</field>
+      <field name="sequence">190</field>
+      <field name="assistant_type">data_source</field>
+      <field name="model_name">upcitemdb</field>
+      <field name="base_url">https://api.upcitemdb.com/prod/trial/lookup</field>
+      <field name="endpoint_path"></field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Free trial: 100 combined requests/day; burst limits also apply.</field>
+    </record>
+    <record id="assistant_enrichment_cohere" model="ab.seo.assistant">
+      <field name="name">Cohere</field>
+      <field name="provider">cohere</field>
+      <field name="sequence">270</field>
+      <field name="assistant_type">ai</field>
+      <field name="model_name">command-a-03-2025</field>
+      <field name="base_url">https://api.cohere.com/v2</field>
+      <field name="endpoint_path">/chat</field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Trial: 20 chat requests/minute, 1,000 calls/month; evaluation terms.</field>
+      <field name="monthly_limit">1000</field>
+      <field name="rpm_limit">20</field>
+      <field name="api_key_name">COHERE_API_KEY</field>
+    </record>
+    <record id="assistant_enrichment_cloudflare" model="ab.seo.assistant">
+      <field name="name">Cloudflare Workers AI</field>
+      <field name="provider">cloudflare</field>
+      <field name="sequence">280</field>
+      <field name="assistant_type">ai</field>
+      <field name="model_name">@cf/meta/llama-3.1-8b-instruct</field>
+      <field name="base_url">https://api.cloudflare.com/client/v4/accounts/{account_id}/ai</field>
+      <field name="endpoint_path">/run/{model}</field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">10,000 neurons/day free; configure model unit costs and account budget.</field>
+      <field name="daily_unit_limit">10000</field>
+      <field name="api_key_name">CLOUDFLARE_API_TOKEN</field>
+    </record>
+    <record id="assistant_enrichment_local_ai" model="ab.seo.assistant">
+      <field name="name">Local AI</field>
+      <field name="provider">local_ai</field>
+      <field name="sequence">290</field>
+      <field name="assistant_type">ai</field>
+      <field name="model_name">local_ai</field>
+      <field name="base_url">http://localhost:8000/v1</field>
+      <field name="endpoint_path">/chat/completions</field>
+      <field name="active" eval="True"/>
+      <field name="daily_limit">0</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Local hardware capacity; no external free allowance.</field>
+      <field name="rpm_limit">0</field>
+    </record>
+    <record id="assistant_enrichment_openai" model="ab.seo.assistant">
+      <field name="name">OpenAI (existing optional provider)</field>
+      <field name="provider">openai</field>
+      <field name="sequence">300</field>
+      <field name="assistant_type">ai</field>
+      <field name="model_name">gpt-4.1-mini</field>
+      <field name="base_url">https://api.openai.com/v1</field>
+      <field name="endpoint_path">/chat/completions</field>
+      <field name="active" eval="False"/>
+      <field name="daily_limit">100</field>
+      <field name="allow_remote" eval="False"/>
+      <field name="notes">Existing paid provider retained; configure account limits.</field>
+    </record>
+    <record id="pipeline_drug" model="ab_seo_pipeline">
+      <field name="name">Drug Product Pipeline</field>
+      <field name="domain">drug</field>
+    </record>
+    <record id="pipeline_drug_eda_eddb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_eda_eddb"/>
+      <field name="sequence">10</field>
+    </record>
+    <record id="pipeline_drug_egypt_a" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_egypt_a"/>
+      <field name="sequence">20</field>
+    </record>
+    <record id="pipeline_drug_egypt_b" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_egypt_b"/>
+      <field name="sequence">30</field>
+    </record>
+    <record id="pipeline_drug_fda_ndc" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_fda_ndc"/>
+      <field name="sequence">40</field>
+    </record>
+    <record id="pipeline_drug_dailymed" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_dailymed"/>
+      <field name="sequence">50</field>
+    </record>
+    <record id="pipeline_drug_openfda" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_openfda_drug_label"/>
+      <field name="sequence">60</field>
+    </record>
+    <record id="pipeline_drug_rxnorm" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_rxnorm"/>
+      <field name="sequence">70</field>
+    </record>
+    <record id="pipeline_drug_drugcentral" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_drugcentral"/>
+      <field name="sequence">80</field>
+    </record>
+    <record id="pipeline_drug_pubchem" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_pubchem"/>
+      <field name="sequence">90</field>
+    </record>
+    <record id="pipeline_drug_chembl" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_chembl"/>
+      <field name="sequence">100</field>
+    </record>
+    <record id="pipeline_drug_gs1" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_gs1"/>
+      <field name="sequence">110</field>
+    </record>
+    <record id="pipeline_drug_upcitemdb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_upcitemdb"/>
+      <field name="sequence">120</field>
+    </record>
+    <record id="pipeline_drug_ready_api" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_ready_api_trial"/>
+      <field name="sequence">130</field>
+    </record>
+    <record id="pipeline_drug_google_gemini" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_google_gemini_free"/>
+      <field name="sequence">140</field>
+    </record>
+    <record id="pipeline_drug_groq" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_groq_free"/>
+      <field name="sequence">150</field>
+    </record>
+    <record id="pipeline_drug_openrouter" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_openrouter_free"/>
+      <field name="sequence">160</field>
+    </record>
+    <record id="pipeline_drug_huggingface" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_huggingface_free"/>
+      <field name="sequence">170</field>
+    </record>
+    <record id="pipeline_drug_alibaba_qwen" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_alibaba_qwen"/>
+      <field name="sequence">180</field>
+    </record>
+    <record id="pipeline_drug_cohere" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_cohere"/>
+      <field name="sequence">190</field>
+    </record>
+    <record id="pipeline_drug_cloudflare" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_cloudflare"/>
+      <field name="sequence">200</field>
+    </record>
+    <record id="pipeline_drug_local_ai" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_drug"/>
+      <field name="provider_id" ref="assistant_enrichment_local_ai"/>
+      <field name="sequence">210</field>
+    </record>
+    <record id="pipeline_cosmetic" model="ab_seo_pipeline">
+      <field name="name">Cosmetic Product Pipeline</field>
+      <field name="domain">cosmetic</field>
+    </record>
+    <record id="pipeline_cosmetic_eda_eddb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_eda_eddb"/>
+      <field name="sequence">10</field>
+    </record>
+    <record id="pipeline_cosmetic_openbeautyfacts" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_openbeautyfacts"/>
+      <field name="sequence">20</field>
+    </record>
+    <record id="pipeline_cosmetic_cosing" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_cosing"/>
+      <field name="sequence">30</field>
+    </record>
+    <record id="pipeline_cosmetic_cir" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_cir"/>
+      <field name="sequence">40</field>
+    </record>
+    <record id="pipeline_cosmetic_pubchem" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_pubchem"/>
+      <field name="sequence">50</field>
+    </record>
+    <record id="pipeline_cosmetic_gs1" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_gs1"/>
+      <field name="sequence">60</field>
+    </record>
+    <record id="pipeline_cosmetic_upcitemdb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_upcitemdb"/>
+      <field name="sequence">70</field>
+    </record>
+    <record id="pipeline_cosmetic_openfda_cosmetic_event" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_openfda_cosmetic_event"/>
+      <field name="sequence">80</field>
+    </record>
+    <record id="pipeline_cosmetic_google_gemini" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_google_gemini_free"/>
+      <field name="sequence">90</field>
+    </record>
+    <record id="pipeline_cosmetic_groq" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_groq_free"/>
+      <field name="sequence">100</field>
+    </record>
+    <record id="pipeline_cosmetic_openrouter" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_openrouter_free"/>
+      <field name="sequence">110</field>
+    </record>
+    <record id="pipeline_cosmetic_huggingface" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_huggingface_free"/>
+      <field name="sequence">120</field>
+    </record>
+    <record id="pipeline_cosmetic_alibaba_qwen" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_alibaba_qwen"/>
+      <field name="sequence">130</field>
+    </record>
+    <record id="pipeline_cosmetic_cohere" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_cohere"/>
+      <field name="sequence">140</field>
+    </record>
+    <record id="pipeline_cosmetic_cloudflare" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_cloudflare"/>
+      <field name="sequence">150</field>
+    </record>
+    <record id="pipeline_cosmetic_local_ai" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_cosmetic"/>
+      <field name="provider_id" ref="assistant_enrichment_local_ai"/>
+      <field name="sequence">160</field>
+    </record>
+    <record id="pipeline_supplement" model="ab_seo_pipeline">
+      <field name="name">Supplement Product Pipeline</field>
+      <field name="domain">supplement</field>
+    </record>
+    <record id="pipeline_supplement_eda_eddb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_eda_eddb"/>
+      <field name="sequence">10</field>
+    </record>
+    <record id="pipeline_supplement_dsld" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_dsld"/>
+      <field name="sequence">20</field>
+    </record>
+    <record id="pipeline_supplement_pubchem" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_pubchem"/>
+      <field name="sequence">30</field>
+    </record>
+    <record id="pipeline_supplement_gs1" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_gs1"/>
+      <field name="sequence">40</field>
+    </record>
+    <record id="pipeline_supplement_upcitemdb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_upcitemdb"/>
+      <field name="sequence">50</field>
+    </record>
+    <record id="pipeline_supplement_google_gemini" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_google_gemini_free"/>
+      <field name="sequence">60</field>
+    </record>
+    <record id="pipeline_supplement_groq" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_groq_free"/>
+      <field name="sequence">70</field>
+    </record>
+    <record id="pipeline_supplement_openrouter" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_openrouter_free"/>
+      <field name="sequence">80</field>
+    </record>
+    <record id="pipeline_supplement_huggingface" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_huggingface_free"/>
+      <field name="sequence">90</field>
+    </record>
+    <record id="pipeline_supplement_alibaba_qwen" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_alibaba_qwen"/>
+      <field name="sequence">100</field>
+    </record>
+    <record id="pipeline_supplement_cohere" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_cohere"/>
+      <field name="sequence">110</field>
+    </record>
+    <record id="pipeline_supplement_cloudflare" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_cloudflare"/>
+      <field name="sequence">120</field>
+    </record>
+    <record id="pipeline_supplement_local_ai" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_supplement"/>
+      <field name="provider_id" ref="assistant_enrichment_local_ai"/>
+      <field name="sequence">130</field>
+    </record>
+    <record id="pipeline_food" model="ab_seo_pipeline">
+      <field name="name">Food Product Pipeline</field>
+      <field name="domain">food</field>
+    </record>
+    <record id="pipeline_food_openfoodfacts" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_openfoodfacts"/>
+      <field name="sequence">10</field>
+    </record>
+    <record id="pipeline_food_usda_fdc" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_usda_fdc"/>
+      <field name="sequence">20</field>
+    </record>
+    <record id="pipeline_food_gs1" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_gs1"/>
+      <field name="sequence">30</field>
+    </record>
+    <record id="pipeline_food_upcitemdb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_upcitemdb"/>
+      <field name="sequence">40</field>
+    </record>
+    <record id="pipeline_food_google_gemini" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_google_gemini_free"/>
+      <field name="sequence">50</field>
+    </record>
+    <record id="pipeline_food_groq" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_groq_free"/>
+      <field name="sequence">60</field>
+    </record>
+    <record id="pipeline_food_openrouter" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_openrouter_free"/>
+      <field name="sequence">70</field>
+    </record>
+    <record id="pipeline_food_huggingface" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_huggingface_free"/>
+      <field name="sequence">80</field>
+    </record>
+    <record id="pipeline_food_alibaba_qwen" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_alibaba_qwen"/>
+      <field name="sequence">90</field>
+    </record>
+    <record id="pipeline_food_cohere" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_cohere"/>
+      <field name="sequence">100</field>
+    </record>
+    <record id="pipeline_food_cloudflare" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_cloudflare"/>
+      <field name="sequence">110</field>
+    </record>
+    <record id="pipeline_food_local_ai" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_food"/>
+      <field name="provider_id" ref="assistant_enrichment_local_ai"/>
+      <field name="sequence">120</field>
+    </record>
+    <record id="pipeline_general" model="ab_seo_pipeline">
+      <field name="name">General Product Pipeline</field>
+      <field name="domain">general</field>
+    </record>
+    <record id="pipeline_general_openproductsfacts" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_openproductsfacts"/>
+      <field name="sequence">10</field>
+    </record>
+    <record id="pipeline_general_gs1" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_gs1"/>
+      <field name="sequence">20</field>
+    </record>
+    <record id="pipeline_general_upcitemdb" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_upcitemdb"/>
+      <field name="sequence">30</field>
+    </record>
+    <record id="pipeline_general_google_gemini" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_google_gemini_free"/>
+      <field name="sequence">40</field>
+    </record>
+    <record id="pipeline_general_groq" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_groq_free"/>
+      <field name="sequence">50</field>
+    </record>
+    <record id="pipeline_general_openrouter" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_openrouter_free"/>
+      <field name="sequence">60</field>
+    </record>
+    <record id="pipeline_general_huggingface" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_huggingface_free"/>
+      <field name="sequence">70</field>
+    </record>
+    <record id="pipeline_general_alibaba_qwen" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_alibaba_qwen"/>
+      <field name="sequence">80</field>
+    </record>
+    <record id="pipeline_general_cohere" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_cohere"/>
+      <field name="sequence">90</field>
+    </record>
+    <record id="pipeline_general_cloudflare" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_cloudflare"/>
+      <field name="sequence">100</field>
+    </record>
+    <record id="pipeline_general_local_ai" model="ab_seo_pipeline_step">
+      <field name="pipeline_id" ref="pipeline_general"/>
+      <field name="provider_id" ref="assistant_enrichment_local_ai"/>
+      <field name="sequence">110</field>
+    </record>
+  </data>
+</odoo>
