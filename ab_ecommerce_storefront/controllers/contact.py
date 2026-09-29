@@ -9,6 +9,10 @@ from odoo.tools import email_normalize
 
 
 class AbBusinessPages(http.Controller):
+    @http.route("/return-policy", type="http", auth="public", website=True, sitemap=True)
+    def return_policy(self, **kwargs):
+        return request.render("ab_ecommerce_storefront.return_policy_page")
+
     @http.route("/business-partnerships", type="http", auth="public", website=True, sitemap=True)
     def business_partnerships(self, **kwargs):
         return request.render("ab_ecommerce_storefront.business_partnerships")

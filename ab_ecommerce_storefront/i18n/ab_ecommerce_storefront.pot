@@ -2080,6 +2080,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "Home"
 msgstr ""
 
@@ -3782,6 +3783,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "Return Policy"
 msgstr ""
 
@@ -6786,4 +6788,99 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
 msgid "Your regular orders and prescription requests will appear here."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "14 days"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Abdin Pharmacies return policy for online purchases, return conditions, exceptions, and refund timing."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "After offer or discount date time for purchases with offer or discount."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "All returned items must be in a new and unused condition. With all original tags and labels attached and its original packaging."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "All returns must be within fourteen (14) days of the purchase date."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "As soon as the sales branch receives the product and in the event that the terms of return and acceptance apply to the product, the amount will be refunded to the customer's credit card"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Card refunds may take up to 21 business days."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Clear return conditions for purchases from Abdin Pharmacies."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Customer Care"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Exceptions"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "For returned item proof of purchase is required."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Items must be new, unused, tagged, and in original packaging."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Original condition"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Our customer will receive a refund within a certain number of days depending on his/her credit card issuer's policies, up to 21 business days."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Products that are kept in the refrigerator, cosmetic products or easy to open are not returned or exchanged"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Refund timing"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Return Policy | Abdin Pharmacies"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Returns must be within fourteen days of purchase."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "The following items cannot be returned or exchanged:"
 msgstr ""

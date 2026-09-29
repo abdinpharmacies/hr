@@ -986,6 +986,7 @@ msgstr "تتبع الطلب"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "Return Policy"
 msgstr "سياسة الاسترجاع"
 
@@ -2287,6 +2288,7 @@ msgstr "<span>الطلب</span>"
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "Home"
 msgstr "الرئيسية"
 
@@ -4881,3 +4883,98 @@ msgstr "ليس لديك طلبات حتى الآن"
 #. module: ab_ecommerce_storefront
 msgid "Your regular orders and prescription requests will appear here."
 msgstr "ستظهر طلباتك العادية وطلبات الروشتات هنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "14 days"
+msgstr "14 يومًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Abdin Pharmacies return policy for online purchases, return conditions, exceptions, and refund timing."
+msgstr "سياسة إرجاع مشتريات صيدليات عابدين عبر الإنترنت وشروط الإرجاع والاستثناءات ومواعيد رد المبالغ."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "After offer or discount date time for purchases with offer or discount."
+msgstr "لا تُقبل مرتجعات المشتريات التي تمت ضمن عرض أو خصم بعد انتهاء مدة العرض أو الخصم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "All returned items must be in a new and unused condition. With all original tags and labels attached and its original packaging."
+msgstr "يجب أن تكون جميع المنتجات المرتجعة جديدة وغير مستخدمة، مع جميع البطاقات والملصقات الأصلية وعبوتها الأصلية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "All returns must be within fourteen (14) days of the purchase date."
+msgstr "يجب إرجاع المنتجات خلال أربعة عشر (14) يومًا من تاريخ الشراء."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "As soon as the sales branch receives the product and in the event that the terms of return and acceptance apply to the product, the amount will be refunded to the customer's credit card"
+msgstr "بمجرد استلام فرع البيع للمنتج والتحقق من استيفائه شروط الإرجاع والقبول، يُرد المبلغ إلى بطاقة ائتمان العميل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Card refunds may take up to 21 business days."
+msgstr "قد تستغرق إعادة المبلغ إلى البطاقة مدة تصل إلى 21 يوم عمل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Clear return conditions for purchases from Abdin Pharmacies."
+msgstr "شروط واضحة لإرجاع المشتريات من صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Customer Care"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Exceptions"
+msgstr "الاستثناءات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "For returned item proof of purchase is required."
+msgstr "يلزم تقديم إثبات الشراء لإرجاع المنتج."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Items must be new, unused, tagged, and in original packaging."
+msgstr "يجب أن تكون المنتجات جديدة وغير مستخدمة، وببطاقاتها وعبواتها الأصلية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Original condition"
+msgstr "الحالة الأصلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Our customer will receive a refund within a certain number of days depending on his/her credit card issuer's policies, up to 21 business days."
+msgstr "يتلقى العميل المبلغ المسترد وفقًا لسياسة جهة إصدار بطاقته الائتمانية، خلال مدة قد تصل إلى 21 يوم عمل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Products that are kept in the refrigerator, cosmetic products or easy to open are not returned or exchanged"
+msgstr "لا تُسترجع أو تُستبدل المنتجات التي تُحفظ في الثلاجة أو مستحضرات التجميل أو المنتجات سهلة الفتح."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Refund timing"
+msgstr "موعد رد المبلغ"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Return Policy | Abdin Pharmacies"
+msgstr "سياسة الإرجاع | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Returns must be within fourteen days of purchase."
+msgstr "يجب إرجاع المنتجات خلال أربعة عشر يومًا من الشراء."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "The following items cannot be returned or exchanged:"
+msgstr "لا يمكن إرجاع المنتجات التالية أو استبدالها:"

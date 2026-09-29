@@ -36,6 +36,7 @@
         "views/management_menus.xml",
         "views/customer_testimonial_views.xml",
         "views/contact_templates.xml",
+        "views/legal_templates.xml",
         "views/browsing_history_templates.xml",
         "views/homepage.xml",
         "views/shop.xml",

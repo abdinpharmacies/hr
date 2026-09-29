@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="return_policy_page" name="Abdin Return Policy">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Return Policy | Abdin Pharmacies</t>
+            <t t-set="website_meta_description">Abdin Pharmacies return policy for online purchases, return conditions, exceptions, and refund timing.</t>
+            <div id="wrap" class="oe_structure ab-legal-page ab-return-policy-page">
+                <section class="ab-legal-hero">
+                    <div class="container">
+                        <nav class="ab-legal-breadcrumb" aria-label="Breadcrumb">
+                            <a href="/">Home</a>
+                            <i class="fa fa-angle-right" aria-hidden="true"/>
+                            <span aria-current="page">Return Policy</span>
+                        </nav>
+                        <div class="ab-legal-hero-content">
+                            <span class="ab-storefront-kicker">Customer Care</span>
+                            <h1>Return Policy</h1>
+                            <p>Clear return conditions for purchases from Abdin Pharmacies.</p>
+                        </div>
+                    </div>
+                </section>
+                <section class="ab-legal-content">
+                    <div class="container">
+                        <aside class="ab-legal-summary" aria-label="Return policy summary">
+                            <div>
+                                <span><i class="fa fa-calendar-check-o" aria-hidden="true"/></span>
+                                <strong>14 days</strong>
+                                <p>Returns must be within fourteen days of purchase.</p>
+                            </div>
+                            <div>
+                                <span><i class="fa fa-archive" aria-hidden="true"/></span>
+                                <strong>Original condition</strong>
+                                <p>Items must be new, unused, tagged, and in original packaging.</p>
+                            </div>
+                            <div>
+                                <span><i class="fa fa-credit-card" aria-hidden="true"/></span>
+                                <strong>Refund timing</strong>
+                                <p>Card refunds may take up to 21 business days.</p>
+                            </div>
+                        </aside>
+                        <article class="ab-legal-card">
+                            <h2>Return Policy</h2>
+                            <p>All returns must be within fourteen (14) days of the purchase date.</p>
+                            <p>All returned items must be in a new and unused condition. With all original tags and labels attached and its original packaging.</p>
+                            <p>For returned item proof of purchase is required.</p>
+                            <h3>Exceptions</h3>
+                            <p>The following items cannot be returned or exchanged:</p>
+                            <ul>
+                                <li>After offer or discount date time for purchases with offer or discount.</li>
+                                <li>Products that are kept in the refrigerator, cosmetic products or easy to open are not returned or exchanged</li>
+                            </ul>
+                            <p>As soon as the sales branch receives the product and in the event that the terms of return and acceptance apply to the product, the amount will be refunded to the customer's credit card</p>
+                            <p>Our customer will receive a refund within a certain number of days depending on his/her credit card issuer's policies, up to 21 business days.</p>
+                        </article>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
