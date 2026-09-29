@@ -17169,6 +17169,39 @@ body.ab-storefront .o_portal.container:has(+ .o_portal_wrap .ab-storefront-order
     }
 }
 
+.ab-prescription-selected-address {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .9rem 1rem;
+    border: 1px solid rgba(0, 95, 62, .12);
+    border-radius: .95rem;
+    background: #f7faf8;
+
+    > i {
+        margin-top: .2rem;
+        color: var(--ab-prescription-green);
+    }
+
+    > div {
+        min-width: 0;
+    }
+
+    strong {
+        display: block;
+        color: $ab-ink;
+        font-weight: var(--ab-font-weight-bold);
+    }
+
+    address {
+        margin: .2rem 0 0;
+        color: #667a72;
+        font-style: normal;
+        line-height: var(--ab-line-height-145);
+        overflow-wrap: anywhere;
+    }
+}
+
 .ab-prescription-address-field {
     .form-control {
         min-height: 118px;

@@ -81,6 +81,7 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         values.update({
             "prescription_country": country,
             "prescription_country_states": country_states,
+            "prescription_delivery_address": self._prescription_saved_delivery_address(),
             "recent_prescriptions": recent_prescriptions,
             "prescription_max_upload_mb": self._max_prescription_upload_size // (1024 * 1024),
         })
@@ -90,6 +91,24 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         return request.website.company_id.country_id or request.env["res.country"].sudo().search(
             [("code", "=", "EG")], limit=1,
         )
+
+    def _prescription_saved_delivery_address(self):
+        if request.env.user._is_public():
+            return request.env["res.partner"]
+        partner = request.env.user.partner_id.sudo()
+        commercial_partner = partner.commercial_partner_id
+        addresses = partner.child_ids.filtered(
+            lambda item: item.type in ("delivery", "other")
+        ) | partner
+        if partner != commercial_partner:
+            addresses |= commercial_partner.child_ids.filtered(
+                lambda item: item.type in ("delivery", "other")
+            ) | commercial_partner
+        country = self._prescription_country()
+        return addresses.filtered(
+            lambda item: item.street and item.city and item.state_id
+            and (not country or item.state_id.country_id == country)
+        )[:1]
 
     def _prescription_default_address_values(self, values):
         if values.get("guest_address") or values.get("guest_city") or values.get("guest_state_id"):
@@ -159,6 +178,13 @@ class AbPrescriptionOrderPortal(CustomerPortal):
         })
 
     def _prescription_partner_values(self, post):
+        if not request.env.user._is_public():
+            saved_address = self._prescription_saved_delivery_address()
+            if saved_address:
+                return {
+                    "partner_id": saved_address.id,
+                    "user_id": request.env.user.id,
+                }
         address_vals = self._prescription_delivery_address_values(post)
         if not request.env.user._is_public():
             partner = self._find_or_create_prescription_delivery_partner(

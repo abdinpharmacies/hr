@@ -177,15 +177,23 @@
                                 </section>
 
                                 <section class="ab-prescription-delivery-address" aria-labelledby="abPrescriptionDeliveryTitle">
-                                        <div class="ab-prescription-section-head">
-                                            <span class="ab-prescription-step" aria-hidden="true">
-                                                <t t-out="3 if request.env.user._is_public() else 2"/>
-                                            </span>
-                                            <div>
-                                                <h2 id="abPrescriptionDeliveryTitle">Delivery address</h2>
-                                                <p>Enter the details needed to reach your address.</p>
-                                            </div>
+                                    <div class="ab-prescription-section-head">
+                                        <span class="ab-prescription-step" aria-hidden="true">
+                                            <t t-out="3 if request.env.user._is_public() else 2"/>
+                                        </span>
+                                        <div>
+                                            <h2 id="abPrescriptionDeliveryTitle">Delivery address</h2>
+                                            <p t-if="not prescription_delivery_address">Enter the details needed to reach your address.</p>
                                         </div>
+                                    </div>
+                                    <div t-if="prescription_delivery_address" class="ab-prescription-selected-address">
+                                        <i class="fa fa-map-marker" aria-hidden="true"/>
+                                        <div>
+                                            <strong t-out="prescription_delivery_address.name"/>
+                                            <address t-out="prescription_delivery_address.contact_address_inline"/>
+                                        </div>
+                                    </div>
+                                    <t t-else="">
                                         <div class="row g-3 ab-prescription-location-fields">
                                             <div class="col-12 col-md-6 ab-prescription-location-field">
                                                 <label for="abPrescriptionGuestState">Governorate</label>
@@ -227,6 +235,7 @@
                                                       required="required"><t t-out="guest_address or ''"/></textarea>
                                             <small class="form-text">Include the street, building, floor, apartment, and a nearby landmark.</small>
                                         </div>
+                                    </t>
                                 </section>
 
                                 <button type="submit" class="btn btn-primary ab-prescription-submit" data-ab-prescription-submit="" disabled="disabled">
