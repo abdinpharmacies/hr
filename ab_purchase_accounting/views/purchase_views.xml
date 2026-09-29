@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_header_form_accounting" model="ir.ui.view">
+        <field name="name">view_purchase_header_form_accounting</field>
+        <field name="model">ab_purchase_header</field>
+        <field name="inherit_id" ref="ab_purchase.ab_purchase_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="purchase_accounting_journal_id"
+                       invisible="1"
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                <button name="action_view_purchase_accounting_journal"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-book"
+                        invisible="not purchase_accounting_journal_id"
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                    <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_notice_header_form_accounting" model="ir.ui.view">
+        <field name="name">view_purchase_notice_header_form_accounting</field>
+        <field name="model">ab_purchase_notice_header</field>
+        <field name="inherit_id" ref="ab_purchase.ab_purchase_notice_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="purchase_accounting_journal_id"
+                       invisible="1"
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                <button name="action_view_purchase_accounting_journal"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-book"
+                        invisible="not purchase_accounting_journal_id"
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                    <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_ob_header_form_accounting" model="ir.ui.view">
+        <field name="name">view_purchase_ob_header_form_accounting</field>
+        <field name="model">ab_purchase_ob_header</field>
+        <field name="inherit_id" ref="ab_purchase_ob.ab_purchase_ob_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <field name="purchase_accounting_journal_id"
+                       invisible="1"
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                <button name="action_view_purchase_accounting_journal"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-book"
+                        invisible="not purchase_accounting_journal_id"
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                    <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_purchase_accounting_config_list" model="ir.ui.view">
+        <field name="name">view_purchase_accounting_config_list</field>
+        <field name="model">ab_purchase_accounting_config</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="company_id"/>
+                <field name="branch_id"/>
+                <field name="activation_date"/>
+                <field name="purchase_doctype_id"/>
+                <field name="return_doctype_id"/>
+                <field name="posting_user_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_purchase_accounting_config_form" model="ir.ui.view">
+        <field name="name">view_purchase_accounting_config_form</field>
+        <field name="model">ab_purchase_accounting_config</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="company_id"/>
+                        <field name="branch_id"/>
+                        <field name="active"/>
+                        <field name="activation_date"/>
+                        <field name="posting_user_id"/>
+                    </group>
+                    <group string="Document Types">
+                        <field name="purchase_doctype_id" domain="[('company_id', '=', company_id), ('active', '=', True)]"/>
+                        <field name="return_doctype_id" domain="[('company_id', '=', company_id), ('active', '=', True)]"/>
+                    </group>
+                    <group string="Accounts">
+                        <field name="inventory_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="tax_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="supplier_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                    </group>
+                    <group string="Non-purchase Receipt Offsets">
+                        <field name="receipt_account_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="receipt_type_id"/>
+                                <field name="offset_account_id" domain="[('company_id', '=', parent.company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Dimensions">
+                        <field name="default_costcenter_id"/>
+                        <field name="supplier_due_days"/>
+                    </group>
+                    <group>
+                        <field name="note" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_purchase_accounting_config" model="ir.actions.act_window">
+        <field name="name">Purchase Accounting</field>
+        <field name="res_model">ab_purchase_accounting_config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_purchase_accounting_config"
+              name="Purchase Accounting"
+              parent="ab_accounting.menu_configuration"
+              action="action_purchase_accounting_config"
+              sequence="8"
+              groups="ab_accounting.group_ab_accounting_manager"/>
+</odoo>
