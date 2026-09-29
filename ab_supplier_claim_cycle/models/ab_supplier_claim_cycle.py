@@ -2,10 +2,12 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from .ab_supplier import PAYMENT_NATURE, BUSINESS_CATEGORY, TAX_CLASSIFICATION, SUPPLIER_SECTION
 
-STATES = [('legacy_review', 'Legacy — Review Required'), ('draft', 'Draft'), ('inventory', 'Inventory'), ('purchasing', 'Purchasing'),
+STATES = [('legacy_review', 'Legacy — Review Required'), ('draft', 'Draft'), ('inventory', 'Inventory'),
+          ('purchasing', 'Purchasing'),
           ('inventory_purchase', 'Inventory and Purchasing'),
           ('supplier_accounts', 'Supplier Accounts'), ('bank_accounts', 'Bank Accounts'),
-          ('returned_secretarial', 'Returned to Secretarial'), ('ready_to_close', 'Ready to Close'), ('closed', 'Closed')]
+          ('returned_secretarial', 'Returned to Secretarial'), ('ready_to_close', 'Ready to Close'),
+          ('closed', 'Closed')]
 DECISIONS = [('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected'),
              ('deferred', 'Deferred'), ('cancelled', 'Cancelled'), ('not_required', 'Not Required')]
 DEPARTMENTS = ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts')
@@ -21,10 +23,12 @@ class SupplierClaimCycle(models.Model):
     _rec_name = 'supplier_id'
     _order = 'id desc'
 
-    supplier_id = fields.Many2one('ab_supplier', required=True, ondelete='restrict', tracking=True)
+    supplier_id = fields.Many2one('ab_costcenter', required=True, ondelete='restrict', tracking=True,
+                                  domain=[('code', '=ilike', '1-%')]
+                                  )
     num_of_invoice = fields.Integer(required=True, tracking=True)
     state = fields.Selection(STATES, default='draft', required=True, readonly=True, copy=False, index=True)
-    user_id = fields.Many2one('res.users', default=lambda self: self.env.user, readonly=True, ondelete='restrict')
+    user_id = fields.Many2one('res.users', default=lambda self: self.env.user, readonly=True, ondelete='set null')
     area = fields.Selection([('south', 'South'), ('north', 'North')], required=True)
     amount_of_check = fields.Char(required=True)
     type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy')], required=True)
@@ -52,7 +56,8 @@ class SupplierClaimCycle(models.Model):
     bracket_withdrawal_bracket = fields.Float(compute='_compute_bracket_terms', string='Withdrawal Bracket')
     review_round = fields.Integer(default=0, readonly=True, copy=False)
     resume_stage = fields.Selection(STATES, readonly=True, copy=False)
-    rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True, copy=False)
+    rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True,
+                                            copy=False)
     rejection_reason = fields.Text(readonly=True, copy=False)
     secretarial_notes = fields.Text()
     # Inline binary storage protects evidence from direct ir.attachment mutations.
@@ -183,7 +188,8 @@ class SupplierClaimCycle(models.Model):
     def _compute_bracket_terms(self):
         for claim in self:
             terms = claim._bracket_values() if claim.state == 'draft' else (claim.bracket_snapshot or {})
-            for name in ('payment_type', 'start_day', 'termination_day', 'credit_days', 'discount', 'withdrawal_bracket'):
+            for name in ('payment_type', 'start_day', 'termination_day', 'credit_days', 'discount',
+                         'withdrawal_bracket'):
                 claim['bracket_' + name] = terms.get(name, False)
 
     @api.constrains('supplier_id', 'bracket_id')
@@ -205,7 +211,8 @@ class SupplierClaimCycle(models.Model):
                         raise ValidationError(_('A deferred review must retain its follow-up date.'))
 
     def _is_admin(self):
-        return self.env.su or self.env.user.has_group(GROUP_PREFIX + 'admin') or self.env.user.has_group('base.group_system')
+        return self.env.su or self.env.user.has_group(GROUP_PREFIX + 'admin') or self.env.user.has_group(
+            'base.group_system')
 
     def _require_role(self, role):
         if not self._is_admin() and not self.env.user.has_group(GROUP_PREFIX + role):
@@ -223,12 +230,13 @@ class SupplierClaimCycle(models.Model):
     def _protected_fields(self):
         return {'legacy_status', 'state', 'user_id', 'business_category', 'bracket_snapshot',
                 'review_round', 'resume_stage', 'rejection_department', 'rejection_reason', 'history_ids'} | {
-                    f'{d}_decision' for d in DEPARTMENTS}
+            f'{d}_decision' for d in DEPARTMENTS}
 
     @api.model_create_multi
     def create(self, vals_list):
         self._require_role('user')
-        allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id', 'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
+        allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id', 'num_of_invoice',
+                   'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
         defaults = dict(state='draft', legacy_status=False, user_id=self.env.uid, review_round=0,
                         business_category=False, bracket_snapshot=False, resume_stage=False,
                         rejection_department=False, rejection_reason=False, active=True,
@@ -252,7 +260,7 @@ class SupplierClaimCycle(models.Model):
         claims = super().create(clean)
         claims._record_secretarial_notes()
         explicit_ids = {claim.id for claim, vals in zip(claims, vals_list) if vals.get('payment_nature')}
-        claims.filtered(lambda claim: claim.id in explicit_ids)._save_supplier_payment_nature()
+        # claims.filtered(lambda claim: claim.id in explicit_ids)._save_supplier_payment_nature()
         return claims
 
     def _save_supplier_payment_nature(self):
@@ -282,7 +290,8 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):
                 claim._require_role('user')
-                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id'} if claim.state == 'draft' else set())
+                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature',
+                                                'bracket_id'} if claim.state == 'draft' else set())
             else:
                 allowed = set()
                 for d in DEPARTMENTS:
@@ -303,7 +312,8 @@ class SupplierClaimCycle(models.Model):
         if vals.get('payment_nature'):
             self._save_supplier_payment_nature()
         if 'secretarial_notes' in vals:
-            self.filtered(lambda claim: (claim.secretarial_notes or '').strip() != previous_notes[claim.id])._record_secretarial_notes()
+            self.filtered(lambda claim: (claim.secretarial_notes or '').strip() != previous_notes[
+                claim.id])._record_secretarial_notes()
         return result
 
     @api.ondelete(at_uninstall=True)
@@ -314,7 +324,8 @@ class SupplierClaimCycle(models.Model):
         # Private RPC-inaccessible bypass, never controlled by a context flag.
         return super(SupplierClaimCycle, self.sudo()).write(vals)
 
-    def _history_values(self, event, from_state=None, department=False, decision=False, reason=False, followup_date=False):
+    def _history_values(self, event, from_state=None, department=False, decision=False, reason=False,
+                        followup_date=False):
         self.ensure_one()
         return {
             'claim_id': self.id, 'event': event, 'from_state': from_state or self.state, 'to_state': self.state,
@@ -340,7 +351,8 @@ class SupplierClaimCycle(models.Model):
         if any(claim.state != 'legacy_review' for claim in self):
             raise UserError(_('Only recovered legacy claims can restart review.'))
         self._workflow_write({'state': 'draft'})
-        self._log('migrated', 'legacy_review', reason='Administrator explicitly restarted the legacy claim for fresh review.')
+        self._log('migrated', 'legacy_review',
+                  reason='Administrator explicitly restarted the legacy claim for fresh review.')
         return True
 
     def action_submit(self):
@@ -429,7 +441,8 @@ class SupplierClaimCycle(models.Model):
                 else:
                     vals['state'] = 'ready_to_close'
             claim._workflow_write(vals)
-            claim._log('decision', old_state, department, decision, reason, followup if decision == 'deferred' else False)
+            claim._log('decision', old_state, department, decision, reason,
+                       followup if decision == 'deferred' else False)
         return True
 
     def action_close(self):

@@ -1,297 +1,432 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-  <record id="invoice_view_tree" model="ir.ui.view">
-    <field name="name">invoice_view_tree</field>
-    <field name="model">ab_supplier_claim_cycle</field>
-    <field name="arch" type="xml">
-      <list>
-        <field name="supplier_id"/>
-        <field name="num_of_invoice"/>
-        <field name="area"/>
-        <field name="amount_of_check"/>
-        <field name="payment_nature"/>
-        <field name="review_round"/>
-        <field name="inventory_decision" widget="badge" optional="show"/>
-        <field name="purchasing_decision" widget="badge" optional="show"/>
-        <field name="supplier_accounts_decision" widget="badge" optional="show"/>
-        <field name="bank_accounts_decision" widget="badge" optional="show"/>
-        <field name="state" widget="badge"/>
-      </list>
-    </field>
-  </record>
-  <record id="invoice_view_form" model="ir.ui.view">
-    <field name="name">invoice_view_form</field>
-    <field name="model">ab_supplier_claim_cycle</field>
-    <field name="arch" type="xml">
-      <form duplicate="false">
-        <header>
-          <button name="action_restart_legacy_review" string="Restart Legacy Review" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'legacy_review' or not active" confirm="Return this legacy claim to Draft for fresh approval? Its original status and history will be preserved."/>
-          <button name="action_submit" string="Submit" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'draft' or not active" class="oe_highlight"/>
-          <button name="action_submit" string="Resubmit" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'returned_secretarial' or not active" class="oe_highlight"/>
-          <button name="action_close" string="Close Claim" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'ready_to_close' or not active" class="oe_highlight"/>
-          <field name="state" widget="statusbar" statusbar_visible="draft,inventory,purchasing,supplier_accounts,bank_accounts,ready_to_close,closed" invisible="payment_nature == 'cash'" options="{'clickable': False}"/>
-          <field name="state" widget="statusbar" statusbar_visible="draft,supplier_accounts,ready_to_close,closed" invisible="payment_nature != 'cash'" options="{'clickable': False}"/>
-        </header>
-        <sheet>
-          <field name="active" invisible="True"/>
-          <group string="Legacy Recovery" invisible="state != 'legacy_review'">
-            <separator string="Department approvals are unverified. An administrator can restart this claim for fresh review."/>
-            <field name="legacy_status" string="Original Legacy Status"/>
-          </group>
-          <group>
-            <field name="supplier_id" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/>
-            <field name="supplier_id" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="num_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="num_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="area" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="area" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="amount_of_check" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="amount_of_check" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="type_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="secretarial_notes" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="secretarial_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="user_id" readonly="True"/>
-            <field name="review_round" readonly="True"/>
-            <field name="payment_nature" readonly="True"/>
-            <field name="business_category" readonly="True"/>
-            <field name="tax_classification" readonly="True"/>
-            <field name="rejection_department" readonly="True" invisible="state != 'returned_secretarial'"/>
-            <field name="rejection_reason" readonly="True" invisible="state != 'returned_secretarial'"/>
-          </group>
-          <notebook>
-            <page string="Inventory" name="inventory">
-              <group>
-                <field name="inventory_decision" widget="badge"/>
-                <field name="inventory_notes" readonly="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="inventory_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_inventory,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="inventory_followup_date" readonly="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="inventory_followup_date" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_inventory,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-              </group>
-              <button name="action_department_decision" string="Approve" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'inventory', 'claim_decision': 'approved'}" class="btn-primary"/>
-              <button name="action_department_decision" string="Reject" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'inventory', 'claim_decision': 'rejected'}" class="btn-secondary"/>
-              <button name="action_department_decision" string="Defer" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'inventory', 'claim_decision': 'deferred'}" class="btn-secondary"/>
-            </page>
-            <page string="Purchasing" name="purchasing">
-              <group>
-                <field name="purchasing_decision" widget="badge"/>
-                <field name="purchasing_notes" readonly="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="purchasing_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_purchasing,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="purchasing_followup_date" readonly="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="purchasing_followup_date" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_purchasing,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-              </group>
-              <button name="action_department_decision" string="Approve" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'purchasing', 'claim_decision': 'approved'}" class="btn-primary"/>
-              <button name="action_department_decision" string="Reject" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'purchasing', 'claim_decision': 'rejected'}" class="btn-secondary"/>
-              <button name="action_department_decision" string="Defer" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'purchasing', 'claim_decision': 'deferred'}" class="btn-secondary"/>
-            </page>
-            <page string="Supplier Accounts" name="supplier_accounts">
-              <group>
-                <field name="supplier_accounts_decision" widget="badge"/>
-                <field name="supplier_accounts_notes" readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="supplier_accounts_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="supplier_accounts_followup_date" readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="supplier_accounts_followup_date" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="cheque_attachment" readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" filename="cheque_filename"/>
-                <field name="cheque_attachment" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin" filename="cheque_filename"/>
-                <field name="cheque_filename" readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="cheque_filename" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-              </group>
-              <button name="action_department_decision" string="Approve" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'supplier_accounts', 'claim_decision': 'approved'}" class="btn-primary"/>
-              <button name="action_department_decision" string="Reject" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'supplier_accounts', 'claim_decision': 'rejected'}" class="btn-secondary"/>
-              <button name="action_department_decision" string="Defer" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'supplier_accounts', 'claim_decision': 'deferred'}" class="btn-secondary"/>
-            </page>
-            <page string="Bank Accounts" name="bank_accounts">
-              <group>
-                <field name="bank_accounts_decision" widget="badge"/>
-                <field name="bank_accounts_notes" readonly="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="bank_accounts_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="bank_accounts_followup_date" readonly="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                <field name="bank_accounts_followup_date" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-              </group>
-              <button name="action_department_decision" string="Approve" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'bank_accounts', 'claim_decision': 'approved'}" class="btn-primary"/>
-              <button name="action_department_decision" string="Reject" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'bank_accounts', 'claim_decision': 'rejected'}" class="btn-secondary"/>
-              <button name="action_department_decision" string="Defer" type="object" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin" invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active" context="{'claim_department': 'bank_accounts', 'claim_decision': 'deferred'}" class="btn-secondary"/>
-            </page>
-            <page string="Stage History" name="history">
-              <field name="history_ids">
-                <list create="false" edit="false" delete="false">
-                  <field name="occurred_at"/>
-                  <field name="user_id"/>
-                  <field name="review_round"/>
-                  <field name="event"/>
-                  <field name="from_state"/>
-                  <field name="to_state"/>
-                  <field name="department"/>
-                  <field name="decision"/>
-                  <field name="reason"/>
-                  <field name="followup_date"/>
-                </list>
-              </field>
-            </page>
-          </notebook>
-        </sheet>
-      </form>
-    </field>
-  </record>
-  <record id="invoice_view_form_simple" model="ir.ui.view">
-    <field name="name">supplier.claim.form.simple</field>
-    <field name="model">ab_supplier_claim_cycle</field>
-    <field name="inherit_id" ref="invoice_view_form"/>
-    <field name="arch" type="xml">
-      <xpath expr="//header/field[@name='state']" position="before">
-        <xpath expr="//page[@name='inventory']/button[contains(@context, 'approved')]" position="move"/>
-        <xpath expr="//page[@name='inventory']/button[contains(@context, 'rejected')]" position="move"/>
-        <xpath expr="//page[@name='inventory']/button[contains(@context, 'deferred')]" position="move"/>
-        <xpath expr="//page[@name='purchasing']/button[contains(@context, 'approved')]" position="move"/>
-        <xpath expr="//page[@name='purchasing']/button[contains(@context, 'rejected')]" position="move"/>
-        <xpath expr="//page[@name='purchasing']/button[contains(@context, 'deferred')]" position="move"/>
-        <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'approved')]" position="move"/>
-        <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'rejected')]" position="move"/>
-        <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'deferred')]" position="move"/>
-        <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'approved')]" position="move"/>
-        <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'rejected')]" position="move"/>
-        <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'deferred')]" position="move"/>
-      </xpath>
-      <xpath expr="//sheet/notebook" position="before">
-        <group name="department_reviews" col="2"/>
-      </xpath>
-      <xpath expr="//group[@name='department_reviews']" position="inside">
-        <xpath expr="//page[@name='inventory']/group" position="move"/>
-        <xpath expr="//page[@name='purchasing']/group" position="move"/>
-        <xpath expr="//page[@name='supplier_accounts']/group" position="move"/>
-        <xpath expr="//page[@name='bank_accounts']/group" position="move"/>
-      </xpath>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='inventory_decision']]" position="attributes">
-        <attribute name="string">Inventory</attribute>
-      </xpath>
-      <xpath expr="//page[@name='inventory']" position="replace"/>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='purchasing_decision']]" position="attributes">
-        <attribute name="string">Purchasing</attribute>
-      </xpath>
-      <xpath expr="//page[@name='purchasing']" position="replace"/>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='supplier_accounts_decision']]" position="attributes">
-        <attribute name="string">Supplier Accounts</attribute>
-      </xpath>
-      <xpath expr="//page[@name='supplier_accounts']" position="replace"/>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]" position="attributes">
-        <attribute name="string">Bank Accounts</attribute>
-      </xpath>
-      <xpath expr="//page[@name='bank_accounts']" position="replace"/>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='inventory_decision']]" position="attributes">
-        <attribute name="invisible">state != 'inventory'</attribute>
-      </xpath>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='purchasing_decision']]" position="attributes">
-        <attribute name="invisible">state != 'purchasing'</attribute>
-      </xpath>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='supplier_accounts_decision']]" position="attributes">
-        <attribute name="invisible">state != 'supplier_accounts'</attribute>
-      </xpath>
-      <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]" position="attributes">
-        <attribute name="invisible">state != 'bank_accounts'</attribute>
-      </xpath>
-    </field>
-  </record>
-  <record id="invoice_view_search" model="ir.ui.view">
-    <field name="name">invoice_view_search</field>
-    <field name="model">ab_supplier_claim_cycle</field>
-    <field name="arch" type="xml">
-      <search>
-        <field name="supplier_id"/>
-        <field name="user_id"/>
-        <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
-        <filter name="inventory_purchase" string="Inventory" domain="[('state', '=', 'inventory')]"/>
-        <filter name="purchasing" string="Purchasing" domain="[('state', '=', 'purchasing')]"/>
-        <filter name="supplier_accounts" string="Supplier Accounts" domain="[('state', '=', 'supplier_accounts')]"/>
-        <filter name="bank_accounts" string="Bank Accounts" domain="[('state', '=', 'bank_accounts')]"/>
-        <filter name="returned_secretarial" string="Returned to Secretarial" domain="[('state', '=', 'returned_secretarial')]"/>
-        <filter name="ready_to_close" string="Ready to Close" domain="[('state', '=', 'ready_to_close')]"/>
-        <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
-        <filter name="cash" string="Cash" domain="[('payment_nature', '=', 'cash')]"/>
-        <filter name="non_cash" string="Non-cash" domain="[('payment_nature', '=', 'non_cash')]"/>
-        <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
-        <filter name="group_state" string="Stage" context="{'group_by': 'state'}"/>
-      </search>
-    </field>
-  </record>
-  <record id="invoice_action" model="ir.actions.act_window">
-    <field name="name">All Claims</field>
-    <field name="domain">[]</field>
-    <field name="context">{}</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-  </record>
-  <menuitem id="invoice_menu" name="All Claims" parent="supplier_claim_cycle_sub_menu" action="invoice_action" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <record id="queue_user" model="ir.actions.act_window">
-    <field name="name">Secretarial Queue</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-    <field name="domain">[('state', 'in', ['draft', 'returned_secretarial', 'ready_to_close'])]</field>
-  </record>
-  <menuitem id="queue_menu_user" name="Secretarial Queue" parent="supplier_claim_cycle_sub_menu" action="queue_user" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <record id="queue_inventory" model="ir.actions.act_window">
-    <field name="name">Inventory Queue</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-    <field name="domain">[('state', '=', 'inventory'), ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
-  </record>
-  <menuitem id="queue_menu_inventory" name="Inventory Queue" parent="supplier_claim_cycle_sub_menu" action="queue_inventory" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <record id="queue_purchasing" model="ir.actions.act_window">
-    <field name="name">Purchasing Queue</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-    <field name="domain">[('state', '=', 'purchasing'), ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
-  </record>
-  <menuitem id="queue_menu_purchasing" name="Purchasing Queue" parent="supplier_claim_cycle_sub_menu" action="queue_purchasing" groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <record id="queue_supplier_accounts" model="ir.actions.act_window">
-    <field name="name">Supplier Accounts Queue</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-    <field name="domain">[('state', '=', 'supplier_accounts'), ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
-  </record>
-  <menuitem id="queue_menu_supplier_accounts" name="Supplier Accounts Queue" parent="supplier_claim_cycle_sub_menu" action="queue_supplier_accounts" groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <record id="queue_bank_accounts" model="ir.actions.act_window">
-    <field name="name">Bank Accounts Queue</field>
-    <field name="res_model">ab_supplier_claim_cycle</field>
-    <field name="view_mode">list,form</field>
-    <field name="domain">[('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['pending', 'deferred'])]</field>
-  </record>
-  <menuitem id="queue_menu_bank_accounts" name="Bank Accounts Queue" parent="supplier_claim_cycle_sub_menu" action="queue_bank_accounts" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-  <!-- Keep legacy action/XML IDs available without exposing stage-filtered menus. -->
-  <record id="queue_menu_user" model="ir.ui.menu">
-    <field name="active" eval="False"/>
-  </record>
-  <record id="queue_menu_inventory" model="ir.ui.menu">
-    <field name="active" eval="False"/>
-  </record>
-  <record id="queue_menu_purchasing" model="ir.ui.menu">
-    <field name="active" eval="False"/>
-  </record>
-  <record id="queue_menu_supplier_accounts" model="ir.ui.menu">
-    <field name="active" eval="False"/>
-  </record>
-  <record id="queue_menu_bank_accounts" model="ir.ui.menu">
-    <field name="active" eval="False"/>
-  </record>
-  <record id="invoice_view_list_simple" model="ir.ui.view">
-    <field name="name">supplier.claim.list.simple</field>
-    <field name="model">ab_supplier_claim_cycle</field>
-    <field name="inherit_id" ref="invoice_view_tree"/>
-    <field name="arch" type="xml">
-      <xpath expr="//field[@name='review_round']" position="attributes">
-        <attribute name="optional">hide</attribute>
-      </xpath>
-      <xpath expr="//field[@name='inventory_decision']" position="attributes">
-        <attribute name="optional">hide</attribute>
-      </xpath>
-      <xpath expr="//field[@name='purchasing_decision']" position="attributes">
-        <attribute name="optional">hide</attribute>
-      </xpath>
-      <xpath expr="//field[@name='supplier_accounts_decision']" position="attributes">
-        <attribute name="optional">hide</attribute>
-      </xpath>
-      <xpath expr="//field[@name='bank_accounts_decision']" position="attributes">
-        <attribute name="optional">hide</attribute>
-      </xpath>
-    </field>
-  </record>
+    <record id="invoice_view_tree" model="ir.ui.view">
+        <field name="name">invoice_view_tree</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="supplier_id"/>
+                <field name="num_of_invoice"/>
+                <field name="area"/>
+                <field name="amount_of_check"/>
+                <field name="payment_nature"/>
+                <field name="review_round"/>
+                <field name="inventory_decision" widget="badge" optional="show"/>
+                <field name="purchasing_decision" widget="badge" optional="show"/>
+                <field name="supplier_accounts_decision" widget="badge" optional="show"/>
+                <field name="bank_accounts_decision" widget="badge" optional="show"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+    <record id="invoice_view_form" model="ir.ui.view">
+        <field name="name">invoice_view_form</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="arch" type="xml">
+            <form duplicate="false">
+                <header>
+                    <button name="action_restart_legacy_review" string="Restart Legacy Review" type="object"
+                            groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
+                            invisible="state != 'legacy_review' or not active"
+                            confirm="Return this legacy claim to Draft for fresh approval? Its original status and history will be preserved."/>
+                    <button name="action_submit" string="Submit" type="object"
+                            groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                            invisible="state != 'draft' or not active" class="oe_highlight"/>
+                    <button name="action_submit" string="Resubmit" type="object"
+                            groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                            invisible="state != 'returned_secretarial' or not active" class="oe_highlight"/>
+                    <button name="action_close" string="Close Claim" type="object"
+                            groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                            invisible="state != 'ready_to_close' or not active" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,inventory,purchasing,supplier_accounts,bank_accounts,ready_to_close,closed"
+                           invisible="payment_nature == 'cash'" options="{'clickable': False}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,supplier_accounts,ready_to_close,closed"
+                           invisible="payment_nature != 'cash'" options="{'clickable': False}"/>
+                </header>
+                <sheet>
+                    <field name="active" invisible="True"/>
+                    <group string="Legacy Recovery" invisible="state != 'legacy_review'">
+                        <separator
+                                string="Department approvals are unverified. An administrator can restart this claim for fresh review."/>
+                        <field name="legacy_status" string="Original Legacy Status"/>
+                    </group>
+                    <group>
+                        <field name="supplier_id" readonly="state != 'draft' or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                               options="{'no_create': True}"/>
+                        <field name="supplier_id" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="num_of_invoice"
+                               readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="num_of_invoice" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="area" readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="area" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="amount_of_check"
+                               readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="amount_of_check" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="type_of_invoice"
+                               readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="type_of_invoice" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="secretarial_notes"
+                               readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="secretarial_notes" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="user_id" readonly="True"/>
+                        <field name="review_round" readonly="True"/>
+                        <field name="payment_nature" readonly="True"/>
+                        <field name="business_category" readonly="True"/>
+                        <field name="tax_classification" readonly="True"/>
+                        <field name="rejection_department" readonly="True" invisible="state != 'returned_secretarial'"/>
+                        <field name="rejection_reason" readonly="True" invisible="state != 'returned_secretarial'"/>
+                    </group>
+                    <notebook>
+                        <page string="Inventory" name="inventory">
+                            <group>
+                                <field name="inventory_decision" widget="badge"/>
+                                <field name="inventory_notes"
+                                       readonly="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="inventory_notes" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_inventory,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="inventory_followup_date"
+                                       readonly="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="inventory_followup_date" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_inventory,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                            </group>
+                            <button name="action_department_decision" string="Approve" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'inventory', 'claim_decision': 'approved'}"
+                                    class="btn-primary"/>
+                            <button name="action_department_decision" string="Reject" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'inventory', 'claim_decision': 'rejected'}"
+                                    class="btn-secondary"/>
+                            <button name="action_department_decision" string="Defer" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'inventory' or inventory_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'inventory', 'claim_decision': 'deferred'}"
+                                    class="btn-secondary"/>
+                        </page>
+                        <page string="Purchasing" name="purchasing">
+                            <group>
+                                <field name="purchasing_decision" widget="badge"/>
+                                <field name="purchasing_notes"
+                                       readonly="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="purchasing_notes" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_purchasing,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="purchasing_followup_date"
+                                       readonly="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="purchasing_followup_date" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_purchasing,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                            </group>
+                            <button name="action_department_decision" string="Approve" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'purchasing', 'claim_decision': 'approved'}"
+                                    class="btn-primary"/>
+                            <button name="action_department_decision" string="Reject" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'purchasing', 'claim_decision': 'rejected'}"
+                                    class="btn-secondary"/>
+                            <button name="action_department_decision" string="Defer" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'purchasing' or purchasing_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'purchasing', 'claim_decision': 'deferred'}"
+                                    class="btn-secondary"/>
+                        </page>
+                        <page string="Supplier Accounts" name="supplier_accounts">
+                            <group>
+                                <field name="supplier_accounts_decision" widget="badge"/>
+                                <field name="supplier_accounts_notes"
+                                       readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="supplier_accounts_notes" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="supplier_accounts_followup_date"
+                                       readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="supplier_accounts_followup_date" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="cheque_attachment"
+                                       readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                       filename="cheque_filename"/>
+                                <field name="cheque_attachment" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                       filename="cheque_filename"/>
+                                <field name="cheque_filename"
+                                       readonly="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="cheque_filename" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                            </group>
+                            <button name="action_department_decision" string="Approve" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'supplier_accounts', 'claim_decision': 'approved'}"
+                                    class="btn-primary"/>
+                            <button name="action_department_decision" string="Reject" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'supplier_accounts', 'claim_decision': 'rejected'}"
+                                    class="btn-secondary"/>
+                            <button name="action_department_decision" string="Defer" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'supplier_accounts' or supplier_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'supplier_accounts', 'claim_decision': 'deferred'}"
+                                    class="btn-secondary"/>
+                        </page>
+                        <page string="Bank Accounts" name="bank_accounts">
+                            <group>
+                                <field name="bank_accounts_decision" widget="badge"/>
+                                <field name="bank_accounts_notes"
+                                       readonly="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="bank_accounts_notes" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="bank_accounts_followup_date"
+                                       readonly="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active"
+                                       groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                <field name="bank_accounts_followup_date" readonly="True"
+                                       groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                            </group>
+                            <button name="action_department_decision" string="Approve" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'bank_accounts', 'claim_decision': 'approved'}"
+                                    class="btn-primary"/>
+                            <button name="action_department_decision" string="Reject" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'bank_accounts', 'claim_decision': 'rejected'}"
+                                    class="btn-secondary"/>
+                            <button name="action_department_decision" string="Defer" type="object"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    invisible="state != 'bank_accounts' or bank_accounts_decision not in ('pending', 'deferred') or not active"
+                                    context="{'claim_department': 'bank_accounts', 'claim_decision': 'deferred'}"
+                                    class="btn-secondary"/>
+                        </page>
+                        <page string="Stage History" name="history">
+                            <field name="history_ids">
+                                <list create="false" edit="false" delete="false">
+                                    <field name="occurred_at"/>
+                                    <field name="user_id"/>
+                                    <field name="review_round"/>
+                                    <field name="event"/>
+                                    <field name="from_state"/>
+                                    <field name="to_state"/>
+                                    <field name="department"/>
+                                    <field name="decision"/>
+                                    <field name="reason"/>
+                                    <field name="followup_date"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="invoice_view_form_simple" model="ir.ui.view">
+        <field name="name">supplier.claim.form.simple</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="inherit_id" ref="invoice_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='state']" position="before">
+                <xpath expr="//page[@name='inventory']/button[contains(@context, 'approved')]" position="move"/>
+                <xpath expr="//page[@name='inventory']/button[contains(@context, 'rejected')]" position="move"/>
+                <xpath expr="//page[@name='inventory']/button[contains(@context, 'deferred')]" position="move"/>
+                <xpath expr="//page[@name='purchasing']/button[contains(@context, 'approved')]" position="move"/>
+                <xpath expr="//page[@name='purchasing']/button[contains(@context, 'rejected')]" position="move"/>
+                <xpath expr="//page[@name='purchasing']/button[contains(@context, 'deferred')]" position="move"/>
+                <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'approved')]" position="move"/>
+                <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'rejected')]" position="move"/>
+                <xpath expr="//page[@name='supplier_accounts']/button[contains(@context, 'deferred')]" position="move"/>
+                <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'approved')]" position="move"/>
+                <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'rejected')]" position="move"/>
+                <xpath expr="//page[@name='bank_accounts']/button[contains(@context, 'deferred')]" position="move"/>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="before">
+                <group name="department_reviews" col="2"/>
+            </xpath>
+            <xpath expr="//group[@name='department_reviews']" position="inside">
+                <xpath expr="//page[@name='inventory']/group" position="move"/>
+                <xpath expr="//page[@name='purchasing']/group" position="move"/>
+                <xpath expr="//page[@name='supplier_accounts']/group" position="move"/>
+                <xpath expr="//page[@name='bank_accounts']/group" position="move"/>
+            </xpath>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='inventory_decision']]"
+                   position="attributes">
+                <attribute name="string">Inventory</attribute>
+            </xpath>
+            <xpath expr="//page[@name='inventory']" position="replace"/>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='purchasing_decision']]"
+                   position="attributes">
+                <attribute name="string">Purchasing</attribute>
+            </xpath>
+            <xpath expr="//page[@name='purchasing']" position="replace"/>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='supplier_accounts_decision']]"
+                   position="attributes">
+                <attribute name="string">Supplier Accounts</attribute>
+            </xpath>
+            <xpath expr="//page[@name='supplier_accounts']" position="replace"/>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]"
+                   position="attributes">
+                <attribute name="string">Bank Accounts</attribute>
+            </xpath>
+            <xpath expr="//page[@name='bank_accounts']" position="replace"/>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='inventory_decision']]"
+                   position="attributes">
+                <attribute name="invisible">state != 'inventory'</attribute>
+            </xpath>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='purchasing_decision']]"
+                   position="attributes">
+                <attribute name="invisible">state != 'purchasing'</attribute>
+            </xpath>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='supplier_accounts_decision']]"
+                   position="attributes">
+                <attribute name="invisible">state != 'supplier_accounts'</attribute>
+            </xpath>
+            <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]"
+                   position="attributes">
+                <attribute name="invisible">state != 'bank_accounts'</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="invoice_view_search" model="ir.ui.view">
+        <field name="name">invoice_view_search</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="supplier_id"/>
+                <field name="user_id"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="inventory_purchase" string="Inventory" domain="[('state', '=', 'inventory')]"/>
+                <filter name="purchasing" string="Purchasing" domain="[('state', '=', 'purchasing')]"/>
+                <filter name="supplier_accounts" string="Supplier Accounts"
+                        domain="[('state', '=', 'supplier_accounts')]"/>
+                <filter name="bank_accounts" string="Bank Accounts" domain="[('state', '=', 'bank_accounts')]"/>
+                <filter name="returned_secretarial" string="Returned to Secretarial"
+                        domain="[('state', '=', 'returned_secretarial')]"/>
+                <filter name="ready_to_close" string="Ready to Close" domain="[('state', '=', 'ready_to_close')]"/>
+                <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <filter name="cash" string="Cash" domain="[('payment_nature', '=', 'cash')]"/>
+                <filter name="non_cash" string="Non-cash" domain="[('payment_nature', '=', 'non_cash')]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <filter name="group_state" string="Stage" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="invoice_action" model="ir.actions.act_window">
+        <field name="name">All Claims</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="invoice_menu" name="All Claims" parent="supplier_claim_cycle_sub_menu" action="invoice_action"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <record id="queue_user" model="ir.actions.act_window">
+        <field name="name">Secretarial Queue</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['draft', 'returned_secretarial', 'ready_to_close'])]</field>
+    </record>
+    <menuitem id="queue_menu_user" name="Secretarial Queue" parent="supplier_claim_cycle_sub_menu" action="queue_user"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <record id="queue_inventory" model="ir.actions.act_window">
+        <field name="name">Inventory Queue</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'inventory'),
+                              ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
+    </record>
+    <menuitem id="queue_menu_inventory" name="Inventory Queue" parent="supplier_claim_cycle_sub_menu"
+              action="queue_inventory"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <record id="queue_purchasing" model="ir.actions.act_window">
+        <field name="name">Purchasing Queue</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'purchasing'),
+                              ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
+    </record>
+    <menuitem id="queue_menu_purchasing" name="Purchasing Queue" parent="supplier_claim_cycle_sub_menu"
+              action="queue_purchasing"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <record id="queue_supplier_accounts" model="ir.actions.act_window">
+        <field name="name">Supplier Accounts Queue</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'supplier_accounts'),
+                              ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
+    </record>
+    <menuitem id="queue_menu_supplier_accounts" name="Supplier Accounts Queue" parent="supplier_claim_cycle_sub_menu"
+              action="queue_supplier_accounts"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <record id="queue_bank_accounts" model="ir.actions.act_window">
+        <field name="name">Bank Accounts Queue</field>
+        <field name="res_model">ab_supplier_claim_cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'bank_accounts'),
+                              ('bank_accounts_decision', 'in', ['pending', 'deferred'])]</field>
+    </record>
+    <menuitem id="queue_menu_bank_accounts" name="Bank Accounts Queue" parent="supplier_claim_cycle_sub_menu"
+              action="queue_bank_accounts"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+    <!-- Keep legacy action/XML IDs available without exposing stage-filtered menus. -->
+    <record id="queue_menu_user" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="queue_menu_inventory" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="queue_menu_purchasing" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="queue_menu_supplier_accounts" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="queue_menu_bank_accounts" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
+    <record id="invoice_view_list_simple" model="ir.ui.view">
+        <field name="name">supplier.claim.list.simple</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="inherit_id" ref="invoice_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='review_round']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='inventory_decision']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='purchasing_decision']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_accounts_decision']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='bank_accounts_decision']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+        </field>
+    </record>
 </odoo>
