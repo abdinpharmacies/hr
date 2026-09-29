@@ -24,7 +24,7 @@ class TestAbQualityAssurance(TransactionCase):
 
         self.member_user = self._create_user("QA Member", "qa_member_test", [self.member_group.id])
         self.admin_user = self._create_user("QA Admin", "qa_admin_test", [self.admin_group.id])
-        self.quality_manager_user = self._create_user("QA Manager", "qa_manager_test", [])
+        self.quality_manager_user = self._create_user("QA Manager", "qa_manager_test", [self.manager_group.id])
         self.section_manager_user = self._create_user(
             "Section Manager",
             "qa_section_manager_test",
@@ -58,8 +58,6 @@ class TestAbQualityAssurance(TransactionCase):
         self.quality_manager_employee.department_id = self.quality_department.id
         self.section_manager_employee.department_id = self.section_department.id
         self.outsider_employee.department_id = self.visited_department.id
-
-        self.env["ab_quality_assurance.access"].sudo()._sync_quality_manager_group()
 
         self.section = self.Sections.with_user(self.quality_manager_user).create(
             {
@@ -115,7 +113,7 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
 
-    def test_quality_department_manager_group_is_synced(self):
+    def test_quality_manager_inherits_user_group(self):
         self.assertTrue(self.quality_manager_user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager"))
         self.assertTrue(self.quality_manager_user.has_group("ab_quality_assurance.group_ab_quality_assurance_user"))
 

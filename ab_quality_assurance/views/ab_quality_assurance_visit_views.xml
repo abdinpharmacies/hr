@@ -587,5 +587,18 @@
             <field name="context">{'search_default_filter_draft': 1}</field>
             <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
         </record>
+        <record id="ab_quality_assurance_visit_form_area_manager_ro" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit.form.area_manager_ro</field>
+            <field name="model">ab_quality_assurance_visit</field>
+            <field name="inherit_id" ref="ab_quality_assurance_visit_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//chatter" position="before">
+                    <field name="can_use_chatter" invisible="1"/>
+                </xpath>
+                <xpath expr="//chatter" position="attributes">
+                    <attribute name="invisible">not can_use_chatter</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

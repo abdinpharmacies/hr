@@ -166,5 +166,60 @@
             <field name="perm_unlink" eval="0"/>
         </record>
 
+        <record id="rule_ab_quality_assurance_visit_area_manager_ro" model="ir.rule">
+            <field name="name">QA Area Manager Read Only: Visit</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
+            <field name="domain_force">[('department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_quality_assurance_visit_section_area_manager_ro" model="ir.rule">
+            <field name="name">QA Area Manager Read Only: Visit Section</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
+            <field name="domain_force">[('visit_id.department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_quality_assurance_visit_line_area_manager_ro" model="ir.rule">
+            <field name="name">QA Area Manager Read Only: Visit Line</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
+            <field name="domain_force">[('visit_id.department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_quality_assurance_department_dashboard_area_manager_ro" model="ir.rule">
+            <field name="name">QA Area Manager Read Only: Department Dashboard</field>
+            <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
+            <field name="domain_force">[('department_id.manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_quality_assurance_dashboard_existing_roles" model="ir.rule">
+            <field name="name">QA Dashboard: Existing Roles</field>
+            <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_user')), (4, ref('group_ab_quality_assurance_department_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
     </data>
 </odoo>

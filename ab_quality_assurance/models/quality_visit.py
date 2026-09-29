@@ -79,6 +79,39 @@ class AbQualityAssuranceVisit(models.Model):
     line_count = fields.Integer(compute="_compute_totals", store=True)
     section_count = fields.Integer(compute="_compute_totals", store=True)
     active = fields.Boolean(default=True)
+    can_use_chatter = fields.Boolean(compute="_compute_can_use_chatter")
+
+    @api.model
+    def _is_area_manager_read_only(self):
+        user = self.env.user
+        # Mail controllers elevate records with sudo after checking read access.
+        # Keep the restriction tied to the acting user's groups even in sudo mode.
+        if user.has_group("base.group_system") or user.has_group(
+            "ab_quality_assurance.group_ab_quality_assurance_manager"
+        ):
+            return False
+        return user.has_group("ab_quality_assurance.group_ab_quality_assurance_area_manager_ro")
+
+    @api.model
+    def _check_area_manager_chatter_access(self):
+        if self._is_area_manager_read_only():
+            raise AccessError(_("Area Managers have read-only access to QA reports and cannot use chatter or activities."))
+
+    @api.depends_context("uid")
+    def _compute_can_use_chatter(self):
+        self.can_use_chatter = not self._is_area_manager_read_only()
+
+    def message_post(self, **kwargs):
+        self._check_area_manager_chatter_access()
+        return super().message_post(**kwargs)
+
+    def message_subscribe(self, partner_ids=None, subtype_ids=None):
+        self._check_area_manager_chatter_access()
+        return super().message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)
+
+    def message_unsubscribe(self, partner_ids=None):
+        self._check_area_manager_chatter_access()
+        return super().message_unsubscribe(partner_ids=partner_ids)
 
     _ab_quality_assurance_visit_name_uniq = models.Constraint(
         "UNIQUE(name)",
