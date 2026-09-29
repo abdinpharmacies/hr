@@ -13,6 +13,7 @@ Current changes before commit:
 - Extend the existing overview dashboard with received, returned, and retained values and receipt/return movement counts. Drilldowns open standard Odoo views.
 - Restrict purchase and return records to assigned stores for ordinary users; preserve manager and administrator access.
 - Validate invoice and tax totals before submission and receipt; correct compound-tax line-cost inversion and zero-quantity handling.
+- Declare ab_taxes as a direct dependency because purchase lines, access rules, and entry views use tax models and defaults.
 - Keep purchase details visible, replace legacy chatter fields with Odoo 19 chatter, and use master prices for first purchases.
 - Preserve the working-tree change allowing draft-only store editing.
 - Append translations from the Odoo-exported POT to both Arabic catalogs while preserving existing entries.

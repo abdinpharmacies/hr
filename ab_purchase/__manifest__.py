@@ -14,6 +14,7 @@
         'ab_store',
         'ab_supplier',
         'ab_inventory',
+        'ab_taxes',
     ],
     'data': [
         'security/security_groups.xml',
