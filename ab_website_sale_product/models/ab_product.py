@@ -1,10 +1,33 @@
 import base64
+import logging
 import os
 import re
 
+from psycopg2 import IntegrityError
+
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, AccessError
+from odoo.exceptions import UserError, AccessError, ValidationError
 from odoo.tools import html_escape
+
+_logger = logging.getLogger(__name__)
+WEBSITE_SYNC_CHUNK_SIZE = 250
+
+
+def website_sync_changed_values(record, values):
+    changes = {}
+    for name, value in values.items():
+        field = record._fields[name]
+        if field.type == "many2many":
+            if len(value) != 1 or value[0][0] != fields.Command.SET:
+                changes[name] = value
+            elif set(record[name].ids) != set(value[0][2]):
+                changes[name] = value
+        elif field.type == "many2one":
+            if record[name].id != (value or False):
+                changes[name] = value
+        elif record[name] != field.convert_to_record(field.convert_to_cache(value, record), record):
+            changes[name] = value
+    return changes
 
 DEFAULT_WEBSITE_IMAGE_DIRECTORY = "/opt/odoo19/product_images"
 WEBSITE_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp")
@@ -171,23 +194,42 @@ class AbProductGroup(models.Model):
         readonly=True,
         groups="base.group_user",
     )
+    website_sync_group_path = fields.Char(
+        string="Website Sync Group Path", compute="_compute_website_sync_group_path",
+        store=True, recursive=True,
+    )
 
-    def _get_or_create_website_categories(self):
+    @api.depends("name", "code", "parent_id.website_sync_group_path")
+    def _compute_website_sync_group_path(self):
+        for group in self:
+            group.website_sync_group_path = " / ".join(filter(None, [
+                group.parent_id.website_sync_group_path, group.name or group.code,
+            ]))
+
+    def _get_or_create_website_categories(self, sync_cache=None):
         categories = self.env["product.public.category"].sudo()
         for group in self:
-            categories |= group._get_or_create_website_category()
+            categories |= group._get_or_create_website_category(sync_cache=sync_cache)
         if not categories:
-            categories = self._get_or_create_canonical_website_category(("Everyday Essentials",))
+            categories = self._get_or_create_canonical_website_category(("Everyday Essentials",), sync_cache=sync_cache)
         return categories
 
-    def _get_or_create_website_category(self):
+    def _get_or_create_website_category(self, sync_cache=None):
         self.ensure_one()
+        if sync_cache is not None and self.id in sync_cache["groups"]:
+            return sync_cache["groups"][self.id]
         category_path = self._get_canonical_website_category_path()
         if category_path:
-            category = self._get_or_create_canonical_website_category(category_path)
-            self.sudo().website_public_category_id = category.id
+            category = self._get_or_create_canonical_website_category(category_path, sync_cache=sync_cache)
+            if self.website_public_category_id != category:
+                self.sudo().website_public_category_id = category.id
+            if sync_cache is not None:
+                sync_cache["groups"][self.id] = category
             return category
-        return self.env["product.public.category"].sudo()
+        category = self.env["product.public.category"].sudo()
+        if sync_cache is not None:
+            sync_cache["groups"][self.id] = category
+        return category
 
     @api.model
     def _normalize_website_category_text(self, text):
@@ -208,8 +250,7 @@ class AbProductGroup(models.Model):
 
     def _get_canonical_website_category_path(self):
         self.ensure_one()
-        raw_parts = self._get_website_group_name_chain()
-        return self._get_canonical_website_category_path_from_text(" / ".join(raw_parts))
+        return self._get_canonical_website_category_path_from_text(self.website_sync_group_path)
 
     @api.model
     def _get_canonical_website_category_path_from_text(self, text):
@@ -231,24 +272,35 @@ class AbProductGroup(models.Model):
         return False
 
     @api.model
-    def _get_or_create_canonical_website_category(self, category_path):
+    def _get_or_create_canonical_website_category(self, category_path, sync_cache=None):
         Category = self.env["product.public.category"].sudo().with_context(lang=False)
         parent = Category
         category = Category
         sequence_base = 10
         for depth, name in enumerate(category_path):
             domain = [("name", "=", name), ("parent_id", "=", parent.id if parent else False)]
-            category = Category.search(domain, limit=1)
+            key = (name, parent.id if parent else False)
+            category = (sync_cache["categories"].get(key, Category) if sync_cache is not None
+                        else Category.search(domain, limit=1))
             vals = {
                 "name": name,
                 "parent_id": parent.id if parent else False,
                 "sequence": sequence_base + depth,
             }
             if category:
-                category.write(vals)
+                changes = website_sync_changed_values(category, vals)
+                if changes:
+                    category.write(changes)
             else:
                 category = Category.create(vals)
-            category._write_arabic_website_category_translation()
+            if sync_cache is not None:
+                sync_cache["categories"][key] = category
+            if sync_cache is None or category.id not in sync_cache["translated_categories"]:
+                category._write_arabic_website_category_translation(
+                    languages=sync_cache["languages"] if sync_cache is not None else None,
+                )
+                if sync_cache is not None:
+                    sync_cache["translated_categories"].add(category.id)
             parent = category
             sequence_base += 10
         return category
@@ -257,11 +309,13 @@ class AbProductGroup(models.Model):
 class ProductPublicCategory(models.Model):
     _inherit = "product.public.category"
 
-    def _write_arabic_website_category_translation(self):
+    def _write_arabic_website_category_translation(self, languages=None):
         Lang = self.env["res.lang"].sudo()
-        arabic_langs = Lang.search([("code", "in", ["ar_001", "ar"])])
-        if not arabic_langs:
-            arabic_langs = Lang.search([("code", "like", "ar%")])
+        arabic_langs = languages
+        if arabic_langs is None:
+            arabic_langs = Lang.search([("code", "in", ["ar_001", "ar"])])
+            if not arabic_langs:
+                arabic_langs = Lang.search([("code", "like", "ar%")])
         for category in self:
             arabic_name = WEBSITE_CATEGORY_TRANSLATIONS.get(
                 category.with_context(lang=False).name
@@ -269,7 +323,9 @@ class ProductPublicCategory(models.Model):
             if not arabic_name:
                 continue
             for lang in arabic_langs:
-                category.with_context(lang=lang.code).write({"name": arabic_name})
+                translated_category = category.with_context(lang=lang.code)
+                if translated_category.name != arabic_name:
+                    translated_category.write({"name": arabic_name})
 
 
 class AbProductTag(models.Model):
@@ -283,30 +339,65 @@ class AbProductTag(models.Model):
         groups="base.group_user",
     )
 
-    def _get_or_create_website_product_tags(self):
+    def _get_or_create_website_product_tags(self, sync_cache=None):
         product_tags = self.env["product.tag"].sudo()
         ProductTag = self.env["product.tag"].sudo()
         for tag in self:
             name = tag.name or _("Unnamed Tag")
             product_tag = tag.website_product_tag_id.sudo()
             if not product_tag:
-                product_tag = ProductTag.search([("name", "=", name)], limit=1)
+                product_tag = (sync_cache["tags_by_name"].get(name, ProductTag) if sync_cache is not None
+                               else ProductTag.search([("name", "=", name)], limit=1))
             vals = {
                 "name": name,
                 "sequence": tag.priority or 10,
                 "visible_to_customers": True,
             }
             if product_tag:
-                product_tag.write(vals)
+                changes = website_sync_changed_values(product_tag, vals)
+                if changes:
+                    product_tag.write(changes)
             else:
                 product_tag = ProductTag.create(vals)
-            tag.sudo().website_product_tag_id = product_tag.id
+            if tag.website_product_tag_id != product_tag:
+                tag.sudo().website_product_tag_id = product_tag.id
+            if sync_cache is not None:
+                sync_cache["tags_by_name"].setdefault(name, product_tag)
             product_tags |= product_tag
         return product_tags
 
 
 class AbProduct(models.Model):
     _inherit = "ab_product"
+
+    website_sync_pending = fields.Boolean(
+        string="Website Sync Pending", compute="_compute_website_sync_pending", store=True,
+    )
+    website_sync_template_ids = fields.One2many(
+        "product.template", "ab_product_id", string="Website Sync Templates", readonly=True,
+    )
+    _website_sync_pending_idx = models.Index("(id) WHERE website_sync_pending")
+
+    @api.depends(
+        "name", "product_card_name", "code", "default_price", "default_cost", "is_service",
+        "active", "allow_sale", "allow_purchase", "website_sale_available", "description",
+        "groups_ids.website_sync_group_path", "groups_ids.active", "tag_ids.name", "tag_ids.priority", "barcode_ids.name",
+        "eplus_stock_snapshot_ids.itm_qty", "eplus_stock_snapshot_ids.active",
+        "website_sync_template_ids",
+        *["website_sync_template_ids." + name for name in (
+            "name", "default_code", "list_price", "standard_price", "type", "is_storable",
+            "allow_out_of_stock_order", "show_availability", "sale_ok", "purchase_ok", "active",
+            "description_sale", "description", "description_ecommerce", "website_description",
+            "is_published", "public_categ_ids", "public_categ_ids.name", "public_categ_ids.parent_id",
+            "product_tag_ids", "product_tag_ids.name", "product_tag_ids.sequence", "image_1920",
+            "product_variant_ids", "product_variant_ids.active", "product_variant_ids.default_code", "product_variant_ids.barcode",
+            "invoice_policy", "service_tracking", "combo_ids",
+            "eplus_stock_shown_qty_type", "eplus_stock_shown_qty_value",
+        )],
+    )
+    def _compute_website_sync_pending(self):
+        for product in self:
+            product.website_sync_pending = True
 
     website_sale_available = fields.Boolean(
         string="Available on Website",
@@ -468,9 +559,8 @@ class AbProduct(models.Model):
         if not template:
             raise UserError(_("Product %s is not synced to eCommerce.") % (self.display_name,))
         with open(image_path, "rb") as image_file:
-            template.sudo().write({
-                "image_1920": base64.b64encode(image_file.read()),
-            })
+            image_data = base64.b64encode(image_file.read())
+        template._apply_website_sync_image(image_data)
         return template
 
     @api.model
@@ -585,11 +675,11 @@ class AbProduct(models.Model):
         lines = str(html_escape(text)).splitlines() or [""]
         return "<p>%s</p>" % "<br/>".join(lines)
 
-    def _prepare_website_product_template_vals(self):
+    def _prepare_website_product_template_vals(self, sync_cache=None):
         self.ensure_one()
         ProductTemplate = self.env["product.template"]
-        public_categories = self._get_or_create_website_public_categories()
-        product_tags = self.tag_ids._get_or_create_website_product_tags()
+        public_categories = self._get_or_create_website_public_categories(sync_cache=sync_cache)
+        product_tags = self.tag_ids._get_or_create_website_product_tags(sync_cache=sync_cache)
         name = self.name or self.product_card_name or self.code or _("Unnamed Product")
         description = self.description or False
         sale_ok = bool(self.active and self.allow_sale)
@@ -622,9 +712,9 @@ class AbProduct(models.Model):
             vals["service_tracking"] = "no"
         return vals
 
-    def _get_or_create_website_public_categories(self, fallback=True):
+    def _get_or_create_website_public_categories(self, fallback=True, sync_cache=None):
         self.ensure_one()
-        public_categories = self.groups_ids._get_or_create_website_categories() if self.groups_ids else self.env["product.public.category"].sudo()
+        public_categories = self.groups_ids._get_or_create_website_categories(sync_cache=sync_cache) if self.groups_ids else self.env["product.public.category"].sudo()
         if public_categories:
             return public_categories
 
@@ -641,16 +731,16 @@ class AbProduct(models.Model):
         )
         category_path = classifier._get_canonical_website_category_path_from_text(text)
         if category_path:
-            return classifier._get_or_create_canonical_website_category(category_path)
+            return classifier._get_or_create_canonical_website_category(category_path, sync_cache=sync_cache)
         if fallback:
-            return classifier._get_or_create_canonical_website_category(("Everyday Essentials",))
+            return classifier._get_or_create_canonical_website_category(("Everyday Essentials",), sync_cache=sync_cache)
         return self.env["product.public.category"].sudo()
 
     def _prepare_initial_website_stock_display_vals(self):
         self.ensure_one()
         return {
             "eplus_stock_shown_qty_type": "quantity",
-            "eplus_stock_shown_qty_value": self.eplus_stock_total_qty or 0.0,
+            "eplus_stock_shown_qty_value": max(self.eplus_stock_total_qty or 0.0, 0.0),
         }
 
     def _template_needs_initial_website_stock_display(self, template):
@@ -671,31 +761,119 @@ class AbProduct(models.Model):
             "barcode": barcode,
         }
 
-    def _sync_website_products(self):
+    @api.model
+    def _lock_website_sync(self, wait=True):
+        if wait:
+            self.env.cr.execute("SELECT pg_advisory_xact_lock(%s, %s)", (190019, 731))
+            return True
+        self.env.cr.execute("SELECT pg_try_advisory_xact_lock(%s, %s)", (190019, 731))
+        return self.env.cr.fetchone()[0]
+
+    def _website_sync_cache(self):
+        names = set(WEBSITE_CATEGORY_TRANSLATIONS)
+        Category = self.env["product.public.category"].sudo().with_context(lang=False)
+        categories = Category.search(fields.Domain("name", "in", list(names)))
+        by_key = {}
+        for category in categories:
+            by_key.setdefault((category.name, category.parent_id.id), category)
+        languages = self.env["res.lang"].sudo().search(fields.Domain("code", "in", ["ar_001", "ar"]))
+        if not languages:
+            languages = self.env["res.lang"].sudo().search(fields.Domain("code", "like", "ar%"))
+        tags = self.tag_ids
+        tag_names = [tag.name or _("Unnamed Tag") for tag in tags]
+        existing_tags = self.env["product.tag"].sudo().search(fields.Domain("name", "in", tag_names))
+        by_name = {}
+        for tag in existing_tags:
+            by_name.setdefault(tag.name, tag)
+        return {
+            "categories": by_key, "groups": {}, "translated_categories": set(),
+            "languages": languages, "tags_by_name": by_name,
+        }
+
+    def _sync_website_products(self, outcomes=None):
+        self._lock_website_sync()
+        template_ids = []
+        for offset in range(0, len(self), WEBSITE_SYNC_CHUNK_SIZE):
+            templates = self[offset:offset + WEBSITE_SYNC_CHUNK_SIZE]._sync_website_product_batch(outcomes=outcomes)
+            template_ids.extend(templates.ids)
+        return self.env["product.template"].sudo().with_context(active_test=False).browse(template_ids)
+
+    def _sync_website_product_batch(self, outcomes=None):
+        products = self.sudo()
         ProductTemplate = self.env["product.template"].sudo().with_context(active_test=False)
-        synced_templates = ProductTemplate.browse()
-        for product in self.sudo():
-            template = ProductTemplate.search([("ab_product_id", "=", product.id)], limit=1)
-            vals = product._prepare_website_product_template_vals()
+        existing = ProductTemplate.search(fields.Domain("ab_product_id", "in", products.ids))
+        by_product = {}
+        for template in existing:
+            by_product.setdefault(template.ab_product_id.id, template)
+        sync_cache = products._website_sync_cache()
+        missing_products = []
+        missing_values = []
+        statuses = {}
+        for product in products:
+            template = by_product.get(product.id)
+            vals = product._prepare_website_product_template_vals(sync_cache=sync_cache)
             if template:
-                template.write(vals)
+                changes = website_sync_changed_values(template, vals)
+                if vals.get("active") and not template.product_variant_ids:
+                    changes["active"] = True
+                if vals.get("type") != "combo" and template.combo_ids:
+                    changes["type"] = vals["type"]
+                if changes:
+                    template.write(changes)
                 if product._template_needs_initial_website_stock_display(template):
-                    template.write(product._prepare_initial_website_stock_display_vals())
+                    stock_changes = website_sync_changed_values(template, product._prepare_initial_website_stock_display_vals())
+                    if stock_changes:
+                        template.write(stock_changes)
+                        changes.update(stock_changes)
+                statuses[product.id] = "updated" if changes else "unchanged"
             else:
                 vals.update(product._prepare_initial_website_stock_display_vals())
-                template = ProductTemplate.create(vals)
-            product._ensure_website_product_placeholder_image(template)
-
+                missing_products.append(product.id)
+                missing_values.append(vals)
+        if missing_values:
+            created = ProductTemplate.create(missing_values)
+            for product_id, template in zip(missing_products, created):
+                by_product[product_id] = template
+                statuses[product_id] = "created"
+        templates = ProductTemplate.browse([by_product[product.id].id for product in products])
+        without_image = templates.with_context(bin_size=True).filtered(lambda template: not template.image_1920)
+        if without_image:
+            placeholder = products._get_website_placeholder_image()
+            if placeholder:
+                image_fields = ["image_1920", "image_1024", "image_512", "image_256", "image_128"]
+                for offset in range(0, len(without_image), 25):
+                    image_templates = without_image[offset:offset + 25].with_context(bin_size=False)
+                    image_templates.write({"image_1920": placeholder})
+                    self.env.flush_all()
+                    image_templates.invalidate_recordset(image_fields)
+                    image_templates.product_variant_ids.invalidate_recordset(image_fields)
+                for template in without_image:
+                    if statuses[template.ab_product_id.id] == "unchanged":
+                        statuses[template.ab_product_id.id] = "updated"
+        for product in products:
+            template = by_product[product.id]
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
             if variant:
-                product_dict = product._prepare_website_product_variant_vals()
+                product_dict = website_sync_changed_values(variant, product._prepare_website_product_variant_vals())
+                if not product_dict:
+                    continue
                 try:
-                    variant.sudo().write(product_dict)
-                except:
+                    with self.env.cr.savepoint():
+                        variant.sudo().write(product_dict)
+                except (ValidationError, IntegrityError):
+                    if "barcode" not in product_dict:
+                        raise
+                    _logger.warning("Website sync retained barcode for ab_product %s", product.id, exc_info=True)
                     product_dict.pop("barcode", None)
-                    variant.sudo().write(product_dict)
-            synced_templates |= template
-        return synced_templates
+                    if product_dict:
+                        variant.sudo().write(product_dict)
+                if statuses[product.id] == "unchanged":
+                    statuses[product.id] = "updated"
+        products.flush_recordset()
+        products.filtered("website_sync_pending").write({"website_sync_pending": False})
+        if outcomes is not None:
+            outcomes.update(statuses)
+        return templates
 
     def action_sync_website_product(self):
         self = self.sudo()
@@ -773,10 +951,6 @@ class AbProduct(models.Model):
 
     @api.model
     def cron_sync_website_products(self, limit=1000):
-        products = self.search([
-            ("active", "=", True),
-            ("allow_sale", "=", True),
-            ("website_sale_available", "=", True),
-        ], limit=limit)
-        products._sync_website_products()
+        self.env["ab_website_product_sync_job"].check_access("create")
+        self.env["ab_website_product_sync_job"]._queue_delta_sync(limit=limit)
         return True

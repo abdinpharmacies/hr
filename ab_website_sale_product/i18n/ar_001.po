@@ -1144,6 +1144,8 @@ msgid "Updated"
 msgstr "تم التحديث"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__unchanged_count
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__unchanged
 msgid "Unchanged"
 msgstr "بدون تغيير"
 
@@ -1333,3 +1335,335 @@ msgstr "تأكيد استبدال الصور"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__replaces_existing
 msgid "Replaces Existing"
 msgstr "يستبدل صورة حالية"
+
+#. module: ab_website_sale_product
+msgid "Website Product Sync"
+msgstr "مزامنة منتجات الموقع"
+
+#. module: ab_website_sale_product
+msgid "Website Product Sync Jobs"
+msgstr "مهام مزامنة منتجات الموقع"
+
+#. module: ab_website_sale_product
+msgid "Website Product Sync Job"
+msgstr "مهمة مزامنة منتجات الموقع"
+
+#. module: ab_website_sale_product
+msgid "Website Product Sync Job Line"
+msgstr "بند مهمة مزامنة منتجات الموقع"
+
+#. module: ab_website_sale_product
+msgid "Open Product Sync Console"
+msgstr "فتح شاشة مزامنة المنتجات"
+
+#. module: ab_website_sale_product
+msgid "Website Products: Process Sync Jobs"
+msgstr "منتجات الموقع: معالجة مهام المزامنة"
+
+#. module: ab_website_sale_product
+msgid "Batch Size"
+msgstr "حجم الدفعة"
+
+#. module: ab_website_sale_product
+msgid "Products Per Batch"
+msgstr "عدد المنتجات في الدفعة"
+
+#. module: ab_website_sale_product
+msgid "Start Full Sync"
+msgstr "بدء مزامنة كاملة"
+
+#. module: ab_website_sale_product
+msgid "Process Next Batch"
+msgstr "معالجة الدفعة التالية"
+
+#. module: ab_website_sale_product
+msgid "Process All Remaining"
+msgstr "معالجة كل المتبقي"
+
+#. module: ab_website_sale_product
+msgid "Open Abdin Products"
+msgstr "فتح منتجات عبدين"
+
+#. module: ab_website_sale_product
+msgid "Cancel this sync job?"
+msgstr "هل تريد إلغاء مهمة المزامنة؟"
+
+#. module: ab_website_sale_product
+msgid "Synced products:"
+msgstr "المنتجات المتزامنة:"
+
+#. module: ab_website_sale_product
+msgid "Sync Lines"
+msgstr "بنود المزامنة"
+
+#. module: ab_website_sale_product
+msgid "Products Fully Synchronized"
+msgstr "تمت مزامنة المنتجات بالكامل"
+
+#. module: ab_website_sale_product
+msgid "All selected Abdin products are synchronized with the website shop."
+msgstr "تمت مزامنة كل منتجات عبدين المحددة مع متجر الموقع."
+
+#. module: ab_website_sale_product
+msgid "Product Sync Failed"
+msgstr "فشلت مزامنة المنتجات"
+
+#. module: ab_website_sale_product
+msgid "The sync stopped before completion."
+msgstr "توقفت المزامنة قبل الاكتمال."
+
+#. module: ab_website_sale_product
+msgid "Product Sync Cancelled"
+msgstr "تم إلغاء مزامنة المنتجات"
+
+#. module: ab_website_sale_product
+msgid "The sync was cancelled."
+msgstr "تم إلغاء المزامنة."
+
+#. module: ab_website_sale_product
+msgid "Ready to Sync Products"
+msgstr "جاهز لمزامنة المنتجات"
+
+#. module: ab_website_sale_product
+msgid "Start a full sync to create or update website products from Abdin products."
+msgstr "ابدأ مزامنة كاملة لإنشاء أو تحديث منتجات الموقع من منتجات عبدين."
+
+#. module: ab_website_sale_product
+msgid "Product Sync In Progress"
+msgstr "مزامنة المنتجات قيد التنفيذ"
+
+#. module: ab_website_sale_product
+msgid "Odoo is processing Abdin products in background batches."
+msgstr "يقوم أودو بمعالجة منتجات عبدين على دفعات في الخلفية."
+
+#. module: ab_website_sale_product
+msgid "Ready to start full website product sync."
+msgstr "جاهز لبدء مزامنة كاملة لمنتجات الموقع."
+
+#. module: ab_website_sale_product
+msgid "Another website product sync is already running."
+msgstr "توجد مزامنة منتجات للموقع قيد التشغيل بالفعل."
+
+#. module: ab_website_sale_product
+msgid "No website-available Abdin products were found."
+msgstr "لم يتم العثور على منتجات عبدين متاحة للموقع."
+
+#. module: ab_website_sale_product
+msgid "Website Product Sync - %s"
+msgstr "مزامنة منتجات الموقع - %s"
+
+#. module: ab_website_sale_product
+msgid "Prepared %(total)s product(s) for website synchronization."
+msgstr "تم تجهيز %(total)s منتج/منتجات لمزامنة الموقع."
+
+#. module: ab_website_sale_product
+msgid "Queued %(total)s product(s) for background website synchronization."
+msgstr "تم وضع %(total)s منتج/منتجات في قائمة مزامنة الموقع بالخلفية."
+
+#. module: ab_website_sale_product
+msgid "Sync cancelled."
+msgstr "تم إلغاء المزامنة."
+
+#. module: ab_website_sale_product
+msgid "Processed %(processed)s of %(total)s product(s)."
+msgstr "تمت معالجة %(processed)s من %(total)s منتج/منتجات."
+
+#. module: ab_website_sale_product
+msgid "Product sync failed for %(failed)s product(s)."
+msgstr "فشلت مزامنة %(failed)s منتج/منتجات."
+
+#. module: ab_website_sale_product
+msgid "Product sync completed with %(failed)s failed product(s)."
+msgstr "اكتملت مزامنة المنتجات مع فشل %(failed)s منتج/منتجات."
+
+#. module: ab_website_sale_product
+msgid "Website products fully synchronized."
+msgstr "تمت مزامنة منتجات الموقع بالكامل."
+
+#. module: ab_website_sale_product
+msgid "Website Product"
+msgstr "منتج الموقع"
+
+#. module: ab_website_sale_product
+msgid "Create"
+msgstr "إنشاء"
+
+#. module: ab_website_sale_product
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#. module: ab_website_sale_product
+msgid "Skipped"
+msgstr "تم التخطي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__sync_mode__delta
+msgid "Changed Products"
+msgstr "المنتجات المتغيرة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__sync_mode__full
+msgid "Full Sync"
+msgstr "مزامنة كاملة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Retry Failed Products"
+msgstr "إعادة محاولة المنتجات الفاشلة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Sync Changed Products"
+msgstr "مزامنة المنتجات المتغيرة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__sync_mode
+msgid "Sync Mode"
+msgstr "وضع المزامنة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_group__website_sync_group_path
+msgid "Website Sync Group Path"
+msgstr "مسار مجموعة مزامنة الموقع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_sync_pending
+msgid "Website Sync Pending"
+msgstr "بانتظار مزامنة الموقع"
+
+#. module: ab_website_sale_product
+msgid "Checkpoints are limited to 250 products. Larger selections continue across multiple checkpoints."
+msgstr "تقتصر نقاط الحفظ على 250 منتجًا. وتستمر الاختيارات الأكبر عبر نقاط حفظ متعددة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_website_product_sync_job__batch_size_option
+msgid "Number of products processed by Process Next Batch. Internal chunks are limited to 250 products; background processing commits after each chunk."
+msgstr "عدد المنتجات التي تتم معالجتها عند الضغط على معالجة الدفعة التالية. تقتصر الأجزاء الداخلية على 250 منتجًا، وتحفظ المعالجة في الخلفية التغييرات بعد كل جزء."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_image_applied_checksum
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_image_applied_checksum
+msgid "Website Image Applied Checksum"
+msgstr "بصمة صورة الموقع المطبقة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__website_image_source_checksum
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_image_source_checksum
+msgid "Website Image Source Checksum"
+msgstr "بصمة مصدر صورة الموقع"
+
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__background_company_id
+msgid "Background Sync Company"
+msgstr "شركة المزامنة في الخلفية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__background_error
+msgid "Background Sync Error"
+msgstr "خطأ المزامنة في الخلفية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__background_requested
+msgid "Background Sync Requested"
+msgstr "تم طلب المزامنة في الخلفية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__background_user_id
+msgid "Background Sync Requested By"
+msgstr "طلب المزامنة في الخلفية بواسطة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "All remaining products are queued for background synchronization."
+msgstr "تمت إضافة جميع المنتجات المتبقية إلى قائمة المزامنة في الخلفية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "Full sync is already running in the background."
+msgstr "المزامنة الكاملة قيد التشغيل بالفعل في الخلفية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "The background sync requester no longer has access to this company."
+msgstr "لم يعد لدى طالب المزامنة في الخلفية صلاحية الوصول إلى هذه الشركة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "The dedicated Website Product Sync worker is offline. Start the module worker service and try again."
+msgstr "عامل مزامنة منتجات الموقع المخصص غير متصل. شغّل خدمة عامل الوحدة ثم حاول مرة أخرى."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__already_synced_count
+msgid "Already Synchronized"
+msgstr "متزامن بالفعل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__catalog_count
+msgid "Catalog Products"
+msgstr "منتجات الكتالوج"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__completed_count
+msgid "Synchronized Products"
+msgstr "المنتجات المتزامنة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__remaining_count
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_remaining_view_list
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "Remaining Products"
+msgstr "المنتجات المتبقية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__missing_count
+msgid "Missing on Website"
+msgstr "منتجات ناقصة على الموقع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__review_count
+msgid "Needs Review"
+msgstr "منتجات تحتاج مراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Check Remaining"
+msgstr "فحص المتبقي"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Show Remaining"
+msgstr "عرض المتبقي"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Remaining Work"
+msgstr "المتبقي للمزامنة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid "Checking Remaining Products"
+msgstr "جارٍ فحص المنتجات المتبقية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_sync_template_ids
+msgid "Website Sync Templates"
+msgstr "قوالب منتجات مزامنة الموقع"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+#, python-format
+msgid "%(ready)s already synchronized; %(remaining)s product(s) need creation or review."
+msgstr "%(ready)s منتجًا متزامن بالفعل؛ و%(remaining)s منتجًا يحتاج إلى إنشاء أو مراجعة."

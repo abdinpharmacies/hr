@@ -7,3 +7,4 @@ from . import product_template
 from . import sale_order
 from . import sale_order_line
 from . import website
+from . import website_product_sync_job

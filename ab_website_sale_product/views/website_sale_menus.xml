@@ -33,16 +33,22 @@
                   action="action_ab_eplus_stock_snapshot"
                   sequence="3"/>
 
+        <menuitem id="menu_catalog_website_product_sync_jobs"
+                  name="Website Product Sync"
+                  parent="website_sale.menu_catalog"
+                  action="action_open_website_product_sync_console"
+                  sequence="4"/>
+
         <menuitem id="menu_catalog_eplus_inventory_sync_jobs"
                   name="Eplus Inventory Sync"
                   parent="website_sale.menu_catalog"
                   action="action_ab_eplus_inventory_sync_job"
-                  sequence="4"/>
+                  sequence="5"/>
 
         <menuitem id="menu_catalog_eplus_branch_stock"
                   name="Eplus Branch Stock"
                   parent="website_sale.menu_catalog"
                   action="action_ab_eplus_stock_snapshot_store"
-                  sequence="5"/>
+                  sequence="6"/>
     </data>
 </odoo>

@@ -11,6 +11,7 @@
         "data/server_actions.xml",
         "data/ir_cron.xml",
         "views/add_many_by_codes_views.xml",
+        "views/website_product_sync_job_views.xml",
         "views/eplus_inventory_sync_job_views.xml",
         "views/eplus_stock_snapshot_store_views.xml",
         "views/eplus_stock_snapshot_views.xml",
