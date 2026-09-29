@@ -89,69 +89,6 @@ _CATEGORY_ICON_FALLBACKS = (
     ("fa-leaf", "blue"),
 )
 
-_HEADER_CATEGORY_MENU = (
-    {
-        "label": _lt("Skin Care"),
-        "aliases": ("skin care", "beauty & skin care", "face care", "beauty"),
-        "icon": "fa-heart",
-        "tone": "orange",
-    },
-    {
-        "label": _lt("Hair Care"),
-        "aliases": ("hair care", "personal care"),
-        "icon": "fa-leaf",
-        "tone": "green",
-    },
-    {
-        "label": _lt("Body Care"),
-        "aliases": ("body care", "bath & shower", "personal care"),
-        "icon": "fa-heart",
-        "tone": "orange",
-    },
-    {
-        "label": _lt("Dietary Supplements"),
-        "aliases": ("dietary supplements", "vitamins & supplements", "vitamins", "wellness"),
-        "icon": "fa-flask",
-        "tone": "orange",
-    },
-    {
-        "label": _lt("Vitamins and Minerals"),
-        "aliases": ("vitamins and minerals", "vitamins & supplements", "vitamins", "minerals"),
-        "icon": "fa-plus-square",
-        "tone": "green",
-    },
-    {
-        "label": _lt("Baby Care"),
-        "aliases": ("baby care", "baby toiletries", "baby accessories"),
-        "icon": "fa-child",
-        "tone": "blue",
-    },
-    {
-        "label": _lt("Oral and Dental Care"),
-        "aliases": ("oral and dental care", "oral care", "mouth & throat", "personal care"),
-        "icon": "fa-smile-o",
-        "tone": "blue",
-    },
-    {
-        "label": _lt("Personal Care"),
-        "aliases": ("personal care", "hygiene & household"),
-        "icon": "fa-heart",
-        "tone": "orange",
-    },
-    {
-        "label": _lt("Medical Devices and Supplies"),
-        "aliases": ("medical devices and supplies", "health devices & supplies", "health devices"),
-        "icon": "fa-stethoscope",
-        "tone": "blue",
-    },
-    {
-        "label": _lt("Mother and Baby Products"),
-        "aliases": ("mother and baby products", "mother & baby", "mom care", "baby care"),
-        "icon": "fa-child",
-        "tone": "blue",
-    },
-)
-
 _HEADER_NEED_MENU = (
     (_lt("Acne treatment"), "fa-medkit", "green"),
     (_lt("Skin brightening and tone correction"), "fa-sun-o", "orange"),
@@ -239,36 +176,16 @@ class Website(models.Model):
 
     def _ab_storefront_header_category_menu(self):
         self.ensure_one()
-        domain = self.website_domain()
-        domain &= fields.Domain("has_published_products", "=", True)
-        categories = self.env["product.public.category"].with_context(bin_size=True).search(
-            domain,
-            order="sequence, name, id",
-        )
-        categories_by_name = {
-            self._ab_storefront_category_source_name(category).casefold(): category
-            for category in categories
-        }
-        items = []
-        for item in _HEADER_CATEGORY_MENU:
-            label = self.env._(item["label"])
-            category = False
-            for alias in item["aliases"]:
-                category = categories_by_name.get(alias.casefold())
-                if category:
-                    break
-            href = (
-                "/shop/category/%s" % self.env["ir.http"]._slug(category)
-                if category
-                else "/shop?%s" % url_encode({"search": label})
-            )
-            items.append({
-                "label": label,
-                "href": href,
-                "icon": item["icon"],
-                "tone": item["tone"],
+        menu = []
+        for category in self._ab_storefront_categories(limit=8):
+            presentation = self._ab_storefront_category_presentation(category)
+            menu.append({
+                "label": self._ab_storefront_category_label(category),
+                "href": "/shop/category/%s" % self.env["ir.http"]._slug(category),
+                "icon": presentation["icon"],
+                "tone": presentation["tone"],
             })
-        return items
+        return menu
 
     def _ab_storefront_header_need_menu(self):
         self.ensure_one()
