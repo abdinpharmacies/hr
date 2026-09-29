@@ -39,6 +39,12 @@
             ]"/>
         </record>
 
+        <record id="group_ab_self_inventory_area_manager_readonly" model="res.groups">
+            <field name="name">Area Manager – Read Only</field>
+            <field name="privilege_id" ref="privilege_ab_self_inventory"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
         <record id="base.group_system" model="res.groups">
             <field name="implied_ids" eval="[(4, ref('ab_self_inventory.group_ab_self_inventory_manager'))]"/>
         </record>

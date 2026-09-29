@@ -83,6 +83,7 @@ class SelfInventoryProcess(models.Model):
     )
     @api.model_create_multi
     def create(self, vals_list):
+        self.check_access('create')
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('ab_self_inventory_process') or 'New'
@@ -213,6 +214,7 @@ class SelfInventoryProcess(models.Model):
                 rec.system_stock_refresh_age_state = 'danger'
 
     def write(self, vals):
+        self.check_access('write')
         auto_receiver = False
         if vals.get('branch_id') and 'receiver_id' not in vals:
             vals = dict(vals)
@@ -232,6 +234,7 @@ class SelfInventoryProcess(models.Model):
         return super().write(vals)
 
     def action_submit_process(self):
+        self.check_access('write')
         for rec in self:
             if rec.state not in ('draft', 'in_progress'):
                 continue
@@ -271,6 +274,7 @@ class SelfInventoryProcess(models.Model):
         return True
 
     def action_cancel(self):
+        self.check_access('write')
         for rec in self:
             if rec.state == 'submitted':
                 raise ValidationError(_("Submitted self inventory processes cannot be cancelled."))
@@ -278,6 +282,7 @@ class SelfInventoryProcess(models.Model):
         return True
 
     def action_reset_to_draft(self):
+        self.check_access('write')
         for rec in self:
             if rec.state == 'submitted':
                 raise ValidationError(_("Submitted self inventory processes cannot be reset to draft."))
@@ -285,6 +290,7 @@ class SelfInventoryProcess(models.Model):
         return True
 
     def action_sync_requested_product_quantities(self):
+        self.check_access('write')
         total_updated = 0
         refreshed_at = fields.Datetime.now()
         for rec in self:
@@ -425,7 +431,15 @@ class SelfInventoryProcess(models.Model):
             result[line.id] = stock_by_item_id.get(item_id, stock_by_code.get(item_code, 0.0))
         return result
 
+    def action_export_saved_report(self):
+        """Export persisted values without fetching stock or changing counts."""
+        self.check_access('read')
+        return self.env.ref('ab_self_inventory.action_self_inventory_count_sheet_xlsx').report_action(self)
+
     def action_export_count_sheet(self):
+        self.check_access('read')
+        if self.env.user._is_self_inventory_area_reader():
+            return self.action_export_saved_report()
         for rec in self:
             if rec.state in ('draft', 'in_progress'):
                 rec._prepare_count_sheet_snapshot()
@@ -449,6 +463,7 @@ class SelfInventoryProcess(models.Model):
         self.sudo().write({'last_system_stock_refresh_at': refreshed_at})
 
     def action_open_import_wizard(self):
+        self.check_access('write')
         self.ensure_one()
         self._check_can_update_process_line_grid()
         return {
@@ -461,6 +476,7 @@ class SelfInventoryProcess(models.Model):
         }
 
     def action_open_manual_add_line_wizard(self):
+        self.check_access('write')
         self.ensure_one()
         self._check_can_update_process_line_grid()
         wizard = self.env['ab_self_inventory_batch_add_line_wizard'].create({
@@ -658,6 +674,7 @@ class SelfInventoryProcessLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        self.check_access('create')
         self._check_duplicate_products(vals_list)
         for vals in vals_list:
             process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
@@ -673,6 +690,7 @@ class SelfInventoryProcessLine(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
+        self.check_access('write')
         mark_counted = 'actual_qty' in vals and not self.env.context.get('ab_self_inventory_reset_count_results')
         if not self.env.su:
             for process in self.mapped('process_id'):
@@ -686,6 +704,7 @@ class SelfInventoryProcessLine(models.Model):
         return super().write(vals)
 
     def unlink(self):
+        self.check_access('unlink')
         if not self.env.su:
             for process in self.mapped('process_id'):
                 process._check_can_update_process_line_grid()

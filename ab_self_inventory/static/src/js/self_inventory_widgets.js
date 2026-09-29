@@ -3,7 +3,7 @@ import { _t } from "@web/core/l10n/translation";
 import { user } from "@web/core/user";
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
-import { Component, useState, xml, useRef, onWillUnmount } from "@odoo/owl";
+import { Component, useState, xml, useRef, onWillUnmount, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { Dialog } from "@web/core/dialog/dialog";
 
@@ -575,6 +575,15 @@ class RowTitleWidget extends Component {
 
     setup() {
         this._t = _t;
+        this.isAreaReader = false;
+        onWillStart(async () => {
+            const [area, manager, admin] = await Promise.all([
+                user.hasGroup("ab_self_inventory.group_ab_self_inventory_area_manager_readonly"),
+                user.hasGroup("ab_self_inventory.group_ab_self_inventory_manager"),
+                user.hasGroup("base.group_system"),
+            ]);
+            this.isAreaReader = area && !manager && !admin;
+        });
         this.state = useState({ menuOpen: false });
         this.actionsWrapperRef = useRef("actionsWrapper");
         this.menuRef = useRef("menu");
@@ -645,10 +654,10 @@ class RowTitleWidget extends Component {
 
         const items = [];
         items.push({ id: "open", label: _t("Open"), icon: "\u2197", action: "open" });
-        if (isDraft) {
+        if (isDraft && !this.isAreaReader) {
             items.push({ id: "edit", label: _t("Edit"), icon: "\u270E", action: "edit" });
         }
-        if (this.props.allowDuplicate !== false) {
+        if (this.props.allowDuplicate !== false && !this.isAreaReader) {
             items.push({ id: "duplicate", label: _t("Duplicate"), icon: "\uD83D\uDCCB", action: "duplicate" });
         }
         return items;

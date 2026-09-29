@@ -71,7 +71,7 @@
                                     class="ab_self_inventory_floating_sync_btn"
                                     groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager">
                                 <span class="ab_self_inventory_floating_sync_main">
-                                    <i class="fa fa-refresh" aria-hidden="true"/>
+                                    <i class="fa fa-refresh" title="Refresh System Stock" aria-hidden="true"/>
                                     <field name="system_stock_refresh_button_label" nolabel="1"/>
                                 </span>
                                 <span class="ab_self_inventory_floating_sync_meta ab_self_inventory_floating_sync_meta--none" invisible="system_stock_refresh_age_state != 'none'">
@@ -194,6 +194,46 @@
             </field>
         </record>
 
+        <record id="view_ab_self_inventory_process_area_form" model="ir.ui.view">
+            <field name="name">Self Inventory process area report</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="inherit_id" ref="view_ab_self_inventory_process_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="inside">
+                    <button name="action_export_saved_report" string="Export Saved Report"
+                            type="object" class="btn-secondary"
+                            groups="ab_self_inventory.group_ab_self_inventory_area_manager_readonly"/>
+                </xpath>
+                <xpath expr="//div[hasclass('ab_form_section_body')]/field[@name='request_id']" position="attributes">
+                    <attribute name="groups">ab_self_inventory.group_ab_self_inventory_readonly,ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager</attribute>
+                </xpath>
+                <xpath expr="//div[span/field[@name='request_id']]" position="attributes">
+                    <attribute name="groups">ab_self_inventory.group_ab_self_inventory_readonly,ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_ab_self_inventory_process_area_list" model="ir.ui.view">
+            <field name="name">Self Inventory area list</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="inherit_id" ref="view_ab_self_inventory_process_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='request_id']" position="attributes">
+                    <attribute name="groups">ab_self_inventory.group_ab_self_inventory_readonly,ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record id="view_ab_self_inventory_process_area_search" model="ir.ui.view">
+            <field name="name">Self Inventory area search</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="inherit_id" ref="view_ab_self_inventory_process_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='request_id']" position="attributes">
+                    <attribute name="groups">ab_self_inventory.group_ab_self_inventory_readonly,ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="action_ab_self_inventory_process" model="ir.actions.act_window">
             <field name="name">Self Inventory Processes</field>
             <field name="res_model">ab_self_inventory_process</field>
@@ -205,7 +245,7 @@
                   name="Processes"
                   parent="menu_ab_self_inventory_root"
                   action="action_ab_self_inventory_process"
-                  groups="group_ab_self_inventory_readonly,group_ab_self_inventory_receiver,group_ab_self_inventory_manager,group_ab_self_inventory_requester"
+                  groups="group_ab_self_inventory_area_manager_readonly,group_ab_self_inventory_readonly,group_ab_self_inventory_receiver,group_ab_self_inventory_manager,group_ab_self_inventory_requester"
                   sequence="20"/>
     </data>
 </odoo>

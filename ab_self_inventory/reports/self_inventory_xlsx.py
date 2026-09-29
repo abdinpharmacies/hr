@@ -7,6 +7,7 @@ class SelfInventoryCountSheetXlsx(models.AbstractModel):
     _inherit = 'report.report_xlsx.abstract'
 
     def generate_xlsx_report(self, workbook, data, processes):
+        processes.check_access('read')
         header_format = workbook.add_format({
             'bold': True,
             'font_color': '#333333',

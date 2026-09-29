@@ -1,6 +1,7 @@
 import re
 
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class ResUsers(models.Model):
@@ -84,3 +85,52 @@ class ResUsers(models.Model):
             self._normalize_self_inventory_branch_token(match.group(1)),
             self._normalize_self_inventory_branch_token(match.group(2)),
         )
+
+    def _is_self_inventory_area_reader(self):
+        self.ensure_one()
+        area_group = self.env.ref(
+            'ab_self_inventory.group_ab_self_inventory_area_manager_readonly',
+            raise_if_not_found=False,
+        )
+        if not area_group or area_group not in self.all_group_ids:
+            return False
+        return (
+            self.env.ref('base.group_system') not in self.all_group_ids
+            and self.env.ref('ab_self_inventory.group_ab_self_inventory_manager') not in self.all_group_ids
+        )
+
+    def _get_self_inventory_area_branch_ids(self):
+        """Resolve only explicit HR mappings; never guess from names or codes."""
+        self.ensure_one()
+        employees = self.sudo().ab_employee_ids.filtered('active')
+        if not employees:
+            return []
+        Department = self.env['ab_hr_department'].sudo().with_context(active_test=True)
+        areas = Department.search(
+            fields.Domain('manager_id', 'in', employees.ids)
+            & fields.Domain('workplace_region', '!=', False)
+        ).mapped('workplace_region')
+        if not areas:
+            return []
+        return Department.search(
+            fields.Domain('workplace_region', 'in', areas.ids)
+            & fields.Domain('store_id.store_type', '=', 'branch')
+            & fields.Domain('store_id.active', '=', True)
+        ).mapped('store_id').ids
+
+    @api.constrains('group_ids')
+    def _check_self_inventory_area_roles(self):
+        for user in self:
+            if user._is_self_inventory_area_reader() and any(
+                self.env.ref('ab_self_inventory.' + role) in user.all_group_ids
+                for role in (
+                    'group_ab_self_inventory_readonly',
+                    'group_ab_self_inventory_requester',
+                    'group_ab_self_inventory_receiver',
+                )
+            ):
+                raise ValidationError(_(
+                    "Area Manager – Read Only cannot be combined with Self Inventory "
+                    "Read Only, Requester, or Branch Receiver. Remove the conflicting "
+                    "roles first. Self Inventory managers and administrators are exempt."
+                ))

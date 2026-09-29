@@ -253,5 +253,25 @@
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
         </record>
+        <record id="rule_ab_self_inventory_process_area_readonly" model="ir.rule">
+            <field name="name">ab_self_inventory_process: managed areas read only</field>
+            <field name="model_id" ref="model_ab_self_inventory_process"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_area_manager_readonly'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user._is_self_inventory_area_reader() else [('branch_id', 'in', user._get_self_inventory_area_branch_ids())]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+        <record id="rule_ab_self_inventory_process_line_area_readonly" model="ir.rule">
+            <field name="name">ab_self_inventory_process_line: managed areas read only</field>
+            <field name="model_id" ref="model_ab_self_inventory_process_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_area_manager_readonly'))]"/>
+            <field name="domain_force">[(1, '=', 1)] if not user._is_self_inventory_area_reader() else [('process_id.branch_id', 'in', user._get_self_inventory_area_branch_ids())]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
     </data>
 </odoo>
