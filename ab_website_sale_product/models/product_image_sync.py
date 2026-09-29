@@ -4,6 +4,8 @@ import logging
 import os
 from collections import defaultdict
 
+from psycopg2.errors import DeadlockDetected, SerializationFailure
+
 from odoo import _, api, models
 from odoo.exceptions import AccessError, UserError
 
@@ -259,7 +261,10 @@ class ProductImageSyncService(models.AbstractModel):
             )
         template = product.website_product_tmpl_id
         current_checksum = self._template_image_sha256(template)
-        if current_checksum == image_entry["checksum"]:
+        if current_checksum == image_entry["checksum"] or (
+            template.website_image_source_checksum == image_entry["checksum"]
+            and template.website_image_applied_checksum == current_checksum
+        ):
             return self._report_line(
                 product=product,
                 status="unchanged",
@@ -416,10 +421,17 @@ class ProductImageSyncService(models.AbstractModel):
                 image_path = line["image_path"]
                 with open(image_path, "rb") as image_file:
                     image_payload = base64.b64encode(image_file.read())
-                product.website_product_tmpl_id.sudo().write({"image_1920": image_payload})
+                with self.env.cr.savepoint():
+                    template = product.website_product_tmpl_id.sudo().with_context(bin_size=False)
+                    if not template._apply_website_sync_image(image_payload):
+                        summary["unchanged"] += 1
+                        report.append(dict(line, status="unchanged", reason=_("The current Odoo image already matches the source file checksum.")))
+                        continue
                 updated_line = dict(line, status="updated", reason=_("Image synchronized."))
                 summary["updated"] += 1
                 report.append(updated_line)
+            except (SerializationFailure, DeadlockDetected):
+                raise
             except Exception as error:
                 _logger.exception("Failed to synchronize product image for ab_product id=%s", product.id)
                 summary["error"] += 1

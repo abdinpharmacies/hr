@@ -1,3 +1,6 @@
+import base64
+import hashlib
+
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.http import request
@@ -15,6 +18,29 @@ class ProductTemplate(models.Model):
         ondelete="restrict",
         groups="base.group_user",
     )
+    website_image_source_checksum = fields.Char(
+        string="Website Image Source Checksum", readonly=True, copy=False, groups="base.group_user",
+    )
+    website_image_applied_checksum = fields.Char(
+        string="Website Image Applied Checksum", readonly=True, copy=False, groups="base.group_user",
+    )
+
+    def _apply_website_sync_image(self, image_payload):
+        self.ensure_one()
+        template = self.sudo().with_context(bin_size=False)
+        source_checksum = hashlib.sha256(base64.b64decode(image_payload)).hexdigest()
+        current_image = template.image_1920
+        current_checksum = hashlib.sha256(base64.b64decode(current_image)).hexdigest() if current_image else ""
+        if current_checksum == source_checksum or (
+            template.website_image_source_checksum == source_checksum
+            and template.website_image_applied_checksum == current_checksum
+        ):
+            return False
+        template.write({"image_1920": image_payload, "website_image_source_checksum": source_checksum})
+        applied_checksum = hashlib.sha256(base64.b64decode(template.image_1920)).hexdigest()
+        template.write({"website_image_applied_checksum": applied_checksum})
+        return True
+
     eplus_stock_snapshot_ids = fields.One2many(
         related="ab_product_id.eplus_stock_snapshot_ids",
         string="Eplus Stock",

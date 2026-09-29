@@ -198,3 +198,36 @@ class TestWebsiteCategoryMapping(TransactionCase):
             line = self._single_product_line(self._plan_for(root, product), product)
 
         self.assertEqual(line["status"], "unchanged")
+
+    def test_changed_image_replaces_previous_and_repeated_plan_is_noop(self):
+        product = self._create_website_product("IMG-CHANGED")
+        Service = self.env["ab.website.product.image.sync.service"]
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "IMG-CHANGED.png")
+            Service.apply_sync_plan(self._plan_for(root, product))
+            output = BytesIO()
+            Image.new("RGB", (1, 1), (20, 40, 60)).save(output, format="PNG")
+            self._write_image(root, "IMG-CHANGED.png", payload=output.getvalue())
+            plan = self._plan_for(root, product)
+            result = Service.apply_sync_plan(plan)
+            self.assertEqual(result["summary"]["updated"], 1)
+            self.assertEqual(product.website_product_tmpl_id.image_1920, base64.b64encode(output.getvalue()))
+            result = Service.apply_sync_plan(plan)
+            self.assertEqual(result["summary"]["updated"], 0)
+            self.assertEqual(self._single_product_line(result, product)["status"], "unchanged")
+
+    def test_resized_source_image_is_unchanged_and_manual_edit_detected(self):
+        product = self._create_website_product("IMG-RESIZED")
+        Service = self.env["ab.website.product.image.sync.service"]
+        output = BytesIO()
+        Image.new("RGB", (2000, 40), (20, 40, 60)).save(output, format="PNG")
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "IMG-RESIZED.png", payload=output.getvalue())
+            Service.apply_sync_plan(self._plan_for(root, product))
+            template = product.website_product_tmpl_id
+            self.assertNotEqual(template.website_image_source_checksum, template.website_image_applied_checksum)
+            plan = self._plan_for(root, product)
+            self.assertEqual(self._single_product_line(plan, product)["status"], "unchanged")
+            template.image_1920 = base64.b64encode(PNG_1X1)
+            plan = self._plan_for(root, product)
+            self.assertEqual(self._single_product_line(plan, product)["status"], "matched")
