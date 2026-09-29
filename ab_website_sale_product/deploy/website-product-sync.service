@@ -1,0 +1,15 @@
+[Unit]
+Description=Website Product Sync dedicated worker
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/odoo19/custom-addons-ecommerce
+ExecStart=/opt/odoo19/venv19/bin/python /opt/odoo19/custom-addons-ecommerce/ab_website_sale_product/worker.py --odoo-root=/opt/odoo19/server --config=/opt/odoo19/custom-addons-ecommerce/odoo19.conf --database=ecom19 --addons-path=/opt/odoo19/server/addons,/opt/odoo19/custom-addons-ecommerce,/opt/odoo19/custom-addons
+Restart=always
+RestartSec=5
+TimeoutStopSec=120
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

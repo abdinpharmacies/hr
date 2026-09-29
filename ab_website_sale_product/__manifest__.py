@@ -23,6 +23,9 @@
         "sync_images_views.xml",
     ],
     "assets": {
+        "web.assets_backend": [
+            "ab_website_sale_product/static/src/js/website_sync_form.js",
+        ],
         "web.assets_frontend": [
             "ab_website_sale_product/static/src/xml/stock_availability.xml",
         ],
