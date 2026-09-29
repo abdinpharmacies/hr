@@ -1,20 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <record id="rule_suppliers_pervent" model="ir.rule">
-        <field name="name">Retired legacy claim rule</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="rule_closed_allow" model="ir.rule">
-        <field name="name">Retired legacy claim rule</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="active" eval="False"/>
-    </record>
-    <record id="rule_closed_status" model="ir.rule">
-        <field name="name">Retired legacy claim rule</field>
-        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
-        <field name="active" eval="False"/>
-    </record>
     <record id="claim_read_user" model="ir.rule">
         <field name="name">claim_read_user</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>

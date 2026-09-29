@@ -25,10 +25,6 @@
         <field name="arch" type="xml">
             <form duplicate="false">
                 <header>
-                    <button name="action_restart_legacy_review" string="Restart Legacy Review" type="object"
-                            groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
-                            invisible="state != 'legacy_review' or not active"
-                            confirm="Return this legacy claim to Draft for fresh approval? Its original status and history will be preserved."/>
                     <button name="action_submit" string="Submit" type="object"
                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                             invisible="state != 'draft' or not active" class="oe_highlight"/>
@@ -47,11 +43,6 @@
                 </header>
                 <sheet>
                     <field name="active" invisible="True"/>
-                    <group string="Legacy Recovery" invisible="state != 'legacy_review'">
-                        <separator
-                                string="Department approvals are unverified. An administrator can restart this claim for fresh review."/>
-                        <field name="legacy_status" string="Original Legacy Status"/>
-                    </group>
                     <group>
                         <field name="supplier_id" readonly="state != 'draft' or not active"
                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -318,7 +309,7 @@
                 <field name="supplier_id"/>
                 <field name="user_id"/>
                 <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
-                <filter name="inventory_purchase" string="Inventory" domain="[('state', '=', 'inventory')]"/>
+                <filter name="inventory" string="Inventory" domain="[('state', '=', 'inventory')]"/>
                 <filter name="purchasing" string="Purchasing" domain="[('state', '=', 'purchasing')]"/>
                 <filter name="supplier_accounts" string="Supplier Accounts"
                         domain="[('state', '=', 'supplier_accounts')]"/>
@@ -343,70 +334,6 @@
     </record>
     <menuitem id="invoice_menu" name="All Claims" parent="supplier_claim_cycle_sub_menu" action="invoice_action"
               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <record id="queue_user" model="ir.actions.act_window">
-        <field name="name">Secretarial Queue</field>
-        <field name="res_model">ab_supplier_claim_cycle</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state', 'in', ['draft', 'returned_secretarial', 'ready_to_close'])]</field>
-    </record>
-    <menuitem id="queue_menu_user" name="Secretarial Queue" parent="supplier_claim_cycle_sub_menu" action="queue_user"
-              groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <record id="queue_inventory" model="ir.actions.act_window">
-        <field name="name">Inventory Queue</field>
-        <field name="res_model">ab_supplier_claim_cycle</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'inventory'),
-                              ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
-    </record>
-    <menuitem id="queue_menu_inventory" name="Inventory Queue" parent="supplier_claim_cycle_sub_menu"
-              action="queue_inventory"
-              groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <record id="queue_purchasing" model="ir.actions.act_window">
-        <field name="name">Purchasing Queue</field>
-        <field name="res_model">ab_supplier_claim_cycle</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'purchasing'),
-                              ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
-    </record>
-    <menuitem id="queue_menu_purchasing" name="Purchasing Queue" parent="supplier_claim_cycle_sub_menu"
-              action="queue_purchasing"
-              groups="ab_supplier_claim_cycle.supplier_claim_group_purchasing,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <record id="queue_supplier_accounts" model="ir.actions.act_window">
-        <field name="name">Supplier Accounts Queue</field>
-        <field name="res_model">ab_supplier_claim_cycle</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'supplier_accounts'),
-                              ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
-    </record>
-    <menuitem id="queue_menu_supplier_accounts" name="Supplier Accounts Queue" parent="supplier_claim_cycle_sub_menu"
-              action="queue_supplier_accounts"
-              groups="ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <record id="queue_bank_accounts" model="ir.actions.act_window">
-        <field name="name">Bank Accounts Queue</field>
-        <field name="res_model">ab_supplier_claim_cycle</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('state', '=', 'bank_accounts'),
-                              ('bank_accounts_decision', 'in', ['pending', 'deferred'])]</field>
-    </record>
-    <menuitem id="queue_menu_bank_accounts" name="Bank Accounts Queue" parent="supplier_claim_cycle_sub_menu"
-              action="queue_bank_accounts"
-              groups="ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-    <!-- Keep legacy action/XML IDs available without exposing stage-filtered menus. -->
-    <record id="queue_menu_user" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    <record id="queue_menu_inventory" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    <record id="queue_menu_purchasing" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    <record id="queue_menu_supplier_accounts" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
-    <record id="queue_menu_bank_accounts" model="ir.ui.menu">
-        <field name="active" eval="False"/>
-    </record>
     <record id="invoice_view_list_simple" model="ir.ui.view">
         <field name="name">supplier.claim.list.simple</field>
         <field name="model">ab_supplier_claim_cycle</field>

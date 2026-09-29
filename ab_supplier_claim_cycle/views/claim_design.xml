@@ -39,7 +39,7 @@
       </xpath>
       <xpath expr="//group[@name='claim_entry']" position="before">
         <field name="resume_stage" invisible="True"/>
-        <div class="o_scc_top_tracking" invisible="state == 'legacy_review'">
+        <div class="o_scc_top_tracking">
           <div class="o_scc_top_tracking_header">
             <strong>Claim Timeline</strong>
             <span class="text-muted">Follow the claim through each review stage</span>
@@ -242,7 +242,7 @@
           <h3>Stage History</h3>
         </div>
       </xpath>
-      <xpath expr="//div[@class='o_scc_history_section']" position="inside">
+      <xpath expr="//div[hasclass('o_scc_history_section')]" position="inside">
         <xpath expr="//field[@name='history_ids']" position="move"/>
       </xpath>
       <xpath expr="//notebook[page[@name='history']]" position="replace"/>
@@ -274,11 +274,11 @@
       </xpath>
       <xpath expr="//field[@name='state']" position="attributes">
         <attribute name="decoration-muted">state == 'draft'</attribute>
-        <attribute name="decoration-info">state in ('inventory', 'inventory_purchase')</attribute>
+        <attribute name="decoration-info">state == 'inventory'</attribute>
         <attribute name="decoration-primary">state == 'purchasing'</attribute>
         <attribute name="decoration-warning">state in ('supplier_accounts', 'bank_accounts')</attribute>
         <attribute name="decoration-success">state in ('ready_to_close', 'closed')</attribute>
-        <attribute name="decoration-danger">state in ('returned_secretarial', 'legacy_review')</attribute>
+        <attribute name="decoration-danger">state == 'returned_secretarial'</attribute>
       </xpath>
     </field>
   </record>
