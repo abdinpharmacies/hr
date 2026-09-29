@@ -261,13 +261,13 @@
                                 <section t-if="recent_prescriptions" class="ab-prescription-status-card">
                                     <div class="ab-prescription-side-head">
                                         <h2>Recent prescription requests</h2>
-                                        <a href="/my/prescriptions">View all</a>
+                                        <a href="/my/orders?order_type=prescription">View all</a>
                                     </div>
                                     <a t-foreach="recent_prescriptions"
                                        t-as="prescription"
                                        t-att-href="prescription.get_portal_url()"
                                        class="ab-prescription-mini-card">
-                                        <strong t-out="prescription._ab_storefront_display_reference()"/>
+                                        <bdi dir="ltr" t-out="prescription.ab_public_reference or (prescription.sale_order_id.ab_public_reference if prescription.sale_order_id else False) or '—'"/>
                                         <span>
                                             <t t-set="state" t-value="prescription.state"/>
                                             <t t-call="ab_ecommerce_storefront.prescription_state_label"/>
@@ -302,7 +302,7 @@
                        t-att-href="prescription.get_portal_url()"
                        class="ab-prescription-list-item">
                         <div>
-                            <strong t-out="prescription._ab_storefront_display_reference()"/>
+                            <bdi dir="ltr" t-out="prescription.ab_public_reference or (prescription.sale_order_id.ab_public_reference if prescription.sale_order_id else False) or '—'"/>
                             <small><span t-field="prescription.create_date"/></small>
                         </div>
                         <span class="ab-prescription-state-pill">
@@ -333,7 +333,7 @@
                 <header class="ab-prescription-track-head">
                     <div>
                         <span>Prescription request</span>
-                        <h1 t-out="prescription._ab_storefront_display_reference()"/>
+                        <h1><bdi dir="ltr" t-out="prescription.ab_public_reference or (prescription.sale_order_id.ab_public_reference if prescription.sale_order_id else False) or '—'"/></h1>
                         <p>
                             <t t-set="state" t-value="prescription.state"/>
                             <t t-call="ab_ecommerce_storefront.prescription_state_description"/>

@@ -5107,3 +5107,75 @@ msgstr ""
 "        </t>\n"
 "    </p>\n"
 "</div>"
+
+#. module: ab_ecommerce_storefront
+msgid "Saved delivery addresses"
+msgstr "عناوين التوصيل المحفوظة"
+
+#. module: ab_ecommerce_storefront
+msgid "Enter a new address"
+msgstr "إدخال عنوان جديد"
+
+#. module: ab_ecommerce_storefront
+msgid "Saved address"
+msgstr "عنوان محفوظ"
+
+#. module: ab_ecommerce_storefront
+msgid "Choose a saved address or enter a new one below."
+msgstr "اختر عنواناً محفوظاً أو أدخل عنواناً جديداً بالأسفل."
+
+#. module: ab_ecommerce_storefront
+msgid "Order type"
+msgstr "نوع الطلب"
+
+#. module: ab_ecommerce_storefront
+msgid "All orders"
+msgstr "جميع الطلبات"
+
+#. module: ab_ecommerce_storefront
+msgid "Regular orders"
+msgstr "الطلبات العادية"
+
+#. module: ab_ecommerce_storefront
+msgid "Prescription orders"
+msgstr "طلبات الروشتة"
+
+#. module: ab_ecommerce_storefront
+msgid "Regular order"
+msgstr "طلب عادي"
+
+#. module: ab_ecommerce_storefront
+msgid "Prescription request"
+msgstr "طلب روشتة"
+
+#. module: ab_ecommerce_storefront
+msgid "View order"
+msgstr "عرض الطلب"
+
+#. module: ab_ecommerce_storefront
+msgid "View prescription details"
+msgstr "عرض تفاصيل الروشتة"
+
+#. module: ab_ecommerce_storefront
+msgid "No regular orders yet"
+msgstr "لا توجد طلبات عادية حتى الآن"
+
+#. module: ab_ecommerce_storefront
+msgid "Start shopping"
+msgstr "ابدأ التسوق"
+
+#. module: ab_ecommerce_storefront
+msgid "No prescription orders yet"
+msgstr "لا توجد طلبات روشتة حتى الآن"
+
+#. module: ab_ecommerce_storefront
+msgid "Upload a prescription"
+msgstr "ارفع روشتة"
+
+#. module: ab_ecommerce_storefront
+msgid "You do not have any orders yet"
+msgstr "ليس لديك طلبات حتى الآن"
+
+#. module: ab_ecommerce_storefront
+msgid "Your regular orders and prescription requests will appear here."
+msgstr "ستظهر طلباتك العادية وطلبات الروشتات هنا."

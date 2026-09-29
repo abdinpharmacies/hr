@@ -2,14 +2,48 @@ import secrets
 import time
 
 from odoo import fields
-from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.addons.sale.controllers.portal import CustomerPortal as SaleCustomerPortal
 from odoo.exceptions import AccessError
 from odoo.http import request, route
 
 from .auth import is_valid_egyptian_mobile, normalize_egyptian_phone
 
 
-class AbStorefrontCustomerPortal(CustomerPortal):
+class AbStorefrontCustomerPortal(SaleCustomerPortal):
+    def _prepare_orders_domain(self, partner):
+        customer_domain = fields.Domain(
+            "partner_id", "child_of", [partner.commercial_partner_id.id]
+        )
+        confirmed_orders = fields.Domain("state", "in", ["sale", "done"])
+        storefront_open_orders = (
+            fields.Domain("website_id", "=", request.website.id)
+            & fields.Domain("state", "in", ["draft", "sent", "cancel"])
+        )
+        non_prescription_order = fields.Domain("ab_prescription_order_ids", "=", False)
+        return customer_domain & non_prescription_order & (
+            confirmed_orders | storefront_open_orders
+        )
+
+    def _ab_storefront_recent_account_orders(self, orders, prescriptions, limit=3):
+        items = []
+        for order in orders:
+            items.append({
+                "kind": "order",
+                "record": order,
+                "date": order.date_order or order.create_date,
+            })
+        for prescription in prescriptions:
+            items.append({
+                "kind": "prescription",
+                "record": prescription,
+                "date": prescription.create_date,
+            })
+        return sorted(
+            items,
+            key=lambda item: item["date"] or fields.Datetime.to_datetime("1970-01-01"),
+            reverse=True,
+        )[:limit]
+
     def _ab_storefront_verify_order(self, order_reference, phone):
         normalized_phone = normalize_egyptian_phone(phone)
         reference = (order_reference or "").strip().upper()
@@ -154,6 +188,10 @@ class AbStorefrontCustomerPortal(CustomerPortal):
             "profile_completion_style": f"--ab-profile-completion: {profile_completion}%",
             "recent_orders": recent_orders,
             "recent_prescriptions": recent_prescriptions,
+            "recent_account_orders": self._ab_storefront_recent_account_orders(
+                recent_orders,
+                recent_prescriptions,
+            ),
             "prescription_count": prescription_count,
             "saved_addresses": saved_addresses,
             "wishlist_count": wishlist_count,
