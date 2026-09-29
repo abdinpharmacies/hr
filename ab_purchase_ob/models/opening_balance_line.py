@@ -1,11 +1,12 @@
-from odoo import api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class Opening_Balance_Details(models.Model):
     _name = 'ab_purchase_ob_line'
     _description = 'opening_balance_details'
     _rec_name = 'product_id'
+    _inherits = {'ab_product_source': 'source_id'}
 
     source_id = fields.Many2one(
         'ab_product_source', required=True, delegate=True, ondelete='cascade')
@@ -31,3 +32,27 @@ class Opening_Balance_Details(models.Model):
             line.purchase_price = product_params.purchase_price
             line.taxes_ids = product_params.taxes_ids or self.env['ab_taxes'].search([
                 ('name', '=', 'Exempt')])
+
+    @api.constrains('qty')
+    def _check_qty(self):
+        for line in self:
+            if line.qty < 0:
+                raise ValidationError(_("Receipt quantities cannot be negative."))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            header = self.env['ab_purchase_ob_header'].browse(vals.get('header_id'))
+            if header.exists() and header.status == 'saved':
+                raise ValidationError(_("Saved receipt lines cannot be changed."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if any(line.header_id.status == 'saved' for line in self):
+            raise ValidationError(_("Saved receipt lines cannot be changed."))
+        return super().write(vals)
+
+    def unlink(self):
+        if any(line.header_id.status == 'saved' for line in self):
+            raise ValidationError(_("Saved receipt lines cannot be changed."))
+        return super().unlink()

@@ -9,7 +9,7 @@
                 <form string="ab_purchase_ob_header_form">
                     <header class="w-100">
                         <button string="Submit" type="object" name="btn_submit_inventory" class="btn-info"
-                                attrs="{'invisible':[('status','=','saved')]}"/>
+                                invisible="status == 'saved'"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
@@ -52,23 +52,30 @@
                             </button>
                         </div>
                         <widget name="web_ribbon" title="Rejected" bg_color="bg-danger"
-                                attrs="{'invisible': [('status', '!=', 'rejected')]}"/>
+                                invisible="status != 'rejected'"/>
                         <widget name="web_ribbon" title="Saved" bg_color="bg-success"
-                                attrs="{'invisible': [('status', '!=', 'saved')]}"/>
+                                invisible="status != 'saved'"/>
                         <widget name="web_ribbon" title="Pending" bg_color="bg-info"
-                                attrs="{'invisible': [('status', '!=', 'pending')]}"/>
+                                invisible="status != 'pending'"/>
                         <field name="status" invisible="1"/>
                         <field name="total_price" invisible="1"/>
                         <field name="total_cost" string="Total Cost" invisible="1"/>
                         <field name="total_tax" invisible="1"/>
                         <field name="lines_count" invisible="1"/>
                         <group>
-                            <field name="store_id" attrs="{'readonly':[('status','=','saved')]}"/>
+                            <field name="purpose" readonly="status == 'saved'"/>
+                            <field name="store_id" readonly="status == 'saved'"/>
+                            <field name="doc_code" readonly="status == 'saved'"/>
+                            <field name="doc_date" readonly="status == 'saved'"/>
+                            <field name="receipt_type_id"
+                                   invisible="purpose != 'non_purchase_receipt'"
+                                   required="purpose == 'non_purchase_receipt'"
+                                   readonly="status == 'saved'"/>
                         </group>
                         <notebook>
-                            <page string="Opening Balance Detail">
-                                <field name="line_ids" attrs="{'readonly':[('status','=','saved')]}">
-                                    <tree editable="bottom">
+                            <page string="Receipt Lines">
+                                <field name="line_ids" readonly="status == 'saved'">
+                                    <list editable="bottom">
                                         <field name="header_status" invisible="1"/>
                                         <field name="product_id" class="text-wrap" width="120px"/>
                                         <field name="exp_date"/>
@@ -81,7 +88,7 @@
                                         <field name="purchase_price"/>
                                         <field name="taxes_ids" widget="many2many_tags" width="65px"/>
                                         <field name="unit_cost"/>
-                                    </tree>
+                                    </list>
                                 </field>
                             </page>
                             <page string="Description">
@@ -91,10 +98,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <div class="oe_chatter">
-                        <field name="message_follower_ids" groups="base.group_user"/>
-                        <field name="message_ids"/>
-                    </div>
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -102,8 +106,12 @@
             <field name="name">ab_purchase_ob_header_view_tree</field>
             <field name="model">ab_purchase_ob_header</field>
             <field name="arch" type="xml">
-                <tree string="ab_purchase_ob_header_tree">
+                <list string="ab_purchase_ob_header_tree">
+                    <field name="purpose"/>
                     <field name="store_id"/>
+                    <field name="doc_code"/>
+                    <field name="doc_date"/>
+                    <field name="receipt_type_id" optional="show"/>
                     <field name="total_price"/>
                     <field name="total_cost"/>
                     <field name="lines_count"/>
@@ -111,7 +119,7 @@
                            decoration-danger="status=='rejected'" decoration-warning="status=='prepending'"
                            decoration-success="status=='saved'"/>
                     <field name="description"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -119,11 +127,69 @@
             <field name="name">Opening Balance</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_purchase_ob_header</field>
-            <field name="context">{'uom_only_type': 1}</field>
-            <field name="view_mode">tree,form</field>
+            <field name="domain">[('purpose', '=', 'opening')]</field>
+            <field name="context">{'uom_only_type': 1, 'default_purpose': 'opening'}</field>
+            <field name="view_mode">list,form</field>
         </record>
         <menuitem id="ab_purchase_ob_header_menu" name="Opening Balance" parent="ab_product_source.menu_root"
                   action="ab_purchase_ob_header_action" sequence="3"/>
+
+        <record id="ab_purchase_ob_non_purchase_receipt_action" model="ir.actions.act_window">
+            <field name="name">Non-purchase Receipts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_ob_header</field>
+            <field name="domain">[('purpose', '=', 'non_purchase_receipt')]</field>
+            <field name="context">{'uom_only_type': 1, 'default_purpose': 'non_purchase_receipt'}</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="ab_purchase_ob_non_purchase_receipt_menu"
+                  name="Non-purchase Receipts"
+                  parent="ab_product_source.menu_root"
+                  action="ab_purchase_ob_non_purchase_receipt_action"
+                  sequence="4"/>
+
+        <record id="ab_purchase_ob_receipt_type_view_list" model="ir.ui.view">
+            <field name="name">ab_purchase_ob_receipt_type_view_list</field>
+            <field name="model">ab_purchase_ob_receipt_type</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_purchase_ob_receipt_type_view_form" model="ir.ui.view">
+            <field name="name">ab_purchase_ob_receipt_type_view_form</field>
+            <field name="model">ab_purchase_ob_receipt_type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="description" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_purchase_ob_receipt_type_action" model="ir.actions.act_window">
+            <field name="name">Receipt Types</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_purchase_ob_receipt_type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="ab_purchase_ob_receipt_type_menu"
+                  name="Receipt Types"
+                  parent="ab_product_source.menu_root"
+                  action="ab_purchase_ob_receipt_type_action"
+                  sequence="5"/>
 
     </data>
 </odoo>
