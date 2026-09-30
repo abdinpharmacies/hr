@@ -117,6 +117,8 @@
                         <notebook>
                             <page string="Purchase Notice Lines">
                                 <field name="line_ids"
+                                       nolabel="1"
+                                       class="o_ab_responsive_x2many_table o_ab_purchase_notice_line_table"
                                        readonly="status == 'saved'">
                                     <list editable="bottom">
                                         <field name="source_id_domain" invisible="1"/>

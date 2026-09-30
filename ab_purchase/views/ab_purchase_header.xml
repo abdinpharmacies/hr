@@ -105,7 +105,8 @@
                         <notebook>
                             <page string="Purchase Detail">
                                 <field name="line_ids"
-
+                                       nolabel="1"
+                                       class="o_ab_responsive_x2many_table o_ab_purchase_line_table"
                                        readonly="status != 'prepending'"
                                        invisible="(net_invoice == 0 and invoice_type != 'bonus') or not store_id or not supplier_id or not doc_code">
                                     <list editable="bottom">
