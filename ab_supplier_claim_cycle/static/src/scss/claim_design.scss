@@ -496,3 +496,43 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
 .o_scc_form .o_scc_history_table .o_data_cell:not([name="cheque_attachment"]) {
     cursor: default;
 }
+
+
+// Historical exceptions are additional steps in the existing route, without cards.
+.o_scc_form .o_scc_top_timeline .o_scc_timeline_exceptions {
+    &, .o_kanban_view, .o_kanban_renderer { display: contents !important; }
+    .o_x2m_control_panel, .o_kanban_ghost { display: none !important; }
+    .o_kanban_record {
+        flex: 1 0 112px !important;
+        position: relative;
+        min-width: 112px;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        cursor: default;
+        &::after {
+            content: ""; position: absolute; top: 8px; inset-inline-start: 58%;
+            width: 84%; height: 2px; background: rgba(148, 163, 184, .28);
+        }
+    }
+    .o_scc_top_timeline_step { width: 100%; }
+    .o_scc_exception_deferred {
+        summary { color: $scc-warning; }
+        .o_scc_top_timeline_dot { background: $scc-warning; }
+    }
+    .o_scc_exception_rejected {
+        summary { color: $scc-danger; }
+        .o_scc_top_timeline_dot { background: $scc-danger; }
+    }
+    @media (max-width: 767px) {
+        .o_kanban_record {
+            flex: 0 0 auto !important;
+            width: 100% !important;
+            &::after {
+                inset-inline-start: 8px; top: 22px; width: 2px; height: calc(100% - 8px);
+            }
+        }
+    }
+}

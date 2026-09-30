@@ -103,6 +103,26 @@
                 <field name="timeline_inventory" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_inventory"/>
               </div>
             </div>
+
+            <field name="timeline_inventory_exception_ids" readonly="True" nolabel="1" mode="kanban"
+                   class="o_scc_timeline_exceptions" invisible="not timeline_inventory_exception_ids">
+              <kanban create="false" edit="false" delete="false" can_open="false" default_order="id asc">
+                <field name="decision"/>
+                <templates>
+                  <t t-name="card">
+                    <div t-att-class="'o_scc_top_timeline_step o_scc_exception_' + record.decision.raw_value">
+                      <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                      <details class="o_scc_stage_date_toggle">
+                        <summary><field name="decision"/></summary>
+                        <field name="occurred_at" class="o_scc_stage_date"/>
+                      </details>
+                      <field name="department" class="o_scc_step_status"/>
+                      <field name="user_id" class="o_scc_stage_details"/>
+                    </div>
+                  </t>
+                </templates>
+              </kanban>
+            </field>
             <div class="o_scc_route_step" role="listitem" invisible="payment_nature == 'cash'">
               <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (purchasing_decision == 'approved')">
                 <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
@@ -132,6 +152,26 @@
                 <field name="timeline_purchasing" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_purchasing"/>
               </div>
             </div>
+
+            <field name="timeline_purchasing_exception_ids" readonly="True" nolabel="1" mode="kanban"
+                   class="o_scc_timeline_exceptions" invisible="not timeline_purchasing_exception_ids">
+              <kanban create="false" edit="false" delete="false" can_open="false" default_order="id asc">
+                <field name="decision"/>
+                <templates>
+                  <t t-name="card">
+                    <div t-att-class="'o_scc_top_timeline_step o_scc_exception_' + record.decision.raw_value">
+                      <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                      <details class="o_scc_stage_date_toggle">
+                        <summary><field name="decision"/></summary>
+                        <field name="occurred_at" class="o_scc_stage_date"/>
+                      </details>
+                      <field name="department" class="o_scc_step_status"/>
+                      <field name="user_id" class="o_scc_stage_details"/>
+                    </div>
+                  </t>
+                </templates>
+              </kanban>
+            </field>
             <div class="o_scc_route_step" role="listitem">
               <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (supplier_accounts_decision == 'approved')">
                 <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
@@ -161,6 +201,26 @@
                 <field name="timeline_supplier_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_supplier_accounts"/>
               </div>
             </div>
+
+            <field name="timeline_supplier_accounts_exception_ids" readonly="True" nolabel="1" mode="kanban"
+                   class="o_scc_timeline_exceptions" invisible="not timeline_supplier_accounts_exception_ids">
+              <kanban create="false" edit="false" delete="false" can_open="false" default_order="id asc">
+                <field name="decision"/>
+                <templates>
+                  <t t-name="card">
+                    <div t-att-class="'o_scc_top_timeline_step o_scc_exception_' + record.decision.raw_value">
+                      <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                      <details class="o_scc_stage_date_toggle">
+                        <summary><field name="decision"/></summary>
+                        <field name="occurred_at" class="o_scc_stage_date"/>
+                      </details>
+                      <field name="department" class="o_scc_step_status"/>
+                      <field name="user_id" class="o_scc_stage_details"/>
+                    </div>
+                  </t>
+                </templates>
+              </kanban>
+            </field>
             <div class="o_scc_route_step" role="listitem" invisible="payment_nature == 'cash'">
               <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (bank_accounts_decision == 'approved')">
                 <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
@@ -190,6 +250,26 @@
                 <field name="timeline_bank_accounts" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_bank_accounts"/>
               </div>
             </div>
+
+            <field name="timeline_bank_accounts_exception_ids" readonly="True" nolabel="1" mode="kanban"
+                   class="o_scc_timeline_exceptions" invisible="not timeline_bank_accounts_exception_ids">
+              <kanban create="false" edit="false" delete="false" can_open="false" default_order="id asc">
+                <field name="decision"/>
+                <templates>
+                  <t t-name="card">
+                    <div t-att-class="'o_scc_top_timeline_step o_scc_exception_' + record.decision.raw_value">
+                      <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                      <details class="o_scc_stage_date_toggle">
+                        <summary><field name="decision"/></summary>
+                        <field name="occurred_at" class="o_scc_stage_date"/>
+                      </details>
+                      <field name="department" class="o_scc_step_status"/>
+                      <field name="user_id" class="o_scc_stage_details"/>
+                    </div>
+                  </t>
+                </templates>
+              </kanban>
+            </field>
             <div class="o_scc_route_step" role="listitem">
               <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (state == 'closed')">
                 <span class="o_scc_top_timeline_dot" aria-hidden="true"/>

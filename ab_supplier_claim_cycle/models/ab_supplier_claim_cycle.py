@@ -30,14 +30,14 @@ class SupplierClaimCycle(models.Model):
     amount_of_check = fields.Char(required=True)
     type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy')], required=True)
     active = fields.Boolean(default=True)
-    payment_nature = fields.Selection(PAYMENT_NATURE, readonly=True, copy=False, tracking=True)
+    payment_nature = fields.Selection(PAYMENT_NATURE, copy=False, tracking=True)
     business_category = fields.Selection(BUSINESS_CATEGORY, readonly=True, copy=False)
     tax_classification = fields.Selection(
         TAX_CLASSIFICATION, string='Tax Type', copy=False, tracking=True,
-        readonly=True, help='Read from the supplier and frozen on first submission.')
+        help='Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims.')
     section = fields.Selection(
         SUPPLIER_SECTION, copy=False, tracking=True,
-        readonly=True, help='Read from the supplier and frozen on first submission.')
+        help='Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims.')
     bracket_id = fields.Many2one('ab_supplier_bracket', string='Supplier Bracket', ondelete='restrict',
                                  copy=False, tracking=True,
                                  help='Optional. Terms are copied on submission and do not calculate the claim amount.')
@@ -97,6 +97,24 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             claim.note_history_ids = claim.history_ids.filtered(
                 lambda entry: (entry.reason or '').strip() or entry.cheque_attachment)
+
+    timeline_inventory_exception_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
+    timeline_purchasing_exception_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
+    timeline_supplier_accounts_exception_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
+    timeline_bank_accounts_exception_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
+
+    @api.depends('history_ids.event', 'history_ids.department', 'history_ids.decision')
+    def _compute_timeline_exceptions(self):
+        for claim in self:
+            exceptions = claim.history_ids.filtered(
+                lambda entry: entry.event == 'decision' and entry.decision in ('deferred', 'rejected'))
+            for department in DEPARTMENTS:
+                claim[f'timeline_{department}_exception_ids'] = exceptions.filtered(
+                    lambda entry: entry.department == department).sorted('id')
 
     timeline_draft = fields.Text(compute='_compute_timeline_details')
     timeline_draft_date = fields.Datetime(compute='_compute_timeline_details')
@@ -219,14 +237,14 @@ class SupplierClaimCycle(models.Model):
 
     @api.model
     def _protected_fields(self):
-        return {'tax_classification', 'section', 'payment_nature', 'state', 'user_id', 'business_category', 'bracket_snapshot',
+        return {'state', 'user_id', 'business_category', 'bracket_snapshot',
                 'review_round', 'resume_stage', 'rejection_department', 'rejection_reason', 'history_ids'} | {
             f'{d}_decision' for d in DEPARTMENTS}
 
     @api.model_create_multi
     def create(self, vals_list):
         self._require_role('user')
-        allowed = {'supplier_id', 'bracket_id', 'num_of_invoice',
+        allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id', 'num_of_invoice',
                    'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
         defaults = dict(state='draft', user_id=self.env.uid, review_round=0,
                         business_category=False, bracket_snapshot=False, resume_stage=False,
@@ -250,7 +268,27 @@ class SupplierClaimCycle(models.Model):
         # Explicit defaults neutralize forged default_* context values.
         claims = super().create(clean)
         claims._record_secretarial_notes()
+        claims._remember_supplier_choices(vals_list)
         return claims
+
+    def _remember_supplier_choices(self, supplied_values):
+        # Only called after validated Draft create/write. Do not grant users
+        # general write access to suppliers or overwrite unrelated master data.
+        mapping = {'tax_classification': 'tax_type', 'section': 'section', 'payment_nature': 'payment_nature'}
+        by_supplier = {}
+        for claim, values in zip(self, supplied_values):
+            selected = {target: claim[source] for source, target in mapping.items()
+                        if source in values and claim[source]}
+            if selected:
+                by_supplier.setdefault(claim.supplier_id.id, {}).update(selected)
+        suppliers = self.env['ab_supplier'].browse(sorted(by_supplier))
+        suppliers.check_access('read')
+        suppliers.lock_for_update(allow_referencing=True)
+        suppliers.invalidate_recordset(list(mapping.values()))
+        for supplier in suppliers:
+            changed = {name: value for name, value in by_supplier[supplier.id].items() if supplier[name] != value}
+            if changed:
+                supplier.sudo().write(changed)
 
     def write(self, vals):
         if set(vals) & self._protected_fields():
@@ -270,7 +308,7 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):
                 claim._require_role('user')
-                allowed = correction_fields | ({'supplier_id', 'bracket_id'} if claim.state == 'draft' else set())
+                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id'} if claim.state == 'draft' else set())
             else:
                 allowed = set()
                 for d in DEPARTMENTS:
@@ -283,11 +321,14 @@ class SupplierClaimCycle(models.Model):
                                 allowed |= {'bank_cheque_attachment', 'bank_cheque_filename'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
+        explicit_choices = {name: vals[name] for name in ('tax_classification', 'section', 'payment_nature') if name in vals}
         if 'supplier_id' in vals:
             vals = {**self._supplier_classifications(vals['supplier_id']), 'bracket_id': False, **vals}
         previous_notes = ({claim.id: (claim.secretarial_notes or '').strip() for claim in self}
                           if 'secretarial_notes' in vals else {})
         result = super().write(vals)
+        if explicit_choices:
+            self._remember_supplier_choices([explicit_choices] * len(self))
         if 'secretarial_notes' in vals:
             self.filtered(lambda claim: (claim.secretarial_notes or '').strip() != previous_notes[
                 claim.id])._record_secretarial_notes()
@@ -344,15 +385,14 @@ class SupplierClaimCycle(models.Model):
                 supplier = claim.supplier_id
                 if not supplier.active:
                     raise ValidationError(_('Select an active supplier.'))
-                if not supplier.payment_nature:
+                if not claim.payment_nature:
                     raise ValidationError(_('Select a payment nature before submitting the claim.'))
-                vals.update(payment_nature=supplier.payment_nature, tax_classification=supplier.tax_type,
-                            section=supplier.section, business_category=supplier.business_category,
+                vals.update(business_category=supplier.business_category,
                             bracket_snapshot=claim._bracket_values())
-                stage = 'supplier_accounts' if supplier.payment_nature == 'cash' else 'inventory'
+                stage = 'supplier_accounts' if claim.payment_nature == 'cash' else 'inventory'
                 for d in DEPARTMENTS:
                     vals[f'{d}_decision'] = (
-                        'pending' if supplier.payment_nature == 'non_cash' or d == 'supplier_accounts'
+                        'pending' if claim.payment_nature == 'non_cash' or d == 'supplier_accounts'
                         else 'not_required'
                     )
             else:
@@ -362,7 +402,8 @@ class SupplierClaimCycle(models.Model):
             vals['state'] = stage
             for d in DEPARTMENTS:
                 if STAGES[d] == stage:
-                    vals.update({f'{d}_decision': 'pending', f'{d}_notes': False, f'{d}_followup_date': False})
+                    vals.update({f'{d}_decision': 'pending', f'{d}_notes': False,
+                                 f'{d}_followup_date': fields.Date.context_today(claim)})
             if stage == 'supplier_accounts':
                 vals.update(cheque_attachment=False, cheque_filename=False)
             claim._workflow_write(vals)
@@ -411,6 +452,9 @@ class SupplierClaimCycle(models.Model):
                         vals.update(state='bank_accounts', bank_accounts_decision='pending')
                 else:
                     vals['state'] = 'ready_to_close'
+            next_stage = vals.get('state')
+            if next_stage in DEPARTMENTS:
+                vals[f'{next_stage}_followup_date'] = fields.Date.context_today(claim)
             claim._workflow_write(vals)
             claim._log('decision', old_state, department, decision, reason,
                        followup if decision == 'deferred' else False)

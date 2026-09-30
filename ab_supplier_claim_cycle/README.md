@@ -1,6 +1,6 @@
 # Supplier Claim Cycle
 
-Version: 19.0.3.0.0 · Odoo 19 · Developer: Alhassan Hossny
+Version: 19.0.3.0.1 · Odoo 19 · Developer: Alhassan Hossny
 
 ## Installation
 
@@ -13,12 +13,21 @@ database to this baseline; database cleanup is a separate operation requiring ap
 
 Each claim references `ab_supplier` directly. Select an active supplier and enter
 invoice count, area, claim amount, invoice type, and optional Secretarial notes.
-Payment nature, tax type, and section are read-only supplier values on the claim.
-The first submission reads the current supplier values and freezes payment nature,
-business category, tax type, section, and any selected bracket terms. Changes to
-supplier data afterward do not alter a submitted claim or its resubmission route.
-Empty optional tax type or section remains empty. Claims never save preferences
-back to the supplier.
+Payment nature, tax type, and section default from the selected supplier and are
+editable by Secretarial users/administrators on active Draft claims. Missing
+values stay empty so the user can choose from the dropdown. Explicit nonempty
+choices are remembered on the supplier when the Draft is saved; clearing an
+optional claim value does not erase the supplier default. Changing the supplier
+loads that supplier's defaults. This narrowly updates only tax type, section,
+and payment nature without granting general supplier-write permissions.
+
+Submission uses the claim's chosen payment nature for routing and preserves its
+tax type and section. These choices cannot be changed after submission, including
+when returned for correction. Subsequent supplier changes do not alter saved
+claims. Business category and selected bracket terms are captured on submission.
+
+The 3.0.1 update changes draft choice behavior only; it does not migrate or rewrite
+existing claims or supplier values during upgrade.
 
 Supplier Bracket is optional. Its ownership is validated through the supplier's
 `costcenter_id`, because brackets belong to cost centers in `ab_supplier`.
@@ -73,3 +82,5 @@ read/write security, and Odoo 19 view validation.
 
 Validated on an empty Odoo 19 test database: 33 tests passed, zero failures or
 errors. Python, XML, and Arabic translation syntax checks also passed.
+
+Follow-up dates default to today when entering or resuming a review stage and remain editable by its reviewer. Each deferral (orange) and rejection (red) stays visible as a separate timeline step after its department, including repeated decisions. Click a step label to reveal its date.

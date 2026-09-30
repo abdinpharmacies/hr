@@ -212,7 +212,8 @@ class TestSupplierClaimCycle(TransactionCase):
             before=claim.state
             with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
             self.decide_write=claim.with_user(self.users[d])
-            self.decide_write.write({d+'_notes':'Waiting'})
+            self.assertEqual(claim[d+'_followup_date'], fields.Date.context_today(claim))
+            self.decide_write.write({d+'_notes':'Waiting', d+'_followup_date': False})
             with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
             self.decide_write.write({d+'_followup_date':fields.Date.today()-timedelta(days=1)})
             with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
@@ -676,27 +677,53 @@ class TestSupplierClaimCycle(TransactionCase):
                 variants = [part for part in node if not safe_eval(part.get('invisible', 'False'), values)]
                 self.assertEqual(len(variants), 1)
 
-    def test_supplier_classifications_are_authoritative(self):
+    def test_supplier_choices_default_edit_remember_and_freeze(self):
         claim = self.claim()
-        self.assertEqual(claim.supplier_id._name, 'ab_supplier')
         self.assertEqual(claim.tax_classification, self.supplier.tax_type)
-        for name, value in [('tax_classification', 'through_supplier'), ('section', 'cosmo'), ('payment_nature', 'cash')]:
+        claim.write({'tax_classification': 'through_supplier', 'section': 'cosmo', 'payment_nature': 'cash'})
+        self.assertEqual((self.supplier.tax_type, self.supplier.section, self.supplier.payment_nature),
+                         ('through_supplier', 'cosmo', 'cash'))
+        next_claim = self.claim()
+        self.assertEqual((next_claim.tax_classification, next_claim.section, next_claim.payment_nature),
+                         ('through_supplier', 'cosmo', 'cash'))
+        # Supplier changes must not overwrite choices already saved on a claim.
+        self.supplier.write({'tax_type': 'tax_payment', 'section': 'medical', 'payment_nature': 'non_cash'})
+        claim.action_submit()
+        self.assertEqual(claim.state, 'supplier_accounts')
+        self.assertEqual((claim.tax_classification, claim.section, claim.payment_nature),
+                         ('through_supplier', 'cosmo', 'cash'))
+        for name, value in [('tax_classification', 'tax_payment'), ('section', 'other'), ('payment_nature', 'non_cash')]:
             with self.assertRaises(AccessError):
                 claim.write({name: value})
-            with self.assertRaises(AccessError), self.env.cr.savepoint():
-                self.Claim.with_user(self.users['user']).create(dict(self.values(), **{name: value}))
-        self.supplier.write({'tax_type': 'non_tax_payment', 'section': 'cosmo',
-                             'payment_nature': 'cash', 'business_category': 'cosmetics'})
-        claim.action_submit()
-        self.assertEqual((claim.tax_classification, claim.section, claim.payment_nature, claim.business_category),
-                         ('non_tax_payment', 'cosmo', 'cash', 'cosmetics'))
-        self.assertEqual(claim.state, 'supplier_accounts')
-        self.supplier.write({'tax_type': 'tax_payment', 'section': 'medical', 'payment_nature': 'non_cash'})
         self.decide(claim, 'supplier_accounts', 'rejected', supplier_accounts_notes='Correct invoice')
+        with self.assertRaises(AccessError):
+            claim.write({'payment_nature': 'non_cash'})
         claim.action_submit()
-        self.assertEqual((claim.tax_classification, claim.section, claim.payment_nature),
-                         ('non_tax_payment', 'cosmo', 'cash'))
         self.assertEqual(claim.state, 'supplier_accounts')
+
+    def test_missing_supplier_choices_and_draft_form(self):
+        self.supplier.write({'tax_type': False, 'section': False})
+        with Form(self.Claim.with_user(self.users['user'])) as form:
+            form.supplier_id = self.supplier
+            self.assertFalse(form.tax_classification)
+            self.assertFalse(form.section)
+            form.tax_classification = 'tax_payment'
+            form.section = 'medical'
+            form.payment_nature = 'cash'
+            form.num_of_invoice = 2
+            form.area = 'north'
+            form.amount_of_check = '100'
+            form.type_of_invoice = 'original'
+        self.assertEqual((self.supplier.tax_type, self.supplier.section, self.supplier.payment_nature),
+                         ('tax_payment', 'medical', 'cash'))
+        self.assertEqual(self.claim().section, 'medical')
+        with self.assertRaises(AccessError):
+            self.supplier.with_user(self.users['user']).write({'tax_type': 'non_tax_payment'})
+        with self.assertRaises(AccessError):
+            form.record.with_user(self.users['inventory']).write({'section': 'other'})
+        self.cash.write({'tax_type': 'through_supplier', 'section': 'other'})
+        form.record.write({'supplier_id': self.cash.id})
+        self.assertEqual((form.record.tax_classification, form.record.section), ('through_supplier', 'other'))
 
     def test_empty_classifications_and_batch_snapshot(self):
         self.supplier.write({'tax_type': False, 'section': False})
@@ -713,14 +740,15 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertFalse(self.claim().tax_classification)
         self.assertFalse(self.claim().section)
 
-    def test_classification_form_is_read_only(self):
+    def test_classification_form_is_editable_only_for_secretarial_drafts(self):
         for role in self.roles:
             arch = etree.fromstring(self.Claim.with_user(self.users[role]).get_view(
                 view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
             for name in ('tax_classification', 'section', 'payment_nature'):
                 nodes = arch.xpath('//group[@name="supplier_classification"]/field[@name="%s"]' % name)
                 self.assertTrue(nodes)
-                self.assertTrue(all(node.get('readonly') in ('True', '1') for node in nodes))
+                expected = "state != 'draft' or not active" if role in ('user', 'admin') else 'True'
+                self.assertTrue(all(node.get('readonly') == expected for node in nodes))
         with Form(self.Claim.with_user(self.users['user'])) as form:
             form.supplier_id = self.supplier
             self.assertEqual(form.tax_classification, self.supplier.tax_type)
@@ -742,3 +770,31 @@ class TestSupplierClaimCycle(TransactionCase):
         self.supplier.active = False
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
             self.claim().action_submit()
+
+    def test_followup_defaults_and_exception_steps(self):
+        claim = self.claim()
+        claim.action_submit()
+        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+            record = claim.with_user(self.users[department])
+            today = fields.Date.context_today(record)
+            self.assertEqual(record[f'{department}_followup_date'], today)
+            future = today + timedelta(days=3)
+            self.decide(claim, department, 'deferred', **{
+                f'{department}_notes': 'Waiting for documents',
+                f'{department}_followup_date': future})
+            self.assertEqual(record[f'{department}_followup_date'], future)
+            self.decide(claim, department, 'deferred')
+            self.decide(claim, department, 'rejected')
+            events = claim[f'timeline_{department}_exception_ids']
+            self.assertEqual(events.mapped('decision'), ['deferred', 'deferred', 'rejected'])
+            self.assertEqual(events.mapped('user_id'), self.users[department])
+            self.assertEqual(events[0].followup_date, future)
+            claim.action_submit()
+            self.assertEqual(record[f'{department}_followup_date'], today)
+            self.decide(claim, department)
+            self.assertEqual(claim[f'timeline_{department}_exception_ids'], events)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.outsider).read(['timeline_inventory_exception_ids'])
+        cash = self.claim(cash=True)
+        cash.action_submit()
+        self.assertEqual(cash.supplier_accounts_followup_date, fields.Date.context_today(cash))

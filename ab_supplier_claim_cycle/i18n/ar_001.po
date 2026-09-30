@@ -1391,3 +1391,8 @@ msgstr "مرفق الشيك"
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
 msgid "Read from the supplier and frozen on first submission."
 msgstr "تُقرأ من بيانات المورد وتُثبت عند الإرسال الأول."
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
+msgid "Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims."
+msgstr "القيمة الافتراضية من المورد. يمكن تعديلها في المسودة، وتُحفظ الاختيارات للمطالبات القادمة."
