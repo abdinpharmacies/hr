@@ -13,7 +13,20 @@
     <record id="ab_purchase_notice_header_action" model="ir.actions.act_window">
         <field name="name">Returns</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">['&amp;', '|', ('notice_effect', '=', False), ('notice_effect', '=', 'physical'), ('notice_type', '=', 'credit_notice')]</field>
+        <field name="context">{'uom_only_type': 1, 'default_notice_effect': 'physical', 'default_notice_type': 'credit_notice'}</field>
     </record>
+    <record id="ab_purchase_financial_notice_action" model="ir.actions.act_window">
+        <field name="name">Financial Notices</field>
+        <field name="res_model">ab_purchase_notice_header</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('notice_effect', '=', 'financial')]</field>
+        <field name="context">{'uom_only_type': 1, 'default_notice_effect': 'financial', 'default_notice_type': 'debit_notice'}</field>
+    </record>
+    <menuitem id="ab_purchase_financial_notice_menu" name="Financial Notices"
+              parent="ab_purchase_notices_menu"
+              action="ab_purchase_financial_notice_action"
+              sequence="3"/>
     <record id="purchase_list_links" model="ir.ui.view">
         <field name="name">purchase_list_links</field>
         <field name="model">ab_purchase_header</field>
@@ -54,6 +67,8 @@
             <xpath expr="//header" position="inside">
                 <button name="action_create_return" type="object" string="Create Return"
                         invisible="status != 'saved'" groups="ab_purchase.group_ab_purchase_manager,base.group_system"/>
+                <button name="action_create_financial_notice" type="object" string="Create Financial Notice"
+                        invisible="status != 'saved'" groups="ab_purchase.group_ab_purchase_manager,base.group_system"/>
             </xpath>
             <xpath expr="//group/field[@name='supplier_id']" position="attributes">
                 <attribute name="readonly">status != 'prepending'</attribute>
@@ -75,8 +90,8 @@
         <field name="model">ab_purchase_notice_header</field>
         <field name="inherit_id" ref="ab_purchase_notice_header_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form" position="attributes"><attribute name="string">Purchase Return</attribute></xpath>
-            <xpath expr="//page[field[@name='line_ids']]" position="attributes"><attribute name="string">Returns</attribute></xpath>
+            <xpath expr="//form" position="attributes"><attribute name="string">Purchase Notice</attribute></xpath>
+            <xpath expr="//page[field[@name='line_ids']]" position="attributes"><attribute name="string">Notice Lines</attribute></xpath>
             <xpath expr="//group/field[@name='purchase_header_id']" position="after">
                 <field name="store_id" readonly="1"/>
             </xpath>
@@ -97,7 +112,8 @@
                 <attribute name="column_invisible">True</attribute>
             </xpath>
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_view_inventory" type="object" class="oe_stat_button" icon="fa-cubes" string="Inventory Movements"/>
+                <button name="action_view_inventory" type="object" class="oe_stat_button" icon="fa-cubes"
+                        string="Inventory Movements" invisible="notice_effect == 'financial'"/>
             </xpath>
             <xpath expr="//form" position="inside"><chatter/></xpath>
         </field>

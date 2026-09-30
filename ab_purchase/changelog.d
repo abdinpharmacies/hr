@@ -1,5 +1,8 @@
 Current changes before commit:
 
+- Add a financial-only purchase notice mode alongside physical supplier returns.
+- Keep physical return counts, returnable quantities, and availability calculations limited to physical credit notices; existing notices with no mode are treated as physical returns for compatibility.
+- Add financial notice menu/action and purchase-form shortcut while leaving inventory movements hidden for financial notices.
 - Add a separate Data Entry client-action window with purchase/return tabs, supplier and product search, an editable line grid, live reconciliation totals, draft queue, and Save and new. Restore the standard Odoo form views.
 - Search suppliers by name or code with native autocomplete and keyboard selection; move focus to the document number after selection.
 - Add a product entry strip with Enter navigation through quantity and prices, Ctrl+Enter addition, automatic focus back to search, and keyboard navigation in the existing line grid.
@@ -29,6 +32,8 @@ Files changed:
 - ab_purchase/models/ab_purchase_header.py
 - ab_purchase/models/ab_purchase_line.py
 - ab_purchase/models/ab_purchase_links.py
+- ab_purchase/models/ab_purchase_notice_header.py
+- ab_purchase/models/ab_purchase_notice_line.py
 - ab_purchase/models/ab_purchase_source_guard.py
 - ab_purchase/models/ab_purchase_entry.py
 - ab_purchase/security/ir.model.access.csv
@@ -42,11 +47,14 @@ Files changed:
 - ab_purchase/static/src/entry/purchase_entry.xml
 - ab_purchase/static/src/entry/purchase_entry.scss
 - ab_purchase/views/ab_purchase_header.xml
+- ab_purchase/views/ab_purchase_notice_header.xml
 - ab_purchase/views/ab_purchase_links_views.xml
 - ab_purchase/views/ab_purchase_entry_views.xml
 
 Validation:
 
+- Latest financial-notice pass: Python AST parsing, XML parsing, manifest parsing, git diff --check, and GNU msgfmt validation passed. The ab_purchase PO catalogs keep their existing header-metadata warnings.
+- Live module upgrade was not rerun for this latest pass to avoid interfering with the active PyCharm/Odoo server; restart with the project update command to test in UI.
 - Targeted ab_purchase upgrade passed on abdin_replica19.
 - Rollback-only ORM checks passed for receipt posting, partial/full returns, discount allocation, cumulative quantity limits, repeated submission, stock balances, and dashboard access.
 - Branch-scoped purchase/return reads and rejection of another store's dashboard passed.

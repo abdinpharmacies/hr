@@ -120,10 +120,16 @@ class PurchaseNoticeLine(models.Model):
             if rec.source_id.bonus == 0:
                 rec.available_bonus = 0
             else:
-                purchase_notice = self.search([
-                    ('source_id', '=', rec.source_id.id),
-                    ('header_id.status', '=', 'saved'),
-                ])
+                domain = (
+                    fields.Domain('source_id', '=', rec.source_id.id)
+                    & fields.Domain('header_id.status', '=', 'saved')
+                    & (
+                        fields.Domain('header_id.notice_effect', '=', False)
+                        | fields.Domain('header_id.notice_effect', '=', 'physical')
+                    )
+                    & fields.Domain('header_id.notice_type', '=', 'credit_notice')
+                )
+                purchase_notice = self.search(list(domain))
 
                 total_return_bonus = sum(purchase_notice.mapped('bonus'))
 

@@ -10,10 +10,14 @@ class PurchaseLinks(models.Model):
     returned_value = fields.Float(compute='_compute_return_totals', string='Returned Value', digits=(16, 3))
     retained_value = fields.Float(compute='_compute_return_totals', string='Retained Value', digits=(16, 3))
 
-    @api.depends('total_cost', 'notice_ids.status', 'notice_ids.notice_type', 'notice_ids.total_cost')
+    @api.depends('total_cost', 'notice_ids.status', 'notice_ids.notice_type',
+                 'notice_ids.notice_effect', 'notice_ids.total_cost')
     def _compute_return_totals(self):
         for invoice in self:
-            returns = invoice.notice_ids.filtered(lambda notice: notice.notice_type == 'credit_notice')
+            returns = invoice.notice_ids.filtered(
+                lambda notice: (not notice.notice_effect or notice.notice_effect == 'physical')
+                and notice.notice_type == 'credit_notice'
+            )
             invoice.return_count = len(returns)
             invoice.returned_value = sum(returns.filtered(lambda notice: notice.status == 'saved').mapped('total_cost'))
             invoice.retained_value = invoice.total_cost - invoice.returned_value
@@ -26,7 +30,12 @@ class PurchaseLinks(models.Model):
         return {
             'type': 'ir.actions.act_window', 'name': _('Purchase Return'),
             'res_model': 'ab_purchase_notice_header', 'views': [(False, 'form')],
-            'context': {'default_purchase_header_id': self.id, 'default_supplier_id': self.supplier_id.id},
+            'context': {
+                'default_purchase_header_id': self.id,
+                'default_supplier_id': self.supplier_id.id,
+                'default_notice_effect': 'physical',
+                'default_notice_type': 'credit_notice',
+            },
         }
 
     def action_view_returns(self):
@@ -35,7 +44,36 @@ class PurchaseLinks(models.Model):
         return {
             'type': 'ir.actions.act_window', 'name': _('Returns'),
             'res_model': 'ab_purchase_notice_header', 'views': [(False, 'list'), (False, 'form')],
-            'domain': list(fields.Domain('purchase_header_id', '=', self.id)),
+            'domain': list(
+                fields.Domain('purchase_header_id', '=', self.id)
+                & (
+                    fields.Domain('notice_effect', '=', False)
+                    | fields.Domain('notice_effect', '=', 'physical')
+                )
+                & fields.Domain('notice_type', '=', 'credit_notice')
+            ),
+            'context': {
+                'default_purchase_header_id': self.id,
+                'default_supplier_id': self.supplier_id.id,
+                'default_notice_effect': 'physical',
+                'default_notice_type': 'credit_notice',
+            },
+        }
+
+    def action_create_financial_notice(self):
+        self.ensure_one()
+        self.check_access('read')
+        if self.status != 'saved':
+            raise ValidationError(_('Save the purchase receipt before creating a financial notice.'))
+        return {
+            'type': 'ir.actions.act_window', 'name': _('Financial Notice'),
+            'res_model': 'ab_purchase_notice_header', 'views': [(False, 'form')],
+            'context': {
+                'default_purchase_header_id': self.id,
+                'default_supplier_id': self.supplier_id.id,
+                'default_notice_effect': 'financial',
+                'default_notice_type': 'debit_notice',
+            },
         }
 
     def action_view_inventory(self):
@@ -76,13 +114,18 @@ class PurchaseLineLinks(models.Model):
             return {}
         domain = (fields.Domain('purchase_line_id', 'in', lines.ids)
                   & fields.Domain('header_id.status', '=', 'saved')
-                  & fields.Domain('header_id.notice_type', '=', 'credit_notice'))
+                  & fields.Domain('header_id.notice_type', '=', 'credit_notice')
+                  & (
+                      fields.Domain('header_id.notice_effect', '=', 'physical')
+                      | fields.Domain('header_id.notice_effect', '=', False)
+                  ))
         return {line.id: (qty, bonus) for line, qty, bonus in
                 self.env['ab_purchase_notice_line']._read_group(
                     domain, ['purchase_line_id'], ['qty:sum', 'bonus:sum'])}
 
     @api.depends('qty', 'bonus', 'notice_line_ids.qty', 'notice_line_ids.bonus',
-                 'notice_line_ids.header_id.status', 'notice_line_ids.header_id.notice_type')
+                 'notice_line_ids.header_id.status', 'notice_line_ids.header_id.notice_type',
+                 'notice_line_ids.header_id.notice_effect')
     def _compute_return_quantities(self):
         quantities = self._get_returned_quantities()
         for line in self:
@@ -113,14 +156,14 @@ class ReturnLinks(models.Model):
             notice.total_taxes_value = sum(notice.line_ids.mapped('line_taxes_value'))
             notice.lines_count = len(notice.line_ids)
 
-    @api.constrains('purchase_header_id', 'supplier_id', 'notice_type')
+    @api.constrains('purchase_header_id', 'supplier_id', 'notice_type', 'notice_effect')
     def _check_purchase_link(self):
         for notice in self:
             if notice.purchase_header_id.status != 'saved':
                 raise ValidationError(_('Save the purchase receipt before creating a return.'))
             if notice.supplier_id != notice.purchase_header_id.supplier_id:
                 raise ValidationError(_('The return supplier must match the purchase invoice.'))
-            if notice.notice_type != 'credit_notice':
+            if (not notice.notice_effect or notice.notice_effect == 'physical') and notice.notice_type != 'credit_notice':
                 raise ValidationError(_('Only purchase returns are supported by this workflow.'))
 
     def btn_get_all_line_ids(self):
@@ -130,13 +173,18 @@ class ReturnLinks(models.Model):
             raise ValidationError(_('Saved notice lines cannot be changed.'))
         entered = self.line_ids.mapped('purchase_line_id')
         available = self.purchase_header_id.line_ids - entered
-        self.write({'line_ids': [fields.Command.create({'purchase_line_id': line.id}) for line in available
-                                 if line.returnable_qty or line.returnable_bonus]})
+        if self.notice_effect == 'financial':
+            lines = available
+        else:
+            lines = available.filtered(lambda line: line.returnable_qty or line.returnable_bonus)
+        self.write({'line_ids': [fields.Command.create({'purchase_line_id': line.id}) for line in lines]})
         return True
 
     def btn_submit_inventory(self):
         self.ensure_one()
         self.check_access('write')
+        if self.notice_effect == 'financial':
+            return super().btn_submit_inventory()
         if self.status == 'saved':
             return super().btn_submit_inventory()
         with self.env.cr.savepoint():
@@ -152,16 +200,19 @@ class ReturnLinks(models.Model):
             return super().btn_submit_inventory()
 
     def write(self, vals):
-        protected = {'purchase_header_id', 'supplier_id', 'notice_type', 'doc_code', 'doc_date', 'line_ids'}
+        protected = {'purchase_header_id', 'supplier_id', 'notice_type', 'notice_effect',
+                     'doc_code', 'doc_date', 'line_ids'}
         if protected.intersection(vals) and any(notice.status == 'saved' for notice in self):
             raise ValidationError(_('Saved returns cannot be changed.'))
-        if {'purchase_header_id', 'supplier_id', 'notice_type'}.intersection(vals) and any(self.mapped('line_ids')):
+        if {'purchase_header_id', 'supplier_id', 'notice_type', 'notice_effect'}.intersection(vals) and any(self.mapped('line_ids')):
             raise ValidationError(_('Remove draft return lines before changing its purchase invoice or supplier.'))
         return super().write(vals)
 
     def action_view_inventory(self):
         self.ensure_one()
         self.check_access('read')
+        if self.notice_effect == 'financial':
+            raise ValidationError(_('Financial notices do not create inventory movements.'))
         return {
             'type': 'ir.actions.act_window', 'name': _('Inventory Movements'),
             'res_model': 'ab_inventory', 'views': [(False, 'list'), (False, 'form')],

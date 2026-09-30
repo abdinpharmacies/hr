@@ -32,13 +32,17 @@ class PurchaseNoticeHeader(models.Model):
     doc_code = fields.Char(required=True, default='0000000000')
     invoice_number = fields.Char(related='purchase_header_id.doc_code', string='Invoice Number')
     eplus_g_header_serial = fields.Integer()
-    # @todo: activate 'Debit Notice'
-    #    1. only on invoice(s)
-    #    2. show all product_source_lines of invoice(s)
-    #    3. update - or reverse - journal entries
     notice_type = fields.Selection([('credit_notice', 'Credit Notice'),
                                     ('debit_notice', 'Debit Notice'), ],
-                                   required=True, default='credit_notice', readonly=True)
+                                   required=True, default='credit_notice')
+    notice_effect = fields.Selection(
+        [
+            ('physical', 'Physical Stock Return'),
+            ('financial', 'Financial Only'),
+        ],
+        default='physical',
+        index=True,
+    )
 
     status = fields.Selection(
         selection=[('pending', 'Pending'), ('saved', 'Saved')],
@@ -141,16 +145,26 @@ class PurchaseNoticeHeader(models.Model):
         lines = self.line_ids.filtered(lambda line: line.qty + line.bonus > 0)
         if not lines:
             raise ValidationError(_("Add a notice line with a positive quantity."))
-        sign = -1 if self.notice_type == 'credit_notice' else 1
+        if self.notice_effect == 'financial':
+            if self.total_cost <= 0:
+                raise ValidationError(_("Financial notices require a positive value."))
+            with self.env.cr.savepoint():
+                self._mark_notice_saved()
+            return True
+        if self.notice_type != 'credit_notice':
+            raise ValidationError(_("Only credit notices can create physical stock returns."))
         with self.env.cr.savepoint():
             for line in lines:
                 self.env['ab_inventory_process'].inventory_write(
                     line, line.qty + line.bonus,
                     self.purchase_header_id.store_id.id,
-                    sign=sign, status='saved',
+                    sign=-1, status='saved',
                 )
-            super(PurchaseNoticeHeader, self).write({'status': 'saved'})
+            self._mark_notice_saved()
         return True
+
+    def _mark_notice_saved(self):
+        return super(PurchaseNoticeHeader, self).write({'status': 'saved'})
 
     @api.model_create_multi
     def create(self, vals_list):

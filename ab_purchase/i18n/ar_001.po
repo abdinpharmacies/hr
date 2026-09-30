@@ -1051,3 +1051,51 @@ msgstr "حدد الضرائب"
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
 msgid "No purchase taxes available"
 msgstr "لا توجد ضرائب مشتريات متاحة"
+
+#. module: ab_purchase
+msgid "Notice Effect"
+msgstr "أثر الإشعار"
+
+#. module: ab_purchase
+msgid "Physical Stock Return"
+msgstr "مرتجع مخزون فعلي"
+
+#. module: ab_purchase
+msgid "Financial Only"
+msgstr "مالي فقط"
+
+#. module: ab_purchase
+msgid "Financial Notice"
+msgstr "إشعار مالي"
+
+#. module: ab_purchase
+msgid "Financial Notices"
+msgstr "إشعارات مالية"
+
+#. module: ab_purchase
+msgid "Create Financial Notice"
+msgstr "إنشاء إشعار مالي"
+
+#. module: ab_purchase
+msgid "Purchase Notice"
+msgstr "إشعار شراء"
+
+#. module: ab_purchase
+msgid "Notice Lines"
+msgstr "بنود الإشعار"
+
+#. module: ab_purchase
+msgid "Financial notices require a positive value."
+msgstr "تتطلب الإشعارات المالية قيمة موجبة."
+
+#. module: ab_purchase
+msgid "Only credit notices can create physical stock returns."
+msgstr "يمكن لإشعارات الدائن فقط إنشاء مرتجعات مخزون فعلية."
+
+#. module: ab_purchase
+msgid "Save the purchase receipt before creating a financial notice."
+msgstr "احفظ استلام المشتريات قبل إنشاء إشعار مالي."
+
+#. module: ab_purchase
+msgid "Financial notices do not create inventory movements."
+msgstr "لا تنشئ الإشعارات المالية حركات مخزون."
