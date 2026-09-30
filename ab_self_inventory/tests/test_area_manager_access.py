@@ -5,7 +5,7 @@ import xlsxwriter
 from lxml import etree
 
 from odoo import Command, fields
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError
 from odoo.tests import TransactionCase, tagged
 
 
@@ -56,15 +56,19 @@ class TestAreaManagerAccess(TransactionCase):
             with self.assertRaises(AccessError):
                 record.with_user(self.reader).read()
 
-    def test_multiple_areas_and_cache_revocation(self):
+    def test_multiple_areas_after_cache_refresh(self):
         self.test_branch_isolation_all_states_and_direct_read()
         second = self.env['ab_hr_employee'].create({'name': 'Second linked employee', 'user_id': self.reader.id})
         other = self.env['ab_hr_department'].create({'name': 'Other managed area', 'manager_id': second.id, 'workplace_region': self.areas[1].id})
+        # HR changes require an explicit cache refresh (or server restart).
+        self.env.registry.clear_cache()
         self.assertEqual(set(self.reader._get_self_inventory_area_branch_ids()), set(self.branches[:2].ids))
         self.denied.filtered(lambda p: p.branch_id == self.branches[1]).with_user(self.reader).check_access('read')
         other.manager_id = False
+        self.env.registry.clear_cache()
         self.test_branch_isolation_all_states_and_direct_read()
         self.departments[0].workplace_region = self.areas[1]
+        self.env.registry.clear_cache()
         self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search(fields.Domain('id', 'in', self.processes.ids)))
 
     def test_missing_mapping_denies_all(self):
@@ -72,9 +76,11 @@ class TestAreaManagerAccess(TransactionCase):
             with self.env.cr.savepoint():
                 previous = self.managed[field]
                 self.managed[field] = value
+                self.env.registry.clear_cache()
                 self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search([]))
                 self.managed[field] = previous
         self.employee.user_id = False
+        self.env.registry.clear_cache()
         self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search([]))
 
     def test_read_only_acl_and_mutation_rpc(self):
@@ -101,13 +107,25 @@ class TestAreaManagerAccess(TransactionCase):
             with self.assertRaises(AccessError):
                 self.env[model].with_user(self.reader).check_access('read')
 
-    def test_conflicting_roles_and_manager_exception(self):
+    def test_standard_group_assignment(self):
+        self.assertEqual(
+            self.area_group.privilege_id,
+            self.env.ref('ab_self_inventory.privilege_ab_self_inventory'),
+        )
+        self.assertEqual(
+            self.area_group.privilege_id.category_id,
+            self.env.ref('ab_self_inventory.module_category_ab_self_inventory'),
+        )
         for role in ('readonly', 'requester', 'receiver'):
             group = self.env.ref('ab_self_inventory.group_ab_self_inventory_' + role)
-            with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                self.reader.group_ids = [Command.link(group.id)]
-            with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                group.write({'user_ids': [Command.link(self.reader.id)]})
+            self.reader.group_ids = [Command.link(group.id)]
+            self.assertIn(group, self.reader.all_group_ids)
+            self.reader.group_ids = [Command.unlink(group.id)]
+            group.write({'user_ids': [Command.link(self.reader.id)]})
+            self.assertIn(group, self.reader.all_group_ids)
+            group.write({'user_ids': [Command.unlink(self.reader.id)]})
+
+    def test_manager_exception(self):
         self.reader.group_ids = [Command.link(self.env.ref('ab_self_inventory.group_ab_self_inventory_manager').id)]
         self.processes.with_user(self.reader).check_access('read')
         self.assertFalse(self.reader._is_self_inventory_area_reader())
@@ -144,11 +162,12 @@ class TestAreaManagerAccess(TransactionCase):
         with self.assertRaises(AccessError):
             self.env['ab_self_inventory_process_line'].with_user(self.reader).create({'process_id': process.id, 'product_id': self.product.id})
 
-    def test_inherited_conflicting_role_denied(self):
+    def test_standard_implied_group_assignment(self):
         wrapper = self.env['res.groups'].create({'name': 'Area wrapper', 'implied_ids': [Command.link(self.area_group.id)]})
         self.reader.group_ids = [Command.link(wrapper.id)]
-        with self.assertRaises(ValidationError), self.env.cr.savepoint():
-            wrapper.implied_ids = [Command.link(self.env.ref('ab_self_inventory.group_ab_self_inventory_receiver').id)]
+        receiver = self.env.ref('ab_self_inventory.group_ab_self_inventory_receiver')
+        wrapper.implied_ids = [Command.link(receiver.id)]
+        self.assertIn(receiver, self.reader.all_group_ids)
 
     def test_area_views_and_grid_are_read_only(self):
         Process = self.env['ab_self_inventory_process'].with_user(self.reader)

@@ -1,7 +1,6 @@
 import re
 
-from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo import api, fields, models
 
 
 class ResUsers(models.Model):
@@ -117,20 +116,3 @@ class ResUsers(models.Model):
             & fields.Domain('store_id.store_type', '=', 'branch')
             & fields.Domain('store_id.active', '=', True)
         ).mapped('store_id').ids
-
-    @api.constrains('group_ids')
-    def _check_self_inventory_area_roles(self):
-        for user in self:
-            if user._is_self_inventory_area_reader() and any(
-                self.env.ref('ab_self_inventory.' + role) in user.all_group_ids
-                for role in (
-                    'group_ab_self_inventory_readonly',
-                    'group_ab_self_inventory_requester',
-                    'group_ab_self_inventory_receiver',
-                )
-            ):
-                raise ValidationError(_(
-                    "Area Manager – Read Only cannot be combined with Self Inventory "
-                    "Read Only, Requester, or Branch Receiver. Remove the conflicting "
-                    "roles first. Self Inventory managers and administrators are exempt."
-                ))
