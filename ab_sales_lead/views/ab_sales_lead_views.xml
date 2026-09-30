@@ -27,34 +27,6 @@
             <field name="model">ab_sales_lead</field>
             <field name="arch" type="xml">
                 <form string="Sales Lead">
-                    <header>
-                        <button name="action_set_in_review"
-                                string="In Review"
-                                type="object"
-                                class="btn-secondary"
-                                groups="ab_sales.group_ab_sales_manager"
-                                invisible="state != 'new'"/>
-                        <button name="action_set_contacted"
-                                string="Contacted"
-                                type="object"
-                                class="btn-primary"
-                                groups="ab_sales.group_ab_sales_manager"
-                                invisible="state not in ['new', 'in_review']"/>
-                        <button name="action_set_closed"
-                                string="Closed"
-                                type="object"
-                                class="btn-success"
-                                groups="ab_sales.group_ab_sales_manager"
-                                invisible="state == 'closed'"/>
-                        <button name="action_set_cancelled"
-                                string="Cancelled"
-                                type="object"
-                                class="btn-secondary"
-                                groups="ab_sales.group_ab_sales_manager"
-                                invisible="state == 'cancelled'"/>
-                        <field name="state" widget="statusbar"
-                               statusbar_visible="new,in_review,contacted,closed,cancelled"/>
-                    </header>
                     <sheet>
                         <group>
                             <group string="Lead">
