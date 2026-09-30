@@ -38,14 +38,13 @@
                         <field name="tax_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
                         <field name="supplier_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
                     </group>
-                    <group string="Non-purchase Receipt Offsets">
-                        <field name="receipt_account_ids" nolabel="1">
-                            <list editable="bottom">
-                                <field name="receipt_type_id"/>
-                                <field name="offset_account_id" domain="[('company_id', '=', parent.company_id), ('is_final', '=', True), ('active', '=', True)]"/>
-                            </list>
-                        </field>
-                    </group>
+                    <separator string="Non-purchase Receipt Offsets"/>
+                    <field name="receipt_account_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_purchase_accounting_receipt_table">
+                        <list editable="bottom">
+                            <field name="receipt_type_id"/>
+                            <field name="offset_account_id" domain="[('company_id', '=', parent.company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                        </list>
+                    </field>
                     <group string="Dimensions">
                         <field name="default_costcenter_id"/>
                         <field name="supplier_due_days"/>
