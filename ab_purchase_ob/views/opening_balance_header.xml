@@ -74,7 +74,7 @@
                         </group>
                         <notebook>
                             <page string="Receipt Lines">
-                                <field name="line_ids" readonly="status == 'saved'">
+                                <field name="line_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_purchase_ob_line_table" readonly="status == 'saved'">
                                     <list editable="bottom">
                                         <field name="header_status" invisible="1"/>
                                         <field name="product_id" class="text-wrap" width="120px"/>
