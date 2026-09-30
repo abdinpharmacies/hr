@@ -42,7 +42,7 @@
                         <field name="reference" readonly="state == 'posted' or is_frozen"/>
                         <field name="opening_run_id" readonly="state == 'posted' or is_frozen"/>
                     </group>
-                    <field name="line_ids" readonly="state == 'posted' or is_frozen">
+                    <field name="line_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_accounting_line_table" readonly="state == 'posted' or is_frozen">
                         <list editable="bottom">
                             <field name="account_id" domain="[('company_id', '=', parent.company_id), ('is_final', '=', True)]"/>
                             <field name="partner_id"/>
@@ -73,9 +73,22 @@
                                 <field name="source_reference" readonly="state == 'posted' or is_frozen"/>
                                 <field name="event_type" readonly="state == 'posted' or is_frozen"/>
                                 <field name="original_event_reference" readonly="state == 'posted' or is_frozen"/>
-                                <field name="reversal_of_id"/>
-                                <field name="reversal_ids"/>
+                                <field name="reversal_of_id" readonly="1" options="{'no_create': True}"/>
                             </group>
+                            <field name="reversal_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_accounting_reversal_table" readonly="1">
+                                <list create="false" edit="false" delete="false">
+                                    <field name="posting_number"/>
+                                    <field name="accounting_date"/>
+                                    <field name="branch_id"/>
+                                    <field name="doctype_id"/>
+                                    <field name="reference"/>
+                                    <field name="reversal_reason"/>
+                                    <field name="state"/>
+                                    <field name="total_debit_val"/>
+                                    <field name="total_credit_val"/>
+                                    <field name="total_net_val"/>
+                                </list>
+                            </field>
                         </page>
                         <page string="Review">
                             <group>

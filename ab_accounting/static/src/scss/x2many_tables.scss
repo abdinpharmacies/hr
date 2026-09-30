@@ -1,0 +1,74 @@
+.o_form_view .o_form_sheet {
+    .o_ab_responsive_x2many_table {
+        display: block;
+        max-width: 100%;
+        min-width: 0;
+
+        .o_list_view,
+        .o_list_renderer.table-responsive {
+            max-width: 100%;
+            min-width: 0;
+        }
+
+        .o_list_renderer.table-responsive {
+            overflow-x: auto;
+            overflow-y: visible;
+        }
+
+        .o_list_table {
+            table-layout: auto !important;
+            width: max-content;
+            min-width: 100%;
+        }
+
+        .o_list_table th[data-name] {
+            width: auto !important;
+        }
+
+        .o_list_table th,
+        .o_list_table td {
+            white-space: nowrap;
+        }
+    }
+
+    .o_ab_responsive_x2many_table th[data-name="posting_number"] { min-width: 145px; }
+    .o_ab_responsive_x2many_table th[data-name="accounting_date"] { min-width: 130px; }
+    .o_ab_responsive_x2many_table th[data-name="branch_id"] { min-width: 150px; }
+    .o_ab_responsive_x2many_table th[data-name="doctype_id"] { min-width: 170px; }
+    .o_ab_responsive_x2many_table th[data-name="reference"] { min-width: 180px; }
+    .o_ab_responsive_x2many_table th[data-name="reversal_reason"] { min-width: 220px; }
+    .o_ab_responsive_x2many_table th[data-name="state"] { min-width: 110px; }
+    .o_ab_responsive_x2many_table th[data-name="total_debit_val"],
+    .o_ab_responsive_x2many_table th[data-name="total_credit_val"],
+    .o_ab_responsive_x2many_table th[data-name="total_net_val"] { min-width: 130px; }
+
+    .o_ab_responsive_x2many_table th[data-name="account_id"] { min-width: 240px; }
+    .o_ab_responsive_x2many_table th[data-name="partner_id"] { min-width: 180px; }
+    .o_ab_responsive_x2many_table th[data-name="costcenter_id"] { min-width: 180px; }
+    .o_ab_responsive_x2many_table th[data-name="explain"] { min-width: 240px; }
+    .o_ab_responsive_x2many_table th[data-name="doc_no"] { min-width: 165px; }
+    .o_ab_responsive_x2many_table th[data-name="due_date"] { min-width: 130px; }
+    .o_ab_responsive_x2many_table th[data-name="debit_val"],
+    .o_ab_responsive_x2many_table th[data-name="credit_val"] { min-width: 130px; }
+
+    .o_ab_responsive_x2many_table th[data-name="product_id"],
+    .o_ab_responsive_x2many_table th[data-name="source_id"],
+    .o_ab_responsive_x2many_table th[data-name="purchase_line_id"] { min-width: 240px; }
+    .o_ab_responsive_x2many_table th[data-name="qty"],
+    .o_ab_responsive_x2many_table th[data-name="bonus"],
+    .o_ab_responsive_x2many_table th[data-name="available_qty"],
+    .o_ab_responsive_x2many_table th[data-name="available_bonus"] { min-width: 110px; }
+    .o_ab_responsive_x2many_table th[data-name="uom_id"] { min-width: 120px; }
+    .o_ab_responsive_x2many_table th[data-name="price"],
+    .o_ab_responsive_x2many_table th[data-name="purchase_price"],
+    .o_ab_responsive_x2many_table th[data-name="line_cost"],
+    .o_ab_responsive_x2many_table th[data-name="unit_cost"] { min-width: 130px; }
+    .o_ab_responsive_x2many_table th[data-name="taxes_ids"] { min-width: 180px; }
+
+    .o_ab_responsive_x2many_table th[data-name="receipt_type_id"] { min-width: 220px; }
+    .o_ab_responsive_x2many_table th[data-name="offset_account_id"] { min-width: 260px; }
+    .o_ab_responsive_x2many_table th[data-name="own_account"],
+    .o_ab_responsive_x2many_table th[data-name="allow_account"],
+    .o_ab_responsive_x2many_table th[data-name="prevent_enquiry"],
+    .o_ab_responsive_x2many_table th[data-name="always_show_account"] { min-width: 145px; }
+}

@@ -8,6 +8,11 @@
     'developer': 'hossam elsheikh',
     'application': True,
     'depends': ['base', 'mail', 'ab_store', 'ab_costcenter', 'report_xlsx'],
+    'assets': {
+        'web.assets_backend': [
+            'ab_accounting/static/src/scss/x2many_tables.scss',
+        ],
+    },
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',

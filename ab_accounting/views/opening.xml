@@ -31,7 +31,7 @@
                         <field name="closed_by"/>
                         <field name="closed_at"/>
                     </group>
-                    <field name="expected_ids" readonly="state == 'closed'">
+                    <field name="expected_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_accounting_expected_table" readonly="state == 'closed'">
                         <list editable="bottom">
                             <field name="account_id"/>
                             <field name="partner_id"/>

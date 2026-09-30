@@ -196,7 +196,7 @@
                         <field name="company_id"/>
                     </group>
                     <field name="doctype_ids" widget="many2many_tags"/>
-                    <field name="account_auth_ids">
+                    <field name="account_auth_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_accounting_auth_table">
                         <list editable="bottom">
                             <field name="account_id"/>
                             <field name="own_account"/>
