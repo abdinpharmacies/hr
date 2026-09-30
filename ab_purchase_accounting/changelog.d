@@ -1,5 +1,7 @@
 Current changes before commit:
 
+- Post financial-only purchase notices without stock movements: debit notices increase inventory/tax value against supplier balance, while financial credit notices reverse value against supplier balance.
+- Preserve the existing physical purchase return journal behavior and keep opening inventory excluded from automatic accounting.
 - Add the purchase-accounting adapter module with explicit branch/company configuration for receipt and return journal mappings.
 - Depend on the purchase opening-balance module while deliberately leaving opening balances out of automatic accounting generation.
 - Add the Plan 3 operation flow using the supplier workbook and explicit manual-test accounting setup for the missing live master data.
@@ -28,6 +30,8 @@ Files changed:
 
 Validation:
 
+- Latest financial-notice accounting pass: Python AST parsing, XML parsing, manifest parsing, git diff --check, and GNU msgfmt validation passed.
+- Live module upgrade was not rerun for this latest pass to avoid interfering with the active PyCharm/Odoo server; restart with the project update command to test in UI.
 - Python syntax compile passed for the adapter and the touched purchase manifest.
 - XML parsing passed for adapter security and view files.
 - Manifest parsing passed for ab_purchase_accounting and ab_purchase.

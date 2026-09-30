@@ -59,3 +59,15 @@ msgstr "الحساب المقابل"
 #. module: ab_purchase_accounting
 msgid "Purchase Accounting Receipt Offset Account"
 msgstr "حساب مقابل لاستلام محاسبة المشتريات"
+
+#. module: ab_purchase_accounting
+msgid "Purchase financial debit notice"
+msgstr "إشعار مدين مالي للمشتريات"
+
+#. module: ab_purchase_accounting
+msgid "Purchase financial credit notice"
+msgstr "إشعار دائن مالي للمشتريات"
+
+#. module: ab_purchase_accounting
+msgid "Configure a purchase tax account before posting taxed purchase notices."
+msgstr "قم بتكوين حساب ضريبة المشتريات قبل ترحيل إشعارات شراء خاضعة للضريبة."

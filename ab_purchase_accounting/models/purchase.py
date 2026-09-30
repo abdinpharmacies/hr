@@ -250,7 +250,8 @@ class PurchaseNoticeHeader(models.Model):
         self.ensure_one()
         if self.purchase_accounting_journal_id:
             return self.purchase_accounting_journal_id
-        if self.notice_type != 'credit_notice':
+        notice_effect = self.notice_effect or 'physical'
+        if notice_effect == 'physical' and self.notice_type != 'credit_notice':
             return self.env['ab_accounting_je_header']
 
         config = self.env['ab_purchase_accounting_config']._for_branch_date(
@@ -266,7 +267,46 @@ class PurchaseNoticeHeader(models.Model):
         if _is_zero(supplier_total):
             return self.env['ab_accounting_je_header']
 
-        reference = '%s %s' % (_('Purchase return'), self.doc_code or self.id)
+        if notice_effect == 'financial' and self.notice_type == 'debit_notice':
+            reference = '%s %s' % (_('Purchase financial debit notice'), self.doc_code or self.id)
+            doctype = config.purchase_doctype_id
+            event_type = 'purchase_financial_debit_notice'
+            operation_suffix = 'financial_debit:%s' % self.id
+            lines = self._purchase_accounting_positive_notice_lines(
+                config, supplier_total, tax_amount, inventory_amount, reference,
+            )
+        else:
+            label = _('Purchase financial credit notice') if notice_effect == 'financial' else _('Purchase return')
+            reference = '%s %s' % (label, self.doc_code or self.id)
+            doctype = config.return_doctype_id
+            event_type = 'purchase_financial_credit_notice' if notice_effect == 'financial' else 'purchase_return'
+            operation_suffix = (
+                'financial_credit:%s' % self.id
+                if notice_effect == 'financial'
+                else 'return:%s' % self.id
+            )
+            lines = self._purchase_accounting_negative_notice_lines(
+                config, supplier_total, tax_amount, inventory_amount, reference,
+            )
+
+        journal = self.purchase_header_id._post_purchase_accounting_journal(
+            config,
+            doctype=doctype,
+            event_type=event_type,
+            operation_suffix=operation_suffix,
+            reference=reference,
+            lines=lines,
+            source=self,
+            accounting_date=self.doc_date or fields.Date.context_today(self),
+            source_reference=self.doc_code or str(self.id),
+        )
+        self.write({'purchase_accounting_journal_id': journal.id})
+        return journal
+
+    def _purchase_accounting_negative_notice_lines(
+        self, config, supplier_total, tax_amount, inventory_amount, reference,
+    ):
+        self.ensure_one()
         lines = [
             self.purchase_header_id._purchase_accounting_line(
                 config,
@@ -279,7 +319,7 @@ class PurchaseNoticeHeader(models.Model):
         ]
         if not _is_zero(tax_amount):
             if not config.tax_account_id:
-                raise ValidationError(_('Configure a purchase tax account before posting taxed purchase returns.'))
+                raise ValidationError(_('Configure a purchase tax account before posting taxed purchase notices.'))
             lines.append(self.purchase_header_id._purchase_accounting_line(
                 config,
                 config.tax_account_id,
@@ -297,17 +337,39 @@ class PurchaseNoticeHeader(models.Model):
                 doc_no=self.doc_code or str(self.id),
                 accounting_date=self.doc_date or fields.Date.context_today(self),
             ))
+        return lines
 
-        journal = self.purchase_header_id._post_purchase_accounting_journal(
+    def _purchase_accounting_positive_notice_lines(
+        self, config, supplier_total, tax_amount, inventory_amount, reference,
+    ):
+        self.ensure_one()
+        lines = []
+        if not _is_zero(inventory_amount):
+            lines.append(self.purchase_header_id._purchase_accounting_line(
+                config,
+                config.inventory_account_id,
+                debit=inventory_amount,
+                explain=reference,
+                doc_no=self.doc_code or str(self.id),
+                accounting_date=self.doc_date or fields.Date.context_today(self),
+            ))
+        if not _is_zero(tax_amount):
+            if not config.tax_account_id:
+                raise ValidationError(_('Configure a purchase tax account before posting taxed purchase notices.'))
+            lines.append(self.purchase_header_id._purchase_accounting_line(
+                config,
+                config.tax_account_id,
+                debit=tax_amount,
+                explain=reference,
+                doc_no=self.doc_code or str(self.id),
+                accounting_date=self.doc_date or fields.Date.context_today(self),
+            ))
+        lines.append(self.purchase_header_id._purchase_accounting_line(
             config,
-            doctype=config.return_doctype_id,
-            event_type='purchase_return',
-            operation_suffix='return:%s' % self.id,
-            reference=reference,
-            lines=lines,
-            source=self,
+            config.supplier_account_id,
+            credit=supplier_total,
+            explain=reference,
+            doc_no=self.doc_code or str(self.id),
             accounting_date=self.doc_date or fields.Date.context_today(self),
-            source_reference=self.doc_code or str(self.id),
-        )
-        self.write({'purchase_accounting_journal_id': journal.id})
-        return journal
+        ))
+        return lines
