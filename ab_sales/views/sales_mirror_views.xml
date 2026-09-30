@@ -1,24 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data>
         <record id="ab_sales_header_view_tree" model="ir.ui.view">
             <field name="name">ab_sales_header.list</field>
             <field name="model">ab_sales_header</field>
             <field name="arch" type="xml">
-                <list create="0" edit="0" delete="0">
-                    <field name="db_serial"/>
-                    <field name="rec_id"/>
-                    <field name="eplus_serial"/>
-                    <field name="store_id"/>
-                    <field name="status" widget="badge"/>
-                    <field name="push_state" widget="badge"/>
-                    <field name="bill_customer_name"/>
-                    <field name="bill_customer_phone"/>
-                    <field name="line_count"/>
-                    <field name="total_qty"/>
-                    <field name="total_net_amount"/>
-                    <field name="active"/>
-                    <field name="synced_at"/>
+                <list create="0" edit="0" delete="0" duplicate="0">
+                    <field name="id" readonly="1"/>
+                    <field name="eplus_serial" readonly="1"/>
+                    <field name="store_id" readonly="1"/>
+                    <field name="customer_id" readonly="1"/>
+                    <field name="line_count" readonly="1"/>
+                    <field name="total_price" readonly="1"/>
+                    <field name="total_net_amount" readonly="1"/>
+                    <field name="status" widget="badge" decoration-info="status=='pending'" decoration-warning="status=='prepending'" decoration-success="status=='saved'" readonly="1"/>
+                    <field name="description" readonly="1"/>
+                    <field name="db_serial" optional="hide"/>
+                    <field name="rec_id" optional="hide"/>
+                    <field name="push_state" widget="badge" optional="hide"/>
+                    <field name="bill_customer_name" optional="hide"/>
+                    <field name="bill_customer_phone" optional="hide"/>
+                    <field name="total_qty" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                    <field name="synced_at" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -27,10 +31,14 @@
             <field name="model">ab_sales_header</field>
             <field name="arch" type="xml">
                 <search>
+                    <field name="store_id"/>
+                    <field name="eplus_serial"/>
+                    <field name="id"/>
+                    <field name="line_ids" string="Product" filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                    <field name="customer_id"/>
+                    <field name="status"/>
                     <field name="db_serial"/>
                     <field name="rec_id"/>
-                    <field name="eplus_serial"/>
-                    <field name="store_id"/>
                     <field name="bill_customer_name"/>
                     <field name="bill_customer_phone"/>
                     <filter name="saved" string="Saved" domain="[('status', '=', 'saved')]"/>
@@ -47,77 +55,96 @@
             <field name="name">ab_sales_header.form</field>
             <field name="model">ab_sales_header</field>
             <field name="arch" type="xml">
-                <form create="0" edit="0" delete="0">
+                <form create="0" edit="0" delete="0" duplicate="0">
                     <sheet>
+                        <group string="Totals">
+                            <field name="total_price" readonly="1"/>
+                            <field name="line_count" readonly="1"/>
+                            <field name="total_qty" readonly="1"/>
+                            <field name="total_net_amount" readonly="1"/>
+                        </group>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-success" invisible="status != 'saved'"/>
+                        <widget name="web_ribbon" title="Pending" bg_color="bg-info" invisible="status != 'pending'"/>
                         <group>
                             <group>
-                                <field name="db_serial"/>
-                                <field name="rec_id"/>
-                                <field name="source_revision"/>
-                                <field name="event_uuid"/>
-                                <field name="source_operation"/>
-                                <field name="source_write_date"/>
-                                <field name="synced_at"/>
+                                <field name="store_id" readonly="1"/>
+                                <field name="eplus_serial" readonly="1"/>
+                                <field name="pos_client_token" readonly="1"/>
+                                <field name="description" readonly="1"/>
                             </group>
                             <group>
-                                <field name="store_id"/>
-                                <field name="eplus_serial"/>
-                                <field name="status"/>
-                                <field name="push_state"/>
-                                <field name="is_closed"/>
-                                <field name="active"/>
+                                <notebook>
+                                    <page name="bill_customer" string="Bill Customer Data">
+                                        <group>
+                                            <field name="bill_customer_name" string="Name" readonly="1"/>
+                                            <field name="bill_customer_phone" string="Phone" readonly="1"/>
+                                            <field name="bill_customer_address" string="Address" readonly="1"/>
+                                        </group>
+                                    </page>
+                                    <page name="current_customer" string="Current Customer">
+                                        <group>
+                                            <field name="customer_id" readonly="1"/>
+                                            <field name="invoice_address" readonly="1"/>
+                                        </group>
+                                    </page>
+                                    <page name="new_customer" string="New Customer">
+                                        <group>
+                                            <field name="new_customer_name" string="Name" readonly="1"/>
+                                            <field name="new_customer_phone" string="Phone" readonly="1"/>
+                                            <field name="new_customer_address" string="Address" readonly="1"/>
+                                        </group>
+                                    </page>
+                                </notebook>
                             </group>
                         </group>
-                        <group>
-                            <group>
-                                <field name="bill_customer_name"/>
-                                <field name="bill_customer_phone"/>
-                                <field name="bill_customer_address"/>
-                                <field name="customer_insurance_name"/>
-                                <field name="customer_insurance_number"/>
-                            </group>
-                            <group>
-                                <field name="customer_id"/>
-                                <field name="employee_id"/>
-                                <field name="is_delivery"/>
-                                <field name="employee_delivery_id"/>
-                                <field name="pos_client_token"/>
-                            </group>
-                        </group>
+                        <field name="store_id" invisible="True" readonly="1"/>
+                        <field name="status" invisible="True" readonly="1"/>
+                        <field name="line_count" invisible="True" readonly="1"/>
                         <notebook>
-                            <page string="Lines">
+                            <page string="Sales Detail">
                                 <field name="line_ids" readonly="1">
-                                    <list>
-                                        <field name="rec_id"/>
-                                        <field name="product_id"/>
-                                        <field name="qty"/>
-                                        <field name="sell_price"/>
-                                        <field name="net_amount"/>
-                                        <field name="products_not_exist"/>
-                                        <field name="active"/>
+                                    <list create="0" edit="0" delete="0" duplicate="0">
+                                        <field name="product_id" decoration-danger="balance==0" width="300px" readonly="1"/>
+                                        <field name="product_code" width="50px" optional="show" readonly="1"/>
+                                        <field name="qty_str" string="Quantity" width="75px" readonly="1"/>
+                                        <field name="uom_id" width="80px" readonly="1"/>
+                                        <field name="qty" optional="hide" readonly="1"/>
+                                        <field name="inventory_json" string="Source" width="75px" optional="hide" readonly="1"/>
+                                        <field name="cost" width="50px" optional="hide" readonly="1"/>
+                                        <field name="target_sell_price" optional="hide" width="75px" readonly="1"/>
+                                        <field name="sell_price" readonly="1"/>
+                                        <field name="balance" decoration-success="balance&gt;0" decoration-danger="balance==0" readonly="1"/>
+                                        <field name="net_amount" optional="show" readonly="1"/>
+                                        <field name="unavailable_reason" optional="hide" readonly="1"/>
+                                        <field name="unavailable_reason_other" optional="hide" readonly="1"/>
+                                        <field name="rec_id" optional="hide" readonly="1"/>
+                                        <field name="active" optional="hide" readonly="1"/>
+                                        <field name="products_not_exist" optional="hide" readonly="1"/>
                                     </list>
                                 </field>
+                            </page>
+                        </notebook>
+                        <notebook>
+                            <page name="reporting_details" string="Reporting Details">
                                 <group>
-                                    <field name="line_count"/>
-                                    <field name="total_qty"/>
-                                    <field name="total_price"/>
-                                    <field name="total_net_amount"/>
+                                    <field name="db_serial"/>
+                                    <field name="rec_id"/>
+                                    <field name="source_revision"/>
+                                    <field name="event_uuid"/>
+                                    <field name="source_operation"/>
+                                    <field name="source_write_date"/>
+                                    <field name="synced_at"/>
+                                    <field name="push_state"/>
+                                    <field name="is_closed"/>
+                                    <field name="active"/>
+                                    <field name="customer_insurance_name"/>
+                                    <field name="customer_insurance_number"/>
+                                    <field name="employee_id"/>
+                                    <field name="is_delivery"/>
+                                    <field name="employee_delivery_id"/>
+                                    <field name="push_message"/>
+                                    <field name="payload_json" widget="ab_pretty_json"/>
                                 </group>
-                            </page>
-                            <page string="Customer Snapshot">
-                                <group>
-                                    <field name="new_customer_name"/>
-                                    <field name="new_customer_phone"/>
-                                    <field name="new_customer_address"/>
-                                    <field name="invoice_address"/>
-                                </group>
-                            </page>
-                            <page string="Messages">
-                                <field name="description"/>
-                                <field name="push_message"/>
-                            </page>
-                            <page string="Raw Payload">
-                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -125,30 +152,34 @@
             </field>
         </record>
         <record id="ab_sales_header_action" model="ir.actions.act_window">
-            <field name="name">Synced Sales</field>
+            <field name="name">Bills</field>
             <field name="res_model">ab_sales_header</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_sales_header_view_search"/>
             <field name="context">{'active_test': False}</field>
         </record>
-
         <record id="ab_sales_line_view_tree" model="ir.ui.view">
             <field name="name">ab_sales_line.list</field>
             <field name="model">ab_sales_line</field>
             <field name="arch" type="xml">
-                <list create="0" edit="0" delete="0">
-                    <field name="db_serial"/>
-                    <field name="rec_id"/>
-                    <field name="header_id"/>
-                    <field name="product_id"/>
-                    <field name="qty"/>
-                    <field name="sell_price"/>
-                    <field name="price_subtotal"/>
-                    <field name="net_amount"/>
-                    <field name="products_not_exist"/>
-                    <field name="unavailable_reason"/>
-                    <field name="active"/>
-                    <field name="synced_at"/>
+                <list create="0" edit="0" delete="0" duplicate="0">
+                    <field name="id" optional="hide" readonly="1"/>
+                    <field name="header_id" optional="show" readonly="1"/>
+                    <field name="product_id" decoration-danger="balance==0" width="300px" readonly="1"/>
+                    <field name="product_code" width="50px" optional="show" readonly="1"/>
+                    <field name="uom_id" width="80px" readonly="1"/>
+                    <field name="qty" optional="show" readonly="1"/>
+                    <field name="sell_price" readonly="1"/>
+                    <field name="balance" decoration-success="balance&gt;0" decoration-danger="balance==0" readonly="1"/>
+                    <field name="net_amount" optional="show" readonly="1"/>
+                    <field name="unavailable_reason" optional="show" readonly="1"/>
+                    <field name="unavailable_reason_other" optional="show" readonly="1"/>
+                    <field name="db_serial" optional="hide"/>
+                    <field name="rec_id" optional="hide"/>
+                    <field name="price_subtotal" optional="hide"/>
+                    <field name="products_not_exist" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                    <field name="synced_at" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -157,10 +188,11 @@
             <field name="model">ab_sales_line</field>
             <field name="arch" type="xml">
                 <search>
+                    <field name="product_id"/>
+                    <field name="unavailable_reason"/>
                     <field name="db_serial"/>
                     <field name="rec_id"/>
                     <field name="header_id"/>
-                    <field name="product_id"/>
                     <filter name="missing_stock" string="Missing Stock" domain="[('products_not_exist', '=', True)]"/>
                     <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                     <filter name="group_db_serial" string="DB Serial" context="{'group_by': 'db_serial'}"/>
@@ -173,7 +205,7 @@
             <field name="name">ab_sales_line.form</field>
             <field name="model">ab_sales_line</field>
             <field name="arch" type="xml">
-                <form create="0" edit="0" delete="0">
+                <form create="0" edit="0" delete="0" duplicate="0">
                     <sheet>
                         <group>
                             <group>
@@ -228,29 +260,28 @@
             </field>
         </record>
         <record id="ab_sales_line_action" model="ir.actions.act_window">
-            <field name="name">Synced Sales Lines</field>
+            <field name="name">Sales Details</field>
             <field name="res_model">ab_sales_line</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_sales_line_view_search"/>
         </record>
-
         <record id="ab_sales_return_header_view_tree" model="ir.ui.view">
             <field name="name">ab_sales_return_header.list</field>
             <field name="model">ab_sales_return_header</field>
             <field name="arch" type="xml">
-                <list create="0" edit="0" delete="0">
-                    <field name="db_serial"/>
-                    <field name="rec_id"/>
-                    <field name="origin_header_id"/>
-                    <field name="sales_return_id"/>
-                    <field name="store_id"/>
-                    <field name="status" widget="badge"/>
-                    <field name="line_count"/>
-                    <field name="total_return_qty"/>
-                    <field name="total_return_value"/>
-                    <field name="total_sales_net"/>
-                    <field name="active"/>
-                    <field name="synced_at"/>
+                <list create="0" edit="0" delete="0" duplicate="0">
+                    <field name="store_id" optional="show" readonly="1"/>
+                    <field name="origin_header_id" optional="show" readonly="1"/>
+                    <field name="status" optional="show" readonly="1"/>
+                    <field name="total_return_value" optional="show" readonly="1"/>
+                    <field name="total_sales_net" optional="show" readonly="1"/>
+                    <field name="db_serial" optional="hide"/>
+                    <field name="rec_id" optional="hide"/>
+                    <field name="sales_return_id" optional="hide"/>
+                    <field name="line_count" optional="hide"/>
+                    <field name="total_return_qty" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                    <field name="synced_at" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -259,11 +290,12 @@
             <field name="model">ab_sales_return_header</field>
             <field name="arch" type="xml">
                 <search>
+                    <field name="origin_header_id"/>
+                    <field name="store_id"/>
+                    <field name="status"/>
                     <field name="db_serial"/>
                     <field name="rec_id"/>
-                    <field name="origin_header_id"/>
                     <field name="sales_return_id"/>
-                    <field name="store_id"/>
                     <filter name="saved" string="Saved" domain="[('status', '=', 'saved')]"/>
                     <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
                     <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
@@ -277,53 +309,73 @@
             <field name="name">ab_sales_return_header.form</field>
             <field name="model">ab_sales_return_header</field>
             <field name="arch" type="xml">
-                <form create="0" edit="0" delete="0">
+                <form create="0" edit="0" delete="0" duplicate="0">
                     <sheet>
+                        <field name="status" invisible="1" readonly="1"/>
+                        <widget name="web_ribbon" title="Pre-Pending" bg_color="bg-info" invisible="status != 'prepending'"/>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-info" invisible="status != 'saved'"/>
                         <group>
                             <group>
-                                <field name="db_serial"/>
-                                <field name="rec_id"/>
-                                <field name="source_revision"/>
-                                <field name="event_uuid"/>
-                                <field name="source_operation"/>
-                                <field name="source_write_date"/>
-                                <field name="synced_at"/>
+                                <field name="store_id" readonly="1"/>
+                                <field name="origin_header_id" readonly="1"/>
                             </group>
                             <group>
-                                <field name="origin_header_id"/>
-                                <field name="sales_return_id"/>
-                                <field name="f_transaction_id"/>
-                                <field name="store_id"/>
-                                <field name="sto_eplus_serial"/>
-                                <field name="status"/>
-                                <field name="active"/>
+                                <field name="total_return_qty" readonly="1"/>
+                                <field name="total_return_value" readonly="1"/>
+                                <field name="total_sales_net" readonly="1"/>
+                                <field name="sales_return_id" readonly="1"/>
+                                <field name="f_transaction_id" readonly="1"/>
                             </group>
                         </group>
+                        <group>
+                            <field name="notes" colspan="4" readonly="1"/>
+                        </group>
                         <notebook>
-                            <page string="Return Lines">
-                                <field name="line_ids" readonly="1">
-                                    <list>
-                                        <field name="rec_id"/>
-                                        <field name="product_id"/>
-                                        <field name="qty"/>
-                                        <field name="sell_price"/>
-                                        <field name="line_value"/>
-                                        <field name="itm_eplus_id"/>
-                                        <field name="std_id"/>
-                                    </list>
-                                </field>
+                            <page name="Lines" string="Lines">
                                 <group>
-                                    <field name="line_count"/>
-                                    <field name="total_return_qty"/>
-                                    <field name="total_return_value"/>
-                                    <field name="total_sales_net"/>
+                                    <field name="line_ids" nolabel="1" readonly="1">
+                                        <list create="0" delete="0" edit="0" duplicate="0">
+                                            <field name="itm_eplus_id" optional="hide" readonly="1"/>
+                                            <field name="product_id" readonly="1"/>
+                                            <field name="qty_sold" optional="show" readonly="1"/>
+                                            <field name="max_returnable_qty" optional="show" readonly="1"/>
+                                            <field name="max_returnable_source" optional="hide" readonly="1"/>
+                                            <field name="uom_id" readonly="1"/>
+                                            <field name="qty_sold_source" optional="hide" readonly="1"/>
+                                            <field name="qty_str" readonly="1"/>
+                                            <field name="qty" optional="hide" readonly="1"/>
+                                            <field name="source_itm_unit" optional="hide" readonly="1"/>
+                                            <field name="source_uom_factor" optional="hide" readonly="1"/>
+                                            <field name="item_unit1_unit2" optional="hide" readonly="1"/>
+                                            <field name="item_unit1_unit3" optional="hide" readonly="1"/>
+                                            <field name="sell_price" optional="show" readonly="1"/>
+                                            <field name="cost" optional="hide" readonly="1"/>
+                                            <field name="c_id" optional="hide" readonly="1"/>
+                                            <field name="std_id" optional="hide" readonly="1"/>
+                                            <field name="sth_id" optional="hide" readonly="1"/>
+                                            <field name="sto_id" optional="hide" readonly="1"/>
+                                            <field name="line_value" optional="hide" readonly="1"/>
+                                            <field name="itm_nexist" optional="hide" readonly="1"/>
+                                        </list>
+                                    </field>
                                 </group>
                             </page>
-                            <page string="Notes">
-                                <field name="notes"/>
-                            </page>
-                            <page string="Raw Payload">
-                                <field name="payload_json" widget="ab_pretty_json"/>
+                        </notebook>
+                        <notebook>
+                            <page name="reporting_details" string="Reporting Details">
+                                <group>
+                                    <field name="db_serial"/>
+                                    <field name="rec_id"/>
+                                    <field name="source_revision"/>
+                                    <field name="event_uuid"/>
+                                    <field name="source_operation"/>
+                                    <field name="source_write_date"/>
+                                    <field name="synced_at"/>
+                                    <field name="sto_eplus_serial"/>
+                                    <field name="active"/>
+                                    <field name="line_count"/>
+                                    <field name="payload_json" widget="ab_pretty_json"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -331,29 +383,45 @@
             </field>
         </record>
         <record id="ab_sales_return_header_action" model="ir.actions.act_window">
-            <field name="name">Synced Sales Returns</field>
+            <field name="name">Sales Returns</field>
             <field name="res_model">ab_sales_return_header</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_sales_return_header_view_search"/>
         </record>
-
         <record id="ab_sales_return_line_view_list" model="ir.ui.view">
             <field name="name">ab_sales_return_line.list</field>
             <field name="model">ab_sales_return_line</field>
             <field name="arch" type="xml">
-                <list create="0" edit="0" delete="0">
-                    <field name="db_serial"/>
-                    <field name="rec_id"/>
-                    <field name="header_id"/>
-                    <field name="product_id"/>
-                    <field name="itm_eplus_id"/>
-                    <field name="sth_id"/>
-                    <field name="std_id"/>
-                    <field name="qty"/>
-                    <field name="sell_price"/>
-                    <field name="line_value"/>
-                    <field name="active"/>
-                    <field name="synced_at"/>
+                <list create="0" edit="0" delete="0" duplicate="0">
+                    <field name="id" optional="show" readonly="1"/>
+                    <field name="header_id" optional="show" readonly="1"/>
+                    <field name="sale_line_id" optional="show" readonly="1"/>
+                    <field name="qty_str" optional="show" readonly="1"/>
+                    <field name="product_id" optional="show" readonly="1"/>
+                    <field name="uom_id" optional="show" readonly="1"/>
+                    <field name="source_itm_unit" optional="show" readonly="1"/>
+                    <field name="source_uom_factor" optional="show" readonly="1"/>
+                    <field name="item_unit1_unit2" optional="show" readonly="1"/>
+                    <field name="item_unit1_unit3" optional="show" readonly="1"/>
+                    <field name="qty_sold" optional="show" readonly="1"/>
+                    <field name="qty_sold_source" optional="show" readonly="1"/>
+                    <field name="max_returnable_qty" optional="show" readonly="1"/>
+                    <field name="max_returnable_source" optional="show" readonly="1"/>
+                    <field name="qty_to_return" optional="show" readonly="1"/>
+                    <field name="sell_price" optional="show" readonly="1"/>
+                    <field name="cost" optional="show" readonly="1"/>
+                    <field name="line_value" optional="show" readonly="1"/>
+                    <field name="itm_eplus_id" optional="show" readonly="1"/>
+                    <field name="sth_id" optional="show" readonly="1"/>
+                    <field name="sto_id" optional="show" readonly="1"/>
+                    <field name="c_id" optional="show" readonly="1"/>
+                    <field name="std_id" optional="show" readonly="1"/>
+                    <field name="itm_nexist" optional="show" readonly="1"/>
+                    <field name="db_serial" optional="hide"/>
+                    <field name="rec_id" optional="hide"/>
+                    <field name="qty" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                    <field name="synced_at" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -362,13 +430,31 @@
             <field name="model">ab_sales_return_line</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="db_serial"/>
-                    <field name="rec_id"/>
                     <field name="header_id"/>
+                    <field name="sale_line_id"/>
+                    <field name="qty_str"/>
                     <field name="product_id"/>
+                    <field name="uom_id"/>
+                    <field name="source_itm_unit"/>
+                    <field name="source_uom_factor"/>
+                    <field name="item_unit1_unit2"/>
+                    <field name="item_unit1_unit3"/>
+                    <field name="qty_sold"/>
+                    <field name="qty_sold_source"/>
+                    <field name="max_returnable_qty"/>
+                    <field name="max_returnable_source"/>
+                    <field name="qty_to_return"/>
+                    <field name="sell_price"/>
+                    <field name="cost"/>
+                    <field name="line_value"/>
                     <field name="itm_eplus_id"/>
                     <field name="sth_id"/>
+                    <field name="sto_id"/>
+                    <field name="c_id"/>
                     <field name="std_id"/>
+                    <field name="itm_nexist"/>
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
                     <filter name="missing_item" string="Missing Item" domain="[('itm_nexist', '=', True)]"/>
                     <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                     <filter name="group_db_serial" string="DB Serial" context="{'group_by': 'db_serial'}"/>
@@ -381,59 +467,45 @@
             <field name="name">ab_sales_return_line.form</field>
             <field name="model">ab_sales_return_line</field>
             <field name="arch" type="xml">
-                <form create="0" edit="0" delete="0">
+                <form create="0" edit="0" delete="0" duplicate="0">
                     <sheet>
                         <group>
-                            <group>
-                                <field name="db_serial"/>
-                                <field name="rec_id"/>
-                                <field name="source_revision"/>
-                                <field name="event_uuid"/>
-                                <field name="synced_at"/>
-                            </group>
-                            <group>
-                                <field name="header_id"/>
-                                <field name="sale_line_id"/>
-                                <field name="product_id"/>
-                                <field name="uom_id"/>
-                                <field name="active"/>
-                            </group>
-                        </group>
-                        <group>
-                            <group>
-                                <field name="qty_str"/>
-                                <field name="qty"/>
-                                <field name="qty_to_return"/>
-                                <field name="qty_sold"/>
-                                <field name="qty_sold_source"/>
-                                <field name="max_returnable_qty"/>
-                                <field name="max_returnable_source"/>
-                            </group>
-                            <group>
-                                <field name="sell_price"/>
-                                <field name="cost"/>
-                                <field name="line_value"/>
-                                <field name="itm_nexist"/>
-                            </group>
-                        </group>
-                        <group>
-                            <group>
-                                <field name="itm_eplus_id"/>
-                                <field name="sth_id"/>
-                                <field name="sto_id"/>
-                                <field name="c_id"/>
-                                <field name="std_id"/>
-                            </group>
-                            <group>
-                                <field name="source_itm_unit"/>
-                                <field name="source_uom_factor"/>
-                                <field name="item_unit1_unit2"/>
-                                <field name="item_unit1_unit3"/>
-                            </group>
+                            <field name="header_id" readonly="1"/>
+                            <field name="sale_line_id" readonly="1"/>
+                            <field name="qty_str" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="uom_id" readonly="1"/>
+                            <field name="source_itm_unit" readonly="1"/>
+                            <field name="source_uom_factor" readonly="1"/>
+                            <field name="item_unit1_unit2" readonly="1"/>
+                            <field name="item_unit1_unit3" readonly="1"/>
+                            <field name="qty_sold" readonly="1"/>
+                            <field name="qty_sold_source" readonly="1"/>
+                            <field name="max_returnable_qty" readonly="1"/>
+                            <field name="max_returnable_source" readonly="1"/>
+                            <field name="qty_to_return" readonly="1"/>
+                            <field name="sell_price" readonly="1"/>
+                            <field name="cost" readonly="1"/>
+                            <field name="line_value" readonly="1"/>
+                            <field name="itm_eplus_id" readonly="1"/>
+                            <field name="sth_id" readonly="1"/>
+                            <field name="sto_id" readonly="1"/>
+                            <field name="c_id" readonly="1"/>
+                            <field name="std_id" readonly="1"/>
+                            <field name="itm_nexist" readonly="1"/>
                         </group>
                         <notebook>
-                            <page string="Raw Payload">
-                                <field name="payload_json" widget="ab_pretty_json"/>
+                            <page name="reporting_details" string="Reporting Details">
+                                <group>
+                                    <field name="db_serial"/>
+                                    <field name="rec_id"/>
+                                    <field name="source_revision"/>
+                                    <field name="event_uuid"/>
+                                    <field name="synced_at"/>
+                                    <field name="active"/>
+                                    <field name="qty"/>
+                                    <field name="payload_json" widget="ab_pretty_json"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -441,23 +513,17 @@
             </field>
         </record>
         <record id="ab_sales_return_line_action" model="ir.actions.act_window">
-            <field name="name">Synced Sales Return Lines</field>
+            <field name="name">Sales Return Lines</field>
             <field name="res_model">ab_sales_return_line</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_sales_return_line_view_search"/>
         </record>
-
-        <menuitem id="sales_menu_root" name="Sales Reporting"
-                  sequence="72"
-                  web_icon="ab_sales,static/description/icon.png"
-                  groups="group_ab_sales_manager"/>
-        <menuitem id="ab_sales_header_menu" name="Synced Sales"
-                  parent="sales_menu_root" action="ab_sales_header_action" sequence="10"/>
-        <menuitem id="menu_ab_sales_line_sync" name="Synced Sales Lines"
-                  parent="sales_menu_root" action="ab_sales_line_action" sequence="20"/>
-        <menuitem id="ab_sales_return_header_menu" name="Synced Sales Returns"
-                  parent="sales_menu_root" action="ab_sales_return_header_action" sequence="30"/>
-        <menuitem id="ab_sales_return_line_menu" name="Synced Sales Return Lines"
-                  parent="sales_menu_root" action="ab_sales_return_line_action" sequence="40"/>
+        <menuitem id="sales_menu_root" name="Sales" sequence="4" web_icon="ab_sales,static/description/icon.png" groups="group_ab_sales_manager"/>
+        <menuitem id="config_sub_menu" name="Configurations" parent="sales_menu_root" sequence="500"/>
+        <menuitem id="ab_sales_reports_menu" name="Reports" parent="sales_menu_root" sequence="1000"/>
+        <menuitem id="ab_sales_header_menu" name="Bills" parent="sales_menu_root" action="ab_sales_header_action" sequence="3"/>
+        <menuitem id="menu_ab_sales_line_sync" name="Sales Details" parent="ab_sales_reports_menu" action="ab_sales_line_action" sequence="1"/>
+        <menuitem id="ab_sales_return_header_menu" name="Sales Returns" parent="sales_menu_root" action="ab_sales_return_header_action" sequence="300"/>
+        <menuitem id="ab_sales_return_line_menu" name="Sales Return Lines" parent="ab_sales_reports_menu" action="ab_sales_return_line_action" sequence="100"/>
     </data>
 </odoo>

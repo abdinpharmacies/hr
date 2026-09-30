@@ -114,6 +114,8 @@ msgstr "هاتف عميل الفاتورة"
 
 #. module: ab_sales
 #: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_pos_draft_cache_sync_form
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_header_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_header_menu
 msgid "Bills"
 msgstr "الفواتير"
 
@@ -588,6 +590,7 @@ msgstr "مخزون غير متوفر"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__name
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
 msgid "Name"
 msgstr "الاسم"
 
@@ -806,6 +809,7 @@ msgstr "الكمية المطلوب إرجاعها"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__qty
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
 msgid "Quantity"
 msgstr "الكمية"
 
@@ -884,7 +888,6 @@ msgid "Sales Quantity"
 msgstr "كمية المبيعات"
 
 #. module: ab_sales
-#: model:ir.ui.menu,name:ab_sales.sales_menu_root
 msgid "Sales Reporting"
 msgstr "تقارير المبيعات"
 
@@ -931,7 +934,8 @@ msgstr "يجب أن تكون مرآة حالة مزامنة مبيعات الي�
 
 #. module: ab_sales
 #: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_return_header_uniq_branch_source
-msgid "Sales return header mirror must be unique per branch and source record."
+msgid ""
+"Sales return header mirror must be unique per branch and source record."
 msgstr "يجب أن تكون مرآة رأس مرتجع المبيعات فريدة لكل فرع وسجل مصدر."
 
 #. module: ab_sales
@@ -1191,14 +1195,10 @@ msgid "Synced POS Settings"
 msgstr "إعدادات نقطة البيع المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_printer_action
-#: model:ir.ui.menu,name:ab_sales.ab_printer_menu
 msgid "Synced Printer Configurations"
 msgstr "إعدادات الطابعات المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_product_metadata_action
-#: model:ir.ui.menu,name:ab_sales.ab_product_metadata_menu
 msgid "Synced Product Metadata"
 msgstr "بيانات المنتج الوصفية المتزامنة"
 
@@ -1215,44 +1215,30 @@ msgid "Synced Product Rankings"
 msgstr "ترتيبات المنتجات المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_header_action
-#: model:ir.ui.menu,name:ab_sales.ab_sales_header_menu
 msgid "Synced Sales"
 msgstr "المبيعات المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_inventory_action
-#: model:ir.ui.menu,name:ab_sales.ab_sales_inventory_menu
 msgid "Synced Sales Inventory"
 msgstr "مخزون المبيعات المتزامن"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_line_action
-#: model:ir.ui.menu,name:ab_sales.menu_ab_sales_line_sync
 msgid "Synced Sales Lines"
 msgstr "سطور المبيعات المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_per_day_action
-#: model:ir.ui.menu,name:ab_sales.ab_sales_per_day_menu
 msgid "Synced Sales Per Day"
 msgstr "مبيعات اليوم المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_per_day_action_state_sync
-#: model:ir.ui.menu,name:ab_sales.ab_sales_per_day_menu_state_sync
 msgid "Synced Sales Per Day States"
 msgstr "حالات مبيعات اليوم المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_line_action
-#: model:ir.ui.menu,name:ab_sales.ab_sales_return_line_menu
 msgid "Synced Sales Return Lines"
 msgstr "سطور مرتجعات المبيعات المتزامنة"
 
 #. module: ab_sales
-#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_header_action
-#: model:ir.ui.menu,name:ab_sales.ab_sales_return_header_menu
 msgid "Synced Sales Returns"
 msgstr "مرتجعات المبيعات المتزامنة"
 
@@ -1403,6 +1389,124 @@ msgstr "sth_id"
 msgid "sto_id"
 msgstr "sto_id"
 
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Bill Customer Data"
+msgstr "بيانات عميل الفاتورة"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.config_sub_menu
+msgid "Configurations"
+msgstr "الإعدادات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Current Customer"
+msgstr "العميل الحالي"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "New Customer"
+msgstr "عميل جديد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Pre-Pending"
+msgstr "قبل الانتظار"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_printer_action
+#: model:ir.ui.menu,name:ab_sales.ab_printer_menu
+msgid "Printers"
+msgstr "الطابعات"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_product_metadata_action
+#: model:ir.ui.menu,name:ab_sales.ab_product_metadata_menu
+msgid "Product Metadata"
+msgstr "بيانات المنتجات الإضافية"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_metadata_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_line_view_form
+msgid "Reporting Details"
+msgstr "تفاصيل التقارير"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_sales_reports_menu
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.sales_menu_root
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Sales Detail"
+msgstr "تفاصيل البيع"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_line_action
+#: model:ir.ui.menu,name:ab_sales.menu_ab_sales_line_sync
+msgid "Sales Details"
+msgstr "تفاصيل المبيعات"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_inventory_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_inventory_menu
+msgid "Sales Inventory"
+msgstr "مخزون المبيعات"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_per_day_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_per_day_menu
+msgid "Sales Per Day"
+msgstr "المبيعات اليومية"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_per_day_action_state_sync
+#: model:ir.ui.menu,name:ab_sales.ab_sales_per_day_menu_state_sync
+msgid "Sales Per Day Sync States"
+msgstr "حالات مزامنة المبيعات اليومية"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_line_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_return_line_menu
+msgid "Sales Return Lines"
+msgstr "بنود مرتجعات المبيعات"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_header_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_return_header_menu
+msgid "Sales Returns"
+msgstr "مرتجعات المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Totals"
+msgstr "الإجماليات"
+
 #~ msgid "#%s: Store IP is missing."
 #~ msgstr "#%s: المخزن IP مفقود."
 
@@ -1414,26 +1518,20 @@ msgstr "sto_id"
 #~ "                        <span class=\"small\">أرصدة المخازن</span>"
 
 #~ msgid ""
-#~ "<span class=\"badge text-bg-success ms-2\" invisible=\"not store_id or "
-#~ "store_server_online == False\">Connected</span>\n"
-#~ "                        <span class=\"badge text-bg-danger ms-2\" "
-#~ "invisible=\"not store_id or store_server_online == True\">Offline</span>"
+#~ "<span class=\"badge text-bg-success ms-2\" invisible=\"not store_id or store_server_online == False\">Connected</span>\n"
+#~ "                        <span class=\"badge text-bg-danger ms-2\" invisible=\"not store_id or store_server_online == True\">Offline</span>"
 #~ msgstr ""
-#~ "<span class=\"badge text-bg-success ms-2\" visual=\"not store_id or "
-#~ "store_server_online == False\">متصل</span>\n"
-#~ "                        <span class=\"badge text-bg-danger ms-2\" "
-#~ "visual=\"not store_id or store_server_online == True\">غير متصل</span>"
+#~ "<span class=\"badge text-bg-success ms-2\" visual=\"not store_id or store_server_online == False\">متصل</span>\n"
+#~ "                        <span class=\"badge text-bg-danger ms-2\" visual=\"not store_id or store_server_online == True\">غير متصل</span>"
 
 #~ msgid ""
 #~ "<span class=\"d-inline-flex align-items-center gap-2\">\n"
-#~ "                                                    <i class=\"fa fa-"
-#~ "building-o text-muted\" aria-hidden=\"true\"/>\n"
+#~ "                                                    <i class=\"fa fa-building-o text-muted\" aria-hidden=\"true\"/>\n"
 #~ "                                                    <span>Store</span>\n"
 #~ "                                                </span>"
 #~ msgstr ""
 #~ "<span class=\"d-inline-flex align-items-center الفجوة-2\">\n"
-#~ "                                                    <i class=\"fa fa-"
-#~ "building-o text-muted\" aria-hidden=\"true\"/>\n"
+#~ "                                                    <i class=\"fa fa-building-o text-muted\" aria-hidden=\"true\"/>\n"
 #~ "                                                    <span>المخزن</span>\n"
 #~ "                                                </span>"
 
@@ -1515,9 +1613,6 @@ msgstr "sto_id"
 #~ msgid "Add products to start building the bill."
 #~ msgstr "أضف منتجات لبدء إنشاء الفاتورة."
 
-#~ msgid "Address"
-#~ msgstr "العنوان"
-
 #~ msgid "Address must be at least 3 characters."
 #~ msgstr "يجب أن يتكون العنوان من 3 أحرف على الأقل."
 
@@ -1580,9 +1675,6 @@ msgstr "sto_id"
 #~ msgid "Bill #"
 #~ msgstr "رقم الفاتورة"
 
-#~ msgid "Bill Customer Data"
-#~ msgstr "بيانات عميل الفاتورة"
-
 #~ msgid "Bill Wizard"
 #~ msgstr "معالج الفاتورة"
 
@@ -1605,8 +1697,7 @@ msgstr "sto_id"
 #~ msgstr "أمين الصندوق"
 
 #~ msgid "Class/source ID used in sales_trans_d and Item_Class_Store (batch)."
-#~ msgstr ""
-#~ "معرف الفئة/المصدر المستخدم في sales_trans_d وItem_Class_Store (دفعة)."
+#~ msgstr "معرف الفئة/المصدر المستخدم في sales_trans_d وItem_Class_Store (دفعة)."
 
 #~ msgid "Clear"
 #~ msgstr "مسح"
@@ -1634,9 +1725,6 @@ msgstr "sto_id"
 
 #~ msgid "Company Pay"
 #~ msgstr "نصيب الشركة"
-
-#~ msgid "Configurations"
-#~ msgstr "الإعدادات"
 
 #~ msgid "Confirm"
 #~ msgstr "تأكيد"
@@ -1691,9 +1779,6 @@ msgstr "sto_id"
 
 #~ msgid "Cron not found."
 #~ msgstr "لم يتم العثور على مهمة Cron."
-
-#~ msgid "Current Customer"
-#~ msgstr "العميل الحالي"
 
 #~ msgid ""
 #~ "Current sell store is not equal ePlus DB store!\n"
@@ -1832,9 +1917,9 @@ msgstr "sto_id"
 #~ "returned NULL). Please check that sales_trans_h.sth_id is an IDENTITY "
 #~ "column."
 #~ msgstr ""
-#~ "فشل في الحصول على رقم STH جديد (الدوال SCOPE_IDENTITY/@@IDENTITY/"
-#~ "IDENT_CURRENT أعادت جميعها القيمة NULL). يرجى التحقق من أن الحقل "
-#~ "sales_trans_h.sth_id هو حقل IDENTITY."
+#~ "فشل في الحصول على رقم STH جديد (الدوال "
+#~ "SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT أعادت جميعها القيمة NULL). يرجى "
+#~ "التحقق من أن الحقل sales_trans_h.sth_id هو حقل IDENTITY."
 
 #~ msgid "Followers"
 #~ msgstr "المتابعون"
@@ -1860,8 +1945,8 @@ msgstr "sto_id"
 #~ msgid ""
 #~ "HTML direct print is not available on this server (missing 'wkhtmltopdf')."
 #~ msgstr ""
-#~ "الطباعة المباشرة بتنسيق HTML غير متاحة على هذا الخادم (الأمر "
-#~ "'wkhtmltopdf' مفقود)."
+#~ "الطباعة المباشرة بتنسيق HTML غير متاحة على هذا الخادم (الأمر 'wkhtmltopdf' "
+#~ "مفقود)."
 
 #~ msgid "Has Balance"
 #~ msgstr "له رصيد"
@@ -2091,9 +2176,6 @@ msgstr "sto_id"
 #~ msgid "New Bill"
 #~ msgstr "فاتورة جديدة"
 
-#~ msgid "New Customer"
-#~ msgstr "عميل جديد"
-
 #~ msgid "Next"
 #~ msgstr "التالي"
 
@@ -2289,9 +2371,6 @@ msgstr "sto_id"
 #~ msgid "Pharmacist"
 #~ msgstr "صيدلي"
 
-#~ msgid "Phone"
-#~ msgstr "الهاتف"
-
 #~ msgid "Phone is required."
 #~ msgstr "الهاتف مطلوب."
 
@@ -2344,9 +2423,6 @@ msgstr "sto_id"
 #~ msgid "PowerShell print command failed."
 #~ msgstr "فشل أمر الطباعة في PowerShell."
 
-#~ msgid "Pre-Pending"
-#~ msgstr "ما قبل التعليق"
-
 #~ msgid "Prepending"
 #~ msgstr "قيد التهيئة"
 
@@ -2387,9 +2463,9 @@ msgstr "sto_id"
 #~ "Printer '%s' is a raw queue. HTML/PDF print is blocked to avoid binary "
 #~ "garbage output. Use text print or configure a non-raw driver queue."
 #~ msgstr ""
-#~ "الطابعة '%s' عبارة عن قائمة انتظار أولية. تم حظر طباعة HTML/PDF لتجنب "
-#~ "إخراج البيانات الثنائية المهملة. استخدم طباعة النص أو قم بتكوين قائمة "
-#~ "انتظار برامج التشغيل غير الأولية."
+#~ "الطابعة '%s' عبارة عن قائمة انتظار أولية. تم حظر طباعة HTML/PDF لتجنب إخراج "
+#~ "البيانات الثنائية المهملة. استخدم طباعة النص أو قم بتكوين قائمة انتظار برامج"
+#~ " التشغيل غير الأولية."
 
 #~ msgid "Printer Configuration"
 #~ msgstr "إعدادات الطابعة"
@@ -2411,9 +2487,6 @@ msgstr "sto_id"
 
 #~ msgid "Printer name must be unique."
 #~ msgstr "يجب أن يكون اسم الطابعة فريدًا."
-
-#~ msgid "Printers"
-#~ msgstr "الطابعات"
 
 #~ msgid ""
 #~ "Product '%s' is sold without balance.\n"
@@ -2441,15 +2514,13 @@ msgstr "sto_id"
 #~ msgstr "بطاقات المنتجات"
 
 #~ msgid ""
-#~ "Products where requested qty exceeds available balance require a reason "
-#~ "before submit.\n"
+#~ "Products where requested qty exceeds available balance require a reason before submit.\n"
 #~ "If reason is 'Other', details are required.\n"
 #~ "\n"
 #~ "Missing lines:\n"
 #~ "%s"
 #~ msgstr ""
-#~ "المنتجات عندما تتجاوز الكمية المطلوبة الرصيد المتاح، يجب تقديم سبب قبل "
-#~ "الإرسال.\n"
+#~ "المنتجات عندما تتجاوز الكمية المطلوبة الرصيد المتاح، يجب تقديم سبب قبل الإرسال.\n"
 #~ "إذا كان السبب هو \"غير ذلك\"، فالتفاصيل مطلوبة.\n"
 #~ "\n"
 #~ "الخطوط المفقودة:\n"
@@ -2471,8 +2542,7 @@ msgstr "sto_id"
 #~ "Python package 'python-escpos' is required for ESC/POS binary printing: %s"
 #~ msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية ESC/POS: %s"
 
-#~ msgid ""
-#~ "Python package 'python-escpos' is required for POS binary printing: %s"
+#~ msgid "Python package 'python-escpos' is required for POS binary printing: %s"
 #~ msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية POS: %s"
 
 #~ msgid "Qty Total"
@@ -2517,9 +2587,6 @@ msgstr "sto_id"
 #~ msgid "Replication_Trans Bulk Insert"
 #~ msgstr "إدراج Replication_Trans دفعة واحدة"
 
-#~ msgid "Reports"
-#~ msgstr "التقارير"
-
 #~ msgid "Requested Qty"
 #~ msgstr "الكمية المطلوبة"
 
@@ -2551,11 +2618,11 @@ msgstr "sto_id"
 #~ msgstr "قيمة المرتجع"
 
 #~ msgid ""
-#~ "Return not allowed. Invoice age (%s days) exceeded allowed return period "
-#~ "(%s days)."
+#~ "Return not allowed. Invoice age (%s days) exceeded allowed return period (%s"
+#~ " days)."
 #~ msgstr ""
-#~ "المرتجع غير مسموح به. تجاوز عمر الفاتورة (أيام %s) فترة الإرجاع المسموح "
-#~ "بها (أيام %s)."
+#~ "المرتجع غير مسموح به. تجاوز عمر الفاتورة (أيام %s) فترة الإرجاع المسموح بها "
+#~ "(أيام %s)."
 
 #~ msgid "Return qty for product %s exceeds allowed max (%s)."
 #~ msgstr "الكمية المرتجع للمنتج %s تتجاوز الحد الأقصى المسموح به (%s)."
@@ -2573,17 +2640,14 @@ msgstr "sto_id"
 #~ msgstr "لا يمكن أن تتجاوز قيمة المرتجع (%s) صافي الفاتورة (%s)."
 
 #~ msgid ""
-#~ "Return was saved, but updating sales_return.returned_items_value failed: "
-#~ "%s"
-#~ msgstr ""
-#~ "تم حفظ المرتجع، ولكن فشل تحديث sales_return.returned_items_value: %s"
+#~ "Return was saved, but updating sales_return.returned_items_value failed: %s"
+#~ msgstr "تم حفظ المرتجع، ولكن فشل تحديث sales_return.returned_items_value: %s"
 
 #~ msgid "Returns"
 #~ msgstr "المرتجعات"
 
 #~ msgid ""
-#~ "Returns accepted within 14 days; refrigerated medications and cosmetics "
-#~ "are not eligible for\n"
+#~ "Returns accepted within 14 days; refrigerated medications and cosmetics are not eligible for\n"
 #~ "                        return or exchange."
 #~ msgstr ""
 #~ "يُقبل الإرجاع خلال 14 يومًا؛أدوية الثلاجة ومستحضرات التجميل لا ترد ولا "
@@ -2605,15 +2669,6 @@ msgstr "sto_id"
 
 #~ msgid "Sale Line"
 #~ msgstr "سطر البيع"
-
-#~ msgid "Sales"
-#~ msgstr "المبيعات"
-
-#~ msgid "Sales Detail"
-#~ msgstr "تفاصيل المبيعات"
-
-#~ msgid "Sales Details"
-#~ msgstr "ab_sales_line"
 
 #~ msgid "Sales Header"
 #~ msgstr "رأس المبيعات"
@@ -2644,9 +2699,6 @@ msgstr "sto_id"
 
 #~ msgid "Sales Return UI API"
 #~ msgstr "واجهة برمجة تطبيقات مرتجع المبيعات"
-
-#~ msgid "Sales Returns"
-#~ msgstr "مرتجعات المبيعات"
 
 #~ msgid "Sales UI API"
 #~ msgstr "واجهة المبيعات البرمجية"
@@ -2791,20 +2843,16 @@ msgstr "sto_id"
 #~ msgid "Some products exceed available stock in this store."
 #~ msgstr "بعض المنتجات تتجاوز المخزون المتاح في هذا المتجر."
 
-#~ msgid "Source"
-#~ msgstr "المصدر"
-
 #~ msgid "Source invoice was not found in Odoo; cannot validate return period."
 #~ msgstr ""
-#~ "لم يتم العثور على فاتورة المصدر في Odoo؛ لا يمكن التحقق من صحة فترة "
-#~ "العودة."
+#~ "لم يتم العثور على فاتورة المصدر في Odoo؛ لا يمكن التحقق من صحة فترة العودة."
 
 #~ msgid ""
 #~ "Source sales invoice #%s is still pending. Save the source invoice first, "
 #~ "then push the return."
 #~ msgstr ""
-#~ "فاتورة المبيعات المصدر #%s لا تزال معلقة. احفظ فاتورة المصدر أولاً، ثم "
-#~ "ادفع الإرجاع."
+#~ "فاتورة المبيعات المصدر #%s لا تزال معلقة. احفظ فاتورة المصدر أولاً، ثم ادفع "
+#~ "الإرجاع."
 
 #~ msgid "Start Date"
 #~ msgstr "تاريخ البداية"
@@ -2889,15 +2937,11 @@ msgstr "sto_id"
 #~ msgid ""
 #~ "This  product \n"
 #~ "%(prod)s\n"
-#~ " cannot be sold in fractional small units. Requested %(req).4f small "
-#~ "units (qty=%(q).4f × factor=%(f).4f). Please adjust the quantity to a "
-#~ "whole small unit."
+#~ " cannot be sold in fractional small units. Requested %(req).4f small units (qty=%(q).4f × factor=%(f).4f). Please adjust the quantity to a whole small unit."
 #~ msgstr ""
 #~ "هذا المنتج \n"
 #~ "%(prod)s\n"
-#~ " لا يمكن بيعها في وحدات صغيرة كسرية. الوحدات الصغيرة %(req).4f المطلوبة "
-#~ "(الكمية = %(q).4f × العامل = %(f).4f). يرجى ضبط الكمية إلى وحدة صغيرة "
-#~ "كاملة."
+#~ " لا يمكن بيعها في وحدات صغيرة كسرية. الوحدات الصغيرة %(req).4f المطلوبة (الكمية = %(q).4f × العامل = %(f).4f). يرجى ضبط الكمية إلى وحدة صغيرة كاملة."
 
 #~ msgid "This bill has no ePlus serial."
 #~ msgstr "هذه الفاتورة لا تحتوي على رقم تسلسلي لـ E-Plus."
@@ -2978,8 +3022,8 @@ msgstr "sto_id"
 #~ msgstr "اكتب ملاحظاتك هنا"
 
 #~ msgid ""
-#~ "You already consumed your chance for this cron interval. Please let "
-#~ "another user try. Next chance: %s UTC"
+#~ "You already consumed your chance for this cron interval. Please let another "
+#~ "user try. Next chance: %s UTC"
 #~ msgstr ""
 #~ "لقد استهلكت فرصتك بالفعل خلال فترة Cron هذه. يرجى السماح لمستخدم آخر "
 #~ "بالمحاولة. الفرصة التالية: %s بالتوقيت العالمي"
@@ -3013,8 +3057,7 @@ msgstr "sto_id"
 
 #~ msgid ""
 #~ "MAIN staging models for branch sales operations uploaded by AB Odoo Sync"
-#~ msgstr ""
-#~ "نماذج وسيطة في المركز لعمليات مبيعات الفروع المرفوعة عبر مزامنة أودو"
+#~ msgstr "نماذج وسيطة في المركز لعمليات مبيعات الفروع المرفوعة عبر مزامنة أودو"
 
 #~ msgid "AB Sales Sync Mirror Mixin"
 #~ msgstr "خليط مرايا مزامنة المبيعات"
@@ -3036,9 +3079,6 @@ msgstr "sto_id"
 
 #~ msgid "Sales Return Headers"
 #~ msgstr "رؤوس مرتجعات المبيعات"
-
-#~ msgid "Sales Return Lines"
-#~ msgstr "سطور مرتجعات المبيعات"
 
 #~ msgid "Group By"
 #~ msgstr "تجميع حسب"
@@ -3087,18 +3127,6 @@ msgstr "sto_id"
 
 #~ msgid "Product Priced Flags"
 #~ msgstr "علامات تسعير المنتج"
-
-#~ msgid "Product Metadata"
-#~ msgstr "بيانات المنتج الوصفية"
-
-#~ msgid "Sales Inventory"
-#~ msgstr "مخزون المبيعات"
-
-#~ msgid "Sales Per Day"
-#~ msgstr "مبيعات اليوم"
-
-#~ msgid "Sales Per Day Sync States"
-#~ msgstr "حالات مزامنة مبيعات اليوم"
 
 #~ msgid "Product Ranking"
 #~ msgstr "ترتيب المنتجات"
