@@ -144,6 +144,8 @@ class Product(models.Model):
     has_pos_balance = fields.Boolean(compute='_compute_has_pos_balance', search='_search_has_pos_balance')
     only_default_sales_uom = fields.Boolean(default=False)
 
+    _pos_active_default_price_idx = models.Index("(default_price) WHERE active = TRUE")
+
     @api.model
     def _search_display_name(self, operator, value):
         if not self.env.context.get("ab_bill_wizard_product_search"):

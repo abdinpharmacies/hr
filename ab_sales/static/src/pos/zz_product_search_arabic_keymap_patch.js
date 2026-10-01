@@ -141,7 +141,12 @@ if (PosAction) {
     patch(PosAction.prototype, {
         async searchProducts(query) {
             const sourceQuery = String(query || "").trim();
-            await super.searchProducts(sourceQuery);
+            const pendingSearch = super.searchProducts(sourceQuery);
+            const requestId = this._productSearchRequestId;
+            await pendingSearch;
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
 
             if (!sourceQuery) {
                 return;
@@ -152,7 +157,7 @@ if (PosAction) {
             if (this.state.enableProductSearchKeyboardMapping === false) {
                 return;
             }
-            if ((this.state.productQuery || "").trim() !== sourceQuery) {
+            if (requestId !== this._productSearchRequestId || (this.state.productQuery || "").trim() !== sourceQuery) {
                 return;
             }
 
@@ -199,9 +204,11 @@ if (PosAction) {
                         store_id: storeId,
                         customer_phone: customerPhone,
                         item_type: this.state.productItemType || "all",
+                        min_price: this.state.productMinPrice,
+                        max_price: this.state.productMaxPrice,
                         context: ctx,
                     });
-                    if ((this.state.productQuery || "").trim() !== sourceQuery) {
+                    if (requestId !== this._productSearchRequestId || (this.state.productQuery || "").trim() !== sourceQuery) {
                         return;
                     }
                     mergedRows = mergeUniqueProducts(mergedRows, mappedRows, PRODUCT_LIMIT);

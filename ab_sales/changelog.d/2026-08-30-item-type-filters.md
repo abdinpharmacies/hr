@@ -59,7 +59,9 @@ Files changed:
 - ab_sales/models/ab_sales_header.py
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
-## Current changes before commit:
+## 2c8d7db - hager yasser - 2026-09-13
+
+Original commit subject: ab_sales/FEAT(#19780): Add an immediate “Remove All” button to the ab_sales POS sidebar
 
 User-facing changes:
 - Added a Remove All control below New Bill in the POS cached-bills sidebar.
@@ -81,3 +83,34 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.js
 - ab_sales/static/src/pos/pos_action.scss
 - ab_sales/static/src/pos/pos_action.xml
+
+## Current changes before commit:
+
+User-facing changes:
+- Added compact Minimum Price and Maximum Price controls below POS product search. A minimum alone matches the exact rounded price; both inputs match an inclusive range.
+- Search only the product master sales price, using two-decimal half-up normalization, validated decimal strings, and indexed price bounds.
+- Apply price criteria to name, code, partial barcode, price-only, item-type, balance, current-store balance, and customer-ranked results, including keyboard-language fallback.
+- Disable Maximum until Minimum is valid; clear Maximum when Minimum is cleared or invalid, debounce for 200 ms, and reject stale search responses.
+- Add an active-product price index through Odoo's declarative index support, with no lifecycle hooks or dependency changes.
+- Append Arabic translations for both supported catalogs. Product-card layout, displayed prices, stock, posting, and accounting behavior remain unchanged.
+
+Validation:
+- Targeted module upgrade succeeded in isolated database `codex_pos_price_20261001`.
+- The combined Sales/Doctor suite ran 51 tests: 50 passed; one existing doctor-creation ACL test also fails against unchanged HEAD in the isolated database. Focused price-search tests and executable frontend checks passed, including keyboard-language and doctor merges.
+- Existing regression fixtures use installation context in the standalone test runner to allow fixture creation under replica restrictions; production security is unchanged.
+- Odoo backend JavaScript, XML, and CSS assets compile successfully. The shared product-card file is byte-for-byte unchanged.
+- Both PO catalogs pass `msgfmt --check-format`; runtime `ar_001` validation messages and the Bills action differ from `en_US`.
+- PostgreSQL confirms that the partial index can serve the price candidate query; production-scale latency has not been benchmarked.
+- Browser verification is unavailable because no browser surface is connected.
+- The doctor-prescription result merge now reuses the same price criteria through the separately authorized ab_sales_doctor integration.
+
+Files changed:
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/models/ab_product_inherit.py
+- ab_sales/models/ab_sales_ui_api.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.scss
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/static/src/pos/zz_product_search_arabic_keymap_patch.js

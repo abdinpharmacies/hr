@@ -1121,3 +1121,17 @@
   text-align: center;
   color: var(--pos-muted);
 }
+
+// Secondary price criteria occupy their own row directly below product search.
+.ab_pos_product_price_filters {
+  flex: 0 0 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .form-control {
+    flex: 0 1 140px;
+    min-width: 0;
+    width: 140px;
+  }
+}

@@ -11,6 +11,7 @@ import re
 import logging
 from pathlib import Path
 from datetime import timedelta
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
@@ -1487,6 +1488,54 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         return promo_data
 
     @api.model
+    def _product_price_bounds(self, min_price=None, max_price=None):
+        """Normalize decimal inputs; a minimum alone is an exact rounded price."""
+        def parse(value):
+            if value is None or (isinstance(value, str) and not value.strip()):
+                return None
+            text = str(value).strip()
+            try:
+                if not re.fullmatch(r"[0-9]+(?:\.[0-9]*)?|\.[0-9]+", text):
+                    raise InvalidOperation
+                price = Decimal(text)
+                if not price.is_finite() or price < 0:
+                    raise InvalidOperation
+                return price.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+            except (InvalidOperation, ValueError):
+                raise UserError(_("Enter a finite, non-negative price using digits and a decimal point."))
+
+        minimum, maximum = parse(min_price), parse(max_price)
+        if maximum is not None and minimum is None:
+            raise UserError(_("Minimum Price is required before Maximum Price."))
+        if maximum is not None and maximum < minimum:
+            raise UserError(_("Maximum Price must be greater than or equal to Minimum Price."))
+        return (minimum, maximum if maximum is not None else minimum) if minimum is not None else None
+
+    @api.model
+    def _product_price_domain(self, bounds):
+        if bounds is None:
+            return fields.Domain.TRUE
+        lower, upper = bounds
+        # Indexable candidate interval for HALF_UP. The explicit decimal check
+        # below is authoritative; zero excludes the negative half-cent tie.
+        return (
+            fields.Domain("default_price", ">" if lower == 0 else ">=", float(lower - Decimal("0.005")))
+            & fields.Domain("default_price", "<", float(upper + Decimal("0.005")))
+        )
+
+    @api.model
+    def _product_price_matches(self, row, bounds):
+        if bounds is None:
+            return True
+        try:
+            price = Decimal(str(row.get("default_price") or 0))
+            return price.is_finite() and bounds[0] <= price.quantize(
+                Decimal("0.01"), rounding=ROUND_HALF_UP
+            ) <= bounds[1]
+        except InvalidOperation:
+            return False
+
+    @api.model
     def _search_products_by_partial_barcode(
             self,
             barcode_query="",
@@ -1496,7 +1545,11 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             store_id=None,
             fields_list=None,
             item_type="all",
+            min_price=None,
+            max_price=None,
     ):
+        price_bounds = self._product_price_bounds(min_price, max_price)
+        price_domain = self._product_price_domain(price_bounds)
         barcode_query = (f"%{barcode_query}" or "").strip()
         if not barcode_query or len(barcode_query) <= 5:
             return []
@@ -1536,9 +1589,15 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         product_ids = []
         seen_product_ids = set()
         for model_name in barcode_models:
-            barcode_rows = self.env[model_name].search([("name", "=ilike", barcode_query)], limit=chunk_size,
+            barcode_domain = fields.Domain("name", "=ilike", barcode_query)
+            if price_bounds is not None:
+                barcode_domain &= fields.Domain("product_ids", "any", price_domain)
+            barcode_rows = self.env[model_name].search(barcode_domain, limit=chunk_size,
                                                        order="name")
-            for product in barcode_rows.mapped("product_ids"):
+            barcode_products = barcode_rows.mapped("product_ids")
+            if price_bounds is not None:
+                barcode_products = barcode_products.filtered_domain(price_domain)
+            for product in barcode_products:
                 if not product or product.id in seen_product_ids:
                     continue
                 seen_product_ids.add(product.id)
@@ -1553,6 +1612,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         product_domain = [("id", "in", product_ids), ("active", "=", True)]
         if item_type != "all":
             product_domain.append(("is_medicine", "=", item_type == "medicine"))
+        product_domain += list(price_domain)
         rows = Product.search_read(
             self._safe_domain("ab_product", product_domain),
             fields_list,
@@ -1601,6 +1661,8 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         out = []
         seen_row_ids = set()
         for row in rows:
+            if not self._product_price_matches(row, price_bounds):
+                continue
             rid = int(row.get("id") or 0)
             if not rid or rid in seen_row_ids:
                 continue
@@ -1639,10 +1701,15 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             store_id=None,
             customer_phone=None,
             item_type="all",
+            min_price=None,
+            max_price=None,
     ):
+        price_bounds = self._product_price_bounds(min_price, max_price)
         self._require_models("ab_product", "ab_product_uom")
         Product = self.env["ab_product"]
         base_domain = [("active", "=", True)]
+        if price_bounds is not None:
+            base_domain += list(self._product_price_domain(price_bounds))
         item_type = self._normalize_item_type_filter(item_type)
         if item_type != "all":
             base_domain.append(("is_medicine", "=", item_type == "medicine"))
@@ -1711,6 +1778,12 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 if sql_filter:
                     extra_where = f" AND {sql_filter['where']}"
                     params.extend(sql_filter["params"])
+                if price_bounds is not None:
+                    lower, upper = price_bounds
+                    lower_operator = ">" if lower == 0 else ">="
+                    extra_where += f" AND p.default_price {lower_operator} %s AND p.default_price < %s"
+                    extra_where += " AND ROUND(p.default_price::numeric, 2) BETWEEN %s AND %s"
+                    params.extend([lower - Decimal("0.005"), upper + Decimal("0.005"), lower, upper])
                 if want_balance_only:
                     extra_where += " AND g.balance > 0"
                 params.append(limit)
@@ -1794,6 +1867,8 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 )
 
                 for row in rows:
+                    if not self._product_price_matches(row, price_bounds):
+                        continue
                     rid = row.get("id")
                     if not rid or rid in seen_ids:
                         continue
@@ -1861,6 +1936,8 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                     store_id=store_id,
                     fields_list=fields_list,
                     item_type=item_type,
+                    min_price=min_price,
+                    max_price=max_price,
                 )
                 if barcode_rows:
                     seen_ids = {int(row.get("id") or 0) for row in rows if row.get("id")}
@@ -1892,6 +1969,9 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 rows = ordered[:limit]
 
             return _annotate(rows, pinned_ids=pinned_ids)[:limit]
+
+        if price_bounds is not None:
+            return _annotate(_run_search(base_domain))[:limit]
 
         if customer_phone:
             frequent_rows = self._rank_rows(

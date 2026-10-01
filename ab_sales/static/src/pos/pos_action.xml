@@ -375,7 +375,7 @@
                                 </div>
                             </div>
                                     <div class="o_ab_sales_pos_product_hint ab_pos_product_hint">
-                                <t t-if="!state.productQuery.trim() and activeCustomerPhone()">
+                                <t t-if="!state.productQuery.trim() and !state.productMinPrice.trim() and activeCustomerPhone()">
                                     <span class="badge text-bg-primary ab_pos_product_hint_badge_quick">Customer Quick Picks</span>
                                 </t>
                                         <t t-else="">
@@ -1057,4 +1057,19 @@
         </Dialog>
     </t>
 
+    <t t-name="ab_sales.PosPriceSearch" t-inherit="ab_sales.PosAction" t-inherit-mode="extension">
+        <xpath expr="//input[@data-field='product_searchbar']" position="after">
+            <div class="ab_pos_product_price_filters">
+                <span class="small text-muted">Price:</span>
+                <input type="text" inputmode="decimal" maxlength="24"
+                       class="form-control form-control-sm" placeholder="Minimum Price" aria-label="Minimum Price"
+                       t-att-value="state.productMinPrice" t-on-input="onProductMinPriceInput"
+                       t-on-keydown="onProductSearchKeydown"/>
+                <input type="text" inputmode="decimal" maxlength="24"
+                       class="form-control form-control-sm" placeholder="Maximum Price" aria-label="Maximum Price"
+                       t-att-value="state.productMaxPrice" t-att-disabled="!isProductMinPriceValid()"
+                       t-on-input="onProductMaxPriceInput" t-on-keydown="onProductSearchKeydown"/>
+            </div>
+        </xpath>
+    </t>
 </templates>
