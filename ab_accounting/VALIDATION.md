@@ -1,54 +1,76 @@
-# Standalone acceptance evidence
+# Verification — first-copy restoration
 
-Verified initially on 2026-09-24 and reverified with direct store relations on 2026-09-27 against the local Odoo 19 source and PostgreSQL. Production databases and external databases were not used. Purchase/sales/HR code was not changed. No service restart or production upgrade was performed.
+Verified with Odoo 19 and an isolated PostgreSQL 16 instance on 2026-10-01.
+Initial functional checks used isolated databases. The existing development database
+was subsequently backed up and upgraded as documented below.
 
-## Environment and reproducibility
+- Clean `ab_accounting` install passed, without purchase modules.
+- Targeted `ab_accounting` upgrade passed, without purchase modules.
+- Purchase adapter and its dependencies installed successfully against the restored schema.
+- Targeted upgrade of both accounting modules passed.
+- All 208 explicitly declared first-copy fields were preserved; no fields were added.
+- Python AST/compile, XML parsing, manifest file/load paths, diff whitespace and
+  GNU `msgfmt --check-format` checks passed.
+- 42 named functional checks passed, with additional confirmation, reversal,
+  adapter posting and atomic-edit assertions. Scripts ran outside the addons and
+  rolled back their data; no test directory was added.
 
-- Initial isolated installation: `ab_accounting_plan02_verify`.
-- Second clean installation of the rebuilt addon: `ab_accounting_plan02_clean`.
-- Direct-store revision: fresh installation and targeted upgrade of `ab_accounting_direct_store_verify`, loading the repository addon directly.
-- Installation used `-i ab_accounting --without-demo=all --stop-after-init`.
-- Targeted upgrades used only `-u ab_accounting --without-demo=all --stop-after-init`; no `-u base`.
-- Test scripts and fixtures are outside the addon under `/tmp/ab_accounting_validation/` (original port) and `/tmp/ab_accounting_direct_store/` (current direct-store revision); they are not shipped in the production package.
-- The standalone installed module graph excludes purchase, sales, HR, `ab_hr`, `abdin_et`, `ab_data_from_excel`, `ab_base_models_inherit`, `ab_purchase`, and `ab_sales`.
+Functional coverage includes balanced manual/automated posting, one-cent imbalance,
+negative/non-finite/sub-cent amounts, both sides on a line, inactive/non-final or
+unauthorized accounts, required dimensions, forbidden/inactive stores, inactive or
+restricted cost centers, direct status bypasses, posted deletion/new-line restrictions,
+creator/reviewer freeze and edit permissions, allowed-field edits, multi-line edits,
+confirmation/reversal, supplier/inventory/tax mapping errors, missing tax/configuration,
+inactive suppliers, purchase retry linkage, posted-only balance limits, archived
+children and recursive account hierarchy.
 
-Applied to `/opt/odoo19/custom-addons/ab_accounting` on 2026-09-27 after filesystem write access was restored. All 26 files initially matched the staged, tested implementation byte-for-byte. A targeted upgrade on `ab_accounting_plan02_clean` then loaded the addon directly from the repository. Additional runtime checks verified the repository import path, native forms/lists, isolated module graph, two-decimal Float comparison and Arabic action translation. Both translation catalogs and Python/XML parsing passed again. The README role table was changed to a list to avoid Odoo's module-description parser errors. Production databases and services remain unchanged.
+The first-copy document-type model has no `active` field. Inactivity is validated
+when supplied by an extension; the baseline uses document-type authorizations.
+The first copy also has no account/company schema. Restoring it is not a migration
+of populated journals created under the later replacement schema. Other populated databases using that replacement require a separately specified
+mapping before upgrade; the small development dataset was audited explicitly below.
 
-## Automated acceptance
+The isolated module installs show unrelated warnings in purchase dependency models
+(e.g. legacy `auto_join` arguments). Those modules were not changed in this refactor.
 
-106 assertions/scenarios passed on the direct-store revision: the original 96 checks were rerun with existing `ab_store` records, plus 10 focused checks. There is no `ab_accounting_branch` model or mapping screen; journals, items, periods, openings, reports and user assignments refer directly to shared stores.
+## Startup repair on the existing development schema
 
-Checks across the external suites:
+The 2026-10-01 startup logs showed missing source columns during eager report-view
+creation, followed by obsolete views/rules from the replacement accounting version.
+The report now uses Odoo 19's `_table_query` API with explicit source dependencies.
+The users view reuses `view_users_accounting` so its old unsupported fields are
+replaced before inherited-view validation. No accounting fields were added.
 
-| Suite | Checks | Coverage |
-|---|---:|---|
-| Core posting | 44 | Clean schema; Float arithmetic; identity retries; negative, non-finite and excess-precision rejection; one-cent imbalance; posting audit; period overlap/closure/reopening; posted header/item write, unlink, archive, reparent and relational-command protection under sudo/context flags; full reversal; openings; balances without current activity; branch/company/role restrictions |
-| Security and exports | 26 | Whole-journal visibility; hidden totals; document grants; attachment access; source navigation; business reversal boundary; forged defaults; reviewer authority; cost-center dimensions; transactional rollback; read-only Reports; native PDF and numeric XLSX parity |
-| Concurrent transactions | 7 | Identical requests; changed requests; conflicting identity across branches; item edit vs posting; duplicate full reversal; period closure vs posting; subsequent closed-period rejection |
-| Native screens and edge cases | 13 | Unsupported currency argument; business event reversal restrictions; archived-account history; inactive accounts/branches; unarchiving; atomic multi-journal posting; native default precision; Auto JE configuration denial; compiled forms/lists; runtime Arabic; all 240 rows retained; Float field precision |
-| Opening concurrency | 2 | Closing an opening run vs adding a draft; no closed run acquiring an unposted journal |
-| Shared authorization | 2 | Explicit Always Show grants and Prevent Enquiry override without partial totals |
-| Context isolation | 2 | Stable generated request/retry despite native action defaults; period audit defaults cannot be forged |
-| Direct stores | 10 | No mapping model; direct relations across all accounting models; all active stores selectable; derived item store IDs; posting still requires assigned stores; independent company periods; cross-company opening/report rejection; secured company movements on a shared store |
+A snapshot of `rip_bconnect` was upgraded in isolated PostgreSQL first. Its draft
+journal (ID 9) and line (ID 23) retained their IDs, accounts, store, cost center and
+amounts. The legacy period/report table rows remained present. Ordinary startup
+without update flags passed. The account/cost-center relation's old column names
+were renamed to the original names; that relation contained no rows. This is a
+one-time development database correction, not a module hook or migration.
 
-Accounting coordinates mutations using ordered store-row locks and a no-op tuple update. The tuple update changes no store values or audit fields; it forces stale PostgreSQL snapshots to retry the complete caller transaction. No shared-store schema extension or mapping record is introduced.
+The startup command must include `ab_accounting` when applying this refactor;
+upgrading only purchase and sync modules leaves the accounting schema stale.
 
-Concurrency suites use separate PostgreSQL cursors/threads with an already-established snapshot and Odoo's whole-transaction retry wrapper. Both schedules were observed for edit/post races: either the edit commits and unbalanced posting is rejected, or posting commits and the edit is rejected. Closing a period can follow an already-committed posting, but new postings after closure fail.
+After the snapshot checks, a fresh backup was taken with the server stopped. The
+same relation-column correction and targeted `ab_accounting,ab_purchase_accounting`
+upgrade passed on `rip_bconnect`. Read-only checks confirmed the existing journal
+and line values and legacy period/report rows were preserved. The server restarted
+without update flags; the registry loaded, the login endpoint on port 4097 returned
+HTTP 200, and the restarted process logged no ERROR or CRITICAL entries. Unrelated
+legacy `auto_join`, import-time translation and sales not-null warnings remain.
 
-A failure inside the posting service leaves no partial journal. A simulated subsequent source-operation failure rolled back both the business record and the posted journal in the enclosing transaction.
+## Journal form table repair
 
-## Rendering and translations
+Restored the prior responsive table approach for the original journal form, with
+accounting-form-scoped assets, readable column widths and horizontal scrolling.
+The embedded inherited list uses explicit `column_invisible` rules for internal
+flags and fields. Standard Odoo 19 `<chatter/>` replaces legacy message-field
+markup that caused the form sheet to collapse beside raw message tables.
 
-- Odoo-generated PDF rendered successfully and was visually inspected after adding the module-owned landscape paper format and table styling. The sampled report has readable columns, no clipping/overlap, and ordinary two-decimal numbers.
-- XLSX cells matched `get_report_data()` row-for-row and used `#,##0.00`; strings are written as strings, not formulas.
-- The current module POT was exported through Odoo 19 to `/tmp/ab_accounting_direct_store/ab_accounting.pot`.
-- All 249 currently exported strings have translations in both `i18n/ar.po` and `i18n/ar_001.po`. Existing msgids and unrelated translations were preserved; missing entries/references were merged. One existing newline-format defect was repaired.
-- Both catalogs pass `msgfmt --check-format`.
-- After loading Arabic and a targeted upgrade, the action changes from `Journals` in `en_US` to `قيود اليومية` in `ar_001`, and the journal form contains translated posting text.
-- Every Python source parses and every XML file parses. Odoo installation/upgrade validates registered fields, ACLs, record rules and views.
-
-## Limits and handoff
-
-This is standalone accounting acceptance. No real purchase or sales adapter was integrated or tested. Adapter owners must implement the transaction and account-mapping contract in `POSTING_CONTRACT.md`; real adapter acceptance remains a separate gate.
-
-This clean-install design includes no migration of existing Odoo 15 production data, replay, hooks, automatic openings or default-account seeding. Multi-company integrations need an explicitly authorized service user and must retry the complete business transaction on serialization conflicts. Reports include every matching row in memory; production-scale load testing was not performed.
+XML/manifest checks and SCSS compilation passed. A backed-up targeted accounting
+upgrade passed. Browser verification in the Arabic interface covered the new-record
+form and adding an unsaved line in an existing journal: the sheet measured 1405px,
+the scrolling container 1373px, the account column 240px, and page width stayed at
+its 1600px viewport. Internal columns were absent. Unsaved checks were discarded;
+read-only database verification confirmed existing journal values were unchanged.
+No accounting model fields or posting behavior changed for this layout repair.

@@ -1,68 +1,200 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <record id="rule_account_guide_scope" model="ir.rule">
-        <field name="name">Account Guide Scope</field>
-        <field name="model_id" ref="model_ab_accounting_account_guide"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_doctype_scope" model="ir.rule">
-        <field name="name">Doctype Scope</field>
-        <field name="model_id" ref="model_ab_accounting_doctype"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_auth_group_scope" model="ir.rule">
-        <field name="name">Auth Group Scope</field>
-        <field name="model_id" ref="model_ab_accounting_auth_group"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_account_auth_scope" model="ir.rule">
-        <field name="name">Account Auth Scope</field>
-        <field name="model_id" ref="model_ab_accounting_account_auth"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_period_scope" model="ir.rule">
-        <field name="name">Period Scope</field>
-        <field name="model_id" ref="model_ab_accounting_period"/>
-        <field name="domain_force">user._accounting_scope_domain()</field>
-    </record>
-    <record id="rule_account_first_level_scope" model="ir.rule">
-        <field name="name">Account First Level Scope</field>
-        <field name="model_id" ref="model_ab_accounting_account_first_level"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_account_second_level_scope" model="ir.rule">
-        <field name="name">Account Second Level Scope</field>
-        <field name="model_id" ref="model_ab_accounting_account_second_level"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_account_scope" model="ir.rule">
-        <field name="name">Account Scope</field>
-        <field name="model_id" ref="model_ab_accounting_account"/>
-        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-    </record>
-    <record id="rule_je_header_scope" model="ir.rule">
-        <field name="name">Je Header Scope</field>
-        <field name="model_id" ref="model_ab_accounting_je_header"/>
-        <field name="domain_force">user._accounting_header_domain()</field>
-    </record>
-    <record id="rule_je_line_scope" model="ir.rule">
-        <field name="name">Je Line Scope</field>
-        <field name="model_id" ref="model_ab_accounting_je_line"/>
-        <field name="domain_force">user._accounting_line_domain()</field>
-    </record>
-    <record id="rule_opening_run_scope" model="ir.rule">
-        <field name="name">Opening Run Scope</field>
-        <field name="model_id" ref="model_ab_accounting_opening_run"/>
-        <field name="domain_force">user._accounting_opening_domain()</field>
-    </record>
-    <record id="rule_opening_balance_scope" model="ir.rule">
-        <field name="name">Opening Balance Scope</field>
-        <field name="model_id" ref="model_ab_accounting_opening_balance"/>
-        <field name="domain_force">user._accounting_opening_line_domain()</field>
-    </record>
-    <record id="rule_report_scope" model="ir.rule">
-        <field name="name">Report Scope</field>
-        <field name="model_id" ref="model_ab_accounting_report"/>
-        <field name="domain_force">user._accounting_scope_domain()</field>
-    </record>
+    <data>
+        <!--        ################# Accountant RULES ##################################-->
+        <record id="rule_ab_accounting_je_line_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_prevent_all</field>
+            <field name="model_id" ref="model_ab_accounting_je_line"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_accounting_je_line_accountant" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_entry_allowed_accounts</field>
+            <field name="model_id" ref="model_ab_accounting_je_line"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">
+                [
+                    '|', '|', '|',
+                    ('create_uid', '=', False),
+                    ('account_id.always_show_account', '=', True),
+                    ('create_uid', '=', user.id),
+                    ('create_uid', 'in', user.responsible_for_ids.ids),
+                ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_accounting_je_line_qry_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_qry_prevent_all</field>
+            <field name="model_id" ref="model_ab_accounting_je_line_qry"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_accounting_je_line_qry_accountant" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_qry_accountant</field>
+            <field name="model_id" ref="model_ab_accounting_je_line_qry"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_accountant'))]"/>
+            <!--            @formatter:off-->
+            <field name="domain_force">[
+                '|', '|', '|',
+                    '&amp;',
+                        ('account_id.prevent_enquiry', '=', False),
+                        ('account_id.allow_account', '=', True),
+                    ('account_id.always_show_account', '=', True),
+                    ('create_uid', '=', user.id),
+                    ('create_uid', 'in', user.responsible_for_ids.ids),
+            ]</field>
+            <!--            @formatter:on-->
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_ab_accounting_je_header_prevent_all" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_header_prevent_all</field>
+            <field name="model_id" ref="model_ab_accounting_je_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_ab_accounting_je_header_accountant" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_header_accountant</field>
+            <field name="model_id" ref="model_ab_accounting_je_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_accountant'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="accountant_his_own_account_statement_reports" model="ir.rule">
+            <field name="name">accountant_his_own_account_statement_reports</field>
+            <field name="model_id" ref="model_ab_accounting_account_statement"/>
+            <field name="domain_force">[('create_uid', '=', user.id), ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_accountant'))]"/>
+        </record>
+
+
+        <!--        ################# REVIEWER RULES ##################################-->
+
+        <record id="rule_ab_accounting_je_line_reviewer" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_reviewer</field>
+            <field name="model_id" ref="model_ab_accounting_je_line"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_reviewer'))]"/>
+            <field name="domain_force">[
+                '|', '|', '|',
+                ('create_uid', '=', False),
+                ('account_id.always_show_account', '=', True),
+                ('create_uid', '=', user.id),
+                ('create_uid', 'in', user.responsible_for_ids.ids),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_accounting_je_header_reviewer" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_header_reviewer</field>
+            <field name="model_id" ref="model_ab_accounting_je_header"/>
+            <field name="groups" eval="[(4, ref('ab_accounting.group_ab_accounting_reviewer'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <!--        ################# MANAGER RULES ##################################-->
+        <record id="manager_account_header" model="ir.rule">
+            <field name="name">manager_account_header</field>
+            <field name="model_id" ref="model_ab_accounting_je_header"/>
+            <field name="domain_force">[
+                (1, '=', 1),
+            ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_manager'))]"/>
+        </record>
+
+        <record id="manager_journal_entries" model="ir.rule">
+            <field name="name">manager_journal_entries</field>
+            <field name="model_id" ref="model_ab_accounting_je_line"/>
+            <field name="domain_force">[
+                (1, '=', 1),
+            ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_manager'))]"/>
+        </record>
+
+        <record id="manager_journal_entries_qry" model="ir.rule">
+            <field name="name">manager_journal_entries_qry</field>
+            <field name="model_id" ref="model_ab_accounting_je_line_qry"/>
+            <field name="domain_force">[(1, '=', 1), ]
+            </field>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_manager'))]"/>
+        </record>
+
+        <record id="rule_ab_accounting_je_line_report" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_line_report</field>
+            <field name="model_id" ref="model_ab_accounting_je_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_report'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_accounting_je_header_report" model="ir.rule">
+            <field name="name">rule_ab_accounting_je_header_report</field>
+            <field name="model_id" ref="model_ab_accounting_je_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_accounting_report'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+    </data>
 </odoo>

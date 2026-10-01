@@ -1,32 +1,46 @@
-Current changes before commit:
+# Module changelog
 
-Applied to the repository on 2026-09-27; targeted isolated upgrade and runtime verification passed.
+a6c12ec | Alhassan Hossny | 2026-09-30 | ab_accounting/Update: make x2many tables responsive inside form sheets
 
-- Port the standalone addon to Odoo 19 with Float-only, two-decimal journals and preserved journal/account hierarchy models.
-- Link journal branches, items, periods, opening runs, reports and explicit user assignments directly to existing ab_store records; remove the separate accounting branch setup and show all active stores in selectors.
-- Keep company scope on accounting records and preserve privilege-based roles, assigned-store posting and whole-journal authorization.
-- Introduce atomic posting, canonical retry fingerprints, database identity uniqueness, coordinated period/opening locks and immutable posted financial data.
-- Add audited review, full reversals, manual opening reconciliation and native posted-only financial reports with secured PDF/XLSX exports.
-- Remove salary tools, custom spreadsheet entry, legacy helpers/import scripts, delegated journal scaffolding and the shared frontend patch.
-- Retain company authorship, identify the current developer, maintain both Arabic catalogs, and document configuration, the adapter contract and isolated validation.
-- Keep acceptance harnesses outside the production addon; 106 checks passed on the direct-store revision, with clean installation, targeted upgrades, concurrency, exports and runtime Arabic verification.
-- Verify clean installation and targeted upgrade from the repository, independent company periods/openings on shared stores, concurrent posting/closure, and current Arabic translations; render README roles as a list compatible with Odoo module descriptions.
+- Responsive accounting tables were added before the first-copy restoration.
 
 Files changed:
+- ab_accounting/__manifest__.py
+- ab_accounting/static/src/scss/x2many_tables.scss
+- ab_accounting/views/configuration.xml
+- ab_accounting/views/journal.xml
+- ab_accounting/views/opening.xml
 
+Current changes before commit:
+
+- Restore responsive journal-entry form tables with readable column widths and horizontal scrolling.
+- Hide internal flag/header/balance columns using Odoo 19 column visibility in the embedded entry list.
+- Use the standard Odoo 19 chatter so message tables no longer collapse the journal sheet.
+- Scope table styles to the journal form while preserving the original fields and workflow.
+
+- Fix startup report initialization using the Odoo 19 read-only query API and source dependencies.
+- Replace the existing user-view XML ID to remove obsolete field references during upgrade.
+- Verify the populated development schema on a snapshot before applying its targeted upgrade.
+- Back up and upgrade rip_bconnect; preserve its journal values and verify normal startup and HTTP 200.
+
+- Restore all 208 original accounting fields and the manual workflow from 389c000.
+- Port views, ORM APIs, authorization, reporting and Excel entry to Odoo 19.
+- Validate posting precision, balance, dimensions, account access, salary deductions and posted/frozen edits.
+- Keep purchase integration external; retain only first-copy fields in the posting contract.
+- Merge original and current Arabic catalogs and document isolated runtime checks.
+
+Files changed:
+- ab_accounting/static/src/scss/x2many_tables.scss
 - ab_accounting/POSTING_CONTRACT.md
 - ab_accounting/README.md
 - ab_accounting/VALIDATION.md
 - ab_accounting/__init__.py
 - ab_accounting/__manifest__.py
-- ab_accounting/changelog.d
 - ab_accounting/data/account_guide.xml
 - ab_accounting/data/allowed_fields.xml
-- ab_accounting/data/create_xml_id_for_old_record.txt
 - ab_accounting/data/doctype.xml
 - ab_accounting/data/sequence.xml
 - ab_accounting/i18n/ar.po
-- ab_accounting/i18n/ar_001---.po
 - ab_accounting/i18n/ar_001.po
 - ab_accounting/models/__init__.py
 - ab_accounting/models/ab_accounting_account_guide.py
@@ -44,7 +58,6 @@ Files changed:
 - ab_accounting/models/configuration.py
 - ab_accounting/models/extra_funcs.py
 - ab_accounting/models/journal.py
-- ab_accounting/models/old_data_query.py
 - ab_accounting/models/opening.py
 - ab_accounting/models/reporting.py
 - ab_accounting/models/res_users_inherit.py
@@ -63,9 +76,7 @@ Files changed:
 - ab_accounting/security/ir.model.access.csv
 - ab_accounting/security/security_groups.xml
 - ab_accounting/security/security_rules.xml
-- ab_accounting/static/src/js/archive_security.js
-- ab_accounting/tests/__init__.py
-- ab_accounting/tests/test_create_je.py
+- ab_accounting/static/src/scss/x2many_tables.scss
 - ab_accounting/views/ab_accounting_account_levels.xml
 - ab_accounting/views/ab_accounting_auth_group.xml
 - ab_accounting/views/ab_costcenter_deduction_forbidden.xml
@@ -85,18 +96,4 @@ Files changed:
 - ab_accounting/views/reporting.xml
 - ab_accounting/views/user_auth.xml
 - ab_accounting/views/z_menus.xml
-
-commit 575d6a9ffd068593cba767c7dd2505b382e50207
-Author: emadco88 <emadco88@gmail.com>
-Date:   2026-09-23T16:31:41+03:00
-
-    ab_accounting/ FIX
-
-- Standardize Odoo 19 manifest metadata and remove the web_domain_field dependency.
-- Replace the progress-wrapper journal loop with ordinary iteration; full accounting compatibility remained pending.
-
-Files changed:
-
-- ab_accounting/__manifest__.py
 - ab_accounting/changelog.d
-- ab_accounting/models/ab_accounting_je_header.py

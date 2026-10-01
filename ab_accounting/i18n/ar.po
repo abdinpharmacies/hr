@@ -88,7 +88,7 @@ msgid "<span>----------</span>"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_auth_ab_accounting_account_auth_group_account_unique
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_auth_ab_accounting_account_auth__a0fcbd98
 msgid "ACCOUNT an USER must be unique"
 msgstr ""
 
@@ -135,18 +135,24 @@ msgstr "دائن ومدين"
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
-#: model:ir.model,name:ab_accounting.model_ab_accounting_account_guide
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__account_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__account_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__account_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__account_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__account_ids
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_line_search
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__account_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__account_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
 msgid "Account"
 msgstr "الحساب"
 
 #. module: ab_accounting
+#: model:ir.actions.act_window,name:ab_accounting.ab_accounting_account_auth_action
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__account_auth_ids
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__account_auth_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__account_auth_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
 msgid "Account Auth"
 msgstr "صلاحيات الحسابات"
 
@@ -161,7 +167,6 @@ msgid "Account Detail"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.model,name:ab_accounting.model_ab_accounting_account_first_level
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__account_first_level_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__account_first_level_id
 msgid "Account First Level"
@@ -178,13 +183,12 @@ msgid "Account ID"
 msgstr "مسلسل الحساب"
 
 #. module: ab_accounting
-#: model:ir.model,name:ab_accounting.model_ab_accounting_account_second_level
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account__account_second_level_id
 msgid "Account Second Level"
 msgstr "المستوى الثاني للحساب"
 
 #. module: ab_accounting
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_report__report_type__statement
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_statement_menu
 msgid "Account Statement"
 msgstr "كشف حساب"
 
@@ -213,16 +217,14 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:res.groups,name:ab_accounting.group_ab_accounting_accountant
-#: model:res.groups.privilege,name:ab_accounting.privilege_accountant
 msgid "Accountant"
 msgstr "محاسب"
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/report/export.py:0
 #: model:ir.module.category,name:ab_accounting.ab_accounting_category
-#: model:ir.ui.menu,name:ab_accounting.menu_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_users_accounting
+#: model:ir.ui.menu,name:ab_accounting.root_menu
+#: model:res.groups.privilege,name:ab_accounting.ab_accounting_privilege
 msgid "Accounting"
 msgstr "المحاسبة"
 
@@ -232,7 +234,7 @@ msgid "Accounting Auth Group"
 msgstr ""
 
 #. module: ab_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.res_users_view_inherit
+#: model_terms:ir.ui.view,arch_db:ab_accounting.view_users_accounting
 msgid "Accounting Security Config"
 msgstr ""
 
@@ -247,8 +249,7 @@ msgid "Accounting account second level"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.actions.act_window,name:ab_accounting.action_account_guide
-#: model:ir.ui.menu,name:ab_accounting.menu_account_guide
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_account_menu
 msgid "Accounts"
 msgstr "الحسابات"
 
@@ -280,16 +281,15 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_needaction
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_needaction
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_needaction
 msgid "Action Needed"
 msgstr "يتطلب إجراءً"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__active
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__active
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__active
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__active
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__active
 msgid "Active"
 msgstr "نشط"
 
@@ -335,6 +335,7 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__allow_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__allow_account
 msgid "Allow Account"
 msgstr "السماح بالحساب"
 
@@ -386,6 +387,8 @@ msgstr "صلاحية الحقول"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__always_show_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__always_show_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__always_show_account
 msgid "Always Show Account"
 msgstr "إظهار الحساب دائماً"
 
@@ -403,8 +406,6 @@ msgstr "أصول"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_attachment_count
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_attachment_count
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_attachment_count
 msgid "Attachment Count"
 msgstr "عدد المرفقات"
 
@@ -432,7 +433,10 @@ msgid "Available Balance"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__net_val
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__balance
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__balance
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
 msgid "Balance"
 msgstr "الرصيد"
 
@@ -471,7 +475,6 @@ msgstr "الرصيد"
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__bank
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__bank
 msgid "Bank"
 msgstr "بنك"
 
@@ -481,15 +484,7 @@ msgid "Bills Actions"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__branch_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__store_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__branch_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__store_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__branch_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__branch_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__branch_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__branch_id
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_header_search
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__related_to__branch
 msgid "Branch"
 msgstr "الفرع"
 
@@ -526,14 +521,12 @@ msgstr ""
 " يمكنك الضغط على 'رأس القيد' للذهاب إليه"
 
 #. module: ab_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_report_form
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_reversal_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_account_statement_form
 msgid "Cancel"
 msgstr "إلغاء"
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__cash
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__cash
 msgid "Cash"
 msgstr "نقدية"
 
@@ -561,6 +554,7 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__code
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__costcenter_code
 msgid "Code"
 msgstr "الكود"
 
@@ -595,7 +589,7 @@ msgstr ""
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
 msgid "Cost Center"
 msgstr "مركز التكلفة"
 
@@ -605,9 +599,17 @@ msgid "Cost Centers"
 msgstr "مراكز التكلفة"
 
 #. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__costcenter_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__costcenter_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__costcenter_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__costcenter_id
+#: model:ir.model.fields,field_description:ab_accounting.field_res_users__costcenter_ids
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
 msgid "Costcenter"
 msgstr "مركز التكلفة"
 
@@ -656,15 +658,17 @@ msgstr "منشأ بواسطة"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__create_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__create_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__create_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__create_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__create_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__create_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__create_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -674,15 +678,17 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__create_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__create_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__create_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__create_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__create_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__create_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__create_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
@@ -706,8 +712,9 @@ msgstr "المُنشئ – %s – لا يمكنه تعديل سجلاته لأن
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__credit_val
+#: code:addons/ab_accounting/models/ab_accounting_je_line_compute_balance.py:0
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__nature__credit
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__nature__credit
 msgid "Credit"
 msgstr "دائن"
 
@@ -725,8 +732,9 @@ msgstr ""
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__debit_val
+#: code:addons/ab_accounting/models/ab_accounting_je_line_compute_balance.py:0
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_first_level__nature__debit
+#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__nature__debit
 msgid "Debit"
 msgstr "مدين"
 
@@ -745,8 +753,7 @@ msgstr "لا يمكن ان يكون المدين او الدائن ياشارة 
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__explain
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__note
 msgid "Description"
 msgstr "الوصف"
 
@@ -756,18 +763,23 @@ msgstr "الوصف"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_configuration__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header_delegate_common__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_scope__display_name
-#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_financial_xlsx__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_excel_writer__display_name
+#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_account_statement_excel__display_name
 #: model:ir.model.fields,field_description:ab_accounting.field_res_users__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
@@ -804,20 +816,24 @@ msgid "Doc Type Auth"
 msgstr "صلاحية نوع المستند"
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__doctype_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__doctype_id
 msgid "Doctype"
 msgstr "نوع المستند"
 
 #. module: ab_accounting
-#: model:ir.model,name:ab_accounting.model_ab_accounting_doctype
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__doctype_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__doctype_id
+#: model:ir.ui.menu,name:ab_accounting.ab_accounting_doctype_menu
 msgid "Document Type"
 msgstr "نوع المستند"
 
 #. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date_due
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__due_date
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_line_search
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__due_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__due_date
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
 msgid "Due Date"
 msgstr "تاريخ الاستحقاق"
 
@@ -856,7 +872,7 @@ msgid "Export Excel"
 msgstr "تصدير إكسل"
 
 #. module: ab_accounting
-#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_allowed_field_auth_ab_user_allowed_field_group_unique
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_allowed_field_auth_ab_user_allowed_field_5726b3ff
 msgid "Field an USER must be unique"
 msgstr ""
 
@@ -884,7 +900,6 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__fixed_asset
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__fixed_asset
 msgid "Fixed Asset"
 msgstr "أصل ثابت"
 
@@ -895,15 +910,11 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_follower_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_follower_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_follower_ids
 msgid "Followers"
 msgstr "المتابعون"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_partner_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_partner_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_partner_ids
 msgid "Followers (Partners)"
 msgstr "المتابعون (جهات الاتصال)"
 
@@ -930,7 +941,7 @@ msgid "Forces all moves for this account to have this account currency."
 msgstr ""
 
 #. module: ab_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_header_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
 msgid "Freeze"
 msgstr "تجميد"
 
@@ -942,6 +953,8 @@ msgstr "من ملف اكسل"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__group_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__group_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.view_users_accounting
 msgid "Group"
 msgstr "المجموعة"
 
@@ -983,8 +996,6 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__has_message
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__has_message
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__has_message
 msgid "Has Message"
 msgstr "يحتوي على رسالة"
 
@@ -1001,7 +1012,8 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__header_id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__header_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__header_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_form
 msgid "Header"
 msgstr "القيد"
 
@@ -1037,33 +1049,34 @@ msgstr "الفرع"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_configuration__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header_delegate_common__id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__id
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_scope__id
-#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_financial_xlsx__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_compute_balance__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__id
+#: model:ir.model.fields,field_description:ab_accounting.field_excel_writer__id
+#: model:ir.model.fields,field_description:ab_accounting.field_report_ab_accounting_account_statement_excel__id
 #: model:ir.model.fields,field_description:ab_accounting.field_res_users__id
 msgid "ID"
 msgstr "المعرّف"
 
 #. module: ab_accounting
 #: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_needaction
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_opening_run__message_needaction
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_period__message_needaction
 msgid "If checked, new messages require your attention."
 msgstr "عند التحديد، توجد رسائل جديدة تتطلب انتباهك."
 
 #. module: ab_accounting
 #: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_has_error
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_opening_run__message_has_error
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_period__message_has_error
 msgid "If checked, some messages have a delivery error."
 msgstr "عند التحديد، توجد رسائل تعذر تسليمها."
 
@@ -1103,6 +1116,8 @@ msgstr "المجموعة الداخلية"
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__internal_type
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__internal_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__internal_type
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__internal_type
 msgid "Internal Type"
 msgstr "النوع الداخلي"
 
@@ -1120,13 +1135,13 @@ msgstr "حساب نهائي"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_is_follower
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_is_follower
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_is_follower
 msgid "Is Follower"
 msgstr "متابع"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__is_frozen
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_frozen
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__is_frozen
 msgid "Is Frozen"
 msgstr "مجمّد"
 
@@ -1136,8 +1151,10 @@ msgid "Is Header"
 msgstr "سطر قيد رئيسي"
 
 #. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__is_posted
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__is_posted
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__is_posted
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__is_posted
 msgid "Is Posted"
 msgstr "مرحّل"
 
@@ -1245,15 +1262,17 @@ msgstr "تاريخ التحديث"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__write_uid
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__write_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__write_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__write_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__write_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__write_uid
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__write_uid
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -1263,15 +1282,17 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field_auth__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__write_date
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__write_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_balance__write_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__write_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__write_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_report__write_date
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_reversal__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_forbidden__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_costcenter_deduction_month_prevented__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__write_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -1300,7 +1321,6 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:res.groups,name:ab_accounting.group_ab_accounting_manager
-#: model:res.groups.privilege,name:ab_accounting.privilege_manager
 msgid "Manager"
 msgstr "مدير"
 
@@ -1316,15 +1336,11 @@ msgstr "رسالة"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_has_error
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_has_error
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_has_error
 msgid "Message Delivery error"
 msgstr "خطأ في تسليم الرسائل"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_ids
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_ids
 msgid "Messages"
 msgstr "الرسائل"
 
@@ -1342,7 +1358,7 @@ msgstr "قيودي"
 
 #. module: ab_accounting
 #: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_ab_accounting_account_name_unique
-#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_guide_ab_accounting_account_guide_name_unique
+#: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_account_guide_ab_accounting_account_guid_821e10e8
 #: model:ir.model.constraint,message:ab_accounting.constraint_ab_accounting_doctype_ab_accounting_doctype_name_unique
 msgid "NAME CAN NOT BE DUPLICATED."
 msgstr "لا يمكن تكرار الاسم"
@@ -1352,9 +1368,10 @@ msgstr "لا يمكن تكرار الاسم"
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_first_level__name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_second_level__name
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_allowed_field__name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__name
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_doctype__name
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__name
+#: model_terms:ir.ui.view,arch_db:ab_accounting.user_auth_form
 msgid "Name"
 msgstr "الاسم"
 
@@ -1403,15 +1420,11 @@ msgstr "ملاحظات"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_needaction_counter
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_needaction_counter
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_needaction_counter
 msgid "Number of Actions"
 msgstr "عدد الإجراءات"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__message_has_error_counter
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_opening_run__message_has_error_counter
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_period__message_has_error_counter
 msgid "Number of errors"
 msgstr "عدد الأخطاء"
 
@@ -1422,8 +1435,6 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_has_error_counter
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_opening_run__message_has_error_counter
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_period__message_has_error_counter
 msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل التي تعذر تسليمها"
 
@@ -1459,12 +1470,12 @@ msgstr "العملية غير متاحة."
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__other
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__other
 msgid "Other"
 msgstr "أخرى"
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__own_account
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__own_account
 msgid "Own Account"
 msgstr "الحساب المملوك"
 
@@ -1476,7 +1487,10 @@ msgid "Parent Account"
 msgstr "الحساب الاب"
 
 #. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__parent_path
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__parent_path
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__parent_path
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__parent_path
 msgid "Parent Path"
 msgstr "مسار الحسابات الأب"
 
@@ -1488,7 +1502,6 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__payable
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__payable
 msgid "Payable"
 msgstr "دائنون"
 
@@ -1498,19 +1511,25 @@ msgid "Payment Redirect To"
 msgstr ""
 
 #. module: ab_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_header_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
 msgid "Post"
 msgstr "ترحيل"
 
 #. module: ab_accounting
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_je_header__state__posted
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_header_search
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_line_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree
 msgid "Posted"
 msgstr "مرحّل"
 
 #. module: ab_accounting
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__start_date_posted
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__posted_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__posted_date
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__posted_date
 msgid "Posted Date"
 msgstr "تاريخ الترحيل"
 
@@ -1533,6 +1552,7 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_auth__prevent_enquiry
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_guide__prevent_enquiry
 msgid "Prevent Enquiry"
 msgstr "منع الاستعلام"
 
@@ -1548,7 +1568,6 @@ msgstr "طباعة PDF"
 
 #. module: ab_accounting
 #: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_account_guide__internal_type__receivable
-#: model:ir.model.fields.selection,name:ab_accounting.selection__ab_accounting_doctype__internal_type__receivable
 msgid "Receivable"
 msgstr "مدينون"
 
@@ -1603,8 +1622,8 @@ msgid "Report"
 msgstr "تقارير"
 
 #. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.reports
 #: model:res.groups,name:ab_accounting.group_ab_accounting_report
-#: model:res.groups.privilege,name:ab_accounting.privilege_report
 msgid "Reports"
 msgstr "التقارير"
 
@@ -1641,7 +1660,6 @@ msgstr "مسئول عن"
 
 #. module: ab_accounting
 #: model:res.groups,name:ab_accounting.group_ab_accounting_reviewer
-#: model:res.groups.privilege,name:ab_accounting.privilege_reviewer
 msgid "Reviewer"
 msgstr "مراجع"
 
@@ -1710,9 +1728,12 @@ msgid "Start Balance:"
 msgstr "رصيد افتتاحي: "
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_branch__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_account_statement__store_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__store_id
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_common__store_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_line_qry__store_id
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_qry_view_form
 msgid "Store"
 msgstr "الفرع"
 
@@ -1767,7 +1788,7 @@ msgid "Till Month"
 msgstr "حتى شهر"
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__total_credit_val
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree_one2many
 msgid "Total Credit"
 msgstr "إجمالي الدائن"
 
@@ -1777,7 +1798,7 @@ msgid "Total Credit Val"
 msgstr "اجمالي دائن"
 
 #. module: ab_accounting
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_je_header__total_debit_val
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_line_view_tree_one2many
 msgid "Total Debit"
 msgstr "إجمالي المدين"
 
@@ -1808,7 +1829,7 @@ msgid "Unconfirmed For User"
 msgstr "غير مؤكد للمستخدم"
 
 #. module: ab_accounting
-#: model_terms:ir.ui.view,arch_db:ab_accounting.view_je_header_form
+#: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_je_header_view_form
 msgid "Unfreeze"
 msgstr "إلغاء التجميد"
 
@@ -1843,7 +1864,8 @@ msgstr ""
 
 #. module: ab_accounting
 #: model:ir.model,name:ab_accounting.model_res_users
-#: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__user_ids
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_payment_redirect_to__user_id
+#: model:ir.model.fields,field_description:ab_accounting.field_ab_due_salaries_wizard__user_id
 msgid "User"
 msgstr "المستخدم"
 
@@ -1859,7 +1881,6 @@ msgid "User Line Owner"
 msgstr ""
 
 #. module: ab_accounting
-#: model:ir.model,name:ab_accounting.model_res_users
 #: model:ir.model.fields,field_description:ab_accounting.field_ab_accounting_auth_group__user_ids
 #: model_terms:ir.ui.view,arch_db:ab_accounting.ab_accounting_auth_group_form
 msgid "Users"
@@ -2710,8 +2731,6 @@ msgstr "ملاحظة"
 
 #. module: ab_accounting
 #: model:ir.model.fields,help:ab_accounting.field_ab_accounting_je_header__message_needaction_counter
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_opening_run__message_needaction_counter
-#: model:ir.model.fields,help:ab_accounting.field_ab_accounting_period__message_needaction_counter
 msgid "Number of messages requiring action"
 msgstr "عدد الرسائل التي تتطلب إجراءً"
 
@@ -2777,7 +2796,7 @@ msgstr "الرصيد الافتتاحي"
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/reporting.py:0
+#: code:addons/ab_accounting/report_wizard/account_statement_wizard.py:0
 msgid "Opening Balance"
 msgstr "الرصيد الافتتاحي"
 
@@ -3112,7 +3131,7 @@ msgstr "راجع بواسطة"
 
 #. module: ab_accounting
 #. odoo-python
-#: code:addons/ab_accounting/models/journal.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
 msgid "Reviewer access is required."
 msgstr "يتطلب هذا الإجراء صلاحية المراجع."
 
@@ -3371,3 +3390,231 @@ msgstr "يجب أن تكون معرّفات نطاق الترحيل أعدادا
 #: code:addons/ab_accounting/models/configuration.py:0
 msgid "The selected store must be active."
 msgstr "يجب أن يكون الفرع المحدد نشطاً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "A journal requires at least two active lines."
+msgstr "يتطلب القيد سطرين نشطين على الأقل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "A line may contain either debit or credit, never both."
+msgstr "يجب أن يحتوي السطر على مبلغ مدين أو دائن فقط، وليس كليهما."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "A posted line requires a nonzero debit or credit."
+msgstr "يتطلب السطر المرحل مبلغاً مديناً أو دائناً غير صفري."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Account and explanation are required."
+msgstr "يجب إدخال الحساب والبيان."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Account balance exceeds the permitted negative balance."
+msgstr "رصيد الحساب يتجاوز الحد السالب المسموح به."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Cost center is inactive or not allowed for this account."
+msgstr "مركز التكلفة غير نشط أو غير مسموح به لهذا الحساب."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Cost center must be active."
+msgstr "يجب أن يكون مركز التكلفة نشطاً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Create a draft journal before posting."
+msgstr "أنشئ قيداً مسودة قبل الترحيل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid ""
+"Debit and credit must be finite non-negative amounts with at most two "
+"decimals."
+msgstr ""
+"يجب أن تكون المبالغ المدينة والدائنة محددة وغير سالبة وبحد أقصى منزلتين "
+"عشريتين."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Imported relation must identify exactly one record."
+msgstr "يجب أن تحدد العلاقة المستوردة سجلاً واحداً فقط."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid ""
+"Journal %(journal)s is not balanced: debit %(debit)s, credit %(credit)s."
+msgstr "القيد %(journal)s غير متوازن: المدين %(debit)s، الدائن %(credit)s."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Journal and document type must be active."
+msgstr "يجب أن يكون القيد ونوع المستند نشطين."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Journal lines cannot be moved to another header."
+msgstr "لا يمكن نقل سطور القيد إلى رأس قيد آخر."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Lines cannot be added to a posted journal."
+msgstr "لا يمكن إضافة سطور إلى قيد مرحل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Only the creator can post this journal."
+msgstr "منشئ القيد فقط يمكنه ترحيله."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Only the responsible reviewer can confirm a posted line."
+msgstr "المراجع المسؤول فقط يمكنه تأكيد سطر مرحل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Only the responsible reviewer can edit a frozen journal."
+msgstr "المراجع المسؤول فقط يمكنه تعديل قيد مجمد."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Only the responsible reviewer can freeze or unfreeze this journal."
+msgstr "المراجع المسؤول فقط يمكنه تجميد هذا القيد أو إلغاء تجميده."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Posted journal header fields cannot be changed."
+msgstr "لا يمكن تغيير حقول رأس القيد المرحل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Posted journals must be reversed, not deleted."
+msgstr "يجب عكس القيود المرحلة بدلاً من حذفها."
+
+#. module: ab_accounting
+#: model:ir.ui.menu,name:ab_accounting.ab_store_ip_menu
+msgid "Store IPs"
+msgstr ""
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Store is inactive or forbidden for this user."
+msgstr "المخزن غير نشط أو ممنوع لهذا المستخدم."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Store must be active."
+msgstr "يجب أن يكون المخزن نشطاً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "The journal must contain its header account and cost center."
+msgstr "يجب أن يحتوي القيد على حساب الرأس ومركز تكلفته."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_account_guide.py:0
+msgid "The permitted negative balance must be non-negative."
+msgstr "يجب ألا يكون حد الرصيد السالب المسموح به سالباً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "This account requires a cost center."
+msgstr "يتطلب هذا الحساب مركز تكلفة."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "This account requires a due date."
+msgstr "يتطلب هذا الحساب تاريخ استحقاق."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "This account requires a store."
+msgstr "يتطلب هذا الحساب مخزناً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "This edit is not permitted by your allowed-field authorizations."
+msgstr "هذا التعديل غير مسموح به وفق صلاحيات الحقول المسموح لك بتعديلها."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Unsupported automated journal fields."
+msgstr "حقول غير مدعومة في القيد الآلي."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Unsupported automated journal line fields."
+msgstr "حقول غير مدعومة في سطر القيد الآلي."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_account_guide.py:0
+msgid "Use an active final posting account."
+msgstr "استخدم حساب ترحيل نهائياً ونشطاً."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Use the confirmation action."
+msgstr "استخدم إجراء التأكيد."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "Use the journal posting and review actions to change its status."
+msgstr "استخدم إجراءات ترحيل القيد ومراجعته لتغيير حالته."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_line.py:0
+msgid "Use the reversal action to deactivate a posted line."
+msgstr "استخدم إجراء العكس لتعطيل سطر مرحل."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_je_header.py:0
+msgid "You are not authorized for this document type."
+msgstr "ليست لديك صلاحية لاستخدام نوع المستند هذا."
+
+#. module: ab_accounting
+#. odoo-python
+#: code:addons/ab_accounting/models/ab_accounting_account_guide.py:0
+msgid "You are not authorized to post to this account."
+msgstr "ليست لديك صلاحية للترحيل إلى هذا الحساب."
