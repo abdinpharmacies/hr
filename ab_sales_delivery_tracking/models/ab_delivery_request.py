@@ -40,6 +40,7 @@ class AbDeliveryRequest(models.Model):
     customer_name = fields.Char(readonly=True, string="Customer")
     customer_phone = fields.Char(readonly=True, string="Phone")
     customer_address = fields.Char(readonly=True, string="Address")
+    delivery_instructions = fields.Text(readonly=True, copy=False, string="Delivery Instructions")
     amount_total = fields.Float(readonly=True, string="Bill Sum")
     telegram_chat_id = fields.Char(readonly=True, string="Telegram Chat ID")
     telegram_message_id = fields.Char(readonly=True, copy=False, string="Telegram Message ID")
@@ -78,16 +79,21 @@ class AbDeliveryRequest(models.Model):
 
     @api.model
     def create_from_sale_header(self, header):
-        header = header.sudo().exists()
+        header.check_access("read")
+        header = header.exists()
         if not header:
             return self.browse()
         header.ensure_one()
 
         request = self.sudo().search([("sale_header_id", "=", header.id)], limit=1)
-        vals = self._delivery_request_vals_from_sale_header(header)
         if request:
-            request.write(vals)
             return request
+        if not (header.is_delivery and header.delivery_notify and header.eplus_serial
+                and header.push_state == "success"):
+            return self.browse()
+        header._validate_delivery_notification()
+        vals = self._delivery_request_vals_from_sale_header(header)
+        vals["delivery_instructions"] = (header.delivery_instructions or "").strip()
         return self.sudo().create(vals)
 
     @api.model
@@ -108,6 +114,7 @@ class AbDeliveryRequest(models.Model):
         }
 
     def action_resend_to_telegram(self):
+        self.check_access("write")
         for request in self.sudo().exists():
             try:
                 request.write({
@@ -121,6 +128,7 @@ class AbDeliveryRequest(models.Model):
         return True
 
     def queue_send_to_telegram(self, force=False):
+        self.check_access("write")
         requests_to_send = self.browse()
         for request in self.sudo().exists():
             if not force and request.state == "sent" and request.telegram_message_id:
@@ -145,6 +153,7 @@ class AbDeliveryRequest(models.Model):
         return True
 
     def job_send_to_telegram(self, force=False):
+        self.check_access("write")
         self.ensure_one()
         if not force and self.state == "sent" and self.telegram_message_id:
             return {"status": "skipped", "reason": self.state}
@@ -249,15 +258,17 @@ class AbDeliveryRequest(models.Model):
 
     def _telegram_message_text(self):
         self.ensure_one()
-        return "\n".join([
+        lines = [
             "طلب توصيل جديد",
             "الفرع: %s" % self._message_value(self.branch_name),
             "رقم الفاتورة: %s" % self._message_value(self.bill_number),
             "العميل: %s" % self._message_value(self.customer_name),
-            "الهاتف: %s" % self._message_value(self.customer_phone),
             "العنوان: %s" % self._message_value(self.customer_address),
             "الإجمالي: %.2f" % float(self.amount_total or 0.0),
-        ])
+        ]
+        if self.delivery_instructions:
+            lines.append(_("Delivery instructions: %s") % self.delivery_instructions)
+        return "\n".join(lines)
 
     @api.model
     def _message_value(self, value):

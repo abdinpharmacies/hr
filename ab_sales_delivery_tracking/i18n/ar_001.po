@@ -187,3 +187,72 @@ msgstr "فشل إرسال تيليجرام: %s"
 #. module: ab_sales_delivery_tracking
 msgid "Telegram Update ID"
 msgstr "معرف تحديث تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+#: model:ir.model.fields,field_description:ab_sales_delivery_tracking.field_ab_sales_header__delivery_notify
+msgid "Notify Delivery Bot"
+msgstr "إشعار بوت التوصيل"
+
+#. module: ab_sales_delivery_tracking
+#: model:ir.model.fields,field_description:ab_sales_delivery_tracking.field_ab_delivery_request__delivery_instructions
+#: model:ir.model.fields,field_description:ab_sales_delivery_tracking.field_ab_sales_header__delivery_instructions
+#: model_terms:ir.ui.view,arch_db:ab_sales_delivery_tracking.delivery_request_instructions_view
+msgid "Delivery Instructions"
+msgstr "تعليمات التوصيل"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
+msgid "Delivery instructions"
+msgstr "تعليمات التوصيل"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.js:0
+msgid "Delivery Notification"
+msgstr "إشعار التوصيل"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_delivery_tracking/models/ab_sales_header.py:0
+#: code:addons/ab_sales_delivery_tracking/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.js:0
+msgid "Delivery instructions are required when notifying the delivery bot."
+msgstr "يجب إدخال تعليمات التوصيل عند اختيار إشعار بوت التوصيل."
+
+#. module: ab_sales_delivery_tracking
+#. odoo-python
+#: code:addons/ab_sales_delivery_tracking/models/ab_sales_pos_api.py:0
+msgid "Delivery instructions must be text."
+msgstr "يجب أن تكون تعليمات التوصيل نصًا."
+
+#. module: ab_sales_delivery_tracking
+#. odoo-python
+#: code:addons/ab_sales_delivery_tracking/models/ab_delivery_request.py:0
+msgid "Delivery instructions: %s"
+msgstr "تعليمات التوصيل: %s"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
+msgid "Push & Notify"
+msgstr "إرسال الفاتورة مع الإشعار"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
+msgid "Push Without Notification"
+msgstr "إرسال الفاتورة بدون إشعار"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-javascript
+#: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
+msgid "Push Without Delivery"
+msgstr "إرسال الفاتورة بدون توصيل"
