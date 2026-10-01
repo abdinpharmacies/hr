@@ -1,6 +1,15 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
-from .ab_supplier import PAYMENT_NATURE, BUSINESS_CATEGORY, TAX_CLASSIFICATION, SUPPLIER_SECTION
+
+PAYMENT_NATURE = [('cash', 'Cash'), ('non_cash', 'Non-cash')]
+TAX_CLASSIFICATION = [
+    ('through_supplier', 'Advance Payments'),
+    ('tax_payment', 'Tax Payment'),
+    ('non_tax_payment', 'Non-tax Payment'),
+]
+
+SUPPLIER_SECTION = [('medical', 'Medicine'), ('cosmo', 'Cosmetics'), ('other', 'Other')]
+CLAIM_DEFAULT_FIELDS = ('type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area')
 
 STATES = [('draft', 'Draft'), ('inventory', 'Inventory'),
           ('purchasing', 'Purchasing'),
@@ -22,7 +31,10 @@ class SupplierClaimCycle(models.Model):
     _rec_name = 'supplier_id'
     _order = 'id desc'
 
-    supplier_id = fields.Many2one('ab_supplier', required=True, ondelete='restrict', tracking=True)
+    supplier_id = fields.Many2one(
+        'ab_costcenter', required=True, ondelete='restrict', tracking=True,
+        domain=fields.Domain('code', '=like', '1-%'),
+    )
     num_of_invoice = fields.Integer(required=True, tracking=True)
     state = fields.Selection(STATES, default='draft', required=True, readonly=True, copy=False, index=True)
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user, readonly=True, ondelete='set null')
@@ -31,25 +43,12 @@ class SupplierClaimCycle(models.Model):
     type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy')], required=True)
     active = fields.Boolean(default=True)
     payment_nature = fields.Selection(PAYMENT_NATURE, copy=False, tracking=True)
-    business_category = fields.Selection(BUSINESS_CATEGORY, readonly=True, copy=False)
     tax_classification = fields.Selection(
         TAX_CLASSIFICATION, string='Tax Type', copy=False, tracking=True,
-        help='Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims.')
+        help='Defaults from the latest claim for this cost center and remains editable in Draft.')
     section = fields.Selection(
         SUPPLIER_SECTION, copy=False, tracking=True,
-        help='Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims.')
-    bracket_id = fields.Many2one('ab_supplier_bracket', string='Supplier Bracket', ondelete='restrict',
-                                 copy=False, tracking=True,
-                                 help='Optional. Terms are copied on submission and do not calculate the claim amount.')
-    bracket_snapshot = fields.Json(readonly=True, copy=False)
-    bracket_payment_type = fields.Selection([
-        ('credit', 'Credit'), ('claim_cash', 'Claim Cash'), ('instant_cash', 'Instant Cash')],
-        compute='_compute_bracket_terms', string='Payment Type')
-    bracket_start_day = fields.Integer(compute='_compute_bracket_terms', string='Start Day')
-    bracket_termination_day = fields.Integer(compute='_compute_bracket_terms', string='Termination Day')
-    bracket_credit_days = fields.Integer(compute='_compute_bracket_terms', string='Credit Days')
-    bracket_discount = fields.Float(compute='_compute_bracket_terms', string='Discount (%)', digits=(5, 2))
-    bracket_withdrawal_bracket = fields.Float(compute='_compute_bracket_terms', string='Withdrawal Bracket')
+        help='Defaults from the latest claim for this cost center and remains editable in Draft.')
     review_round = fields.Integer(default=0, readonly=True, copy=False)
     resume_stage = fields.Selection(STATES, readonly=True, copy=False)
     rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True,
@@ -158,55 +157,42 @@ class SupplierClaimCycle(models.Model):
                 claim['timeline_' + stage + '_date'] = date
                 claim['timeline_' + stage] = '\n'.join(lines) or False
 
-    @api.model
-    def _supplier_classifications_by_id(self, supplier_ids):
-        suppliers = self.env['ab_supplier'].browse(supplier_ids).exists()
-        suppliers.check_access('read')
-        result = {}
-        for supplier in suppliers:
-            result[supplier.id] = {
-                'tax_classification': supplier.tax_type,
-                'section': supplier.section,
-                'payment_nature': supplier.payment_nature,
-            }
-        return result
+    def _last_claim_values_by_supplier(self, supplier_ids, exclude_ids=None):
+        supplier_ids = {supplier_id for supplier_id in supplier_ids if supplier_id}
+        exclude_ids = [record_id for record_id in (exclude_ids or []) if isinstance(record_id, int)]
+        empty_values = {name: False for name in CLAIM_DEFAULT_FIELDS}
+        result = {supplier_id: dict(empty_values) for supplier_id in supplier_ids}
+        if not supplier_ids:
+            return result
 
-    @api.model
-    def _supplier_classifications(self, supplier_id):
-        return self._supplier_classifications_by_id([supplier_id] if supplier_id else []).get(
-            supplier_id, {'tax_classification': False, 'section': False, 'payment_nature': False})
+        domain = fields.Domain('supplier_id', 'in', supplier_ids)
+        if exclude_ids:
+            domain &= fields.Domain('id', 'not in', exclude_ids)
+        previous_claims = self.with_context(active_test=False).search(
+            domain,
+            order='supplier_id, id desc',
+        )
+        found = set()
+        for previous_claim in previous_claims:
+            supplier_id = previous_claim.supplier_id.id
+            if supplier_id not in found:
+                result[supplier_id] = {
+                    name: previous_claim[name]
+                    for name in CLAIM_DEFAULT_FIELDS
+                }
+                found.add(supplier_id)
+        return result
 
     @api.onchange('supplier_id')
     def _onchange_supplier_terms(self):
-        for claim in self:
-            if claim.state == 'draft':
-                claim.update(claim._supplier_classifications(claim.supplier_id.id))
-                claim.bracket_id = False
-
-    def _bracket_values(self):
-        self.ensure_one()
-        if not self.bracket_id:
-            return {}
-        self.bracket_id.check_access('read')
-        return {name: self.bracket_id[name] for name in (
-            'payment_type', 'start_day', 'termination_day', 'credit_days', 'discount', 'withdrawal_bracket')}
-
-    @api.depends('bracket_snapshot', 'state', 'bracket_id.payment_type', 'bracket_id.start_day',
-                 'bracket_id.termination_day', 'bracket_id.credit_days', 'bracket_id.discount',
-                 'bracket_id.withdrawal_bracket')
-    def _compute_bracket_terms(self):
-        for claim in self:
-            terms = claim._bracket_values() if claim.state == 'draft' else (claim.bracket_snapshot or {})
-            for name in ('payment_type', 'start_day', 'termination_day', 'credit_days', 'discount',
-                         'withdrawal_bracket'):
-                claim['bracket_' + name] = terms.get(name, False)
-
-    @api.constrains('supplier_id', 'bracket_id')
-    def _check_supplier_bracket(self):
-        for claim in self:
-            if claim.bracket_id:
-                if not claim.supplier_id._has_bracket(claim.bracket_id):
-                    raise ValidationError(_('Select a bracket belonging to this supplier’s cost center.'))
+        draft_claims = self.filtered(lambda claim: claim.state == 'draft')
+        values_by_supplier = self._last_claim_values_by_supplier(
+            draft_claims.mapped('supplier_id').ids,
+            exclude_ids=draft_claims._origin.ids,
+        )
+        empty_values = {name: False for name in CLAIM_DEFAULT_FIELDS}
+        for claim in draft_claims:
+            claim.update(values_by_supplier.get(claim.supplier_id.id, empty_values))
 
     @api.constrains(*(f'{department}_{suffix}' for department in DEPARTMENTS
                       for suffix in ('decision', 'notes', 'followup_date')))
@@ -237,24 +223,24 @@ class SupplierClaimCycle(models.Model):
 
     @api.model
     def _protected_fields(self):
-        return {'state', 'user_id', 'business_category', 'bracket_snapshot',
+        return {'state', 'user_id',
                 'review_round', 'resume_stage', 'rejection_department', 'rejection_reason', 'history_ids'} | {
             f'{d}_decision' for d in DEPARTMENTS}
 
     @api.model_create_multi
     def create(self, vals_list):
         self._require_role('user')
-        allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id', 'num_of_invoice',
+        allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'num_of_invoice',
                    'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
         defaults = dict(state='draft', user_id=self.env.uid, review_round=0,
-                        business_category=False, bracket_snapshot=False, resume_stage=False,
+                        resume_stage=False,
                         rejection_department=False, rejection_reason=False, active=True,
                         cheque_attachment=False, cheque_filename=False,
                         bank_cheque_attachment=False, bank_cheque_filename=False)
         for d in DEPARTMENTS:
             defaults.update({f'{d}_decision': 'not_required', f'{d}_notes': False, f'{d}_followup_date': False})
         supplier_ids = {vals.get('supplier_id') or self.env.context.get('default_supplier_id') for vals in vals_list}
-        classifications_by_id = self._supplier_classifications_by_id([sid for sid in supplier_ids if sid])
+        values_by_supplier = self._last_claim_values_by_supplier(supplier_ids)
         clean = []
         for vals in vals_list:
             # Forms submit harmless defaults (including the invisible active flag).
@@ -262,33 +248,15 @@ class SupplierClaimCycle(models.Model):
                    for name, value in vals.items() if name not in allowed):
                 raise AccessError(_('Create a draft claim without workflow values.'))
             supplier_id = vals.get('supplier_id') or self.env.context.get('default_supplier_id')
-            classifications = classifications_by_id.get(supplier_id, {
-                'tax_classification': False, 'section': False, 'payment_nature': False})
-            clean.append({**classifications, 'bracket_id': False, **vals, **defaults})
+            previous_values = values_by_supplier.get(
+                supplier_id,
+                {name: False for name in CLAIM_DEFAULT_FIELDS},
+            )
+            clean.append({**previous_values, **vals, **defaults})
         # Explicit defaults neutralize forged default_* context values.
         claims = super().create(clean)
         claims._record_secretarial_notes()
-        claims._remember_supplier_choices(vals_list)
         return claims
-
-    def _remember_supplier_choices(self, supplied_values):
-        # Only called after validated Draft create/write. Do not grant users
-        # general write access to suppliers or overwrite unrelated master data.
-        mapping = {'tax_classification': 'tax_type', 'section': 'section', 'payment_nature': 'payment_nature'}
-        by_supplier = {}
-        for claim, values in zip(self, supplied_values):
-            selected = {target: claim[source] for source, target in mapping.items()
-                        if source in values and claim[source]}
-            if selected:
-                by_supplier.setdefault(claim.supplier_id.id, {}).update(selected)
-        suppliers = self.env['ab_supplier'].browse(sorted(by_supplier))
-        suppliers.check_access('read')
-        suppliers.lock_for_update(allow_referencing=True)
-        suppliers.invalidate_recordset(list(mapping.values()))
-        for supplier in suppliers:
-            changed = {name: value for name, value in by_supplier[supplier.id].items() if supplier[name] != value}
-            if changed:
-                supplier.sudo().write(changed)
 
     def write(self, vals):
         if set(vals) & self._protected_fields():
@@ -308,7 +276,8 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):
                 claim._require_role('user')
-                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature', 'bracket_id'} if claim.state == 'draft' else set())
+                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature'}
+                                               if claim.state == 'draft' else set())
             else:
                 allowed = set()
                 for d in DEPARTMENTS:
@@ -321,14 +290,19 @@ class SupplierClaimCycle(models.Model):
                                 allowed |= {'bank_cheque_attachment', 'bank_cheque_filename'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
-        explicit_choices = {name: vals[name] for name in ('tax_classification', 'section', 'payment_nature') if name in vals}
         if 'supplier_id' in vals:
-            vals = {**self._supplier_classifications(vals['supplier_id']), 'bracket_id': False, **vals}
+            values_by_supplier = self._last_claim_values_by_supplier(
+                [vals['supplier_id']],
+                exclude_ids=self.ids,
+            )
+            previous_values = values_by_supplier.get(
+                vals['supplier_id'],
+                {name: False for name in CLAIM_DEFAULT_FIELDS},
+            )
+            vals = {**previous_values, **vals}
         previous_notes = ({claim.id: (claim.secretarial_notes or '').strip() for claim in self}
                           if 'secretarial_notes' in vals else {})
         result = super().write(vals)
-        if explicit_choices:
-            self._remember_supplier_choices([explicit_choices] * len(self))
         if 'secretarial_notes' in vals:
             self.filtered(lambda claim: (claim.secretarial_notes or '').strip() != previous_notes[
                 claim.id])._record_secretarial_notes()
@@ -351,7 +325,6 @@ class SupplierClaimCycle(models.Model):
             'review_round': self.review_round, 'user_id': self.env.uid, 'occurred_at': fields.Datetime.now(),
             **{f'{d}_decision': self[f'{d}_decision'] for d in DEPARTMENTS},
             'tax_classification': self.tax_classification, 'section': self.section,
-            'bracket_snapshot': self.bracket_snapshot,
         }
 
     def _log(self, event, from_state=None, department=False, decision=False, reason=False, followup_date=False):
@@ -369,10 +342,6 @@ class SupplierClaimCycle(models.Model):
         if any(c.state not in ('draft', 'returned_secretarial') for c in self):
             raise UserError(_('Only draft or returned claims can be submitted.'))
         drafts = self.filtered(lambda c: c.state == 'draft')
-        drafts._check_supplier_bracket()
-        drafts.mapped('bracket_id').lock_for_update(allow_referencing=True)
-        drafts.mapped('bracket_id').invalidate_recordset()
-        drafts._check_supplier_bracket()
         suppliers = drafts.mapped('supplier_id')
         suppliers.check_access('read')
         suppliers.lock_for_update(allow_referencing=True)
@@ -387,8 +356,6 @@ class SupplierClaimCycle(models.Model):
                     raise ValidationError(_('Select an active supplier.'))
                 if not claim.payment_nature:
                     raise ValidationError(_('Select a payment nature before submitting the claim.'))
-                vals.update(business_category=supplier.business_category,
-                            bracket_snapshot=claim._bracket_values())
                 stage = 'supplier_accounts' if claim.payment_nature == 'cash' else 'inventory'
                 for d in DEPARTMENTS:
                     vals[f'{d}_decision'] = (

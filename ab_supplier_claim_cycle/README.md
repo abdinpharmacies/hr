@@ -1,37 +1,29 @@
 # Supplier Claim Cycle
 
-Version: 19.0.3.0.1 · Odoo 19 · Developer: Alhassan Hossny
+Version: 19.0.4.0.0 · Odoo 19 · Developer: Alhassan Hossny
 
 ## Installation
 
 This release targets a fresh installation on an empty database. Install
 `ab_supplier_claim_cycle` with its declared dependencies: `base`, `mail`, `web`,
-and `ab_supplier`. No demo data is provided. Do not upgrade an existing claims
+and `ab_costcenter`. No demo data is provided. Do not upgrade an existing claims
 database to this baseline; database cleanup is a separate operation requiring approval.
 
 ## Supplier and classifications
 
-Each claim references `ab_supplier` directly. Select an active supplier and enter
-invoice count, area, claim amount, invoice type, and optional Secretarial notes.
-Payment nature, tax type, and section default from the selected supplier and are
-editable by Secretarial users/administrators on active Draft claims. Missing
-values stay empty so the user can choose from the dropdown. Explicit nonempty
-choices are remembered on the supplier when the Draft is saved; clearing an
-optional claim value does not erase the supplier default. Changing the supplier
-loads that supplier's defaults. This narrowly updates only tax type, section,
-and payment nature without granting general supplier-write permissions.
+Each claim references `ab_costcenter` directly. Claim users can select cost centers
+whose code starts with `1-`. Select an active cost center and enter invoice count,
+area, claim amount, and optional Secretarial notes.
 
-Submission uses the claim's chosen payment nature for routing and preserves its
-tax type and section. These choices cannot be changed after submission, including
-when returned for correction. Subsequent supplier changes do not alter saved
-claims. Business category and selected bracket terms are captured on submission.
+Invoice type, payment nature, tax type, and section default from the newest saved
+claim for the selected cost center. Draft and archived claims are eligible sources.
+If there is no previous claim, all four fields remain empty for manual entry.
+Explicit values always override historical defaults. The choices stay on the claim
+and are never written back to the cost-center master.
 
-The 3.0.1 update changes draft choice behavior only; it does not migrate or rewrite
-existing claims or supplier values during upgrade.
-
-Supplier Bracket is optional. Its ownership is validated through the supplier's
-`costcenter_id`, because brackets belong to cost centers in `ab_supplier`.
-Bracket terms do not calculate or change the entered claim amount.
+Submission uses the claim's chosen payment nature for routing. These choices cannot
+be changed after submission, including when returned for correction. Supplier
+brackets and business categories are not part of this module.
 
 ## Workflow
 
@@ -77,10 +69,7 @@ odoo-bin -c /path/to/test.conf -d supplier_cycle_test \
 ```
 
 The suite covers both routes, every department, rejection and deferral,
-resubmission, evidence, closure, archival, supplier snapshots, bracket ownership,
-read/write security, and Odoo 19 view validation.
-
-Validated on an empty Odoo 19 test database: 33 tests passed, zero failures or
-errors. Python, XML, and Arabic translation syntax checks also passed.
+resubmission, evidence, closure, archival, previous-claim defaults, cost-center
+security, read/write security, and Odoo 19 view validation.
 
 Follow-up dates default to today when entering or resuming a review stage and remain editable by its reviewer. Each deferral (orange) and rejection (red) stays visible as a separate timeline step after its department, including repeated decisions. Click a step label to reveal its date.

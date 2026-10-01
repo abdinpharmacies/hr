@@ -21,9 +21,15 @@ class TestSupplierClaimCycle(TransactionCase):
                      groups='ab_supplier_claim_cycle.supplier_claim_group_'+role) for role in cls.roles}
         cls.outsider = new_test_user(cls.env(context=dict(cls.env.context, no_reset_password=True)), login='scc_test_outsider', groups='base.group_user')
         cls.system = new_test_user(cls.env(context=dict(cls.env.context, no_reset_password=True)), login='scc_test_system', groups='base.group_system')
-        cls.supplier = cls.env['ab_supplier'].create({'name':'Cycle Supplier Alpha', 'code':'SCC-42',
-                                                    'business_category':'medicine', 'tax_type':'tax_payment'})
-        cls.cash = cls.env['ab_supplier'].create({'name':'Cash Supplier', 'code':'SCC-43', 'payment_nature':'cash'})
+        cls.supplier = cls.env['ab_costcenter'].create({
+            'name': 'Cycle Supplier Alpha', 'code': '1-42',
+        })
+        cls.cash = cls.env['ab_costcenter'].create({
+            'name': 'Cash Supplier', 'code': '1-43',
+        })
+        cls.non_supplier_center = cls.env['ab_costcenter'].create({
+            'name': 'Internal Cost Center', 'code': '2-10',
+        })
         cls.Claim = cls.env['ab_supplier_claim_cycle']
 
     def claim(self, cash=False):
@@ -31,7 +37,9 @@ class TestSupplierClaimCycle(TransactionCase):
 
     def values(self, cash=False):
         return dict(supplier_id=(self.cash if cash else self.supplier).id, num_of_invoice=2,
-                    area='north', amount_of_check='100', type_of_invoice='original')
+                    area='north', amount_of_check='100', type_of_invoice='original',
+                    payment_nature='cash' if cash else 'non_cash',
+                    tax_classification='tax_payment', section='medical')
 
     def decide(self, claim, department, decision='approved', **vals):
         record=claim.with_user(self.users[department])
@@ -120,18 +128,13 @@ class TestSupplierClaimCycle(TransactionCase):
                     cheque_attachment=base64.b64encode(b'proof'))
         self.assertEqual(other.note_history_ids.display_note, 'User note')
 
-    def test_supplier_lookup_and_snapshot(self):
-        self.assertEqual(self.supplier.payment_nature,'non_cash')
-        Supplier=self.env['ab_supplier'].with_user(self.users['user'])
-        self.assertIn(self.supplier.id,[r[0] for r in Supplier.name_search('Cycle Supplier')])
-        self.assertIn(self.supplier.id,[r[0] for r in Supplier.name_search('SCC-4')])
-        claim=self.claim(); claim.action_submit()
-        self.supplier.write({'payment_nature':'cash','business_category':'cosmetics','tax_type':'non_tax_payment'})
-        self.assertEqual((claim.payment_nature,claim.business_category,claim.tax_classification),('non_cash','medicine','tax_payment'))
-        self.decide(claim,'inventory','rejected',inventory_notes='Correct invoices')
-        claim.action_submit()
-        self.assertEqual(claim.state,'inventory')
-        self.assertEqual(claim.payment_nature,'non_cash')
+    def test_costcenter_lookup_and_security(self):
+        CostCenter = self.env['ab_costcenter'].with_user(self.users['user'])
+        self.assertIn(self.supplier.id, [row[0] for row in CostCenter.name_search('Cycle Supplier')])
+        self.assertFalse(CostCenter.search(fields.Domain('id', '=', self.non_supplier_center.id)))
+        with self.assertRaises(AccessError):
+            self.non_supplier_center.with_user(self.users['user']).read(['name'])
+        self.assertEqual(self.non_supplier_center.with_user(self.system).name, 'Internal Cost Center')
 
     def test_cash_closure_and_archive(self):
         claim=self.claim(True); claim.action_submit()
@@ -541,50 +544,6 @@ class TestSupplierClaimCycle(TransactionCase):
                 values.update(state='inventory', active=False)
                 self.assertFalse(any(visible(n) for n in arch.xpath('//header/button')))
 
-    def test_bracket_eligibility_snapshot_and_permissions(self):
-        center = self.env['ab_costcenter'].with_context(install_mode=True).create({'name': 'Terms Test', 'code': 'SCC-TERMS'})
-        other = self.env['ab_costcenter'].with_context(install_mode=True).create({'name': 'Other Terms', 'code': 'SCC-OTHER'})
-        self.supplier.costcenter_id = center
-        bracket = self.env['ab_supplier_bracket'].create({
-            'supplier_id': center.id, 'payment_type': 'credit', 'start_day': 1,
-            'termination_day': 10, 'credit_days': 30, 'discount': 2.5, 'withdrawal_bracket': 500})
-        foreign = self.env['ab_supplier_bracket'].create({'supplier_id': other.id, 'credit_days': 90})
-        claim = self.claim()
-        with self.assertRaises(UserError), self.cr.savepoint():
-            claim.write({'bracket_id': foreign.id})
-        with self.assertRaises(ValidationError), self.cr.savepoint():
-            claim.with_user(self.users['admin']).write({'bracket_id': foreign.id})
-        claim.write({'bracket_id': bracket.id})
-        self.assertEqual(claim.bracket_credit_days, 30)
-        self.assertIn('30', bracket.with_user(self.users['user']).display_name)
-        with self.assertRaises(AccessError):
-            bracket.with_user(self.users['user']).write({'discount': 99})
-        with self.assertRaises(AccessError):
-            claim.write({'bracket_snapshot': {'discount': 99}})
-        claim.action_submit()
-        self.assertEqual(claim.amount_of_check, '100')
-        self.assertEqual(claim.state, 'inventory')
-        bracket.write({'credit_days': 60, 'discount': 9})
-        self.assertEqual(claim.bracket_credit_days, 30)
-        self.assertEqual(claim.bracket_discount, 2.5)
-        self.assertEqual(claim.bracket_snapshot['credit_days'], 30)
-        self.assertFalse(claim.history_ids)
-        with self.assertRaises(AccessError):
-            claim.write({'bracket_id': False})
-        draft = self.claim()
-        draft.write({'bracket_id': bracket.id})
-        draft.write({'supplier_id': self.cash.id})
-        self.assertFalse(draft.bracket_id)
-        self.assertFalse(draft.tax_classification)
-        with self.assertRaises(UserError), self.cr.savepoint():
-            draft.write({'bracket_id': bracket.id})
-        # A bracket reassigned after draft creation is revalidated at submission.
-        draft.write({'supplier_id': self.supplier.id})
-        draft.write({'bracket_id': bracket.id})
-        bracket.supplier_id = other
-        with self.assertRaises(UserError), self.cr.savepoint():
-            draft.action_submit()
-
     def test_history_starts_with_department_decisions(self):
         History = self.env['ab_supplier_claim_cycle.history']
         for cash in (False, True):
@@ -677,68 +636,76 @@ class TestSupplierClaimCycle(TransactionCase):
                 variants = [part for part in node if not safe_eval(part.get('invisible', 'False'), values)]
                 self.assertEqual(len(variants), 1)
 
-    def test_supplier_choices_default_edit_remember_and_freeze(self):
-        claim = self.claim()
-        self.assertEqual(claim.tax_classification, self.supplier.tax_type)
-        claim.write({'tax_classification': 'through_supplier', 'section': 'cosmo', 'payment_nature': 'cash'})
-        self.assertEqual((self.supplier.tax_type, self.supplier.section, self.supplier.payment_nature),
-                         ('through_supplier', 'cosmo', 'cash'))
-        next_claim = self.claim()
-        self.assertEqual((next_claim.tax_classification, next_claim.section, next_claim.payment_nature),
-                         ('through_supplier', 'cosmo', 'cash'))
-        # Supplier changes must not overwrite choices already saved on a claim.
-        self.supplier.write({'tax_type': 'tax_payment', 'section': 'medical', 'payment_nature': 'non_cash'})
-        claim.action_submit()
-        self.assertEqual(claim.state, 'supplier_accounts')
-        self.assertEqual((claim.tax_classification, claim.section, claim.payment_nature),
-                         ('through_supplier', 'cosmo', 'cash'))
-        for name, value in [('tax_classification', 'tax_payment'), ('section', 'other'), ('payment_nature', 'non_cash')]:
-            with self.assertRaises(AccessError):
-                claim.write({name: value})
-        self.decide(claim, 'supplier_accounts', 'rejected', supplier_accounts_notes='Correct invoice')
-        with self.assertRaises(AccessError):
-            claim.write({'payment_nature': 'non_cash'})
-        claim.action_submit()
-        self.assertEqual(claim.state, 'supplier_accounts')
+    def test_latest_claim_defaults_include_archived_drafts(self):
+        older = self.claim()
+        older.write({
+            'type_of_invoice': 'original', 'payment_nature': 'non_cash',
+            'tax_classification': 'tax_payment', 'section': 'medical',
+        })
+        latest = self.claim()
+        latest.write({
+            'type_of_invoice': 'copy', 'payment_nature': 'cash',
+            'tax_classification': 'through_supplier', 'section': 'cosmo',
+        })
+        latest.write({'active': False})
 
-    def test_missing_supplier_choices_and_draft_form(self):
-        self.supplier.write({'tax_type': False, 'section': False})
+        values = {
+            'supplier_id': self.supplier.id, 'num_of_invoice': 3,
+            'area': 'south', 'amount_of_check': '250',
+        }
+        claim = self.Claim.with_user(self.users['user']).create(values)
+        self.assertEqual(
+            tuple(claim[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
+            ('copy', 'cash', 'through_supplier', 'cosmo'),
+        )
+
+    def test_explicit_values_override_previous_claim(self):
+        self.claim()
+        values = {
+            **self.values(),
+            'type_of_invoice': 'copy', 'payment_nature': 'cash',
+            'tax_classification': 'non_tax_payment', 'section': 'other',
+        }
+        claim = self.Claim.with_user(self.users['user']).create(values)
+        self.assertEqual(
+            tuple(claim[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
+            ('copy', 'cash', 'non_tax_payment', 'other'),
+        )
+
+    def test_supplier_change_loads_or_clears_previous_values(self):
+        previous_cash = self.claim(True)
+        previous_cash.write({
+            'type_of_invoice': 'copy', 'tax_classification': 'through_supplier', 'section': 'cosmo',
+        })
+        draft = self.claim()
+        draft.write({'supplier_id': self.cash.id})
+        self.assertEqual(
+            tuple(draft[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
+            ('copy', 'cash', 'through_supplier', 'cosmo'),
+        )
+
+        empty_center = self.env['ab_costcenter'].create({'name': 'No Claims', 'code': '1-99'})
+        draft.write({'supplier_id': empty_center.id})
+        self.assertFalse(any(draft[name] for name in (
+            'type_of_invoice', 'payment_nature', 'tax_classification', 'section',
+        )))
+
+    def test_draft_form_uses_latest_claim_values(self):
+        previous = self.claim()
+        previous.write({
+            'type_of_invoice': 'copy', 'payment_nature': 'cash',
+            'tax_classification': 'through_supplier', 'section': 'other',
+        })
         with Form(self.Claim.with_user(self.users['user'])) as form:
             form.supplier_id = self.supplier
-            self.assertFalse(form.tax_classification)
-            self.assertFalse(form.section)
-            form.tax_classification = 'tax_payment'
-            form.section = 'medical'
-            form.payment_nature = 'cash'
+            self.assertEqual(form.type_of_invoice, 'copy')
+            self.assertEqual(form.payment_nature, 'cash')
+            self.assertEqual(form.tax_classification, 'through_supplier')
+            self.assertEqual(form.section, 'other')
             form.num_of_invoice = 2
             form.area = 'north'
             form.amount_of_check = '100'
-            form.type_of_invoice = 'original'
-        self.assertEqual((self.supplier.tax_type, self.supplier.section, self.supplier.payment_nature),
-                         ('tax_payment', 'medical', 'cash'))
-        self.assertEqual(self.claim().section, 'medical')
-        with self.assertRaises(AccessError):
-            self.supplier.with_user(self.users['user']).write({'tax_type': 'non_tax_payment'})
-        with self.assertRaises(AccessError):
-            form.record.with_user(self.users['inventory']).write({'section': 'other'})
-        self.cash.write({'tax_type': 'through_supplier', 'section': 'other'})
-        form.record.write({'supplier_id': self.cash.id})
-        self.assertEqual((form.record.tax_classification, form.record.section), ('through_supplier', 'other'))
-
-    def test_empty_classifications_and_batch_snapshot(self):
-        self.supplier.write({'tax_type': False, 'section': False})
-        before = self.supplier.read(['tax_type', 'section', 'payment_nature', 'write_date'])
-        claims = self.Claim.with_user(self.users['user']).with_context(
-            default_tax_classification='tax_payment', default_section='cosmo', default_payment_nature='cash',
-        ).create([self.values(), self.values()])
-        claims.action_submit()
-        for claim in claims:
-            self.assertFalse(claim.tax_classification)
-            self.assertFalse(claim.section)
-            self.assertEqual(claim.payment_nature, 'non_cash')
-        self.assertEqual(before, self.supplier.read(['tax_type', 'section', 'payment_nature', 'write_date']))
-        self.assertFalse(self.claim().tax_classification)
-        self.assertFalse(self.claim().section)
+        self.assertEqual(form.record.supplier_id, self.supplier)
 
     def test_classification_form_is_editable_only_for_secretarial_drafts(self):
         for role in self.roles:
@@ -749,9 +716,10 @@ class TestSupplierClaimCycle(TransactionCase):
                 self.assertTrue(nodes)
                 expected = "state != 'draft' or not active" if role in ('user', 'admin') else 'True'
                 self.assertTrue(all(node.get('readonly') == expected for node in nodes))
+        previous = self.claim()
         with Form(self.Claim.with_user(self.users['user'])) as form:
             form.supplier_id = self.supplier
-            self.assertEqual(form.tax_classification, self.supplier.tax_type)
+            self.assertEqual(form.tax_classification, previous.tax_classification)
             form.num_of_invoice = 1
             form.area = 'north'
             form.amount_of_check = '100'
@@ -763,7 +731,10 @@ class TestSupplierClaimCycle(TransactionCase):
             'draft', 'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts',
             'returned_secretarial', 'ready_to_close', 'closed',
         })
-        self.assertEqual(self.Claim._fields['supplier_id'].comodel_name, 'ab_supplier')
+        self.assertEqual(self.Claim._fields['supplier_id'].comodel_name, 'ab_costcenter')
+        self.assertNotIn('business_category', self.Claim._fields)
+        self.assertNotIn('bracket_id', self.Claim._fields)
+        self.assertNotIn('bracket_snapshot', self.env['ab_supplier_claim_cycle.history']._fields)
         self.assertEqual(set(dict(self.env['ab_supplier_claim_cycle.history']._fields['event'].selection)), {
             'resubmitted', 'decision', 'closed', 'archived', 'restored', 'secretarial_note',
         })

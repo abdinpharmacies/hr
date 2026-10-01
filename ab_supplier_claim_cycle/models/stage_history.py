@@ -1,7 +1,8 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
-from .ab_supplier_claim_cycle import STATES, DECISIONS, DEPARTMENTS
-from .ab_supplier import TAX_CLASSIFICATION, SUPPLIER_SECTION
+from .ab_supplier_claim_cycle import (
+    STATES, DECISIONS, DEPARTMENTS, TAX_CLASSIFICATION, SUPPLIER_SECTION,
+)
 
 
 class SupplierClaimHistory(models.Model):
@@ -21,7 +22,6 @@ class SupplierClaimHistory(models.Model):
     bank_accounts_decision = fields.Selection(DECISIONS)
     tax_classification = fields.Selection(TAX_CLASSIFICATION)
     section = fields.Selection(SUPPLIER_SECTION)
-    bracket_snapshot = fields.Json()
     reason = fields.Text()
     followup_date = fields.Date()
     review_round = fields.Integer(required=True)

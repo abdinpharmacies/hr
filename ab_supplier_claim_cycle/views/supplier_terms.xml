@@ -45,7 +45,6 @@
       <xpath expr="//field[@name='supplier_id']" position="after">
         <field name="tax_classification" optional="hide"/>
         <field name="section" optional="hide"/>
-        <field name="bracket_id" optional="hide"/>
       </xpath>
     </field>
   </record>
