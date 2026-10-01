@@ -84,7 +84,9 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.scss
 - ab_sales/static/src/pos/pos_action.xml
 
-## Current changes before commit:
+## ff8a1acd7dd3d5cd6e08abaaeb15a9eb097956ba - hager yasser - 2026-10-01
+
+Original commit subject: ab_sales/FEAT(#20447): POS Product Search by Sales Price
 
 User-facing changes:
 - Added compact Minimum Price and Maximum Price controls below POS product search. A minimum alone matches the exact rounded price; both inputs match an inclusive range.
@@ -114,3 +116,21 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.scss
 - ab_sales/static/src/pos/pos_action.xml
 - ab_sales/static/src/pos/zz_product_search_arabic_keymap_patch.js
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Recalculate the delivery checkbox whenever Before Submit opens: require a selected customer and at least one current sales line whose trimmed product code starts with `00`.
+- Preserve leading zeros and treat missing codes or empty bills as nonmatching. Previously saved delivery choices no longer determine the opening default.
+- Keep manual checkbox changes effective for the current submission and retain the selected-customer validation for delivery.
+
+Validation:
+- Executed 108 combinations of customer selection, saved delivery value, and product code across the base dialog and its delivery-tracking subclass.
+- Verified reopening after adding/removing matching items or changing the customer, and manual unchecking for the current submission.
+- JavaScript syntax and combined backend asset compilation passed. No new or modified user-facing strings require translation.
+- No live bill submission was performed; full browser interaction was not exercised.
+
+Files changed:
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/static/src/pos/pos_action.js
