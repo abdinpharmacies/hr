@@ -84,7 +84,9 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.scss
 - ab_sales/static/src/pos/pos_action.xml
 
-## Current changes before commit:
+## ff8a1ac - hager yasser - 2026-10-01
+
+Original commit subject: ab_sales/FEAT(#20447): POS Product Search by Sales Price
 
 User-facing changes:
 - Added compact Minimum Price and Maximum Price controls below POS product search. A minimum alone matches the exact rounded price; both inputs match an inclusive range.
@@ -114,3 +116,15 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.scss
 - ab_sales/static/src/pos/pos_action.xml
 - ab_sales/static/src/pos/zz_product_search_arabic_keymap_patch.js
+
+## Current changes before commit:
+
+User-facing changes:
+- Change POS price input placeholders to From and To, with Arabic من and إلى in both language catalogs.
+- Preserve accessible labels, validation, and exact-price/range search behavior.
+
+Files changed:
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
