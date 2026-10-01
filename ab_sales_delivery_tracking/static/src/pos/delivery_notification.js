@@ -4,6 +4,9 @@ import {Dialog} from "@web/core/dialog/dialog";
 import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
 
+// Bump with the backend requirement when the submission interface changes incompatibly.
+const DELIVERY_UI_VERSION = "1";
+
 export class DeliveryNotificationDialog extends Component {
     static template = "ab_sales_delivery_tracking.NotificationDialog";
     static components = {Dialog};
@@ -14,14 +17,13 @@ export class DeliveryNotificationDialog extends Component {
         this.title = _t("Delivery Notification");
     }
 
-    confirm(notify, isDelivery = true) {
-        notify = isDelivery && notify;
+    confirm(notify) {
         const instructions = this.state.instructions.trim();
         if (notify && !instructions) {
             this.state.error = _t("Delivery instructions are required when notifying the delivery bot.");
             return;
         }
-        this.props.onConfirm({notify, instructions, isDelivery});
+        this.props.onConfirm({notify, instructions});
         this.props.close();
     }
 }
@@ -63,7 +65,6 @@ export class DeliveryBeforeSubmitDialog extends SalesBeforeSubmitDialog {
             }
             await this.props.onSubmit({
                 ...this._payload(),
-                is_delivery: choice.isDelivery,
                 delivery_notify: choice.notify,
                 delivery_instructions: choice.instructions,
             });
@@ -88,7 +89,6 @@ export class DeliveryTrackingPosAction extends SalesPosAction {
             onSubmit: async (payload) => {
                 await this._applySubmitDialog(bill, payload);
                 return this._submitWithDeliveryChoice(bill, {
-                    isDelivery: !!payload.is_delivery,
                     notify: payload.delivery_notify === true,
                     instructions: payload.delivery_instructions ?? bill.header.delivery_instructions ?? "",
                 });
@@ -117,9 +117,10 @@ export class DeliveryTrackingPosAction extends SalesPosAction {
     }
 
     _submitWithDeliveryChoice(bill, choice) {
-        bill.header.is_delivery = choice.isDelivery;
-        bill.header.delivery_notify = choice.isDelivery && choice.notify;
+        bill.header.delivery_notify = !!bill.header.is_delivery && choice.notify;
         bill.header.delivery_instructions = choice.instructions;
+        bill.updated_at = new Date().toISOString();
+        this.persistCache();
         return super._submitBillInternal(bill);
     }
 
@@ -139,6 +140,7 @@ export class DeliveryTrackingPosAction extends SalesPosAction {
     _buildSubmitHeader(bill) {
         return {
             ...super._buildSubmitHeader(bill),
+            delivery_ui_version: DELIVERY_UI_VERSION,
             delivery_notify: !!bill.header.is_delivery && bill.header.delivery_notify === true,
             delivery_instructions: bill.header.delivery_instructions || "",
         };

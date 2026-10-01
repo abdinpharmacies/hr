@@ -41,6 +41,7 @@ class AbDeliveryRequest(models.Model):
     customer_phone = fields.Char(readonly=True, string="Phone")
     customer_address = fields.Char(readonly=True, string="Address")
     delivery_instructions = fields.Text(readonly=True, copy=False, string="Delivery Instructions")
+    bill_description = fields.Text(readonly=True, copy=False, string="Bill Description")
     amount_total = fields.Float(readonly=True, string="Bill Sum")
     telegram_chat_id = fields.Char(readonly=True, string="Telegram Chat ID")
     telegram_message_id = fields.Char(readonly=True, copy=False, string="Telegram Message ID")
@@ -94,6 +95,7 @@ class AbDeliveryRequest(models.Model):
         header._validate_delivery_notification()
         vals = self._delivery_request_vals_from_sale_header(header)
         vals["delivery_instructions"] = (header.delivery_instructions or "").strip()
+        vals["bill_description"] = (header.description or "").strip()
         return self.sudo().create(vals)
 
     @api.model
@@ -266,6 +268,8 @@ class AbDeliveryRequest(models.Model):
             "العنوان: %s" % self._message_value(self.customer_address),
             "الإجمالي: %.2f" % float(self.amount_total or 0.0),
         ]
+        if self.bill_description:
+            lines.append(_("Description: %s") % self.bill_description)
         if self.delivery_instructions:
             lines.append(_("Delivery instructions: %s") % self.delivery_instructions)
         return "\n".join(lines)
