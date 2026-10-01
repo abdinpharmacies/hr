@@ -1,5 +1,14 @@
 # Plan 3 Purchase Accounting Operation Flow
 
+The live-state notes below are historical observations from before the first-copy
+accounting restoration. They are not verification of the current live database.
+The adapter now uses the original journal fields and validates mappings at posting.
+Inventory accounts must be under the inventory XML-ID account, tax accounts under
+the taxes XML-ID account, and supplier accounts must be payable liabilities or
+liabilities under the supplier XML-ID account. All must be active final accounts.
+The posting user must own the supplier and receipt-offset header accounts and be
+authorized for every line account and both document types.
+
 Source supplier workbook: `/home/abdin_04/Documents/Share/abdin_dev__plan/Suppliers_data.xlsx`
 
 ## Current Live State
@@ -92,7 +101,7 @@ Branch:
 
 Posting user:
 
-- Use a dedicated user with `ab_accounting.group_ab_accounting_auto_je`.
+- Use a dedicated user with `ab_accounting.group_ab_accounting_accountant`.
 - Temporary test shortcut: the seeded manual-test setup uses admin/system as the posting user.
 
 Document types:
@@ -111,7 +120,7 @@ Accounts:
 
 Important constraints:
 
-- Do not use an account with `has_partner = True`; suppliers are not linked to `res.partner` yet.
+- The accounting baseline uses no partner field; supplier dimensions use the existing cost center.
 - If any configured account has `has_costcenter = True`, each tested supplier must have `costcenter_id`, or set `default_costcenter_id` on `ab_purchase_accounting_config`.
 - Create exactly one open `ab_accounting_period` for the company, branch, and document date used in tests.
 

@@ -146,11 +146,8 @@ class PurchaseHeader(models.Model):
         accounting_date=None,
     ):
         self.ensure_one()
-        if account.has_partner:
-            raise ValidationError(
-                _('Account %(account)s requires a partner, but purchase suppliers are not linked to partners.')
-                % {'account': account.display_name}
-            )
+        if not self.supplier_id or not self.supplier_id.active:
+            raise ValidationError(_('Supplier must be active before accounting posting.'))
         costcenter = self._purchase_accounting_costcenter(config) if account.has_costcenter else False
         if account.has_costcenter and not costcenter:
             raise ValidationError(
@@ -159,6 +156,7 @@ class PurchaseHeader(models.Model):
             )
         return {
             'account_id': account.id,
+            'store_id': config.branch_id.id,
             'costcenter_id': costcenter.id if costcenter else False,
             'explain': explain or self._purchase_accounting_reference(_('Purchase accounting')),
             'doc_no': doc_no or self.doc_code or str(self.id),
@@ -185,18 +183,18 @@ class PurchaseHeader(models.Model):
         source = source or self
         source_reference = source_reference or self.doc_code or str(self.id)
         accounting_date = accounting_date or self.doc_date or fields.Date.context_today(self)
+        config._check_configuration()
+        if config.branch_id != self.store_id:
+            raise ValidationError(_('Accounting configuration must match the document branch.'))
+        header_line = next((line for line in lines if line['account_id'] == config.supplier_account_id.id), lines[-1])
         request = {
-            'origin_database': self.env.cr.dbname,
-            'operation_identity': '%s:%s:%s' % (source._name, source.id, operation_suffix),
-            'company_id': config.company_id.id,
-            'branch_id': config.branch_id.id,
+            'account_id': header_line['account_id'],
+            'costcenter_id': header_line['costcenter_id'],
+            'store_id': config.branch_id.id,
             'doctype_id': doctype.id,
-            'accounting_date': accounting_date,
-            'source_model': source._name,
-            'source_res_id': source.id,
-            'source_reference': source_reference,
-            'event_type': event_type,
-            'reference': reference,
+            'posted_date': accounting_date,
+            'res_header_ref': source._name,
+            'res_header_id': source.id,
             'lines': lines,
         }
         posting_context = dict(self.env.context, allowed_company_ids=[config.company_id.id])

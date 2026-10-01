@@ -17,57 +17,462 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__purchase_accounting_journal_id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__purchase_accounting_journal_id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__purchase_accounting_journal_id
 msgid "Accounting Journal"
 msgstr "قيد محاسبي"
 
 #. module: ab_purchase_accounting
+#: model:ir.actions.act_window,name:ab_purchase_accounting.action_purchase_accounting_config
+#: model:ir.ui.menu,name:ab_purchase_accounting.menu_purchase_accounting_config
 msgid "Purchase Accounting"
 msgstr "محاسبة المشتريات"
 
 #. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_accounting_config
 msgid "Purchase Accounting Configuration"
 msgstr "إعداد محاسبة المشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
 msgid "Purchase receipt"
 msgstr "استلام مشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
 msgid "Purchase return"
 msgstr "مرتجع مشتريات"
 
 #. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_header_form_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_notice_header_form_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_ob_header_form_accounting
 msgid "Journal"
 msgstr "القيد"
 
 #. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_config_form
 msgid "Non-purchase Receipt Offsets"
 msgstr "حسابات مقابلة لاستلام غير المشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
 msgid "Non-purchase receipt"
 msgstr "استلام غير مشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
 msgid "Non-purchase receipt accounting"
 msgstr "محاسبة استلام غير مشتريات"
 
 #. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__offset_account_id
 msgid "Offset Account"
 msgstr "الحساب المقابل"
 
 #. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_accounting_receipt_account
 msgid "Purchase Accounting Receipt Offset Account"
 msgstr "حساب مقابل لاستلام محاسبة المشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
 msgid "Purchase financial debit notice"
 msgstr "إشعار مدين مالي للمشتريات"
 
 #. module: ab_purchase_accounting
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
 msgid "Purchase financial credit notice"
 msgstr "إشعار دائن مالي للمشتريات"
 
 #. module: ab_purchase_accounting
-msgid "Configure a purchase tax account before posting taxed purchase notices."
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid ""
+"Configure a purchase tax account before posting taxed purchase notices."
 msgstr "قم بتكوين حساب ضريبة المشتريات قبل ترحيل إشعارات شراء خاضعة للضريبة."
+
+#. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_header
+msgid "Abdin Purchase Header"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_notice_header
+msgid "Abdin Purchase Notice Header"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+msgid ""
+"Account %(account)s requires a cost center. Configure a default cost center "
+"on the adapter."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid ""
+"Account %(account)s requires a cost center. Configure one on the supplier or"
+" adapter."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Accounting configuration must match the document branch."
+msgstr "يجب أن يطابق إعداد المحاسبة فرع المستند."
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_config_form
+msgid "Accounts"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__activation_date
+msgid "Activation Date"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__active
+msgid "Active"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__branch_id
+msgid "Branch"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__company_id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__company_id
+msgid "Company"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__config_id
+msgid "Config"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Configure a purchase tax account before posting taxed purchases."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Configure a supplier payable account under the supplier account guide."
+msgstr "اضبط حساباً دائناً للمورد ضمن دليل حسابات الموردين."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Configure a tax posting account under the tax account guide."
+msgstr "اضبط حساب ترحيل للضريبة ضمن دليل حسابات الضرائب."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid ""
+"Configure an inventory posting account under the inventory account guide."
+msgstr "اضبط حساب ترحيل للمخزون ضمن دليل حسابات المخزون."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.constraint,message:ab_purchase_accounting.constraint_ab_purchase_accounting_receipt_account_receipt_type_unique
+msgid ""
+"Configure each non-purchase receipt type only once per purchase accounting "
+"setup."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Cost center must be active."
+msgstr "يجب أن يكون مركز التكلفة نشطاً."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__create_uid
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__create_date
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__posting_user_id
+msgid ""
+"Dedicated accounting integration user used to call the Auto JE posting "
+"contract."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__default_costcenter_id
+msgid "Default Cost Center"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_config_form
+msgid "Dimensions"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__display_name
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__display_name
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__display_name
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__display_name
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_config_form
+msgid "Document Types"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__inventory_account_id
+msgid "Inventory Account"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__write_uid
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__write_date
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "No accounting journal is linked to this purchase invoice."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "No accounting journal is linked to this purchase return."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+msgid "No accounting journal is linked to this receipt document."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid ""
+"No active purchase accounting configuration exists for %(branch)s on "
+"%(date)s."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid ""
+"No offset account is configured for non-purchase receipt type "
+"%(receipt_type)s."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__receipt_account_ids
+msgid "Non-purchase Receipt Offset Accounts"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+msgid "Non-purchase receipt accounting amounts cannot be negative."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+msgid "Non-purchase receipts require a nonzero receipt value for accounting."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__note
+msgid "Note"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__activation_date
+msgid ""
+"Only purchase documents dated on or after this date are posted "
+"automatically."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__posting_user_id
+msgid "Posting User"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__purchase_accounting_journal_count
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__purchase_accounting_journal_count
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__purchase_accounting_journal_count
+msgid "Purchase Accounting Journal Count"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__purchase_doctype_id
+msgid "Purchase Receipt Document Type"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__return_doctype_id
+msgid "Purchase Return Document Type"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__tax_account_id
+msgid "Purchase Tax Account"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Purchase accounting"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Purchase accounting accounts must be active posting accounts."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.constraint,message:ab_purchase_accounting.constraint_ab_purchase_accounting_config_activation_unique
+msgid ""
+"Purchase accounting activation dates must be unique per company and branch."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Purchase accounting amounts cannot be negative."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Purchase accounting document types must be active."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Purchase accounting requires an active purchase branch."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Purchase accounting requires company, branch and accounting date."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__receipt_type_id
+msgid "Receipt Type"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Receipt offset accounts must be active posting accounts."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Select a receipt type before posting non-purchase receipt accounting."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__supplier_account_id
+msgid "Supplier Account"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__supplier_due_days
+msgid "Supplier Due Days"
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Supplier due days cannot be negative."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Supplier must be active before accounting posting."
+msgstr "يجب أن يكون المورد نشطاً قبل الترحيل المحاسبي."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Supplier, inventory and tax accounts must be distinct."
+msgstr "يجب أن تكون حسابات المورد والمخزون والضريبة مختلفة."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "The posting user must be allowed on the configured company."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "The posting user must be authorized for both document types."
+msgstr "يجب أن يكون مستخدم الترحيل مخولاً لاستخدام نوعي المستندات."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "The posting user must have Accountant access."
+msgstr "يجب أن تتوفر لمستخدم الترحيل صلاحية المحاسب."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__default_costcenter_id
+msgid ""
+"Used only when a configured account requires a cost center and the supplier "
+"has none."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__supplier_due_days
+msgid "Used when a configured account requires due dates."
+msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_ob_header
+msgid "opening_balance_header"
+msgstr ""

@@ -30,19 +30,19 @@
                         <field name="posting_user_id"/>
                     </group>
                     <group string="Document Types">
-                        <field name="purchase_doctype_id" domain="[('company_id', '=', company_id), ('active', '=', True)]"/>
-                        <field name="return_doctype_id" domain="[('company_id', '=', company_id), ('active', '=', True)]"/>
+                        <field name="purchase_doctype_id" domain="[]"/>
+                        <field name="return_doctype_id" domain="[]"/>
                     </group>
                     <group string="Accounts">
-                        <field name="inventory_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
-                        <field name="tax_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
-                        <field name="supplier_account_id" domain="[('company_id', '=', company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="inventory_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="tax_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="supplier_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
                     </group>
                     <separator string="Non-purchase Receipt Offsets"/>
                     <field name="receipt_account_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_purchase_accounting_receipt_table">
                         <list editable="bottom">
                             <field name="receipt_type_id"/>
-                            <field name="offset_account_id" domain="[('company_id', '=', parent.company_id), ('is_final', '=', True), ('active', '=', True)]"/>
+                            <field name="offset_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
                         </list>
                     </field>
                     <group string="Dimensions">
@@ -65,7 +65,7 @@
 
     <menuitem id="menu_purchase_accounting_config"
               name="Purchase Accounting"
-              parent="ab_accounting.menu_configuration"
+              parent="ab_accounting.accounting_menu"
               action="action_purchase_accounting_config"
               sequence="8"
               groups="ab_accounting.group_ab_accounting_manager"/>

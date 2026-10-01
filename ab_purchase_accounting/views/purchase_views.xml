@@ -8,13 +8,13 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <field name="purchase_accounting_journal_id"
                        invisible="1"
-                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager"/>
                 <button name="action_view_purchase_accounting_journal"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-book"
                         invisible="not purchase_accounting_journal_id"
-                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager">
                     <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
                 </button>
             </xpath>
@@ -29,13 +29,13 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <field name="purchase_accounting_journal_id"
                        invisible="1"
-                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager"/>
                 <button name="action_view_purchase_accounting_journal"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-book"
                         invisible="not purchase_accounting_journal_id"
-                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager">
                     <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
                 </button>
             </xpath>
@@ -50,13 +50,13 @@
             <xpath expr="//div[@name='button_box']" position="inside">
                 <field name="purchase_accounting_journal_id"
                        invisible="1"
-                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager"/>
+                       groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager"/>
                 <button name="action_view_purchase_accounting_journal"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-book"
                         invisible="not purchase_accounting_journal_id"
-                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_auto_je,ab_accounting.group_ab_accounting_manager">
+                        groups="ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_reviewer,ab_accounting.group_ab_accounting_report,ab_accounting.group_ab_accounting_accountant,ab_accounting.group_ab_accounting_manager">
                     <field name="purchase_accounting_journal_count" widget="statinfo" string="Journal"/>
                 </button>
             </xpath>
