@@ -1062,11 +1062,11 @@
             <div class="ab_pos_product_price_filters">
                 <span class="small text-muted">Price:</span>
                 <input type="text" inputmode="decimal" maxlength="24"
-                       class="form-control form-control-sm" placeholder="Minimum Price" aria-label="Minimum Price"
+                       class="form-control form-control-sm" placeholder="From" aria-label="Minimum Price"
                        t-att-value="state.productMinPrice" t-on-input="onProductMinPriceInput"
                        t-on-keydown="onProductSearchKeydown"/>
                 <input type="text" inputmode="decimal" maxlength="24"
-                       class="form-control form-control-sm" placeholder="Maximum Price" aria-label="Maximum Price"
+                       class="form-control form-control-sm" placeholder="To" aria-label="Maximum Price"
                        t-att-value="state.productMaxPrice" t-att-disabled="!isProductMinPriceValid()"
                        t-on-input="onProductMaxPriceInput" t-on-keydown="onProductSearchKeydown"/>
             </div>

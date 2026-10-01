@@ -137,3 +137,15 @@ msgstr "يجب أن يكون الحد الأقصى للسعر أكبر من أو
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Failed to search products."
 msgstr "تعذر البحث عن المنتجات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "From"
+msgstr "من"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "To"
+msgstr "إلى"
