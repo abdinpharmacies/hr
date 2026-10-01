@@ -74,7 +74,9 @@ Files changed:
 - ab_sales_delivery_tracking/views/pos_action.xml
 
 
-## Current changes before commit:
+## 25bbfaca233e28afdb4ed8f930c43e196f25a1e9 - emadco88 - 2026-10-01
+
+Original commit subject: ab_sales_delivery_tracking/ UPD force user to reload the POS UI
 
 User-facing changes:
 - Remove Push Without Delivery and its conversion-only dialog logic. The remaining Notify and Without Notification choices preserve the bill delivery flag; Cancel keeps Before Submit open. Existing translation entries are preserved.
@@ -108,3 +110,25 @@ Files changed:
 - ab_sales_delivery_tracking/static/src/pos/delivery_notification.js
 - ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml
 - ab_sales_delivery_tracking/views/pos_action.xml
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Repair the saved POS client-action tag during webclient startup so reloading an existing tab opens the delivery-aware interface and supplies its required version marker.
+- Change only a saved client action tagged `ab_sales.pos`; preserve its ID, context, parameters, other actions, and draft storage. Missing, malformed, or unavailable browser storage does not interrupt service startup.
+- Preserve the original POS registry entry and inherited promotion, contract, and sales-lead extensions. Keep the backend version guard enabled.
+
+Validation:
+- Reproduced the old-action restore loop using Odoo's actual action-restoration function, then verified the startup service selects the updated tag.
+- Checked repeat startup, unrelated/non-client actions, malformed JSON, missing storage, storage errors, and preservation of draft/context/state data.
+- Loaded the actual promotion, contract, and sales-lead patches with the base and delivery POS classes; verified inherited promo behavior/component registration, lead dialog opening, and contract fields plus version marker on both bill types.
+- Targeted upgrade and backend JavaScript asset compilation passed in isolated database `codex_delivery_followup_20261001`; JavaScript syntax and whitespace checks passed.
+- No user-facing strings were added or changed. No live sales push or Telegram send was used for testing.
+- Deployed the three changed files to `proxmox-2`, targeted-upgraded `ab_sales_delivery_tracking` in `abdin_replica19`, and restarted the Odoo web and queue-runner services; both are active. Verified the compiled `web.assets_web` includes the repair service and the database POS action selects the delivery interface. Original manifest/changelog backups are in `/tmp/ab_delivery_restore_backup_20261001` on that server.
+- Changes remain uncommitted in both workspaces. The affected browser is not connected for direct UI verification.
+
+Files changed:
+- ab_sales_delivery_tracking/__manifest__.py
+- ab_sales_delivery_tracking/changelog.d/2026-09-01-initial-delivery-requests.md
+- ab_sales_delivery_tracking/static/src/pos/restore_delivery_action_service.js

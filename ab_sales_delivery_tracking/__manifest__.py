@@ -20,6 +20,7 @@
     'assets': {
         'web.assets_backend': [
             'ab_sales_delivery_tracking/static/src/pos/delivery_notification.js',
+            'ab_sales_delivery_tracking/static/src/pos/restore_delivery_action_service.js',
             'ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml',
         ],
     },
