@@ -11,25 +11,18 @@
                 <xpath expr="//page[@name='current_customer']//group//field[@name='customer_id']" position="after">
                     <field name="contract_id"
                            readonly="status != 'prepending'"/>
-                    <field name="contract_allow_total_invoice_discount" invisible="1"/>
-                    <field name="contract_total_invoice_discount_source"
-                           readonly="1"
-                           invisible="not contract_allow_total_invoice_discount"/>
-                    <field name="total_invoice_discount"
-                           readonly="status != 'prepending'"
-                           invisible="not contract_allow_total_invoice_discount"/>
                     <field name="discount" readonly="1" invisible="contract_id == False"/>
                     <field name="total_after_discount" readonly="1" invisible="contract_id == False"/>
-                    <field name="cust_pay" readonly="1" invisible="contract_id == False"/>
-                    <field name="company_pay" readonly="1" invisible="contract_id == False"/>
                 </xpath>
 
                 <xpath expr="//field[@name='line_ids']//list//field[@name='sell_price']" position="after">
                     <field name="discount" optional="show" column_invisible="parent.contract_id == False"/>
-                    <field name="ab_contract_discount_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_contract_discount_amount" optional="hide"
+                           column_invisible="parent.contract_id == False"/>
                     <field name="ab_customer_amount" optional="hide" column_invisible="parent.contract_id == False"/>
                     <field name="ab_company_amount" optional="hide" column_invisible="parent.contract_id == False"/>
-                    <field name="ab_contract_net_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_contract_net_amount" optional="hide"
+                           column_invisible="parent.contract_id == False"/>
                 </xpath>
             </field>
         </record>
@@ -45,9 +38,7 @@
                     <field name="paid_percentage"/>
                     <field name="paid_amount"/>
                     <field name="discount_percentage_rule"/>
-                    <field name="allow_total_invoice_discount"/>
                     <field name="allowed_store_ids" widget="many2many_tags"/>
-                    <field name="total_invoice_discount_source"/>
                     <field name="max_bill_value"/>
                     <field name="eplus_cust_id"/>
                     <field name="eplus_cust_code"/>
@@ -72,9 +63,6 @@
                                 <field name="paid_percentage"/>
                                 <field name="paid_amount"/>
                                 <field name="discount_percentage_rule"/>
-                                <field name="allow_total_invoice_discount"/>
-                                <field name="total_invoice_discount_source"
-                                       invisible="not allow_total_invoice_discount"/>
                                 <field name="max_bill_value"/>
                                 <field name="allowed_store_ids" widget="many2many_tags"/>
                             </group>
