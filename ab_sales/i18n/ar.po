@@ -95,3 +95,45 @@ msgstr "نوع الفاتورة:"
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "Remove All"
 msgstr "حذف الكل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Price:"
+msgstr "السعر:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Minimum Price"
+msgstr "الحد الأدنى للسعر"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Maximum Price"
+msgstr "الحد الأقصى للسعر"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Enter a finite, non-negative price using digits and a decimal point."
+msgstr "أدخل سعرًا محدودًا وغير سالب باستخدام الأرقام والنقطة العشرية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Minimum Price is required before Maximum Price."
+msgstr "يجب إدخال الحد الأدنى للسعر قبل الحد الأقصى للسعر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Maximum Price must be greater than or equal to Minimum Price."
+msgstr "يجب أن يكون الحد الأقصى للسعر أكبر من أو يساوي الحد الأدنى للسعر."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Failed to search products."
+msgstr "تعذر البحث عن المنتجات."

@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
 import {Component, onMounted, onWillStart, onWillUnmount, useExternalListener, useRef, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
@@ -963,6 +964,8 @@ class AbSalesPosAction extends Component {
             storeResults: [],
             productResults: [],
             productQuery: "",
+            productMinPrice: "",
+            productMaxPrice: "",
             productHasBalanceOnly: !!initialPosUiSettings.productHasBalanceOnly,
             productHasPosBalanceOnly: !!initialPosUiSettings.productHasPosBalanceOnly,
             productItemType: "all",
@@ -1002,6 +1005,7 @@ class AbSalesPosAction extends Component {
         this.customerM2ORef = useRef("customerM2O");
 
         this._productSearchTimer = null;
+        this._productSearchRequestId = 0;
         this._customerSearchTimer = null;
         this._promoTimer = null;
         this._promoRequestId = 0;
@@ -2075,6 +2079,9 @@ class AbSalesPosAction extends Component {
         this.state.storeQuery = "";
         this.state.storeResults = [];
         this.state.productQuery = "";
+        this.state.productMinPrice = "";
+        this.state.productMaxPrice = "";
+        this._productSearchRequestId += 1;
         this.state.productResults = [];
         this.state.selectionIndex = -1;
         this.state.qtyBuffer = "";
@@ -2572,14 +2579,40 @@ class AbSalesPosAction extends Component {
         this.searchProducts(this.state.productQuery.trim());
     }
 
+    isProductMinPriceValid() {
+        const value = this.state.productMinPrice.trim();
+        return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(value) && Number.isFinite(Number(value));
+    }
+
+    onProductMinPriceInput(ev) {
+        this.state.productMinPrice = ev.target.value || "";
+        if (!this.isProductMinPriceValid()) {
+            this.state.productMaxPrice = "";
+        }
+        this.queueProductSearch();
+    }
+
+    onProductMaxPriceInput(ev) {
+        this.state.productMaxPrice = this.isProductMinPriceValid() ? ev.target.value || "" : "";
+        this.queueProductSearch();
+    }
+
     onProductSearch(ev) {
         this.state.productQuery = ev.target.value || "";
-        if (this._productSearchTimer) {
-            clearTimeout(this._productSearchTimer);
-        }
-        const query = this.state.productQuery.trim();
-        this._productSearchTimer = setTimeout(async () => {
-            await this.searchProducts(query);
+        this.queueProductSearch();
+    }
+
+    queueProductSearch() {
+        clearTimeout(this._productSearchTimer);
+        this._productSearchRequestId += 1;
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        this.state.productResults = [];
+        this.state.loadingProducts = true;
+        this._productSearchTimer = setTimeout(() => {
+            this._productSearchTimer = null;
+            this.searchProducts(this.state.productQuery.trim());
         }, 200);
     }
 
@@ -2611,10 +2644,12 @@ class AbSalesPosAction extends Component {
     }
 
     async searchProducts(query) {
+        const requestId = ++this._productSearchRequestId;
         const bill = this.currentBill;
         if (!bill) {
             this.state.productResults = [];
             this.state.selectionIndex = -1;
+            this.state.loadingProducts = false;
             return;
         }
         const storeId = bill?.header?.store_id || null;
@@ -2635,9 +2670,15 @@ class AbSalesPosAction extends Component {
                     store_id: storeId,
                     customer_phone: customerPhone,
                     item_type: this.state.productItemType || "all",
+                    min_price: this.state.productMinPrice,
+                    max_price: this.state.productMaxPrice,
                     context: ctx,
                 }
             );
+
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
 
             // Fetch promotion information for these products
             if (productResults && productResults.length > 0) {
@@ -2679,15 +2720,23 @@ class AbSalesPosAction extends Component {
                 }
             }
 
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
             this.state.productResults = productResults;
             this.state.selectionIndex = -1;
             this.state.qtyBuffer = "";
             this.state.qtyBufferProductId = null;
             this.schedulePosBalanceRefresh(this.state.productResults, storeId);
         } catch (err) {
-            this.notification.add(err?.message || "Failed to search products.", {type: "danger"});
+            if (requestId === this._productSearchRequestId) {
+                this.state.productResults = [];
+                this.notification.add(err?.data?.message || err?.message || _t("Failed to search products."), {type: "danger"});
+            }
         } finally {
-            this.state.loadingProducts = false;
+            if (requestId === this._productSearchRequestId) {
+                this.state.loadingProducts = false;
+            }
         }
     }
 
