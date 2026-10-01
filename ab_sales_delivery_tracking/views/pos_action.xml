@@ -10,6 +10,7 @@
         <field name="arch" type="xml">
             <field name="customer_address" position="after">
                 <field name="delivery_instructions" string="Delivery Instructions"/>
+                <field name="bill_description"/>
             </field>
         </field>
     </record>

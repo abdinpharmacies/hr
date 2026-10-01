@@ -34,7 +34,9 @@ User-facing changes:
 Files changed:
 - ab_sales_delivery_tracking/data/ir_cron.xml
 
-## Current changes before commit:
+## 2adebc46dd66efb9188aed91337c8bda52f9cb9f - hager yasser - 2026-10-01
+
+Original commit subject: ab_sales_delivery_tracking/FEAT(#20487): Optional delivery bot notification
 
 User-facing changes:
 - Added a delivery-only POS dialog with multiline instructions, Push & Notify, Push Without Notification, Push Without Delivery, and Cancel; closing the dialog never submits.
@@ -66,6 +68,42 @@ Files changed:
 - ab_sales_delivery_tracking/models/__init__.py
 - ab_sales_delivery_tracking/models/ab_delivery_request.py
 - ab_sales_delivery_tracking/models/ab_sales_header.py
+- ab_sales_delivery_tracking/models/ab_sales_pos_api.py
+- ab_sales_delivery_tracking/static/src/pos/delivery_notification.js
+- ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml
+- ab_sales_delivery_tracking/views/pos_action.xml
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Remove Push Without Delivery and its conversion-only dialog logic. The remaining Notify and Without Notification choices preserve the bill delivery flag; Cancel keeps Before Submit open. Existing translation entries are preserved.
+- Save delivery notification choices and instructions to the draft cache before submitting, including manual non-delivery submissions; update the draft timestamp so cache restoration keeps the latest choice.
+- Snapshot the bill description on new delivery requests, display it on the request form, and include nonblank descriptions in bot messages without changing them during refreshes, retries, or resends. Existing requests without a snapshot remain unchanged.
+- Require interface version `1` for every POS submission, including non-delivery bills. Reject missing or outdated versions before the parent submission logic with a translated save-and-reload message, and remove the marker before ORM field processing.
+- Stamp the version from the loaded module-owned JavaScript on every submission rather than trusting cached bill data.
+- Append Arabic translations in both catalogs using references exported from Odoo 19.
+
+Validation:
+- Installed and targeted-upgraded this module in the isolated database `codex_delivery_followup_20261001`, with HTTP and cron workers disabled.
+- Backend checks passed for missing/outdated versions on both bill types, accepted payload/keyword submissions, marker removal, consent normalization, and required instructions. Rejected calls never reached the mocked parent submit method.
+- Real Odoo request checks passed for description/instructions snapshots, refresh preservation, mocked Telegram send/resend, empty description omission, and phone omission. Test business records were rolled back.
+- Frontend checks passed for the two retained notification choices preserving delivery state, cache-before-submit ordering, required instructions, and Cancel preserving Before Submit. The inherited dialog uses the new base delivery default; all 108 customer/code/saved-choice combinations passed across both dialogs.
+- Confirmed the XML contains exactly Push & Notify, Push Without Notification, and Cancel, with existing translations in both Arabic catalogs.
+- Exported the module POT, checked both PO formats, and verified Arabic error/message/field translations plus differing English/Arabic form views at runtime.
+- Backend JavaScript asset compilation passed. Full browser interaction was not exercised.
+- Test harnesses remain outside the addon in `/tmp/test_delivery_followup.py`, `/tmp/test_delivery_followup.mjs`, and `/tmp/test_delivery_followup_i18n.py`.
+- No live E-Plus pushes or Telegram sends were performed. The running POS database was not upgraded.
+
+Deployment:
+- Deploy the Python and JavaScript changes together, target-upgrade `ab_sales_delivery_tracking`, and restart all Odoo workers consistently. Existing tabs must reload before their next successful submission.
+- Any integration calling `ab_sales_pos_api.pos_submit` must provide `header.delivery_ui_version = "1"`. Increment the frontend/backend constants together for future incompatible interface updates.
+
+Files changed:
+- ab_sales_delivery_tracking/changelog.d/2026-09-01-initial-delivery-requests.md
+- ab_sales_delivery_tracking/i18n/ar.po
+- ab_sales_delivery_tracking/i18n/ar_001.po
+- ab_sales_delivery_tracking/models/ab_delivery_request.py
 - ab_sales_delivery_tracking/models/ab_sales_pos_api.py
 - ab_sales_delivery_tracking/static/src/pos/delivery_notification.js
 - ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml

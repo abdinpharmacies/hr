@@ -256,3 +256,23 @@ msgstr "إلغاء"
 #: code:addons/ab_sales_delivery_tracking/static/src/pos/delivery_notification.xml:0
 msgid "Push Without Delivery"
 msgstr "إرسال الفاتورة بدون توصيل"
+
+#. module: ab_sales_delivery_tracking
+#: model:ir.model.fields,field_description:ab_sales_delivery_tracking.field_ab_delivery_request__bill_description
+msgid "Bill Description"
+msgstr "وصف الفاتورة"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-python
+#: code:addons/ab_sales_delivery_tracking/models/ab_delivery_request.py:0
+msgid "Description: %s"
+msgstr "الوصف: %s"
+
+#. module: ab_sales_delivery_tracking
+#. odoo-python
+#: code:addons/ab_sales_delivery_tracking/models/ab_sales_pos_api.py:0
+msgid ""
+"Your POS interface is outdated. Save your draft and reload the page before "
+"submitting."
+msgstr ""
+"واجهة نقطة البيع قديمة. احفظ مسودتك وأعد تحميل الصفحة قبل إرسال الفاتورة."
