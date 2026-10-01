@@ -99,20 +99,19 @@ class ResUsers(models.Model):
         )
 
     def _get_self_inventory_area_branch_ids(self):
-        """Resolve only explicit HR mappings; never guess from names or codes."""
+        """Return branches reporting directly to the user's managed departments."""
         self.ensure_one()
         employees = self.sudo().ab_employee_ids.filtered('active')
         if not employees:
             return []
         Department = self.env['ab_hr_department'].sudo().with_context(active_test=True)
-        areas = Department.search(
+        managed_departments = Department.search(
             fields.Domain('manager_id', 'in', employees.ids)
-            & fields.Domain('workplace_region', '!=', False)
-        ).mapped('workplace_region')
-        if not areas:
+        )
+        if not managed_departments:
             return []
         return Department.search(
-            fields.Domain('workplace_region', 'in', areas.ids)
+            fields.Domain('parent_id', 'in', managed_departments.ids)
             & fields.Domain('store_id.store_type', '=', 'branch')
             & fields.Domain('store_id.active', '=', True)
         ).mapped('store_id').ids
