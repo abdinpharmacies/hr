@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="ab_sales.ab_sales_pos_action" model="ir.actions.client">
+        <field name="tag">ab_sales_delivery_tracking.pos</field>
+    </record>
+    <record id="delivery_request_instructions_view" model="ir.ui.view">
+        <field name="name">ab.delivery.request.instructions</field>
+        <field name="model">ab_delivery_request</field>
+        <field name="inherit_id" ref="ab_delivery_request_view_form"/>
+        <field name="arch" type="xml">
+            <field name="customer_address" position="after">
+                <field name="delivery_instructions" string="Delivery Instructions"/>
+            </field>
+        </field>
+    </record>
+</odoo>

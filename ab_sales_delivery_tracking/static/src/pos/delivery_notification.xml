@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_delivery_tracking.NotificationDialog">
+        <Dialog title="title" size="'md'">
+            <label for="ab_delivery_instructions" class="form-label">Delivery instructions</label>
+            <textarea id="ab_delivery_instructions" class="form-control" rows="4"
+                      t-model="state.instructions"/>
+            <div t-if="state.error" class="alert alert-danger mt-2" role="alert" t-esc="state.error"/>
+            <t t-set-slot="footer">
+                <button type="button" class="btn btn-primary" t-on-click="() => this.confirm(true)">Push &amp; Notify</button>
+                <button type="button" class="btn btn-secondary" t-on-click="() => this.confirm(false)">Push Without Notification</button>
+                <button type="button" class="btn btn-secondary" t-on-click="() => this.confirm(false, false)">Push Without Delivery</button>
+                <button type="button" class="btn btn-secondary" t-on-click="props.close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>
