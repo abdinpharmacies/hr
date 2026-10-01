@@ -310,7 +310,12 @@ if (PosAction) {
         },
 
         async searchProducts(query) {
-            await super.searchProducts(...arguments);
+            const pendingSearch = super.searchProducts(...arguments);
+            const searchRequestId = this._productSearchRequestId;
+            await pendingSearch;
+            if (searchRequestId !== this._productSearchRequestId) {
+                return;
+            }
             await this._mergeDoctorPrescriptionProducts(String(query || "").trim());
         },
 
@@ -321,6 +326,7 @@ if (PosAction) {
                 return;
             }
             const requestId = ++this._abSalesDoctorProductRequestId;
+            const searchRequestId = this._productSearchRequestId;
             const storeId = bill.header.store_id || null;
             try {
                 const doctorRows = await this.orm.call(
@@ -333,9 +339,13 @@ if (PosAction) {
                         limit: 24,
                         store_id: storeId,
                         item_type: this.state.productItemType || "all",
+                        min_price: this.state.productMinPrice,
+                        max_price: this.state.productMaxPrice,
+                        has_balance: this.state.productHasBalanceOnly,
+                        has_pos_balance: this.state.productHasPosBalanceOnly,
                     }
                 );
-                if (requestId !== this._abSalesDoctorProductRequestId) {
+                if (requestId !== this._abSalesDoctorProductRequestId || searchRequestId !== this._productSearchRequestId) {
                     return;
                 }
                 const currentBill = this.currentBill;
