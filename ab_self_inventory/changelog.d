@@ -1,6 +1,21 @@
 # ab_self_inventory changelog
 
-## Unreleased — Area Manager – Read Only
+## Unreleased — Branches reporting to managed departments
+
+- Area Manager – Read Only now resolves branches only through the user's active
+  employees, the active departments they manage, and those departments' active
+  direct child departments (`manager_id` → child `parent_id` → `store_id`).
+  Stores must be active and have type `branch`. The parent department's own
+  office store is not included.
+- `workplace_region` no longer grants access. Shared, different, or missing
+  regions do not change branch permissions.
+- All 13 Self Inventory access tests passed in an isolated database, including
+  same-region manager isolation, direct read denial, inactive mappings, and
+  existing read-only/report protections.
+- Restart Odoo workers to load the Python change and discard cached rule domains.
+  HR records and production inventory data are unchanged.
+
+## Previous implementation — Area Manager – Read Only
 
 - Grant read access to processes and product lines in all states for branches
   sharing an area with departments managed by the user's linked employees.

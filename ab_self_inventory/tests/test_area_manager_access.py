@@ -16,24 +16,36 @@ class TestAreaManagerAccess(TransactionCase):
         super().setUpClass()
         cls.area_group = cls.env.ref('ab_self_inventory.group_ab_self_inventory_area_manager_readonly')
         cls.reader = cls.env['res.users'].create({
-            'name': 'Area reader', 'login': 'test_self_inventory_area_reader',
+            'name': 'محمد عبدالحكيم', 'login': 'test_self_inventory_area_reader',
             'group_ids': [Command.set([cls.env.ref('base.group_user').id, cls.area_group.id])],
         })
-        cls.employee = cls.env['ab_hr_employee'].create({'name': 'Area employee', 'user_id': cls.reader.id})
+        cls.employee = cls.env['ab_hr_employee'].create({'name': 'محمد عبدالحكيم', 'user_id': cls.reader.id})
         cls.areas = cls.env['ab_hr_region'].create([{'name': 'Area A'}, {'name': 'Area B'}])
         cls.branches = cls.env['ab_store'].create([
             {'name': 'Branch A', 'code': 'TEST-AREA-A', 'store_type': 'branch'},
             {'name': 'Branch B', 'code': 'TEST-AREA-B', 'store_type': 'branch'},
             {'name': 'Warehouse A', 'code': 'TEST-AREA-W', 'store_type': 'main'},
+            {'name': 'Shared administration office', 'code': 'TEST-AREA-O', 'store_type': 'branch'},
         ])
+        cls.other_reader = cls.env['res.users'].create({
+            'name': 'محمد مجدي فتحي محمود', 'login': 'test_self_inventory_other_reader',
+            'group_ids': [Command.set([cls.env.ref('base.group_user').id, cls.area_group.id])],
+        })
+        cls.other_employee = cls.env['ab_hr_employee'].create({
+            'name': 'محمد مجدي فتحي محمود', 'user_id': cls.other_reader.id,
+        })
         cls.managed = cls.env['ab_hr_department'].create({
-            'name': 'Managed area', 'manager_id': cls.employee.id,
-            'workplace_region': cls.areas[0].id,
+            'name': 'Hakim area department', 'manager_id': cls.employee.id,
+            'store_id': cls.branches[3].id,
+        })
+        cls.other_managed = cls.env['ab_hr_department'].create({
+            'name': 'Magdy area department', 'manager_id': cls.other_employee.id,
+            'store_id': cls.branches[3].id,
         })
         cls.departments = cls.env['ab_hr_department'].create([
-            {'name': 'Department A', 'workplace_region': cls.areas[0].id, 'store_id': cls.branches[0].id},
-            {'name': 'Department B', 'workplace_region': cls.areas[1].id, 'store_id': cls.branches[1].id},
-            {'name': 'Warehouse', 'workplace_region': cls.areas[0].id, 'store_id': cls.branches[2].id},
+            {'name': 'Department A', 'parent_id': cls.managed.id, 'workplace_region': cls.areas[0].id, 'store_id': cls.branches[0].id},
+            {'name': 'Department B', 'parent_id': cls.other_managed.id, 'workplace_region': cls.areas[0].id, 'store_id': cls.branches[1].id},
+            {'name': 'Warehouse', 'parent_id': cls.managed.id, 'workplace_region': cls.areas[0].id, 'store_id': cls.branches[2].id},
         ])
         cls.product = cls.env['ab_product'].create({'code': 'TEST-AREA-P', 'product_card_id': cls.env['ab_product_card'].create({'name': 'Area product'}).id})
         cls.processes = cls.env['ab_self_inventory_process'].create([
@@ -56,32 +68,62 @@ class TestAreaManagerAccess(TransactionCase):
             with self.assertRaises(AccessError):
                 record.with_user(self.reader).read()
 
-    def test_multiple_areas_after_cache_refresh(self):
+    def test_same_region_does_not_share_branches(self):
+        for user, branch in ((self.reader, self.branches[0]), (self.other_reader, self.branches[1])):
+            expected = self.processes.filtered(lambda p: p.branch_id == branch)
+            visible = self.env['ab_self_inventory_process'].with_user(user).search(fields.Domain('id', 'in', self.processes.ids))
+            self.assertEqual(set(visible.ids), set(expected.ids))
+            lines = self.env['ab_self_inventory_process_line'].with_user(user).search(fields.Domain('process_id', 'in', self.processes.ids))
+            self.assertEqual(set(lines.ids), set(expected.line_ids.ids))
+            expected.with_user(user).read(['name', 'branch_id', 'state'])
+            for denied in (self.processes - expected):
+                for record in (denied, denied.line_ids):
+                    with self.assertRaises(AccessError):
+                        record.with_user(user).read(['id'])
+        self.departments[0].workplace_region = False
+        self.env.registry.clear_cache()
         self.test_branch_isolation_all_states_and_direct_read()
+        self.departments[0].workplace_region = self.areas[1]
+        self.env.registry.clear_cache()
+        self.test_branch_isolation_all_states_and_direct_read()
+
+    def test_multiple_employees_managed_departments_after_cache_refresh(self):
         second = self.env['ab_hr_employee'].create({'name': 'Second linked employee', 'user_id': self.reader.id})
-        other = self.env['ab_hr_department'].create({'name': 'Other managed area', 'manager_id': second.id, 'workplace_region': self.areas[1].id})
-        # HR changes require an explicit cache refresh (or server restart).
+        other = self.env['ab_hr_department'].create({
+            'name': 'Other managed department', 'manager_id': second.id,
+        })
+        self.env['ab_hr_department'].create({
+            'name': 'Second managed branch', 'parent_id': other.id,
+            'store_id': self.branches[1].id,
+        })
+        # HR changes still require an explicit cache refresh (or server restart).
         self.env.registry.clear_cache()
         self.assertEqual(set(self.reader._get_self_inventory_area_branch_ids()), set(self.branches[:2].ids))
         self.denied.filtered(lambda p: p.branch_id == self.branches[1]).with_user(self.reader).check_access('read')
         other.manager_id = False
         self.env.registry.clear_cache()
         self.test_branch_isolation_all_states_and_direct_read()
-        self.departments[0].workplace_region = self.areas[1]
-        self.env.registry.clear_cache()
-        self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search(fields.Domain('id', 'in', self.processes.ids)))
 
-    def test_missing_mapping_denies_all(self):
-        for field, value in [('workplace_region', False), ('manager_id', False)]:
-            with self.env.cr.savepoint():
-                previous = self.managed[field]
-                self.managed[field] = value
+    def test_missing_or_inactive_mapping_denies_all(self):
+        for record, field, value in (
+            (self.departments[0], 'store_id', False),
+            (self.departments[0], 'parent_id', False),
+            (self.departments[0], 'active', False),
+            (self.managed, 'manager_id', False),
+            (self.managed, 'active', False),
+            (self.branches[0], 'active', False),
+            (self.employee, 'active', False),
+            (self.employee, 'user_id', False),
+        ):
+            with self.subTest(field=field, model=record._name):
+                previous = record[field]
+                record[field] = value
                 self.env.registry.clear_cache()
+                self.assertEqual(self.reader._get_self_inventory_area_branch_ids(), [])
                 self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search([]))
-                self.managed[field] = previous
-        self.employee.user_id = False
-        self.env.registry.clear_cache()
-        self.assertFalse(self.env['ab_self_inventory_process'].with_user(self.reader).search([]))
+                self.assertFalse(self.env['ab_self_inventory_process_line'].with_user(self.reader).search([]))
+                record[field] = previous
+                self.env.registry.clear_cache()
 
     def test_read_only_acl_and_mutation_rpc(self):
         for model in ('ab_self_inventory_process', 'ab_self_inventory_process_line'):
