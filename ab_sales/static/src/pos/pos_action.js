@@ -185,7 +185,9 @@ class AbSalesPosSubmitDialog extends Component {
             customer_insurance_name: header.customer_insurance_name || "",
             customer_insurance_number: header.customer_insurance_number || "",
             description: header.description || "",
-            is_delivery: header.is_delivery !== undefined ? !!header.is_delivery : !!header.customer_id,
+            is_delivery: !!header.customer_id && (this.props.bill?.lines || []).some(
+                (line) => String(line.product_code || "").trim().startsWith("00")
+            ),
             eplus_employee: Number.isFinite(employeeId) && employeeId > 0
                 ? {id: employeeId, display_name: employeeName || ""}
                 : false,
