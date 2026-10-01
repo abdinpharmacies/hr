@@ -118,7 +118,9 @@ Files changed:
 - ab_sales/static/src/pos/zz_product_search_arabic_keymap_patch.js
 
 
-## Current changes before commit:
+## 162e2b984911584da7f2041f535da8f83934e18f - emadco88 - 2026-10-01
+
+Original commit subject: ab_sales/ UPD is_delivery if bill has item starts with 00 like 003 0015 0017
 
 User-facing changes:
 - Recalculate the delivery checkbox whenever Before Submit opens: require a selected customer and at least one current sales line whose trimmed product code starts with `00`.
@@ -134,3 +136,30 @@ Validation:
 Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 - ab_sales/static/src/pos/pos_action.js
+
+## d464c5f2436daea9cf993c9b5e5e14ea425730d9 - hager yasser - 2026-10-01
+
+Original commit subject: ab_sales/FIX: Update price placeholders in ab_sales
+
+User-facing changes:
+- Change POS price input placeholders to From and To, with Arabic من and إلى in both language catalogs.
+- Preserve accessible labels, validation, and exact-price/range search behavior.
+
+Files changed:
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Integrate the incoming From/To price placeholders and Arabic translations while retaining the customer-and-product-code delivery default.
+- Resolve duplicate changelog headings and preserve both committed changes with their original authors, dates, and subjects.
+
+Files changed:
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/static/src/pos/pos_action.xml
