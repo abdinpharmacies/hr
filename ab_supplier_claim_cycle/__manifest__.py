@@ -1,6 +1,6 @@
 {
     'name': 'Supplier Claim Cycle',
-    'version': '19.0.4.0.0',
+    'version': '19.0.4.1.0',
     'description': 'Supplier claims with sequential reviews, department decisions, and audited Secretarial closure.',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
@@ -17,6 +17,7 @@
         'views/ab_supplier_claim_cycle.xml',
         'views/supplier_terms.xml',
         'views/claim_design.xml',
+        'wizard/claim_decision_views.xml',
     ],
     'assets': {'web.assets_backend': [
         'ab_supplier_claim_cycle/static/src/scss/claim_design.scss',

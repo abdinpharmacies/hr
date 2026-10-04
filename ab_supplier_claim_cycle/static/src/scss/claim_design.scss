@@ -415,7 +415,14 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
     .o_scc_details, .o_scc_details:hover { border-top: 3px solid rgba(#7c3aed, .25); }
     .o_scc_reviews { margin-top: 16px; }
     .o_scc_reviews, .o_scc_reviews:hover { border-top: 3px solid rgba($scc-warning, .25); }
-    .o_scc_rejection, .o_scc_rejection:hover { border-top: 3px solid rgba($scc-danger, .25); }
+    .o_scc_rejection {
+        margin-top: 16px;
+        &, &:hover { border-top: 3px solid rgba($scc-danger, .25); }
+    }
+    .o_scc_exception_history td[name="reason"] {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
     .o_scc_history_section, .o_scc_history_section:hover { border-top: 3px solid rgba($scc-success, .25); }
     @media (max-width: 767px) {
         .o_scc_entry_grid > .o_inner_group { flex-basis: 100%; }

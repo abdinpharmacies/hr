@@ -23,6 +23,7 @@ class SupplierClaimHistory(models.Model):
     tax_classification = fields.Selection(TAX_CLASSIFICATION)
     section = fields.Selection(SUPPLIER_SECTION)
     reason = fields.Text()
+    notes = fields.Text(string='Department Notes')
     followup_date = fields.Date()
     review_round = fields.Integer(required=True)
     user_id = fields.Many2one('res.users', required=True, ondelete='restrict')
@@ -49,11 +50,14 @@ class SupplierClaimHistory(models.Model):
 
     display_note = fields.Text(string='Note', compute='_compute_display_note')
 
-    @api.depends('reason', 'cheque_attachment')
+    @api.depends('notes', 'reason', 'event', 'decision', 'cheque_attachment')
     @api.depends_context('lang')
     def _compute_display_note(self):
         for entry in self:
-            entry.display_note = (entry.reason if (entry.reason or '').strip()
+            # Read legacy notes without rewriting immutable history.
+            note = entry.notes or (entry.reason if not (
+                entry.event == 'decision' and entry.decision in ('rejected', 'deferred')) else False)
+            entry.display_note = (note if (note or '').strip()
                                   else _('Cheque attachment') if entry.cheque_attachment else False)
 
     @api.model_create_multi

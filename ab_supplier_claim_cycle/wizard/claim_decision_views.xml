@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="claim_decision_wizard_form" model="ir.ui.view">
+    <field name="name">supplier.claim.decision.wizard.form</field>
+    <field name="model">ab_supplier_claim_cycle.decision.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Supplier Claim Decision">
+        <group>
+          <field name="claim_id" invisible="True"/>
+          <field name="department"/>
+          <field name="decision" invisible="True"/>
+          <label for="reason" string="Rejection Reason" invisible="decision != 'rejected'"/>
+          <label for="reason" string="Deferral Reason" invisible="decision != 'deferred'"/>
+          <field name="reason" nolabel="1" required="True" placeholder="Enter the reason for this decision..."/>
+          <field name="followup_date" invisible="decision != 'deferred'" required="decision == 'deferred'"/>
+        </group>
+        <footer>
+          <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+          <button special="cancel" string="Cancel" class="btn-secondary"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>
