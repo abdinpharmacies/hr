@@ -1,8 +1,11 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
-PAYMENT_NATURE = [('cash', 'Cash'),
-                  ('bank_transfer', 'Bank Transfer'), ('check', 'Check')]
+PAYMENT_NATURE = [
+    ('cash', 'Cash'),
+    ('check', 'Check'),
+    ('bank_transfer', 'Bank Transfer'),
+]
 TAX_CLASSIFICATION = [
     ('through_supplier', 'Advance Payments'),
     ('tax_payment', 'Tax Payment'),
