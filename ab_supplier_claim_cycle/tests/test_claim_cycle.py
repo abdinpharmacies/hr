@@ -41,10 +41,13 @@ class TestSupplierClaimCycle(TransactionCase):
                     payment_nature='cash' if cash else 'non_cash',
                     tax_classification='tax_payment', section='medical')
 
-    def decide(self, claim, department, decision='approved', **vals):
+    def decide(self, claim, department, decision='approved', reason=None, followup_date=None, **vals):
         record=claim.with_user(self.users[department])
+        if decision in ('rejected', 'deferred'):
+            reason = vals.pop(department + '_notes', reason)
+            followup_date = vals.pop(department + '_followup_date', followup_date)
         if vals: record.write(vals)
-        return record.action_decide(department, decision)
+        return record.action_decide(department, decision, reason=reason, followup_date=followup_date)
 
     def accounts(self, claim):
         claim.action_submit()
@@ -217,10 +220,11 @@ class TestSupplierClaimCycle(TransactionCase):
             self.decide_write=claim.with_user(self.users[d])
             self.assertEqual(claim[d+'_followup_date'], fields.Date.context_today(claim))
             self.decide_write.write({d+'_notes':'Waiting', d+'_followup_date': False})
-            with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
+            with self.assertRaises(ValidationError):self.decide(claim,d,'deferred',reason='Waiting')
             self.decide_write.write({d+'_followup_date':fields.Date.today()-timedelta(days=1)})
-            with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
-            self.decide(claim,d,'deferred',**{d+'_followup_date':fields.Date.today()})
+            with self.assertRaises(ValidationError):
+                self.decide(claim,d,'deferred',reason='Waiting',followup_date=fields.Date.today()-timedelta(days=1))
+            self.decide(claim,d,'deferred',reason='Waiting',followup_date=fields.Date.today())
             self.assertEqual(claim.state,before); self.assertEqual(claim[d+'_decision'],'deferred')
             extra={'cheque_attachment':base64.b64encode(b'cheque')} if d=='supplier_accounts' else {}
             self.decide(claim,d,**extra)
@@ -367,9 +371,10 @@ class TestSupplierClaimCycle(TransactionCase):
         claim.action_submit()
         self.decide(claim, 'inventory', 'deferred', inventory_notes='Awaiting receipt',
                     inventory_followup_date=fields.Date.today())
-        for vals in ({'inventory_notes': False}, {'inventory_followup_date': False}):
-            with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                claim.with_user(self.users['inventory']).write(vals)
+        claim.with_user(self.users['inventory']).write({'inventory_notes': False})
+        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+            claim.with_user(self.users['inventory']).write({'inventory_followup_date': False})
+        self.assertEqual(claim.exception_history_ids.reason, 'Awaiting receipt')
         self.assertEqual(claim.inventory_decision, 'deferred')
         self.assertTrue(claim.inventory_followup_date)
 
@@ -531,8 +536,11 @@ class TestSupplierClaimCycle(TransactionCase):
                     self.assertEqual(len(buttons), 3 if authorized else 0)
                     if lang == 'en_US' and buttons:
                         self.assertEqual([n.get('string') for n in buttons], ['Approve', 'Reject', 'Defer'])
-                    rejection = arch.xpath('//field[@name="rejection_reason"]')[0]
-                    self.assertEqual(visible(rejection), stage == 'returned_secretarial')
+                    rejection = arch.xpath('//field[@name="rejection_reason"]')
+                    permitted = user in (self.users['user'], self.users['admin'], self.system)
+                    self.assertEqual(bool(rejection), permitted)
+                    if rejection:
+                        self.assertEqual(visible(rejection[0]), stage == 'returned_secretarial')
                     for node in arch.xpath('//group[@name="department_reviews"]//field[@name="cheque_attachment"]'):
                         expected = authorized and stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
                         self.assertEqual(visible(node), expected)
@@ -754,8 +762,8 @@ class TestSupplierClaimCycle(TransactionCase):
                 f'{department}_notes': 'Waiting for documents',
                 f'{department}_followup_date': future})
             self.assertEqual(record[f'{department}_followup_date'], future)
-            self.decide(claim, department, 'deferred')
-            self.decide(claim, department, 'rejected')
+            self.decide(claim, department, 'deferred', reason='Still waiting', followup_date=future)
+            self.decide(claim, department, 'rejected', reason='Please correct')
             events = claim[f'timeline_{department}_exception_ids']
             self.assertEqual(events.mapped('decision'), ['deferred', 'deferred', 'rejected'])
             self.assertEqual(events.mapped('user_id'), self.users[department])
@@ -769,3 +777,157 @@ class TestSupplierClaimCycle(TransactionCase):
         cash = self.claim(cash=True)
         cash.action_submit()
         self.assertEqual(cash.supplier_accounts_followup_date, fields.Date.context_today(cash))
+
+    def open_decision(self, claim, department, decision, user=None):
+        record = claim.with_user(user or self.users[department])
+        action = record.with_context(claim_department=department, claim_decision=decision).action_department_decision()
+        self.assertEqual((action['type'], action['target']), ('ir.actions.act_window', 'new'))
+        return self.env[action['res_model']].with_user(record.env.user).browse(action['res_id'])
+
+    def test_decision_popups_and_separate_notes_every_department(self):
+        claim = self.claim()
+        claim.action_submit()
+        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+            record = claim.with_user(self.users[department])
+            record.write({department + '_notes': 'Ordinary note'})
+            history = claim.history_ids
+            popup = self.open_decision(claim, department, 'deferred')
+            self.assertFalse(popup.reason)
+            self.assertEqual(popup.followup_date, fields.Date.context_today(record))
+            self.assertEqual(claim.history_ids, history)
+            self.assertEqual(claim.state, department)
+            # Cancelling/discarding a popup does not submit a decision.
+            popup.unlink()
+            self.assertEqual(claim.history_ids, history)
+            popup = self.open_decision(claim, department, 'deferred')
+            for reason, date in ((False, fields.Date.today()), ('  ', fields.Date.today()),
+                                 ('Waiting', False), ('Waiting', fields.Date.today() - timedelta(days=1))):
+                popup.write({'reason': reason, 'followup_date': date})
+                with self.assertRaises(ValidationError), self.env.cr.savepoint():
+                    popup.action_confirm()
+            popup.write({'reason': '  Missing documents  ', 'followup_date': fields.Date.today()})
+            self.assertEqual(popup.action_confirm()['type'], 'ir.actions.act_window_close')
+            self.assertEqual(record[department + '_notes'], 'Ordinary note')
+            entry = claim.exception_history_ids[0]
+            self.assertEqual((entry.reason, entry.notes, entry.display_note),
+                             ('Missing documents', 'Ordinary note', 'Ordinary note'))
+            self.assertIn(entry, claim.note_history_ids)
+            self.assertEqual(claim.state, department)
+            # Ordinary notes can be cleared independently of a recorded deferral.
+            record.write({department + '_notes': False})
+            popup = self.open_decision(claim, department, 'rejected')
+            self.assertFalse(popup.reason)
+            self.assertFalse(popup.followup_date)
+            popup.reason = 'Correct invoice'
+            popup.action_confirm()
+            self.assertEqual(claim.state, 'returned_secretarial')
+            self.assertEqual(claim.rejection_reason, 'Correct invoice')
+            rejected = claim.exception_history_ids[0]
+            self.assertEqual(rejected.reason, 'Correct invoice')
+            self.assertFalse(rejected.notes)
+            self.assertNotIn('Correct invoice', claim.note_history_ids.mapped('display_note'))
+            claim.action_submit()
+            self.decide(claim, department)
+
+    def test_reason_api_does_not_fall_back_to_notes(self):
+        claim = self.claim()
+        claim.action_submit()
+        record = claim.with_user(self.users['inventory'])
+        record.inventory_notes = 'Not a rejection reason'
+        for decision in ('rejected', 'deferred'):
+            with self.assertRaises(ValidationError), self.env.cr.savepoint():
+                record.action_decide('inventory', decision, followup_date=fields.Date.today())
+        self.assertFalse(claim.history_ids)
+        self.assertEqual(claim.state, 'inventory')
+
+    def test_decision_popup_access_and_stale_confirmation(self):
+        claim = self.claim()
+        claim.action_submit()
+        for user in (self.users['user'], self.users['reviewer'], self.users['purchasing'], self.outsider):
+            with self.assertRaises(AccessError), self.env.cr.savepoint():
+                self.open_decision(claim, 'inventory', 'rejected', user=user)
+        popup = self.open_decision(claim, 'inventory', 'rejected')
+        popup.reason = 'Correction'
+        with self.assertRaises(AccessError), self.env.cr.savepoint():
+            popup.with_user(self.users['purchasing']).action_confirm()
+        # Even a forged wizard must pass the claim's department authorization.
+        forged = self.env[popup._name].with_user(self.users['purchasing']).create({
+            'claim_id': claim.id, 'department': 'inventory', 'decision': 'rejected',
+            'review_round': claim.review_round, 'history_revision': 0, 'reason': 'Forged',
+        })
+        with self.assertRaises(AccessError), self.env.cr.savepoint():
+            forged.action_confirm()
+        self.decide(claim, 'inventory', 'deferred', reason='Waiting', followup_date=fields.Date.today())
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            popup.action_confirm()
+        for user in (self.users['admin'], self.system):
+            admin_popup = self.open_decision(claim, 'inventory', 'deferred', user=user)
+            admin_popup.reason = 'Admin follow-up'
+            admin_popup.action_confirm()
+            with self.assertRaises(UserError), self.env.cr.savepoint():
+                admin_popup.action_confirm()
+        popup = self.open_decision(claim, 'inventory', 'rejected', user=self.users['admin'])
+        popup.reason = 'Late'
+        claim.write({'active': False})
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            popup.action_confirm()
+        claim.write({'active': True})
+        self.decide(claim, 'inventory')
+        self.decide(claim, 'purchasing')
+        self.decide(claim, 'supplier_accounts')
+        self.decide(claim, 'bank_accounts')
+        claim.action_close()
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            popup.action_confirm()
+
+    def test_legacy_history_separation(self):
+        claim = self.claim()
+        history = self.env['ab_supplier_claim_cycle.history']
+        rows = []
+        for decision in ('approved', 'rejected', 'deferred'):
+            values = claim._history_values('decision', department='inventory', decision=decision,
+                                          reason='Legacy ' + decision)
+            values.pop('notes')
+            rows.append(values)
+        history._append(rows)
+        self.assertEqual(claim.note_history_ids.mapped('display_note'), ['Legacy approved'])
+        self.assertEqual(set(claim.exception_history_ids.mapped('reason')), {'Legacy rejected', 'Legacy deferred'})
+        self.assertEqual(set(claim.history_ids.mapped('reason')),
+                         {'Legacy approved', 'Legacy rejected', 'Legacy deferred'})
+
+    def test_popup_form_and_translations(self):
+        claim = self.claim()
+        claim.action_submit()
+        for language, title, reason_label, confirm in (
+                ('en_US', 'Reject Claim', 'Rejection Reason', 'Confirm'),
+                ('ar_001', 'رفض المطالبة', 'سبب الرفض', 'تأكيد')):
+            record = claim.with_user(self.users['inventory']).with_context(
+                lang=language, claim_department='inventory', claim_decision='rejected')
+            action = record.action_department_decision()
+            self.assertEqual(action['name'], title)
+            popup = self.env[action['res_model']].with_user(record.env.user).with_context(
+                lang=language).browse(action['res_id'])
+            arch = etree.fromstring(popup.get_view(view_type='form')['arch'])
+            self.assertEqual(arch.xpath('//label[@for="reason"]')[0].get('string'), reason_label)
+            self.assertEqual(arch.xpath('//button[@name="action_confirm"]')[0].get('string'), confirm)
+            with Form(popup) as form:
+                form.reason = 'Reason entered in form'
+            self.assertEqual(popup.reason, 'Reason entered in form')
+            claim_arch = etree.fromstring(record.get_view(view_type='form')['arch'])
+            heading = claim_arch.xpath('//div[contains(@class,"o_scc_exception_history")]/h3')[0]
+            self.assertEqual(heading.text, 'Rejections & Deferrals' if language == 'en_US'
+                             else 'حالات الرفض والتأجيل')
+        self.assertEqual(claim.state, 'inventory')
+        self.assertFalse(claim.history_ids)
+
+    def test_popup_cannot_confirm_after_return_and_resubmit(self):
+        claim = self.claim()
+        claim.action_submit()
+        popup = self.open_decision(claim, 'inventory', 'rejected')
+        popup.reason = 'Old round'
+        self.decide(claim, 'inventory', 'rejected', reason='Actual correction')
+        claim.action_submit()
+        self.assertEqual(claim.state, 'inventory')
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            popup.action_confirm()
+        self.assertEqual(len(claim.exception_history_ids), 1)

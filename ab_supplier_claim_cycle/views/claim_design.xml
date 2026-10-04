@@ -26,6 +26,7 @@
       </xpath>
       <xpath expr="//group[@name='claim_rejection']" position="attributes">
         <attribute name="class" add="o_scc_panel" separator=" "/>
+        <attribute name="groups">ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin</attribute>
       </xpath>
       <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]" position="inside">
         <field name="cheque_attachment" string="Supplier Cheque Attachment" readonly="True" filename="cheque_filename" invisible="not cheque_attachment"/>
@@ -319,7 +320,7 @@
       </xpath>
       <xpath expr="//notebook[page[@name='history']]" position="before">
         <div class="o_scc_history_section">
-          <h3>Stage History</h3>
+          <h3>Notes</h3>
         </div>
       </xpath>
       <xpath expr="//div[hasclass('o_scc_history_section')]" position="inside">
@@ -328,6 +329,21 @@
       <xpath expr="//notebook[page[@name='history']]" position="replace"/>
       <xpath expr="//div[hasclass('o_scc_history_section')]/field[@name='history_ids']" position="attributes">
         <attribute name="name">note_history_ids</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_history_section')]" position="after">
+        <div class="o_scc_history_section o_scc_exception_history" invisible="not exception_history_ids">
+          <h3>Rejections &amp; Deferrals</h3>
+          <field name="exception_history_ids" readonly="True" nolabel="1" mode="list">
+            <list create="false" edit="false" delete="false" no_open="True" default_order="id desc">
+              <field name="department"/>
+              <field name="decision" widget="badge" decoration-danger="decision == 'rejected'" decoration-warning="decision == 'deferred'"/>
+              <field name="reason" string="Reason"/>
+              <field name="user_id" string="User" options="{'no_open': True}"/>
+              <field name="occurred_at"/>
+              <field name="followup_date"/>
+            </list>
+          </field>
+        </div>
       </xpath>
 
       <xpath expr="//group[@name='supplier_classification']" position="attributes">

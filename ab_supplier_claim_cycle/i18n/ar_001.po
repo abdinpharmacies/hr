@@ -118,6 +118,7 @@ msgstr ""
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__inventory
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__inventory
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
@@ -318,6 +319,7 @@ msgstr ""
 msgid "A cheque attachment is required before Bank Accounts."
 msgstr "يجب إرفاق الشيك قبل الإحالة إلى حسابات البنوك."
 
+#: code:addons/ab_supplier_claim_cycle/wizard/claim_decision.py:0
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
@@ -373,6 +375,7 @@ msgstr "يجب أرشفة الموردين بدلاً من حذفهم."
 msgid "Archived"
 msgstr "مؤرشف"
 
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__bank_accounts
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__bank_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__bank_accounts
@@ -503,6 +506,7 @@ msgstr "يتطلب التأجيل تاريخ متابعة اليوم أو بعد
 msgid "Deferred"
 msgstr "مؤجل"
 
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__department
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__department
 msgid "Department"
@@ -645,6 +649,7 @@ msgstr "طبيعة السداد"
 msgid "Pending"
 msgstr "قيد الانتظار"
 
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__purchasing
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__purchasing
@@ -684,6 +689,8 @@ msgstr "ملاحظات المشتريات"
 msgid "Ready to Close"
 msgstr "جاهزة للإغلاق"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__reason
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__reason
 msgid "Reason"
@@ -709,6 +716,7 @@ msgstr "مرفوض"
 msgid "Rejection Department"
 msgstr "القسم الرافض"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__rejection_reason
 msgid "Rejection Reason"
@@ -803,6 +811,7 @@ msgstr "إرسال"
 msgid "Submitted"
 msgstr "تم الإرسال"
 
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__supplier_accounts
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__supplier_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__supplier_accounts
@@ -1084,6 +1093,7 @@ msgstr "تفاصيل المطالبة"
 msgid "Payment Terms"
 msgstr "شروط السداد"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
 msgid "Notes"
@@ -1190,6 +1200,7 @@ msgstr "الملاحظة"
 msgid "Save Note"
 msgstr "حفظ الملاحظة"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.secretarial_note_wizard_form
 msgid "Cancel"
@@ -1396,3 +1407,60 @@ msgstr "تُقرأ من بيانات المورد وتُثبت عند الإرس
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
 msgid "Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims."
 msgstr "القيمة الافتراضية من المورد. يمكن تعديلها في المسودة، وتُحفظ الاختيارات للمطالبات القادمة."
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "Rejections &amp; Deferrals"
+msgstr "حالات الرفض والتأجيل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
+msgid "Deferral Reason"
+msgstr "سبب التأجيل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__notes
+msgid "Department Notes"
+msgstr "ملاحظات القسم"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__followup_date
+msgid "Follow-up Date"
+msgstr "تاريخ المتابعة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_cycle_decision_wizard
+msgid "Supplier Claim Decision"
+msgstr "قرار مطالبة المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
+msgid "Enter the reason for this decision..."
+msgstr "أدخل سبب هذا القرار..."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+#, python-format
+msgid "Reject Claim"
+msgstr "رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+#, python-format
+msgid "Defer Claim"
+msgstr "تأجيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/wizard/claim_decision.py:0
+#, python-format
+msgid "The claim has changed. Close this dialog and open it again."
+msgstr "تم تغيير المطالبة. أغلق هذه النافذة وافتحها مرة أخرى."

@@ -91,11 +91,16 @@ class SupplierClaimCycle(models.Model):
     note_history_ids = fields.One2many(
         'ab_supplier_claim_cycle.history', compute='_compute_note_history', readonly=True)
 
-    @api.depends('history_ids', 'history_ids.reason', 'history_ids.cheque_attachment')
+    exception_history_ids = fields.One2many(
+        'ab_supplier_claim_cycle.history', compute='_compute_note_history', readonly=True)
+
+    @api.depends('history_ids', 'history_ids.display_note', 'history_ids.event', 'history_ids.decision')
     def _compute_note_history(self):
         for claim in self:
             claim.note_history_ids = claim.history_ids.filtered(
-                lambda entry: (entry.reason or '').strip() or entry.cheque_attachment)
+                lambda entry: bool(entry.display_note))
+            claim.exception_history_ids = claim.history_ids.filtered(
+                lambda entry: entry.event == 'decision' and entry.decision in ('rejected', 'deferred'))
 
     timeline_inventory_exception_ids = fields.One2many(
         'ab_supplier_claim_cycle.history', compute='_compute_timeline_exceptions')
@@ -195,13 +200,11 @@ class SupplierClaimCycle(models.Model):
             claim.update(values_by_supplier.get(claim.supplier_id.id, empty_values))
 
     @api.constrains(*(f'{department}_{suffix}' for department in DEPARTMENTS
-                      for suffix in ('decision', 'notes', 'followup_date')))
+                      for suffix in ('decision', 'followup_date')))
     def _check_deferred_details(self):
         for claim in self:
             for department in DEPARTMENTS:
                 if claim[f'{department}_decision'] == 'deferred':
-                    if not (claim[f'{department}_notes'] or '').strip():
-                        raise ValidationError(_('A reason is required for rejection or deferral.'))
                     if not claim[f'{department}_followup_date']:
                         raise ValidationError(_('A deferred review must retain its follow-up date.'))
 
@@ -325,6 +328,8 @@ class SupplierClaimCycle(models.Model):
             'review_round': self.review_round, 'user_id': self.env.uid, 'occurred_at': fields.Datetime.now(),
             **{f'{d}_decision': self[f'{d}_decision'] for d in DEPARTMENTS},
             'tax_classification': self.tax_classification, 'section': self.section,
+            'notes': ((self[f'{department}_notes'] or '').strip() or False)
+            if event == 'decision' and department in DEPARTMENTS else False,
         }
 
     def _log(self, event, from_state=None, department=False, decision=False, reason=False, followup_date=False):
@@ -378,7 +383,7 @@ class SupplierClaimCycle(models.Model):
                 claim._log('resubmitted', old_state)
         return True
 
-    def action_decide(self, department, decision):
+    def action_decide(self, department, decision, reason=None, followup_date=None):
         if department not in DEPARTMENTS or decision not in ('approved', 'rejected', 'deferred'):
             raise ValidationError(_('Invalid department decision.'))
         self._require_role(department)
@@ -386,19 +391,17 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             if claim.state != STAGES[department] or claim[f'{department}_decision'] not in ('pending', 'deferred'):
                 raise UserError(_('This department has no pending decision in the current stage.'))
-            reason = (claim[f'{department}_notes'] or '').strip()
-            followup = claim[f'{department}_followup_date']
-            if decision in ('rejected', 'deferred') and not reason:
+            decision_reason = (reason or '').strip() if decision != 'approved' else False
+            followup = fields.Date.to_date(followup_date) if decision == 'deferred' else False
+            if decision in ('rejected', 'deferred') and not decision_reason:
                 raise ValidationError(_('A reason is required for rejection or deferral.'))
             if decision == 'deferred' and (not followup or followup < fields.Date.context_today(claim)):
                 raise ValidationError(_('Deferral requires a follow-up date today or later.'))
             old_state = claim.state
-            vals = {f'{department}_decision': decision}
-            if decision != 'deferred':
-                vals[f'{department}_followup_date'] = False
+            vals = {f'{department}_decision': decision, f'{department}_followup_date': followup}
             if decision == 'rejected':
                 vals.update(state='returned_secretarial', resume_stage=old_state,
-                            rejection_department=department, rejection_reason=reason)
+                            rejection_department=department, rejection_reason=decision_reason)
             elif decision == 'approved':
                 if department == 'inventory':
                     # Preserve Purchasing approvals recorded before sequential routing.
@@ -423,7 +426,7 @@ class SupplierClaimCycle(models.Model):
             if next_stage in DEPARTMENTS:
                 vals[f'{next_stage}_followup_date'] = fields.Date.context_today(claim)
             claim._workflow_write(vals)
-            claim._log('decision', old_state, department, decision, reason,
+            claim._log('decision', old_state, department, decision, decision_reason,
                        followup if decision == 'deferred' else False)
         return True
 
@@ -437,4 +440,27 @@ class SupplierClaimCycle(models.Model):
         return True
 
     def action_department_decision(self):
-        return self.action_decide(self.env.context.get('claim_department'), self.env.context.get('claim_decision'))
+        department = self.env.context.get('claim_department')
+        decision = self.env.context.get('claim_decision')
+        if decision == 'approved':
+            return self.action_decide(department, decision)
+        self.ensure_one()
+        if department not in DEPARTMENTS or decision not in ('rejected', 'deferred'):
+            raise ValidationError(_('Invalid department decision.'))
+        self._require_role(department)
+        self._prepare_action()
+        if self.state != STAGES[department] or self[f'{department}_decision'] not in ('pending', 'deferred'):
+            raise UserError(_('This department has no pending decision in the current stage.'))
+        wizard = self.env['ab_supplier_claim_cycle.decision.wizard'].create({
+            'claim_id': self.id, 'department': department, 'decision': decision,
+            'reason': False, 'review_round': self.review_round,
+            'history_revision': max(self.history_ids.ids, default=0),
+            'followup_date': (self[f'{department}_followup_date'] or fields.Date.context_today(self))
+            if decision == 'deferred' else False,
+        })
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reject Claim') if decision == 'rejected' else _('Defer Claim'),
+            'res_model': wizard._name, 'res_id': wizard.id,
+            'view_mode': 'form', 'target': 'new',
+        }
