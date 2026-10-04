@@ -16,6 +16,7 @@
                 <field name="supplier_accounts_decision" widget="badge" optional="show"/>
                 <field name="bank_accounts_decision" widget="badge" optional="show"/>
                 <field name="state" widget="badge"/>
+                <field name="attachment" optional="show"/>
             </list>
         </field>
     </record>
@@ -72,6 +73,11 @@
                                readonly="state not in ('draft', 'returned_secretarial') or not active"
                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
                         <field name="secretarial_notes" readonly="True"
+                               groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="attachment"
+                               readonly="state not in ('draft', 'returned_secretarial') or not active"
+                               groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                        <field name="attachment" readonly="True"
                                groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
                         <field name="user_id" readonly="True"/>
                         <field name="review_round" readonly="True"/>
@@ -231,6 +237,7 @@
                         </page>
                     </notebook>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>
@@ -318,7 +325,9 @@
                 <filter name="ready_to_close" string="Ready to Close" domain="[('state', '=', 'ready_to_close')]"/>
                 <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
                 <filter name="cash" string="Cash" domain="[('payment_nature', '=', 'cash')]"/>
-                <filter name="non_cash" string="Non-cash" domain="[('payment_nature', '=', 'non_cash')]"/>
+                <filter name="bank_transfer" string="Bank Transfer"
+                        domain="[('payment_nature', '=', 'bank_transfer')]"/>
+                <filter name="check" string="Check" domain="[('payment_nature', '=', 'check')]"/>
                 <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
                 <filter name="group_state" string="Stage" context="{'group_by': 'state'}"/>
             </search>

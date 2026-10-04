@@ -1,0 +1,1006 @@
+2026-10-01 09:19:10,029 11308 WARNING ? odoo.tools.config: option --without-demo: since 19.0, invalid boolean value: 'all', assume True 
+2026-10-01 09:19:10,029 11308 WARNING ? odoo.tools.config: option addons_path, no such directory 'd:\\odoo19\\server\\addons', skipped 
+2026-10-01 09:19:10,029 11308 WARNING ? odoo.tools.config: unknown option 'bconnect_user' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,029 11308 WARNING ? odoo.tools.config: unknown option 'bconnect_db' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 WARNING ? odoo.tools.config: unknown option 'bconnect_ip1' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 WARNING ? odoo.tools.config: unknown option 'decryption_key' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 WARNING ? odoo.tools.config: unknown option 'xmlrpc_pass' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 WARNING ? odoo.tools.config: unknown option 'is_control_server' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 WARNING ? odoo.tools.config: unknown option 'db_serial' in the config file at d:\odoo19\config\hr_db.conf, option stored as-is, without parsing 
+2026-10-01 09:19:10,030 11308 INFO ? odoo: Odoo version 19.0 
+2026-10-01 09:19:10,031 11308 INFO ? odoo: Using configuration file at d:\odoo19\config\hr_db.conf 
+2026-10-01 09:19:10,031 11308 INFO ? odoo: addons paths: _NamespacePath(['D:\\odoo19\\server\\odoo\\odoo\\addons', 'd:\\odoo19\\odoolocaldata\\addons\\19.0', 'd:\\odoo19\\server\\odoo\\addons', 'd:\\odoo19\\main']) 
+2026-10-01 09:19:10,031 11308 INFO ? odoo: database: hr_user@localhost:5432 
+2026-10-01 09:19:11,674 11308 INFO ? odoo.service.server: HTTP service (werkzeug) running on 63-ETHAR_160:8069 
+2026-10-01 09:19:11,787 11308 INFO codex_ab_supplier_claim_cycle_test odoo.tests.common: Importing test framework 
+2026-10-01 09:19:12,090 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Initializing database codex_ab_supplier_claim_cycle_test 
+2026-10-01 09:19:12,574 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_announcement', defaulting to '' 
+2026-10-01 09:19:12,580 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_announcement', defaulting to '' 
+2026-10-01 09:19:12,587 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_base_models_inherit', defaulting to '' 
+2026-10-01 09:19:12,591 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_base_models_inherit', defaulting to '' 
+2026-10-01 09:19:12,598 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_contract', defaulting to '' 
+2026-10-01 09:19:12,601 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_contract', defaulting to '' 
+2026-10-01 09:19:12,610 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_customer', defaulting to '' 
+2026-10-01 09:19:12,611 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_customer', defaulting to '' 
+2026-10-01 09:19:12,615 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_distribution_store', defaulting to '' 
+2026-10-01 09:19:12,617 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_distribution_store', defaulting to '' 
+2026-10-01 09:19:12,618 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_employee_tools', defaulting to '' 
+2026-10-01 09:19:12,620 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_employee_tools', defaulting to '' 
+2026-10-01 09:19:12,627 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_eplus_replication_contract', defaulting to '' 
+2026-10-01 09:19:12,628 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_eplus_replication_contract', defaulting to LGPL-3 
+2026-10-01 09:19:12,630 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_eplus_replication_contract', defaulting to '' 
+2026-10-01 09:19:12,630 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_eplus_replication_contract', defaulting to LGPL-3 
+2026-10-01 09:19:12,639 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_effects', defaulting to '' 
+2026-10-01 09:19:12,640 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_effects', defaulting to '' 
+2026-10-01 09:19:12,643 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_org_chart', defaulting to '' 
+2026-10-01 09:19:12,645 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_org_chart', defaulting to '' 
+2026-10-01 09:19:12,649 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory', defaulting to '' 
+2026-10-01 09:19:12,650 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory', defaulting to '' 
+2026-10-01 09:19:12,652 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory_adjust', defaulting to '' 
+2026-10-01 09:19:12,653 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory_adjust', defaulting to '' 
+2026-10-01 09:19:12,658 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_connect', defaulting to '' 
+2026-10-01 09:19:12,659 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_connect', defaulting to '' 
+2026-10-01 09:19:12,663 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_replication_upload', defaulting to '' 
+2026-10-01 09:19:12,664 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_replication_upload', defaulting to '' 
+2026-10-01 09:19:12,666 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_update', defaulting to '' 
+2026-10-01 09:19:12,667 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_update', defaulting to '' 
+2026-10-01 09:19:12,682 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_pos', defaulting to '' 
+2026-10-01 09:19:12,685 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_pos', defaulting to '' 
+2026-10-01 09:19:12,688 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product', defaulting to '' 
+2026-10-01 09:19:12,691 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product', defaulting to '' 
+2026-10-01 09:19:12,693 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product_source', defaulting to '' 
+2026-10-01 09:19:12,695 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product_source', defaulting to '' 
+2026-10-01 09:19:12,697 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_promo_program', defaulting to '' 
+2026-10-01 09:19:12,698 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_promo_program', defaulting to '' 
+2026-10-01 09:19:12,701 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_quality_assurance', defaulting to '' 
+2026-10-01 09:19:12,703 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_quality_assurance', defaulting to '' 
+2026-10-01 09:19:12,709 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_request_management', defaulting to '' 
+2026-10-01 09:19:12,710 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_request_management', defaulting to '' 
+2026-10-01 09:19:12,719 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales', defaulting to '' 
+2026-10-01 09:19:12,721 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales', defaulting to '' 
+2026-10-01 09:19:12,724 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_cashier', defaulting to '' 
+2026-10-01 09:19:12,726 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_cashier', defaulting to '' 
+2026-10-01 09:19:12,727 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_contract', defaulting to '' 
+2026-10-01 09:19:12,727 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_sales_contract', defaulting to LGPL-3 
+2026-10-01 09:19:12,728 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_contract', defaulting to '' 
+2026-10-01 09:19:12,728 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_sales_contract', defaulting to LGPL-3 
+2026-10-01 09:19:12,733 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_models_replication', defaulting to '' 
+2026-10-01 09:19:12,734 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_models_replication', defaulting to '' 
+2026-10-01 09:19:12,736 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_promo', defaulting to '' 
+2026-10-01 09:19:12,737 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_promo', defaulting to '' 
+2026-10-01 09:19:12,762 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_template', defaulting to '' 
+2026-10-01 09:19:12,764 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_template', defaulting to '' 
+2026-10-01 09:19:12,771 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_transfer', defaulting to '' 
+2026-10-01 09:19:12,772 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_transfer', defaulting to '' 
+2026-10-01 09:19:12,779 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_visit_report', defaulting to '' 
+2026-10-01 09:19:12,780 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_visit_report', defaulting to '' 
+2026-10-01 09:19:12,782 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_wan', defaulting to '' 
+2026-10-01 09:19:12,784 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_wan', defaulting to '' 
+2026-10-01 09:19:12,794 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_widgets', defaulting to '' 
+2026-10-01 09:19:12,795 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_widgets', defaulting to '' 
+2026-10-01 09:19:14,880 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading 1 modules... 
+2026-10-01 09:19:14,880 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module base (1/1) 
+2026-10-01 09:19:14,920 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module base: creating or updating database tables 
+2026-10-01 09:19:15,700 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.module.module.menus_by_module 
+2026-10-01 09:19:15,700 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.module.module.reports_by_module 
+2026-10-01 09:19:15,700 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.module.module.views_by_module 
+2026-10-01 09:19:15,967 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.user_id 
+2026-10-01 09:19:15,967 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.commercial_partner_id 
+2026-10-01 09:19:15,967 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.complete_name 
+2026-10-01 09:19:15,968 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.lang 
+2026-10-01 09:19:15,968 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.company_registry 
+2026-10-01 09:19:15,968 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.commercial_company_name 
+2026-10-01 09:19:15,968 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.properties 
+2026-10-01 09:19:15,968 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.partner_share 
+2026-10-01 09:19:16,045 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.currency.decimal_places 
+2026-10-01 09:19:16,106 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.company.uses_default_logo 
+2026-10-01 09:19:16,106 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.company.logo_web 
+2026-10-01 09:19:16,111 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Computing parent_path for table res_company... 
+2026-10-01 09:19:16,139 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:19:16,181 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.users.signature 
+2026-10-01 09:19:16,181 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.users.share 
+2026-10-01 09:19:19,376 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_bank.xml 
+2026-10-01 09:19:19,398 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res.lang.csv 
+2026-10-01 09:19:19,474 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_lang_data.xml 
+2026-10-01 09:19:19,568 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_partner_data.xml 
+2026-10-01 09:19:19,653 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_currency_data.xml 
+2026-10-01 09:19:19,690 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:19:20,390 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_company_data.xml 
+2026-10-01 09:19:20,409 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_users_data.xml 
+2026-10-01 09:19:22,478 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/report_paperformat_data.xml 
+2026-10-01 09:19:22,512 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res_country_data.xml 
+2026-10-01 09:19:23,564 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_demo_data.xml 
+2026-10-01 09:19:23,610 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/security/base_groups.xml 
+2026-10-01 09:19:23,946 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/security/base_security.xml 
+2026-10-01 09:19:24,235 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/wizard_ir_model_menu_create_views.xml 
+2026-10-01 09:19:24,269 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/base_menus.xml 
+2026-10-01 09:19:24,416 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/decimal_precision_views.xml 
+2026-10-01 09:19:24,456 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_config_views.xml 
+2026-10-01 09:19:24,491 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/res.country.state.csv 
+2026-10-01 09:19:25,126 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_actions_views.xml 
+2026-10-01 09:19:25,369 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_asset_views.xml 
+2026-10-01 09:19:25,409 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_config_parameter_views.xml 
+2026-10-01 09:19:25,455 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_cron_views.xml 
+2026-10-01 09:19:25,522 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_cron_trigger_views.xml 
+2026-10-01 09:19:25,560 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_filters_views.xml 
+2026-10-01 09:19:25,608 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_mail_server_views.xml 
+2026-10-01 09:19:25,650 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_model_views.xml 
+2026-10-01 09:19:25,893 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_attachment_views.xml 
+2026-10-01 09:19:25,938 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_rule_views.xml 
+2026-10-01 09:19:25,979 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_sequence_views.xml 
+2026-10-01 09:19:26,022 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_ui_menu_views.xml 
+2026-10-01 09:19:26,071 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_ui_view_views.xml 
+2026-10-01 09:19:26,178 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_default_views.xml 
+2026-10-01 09:19:26,225 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_config_parameter_data.xml 
+2026-10-01 09:19:26,238 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_cron_data.xml 
+2026-10-01 09:19:26,267 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/report/ir_model_report.xml 
+2026-10-01 09:19:26,282 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/report/ir_model_templates.xml 
+2026-10-01 09:19:26,304 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_logging_views.xml 
+2026-10-01 09:19:26,348 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_qweb_widget_templates.xml 
+2026-10-01 09:19:26,380 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_module_views.xml 
+2026-10-01 09:19:26,469 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_module_category_data.xml 
+2026-10-01 09:19:26,554 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_module_module.xml 
+2026-10-01 09:19:26,675 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/report/ir_module_reports.xml 
+2026-10-01 09:19:26,692 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/report/ir_module_report_templates.xml 
+2026-10-01 09:19:26,719 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_module_update_views.xml 
+2026-10-01 09:19:26,747 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_language_install_views.xml 
+2026-10-01 09:19:26,787 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_import_language_views.xml 
+2026-10-01 09:19:26,818 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_module_upgrade_views.xml 
+2026-10-01 09:19:26,861 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_module_uninstall_views.xml 
+2026-10-01 09:19:26,876 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_export_language_views.xml 
+2026-10-01 09:19:26,912 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/wizard/base_partner_merge_views.xml 
+2026-10-01 09:19:26,945 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/data/ir_demo_failure_data.xml 
+2026-10-01 09:19:26,983 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/ir_profile_views.xml 
+2026-10-01 09:19:27,032 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_company_views.xml 
+2026-10-01 09:19:27,071 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_lang_views.xml 
+2026-10-01 09:19:27,112 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_partner_views.xml 
+2026-10-01 09:19:27,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_bank_views.xml 
+2026-10-01 09:19:27,298 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_country_views.xml 
+2026-10-01 09:19:27,365 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_currency_views.xml 
+2026-10-01 09:19:27,446 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_groups_views.xml 
+2026-10-01 09:19:27,531 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_users_views.xml 
+2026-10-01 09:19:27,681 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_users_apikeys_views.xml 
+2026-10-01 09:19:27,706 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_device_views.xml 
+2026-10-01 09:19:27,751 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_users_identitycheck_views.xml 
+2026-10-01 09:19:27,772 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/res_config_settings_views.xml 
+2026-10-01 09:19:27,784 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/views/report_paperformat_views.xml 
+2026-10-01 09:19:27,830 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base/security/ir.model.access.csv 
+2026-10-01 09:19:30,118 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module base loaded in 15.24s, 8412 queries (+8412 other) 
+2026-10-01 09:19:30,118 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: 1 modules loaded in 15.24s, 8412 queries (+8412 extra) 
+2026-10-01 09:19:30,128 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: updating modules list 
+2026-10-01 09:19:30,132 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_module: ALLOW access to module.update_list on [] to user __system__ #1 via n/a 
+2026-10-01 09:19:30,485 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_announcement', defaulting to '' 
+2026-10-01 09:19:30,546 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_base_models_inherit', defaulting to '' 
+2026-10-01 09:19:30,550 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_contract', defaulting to '' 
+2026-10-01 09:19:30,559 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_customer', defaulting to '' 
+2026-10-01 09:19:30,561 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_distribution_store', defaulting to '' 
+2026-10-01 09:19:30,563 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_employee_tools', defaulting to '' 
+2026-10-01 09:19:30,570 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_eplus_replication_contract', defaulting to '' 
+2026-10-01 09:19:30,570 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_eplus_replication_contract', defaulting to LGPL-3 
+2026-10-01 09:19:30,575 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_effects', defaulting to '' 
+2026-10-01 09:19:30,577 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_hr_org_chart', defaulting to '' 
+2026-10-01 09:19:30,581 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory', defaulting to '' 
+2026-10-01 09:19:30,582 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_inventory_adjust', defaulting to '' 
+2026-10-01 09:19:30,585 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_connect', defaulting to '' 
+2026-10-01 09:19:30,588 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_replication_upload', defaulting to '' 
+2026-10-01 09:19:30,589 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_odoo_update', defaulting to '' 
+2026-10-01 09:19:30,596 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_pos', defaulting to '' 
+2026-10-01 09:19:30,598 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product', defaulting to '' 
+2026-10-01 09:19:30,600 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_product_source', defaulting to '' 
+2026-10-01 09:19:30,602 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_promo_program', defaulting to '' 
+2026-10-01 09:19:30,604 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_quality_assurance', defaulting to '' 
+2026-10-01 09:19:30,607 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_request_management', defaulting to '' 
+2026-10-01 09:19:30,610 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales', defaulting to '' 
+2026-10-01 09:19:30,612 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_cashier', defaulting to '' 
+2026-10-01 09:19:30,614 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_contract', defaulting to '' 
+2026-10-01 09:19:30,614 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `license` key in manifest for 'ab_sales_contract', defaulting to LGPL-3 
+2026-10-01 09:19:30,617 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_models_replication', defaulting to '' 
+2026-10-01 09:19:30,618 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_sales_promo', defaulting to '' 
+2026-10-01 09:19:30,631 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_template', defaulting to '' 
+2026-10-01 09:19:30,634 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_transfer', defaulting to '' 
+2026-10-01 09:19:30,637 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_visit_report', defaulting to '' 
+2026-10-01 09:19:30,638 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_wan', defaulting to '' 
+2026-10-01 09:19:30,645 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.modules.module: Missing `author` key in manifest for 'ab_widgets', defaulting to '' 
+2026-10-01 09:19:32,006 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_module: ALLOW access to module.button_install on ['Supplier Claim Cycle'] to user __system__ #1 via n/a 
+2026-10-01 09:19:32,149 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading 29 modules... 
+2026-10-01 09:19:32,149 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module rpc (2/29) 
+2026-10-01 09:19:32,214 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module rpc loaded in 0.07s, 9 queries (+9 other) 
+2026-10-01 09:19:32,214 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module web (3/29) 
+2026-10-01 09:19:32,276 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module web: creating or updating database tables 
+2026-10-01 09:19:33,224 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/security/ir.model.access.csv 
+2026-10-01 09:19:33,263 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/security/web_security.xml 
+2026-10-01 09:19:33,307 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/webclient_templates.xml 
+2026-10-01 09:19:33,406 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/report_templates.xml 
+2026-10-01 09:19:33,588 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/base_document_layout_views.xml 
+2026-10-01 09:19:33,634 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/partner_view.xml 
+2026-10-01 09:19:33,656 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/speedscope_template.xml 
+2026-10-01 09:19:33,691 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/memory_template.xml 
+2026-10-01 09:19:33,726 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/speedscope_config_wizard.xml 
+2026-10-01 09:19:33,757 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/neutralize_views.xml 
+2026-10-01 09:19:33,776 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/views/ir_ui_view_views.xml 
+2026-10-01 09:19:33,797 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/data/ir_attachment.xml 
+2026-10-01 09:19:33,810 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web/data/report_layout.xml 
+2026-10-01 09:19:34,322 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module web loaded in 2.11s, 1232 queries (+1232 other) 
+2026-10-01 09:19:34,322 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module api_doc (4/29) 
+2026-10-01 09:19:34,335 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module api_doc: creating or updating database tables 
+2026-10-01 09:19:34,365 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading api_doc/security/res_groups.xml 
+2026-10-01 09:19:34,410 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading api_doc/views/docclient.xml 
+2026-10-01 09:19:34,499 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module api_doc loaded in 0.18s, 63 queries (+63 other) 
+2026-10-01 09:19:34,499 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_totp (5/29) 
+2026-10-01 09:19:34,538 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module auth_totp: creating or updating database tables 
+2026-10-01 09:19:34,696 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/security/security.xml 
+2026-10-01 09:19:34,737 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/security/ir.model.access.csv 
+2026-10-01 09:19:34,760 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/data/ir_action_data.xml 
+2026-10-01 09:19:34,778 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/views/res_users_views.xml 
+2026-10-01 09:19:34,829 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/views/templates.xml 
+2026-10-01 09:19:34,847 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp/wizard/auth_totp_wizard_views.xml 
+2026-10-01 09:19:34,958 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_totp loaded in 0.46s, 218 queries (+218 other) 
+2026-10-01 09:19:34,959 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module base_import (6/29) 
+2026-10-01 09:19:35,009 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module base_import: creating or updating database tables 
+2026-10-01 09:19:35,919 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_import/security/ir.model.access.csv 
+2026-10-01 09:19:35,952 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module base_import loaded in 0.99s, 956 queries (+956 other) 
+2026-10-01 09:19:35,952 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module base_import_module (7/29) 
+2026-10-01 09:19:35,969 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module base_import_module: creating or updating database tables 
+2026-10-01 09:19:36,083 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_import_module/security/ir.model.access.csv 
+2026-10-01 09:19:36,105 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_import_module/views/base_import_module_view.xml 
+2026-10-01 09:19:36,161 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_import_module/views/ir_module_views.xml 
+2026-10-01 09:19:36,284 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module base_import_module loaded in 0.33s, 172 queries (+172 other) 
+2026-10-01 09:19:36,284 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module base_setup (8/29) 
+2026-10-01 09:19:36,303 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module base_setup: creating or updating database tables 
+2026-10-01 09:19:36,375 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_setup/data/base_setup_data.xml 
+2026-10-01 09:19:36,389 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_setup/views/res_config_settings_views.xml 
+2026-10-01 09:19:36,456 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_setup/views/res_partner_views.xml 
+2026-10-01 09:19:36,579 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module base_setup loaded in 0.30s, 152 queries (+152 other) 
+2026-10-01 09:19:36,579 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module bus (9/29) 
+2026-10-01 09:19:36,618 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module bus: creating or updating database tables 
+2026-10-01 09:19:36,802 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading bus/security/ir.model.access.csv 
+2026-10-01 09:19:37,021 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module bus loaded in 0.44s, 155 queries (+155 other) 
+2026-10-01 09:19:37,021 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module web_tour (10/29) 
+2026-10-01 09:19:37,037 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module web_tour: creating or updating database tables 
+2026-10-01 09:19:37,046 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.users.tour_enabled 
+2026-10-01 09:19:37,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web_tour/security/ir.model.access.csv 
+2026-10-01 09:19:37,210 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web_tour/views/tour_views.xml 
+2026-10-01 09:19:37,316 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module web_tour loaded in 0.30s, 180 queries (+180 other) 
+2026-10-01 09:19:37,316 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_passkey (11/29) 
+2026-10-01 09:19:37,408 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module auth_passkey: creating or updating database tables 
+2026-10-01 09:19:37,538 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/views/auth_passkey_key_views.xml 
+2026-10-01 09:19:37,580 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/views/auth_passkey_login_templates.xml 
+2026-10-01 09:19:37,614 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:19:37,620 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/views/res_users_identitycheck_views.xml 
+2026-10-01 09:19:37,643 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/views/res_users_views.xml 
+2026-10-01 09:19:37,688 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/security/ir.model.access.csv 
+2026-10-01 09:19:37,719 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey/security/security.xml 
+2026-10-01 09:19:37,819 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_passkey loaded in 0.50s, 218 queries (+218 other) 
+2026-10-01 09:19:37,819 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module html_editor (12/29) 
+2026-10-01 09:19:38,142 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module html_editor: creating or updating database tables 
+2026-10-01 09:19:39,017 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading html_editor/security/ir.model.access.csv 
+2026-10-01 09:19:39,151 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module html_editor loaded in 1.33s, 1034 queries (+1034 other) 
+2026-10-01 09:19:39,152 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module iap (13/29) 
+2026-10-01 09:19:39,157 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module iap: creating or updating database tables 
+2026-10-01 09:19:39,291 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap/data/services.xml 
+2026-10-01 09:19:39,310 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap/security/ir.model.access.csv 
+2026-10-01 09:19:39,332 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap/security/ir_rule.xml 
+2026-10-01 09:19:39,353 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap/views/iap_views.xml 
+2026-10-01 09:19:39,401 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap/views/res_config_settings.xml 
+2026-10-01 09:19:39,496 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module iap loaded in 0.34s, 182 queries (+182 other) 
+2026-10-01 09:19:39,496 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module mail (14/29) 
+2026-10-01 09:19:39,573 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module mail: creating or updating database tables 
+2026-10-01 09:19:40,186 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.partner_ids 
+2026-10-01 09:19:40,187 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_user_id 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_type_id 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.template_id 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_date_deadline_range 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_summary 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.followers_type 
+2026-10-01 09:19:40,191 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.followers_partner_field_name 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.mail_post_method 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_date_deadline_range_type 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_user_type 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_user_field_name 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.activity_note 
+2026-10-01 09:19:40,192 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.mail_post_autofollow 
+2026-10-01 09:19:40,313 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.users.notification_type 
+2026-10-01 09:19:40,464 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.email_normalized 
+2026-10-01 09:19:43,198 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_groups.xml 
+2026-10-01 09:19:43,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_activity_schedule_views.xml 
+2026-10-01 09:19:43,273 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_blacklist_remove_views.xml 
+2026-10-01 09:19:43,289 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_compose_message_views.xml 
+2026-10-01 09:19:43,334 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_template_preview_views.xml 
+2026-10-01 09:19:43,366 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_followers_edit_views.xml 
+2026-10-01 09:19:43,391 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/wizard/mail_template_reset_views.xml 
+2026-10-01 09:19:43,414 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/fetchmail_views.xml 
+2026-10-01 09:19:43,451 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/ir_cron_views.xml 
+2026-10-01 09:19:43,466 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/ir_filters_views.xml 
+2026-10-01 09:19:43,498 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/ir_mail_server_views.xml 
+2026-10-01 09:19:43,521 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_message_subtype_views.xml 
+2026-10-01 09:19:43,553 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_tracking_value_views.xml 
+2026-10-01 09:19:43,580 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_notification_views.xml 
+2026-10-01 09:19:43,614 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_message_views.xml 
+2026-10-01 09:19:43,672 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_message_schedule_views.xml 
+2026-10-01 09:19:43,709 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_mail_views.xml 
+2026-10-01 09:19:43,760 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_followers_views.xml 
+2026-10-01 09:19:43,790 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_ice_server_views.xml 
+2026-10-01 09:19:43,830 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss_channel_member_views.xml 
+2026-10-01 09:19:43,856 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss_channel_rtc_session_views.xml 
+2026-10-01 09:19:43,901 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_link_preview_views.xml 
+2026-10-01 09:19:43,945 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss/discuss_gif_favorite_views.xml 
+2026-10-01 09:19:43,983 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss_channel_views.xml 
+2026-10-01 09:19:44,046 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_canned_response_views.xml 
+2026-10-01 09:19:44,102 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_role_views.xml 
+2026-10-01 09:19:44,142 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_activity_views.xml 
+2026-10-01 09:19:44,307 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_activity_plan_views.xml 
+2026-10-01 09:19:44,383 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_activity_plan_template_views.xml 
+2026-10-01 09:19:44,416 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_config_settings_views.xml 
+2026-10-01 09:19:44,454 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/ir_config_parameter_data.xml 
+2026-10-01 09:19:44,472 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/res_partner_data.xml 
+2026-10-01 09:19:44,611 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_message_subtype_data.xml 
+2026-10-01 09:19:44,631 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_templates_chatter.xml 
+2026-10-01 09:19:44,667 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_templates_email_layouts.xml 
+2026-10-01 09:19:44,709 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_templates_mailgateway.xml 
+2026-10-01 09:19:44,746 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/discuss_channel_data.xml 
+2026-10-01 09:19:44,813 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_activity_type_data.xml 
+2026-10-01 09:19:44,847 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/security_notifications_templates.xml 
+2026-10-01 09:19:44,863 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/ir_cron_data.xml 
+2026-10-01 09:19:45,037 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/ir_actions_client.xml 
+2026-10-01 09:19:45,060 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/security/mail_security.xml 
+2026-10-01 09:19:45,325 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/security/ir.model.access.csv 
+2026-10-01 09:19:45,416 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss_public_templates.xml 
+2026-10-01 09:19:45,449 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_alias_domain_views.xml 
+2026-10-01 09:19:45,490 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_alias_views.xml 
+2026-10-01 09:19:45,526 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_gateway_allowed_views.xml 
+2026-10-01 09:19:45,552 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_guest_views.xml 
+2026-10-01 09:19:45,581 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_message_reaction_views.xml 
+2026-10-01 09:19:45,609 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_templates_public.xml 
+2026-10-01 09:19:45,632 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_users_views.xml 
+2026-10-01 09:19:45,690 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_users_settings_views.xml 
+2026-10-01 09:19:45,727 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_template_views.xml 
+2026-10-01 09:19:45,769 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/ir_actions_server_views.xml 
+2026-10-01 09:19:45,794 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/ir_model_views.xml 
+2026-10-01 09:19:45,857 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_partner_views.xml 
+2026-10-01 09:19:45,957 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_blacklist_views.xml 
+2026-10-01 09:19:45,996 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_menus.xml 
+2026-10-01 09:19:46,256 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss/discuss_menus.xml 
+2026-10-01 09:19:46,272 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/discuss/discuss_call_history_views.xml 
+2026-10-01 09:19:46,307 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/res_company_views.xml 
+2026-10-01 09:19:46,331 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/views/mail_scheduled_message_views.xml 
+2026-10-01 09:19:46,358 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_canned_response_data.xml 
+2026-10-01 09:19:46,379 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/mail_templates_invite.xml 
+2026-10-01 09:19:46,407 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail/data/web_tour_tour.xml 
+2026-10-01 09:19:47,467 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module mail loaded in 7.97s, 4978 queries (+4979 other) 
+2026-10-01 09:19:47,468 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module web_unsplash (15/29) 
+2026-10-01 09:19:47,502 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module web_unsplash: creating or updating database tables 
+2026-10-01 09:19:47,640 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading web_unsplash/views/res_config_settings_view.xml 
+2026-10-01 09:19:47,777 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module web_unsplash loaded in 0.31s, 103 queries (+103 other) 
+2026-10-01 09:19:47,778 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module ab_costcenter (16/29) 
+2026-10-01 09:19:47,790 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module ab_costcenter: creating or updating database tables 
+2026-10-01 09:19:47,915 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_costcenter/security/security.xml 
+2026-10-01 09:19:47,916 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_costcenter/security/ir.model.access.csv 
+2026-10-01 09:19:47,925 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_costcenter/views/costcenter.xml 
+2026-10-01 09:19:47,971 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module ab_costcenter loaded in 0.19s, 113 queries (+113 other) 
+2026-10-01 09:19:47,971 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_signup (17/29) 
+2026-10-01 09:19:48,006 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module auth_signup: creating or updating database tables 
+2026-10-01 09:19:48,135 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/data/ir_config_parameter_data.xml 
+2026-10-01 09:19:48,155 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/data/ir_cron_data.xml 
+2026-10-01 09:19:48,231 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/data/mail_template_data.xml 
+2026-10-01 09:19:48,366 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/views/res_config_settings_views.xml 
+2026-10-01 09:19:48,386 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/views/res_users_views.xml 
+2026-10-01 09:19:48,440 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/views/auth_signup_login_templates.xml 
+2026-10-01 09:19:48,490 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/views/auth_signup_templates_email.xml 
+2026-10-01 09:19:48,509 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_signup/views/webclient_templates.xml 
+2026-10-01 09:19:48,620 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_signup loaded in 0.65s, 255 queries (+255 other) 
+2026-10-01 09:19:48,620 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_totp_mail (18/29) 
+2026-10-01 09:19:48,641 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module auth_totp_mail: creating or updating database tables 
+2026-10-01 09:19:48,715 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/data/ir_action_data.xml 
+2026-10-01 09:19:48,771 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/data/mail_template_data.xml 
+2026-10-01 09:19:48,924 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/data/security_notifications_template.xml 
+2026-10-01 09:19:48,950 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/views/res_config_settings_views.xml 
+2026-10-01 09:19:48,978 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/views/res_users_views.xml 
+2026-10-01 09:19:49,027 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_mail/views/templates.xml 
+2026-10-01 09:19:49,159 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_totp_mail loaded in 0.54s, 189 queries (+189 other) 
+2026-10-01 09:19:49,159 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module base_install_request (19/29) 
+2026-10-01 09:19:49,172 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module base_install_request: creating or updating database tables 
+2026-10-01 09:19:49,302 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_install_request/security/ir.model.access.csv 
+2026-10-01 09:19:49,333 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_install_request/wizard/base_module_install_request_views.xml 
+2026-10-01 09:19:49,378 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_install_request/data/mail_template_data.xml 
+2026-10-01 09:19:49,396 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_install_request/data/mail_templates_module_install.xml 
+2026-10-01 09:19:49,411 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading base_install_request/views/ir_module_module_views.xml 
+2026-10-01 09:19:49,452 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_module: ALLOW access to module.button_install on ['Project', 'Email Marketing', 'Employees', 'Surveys'] to user __system__ #1 via n/a 
+2026-10-01 09:19:49,602 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module base_install_request loaded in 0.44s, 236 queries (+236 other) 
+2026-10-01 09:19:49,602 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module google_gmail (20/29) 
+2026-10-01 09:19:49,631 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module google_gmail: creating or updating database tables 
+2026-10-01 09:19:49,722 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading google_gmail/views/fetchmail_server_views.xml 
+2026-10-01 09:19:49,764 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading google_gmail/views/ir_mail_server_views.xml 
+2026-10-01 09:19:49,788 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading google_gmail/views/res_config_settings_views.xml 
+2026-10-01 09:19:49,820 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading google_gmail/views/templates.xml 
+2026-10-01 09:19:49,868 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module google_gmail loaded in 0.27s, 155 queries (+155 other) 
+2026-10-01 09:19:49,868 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module iap_mail (21/29) 
+2026-10-01 09:19:49,880 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module iap_mail: creating or updating database tables 
+2026-10-01 09:19:49,942 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap_mail/data/mail_templates.xml 
+2026-10-01 09:19:49,976 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading iap_mail/views/iap_views.xml 
+2026-10-01 09:19:50,020 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module iap_mail loaded in 0.15s, 70 queries (+70 other) 
+2026-10-01 09:19:50,020 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module mail_bot (22/29) 
+2026-10-01 09:19:50,039 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module mail_bot: creating or updating database tables 
+2026-10-01 09:19:50,122 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail_bot/views/res_users_views.xml 
+2026-10-01 09:19:50,157 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail_bot/data/mailbot_data.xml 
+2026-10-01 09:19:50,187 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module mail_bot loaded in 0.17s, 109 queries (+109 other) 
+2026-10-01 09:19:50,187 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module microsoft_outlook (23/29) 
+2026-10-01 09:19:50,213 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module microsoft_outlook: creating or updating database tables 
+2026-10-01 09:19:50,315 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading microsoft_outlook/views/fetchmail_server_views.xml 
+2026-10-01 09:19:50,355 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading microsoft_outlook/views/ir_mail_server_views.xml 
+2026-10-01 09:19:50,380 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading microsoft_outlook/views/res_config_settings_views.xml 
+2026-10-01 09:19:50,413 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading microsoft_outlook/views/templates.xml 
+2026-10-01 09:19:50,470 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module microsoft_outlook loaded in 0.28s, 158 queries (+158 other) 
+2026-10-01 09:19:50,470 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module phone_validation (24/29) 
+2026-10-01 09:19:50,633 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module phone_validation: creating or updating database tables 
+2026-10-01 09:19:50,665 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.partner.phone_sanitized 
+2026-10-01 09:19:52,042 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading phone_validation/security/ir.model.access.csv 
+2026-10-01 09:19:52,061 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading phone_validation/views/phone_blacklist_views.xml 
+2026-10-01 09:19:52,118 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading phone_validation/views/res_partner_views.xml 
+2026-10-01 09:19:52,142 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading phone_validation/wizard/phone_blacklist_remove_view.xml 
+2026-10-01 09:19:52,224 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module phone_validation loaded in 1.75s, 1636 queries (+1636 other) 
+2026-10-01 09:19:52,224 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module privacy_lookup (25/29) 
+2026-10-01 09:19:52,250 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module privacy_lookup: creating or updating database tables 
+2026-10-01 09:19:52,454 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading privacy_lookup/wizard/privacy_lookup_wizard_views.xml 
+2026-10-01 09:19:52,535 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading privacy_lookup/views/privacy_log_views.xml 
+2026-10-01 09:19:52,586 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading privacy_lookup/security/ir.model.access.csv 
+2026-10-01 09:19:52,616 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading privacy_lookup/data/ir_actions_server_data.xml 
+2026-10-01 09:19:52,728 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module privacy_lookup loaded in 0.50s, 293 queries (+293 other) 
+2026-10-01 09:19:52,728 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module ab_supplier_claim_cycle (26/29) 
+2026-10-01 09:19:52,752 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module ab_supplier_claim_cycle: creating or updating database tables 
+2026-10-01 09:19:52,788 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:19:52,932 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/security/groups.xml 
+2026-10-01 09:19:53,047 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/security/record_rules.xml 
+2026-10-01 09:19:53,206 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/security/costcenter_rules.xml 
+2026-10-01 09:19:53,217 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/security/ir.model.access.csv 
+2026-10-01 09:19:53,238 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/views/menus.xml 
+2026-10-01 09:19:53,248 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/views/ab_supplier_claim_cycle.xml 
+2026-10-01 09:19:53,336 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/views/supplier_terms.xml 
+2026-10-01 09:19:53,379 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading ab_supplier_claim_cycle/views/claim_design.xml 
+2026-10-01 09:19:53,474 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module ab_supplier_claim_cycle loaded in 0.74s, 445 queries (+445 other) 
+2026-10-01 09:19:53,474 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module partner_autocomplete (27/29) 
+2026-10-01 09:19:53,528 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module partner_autocomplete: creating or updating database tables 
+2026-10-01 09:19:53,657 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading partner_autocomplete/views/res_company_views.xml 
+2026-10-01 09:19:53,690 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading partner_autocomplete/views/res_config_settings_views.xml 
+2026-10-01 09:19:53,714 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading partner_autocomplete/data/iap_service_data.xml 
+2026-10-01 09:19:53,828 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module partner_autocomplete loaded in 0.35s, 141 queries (+141 other) 
+2026-10-01 09:19:53,829 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module sms (28/29) 
+2026-10-01 09:19:54,000 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module sms: creating or updating database tables 
+2026-10-01 09:19:54,018 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.sms_template_id 
+2026-10-01 09:19:54,018 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of ir.actions.server.sms_method 
+2026-10-01 09:19:55,076 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:19:55,766 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/data/iap_service_data.xml 
+2026-10-01 09:19:55,780 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/data/ir_cron_data.xml 
+2026-10-01 09:19:55,825 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_account_code_views.xml 
+2026-10-01 09:19:55,851 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_account_phone_views.xml 
+2026-10-01 09:19:55,870 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_account_sender_views.xml 
+2026-10-01 09:19:55,888 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_composer_views.xml 
+2026-10-01 09:19:55,915 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_template_preview_views.xml 
+2026-10-01 09:19:55,937 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/wizard/sms_template_reset_views.xml 
+2026-10-01 09:19:55,962 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/ir_actions_server_views.xml 
+2026-10-01 09:19:55,985 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/mail_notification_views.xml 
+2026-10-01 09:19:56,023 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/res_config_settings_views.xml 
+2026-10-01 09:19:56,044 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/res_partner_views.xml 
+2026-10-01 09:19:56,090 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/iap_account_views.xml 
+2026-10-01 09:19:56,120 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/sms_sms_views.xml 
+2026-10-01 09:19:56,171 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/views/sms_template_views.xml 
+2026-10-01 09:19:56,218 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/security/ir.model.access.csv 
+2026-10-01 09:19:56,266 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading sms/security/sms_security.xml 
+2026-10-01 09:19:56,402 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module sms loaded in 2.57s, 2057 queries (+2057 other) 
+2026-10-01 09:19:56,402 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module snailmail (29/29) 
+2026-10-01 09:19:56,619 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module snailmail: creating or updating database tables 
+2026-10-01 09:19:56,766 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:19:57,005 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading snailmail/data/iap_service_data.xml 
+2026-10-01 09:19:57,028 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading snailmail/data/snailmail_data.xml 
+2026-10-01 09:19:57,086 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading snailmail/views/report_assets.xml 
+2026-10-01 09:19:57,114 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading snailmail/views/snailmail_views.xml 
+2026-10-01 09:19:57,157 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading snailmail/security/ir.model.access.csv 
+2026-10-01 09:19:57,266 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module snailmail loaded in 0.86s, 421 queries (+421 other) 
+2026-10-01 09:19:57,267 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: 29 modules loaded in 25.12s, 15930 queries (+15931 extra) 
+2026-10-01 09:19:57,272 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading 61 modules... 
+2026-10-01 09:19:57,272 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module social_media (30/61) 
+2026-10-01 09:19:57,284 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module social_media: creating or updating database tables 
+2026-10-01 09:19:57,343 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading social_media/views/res_company_views.xml 
+2026-10-01 09:19:57,426 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module social_media loaded in 0.15s, 74 queries (+74 other) 
+2026-10-01 09:19:57,426 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module uom (31/61) 
+2026-10-01 09:19:57,436 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module uom: creating or updating database tables 
+2026-10-01 09:19:57,535 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading uom/data/uom_data.xml 
+2026-10-01 09:19:57,659 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading uom/security/uom_security.xml 
+2026-10-01 09:19:57,676 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading uom/security/ir.model.access.csv 
+2026-10-01 09:19:57,700 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading uom/views/uom_uom_views.xml 
+2026-10-01 09:19:57,800 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module uom loaded in 0.37s, 230 queries (+230 other) 
+2026-10-01 09:19:57,800 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module http_routing (32/61) 
+2026-10-01 09:19:57,808 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module http_routing: creating or updating database tables 
+2026-10-01 09:19:57,842 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading http_routing/views/http_routing_template.xml 
+2026-10-01 09:19:57,909 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading http_routing/views/res_lang_views.xml 
+2026-10-01 09:19:57,969 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module http_routing loaded in 0.17s, 114 queries (+114 other) 
+2026-10-01 09:19:57,969 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module resource (33/61) 
+2026-10-01 09:19:57,999 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module resource: creating or updating database tables 
+2026-10-01 09:19:58,307 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/data/resource_data.xml 
+2026-10-01 09:19:58,359 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/security/ir.model.access.csv 
+2026-10-01 09:19:58,392 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/security/resource_security.xml 
+2026-10-01 09:19:58,440 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/views/resource_resource_views.xml 
+2026-10-01 09:19:58,490 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/views/resource_calendar_leaves_views.xml 
+2026-10-01 09:19:58,546 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/views/resource_calendar_attendance_views.xml 
+2026-10-01 09:19:58,581 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/views/resource_calendar_views.xml 
+2026-10-01 09:19:58,633 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading resource/views/menuitems.xml 
+2026-10-01 09:19:58,773 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module resource loaded in 0.80s, 420 queries (+420 other) 
+2026-10-01 09:19:58,773 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module utm (34/61) 
+2026-10-01 09:19:58,800 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module utm: creating or updating database tables 
+2026-10-01 09:19:59,043 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/data/utm_medium_data.xml 
+2026-10-01 09:19:59,086 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/data/utm_source_data.xml 
+2026-10-01 09:19:59,123 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/data/utm_stage_data.xml 
+2026-10-01 09:19:59,139 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/data/utm_tag_data.xml 
+2026-10-01 09:19:59,158 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_campaign_views.xml 
+2026-10-01 09:19:59,240 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_medium_views.xml 
+2026-10-01 09:19:59,277 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_source_views.xml 
+2026-10-01 09:19:59,319 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_stage_views.xml 
+2026-10-01 09:19:59,355 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_tag_views.xml 
+2026-10-01 09:19:59,382 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/views/utm_menus.xml 
+2026-10-01 09:19:59,433 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading utm/security/ir.model.access.csv 
+2026-10-01 09:19:59,580 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module utm loaded in 0.81s, 410 queries (+410 other) 
+2026-10-01 09:19:59,580 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module web_hierarchy (35/61) 
+2026-10-01 09:19:59,715 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module web_hierarchy: creating or updating database tables 
+2026-10-01 09:20:00,771 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:20:01,280 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module web_hierarchy loaded in 1.70s, 1700 queries (+1700 other) 
+2026-10-01 09:20:01,280 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module analytic (36/61) 
+2026-10-01 09:20:01,302 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module analytic: creating or updating database tables 
+2026-10-01 09:20:01,662 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/security/analytic_security.xml 
+2026-10-01 09:20:01,701 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/security/ir.model.access.csv 
+2026-10-01 09:20:01,728 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/views/analytic_line_views.xml 
+2026-10-01 09:20:01,834 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/views/analytic_account_views.xml 
+2026-10-01 09:20:01,889 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:20:01,895 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/views/analytic_plan_views.xml 
+2026-10-01 09:20:01,939 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/views/analytic_distribution_model_views.xml 
+2026-10-01 09:20:01,974 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading analytic/data/analytic_data.xml 
+2026-10-01 09:20:02,152 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module analytic loaded in 0.87s, 425 queries (+425 other) 
+2026-10-01 09:20:02,152 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module contacts (37/61) 
+2026-10-01 09:20:02,195 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module contacts: creating or updating database tables 
+2026-10-01 09:20:02,280 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading contacts/views/contact_views.xml 
+2026-10-01 09:20:02,468 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module contacts loaded in 0.32s, 209 queries (+209 other) 
+2026-10-01 09:20:02,469 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module gamification (38/61) 
+2026-10-01 09:20:02,503 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module gamification: creating or updating database tables 
+2026-10-01 09:20:02,661 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of res.users.karma 
+2026-10-01 09:20:03,147 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/wizard/update_goal.xml 
+2026-10-01 09:20:03,174 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/wizard/grant_badge.xml 
+2026-10-01 09:20:03,201 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/res_users_views.xml 
+2026-10-01 09:20:03,248 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_karma_rank_views.xml 
+2026-10-01 09:20:03,291 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_karma_tracking_views.xml 
+2026-10-01 09:20:03,324 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_badge_views.xml 
+2026-10-01 09:20:03,374 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_badge_user_views.xml 
+2026-10-01 09:20:03,403 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_goal_views.xml 
+2026-10-01 09:20:03,457 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_goal_definition_views.xml 
+2026-10-01 09:20:03,500 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_challenge_views.xml 
+2026-10-01 09:20:03,557 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_challenge_line_views.xml 
+2026-10-01 09:20:03,583 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/views/gamification_menus.xml 
+2026-10-01 09:20:03,638 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/security/gamification_security.xml 
+2026-10-01 09:20:03,682 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/security/ir.model.access.csv 
+2026-10-01 09:20:03,718 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/data/ir_cron_data.xml 
+2026-10-01 09:20:03,788 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/data/mail_template_data.xml 
+2026-10-01 09:20:03,884 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/data/gamification_badge_data.xml 
+2026-10-01 09:20:03,994 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/data/gamification_challenge_data.xml 
+2026-10-01 09:20:04,067 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading gamification/data/gamification_karma_rank_data.xml 
+2026-10-01 09:20:04,679 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module gamification loaded in 2.21s, 975 queries (+975 other) 
+2026-10-01 09:20:04,679 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module html_builder (39/61) 
+2026-10-01 09:20:04,742 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module html_builder loaded in 0.06s, 10 queries (+10 other) 
+2026-10-01 09:20:04,742 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module link_tracker (40/61) 
+2026-10-01 09:20:04,764 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module link_tracker: creating or updating database tables 
+2026-10-01 09:20:05,008 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading link_tracker/views/link_tracker_views.xml 
+2026-10-01 09:20:05,096 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading link_tracker/views/utm_campaign_views.xml 
+2026-10-01 09:20:05,134 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading link_tracker/security/ir.model.access.csv 
+2026-10-01 09:20:05,276 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module link_tracker loaded in 0.53s, 282 queries (+282 other) 
+2026-10-01 09:20:05,276 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module rating (41/61) 
+2026-10-01 09:20:05,353 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module rating: creating or updating database tables 
+2026-10-01 09:20:05,492 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:20:05,734 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading rating/views/rating_rating_views.xml 
+2026-10-01 09:20:05,832 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading rating/views/rating_templates.xml 
+2026-10-01 09:20:05,862 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading rating/views/mail_message_views.xml 
+2026-10-01 09:20:05,887 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading rating/security/ir.model.access.csv 
+2026-10-01 09:20:05,960 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module rating loaded in 0.68s, 430 queries (+430 other) 
+2026-10-01 09:20:05,960 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module resource_mail (42/61) 
+2026-10-01 09:20:05,973 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module resource_mail: creating or updating database tables 
+2026-10-01 09:20:06,026 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module resource_mail loaded in 0.07s, 36 queries (+36 other) 
+2026-10-01 09:20:06,026 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module portal (43/61) 
+2026-10-01 09:20:06,067 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module portal: creating or updating database tables 
+2026-10-01 09:20:06,252 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:20:06,489 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/security/ir.model.access.csv 
+2026-10-01 09:20:06,508 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/data/mail_templates.xml 
+2026-10-01 09:20:06,527 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/views/address_templates.xml 
+2026-10-01 09:20:06,581 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/views/mail_templates_public.xml 
+2026-10-01 09:20:06,600 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/views/portal_templates.xml 
+2026-10-01 09:20:06,785 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/views/res_config_settings_views.xml 
+2026-10-01 09:20:06,820 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/wizard/portal_share_views.xml 
+2026-10-01 09:20:06,853 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal/wizard/portal_wizard_views.xml 
+2026-10-01 09:20:07,054 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module portal loaded in 1.03s, 588 queries (+588 other) 
+2026-10-01 09:20:07,055 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module survey (44/61) 
+2026-10-01 09:20:07,125 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module survey: creating or updating database tables 
+2026-10-01 09:20:07,135 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of gamification.badge.survey_id 
+2026-10-01 09:20:07,866 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/report/survey_templates.xml 
+2026-10-01 09:20:07,901 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/report/survey_reports.xml 
+2026-10-01 09:20:07,924 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/data/ir_actions_server_data.xml 
+2026-10-01 09:20:07,958 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/data/mail_message_subtype_data.xml 
+2026-10-01 09:20:07,975 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/data/mail_template_data.xml 
+2026-10-01 09:20:08,002 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/data/survey_tour.xml 
+2026-10-01 09:20:08,018 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/security/survey_security.xml 
+2026-10-01 09:20:08,199 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/security/ir.model.access.csv 
+2026-10-01 09:20:08,234 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_menus.xml 
+2026-10-01 09:20:08,281 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_survey_views.xml 
+2026-10-01 09:20:08,367 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_user_views.xml 
+2026-10-01 09:20:08,450 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_question_views.xml 
+2026-10-01 09:20:08,545 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_templates.xml 
+2026-10-01 09:20:08,710 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_templates_management.xml 
+2026-10-01 09:20:08,782 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_templates_print.xml 
+2026-10-01 09:20:08,814 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_templates_statistics.xml 
+2026-10-01 09:20:08,914 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/survey_templates_user_input_session.xml 
+2026-10-01 09:20:08,982 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/gamification_badge_views.xml 
+2026-10-01 09:20:09,007 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/wizard/survey_invite_views.xml 
+2026-10-01 09:20:09,031 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading survey/views/res_partner_views.xml 
+2026-10-01 09:20:09,492 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module survey loaded in 2.44s, 1190 queries (+1190 other) 
+2026-10-01 09:20:09,492 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_passkey_portal (45/61) 
+2026-10-01 09:20:09,514 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_passkey_portal/views/templates.xml 
+2026-10-01 09:20:09,598 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_passkey_portal loaded in 0.11s, 22 queries (+22 other) 
+2026-10-01 09:20:09,598 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module auth_totp_portal (46/61) 
+2026-10-01 09:20:09,616 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module auth_totp_portal: creating or updating database tables 
+2026-10-01 09:20:09,674 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_portal/security/security.xml 
+2026-10-01 09:20:09,704 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading auth_totp_portal/views/templates.xml 
+2026-10-01 09:20:09,766 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module auth_totp_portal loaded in 0.17s, 70 queries (+70 other) 
+2026-10-01 09:20:09,767 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module digest (47/61) 
+2026-10-01 09:20:09,792 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module digest: creating or updating database tables 
+2026-10-01 09:20:09,973 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/security/ir.model.access.csv 
+2026-10-01 09:20:09,997 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/data/digest_data.xml 
+2026-10-01 09:20:10,044 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/data/digest_tips_data.xml 
+2026-10-01 09:20:10,088 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/data/ir_cron_data.xml 
+2026-10-01 09:20:10,135 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/data/res_config_settings_data.xml 
+2026-10-01 09:20:10,151 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/views/digest_views.xml 
+2026-10-01 09:20:10,241 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/views/digest_templates.xml 
+2026-10-01 09:20:10,260 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading digest/views/res_config_settings_views.xml 
+2026-10-01 09:20:10,380 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module digest loaded in 0.61s, 326 queries (+326 other) 
+2026-10-01 09:20:10,380 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module portal_rating (48/61) 
+2026-10-01 09:20:10,406 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module portal_rating: creating or updating database tables 
+2026-10-01 09:20:10,525 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal_rating/views/rating_rating_views.xml 
+2026-10-01 09:20:10,568 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal_rating/views/portal_templates.xml 
+2026-10-01 09:20:10,589 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading portal_rating/views/rating_templates.xml 
+2026-10-01 09:20:10,625 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module portal_rating loaded in 0.24s, 129 queries (+129 other) 
+2026-10-01 09:20:10,626 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr (49/61) 
+2026-10-01 09:20:10,826 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr: creating or updating database tables 
+2026-10-01 09:20:12,246 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:20:13,504 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/security/hr_security.xml 
+2026-10-01 09:20:13,675 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/security/ir.model.access.csv 
+2026-10-01 09:20:13,721 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/data/digest_data.xml 
+2026-10-01 09:20:13,745 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/data/report_paperformat.xml 
+2026-10-01 09:20:13,758 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/wizard/hr_departure_wizard_views.xml 
+2026-10-01 09:20:13,781 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/wizard/hr_contract_template_wizard.views.xml 
+2026-10-01 09:20:13,805 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/wizard/mail_activity_schedule_views.xml 
+2026-10-01 09:20:13,828 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/wizard/hr_bank_account_allocation_wizard.xml 
+2026-10-01 09:20:13,850 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/wizard/hr_bank_account_allocation_wizard_line.xml 
+2026-10-01 09:20:13,867 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/mail_activity_plan_views.xml 
+2026-10-01 09:20:13,947 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_version_views.xml 
+2026-10-01 09:20:14,013 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_contract_template_views.xml 
+2026-10-01 09:20:14,046 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_departure_reason_views.xml 
+2026-10-01 09:20:14,073 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_contract_type_views.xml 
+2026-10-01 09:20:14,116 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_job_views.xml 
+2026-10-01 09:20:14,163 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_employee_category_views.xml 
+2026-10-01 09:20:14,193 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_employee_public_views.xml 
+2026-10-01 09:20:14,270 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/report/hr_employee_badge.xml 
+2026-10-01 09:20:14,294 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_employee_views.xml 
+2026-10-01 09:20:14,500 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_department_views.xml 
+2026-10-01 09:20:14,579 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_work_location_views.xml 
+2026-10-01 09:20:14,609 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_views.xml 
+2026-10-01 09:20:14,727 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/res_config_settings_views.xml 
+2026-10-01 09:20:14,778 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/res_partner_views.xml 
+2026-10-01 09:20:14,826 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/res_partner_bank_views.xml 
+2026-10-01 09:20:14,853 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/discuss_channel_views.xml 
+2026-10-01 09:20:14,883 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/res_users.xml 
+2026-10-01 09:20:14,995 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/views/hr_templates.xml 
+2026-10-01 09:20:15,014 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr/data/hr_data.xml 
+2026-10-01 09:20:15,753 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr loaded in 5.13s, 3739 queries (+3739 other) 
+2026-10-01 09:20:15,754 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module mass_mailing (50/61) 
+2026-10-01 09:20:15,878 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module mass_mailing: creating or updating database tables 
+2026-10-01 09:20:16,337 11308 WARNING codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Two fields (bank_cheque_attachment, cheque_attachment) of ab_supplier_claim_cycle() have the same label: Cheque Attachment. [Modules: ab_supplier_claim_cycle and ab_supplier_claim_cycle] 
+2026-10-01 09:20:17,167 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/res_groups_privilege_data.xml 
+2026-10-01 09:20:17,189 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/security/res_groups_data.xml 
+2026-10-01 09:20:17,234 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/security/security.xml 
+2026-10-01 09:20:17,274 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/security/ir.model.access.csv 
+2026-10-01 09:20:17,325 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/digest_data.xml 
+2026-10-01 09:20:17,354 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/ir_attachment_data.xml 
+2026-10-01 09:20:17,448 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/ir_config_parameter_data.xml 
+2026-10-01 09:20:17,470 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/ir_cron_data.xml 
+2026-10-01 09:20:17,555 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/mailing_data_templates.xml 
+2026-10-01 09:20:17,604 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/mailing_list_contact.xml 
+2026-10-01 09:20:17,641 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/mailing_subscription_optout.xml 
+2026-10-01 09:20:17,666 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/mailing_subscription.xml 
+2026-10-01 09:20:17,682 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/data/mass_mailing_tour.xml 
+2026-10-01 09:20:17,698 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mail_compose_message_views.xml 
+2026-10-01 09:20:17,729 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mailing_contact_import_views.xml 
+2026-10-01 09:20:17,752 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mailing_contact_to_list_views.xml 
+2026-10-01 09:20:17,776 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mailing_list_merge_views.xml 
+2026-10-01 09:20:17,806 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mailing_mailing_test_views.xml 
+2026-10-01 09:20:17,829 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/wizard/mailing_mailing_schedule_date_views.xml 
+2026-10-01 09:20:17,852 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/report/mailing_trace_report_views.xml 
+2026-10-01 09:20:17,900 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mail_blacklist_views.xml 
+2026-10-01 09:20:17,943 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_filter_views.xml 
+2026-10-01 09:20:17,977 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_mobile_preview_content.xml 
+2026-10-01 09:20:17,993 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_trace_views.xml 
+2026-10-01 09:20:18,055 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/link_tracker_views.xml 
+2026-10-01 09:20:18,142 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_contact_views.xml 
+2026-10-01 09:20:18,226 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_list_views.xml 
+2026-10-01 09:20:18,286 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_mailing_views.xml 
+2026-10-01 09:20:18,383 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_subscription_optout_views.xml 
+2026-10-01 09:20:18,423 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_subscription_views.xml 
+2026-10-01 09:20:18,474 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/res_config_settings_views.xml 
+2026-10-01 09:20:18,517 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/utm_campaign_views.xml 
+2026-10-01 09:20:18,562 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_menus.xml 
+2026-10-01 09:20:18,697 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_templates_portal_layouts.xml 
+2026-10-01 09:20:18,714 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_templates_portal_management.xml 
+2026-10-01 09:20:18,746 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/mailing_templates_portal_unsubscribe.xml 
+2026-10-01 09:20:18,786 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/themes_templates.xml 
+2026-10-01 09:20:18,824 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets_themes.xml 
+2026-10-01 09:20:18,888 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_columns_snippets.xml 
+2026-10-01 09:20:19,000 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_footer_snippets.xml 
+2026-10-01 09:20:19,066 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_headers_snippets.xml 
+2026-10-01 09:20:19,150 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_headings_snippets.xml 
+2026-10-01 09:20:19,203 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_images_snippets.xml 
+2026-10-01 09:20:19,323 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_inner_snippets.xml 
+2026-10-01 09:20:19,461 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_marketing_snippets.xml 
+2026-10-01 09:20:19,521 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_masonry_snippets.xml 
+2026-10-01 09:20:19,618 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_people_snippets.xml 
+2026-10-01 09:20:19,692 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_text_snippets.xml 
+2026-10-01 09:20:19,837 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing/views/snippets/mass_mailing_website_snippets.xml 
+2026-10-01 09:20:20,254 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module mass_mailing loaded in 4.50s, 2314 queries (+2314 other) 
+2026-10-01 09:20:20,254 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module project (51/61) 
+2026-10-01 09:20:20,360 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module project: creating or updating database tables 
+2026-10-01 09:20:21,851 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/security/project_security.xml 
+2026-10-01 09:20:22,170 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/security/ir.model.access.csv 
+2026-10-01 09:20:22,246 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/security/ir.model.access.xml 
+2026-10-01 09:20:22,273 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/digest_data.xml 
+2026-10-01 09:20:22,307 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/report/project_task_burndown_chart_report_views.xml 
+2026-10-01 09:20:22,361 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/account_analytic_account_views.xml 
+2026-10-01 09:20:22,406 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/digest_digest_views.xml 
+2026-10-01 09:20:22,431 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/rating_rating_views.xml 
+2026-10-01 09:20:22,555 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_update_views.xml 
+2026-10-01 09:20:22,607 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_update_templates.xml 
+2026-10-01 09:20:22,633 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_project_stage_views.xml 
+2026-10-01 09:20:22,716 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/wizard/project_share_wizard_views.xml 
+2026-10-01 09:20:22,763 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_task_type_views.xml 
+2026-10-01 09:20:22,853 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_project_views.xml 
+2026-10-01 09:20:23,174 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_task_views.xml 
+2026-10-01 09:20:23,775 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_role_views.xml 
+2026-10-01 09:20:23,840 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_tags_views.xml 
+2026-10-01 09:20:23,889 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_milestone_views.xml 
+2026-10-01 09:20:23,953 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/res_partner_views.xml 
+2026-10-01 09:20:23,989 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/res_config_settings_views.xml 
+2026-10-01 09:20:24,030 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/mail_activity_plan_views.xml 
+2026-10-01 09:20:24,073 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/mail_activity_type_views.xml 
+2026-10-01 09:20:24,089 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_sharing_project_task_views.xml 
+2026-10-01 09:20:24,220 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_portal_project_project_templates.xml 
+2026-10-01 09:20:24,273 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_portal_project_task_templates.xml 
+2026-10-01 09:20:24,366 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_task_templates.xml 
+2026-10-01 09:20:24,382 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_sharing_project_task_templates.xml 
+2026-10-01 09:20:24,406 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/report/project_report_views.xml 
+2026-10-01 09:20:24,467 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/ir_cron_data.xml 
+2026-10-01 09:20:24,515 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/mail_message_subtype_data.xml 
+2026-10-01 09:20:24,608 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/mail_template_data.xml 
+2026-10-01 09:20:24,664 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/project_data.xml 
+2026-10-01 09:20:24,720 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/data/project_tour.xml 
+2026-10-01 09:20:24,733 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/wizard/project_task_type_delete_views.xml 
+2026-10-01 09:20:24,767 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/wizard/project_task_share_wizard_views.xml 
+2026-10-01 09:20:24,790 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/wizard/project_project_stage_delete_views.xml 
+2026-10-01 09:20:24,815 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/wizard/project_template_create_wizard.xml 
+2026-10-01 09:20:24,839 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project/views/project_menus.xml 
+2026-10-01 09:20:25,868 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module project loaded in 5.61s, 2818 queries (+2818 other) 
+2026-10-01 09:20:25,868 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr_gamification (52/61) 
+2026-10-01 09:20:25,920 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr_gamification: creating or updating database tables 
+2026-10-01 09:20:26,141 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_gamification/security/gamification_security.xml 
+2026-10-01 09:20:26,207 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_gamification/security/ir.model.access.csv 
+2026-10-01 09:20:26,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_gamification/wizard/gamification_badge_user_wizard_views.xml 
+2026-10-01 09:20:26,305 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_gamification/views/gamification_views.xml 
+2026-10-01 09:20:26,403 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_gamification/views/hr_employee_views.xml 
+2026-10-01 09:20:26,512 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr_gamification loaded in 0.64s, 311 queries (+311 other) 
+2026-10-01 09:20:26,512 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr_homeworking (53/61) 
+2026-10-01 09:20:26,554 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr_homeworking: creating or updating database tables 
+2026-10-01 09:20:26,817 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_homeworking/security/security.xml 
+2026-10-01 09:20:26,847 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_homeworking/security/ir.model.access.csv 
+2026-10-01 09:20:26,864 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_homeworking/views/hr_employee_views.xml 
+2026-10-01 09:20:26,925 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_homeworking/views/res_users.xml 
+2026-10-01 09:20:27,014 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr_homeworking loaded in 0.50s, 274 queries (+274 other) 
+2026-10-01 09:20:27,014 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr_org_chart (54/61) 
+2026-10-01 09:20:27,050 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr_org_chart: creating or updating database tables 
+2026-10-01 09:20:27,129 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_org_chart/views/hr_department_views.xml 
+2026-10-01 09:20:27,190 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_org_chart/views/hr_employee_public_views.xml 
+2026-10-01 09:20:27,232 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_org_chart/views/hr_views.xml 
+2026-10-01 09:20:27,365 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr_org_chart loaded in 0.35s, 155 queries (+155 other) 
+2026-10-01 09:20:27,365 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr_skills (55/61) 
+2026-10-01 09:20:27,418 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr_skills: creating or updating database tables 
+2026-10-01 09:20:27,434 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models: Prepare computation of hr.employee.skill_ids 
+2026-10-01 09:20:27,943 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/security/ir.model.access.csv 
+2026-10-01 09:20:27,978 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/security/hr_skills_security.xml 
+2026-10-01 09:20:28,068 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/views/hr_views.xml 
+2026-10-01 09:20:28,362 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/views/hr_job_views.xml 
+2026-10-01 09:20:28,391 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/views/hr_job_skill_views.xml 
+2026-10-01 09:20:28,408 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/hr_resume_data.xml 
+2026-10-01 09:20:28,424 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/hr_skill_data.xml 
+2026-10-01 09:20:28,556 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/ir_actions_server_data.xml 
+2026-10-01 09:20:28,606 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/ir_cron_data.xml 
+2026-10-01 09:20:28,639 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/mail_activity_type_data.xml 
+2026-10-01 09:20:28,659 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/data/report_paperformat.xml 
+2026-10-01 09:20:28,675 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/report/hr_employee_certification_report_views.xml 
+2026-10-01 09:20:28,717 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/report/hr_employee_skill_history_report_views.xml 
+2026-10-01 09:20:28,752 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/report/hr_employee_skill_report_views.xml 
+2026-10-01 09:20:28,797 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/report/hr_employee_cv_report.xml 
+2026-10-01 09:20:28,813 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/views/hr_department_views.xml 
+2026-10-01 09:20:28,836 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/views/hr_employee_cv_templates.xml 
+2026-10-01 09:20:28,873 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills/wizard/hr_employee_cv_wizard_views.xml 
+2026-10-01 09:20:29,110 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr_skills loaded in 1.75s, 1061 queries (+1061 other) 
+2026-10-01 09:20:29,110 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module mail_bot_hr (56/61) 
+2026-10-01 09:20:29,136 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mail_bot_hr/views/res_users_views.xml 
+2026-10-01 09:20:29,239 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module mail_bot_hr loaded in 0.13s, 43 queries (+43 other) 
+2026-10-01 09:20:29,239 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module mass_mailing_themes (57/61) 
+2026-10-01 09:20:29,255 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing_themes/data/ir_attachment_data.xml 
+2026-10-01 09:20:29,309 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading mass_mailing_themes/views/mass_mailing_themes_templates.xml 
+2026-10-01 09:20:29,445 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module mass_mailing_themes loaded in 0.21s, 75 queries (+75 other) 
+2026-10-01 09:20:29,445 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module project_sms (58/61) 
+2026-10-01 09:20:29,468 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module project_sms: creating or updating database tables 
+2026-10-01 09:20:29,606 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/views/project_stage_views.xml 
+2026-10-01 09:20:29,667 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/views/project_task_type_views.xml 
+2026-10-01 09:20:29,720 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/views/project_project_views.xml 
+2026-10-01 09:20:29,739 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/views/project_task_views.xml 
+2026-10-01 09:20:29,754 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/security/ir.model.access.csv 
+2026-10-01 09:20:29,770 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_sms/security/project_sms_security.xml 
+2026-10-01 09:20:29,828 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module project_sms loaded in 0.38s, 212 queries (+212 other) 
+2026-10-01 09:20:29,828 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module project_todo (59/61) 
+2026-10-01 09:20:29,859 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module project_todo: creating or updating database tables 
+2026-10-01 09:20:30,024 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/security/ir.model.access.csv 
+2026-10-01 09:20:30,052 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/security/project_todo_security.xml 
+2026-10-01 09:20:30,071 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/data/todo_template.xml 
+2026-10-01 09:20:30,092 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/views/project_task_views.xml 
+2026-10-01 09:20:30,213 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/views/project_todo_menus.xml 
+2026-10-01 09:20:30,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_todo/wizard/mail_activity_todo_create.xml 
+2026-10-01 09:20:30,509 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module project_todo loaded in 0.68s, 278 queries (+278 other) 
+2026-10-01 09:20:30,509 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module hr_skills_survey (60/61) 
+2026-10-01 09:20:30,528 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module hr_skills_survey: creating or updating database tables 
+2026-10-01 09:20:30,646 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills_survey/data/hr_resume_data.xml 
+2026-10-01 09:20:30,663 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills_survey/views/hr_templates.xml 
+2026-10-01 09:20:30,709 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading hr_skills_survey/views/survey_survey_views.xml 
+2026-10-01 09:20:30,781 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module hr_skills_survey loaded in 0.27s, 148 queries (+148 other) 
+2026-10-01 09:20:30,781 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Loading module project_hr_skills (61/61) 
+2026-10-01 09:20:30,813 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: module project_hr_skills: creating or updating database tables 
+2026-10-01 09:20:30,932 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: loading project_hr_skills/views/project_task_views.xml 
+2026-10-01 09:20:30,989 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Module project_hr_skills loaded in 0.21s, 120 queries (+120 other) 
+2026-10-01 09:20:30,990 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: 61 modules loaded in 33.72s, 19188 queries (+19188 extra) 
+2026-10-01 09:20:32,050 11308 INFO codex_ab_supplier_claim_cycle_test odoo.modules.loading: Modules loaded. 
+2026-10-01 09:20:32,064 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: Registry changed, signaling through the database 
+2026-10-01 09:20:32,067 11308 INFO codex_ab_supplier_claim_cycle_test odoo.registry: Registry loaded in 80.391s 
+2026-10-01 09:20:32,067 11308 INFO codex_ab_supplier_claim_cycle_test odoo.service.server: Starting post tests 
+2026-10-01 09:20:32,153 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_module: module ab_supplier_claim_cycle: loading translation file d:\odoo19\main\ab_supplier_claim_cycle\i18n\ar_001.po for language ar_001 
+2026-10-01 09:20:33,937 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_administrators_complete_both_routes ... 
+2026-10-01 09:20:34,174 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_attachment_only_history_note ... 
+2026-10-01 09:20:34,351 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_buttons_and_view_validation ... 
+2026-10-01 09:20:34,542 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_cash_closure_and_archive ... 
+2026-10-01 09:20:34,714 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models.unlink: User #5 deleted mail.message records with IDs: [99] 
+2026-10-01 09:20:34,720 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 5, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:34,754 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models.unlink: User #11 deleted mail.message records with IDs: [99] 
+2026-10-01 09:20:34,756 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 11, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:34,767 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models.unlink: User #5 deleted mail.message records with IDs: [99] 
+2026-10-01 09:20:34,776 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_classification_form_is_editable_only_for_secretarial_drafts ... 
+2026-10-01 09:20:35,123 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_costcenter_lookup_and_security ... 
+2026-10-01 09:20:35,149 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: read on record ids: [3], uid: 5, model: ab_costcenter 
+2026-10-01 09:20:35,175 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_deferral_validation_every_department ... 
+2026-10-01 09:20:35,526 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_deferred_details_cannot_be_cleared ... 
+2026-10-01 09:20:35,616 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_draft_form_uses_latest_claim_values ... 
+2026-10-01 09:20:35,820 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_evidence_and_archived_claim_protection ... 
+2026-10-01 09:20:35,939 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [17], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,023 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_explicit_values_override_previous_claim ... 
+2026-10-01 09:20:36,078 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_followup_defaults_and_exception_steps ... 
+2026-10-01 09:20:36,277 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: read, uid: 12, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,296 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_force_unlink_context_cannot_bypass_protection ... 
+2026-10-01 09:20:36,397 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models.unlink: User #5 deleted mail.message records with IDs: [114] 
+2026-10-01 09:20:36,408 11308 INFO codex_ab_supplier_claim_cycle_test odoo.models.unlink: User #1 deleted ab_costcenter records with IDs: [1] 
+2026-10-01 09:20:36,436 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: ====================================================================== 
+2026-10-01 09:20:36,436 11308 ERROR codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: FAIL: TestSupplierClaimCycle.test_force_unlink_context_cannot_bypass_protection
+Traceback (most recent call last):
+  File "d:\odoo19\main\ab_supplier_claim_cycle\tests\test_claim_cycle.py", line 322, in test_force_unlink_context_cannot_bypass_protection
+    with self.assertRaises(UserError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\odoo19\Python312\Lib\contextlib.py", line 144, in __exit__
+    next(self.gen)
+  File "D:\odoo19\server\odoo\odoo\tests\common.py", line 514, in _assertRaises
+    with ExitStack() as inner:
+         ^^^^^^^^^^^
+  File "D:\odoo19\Python312\Lib\contextlib.py", line 610, in __exit__
+    raise exc_details[1]
+  File "D:\odoo19\Python312\Lib\contextlib.py", line 595, in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+AssertionError: UserError not raised
+ 
+2026-10-01 09:20:36,437 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_fresh_model_contract ... 
+2026-10-01 09:20:36,501 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_history_immutable_and_visibility ... 
+2026-10-01 09:20:36,587 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 5, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,593 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 6, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,599 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 7, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,609 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 8, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,617 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 9, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,625 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 10, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,633 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 11, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,649 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: read on record ids: [69, 68], uid: 9, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,654 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_history_starts_with_department_decisions ... 
+2026-10-01 09:20:36,762 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_inline_secretarial_note_history_and_permissions ... 
+2026-10-01 09:20:36,817 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [27], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,831 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [27], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,846 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [27], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,860 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [27], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,869 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:36,941 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: unlink, uid: 5, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:36,982 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_late_rejections_resume ... 
+2026-10-01 09:20:37,159 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_latest_claim_defaults_include_archived_drafts ... 
+2026-10-01 09:20:37,161 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:20:37,230 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_multi_record_actions ... 
+2026-10-01 09:20:37,324 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_optional_cheques_and_bank_upload_access ... 
+2026-10-01 09:20:37,434 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [36], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:37,445 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [36], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:37,455 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [36], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:37,468 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:37,499 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [36], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:37,553 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_plain_form_stage_visibility ... 
+2026-10-01 09:20:38,193 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_purchasing_rejection_preserves_inventory_and_early_close ... 
+2026-10-01 09:20:38,319 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_rejected_cycles_finish_with_audited_closure ... 
+2026-10-01 09:20:38,634 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_review_panel_visibility_and_note_attachments ... 
+2026-10-01 09:20:38,768 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: read, uid: 12, model: ab_supplier_claim_cycle.history 
+2026-10-01 09:20:38,774 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_secretarial_form_create ... 
+2026-10-01 09:20:38,987 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_secretarial_note_api_and_form_visibility ... 
+2026-10-01 09:20:39,070 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [46], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,320 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_security_every_group ... 
+2026-10-01 09:20:39,436 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,443 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,466 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,474 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,488 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,514 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,522 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,536 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,554 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,559 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,564 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,587 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: read, uid: 12, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,600 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: read on record ids: [47], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,675 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [47], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,688 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_sequential_approvals_and_no_early_purchasing ... 
+2026-10-01 09:20:39,780 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [49], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:39,899 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_sequential_rejection_new_round ... 
+2026-10-01 09:20:40,044 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_shared_claims_menu_and_completed_visibility ... 
+2026-10-01 09:20:40,170 11308 WARNING ? odoo.http: Logged into database 'hr_db', but dbfilter rejects it; logging session out. 
+2026-10-01 09:20:40,321 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_stage_permissions_and_queues_every_department ... 
+2026-10-01 09:20:40,407 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [53], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,424 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [53], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,440 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [53], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,449 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,515 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [54], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,532 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [54], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,550 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [54], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,568 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,635 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [55], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,656 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [55], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,675 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [55], uid: 9, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,696 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,768 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [56], uid: 6, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,785 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [56], uid: 7, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,807 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_rule: Access Denied by record rules for operation: write on record ids: [56], uid: 8, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,822 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: write, uid: 10, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:40,852 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_supplier_change_loads_or_clears_previous_values ... 
+2026-10-01 09:20:40,918 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_timeline_cash_and_non_cash_routes ... 
+2026-10-01 09:20:41,014 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.ab_supplier_claim_cycle.tests.test_claim_cycle: Starting TestSupplierClaimCycle.test_timeline_details_follow_each_stage ... 
+2026-10-01 09:20:41,168 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_model: Access Denied by ACLs for operation: read, uid: 12, model: ab_supplier_claim_cycle 
+2026-10-01 09:20:41,186 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_attachment: filestore gc 42 checked, 9 removed 
+2026-10-01 09:20:41,200 11308 INFO codex_ab_supplier_claim_cycle_test odoo.service.server: 35 post-tests in 9.13s, 6932 queries 
+2026-10-01 09:20:41,200 11308 INFO codex_ab_supplier_claim_cycle_test odoo.tests.stats: ab_supplier_claim_cycle: 37 tests 9.05s 6932 queries 
+2026-10-01 09:20:41,200 11308 ERROR codex_ab_supplier_claim_cycle_test odoo.tests.result: 1 failed, 0 error(s) of 35 tests when loading database 'codex_ab_supplier_claim_cycle_test' 
+2026-10-01 09:20:41,201 11308 INFO codex_ab_supplier_claim_cycle_test odoo.service.server: Initiating shutdown 
+2026-10-01 09:20:41,201 11308 INFO codex_ab_supplier_claim_cycle_test odoo.service.server: Hit CTRL-C again or send a second signal to force the shutdown. 
+2026-10-01 09:20:41,285 11308 INFO codex_ab_supplier_claim_cycle_test odoo.addons.base.models.ir_http: Generating routing map for key None 
+2026-10-01 09:20:41,760 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 7 0.017 85.608
+2026-10-01 09:20:41,762 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 2 0.024 82.049
+2026-10-01 09:20:41,762 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 2 0.023 64.128
+2026-10-01 09:20:41,763 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 2 0.021 39.855
+2026-10-01 09:20:41,766 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 2 0.020 1.579
+2026-10-01 09:20:41,777 11308 INFO codex_ab_supplier_claim_cycle_test werkzeug: 127.0.0.1 - - [01/Oct/2026 09:20:41] "GET /websocket?version=19.0-2 HTTP/1.1" 101 - 2 0.025 4.595
+2026-10-01 09:20:42,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.sql_db: ConnectionPool(read/write;used=0/count=0/max=64): Closed 5 connections  
+2026-10-01 09:20:42,244 11308 INFO codex_ab_supplier_claim_cycle_test odoo.sql_db: ConnectionPool(read-only;used=0/count=0/max=64): Closed 6 connections  

@@ -1,7 +1,8 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
-PAYMENT_NATURE = [('cash', 'Cash'), ('non_cash', 'Non-cash')]
+PAYMENT_NATURE = [('cash', 'Cash'),
+                  ('bank_transfer', 'Bank Transfer'), ('check', 'Check')]
 TAX_CLASSIFICATION = [
     ('through_supplier', 'Advance Payments'),
     ('tax_payment', 'Tax Payment'),
@@ -40,7 +41,8 @@ class SupplierClaimCycle(models.Model):
     user_id = fields.Many2one('res.users', default=lambda self: self.env.user, readonly=True, ondelete='set null')
     area = fields.Selection([('south', 'South'), ('north', 'North')], required=True)
     amount_of_check = fields.Char(required=True)
-    type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy')], required=True)
+    type_of_invoice = fields.Selection([('original', 'Original'), ('copy', 'Copy'),
+                                        ('bank_statement', 'Bank Statement')], required=True)
     active = fields.Boolean(default=True)
     payment_nature = fields.Selection(PAYMENT_NATURE, copy=False, tracking=True)
     tax_classification = fields.Selection(
@@ -56,6 +58,7 @@ class SupplierClaimCycle(models.Model):
     rejection_reason = fields.Text(readonly=True, copy=False)
     secretarial_notes = fields.Text()
     # Inline binary storage protects evidence from direct ir.attachment mutations.
+    attachment = fields.Binary(string='Attachment', attachment=False, copy=False)
     cheque_attachment = fields.Binary(attachment=False, copy=False)
     cheque_filename = fields.Char(copy=False)
     bank_cheque_attachment = fields.Binary(string='Cheque Attachment', attachment=False, copy=False)
@@ -231,10 +234,10 @@ class SupplierClaimCycle(models.Model):
     def create(self, vals_list):
         self._require_role('user')
         allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'num_of_invoice',
-                   'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
+                   'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment'}
         defaults = dict(state='draft', user_id=self.env.uid, review_round=0,
                         resume_stage=False,
-                        rejection_department=False, rejection_reason=False, active=True,
+                        rejection_department=False, rejection_reason=False, active=True, attachment=False,
                         cheque_attachment=False, cheque_filename=False,
                         bank_cheque_attachment=False, bank_cheque_filename=False)
         for d in DEPARTMENTS:
@@ -272,7 +275,9 @@ class SupplierClaimCycle(models.Model):
             return result
         if any(c.state == 'closed' or not c.active for c in self):
             raise UserError(_('Closed or archived claims cannot be changed.'))
-        correction_fields = {'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes'}
+        correction_fields = {
+            'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
+        }
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):
                 claim._require_role('user')
@@ -359,7 +364,7 @@ class SupplierClaimCycle(models.Model):
                 stage = 'supplier_accounts' if claim.payment_nature == 'cash' else 'inventory'
                 for d in DEPARTMENTS:
                     vals[f'{d}_decision'] = (
-                        'pending' if claim.payment_nature == 'non_cash' or d == 'supplier_accounts'
+                        'pending' if claim.payment_nature != 'cash' or d == 'supplier_accounts'
                         else 'not_required'
                     )
             else:

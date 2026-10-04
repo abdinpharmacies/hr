@@ -65,12 +65,18 @@ msgstr "تفاصيل المطالبة"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 msgid "Closed"
-msgstr "تسليم الشيك"
+msgstr "مغلق"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__copy
 msgid "Copy"
 msgstr "صورة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__copy
+msgid "bank statement"
+msgstr "كشف حساب"
+
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_uid
@@ -241,12 +247,12 @@ msgstr "المرحلة"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_id
 msgid "Supplier"
-msgstr "نوع مستند الفواتير"
+msgstr "اسم الشركة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__type_of_invoice
 msgid "Type Of Invoice"
-msgstr "نوع مستند الفواتير"
+msgstr "نوع الفواتير"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread
@@ -433,6 +439,13 @@ msgid "Cash"
 msgstr "نقدي"
 
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__payment_nature__bank_check
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__bank_check
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "bank check"
+msgstr "شيك بنكي"
+
+#. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_attachment
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_cheque_attachment
@@ -576,11 +589,16 @@ msgid "Medicine"
 msgstr "أدوية"
 
 #. module: ab_supplier_claim_cycle
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__payment_nature__non_cash
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__non_cash
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__bank_transfer
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
-msgid "Non-cash"
-msgstr "غير نقدي"
+msgid "Bank Transfer"
+msgstr "تحويل بنكي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__payment_nature__check
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
+msgid "Check"
+msgstr "شيك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__non_tax_payment

@@ -30,7 +30,7 @@ brackets and business categories are not part of this module.
 States: `draft`, `inventory`, `purchasing`, `supplier_accounts`, `bank_accounts`,
 `returned_secretarial`, `ready_to_close`, `closed`.
 
-- Non-cash: Draft → Inventory → Purchasing → Supplier Accounts → Bank Accounts
+- Bank transfer or check: Draft → Inventory → Purchasing → Supplier Accounts → Bank Accounts
   → Ready to Close → Closed.
 - Cash: Draft → Supplier Accounts → Ready to Close → Closed.
 - Each department approves, rejects, or defers its current review.

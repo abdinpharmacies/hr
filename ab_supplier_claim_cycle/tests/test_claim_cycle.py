@@ -38,7 +38,7 @@ class TestSupplierClaimCycle(TransactionCase):
     def values(self, cash=False):
         return dict(supplier_id=(self.cash if cash else self.supplier).id, num_of_invoice=2,
                     area='north', amount_of_check='100', type_of_invoice='original',
-                    payment_nature='cash' if cash else 'non_cash',
+                    payment_nature='cash' if cash else 'bank_transfer',
                     tax_classification='tax_payment', section='medical')
 
     def decide(self, claim, department, decision='approved', **vals):
@@ -172,6 +172,17 @@ class TestSupplierClaimCycle(TransactionCase):
         self.decide(claim, 'bank_accounts')
         claim.action_close()
         self.assertEqual(claim.state, 'closed')
+
+    def test_check_uses_full_review_route(self):
+        claim = self.Claim.with_user(self.users['user']).create({
+            **self.values(),
+            'payment_nature': 'check',
+        })
+        claim.action_submit()
+        self.assertEqual(claim.state, 'inventory')
+        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+            self.decide(claim, department)
+        self.assertEqual(claim.state, 'ready_to_close')
 
     def test_sequential_rejection_new_round(self):
         for rejecting in ('inventory', 'purchasing'):
@@ -513,7 +524,7 @@ class TestSupplierClaimCycle(TransactionCase):
                 arch = etree.fromstring(self.Claim.with_user(user).with_context(lang=lang).get_view(
                     view_id=view.id, view_type='form')['arch'])
                 self.assertTrue(arch.xpath("//div[@class='o_scc_top_tracking']"))
-                values = dict(state='draft', payment_nature='non_cash', active=True, cheque_attachment=False, resume_stage=False,
+                values = dict(state='draft', payment_nature='bank_transfer', active=True, cheque_attachment=False, resume_stage=False,
                               **{d + '_decision': 'pending' for d in departments})
                 def visible(node):
                     return not any(safe_eval(parent.get('invisible', 'False'), values)
@@ -536,11 +547,11 @@ class TestSupplierClaimCycle(TransactionCase):
                     for node in arch.xpath('//group[@name="department_reviews"]//field[@name="cheque_attachment"]'):
                         expected = authorized and stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
                         self.assertEqual(visible(node), expected)
-                for nature in ('cash', 'non_cash'):
+                for nature in ('cash', 'bank_transfer', 'check'):
                     values.update(payment_nature=nature, state='supplier_accounts')
                     bars = [n for n in arch.xpath('//header/field[@widget="statusbar"]') if visible(n)]
                     self.assertEqual(len(bars), 1)
-                    self.assertEqual('inventory' in bars[0].get('statusbar_visible'), nature == 'non_cash')
+                    self.assertEqual('inventory' in bars[0].get('statusbar_visible'), nature != 'cash')
                 values.update(state='inventory', active=False)
                 self.assertFalse(any(visible(n) for n in arch.xpath('//header/button')))
 
@@ -595,6 +606,22 @@ class TestSupplierClaimCycle(TransactionCase):
         with self.assertRaises(UserError):
             closed.write({'secretarial_notes': 'Closed'})
 
+    def test_claim_attachment_permissions(self):
+        draft_file = base64.b64encode(b'draft attachment')
+        claim = self.Claim.with_user(self.users['user']).create({
+            **self.values(),
+            'attachment': draft_file,
+        })
+        self.assertEqual(claim.attachment, draft_file)
+
+        updated_file = base64.b64encode(b'updated attachment')
+        claim.write({'attachment': updated_file})
+        self.assertEqual(claim.attachment, updated_file)
+
+        claim.action_submit()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['inventory']).write({'attachment': draft_file})
+
     def test_secretarial_note_api_and_form_visibility(self):
         claim = self.Claim.with_user(self.users['user']).create({**self.values(), 'secretarial_notes': 'First note'})
         self.assertEqual(claim.history_ids.reason, 'First note')
@@ -617,17 +644,19 @@ class TestSupplierClaimCycle(TransactionCase):
                 arch = etree.fromstring(self.Claim.with_user(self.users[role]).with_context(lang=lang).get_view(
                     view_id=view.id, view_type='form')['arch'])
                 self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="secretarial_notes"]'))
+                self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="attachment"]'))
+                self.assertTrue(arch.xpath('//chatter'))
                 buttons = arch.xpath('//button[@name="action_open_secretarial_note"]')
                 self.assertFalse(buttons)
                 self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list/field[@name="display_note"]'))
 
-    def test_timeline_cash_and_non_cash_routes(self):
+    def test_timeline_payment_routes(self):
         from odoo.tools.safe_eval import safe_eval
         arch = etree.fromstring(self.Claim.get_view(
             view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
         self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list[@no_open="True"]'))
         steps = arch.xpath('//div[@class="o_scc_route_step"]')
-        for nature, count in [('cash', 3), ('non_cash', 6)]:
+        for nature, count in [('cash', 3), ('bank_transfer', 6), ('check', 6)]:
             values = dict(payment_nature=nature, state='draft', resume_stage=False,
                           **{d + '_decision': 'not_required' for d in ('inventory','purchasing','supplier_accounts','bank_accounts')})
             visible = [node for node in steps if not safe_eval(node.get('invisible', 'False'), values)]
@@ -639,7 +668,7 @@ class TestSupplierClaimCycle(TransactionCase):
     def test_latest_claim_defaults_include_archived_drafts(self):
         older = self.claim()
         older.write({
-            'type_of_invoice': 'original', 'payment_nature': 'non_cash',
+            'type_of_invoice': 'original', 'payment_nature': 'bank_transfer',
             'tax_classification': 'tax_payment', 'section': 'medical',
         })
         latest = self.claim()
