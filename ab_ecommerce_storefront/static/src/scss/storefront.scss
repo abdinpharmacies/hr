@@ -6467,6 +6467,35 @@ html[dir="rtl"] {
         border: 1px solid $ab-border;
         border-radius: 1rem;
         background: $ab-surface;
+
+        .o_searchbar_form {
+            position: relative;
+
+            > .o_dropdown_menu {
+                top: calc(100% + .5rem) !important;
+                bottom: auto !important;
+                inset-inline: 0;
+                width: 100%;
+                margin: 0;
+                overflow: hidden auto;
+                overscroll-behavior-y: contain;
+                padding: .4rem;
+                border: 1px solid $ab-border;
+                border-radius: .75rem;
+                background: $ab-surface;
+                box-shadow: 0 12px 32px rgba($ab-ink, .14);
+
+                .dropdown-item {
+                    border-radius: .5rem;
+
+                    &:hover,
+                    &:focus-visible {
+                        color: $ab-green-dark;
+                        background: $ab-green-soft;
+                    }
+                }
+            }
+        }
     }
 
     .ab-storefront-mobile-shop-search {

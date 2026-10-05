@@ -133,7 +133,7 @@
             <t t-set="ab_history_limit" t-value="10"/>
             <t t-set="ab_history_exclude_current" t-value="False"/>
             <t t-call="ab_ecommerce_storefront.browsing_history_rail"/>
-            <section class="ab-storefront-shop-assurance">
+            <section t-if="not category and not search" class="ab-storefront-shop-assurance">
                 <div class="container py-4">
                     <div class="row g-3 text-center text-md-start">
                         <div class="col-6 col-lg-3"><i class="fa fa-check-circle me-2"/>Genuine products</div>
