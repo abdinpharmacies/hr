@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_product_classification" model="ir.actions.client">
+        <field name="name">Product Classification</field>
+        <field name="tag">ab_product_classification</field>
+        <field name="path">ecommerce-product-classification</field>
+    </record>
+    <record id="category_classification_button" model="ir.ui.view">
+        <field name="name">product.public.category.classification.button</field>
+        <field name="model">product.public.category</field>
+        <field name="inherit_id" ref="website_sale.product_public_category_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="%(action_product_classification)d" type="action" string="Classify Products" display="always" class="btn-primary" groups="base.group_system"/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+    <record id="classification_taxonomy_list" model="ir.ui.view">
+        <field name="name">product.classification.taxonomy.list</field>
+        <field name="model">ab_product_classification_taxonomy</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0" editable="bottom" open_form_view="1">
+                <field name="parent_id" readonly="1"/>
+                <field name="name" readonly="1"/>
+                <field name="description" optional="show"/>
+                <field name="need_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
+                <field name="category_id" options="{'no_create': True}"/>
+                <field name="ready" readonly="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="classification_taxonomy_action" model="ir.actions.act_window">
+        <field name="name">Approved Taxonomy Bindings</field>
+        <field name="res_model">ab_product_classification_taxonomy</field>
+        <field name="view_mode">list,form</field>
+        <field name="path">approved-taxonomy-bindings</field>
+    </record>
+    <record id="classification_taxonomy_form" model="ir.ui.view">
+        <field name="name">product.classification.taxonomy.form</field>
+        <field name="model">ab_product_classification_taxonomy</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0">
+                <sheet>
+                    <h1><field name="name" readonly="1"/></h1>
+                    <group>
+                        <field name="parent_id" readonly="1"/>
+                        <field name="category_id" options="{'no_create': True}"/>
+                        <field name="ready" readonly="1"/>
+                        <field name="need_ids" widget="many2many_tags" options="{'no_create': True, 'no_open': True}"/>
+                    </group>
+                    <group><field name="description" placeholder="Describe the products included in this category."/></group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="classification_roots_action" model="ir.actions.act_window">
+        <field name="name">Category Descriptions</field>
+        <field name="res_model">ab_product_classification_taxonomy</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('parent_id', '=', False)]</field>
+        <field name="path">shop-category-descriptions</field>
+    </record>
+    <record id="classification_result_search" model="ir.ui.view">
+        <field name="name">product.classification.result.search</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_name"/>
+                <field name="product_code"/>
+                <field name="run_id"/>
+                <field name="node_id"/>
+                <filter name="needs_review" string="Needs Review" domain="[('status', '=', 'needs_review'), ('ignored', '=', False)]"/>
+                <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                <filter name="ignored" string="Ignored" domain="[('ignored', '=', True)]"/>
+                <group>
+                    <filter name="by_root" string="Primary Category" context="{'group_by': 'root_id'}"/>
+                    <filter name="by_method" string="Method" context="{'group_by': 'method'}"/>
+                    <filter name="by_status" string="Status" context="{'group_by': 'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="classification_result_list" model="ir.ui.view">
+        <field name="name">product.classification.result.list</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0" decoration-warning="status == 'needs_review'" decoration-danger="status == 'failed'">
+                <field name="product_code"/>
+                <field name="product_name"/>
+                <field name="current_categories" optional="hide"/>
+                <field name="root_id"/>
+                <field name="node_id"/>
+                <field name="status" widget="badge"/>
+                <field name="method"/>
+                <field name="confidence"/>
+                <field name="classification_reason" optional="show"/>
+                <field name="ignored" optional="hide"/>
+                <field name="run_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    <record id="classification_result_form" model="ir.ui.view">
+        <field name="name">product.classification.result.form</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0">
+                <header>
+                    <button name="action_accept" type="object" string="Accept as Manual" class="btn-primary" invisible="status in ['pending', 'processing']"/>
+                    <button name="action_ignore" type="object" string="Reject / Ignore" invisible="status in ['pending', 'processing'] or ignored"/>
+                    <button name="action_reset_manual" type="object" string="Reset Manual Decision" confirm="Allow automatic classification on the next run?" invisible="method not in ['manual', 'forced']"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <h1><field name="product_name" readonly="1"/></h1>
+                    <group>
+                        <group>
+                            <field name="product_code" readonly="1"/>
+                            <field name="ab_product_id" readonly="1"/>
+                            <field name="product_id" readonly="1"/>
+                            <field name="run_id" readonly="1"/>
+                            <field name="current_categories" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="node_id" readonly="1"/>
+                            <field name="proposed_node_id" options="{'no_create': True}" domain="[('category_id', '!=', False)]"/>
+                            <field name="method" readonly="1"/>
+                            <field name="confidence" readonly="1"/>
+                            <field name="ignored" readonly="1"/>
+                            <field name="processed_at" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="classification_reason" readonly="1"/>
+                        <field name="error_message" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Evidence">
+                            <group>
+                                <field name="matched_rule" readonly="1"/>
+                                <field name="matched_terms" readonly="1"/>
+                                <field name="historical_evidence" readonly="1"/>
+                                <field name="evidence" readonly="1"/>
+                                <field name="reused_result_id" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Web Research">
+                            <group>
+                                <field name="source_url" widget="url" readonly="1"/>
+                                <field name="source_title" readonly="1"/>
+                                <field name="search_query" readonly="1"/>
+                                <field name="research_provider" readonly="1"/>
+                                <field name="researched_at" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Review History">
+                            <field name="review_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="create_date"/>
+                                    <field name="reviewer_id"/>
+                                    <field name="decision"/>
+                                    <field name="node_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="classification_result_action" model="ir.actions.act_window">
+        <field name="name">Classification Results</field>
+        <field name="res_model">ab_product_classification_result</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="classification_run_list" model="ir.ui.view">
+        <field name="name">product.classification.run.list</field>
+        <field name="model">ab_product_classification_run</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0">
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="state"/>
+                <field name="total_products"/>
+                <field name="processed_products"/>
+                <field name="progress_percent" widget="progressbar"/>
+                <field name="started_at"/>
+                <field name="finished_at"/>
+                <button name="action_open_progress" type="object" string="Open Progress"/>
+            </list>
+        </field>
+    </record>
+    <record id="classification_run_action" model="ir.actions.act_window">
+        <field name="name">Classification Runs</field>
+        <field name="res_model">ab_product_classification_run</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

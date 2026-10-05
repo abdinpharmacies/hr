@@ -1,0 +1,25 @@
+{
+  "source": "/home/abdin_02/Mohamed_tips/work/website_ecommerce/categories",
+  "files": [
+    {
+      "file": "ecommerce_categories.csv",
+      "bytes": 159876,
+      "sha256": "9cf9f7cb9435a6b002fecfbae48b8491c719002093f700036e70845f006fcf97"
+    },
+    {
+      "file": "ecommerce_product_category_rel.csv",
+      "bytes": 185158,
+      "sha256": "b6d961043c475482c5dd0b6b22498e1c18e00df5c22fa48b1e33ff0bfa9d7f3c"
+    },
+    {
+      "file": "ecommerce_products.csv",
+      "bytes": 10676681,
+      "sha256": "c11b46a23baac7c50da7173a86aa1893edc322d269dd31a6a023554b86af029f"
+    },
+    {
+      "file": "notes.md",
+      "bytes": 1643,
+      "sha256": "b6647431539f158132634767ca6d47ec1bad8477812d26aa41462a7705f2aa14"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="shop_need_acne_treatment" model="product.tag">
+        <field name="name">Acne treatment</field>
+        <field name="ab_shop_need_key">acne_treatment</field>
+    </record>
+    <record id="shop_need_skin_brightening" model="product.tag">
+        <field name="name">Skin brightening and tone correction</field>
+        <field name="ab_shop_need_key">skin_brightening</field>
+    </record>
+    <record id="shop_need_dry_skin_hydration" model="product.tag">
+        <field name="name">Dry skin hydration</field>
+        <field name="ab_shop_need_key">dry_skin_hydration</field>
+    </record>
+    <record id="shop_need_hair_loss_treatment" model="product.tag">
+        <field name="name">Hair loss treatment</field>
+        <field name="ab_shop_need_key">hair_loss_treatment</field>
+    </record>
+    <record id="shop_need_dandruff_control" model="product.tag">
+        <field name="name">Dandruff control</field>
+        <field name="ab_shop_need_key">dandruff_control</field>
+    </record>
+    <record id="shop_need_sun_protection" model="product.tag">
+        <field name="name">Sun protection</field>
+        <field name="ab_shop_need_key">sun_protection</field>
+    </record>
+    <record id="shop_need_anti_aging" model="product.tag">
+        <field name="name">Anti-aging and wrinkle care</field>
+        <field name="ab_shop_need_key">anti_aging</field>
+    </record>
+    <record id="shop_need_immune_support" model="product.tag">
+        <field name="name">Immune support</field>
+        <field name="ab_shop_need_key">immune_support</field>
+    </record>
+    <record id="shop_need_energy_vitality" model="product.tag">
+        <field name="name">Energy and vitality</field>
+        <field name="ab_shop_need_key">energy_vitality</field>
+    </record>
+    <record id="shop_need_sensitive_skin" model="product.tag">
+        <field name="name">Sensitive skin care</field>
+        <field name="ab_shop_need_key">sensitive_skin</field>
+    </record>
+</odoo>

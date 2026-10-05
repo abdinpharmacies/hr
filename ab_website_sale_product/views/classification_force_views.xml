@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="classification_force_preview_list" model="ir.ui.view">
+        <field name="name">classification.force.preview.list</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0" editable="bottom" open_form_view="1" decoration-warning="not force_suggested_node_id and not proposed_node_id">
+                <header>
+                    <button name="action_force_selected" type="object" string="Apply Selected Suggestions" class="btn-primary" confirm="Apply the suggested or chosen categories to the selected review products?"/>
+                </header>
+                <field name="product_code" readonly="1"/>
+                <field name="product_name" readonly="1"/>
+                <field name="force_current_category_ids" widget="many2many_tags" readonly="1"/>
+                <field name="force_suggested_node_id" readonly="1"/>
+                <field name="force_suggestion_reason" readonly="1"/>
+                <field name="force_suggestion_score" readonly="1"/>
+                <field name="proposed_node_id" options="{'no_create': True, 'no_open': True}"/>
+                <field name="classification_reason" readonly="1" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    <record id="classification_force_result_form" model="ir.ui.view">
+        <field name="name">classification.force.result.form</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="inherit_id" ref="classification_result_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='proposed_node_id']" position="after">
+                <field name="force_suggested_node_id" readonly="1"/>
+                <field name="force_suggestion_reason" readonly="1"/>
+                <field name="force_suggestion_score" readonly="1"/>
+            </xpath>
+            <xpath expr="//header/button[@name='action_accept']" position="after">
+                <button name="action_force_selected" type="object" string="Apply Suggestion" invisible="status != 'needs_review' or ignored"/>
+                <button name="action_undo_force_selected" type="object" string="Undo Force Categorization" invisible="method != 'forced'" confirm="Restore the category assignment saved before force categorization? Later category edits will be retained."/>
+            </xpath>
+        </field>
+    </record>
+    <record id="classification_force_result_list" model="ir.ui.view">
+        <field name="name">classification.force.result.list</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="inherit_id" ref="classification_result_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="action_undo_force_selected" type="object" string="Undo Selected Force Changes" confirm="Restore the saved category assignments for selected force-categorized products? Later category edits will be retained."/>
+                </header>
+            </xpath>
+        </field>
+    </record>
+    <record id="classification_force_result_search" model="ir.ui.view">
+        <field name="name">classification.force.result.search</field>
+        <field name="model">ab_product_classification_result</field>
+        <field name="inherit_id" ref="classification_result_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='failed']" position="after">
+                <filter name="force_categorized" string="Force Categorized" domain="[('method', '=', 'forced')]"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="classification_force_wizard_form" model="ir.ui.view">
+        <field name="name">classification.force.wizard.form</field>
+        <field name="model">ab_classification_force_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Automatically Assign All Review Products">
+                <p>Assign every remaining review product using its review override or best available suggestion. Products without a suggestion will use the fallback category below.</p>
+                <group>
+                    <field name="run_id"/>
+                    <field name="review_count"/>
+                    <field name="fallback_node_id" options="{'no_create': True, 'no_open': True}"/>
+                </group>
+                <p>Assignments run in background batches. Each change records the previous categories and can be undone. Approved manual decisions and ignored products are retained.</p>
+                <footer>
+                    <button name="action_start" type="object" string="Assign All Review Products" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="classification_force_progress_form" model="ir.ui.view">
+        <field name="name">classification.force.progress.form</field>
+        <field name="model">ab_product_classification_run</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_force_progress" type="object" string="Refresh"/>
+                    <button name="action_force_preview" type="object" string="Review Suggestions"/>
+                    <button name="action_cancel_force" type="object" string="Stop Force Operation" invisible="force_state not in ['queued', 'running']"/>
+                    <field name="force_state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <h1><field name="name"/></h1>
+                    <group>
+                        <group>
+                            <field name="force_mode"/>
+                            <field name="force_fallback_node_id" invisible="force_mode != 'all'"/>
+                            <field name="force_total"/>
+                            <field name="force_processed"/>
+                        </group>
+                        <group>
+                            <field name="force_applied"/>
+                            <field name="force_skipped"/>
+                            <field name="force_failed"/>
+                            <field name="needs_review_count"/>
+                        </group>
+                    </group>
+                    <field name="force_error" invisible="not force_error"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

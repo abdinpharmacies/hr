@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="taxonomy_medicines" model="ab_product_classification_taxonomy">
+        <field name="key">medicines</field>
+        <field name="name">Medicines</field>
+        <field name="description">Medicines organized by their intended therapeutic category, dosage form, and pharmaceutical information.</field>
+        <field name="sequence">0</field>
+    </record>
+    <record id="taxonomy_medicines__pain_and_fever" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__pain_and_fever</field>
+        <field name="name">Pain &amp; Fever</field>
+        <field name="sequence">1</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__cold_and_respiratory" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__cold_and_respiratory</field>
+        <field name="name">Cold &amp; Respiratory</field>
+        <field name="sequence">2</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__allergy" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__allergy</field>
+        <field name="name">Allergy</field>
+        <field name="sequence">3</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__digestive" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__digestive</field>
+        <field name="name">Digestive</field>
+        <field name="sequence">4</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__diabetes" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__diabetes</field>
+        <field name="name">Diabetes</field>
+        <field name="sequence">5</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__cardiovascular" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__cardiovascular</field>
+        <field name="name">Cardiovascular</field>
+        <field name="sequence">6</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__cns_neurology" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__cns_neurology</field>
+        <field name="name">CNS / Neurology</field>
+        <field name="sequence">7</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__anti_infectives" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__anti_infectives</field>
+        <field name="name">Anti-Infectives</field>
+        <field name="sequence">8</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__eye_care" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__eye_care</field>
+        <field name="name">Eye Care</field>
+        <field name="sequence">9</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__ear_nose_throat" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__ear_nose_throat</field>
+        <field name="name">Ear / Nose / Throat</field>
+        <field name="sequence">10</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__oral_throat_medicines" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__oral_throat_medicines</field>
+        <field name="name">Oral / Throat Medicines</field>
+        <field name="sequence">11</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__dermatology" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__dermatology</field>
+        <field name="name">Dermatology</field>
+        <field name="sequence">12</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__hormones" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__hormones</field>
+        <field name="name">Hormones</field>
+        <field name="sequence">13</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__urinary_renal" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__urinary_renal</field>
+        <field name="name">Urinary / Renal</field>
+        <field name="sequence">14</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__women_s_health" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__women_s_health</field>
+        <field name="name">Women's Health</field>
+        <field name="sequence">15</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__men_s_health" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__men_s_health</field>
+        <field name="name">Men's Health</field>
+        <field name="sequence">16</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_medicines__specialized_medicines" model="ab_product_classification_taxonomy">
+        <field name="key">medicines__specialized_medicines</field>
+        <field name="name">Specialized Medicines</field>
+        <field name="sequence">17</field>
+        <field name="parent_id" ref="taxonomy_medicines"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements</field>
+        <field name="name">Vitamins &amp; Supplements</field>
+        <field name="description">Vitamins, minerals, and nutritional supplements organized by their stated nutritional purpose and intended users.</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__vitamins" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__vitamins</field>
+        <field name="name">Vitamins</field>
+        <field name="sequence">101</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__minerals" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__minerals</field>
+        <field name="name">Minerals</field>
+        <field name="sequence">102</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__multivitamins" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__multivitamins</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_immune_support')), Command.link(ref('shop_need_energy_vitality'))]"/>
+        <field name="name">Multivitamins</field>
+        <field name="sequence">103</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__omega" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__omega</field>
+        <field name="name">Omega</field>
+        <field name="sequence">104</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__children_s_supplements" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__children_s_supplements</field>
+        <field name="name">Children's Supplements</field>
+        <field name="sequence">105</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__pregnancy_and_lactation" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__pregnancy_and_lactation</field>
+        <field name="name">Pregnancy &amp; Lactation</field>
+        <field name="sequence">106</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__hair_skin_nails" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__hair_skin_nails</field>
+        <field name="name">Hair / Skin / Nails</field>
+        <field name="sequence">107</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__sports_nutrition" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__sports_nutrition</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_energy_vitality'))]"/>
+        <field name="name">Sports Nutrition</field>
+        <field name="sequence">108</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_vitamins_and_supplements__herbal_supplements" model="ab_product_classification_taxonomy">
+        <field name="key">vitamins_and_supplements__herbal_supplements</field>
+        <field name="name">Herbal Supplements</field>
+        <field name="sequence">109</field>
+        <field name="parent_id" ref="taxonomy_vitamins_and_supplements"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty</field>
+        <field name="name">Skin Care &amp; Beauty</field>
+        <field name="description">Skin care and beauty products organized by skin concern, product function, and area of use.</field>
+        <field name="sequence">200</field>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__face_cleansing" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__face_cleansing</field>
+        <field name="name">Face Cleansing</field>
+        <field name="sequence">201</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__moisturizers" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__moisturizers</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_dry_skin_hydration')), Command.link(ref('shop_need_sensitive_skin'))]"/>
+        <field name="name">Moisturizers</field>
+        <field name="sequence">202</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__sun_care" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__sun_care</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_sun_protection'))]"/>
+        <field name="name">Sun Care</field>
+        <field name="sequence">203</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__skin_treatment" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__skin_treatment</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_acne_treatment')), Command.link(ref('shop_need_skin_brightening')), Command.link(ref('shop_need_anti_aging'))]"/>
+        <field name="name">Skin Treatment</field>
+        <field name="sequence">204</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__body_care" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__body_care</field>
+        <field name="name">Body Care</field>
+        <field name="sequence">205</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__lips_and_eye_care" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__lips_and_eye_care</field>
+        <field name="name">Lips &amp; Eye Care</field>
+        <field name="sequence">206</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__makeup" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__makeup</field>
+        <field name="name">Makeup</field>
+        <field name="sequence">207</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__nails" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__nails</field>
+        <field name="name">Nails</field>
+        <field name="sequence">208</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_skin_care_and_beauty__fragrance" model="ab_product_classification_taxonomy">
+        <field name="key">skin_care_and_beauty__fragrance</field>
+        <field name="name">Fragrance</field>
+        <field name="sequence">209</field>
+        <field name="parent_id" ref="taxonomy_skin_care_and_beauty"/>
+    </record>
+    <record id="taxonomy_hair_care" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care</field>
+        <field name="name">Hair Care</field>
+        <field name="description">Hair and scalp products organized by cleansing, conditioning, styling, and specific hair concerns.</field>
+        <field name="sequence">300</field>
+    </record>
+    <record id="taxonomy_hair_care__shampoo" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__shampoo</field>
+        <field name="name">Shampoo</field>
+        <field name="sequence">301</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__conditioner" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__conditioner</field>
+        <field name="name">Conditioner</field>
+        <field name="sequence">302</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_masks" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_masks</field>
+        <field name="name">Hair Masks</field>
+        <field name="sequence">303</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_oils_and_serums" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_oils_and_serums</field>
+        <field name="name">Hair Oils &amp; Serums</field>
+        <field name="sequence">304</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_styling" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_styling</field>
+        <field name="name">Hair Styling</field>
+        <field name="sequence">305</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_color" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_color</field>
+        <field name="name">Hair Color</field>
+        <field name="sequence">306</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_loss_and_scalp_care" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_loss_and_scalp_care</field>
+        <field name="need_ids" eval="[Command.link(ref('shop_need_hair_loss_treatment')), Command.link(ref('shop_need_dandruff_control'))]"/>
+        <field name="name">Hair Loss &amp; Scalp Care</field>
+        <field name="sequence">307</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_hair_care__hair_tools" model="ab_product_classification_taxonomy">
+        <field name="key">hair_care__hair_tools</field>
+        <field name="name">Hair Tools</field>
+        <field name="sequence">308</field>
+        <field name="parent_id" ref="taxonomy_hair_care"/>
+    </record>
+    <record id="taxonomy_personal_care" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care</field>
+        <field name="name">Personal Care</field>
+        <field name="description">Daily personal care products for oral hygiene, bathing, deodorants, shaving, and feminine care.</field>
+        <field name="sequence">400</field>
+    </record>
+    <record id="taxonomy_personal_care__oral_care" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__oral_care</field>
+        <field name="name">Oral Care</field>
+        <field name="sequence">401</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__bath_and_shower" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__bath_and_shower</field>
+        <field name="name">Bath &amp; Shower</field>
+        <field name="sequence">402</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__deodorants" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__deodorants</field>
+        <field name="name">Deodorants</field>
+        <field name="sequence">403</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__feminine_care" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__feminine_care</field>
+        <field name="name">Feminine Care</field>
+        <field name="sequence">404</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__shaving_and_men_s_care" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__shaving_and_men_s_care</field>
+        <field name="name">Shaving &amp; Men's Care</field>
+        <field name="sequence">405</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__hair_removal" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__hair_removal</field>
+        <field name="name">Hair Removal</field>
+        <field name="sequence">406</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_personal_care__personal_care_devices" model="ab_product_classification_taxonomy">
+        <field name="key">personal_care__personal_care_devices</field>
+        <field name="name">Personal Care Devices</field>
+        <field name="sequence">407</field>
+        <field name="parent_id" ref="taxonomy_personal_care"/>
+    </record>
+    <record id="taxonomy_mother_and_baby" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby</field>
+        <field name="name">Mother &amp; Baby</field>
+        <field name="description">Products for mothers and children, including feeding, baby care, diapers, and accessories.</field>
+        <field name="sequence">500</field>
+    </record>
+    <record id="taxonomy_mother_and_baby__diapers_and_wipes" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__diapers_and_wipes</field>
+        <field name="name">Diapers &amp; Wipes</field>
+        <field name="sequence">501</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_mother_and_baby__baby_food_and_milk" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__baby_food_and_milk</field>
+        <field name="name">Baby Food &amp; Milk</field>
+        <field name="sequence">502</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_mother_and_baby__breastfeeding" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__breastfeeding</field>
+        <field name="name">Breastfeeding</field>
+        <field name="sequence">503</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_mother_and_baby__baby_skin_and_hair" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__baby_skin_and_hair</field>
+        <field name="name">Baby Skin &amp; Hair</field>
+        <field name="sequence">504</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_mother_and_baby__baby_accessories" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__baby_accessories</field>
+        <field name="name">Baby Accessories</field>
+        <field name="sequence">505</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_mother_and_baby__mother_care" model="ab_product_classification_taxonomy">
+        <field name="key">mother_and_baby__mother_care</field>
+        <field name="name">Mother Care</field>
+        <field name="sequence">506</field>
+        <field name="parent_id" ref="taxonomy_mother_and_baby"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies</field>
+        <field name="name">Medical Devices &amp; Supplies</field>
+        <field name="description">Medical devices and supplies for monitoring, patient care, mobility, wound care, and first aid.</field>
+        <field name="sequence">600</field>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__monitoring_devices" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__monitoring_devices</field>
+        <field name="name">Monitoring Devices</field>
+        <field name="sequence">601</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__test_strips" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__test_strips</field>
+        <field name="name">Test Strips</field>
+        <field name="sequence">602</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__supports_and_braces" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__supports_and_braces</field>
+        <field name="name">Supports &amp; Braces</field>
+        <field name="sequence">603</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__mobility" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__mobility</field>
+        <field name="name">Mobility</field>
+        <field name="sequence">604</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__patient_care" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__patient_care</field>
+        <field name="name">Patient Care</field>
+        <field name="sequence">605</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__medical_consumables" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__medical_consumables</field>
+        <field name="name">Medical Consumables</field>
+        <field name="sequence">606</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_medical_devices_and_supplies__wound_care_and_first_aid" model="ab_product_classification_taxonomy">
+        <field name="key">medical_devices_and_supplies__wound_care_and_first_aid</field>
+        <field name="name">Wound Care &amp; First Aid</field>
+        <field name="sequence">607</field>
+        <field name="parent_id" ref="taxonomy_medical_devices_and_supplies"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household</field>
+        <field name="name">Hygiene &amp; Household</field>
+        <field name="description">Hygiene and household essentials for cleaning, disinfection, paper products, and home care.</field>
+        <field name="sequence">700</field>
+    </record>
+    <record id="taxonomy_hygiene_and_household__tissues_and_paper" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__tissues_and_paper</field>
+        <field name="name">Tissues &amp; Paper</field>
+        <field name="sequence">701</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household__surface_cleaning" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__surface_cleaning</field>
+        <field name="name">Surface Cleaning</field>
+        <field name="sequence">702</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household__disinfection" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__disinfection</field>
+        <field name="name">Disinfection</field>
+        <field name="sequence">703</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household__air_fresheners" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__air_fresheners</field>
+        <field name="name">Air Fresheners</field>
+        <field name="sequence">704</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household__pest_control" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__pest_control</field>
+        <field name="name">Pest Control</field>
+        <field name="sequence">705</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+    <record id="taxonomy_hygiene_and_household__household_supplies" model="ab_product_classification_taxonomy">
+        <field name="key">hygiene_and_household__household_supplies</field>
+        <field name="name">Household Supplies</field>
+        <field name="sequence">706</field>
+        <field name="parent_id" ref="taxonomy_hygiene_and_household"/>
+    </record>
+</odoo>

@@ -8,3 +8,6 @@ from . import sale_order
 from . import sale_order_line
 from . import website
 from . import website_product_sync_job
+from . import product_classification
+from . import shop_need
+from . import classification_force

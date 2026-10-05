@@ -7,6 +7,7 @@
             <field name="inherit_id" ref="website_sale.product_template_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='extra_info']" position="inside">
+                    <field name="ab_shop_need_ids" widget="many2many_tags" readonly="1"/>
                     <field name="ab_product_id" readonly="1"/>
                     <field name="eplus_stock_shown_qty_type"
                            groups="base.group_user"

@@ -329,14 +329,38 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشئ بواسطة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_date
 msgid "Created on"
-msgstr ""
+msgstr "تاريخ الإنشاء"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -366,8 +390,23 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order_line__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_website__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_audit__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_image_sync_service__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "الاسم المعروض"
 
 #. module: ab_website_sale_product
 #: model:ir.model.constraint,message:ab_website_sale_product.constraint_product_template_ab_product_unique
@@ -511,8 +550,23 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order_line__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_website__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_audit__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_image_sync_service__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__id
 msgid "ID"
-msgstr ""
+msgstr "المعرف"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_image_file_path
@@ -556,14 +610,38 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "تاريخ آخر تحديث"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -645,13 +723,17 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job_line__state__pending
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__pending
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__pending
 msgid "Pending"
-msgstr ""
+msgstr "قيد الانتظار"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__product_template__eplus_stock_shown_qty_type__percentage
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
 msgid "Percentage"
-msgstr ""
+msgstr "النسبة المئوية"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -660,8 +742,12 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_product_template
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__product_id
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
 msgid "Product"
-msgstr ""
+msgstr "المنتج"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -671,8 +757,11 @@ msgstr "المنتج %s غير متزامن مع التجارة الإلكترو
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__product_code
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__product_code
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__product_code
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__product_code
 msgid "Product Code"
-msgstr ""
+msgstr "كود المنتج"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -682,8 +771,11 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__product_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__product_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__product_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__product_name
 msgid "Product Name"
-msgstr ""
+msgstr "اسم المنتج"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -725,8 +817,9 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__ready
 msgid "Ready"
-msgstr ""
+msgstr "جاهز"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -911,8 +1004,10 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_website
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__website_id
 msgid "Website"
-msgstr ""
+msgstr "الموقع الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
@@ -921,8 +1016,9 @@ msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_group__website_public_category_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__category_id
 msgid "Website Category"
-msgstr ""
+msgstr "فئة الموقع الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_tag__website_product_tag_id
@@ -1128,6 +1224,9 @@ msgid "Match Method"
 msgstr "طريقة المطابقة"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__status
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__status
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
 msgid "Status"
 msgstr "الحالة"
 
@@ -1361,10 +1460,16 @@ msgid "Website Products: Process Sync Jobs"
 msgstr "منتجات الموقع: معالجة مهام المزامنة"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__batch_size
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__batch_size
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__batch_size
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__batch_size_option
 msgid "Batch Size"
 msgstr "حجم الدفعة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Products Per Batch"
 msgstr "عدد المنتجات في الدفعة"
 
@@ -1632,6 +1737,10 @@ msgstr "منتجات ناقصة على الموقع"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__review_count
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__needs_review
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__needs_review
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
 msgid "Needs Review"
 msgstr "منتجات تحتاج مراجعة"
 
@@ -1667,3 +1776,2058 @@ msgstr "قوالب منتجات مزامنة الموقع"
 #, python-format
 msgid "%(ready)s already synchronized; %(remaining)s product(s) need creation or review."
 msgstr "%(ready)s منتجًا متزامن بالفعل؛ و%(remaining)s منتجًا يحتاج إلى إنشاء أو مراجعة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "A batch is being committed. Try again shortly."
+msgstr "يجري حفظ دفعة الآن. يرجى المحاولة بعد قليل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "A classification run is already active. Resume or stop it first."
+msgstr "توجد عملية تصنيف نشطة بالفعل. استأنفها أو أوقفها أولاً."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_product_classification_assignment_key_unique
+msgid "A product can have only one current classification."
+msgstr "يمكن أن يكون للمنتج تصنيف حالي واحد فقط."
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_product_classification_result_run_product_unique
+msgid "A product can occur only once per run."
+msgstr "يمكن أن يظهر المنتج مرة واحدة فقط في كل عملية تصنيف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__ab_product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__ab_product_id
+msgid "Ab Product"
+msgstr "منتج عبدين"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Accept as Manual"
+msgstr "اعتماد كتصنيف يدوي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_review__decision__accept
+msgid "Accepted"
+msgstr "معتمد"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__air_fresheners
+msgid "Air Fresheners"
+msgstr "معطرات الجو"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__scope__all
+msgid "All Abdin Products"
+msgstr "جميع منتجات عبدين"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "All Results"
+msgstr "جميع النتائج"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__allergy
+msgid "Allergy"
+msgstr "الحساسية"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Allow automatic classification on the next run?"
+msgstr "هل تسمح بالتصنيف التلقائي في العملية القادمة؟"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"An established taxonomy binding cannot be replaced. Correct the linked "
+"category structure instead."
+msgstr "لا يمكن استبدال ربط تصنيف قائم. صحح بنية الفئة المرتبطة بدلاً من ذلك."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Another classification run is active."
+msgstr "توجد عملية تصنيف أخرى نشطة."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__anti_infectives
+msgid "Anti-Infectives"
+msgstr "مضادات العدوى"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_taxonomy
+msgid "Approved Product Taxonomy"
+msgstr "شجرة تصنيف المنتجات المعتمدة"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.classification_taxonomy_action
+msgid "Approved Taxonomy Bindings"
+msgstr "ربط فئات التصنيف المعتمد"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Approved taxonomy bindings have changed. Resolve them before resuming."
+msgstr "تغير ربط فئات التصنيف المعتمد. صححه قبل الاستئناف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_assignment__mode__automatic
+msgid "Automatic"
+msgstr "تلقائي"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__baby_accessories
+msgid "Baby Accessories"
+msgstr "مستلزمات الطفل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__baby_food_and_milk
+msgid "Baby Food & Milk"
+msgstr "غذاء وحليب الأطفال"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__baby_skin_and_hair
+msgid "Baby Skin & Hair"
+msgstr "بشرة وشعر الطفل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__bath_and_shower
+msgid "Bath & Shower"
+msgstr "الاستحمام"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__body_care
+msgid "Body Care"
+msgstr "العناية بالجسم"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__breastfeeding
+msgid "Breastfeeding"
+msgstr "الرضاعة الطبيعية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__cns_neurology
+msgid "CNS / Neurology"
+msgstr "الجهاز العصبي والأعصاب"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__cache_key
+msgid "Cache Key"
+msgstr "مفتاح ذاكرة التخزين المؤقت"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__cardiovascular
+msgid "Cardiovascular"
+msgstr "القلب والأوعية الدموية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__checkpoint
+msgid "Checkpoint"
+msgstr "نقطة الحفظ"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__children_s_supplements
+msgid "Children's Supplements"
+msgstr "مكملات الأطفال"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Choose a valid scope and a batch size from 1 to 250."
+msgstr "اختر نطاقاً صحيحاً وحجم دفعة من 1 إلى 250."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Choose an approved category before accepting."
+msgstr "اختر فئة معتمدة قبل الاعتماد."
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_classification_audit
+msgid "Classification Audit Protection"
+msgstr "حماية سجل تدقيق التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__classification_reason
+msgid "Classification Reason"
+msgstr "سبب التصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.actions.act_window,name:ab_website_sale_product.classification_result_action
+msgid "Classification Results"
+msgstr "نتائج التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.classification_run_action
+msgid "Classification Runs"
+msgstr "عمليات التصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Classification audit records cannot be edited directly."
+msgstr "لا يمكن تعديل سجلات تدقيق التصنيف مباشرة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Classification audit records must be retained."
+msgstr "يجب الاحتفاظ بسجلات تدقيق التصنيف."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Classification progress"
+msgstr "تقدم التصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__classified
+msgid "Classified"
+msgstr "تم التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__classified_products
+msgid "Classified Products"
+msgstr "المنتجات المصنفة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.category_classification_button
+msgid "Classify Products"
+msgstr "تصنيف المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Classify the e-commerce catalog using the approved taxonomy."
+msgstr "تصنيف منتجات المتجر الإلكتروني وفق شجرة التصنيف المعتمدة."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__cold_and_respiratory
+msgid "Cold & Respiratory"
+msgstr "البرد والجهاز التنفسي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__completed
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__conditioner
+msgid "Conditioner"
+msgstr "البلسم"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__confidence
+msgid "Confidence"
+msgstr "درجة الثقة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Conflicting historical categories"
+msgstr "تعارض في الفئات التاريخية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Conflicting local rules"
+msgstr "تعارض في القواعد المحلية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Conflicting web evidence"
+msgstr "تعارض في أدلة البحث عبر الويب"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__current_batch
+msgid "Current Batch"
+msgstr "الدفعة الحالية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__current_categories
+msgid "Current Categories"
+msgstr "الفئات الحالية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__current_product
+msgid "Current Product"
+msgstr "المنتج الحالي"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_assignment
+msgid "Current Product Classification"
+msgstr "التصنيف الحالي للمنتج"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Current batch:"
+msgstr "الدفعة الحالية:"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__decision
+msgid "Decision"
+msgstr "القرار"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__deodorants
+msgid "Deodorants"
+msgstr "مزيلات العرق"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__dermatology
+msgid "Dermatology"
+msgstr "الأمراض الجلدية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__diabetes
+msgid "Diabetes"
+msgstr "السكري"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__diapers_and_wipes
+msgid "Diapers & Wipes"
+msgstr "الحفاضات والمناديل المبللة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__digestive
+msgid "Digestive"
+msgstr "الجهاز الهضمي"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__disinfection
+msgid "Disinfection"
+msgstr "التطهير"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__draft
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__draft
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Duplicate historical product mapping"
+msgstr "تكرار في ربط المنتج بالبيانات التاريخية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_product_classification_taxonomy_category_unique
+msgid "Each website category can represent only one taxonomy node."
+msgstr "يمكن ربط كل فئة بالموقع بعقدة واحدة فقط في شجرة التصنيف."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__ear_nose_throat
+msgid "Ear / Nose / Throat"
+msgstr "الأنف والأذن والحنجرة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__engine_version
+msgid "Engine Version"
+msgstr "إصدار محرك التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__error_message
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__evidence
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Evidence"
+msgstr "الأدلة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__expires_at
+msgid "Expires At"
+msgstr "تاريخ انتهاء الصلاحية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__eye_care
+msgid "Eye Care"
+msgstr "العناية بالعين"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__face_cleansing
+msgid "Face Cleansing"
+msgstr "تنظيف الوجه"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job_line__state__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__failed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__failed
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__failed_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__failed_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__failed_count
+msgid "Failed Count"
+msgstr "عدد الحالات الفاشلة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__feminine_care
+msgid "Feminine Care"
+msgstr "العناية النسائية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__fingerprint
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__fingerprint
+msgid "Fingerprint"
+msgstr "بصمة البيانات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__finished_at
+msgid "Finished At"
+msgstr "وقت الانتهاء"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__fragrance
+msgid "Fragrance"
+msgstr "العطور"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__hair_skin_nails
+msgid "Hair / Skin / Nails"
+msgstr "الشعر والبشرة والأظافر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care
+msgid "Hair Care"
+msgstr "العناية بالشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_color
+msgid "Hair Color"
+msgstr "صبغات الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_loss_and_scalp_care
+msgid "Hair Loss & Scalp Care"
+msgstr "تساقط الشعر والعناية بفروة الرأس"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_masks
+msgid "Hair Masks"
+msgstr "ماسكات الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_oils_and_serums
+msgid "Hair Oils & Serums"
+msgstr "زيوت وسيروم الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__hair_removal
+msgid "Hair Removal"
+msgstr "إزالة الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_styling
+msgid "Hair Styling"
+msgstr "تصفيف الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__hair_tools
+msgid "Hair Tools"
+msgstr "أدوات الشعر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__herbal_supplements
+msgid "Herbal Supplements"
+msgstr "المكملات العشبية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__historical_evidence
+msgid "Historical Evidence"
+msgstr "الأدلة التاريخية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__historical_mapping
+msgid "Historical Mapping"
+msgstr "الربط بالبيانات التاريخية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Historical category mapping"
+msgstr "الربط بالفئات التاريخية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Historical mapping is missing or unsuitable"
+msgstr "الربط التاريخي غير موجود أو غير مناسب"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__hormones
+msgid "Hormones"
+msgstr "الهرمونات"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__household_supplies
+msgid "Household Supplies"
+msgstr "المستلزمات المنزلية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household
+msgid "Hygiene & Household"
+msgstr "النظافة والاحتياجات المنزلية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__ignored
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_assignment__mode__ignored
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_review__decision__ignore
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+msgid "Ignored"
+msgstr "تم التجاهل"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Invalid product scope."
+msgstr "نطاق المنتجات غير صالح."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__key
+msgid "Key"
+msgstr "المفتاح"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__last_snapshot_id
+msgid "Last Snapshot"
+msgstr "آخر سجل في اللقطة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Last processed:"
+msgstr "آخر منتج تمت معالجته:"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__lips_and_eye_care
+msgid "Lips & Eye Care"
+msgstr "العناية بالشفاه ومحيط العين"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Loading classification progress…"
+msgstr "جارٍ تحميل تقدم التصنيف…"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__local_rule
+msgid "Local Rule"
+msgstr "قاعدة محلية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__makeup
+msgid "Makeup"
+msgstr "المكياج"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_assignment__mode__manual
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__manual
+msgid "Manual"
+msgstr "يدوي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_review__decision__reset
+msgid "Manual Decision Reset"
+msgstr "إلغاء أولوية القرار اليدوي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__matched_rule
+msgid "Matched Rule"
+msgstr "القاعدة المطابقة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__matched_terms
+msgid "Matched Terms"
+msgstr "المصطلحات المطابقة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Matched deterministic rule: %s"
+msgstr "القاعدة الحتمية المطابقة: %s"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__medical_consumables
+msgid "Medical Consumables"
+msgstr "المستهلكات الطبية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies
+msgid "Medical Devices & Supplies"
+msgstr "الأجهزة والمستلزمات الطبية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines
+msgid "Medicines"
+msgstr "الأدوية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__men_s_health
+msgid "Men's Health"
+msgstr "صحة الرجل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__method
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+msgid "Method"
+msgstr "الطريقة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__minerals
+msgid "Minerals"
+msgstr "المعادن"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__mobility
+msgid "Mobility"
+msgstr "مساعدات الحركة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__mode
+msgid "Mode"
+msgstr "النمط"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__moisturizers
+msgid "Moisturizers"
+msgstr "المرطبات"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__monitoring_devices
+msgid "Monitoring Devices"
+msgstr "أجهزة القياس والمتابعة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby
+msgid "Mother & Baby"
+msgstr "الأم والطفل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_mother_and_baby__mother_care
+msgid "Mother Care"
+msgstr "العناية بالأم"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__multivitamins
+msgid "Multivitamins"
+msgstr "الفيتامينات المتعددة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__nails
+msgid "Nails"
+msgstr "الأظافر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__needs_review_count
+msgid "Needs Review Count"
+msgstr "عدد المنتجات بحاجة للمراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "No deterministic rule matched"
+msgstr "لم تطابق أي قاعدة حتمية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__node_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__node_id
+msgid "Node"
+msgstr "عقدة التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__omega
+msgid "Omega"
+msgstr "أوميغا"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Only administrators can manage product classification."
+msgstr "يمكن للمسؤولين فقط إدارة تصنيف المنتجات."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_run_list
+msgid "Open Progress"
+msgstr "عرض التقدم"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Open Review Queue"
+msgstr "فتح قائمة المراجعة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__oral_throat_medicines
+msgid "Oral / Throat Medicines"
+msgstr "أدوية الفم والحلق"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__oral_care
+msgid "Oral Care"
+msgstr "العناية بالفم والأسنان"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__pain_and_fever
+msgid "Pain & Fever"
+msgstr "الألم والحمى"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__parent_id
+msgid "Parent"
+msgstr "الفئة الرئيسية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__patient_care
+msgid "Patient Care"
+msgstr "رعاية المريض"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Pause"
+msgstr "إيقاف مؤقت"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid ""
+"Pause and stop take effect between committed batches. Queued jobs require "
+"the integration queue runner."
+msgstr ""
+"يُطبق الإيقاف المؤقت أو النهائي بين الدفعات المحفوظة. تتطلب المهام المنتظرة "
+"تشغيل عامل طابور التكامل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__paused
+msgid "Paused"
+msgstr "متوقف مؤقتاً"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__paused_at
+msgid "Paused At"
+msgstr "وقت الإيقاف المؤقت"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_research__payload
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Permanent manual decision"
+msgstr "قرار يدوي دائم"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care
+msgid "Personal Care"
+msgstr "العناية الشخصية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__personal_care_devices
+msgid "Personal Care Devices"
+msgstr "أجهزة العناية الشخصية"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__pest_control
+msgid "Pest Control"
+msgstr "مكافحة الحشرات"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__pregnancy_and_lactation
+msgid "Pregnancy & Lactation"
+msgstr "الحمل والرضاعة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Prepare Taxonomy"
+msgstr "إعداد شجرة التصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Prepare and resolve all approved taxonomy bindings before starting."
+msgstr "أعد ربط جميع فئات التصنيف المعتمد وصححها قبل البدء."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid ""
+"Prepare the approved taxonomy before starting. Existing ambiguous categories"
+" require a binding and correct parent."
+msgstr ""
+"أعد شجرة التصنيف المعتمدة قبل البدء. تحتاج الفئات الحالية الملتبسة إلى ربط "
+"وفئة رئيسية صحيحة."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Preparing the product snapshot in the background…"
+msgstr "جارٍ تجهيز لقطة المنتجات في الخلفية…"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__node_id
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+msgid "Primary Category"
+msgstr "الفئة الأساسية"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Processed"
+msgstr "تمت المعالجة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__processed_at
+msgid "Processed At"
+msgstr "وقت المعالجة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__processed_products
+msgid "Processed Products"
+msgstr "المنتجات المعالجة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__status__processing
+msgid "Processing"
+msgstr "قيد المعالجة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.actions.client,name:ab_website_sale_product.action_product_classification
+msgid "Product Classification"
+msgstr "تصنيف منتجات المتجر الإلكتروني"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Product Classification %s"
+msgstr "تصنيف المنتجات %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_result
+msgid "Product Classification Result"
+msgstr "نتيجة تصنيف المنتج"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_review
+msgid "Product Classification Review Decision"
+msgstr "قرار مراجعة تصنيف المنتج"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_run
+msgid "Product Classification Run"
+msgstr "عملية تصنيف المنتجات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__product_key
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__product_key
+msgid "Product Key"
+msgstr "مفتاح المنتج"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_product_classification_research
+msgid "Product Research Cache"
+msgstr "ذاكرة نتائج البحث عن المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Product Scope"
+msgstr "نطاق المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Products in selected scope"
+msgstr "المنتجات في النطاق المحدد"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid ""
+"Products without a proposed category remain in the review queue and are "
+"excluded from category totals."
+msgstr ""
+"تبقى المنتجات دون فئة مقترحة في قائمة المراجعة ولا تدخل في إجماليات الفئات."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__progress_percent
+msgid "Progress Percent"
+msgstr "نسبة التقدم"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "Progress could not be refreshed. Retrying automatically."
+msgstr "تعذر تحديث التقدم. ستتم إعادة المحاولة تلقائياً."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__queue_uuid
+msgid "Queue Uuid"
+msgstr "معرف مهمة الطابور"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.server,name:ab_website_sale_product.classification_recovery_cron_ir_actions_server
+msgid "Recover interrupted product classification"
+msgstr "استعادة عمليات تصنيف المنتجات المنقطعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Reject / Ignore"
+msgstr "رفض / تجاهل"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Remaining"
+msgstr "المتبقي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__requested_by
+msgid "Requested By"
+msgstr "طلب بواسطة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__research_provider
+msgid "Research Provider"
+msgstr "مزود البحث"
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_product_classification_research_key_unique
+msgid "Research cache keys must be unique."
+msgstr "يجب أن تكون مفاتيح ذاكرة البحث فريدة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Research provider request failed: %s"
+msgstr "فشل طلب مزود البحث: %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__researched_at
+msgid "Researched At"
+msgstr "وقت البحث"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Reset Manual Decision"
+msgstr "إلغاء أولوية القرار اليدوي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_assignment__result_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__result_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__result_ids
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Resume"
+msgstr "استئناف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__reused_result_id
+msgid "Reused Result"
+msgstr "النتيجة المعاد استخدامها"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__review_ids
+msgid "Review"
+msgstr "المراجعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__proposed_node_id
+msgid "Review Category"
+msgstr "الفئة المختارة للمراجعة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Review History"
+msgstr "سجل المراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "Review Queue"
+msgstr "قائمة المراجعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__reviewer_id
+msgid "Reviewer"
+msgstr "المراجع"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__root_id
+msgid "Root"
+msgstr "الفئة الجذرية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__run_id
+msgid "Run"
+msgstr "العملية"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Run History"
+msgstr "سجل العمليات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__running
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__running
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__running
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__scope
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__search_query
+msgid "Search Query"
+msgstr "عبارة البحث"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hair_care__shampoo
+msgid "Shampoo"
+msgstr "الشامبو"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_personal_care__shaving_and_men_s_care
+msgid "Shaving & Men's Care"
+msgstr "الحلاقة والعناية بالرجل"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty
+msgid "Skin Care & Beauty"
+msgstr "البشرة والجمال"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__skin_treatment
+msgid "Skin Treatment"
+msgstr "علاج البشرة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__snapshot_done
+msgid "Snapshot Done"
+msgstr "اكتمل تجهيز اللقطة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid ""
+"Some categories need an administrator to resolve their existing name or "
+"parent in Taxonomy Bindings."
+msgstr ""
+"تحتاج بعض الفئات إلى مسؤول لتصحيح الاسم أو الفئة الرئيسية الحالية في ربط "
+"فئات التصنيف."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__source_title
+msgid "Source Title"
+msgstr "عنوان المصدر"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__source_url
+msgid "Source Url"
+msgstr "رابط المصدر"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__specialized_medicines
+msgid "Specialized Medicines"
+msgstr "الأدوية المتخصصة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__sports_nutrition
+msgid "Sports Nutrition"
+msgstr "التغذية الرياضية"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Start Classification"
+msgstr "بدء التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__started_at
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__state
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__state
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__state
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__state
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Stop"
+msgstr "إيقاف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Stop the active classification run before changing taxonomy bindings."
+msgstr "أوقف عملية التصنيف النشطة قبل تغيير ربط الفئات."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__stopped
+msgid "Stopped"
+msgstr "متوقف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__stopped_at
+msgid "Stopped At"
+msgstr "وقت الإيقاف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__stopping
+msgid "Stopping"
+msgstr "جارٍ الإيقاف"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_skin_care_and_beauty__sun_care
+msgid "Sun Care"
+msgstr "العناية بالشمس"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__supports_and_braces
+msgid "Supports & Braces"
+msgstr "الدعامات والأربطة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__surface_cleaning
+msgid "Surface Cleaning"
+msgstr "تنظيف الأسطح"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Taxonomy Bindings"
+msgstr "ربط فئات التصنيف"
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_product_classification_taxonomy_key_unique
+msgid "Taxonomy keys must be unique."
+msgstr "يجب أن تكون مفاتيح التصنيف فريدة."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "Taxonomy preparation failed."
+msgstr "فشل إعداد شجرة التصنيف."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__test_strips
+msgid "Test Strips"
+msgstr "شرائط الاختبار"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "The approved taxonomy is closed."
+msgstr "شجرة التصنيف المعتمدة مغلقة ولا تقبل فئات جديدة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "The approved taxonomy must be retained."
+msgstr "يجب الاحتفاظ بشجرة التصنيف المعتمدة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "The chosen category is not correctly bound to the approved taxonomy."
+msgstr "الفئة المختارة غير مرتبطة بشكل صحيح بشجرة التصنيف المعتمدة."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "The classification action failed. Please try again."
+msgstr "فشلت عملية التصنيف. يرجى المحاولة مرة أخرى."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "The queue job failed. Inspect the queue and resume this run."
+msgstr "فشلت مهمة الطابور. افحص الطابور ثم استأنف هذه العملية."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "The request is queued and will apply after the current batch."
+msgstr "أُضيف الطلب إلى قائمة الانتظار وسيُطبق بعد الدفعة الحالية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "The requester no longer has access to this company."
+msgstr "لم يعد صاحب الطلب يملك صلاحية الوصول إلى هذه الشركة."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_hygiene_and_household__tissues_and_paper
+msgid "Tissues & Paper"
+msgstr "المناديل والورقيات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__total_products
+msgid "Total Products"
+msgstr "إجمالي المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Trusted web evidence matched deterministic rule: %s"
+msgstr "طابقت أدلة الويب الموثوقة القاعدة الحتمية: %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__upper_id
+msgid "Upper"
+msgstr "الحد الأعلى للمعرف"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__urinary_renal
+msgid "Urinary / Renal"
+msgstr "الكلى والمسالك البولية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Use classification workflow actions to create audit records."
+msgstr "استخدم إجراءات سير عمل التصنيف لإنشاء سجلات التدقيق."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements__vitamins
+msgid "Vitamins"
+msgstr "الفيتامينات"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_vitamins_and_supplements
+msgid "Vitamins & Supplements"
+msgstr "الفيتامينات والمكملات"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Wait until this product has been processed."
+msgstr "انتظر حتى تتم معالجة هذا المنتج."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__web_research
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_form
+msgid "Web Research"
+msgstr "البحث عبر الويب"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Web research is not configured"
+msgstr "البحث عبر الويب غير مُعد"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__scope__website
+msgid "Website Products"
+msgstr "منتجات الموقع الإلكتروني"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Website is outside your allowed companies."
+msgstr "الموقع الإلكتروني خارج نطاق الشركات المسموح لك بها."
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medicines__women_s_health
+msgid "Women's Health"
+msgstr "صحة المرأة"
+
+#. module: ab_website_sale_product
+#: model:ab_product_classification_taxonomy,name:ab_website_sale_product.taxonomy_medical_devices_and_supplies__wound_care_and_first_aid
+msgid "Wound Care & First Aid"
+msgstr "العناية بالجروح والإسعافات الأولية"
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_skin_brightening
+msgid "Skin brightening and tone correction"
+msgstr "تفتيح البشرة وتوحيد لونها"
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_product_tag_shop_need_key_unique
+msgid "Each shop need must have a unique key."
+msgstr "يجب أن يكون لكل احتياج تسوق مفتاح فريد."
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_hair_loss_treatment
+msgid "Hair loss treatment"
+msgstr "علاج تساقط الشعر"
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_immune_support
+msgid "Immune support"
+msgstr "دعم المناعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__ab_shop_need_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__need_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__ab_shop_need_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__ab_shop_need_ids
+msgid "Shop by Need"
+msgstr "تسوق حسب احتياجك"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Choose only approved shop needs."
+msgstr "اختر فقط احتياجات التسوق المعتمدة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_taxonomy__description
+msgid "Category Description"
+msgstr "وصف الفئة"
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_sensitive_skin
+msgid "Sensitive skin care"
+msgstr "العناية بالبشرة الحساسة"
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_acne_treatment
+msgid "Acne treatment"
+msgstr "علاج حب الشباب"
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_dandruff_control
+msgid "Dandruff control"
+msgstr "مكافحة القشرة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product_classification_taxonomy__need_ids
+msgid ""
+"Choose needs for this category. Needs on a main category also apply to its "
+"subcategories."
+msgstr ""
+"حدد الاحتياجات لهذه الفئة. الاحتياجات المحددة للفئة الرئيسية تشمل فئاتها "
+"الفرعية أيضًا."
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_anti_aging
+msgid "Anti-aging and wrinkle care"
+msgstr "مقاومة علامات التقدم في السن والعناية بالتجاعيد"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Products for mothers and children, including feeding, baby care, diapers, "
+"and accessories."
+msgstr ""
+"منتجات للأم والطفل تشمل التغذية والعناية بالطفل والحفاضات والمستلزمات."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Medical devices and supplies for monitoring, patient care, mobility, wound "
+"care, and first aid."
+msgstr ""
+"أجهزة ومستلزمات طبية للقياس والمتابعة ورعاية المرضى والحركة والعناية بالجروح"
+" والإسعافات الأولية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Hygiene and household essentials for cleaning, disinfection, paper products,"
+" and home care."
+msgstr ""
+"منتجات للنظافة والاحتياجات المنزلية تشمل التنظيف والتطهير والمنتجات الورقية "
+"والعناية بالمنزل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/shop_need.py:0
+msgid "Only administrators can configure shop needs."
+msgstr "يمكن للمسؤولين فقط إعداد احتياجات التسوق."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Skin care and beauty products organized by skin concern, product function, "
+"and area of use."
+msgstr ""
+"منتجات للعناية بالبشرة والجمال مرتبة حسب احتياج البشرة ووظيفة المنتج ومنطقة "
+"استخدامه."
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_dry_skin_hydration
+msgid "Dry skin hydration"
+msgstr "ترطيب البشرة الجافة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Medicines organized by their intended therapeutic category, dosage form, and"
+" pharmaceutical information."
+msgstr ""
+"أدوية مرتبة حسب الفئة العلاجية المخصصة لها والشكل الدوائي والمعلومات "
+"الصيدلانية."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_tag__ab_shop_need_key
+msgid "Shop Need"
+msgstr "احتياج التسوق"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/shop_need.py:0
+msgid "Shop needs must be retained."
+msgstr "يجب الاحتفاظ باحتياجات التسوق."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Vitamins, minerals, and nutritional supplements organized by their stated "
+"nutritional purpose and intended users."
+msgstr ""
+"فيتامينات ومعادن ومكملات غذائية مرتبة حسب الغرض الغذائي المعلن والفئة "
+"المستهدفة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Hair and scalp products organized by cleansing, conditioning, styling, and "
+"specific hair concerns."
+msgstr ""
+"منتجات للشعر وفروة الرأس تشمل التنظيف والترطيب والتصفيف والعناية باحتياجات "
+"الشعر المختلفة."
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_sun_protection
+msgid "Sun protection"
+msgstr "الحماية من الشمس"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model:ir.actions.act_window,name:ab_website_sale_product.classification_roots_action
+msgid "Category Descriptions"
+msgstr "أوصاف الفئات"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"Daily personal care products for oral hygiene, bathing, deodorants, shaving,"
+" and feminine care."
+msgstr ""
+"منتجات للعناية الشخصية اليومية تشمل نظافة الفم والاستحمام ومزيلات العرق "
+"والحلاقة والعناية النسائية."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_taxonomy_form
+msgid "Describe the products included in this category."
+msgstr "اكتب وصفًا للمنتجات التي تشملها هذه الفئة."
+
+#. module: ab_website_sale_product
+#: model:product.tag,name:ab_website_sale_product.shop_need_energy_vitality
+msgid "Energy and vitality"
+msgstr "الطاقة والحيوية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Select products from one classification run."
+msgstr "حدد منتجات من عملية تصنيف واحدة."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_list
+msgid ""
+"Restore the saved category assignments for selected force-categorized "
+"products? Later category edits will be retained."
+msgstr ""
+"هل تريد استعادة روابط الفئات المحفوظة للمنتجات المحددة المصنفة إجباريًا؟ "
+"ستُحفظ تعديلات الفئات اللاحقة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_skipped
+msgid "Skipped Products"
+msgstr "المنتجات المتخطاة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_progress_form
+msgid "Review Suggestions"
+msgstr "مراجعة الاقتراحات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_total
+msgid "Products in Force Operation"
+msgstr "منتجات عملية التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "processed;"
+msgstr "تمت معالجته؛"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_wizard_form
+msgid ""
+"Assignments run in background batches. Each change records the previous "
+"categories and can be undone. Approved manual decisions and ignored products"
+" are retained."
+msgstr ""
+"يُنفّذ التصنيف على دفعات في الخلفية. تُسجّل الفئات السابقة لكل تغيير ويمكن "
+"التراجع عنه. تُحفظ القرارات اليدوية المعتمدة والمنتجات التي تم تجاهلها."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Automatic fallback category chosen by the administrator"
+msgstr "الفئة البديلة للتصنيف التلقائي التي اختارها المسؤول"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Choose a category or use the automatic fallback"
+msgstr "اختر فئة أو استخدم الفئة البديلة للتصنيف التلقائي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_failed
+msgid "Force Failures"
+msgstr "حالات فشل التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid ""
+"The force queue job failed. Start a new force operation for the remaining "
+"products."
+msgstr ""
+"فشلت مهمة التصنيف الإجباري في قائمة الانتظار. ابدأ عملية تصنيف إجباري جديدة "
+"للمنتجات المتبقية."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_wizard_form
+msgid ""
+"Assign every remaining review product using its review override or best "
+"available suggestion. Products without a suggestion will use the fallback "
+"category below."
+msgstr ""
+"صنّف كل منتج متبقٍ يحتاج إلى مراجعة باستخدام الفئة المختارة في المراجعة أو "
+"أفضل اقتراح متاح. ستُستخدم الفئة البديلة أدناه للمنتجات التي لا يوجد لها "
+"اقتراح."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_mode__undo
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_form
+msgid "Undo Force Categorization"
+msgstr "التراجع عن التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_requested_by
+msgid "Force Requested By"
+msgstr "طالب التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Category chosen in the review preview"
+msgstr "الفئة المختارة في معاينة المراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Force operation:"
+msgstr "عملية التصنيف الإجباري:"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Existing category name matches an approved category"
+msgstr "اسم الفئة الحالية يطابق فئة معتمدة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_list
+msgid "Undo Selected Force Changes"
+msgstr "التراجع عن تغييرات التصنيف الإجباري المحددة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_error
+msgid "Force Error"
+msgstr "خطأ التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_applied
+msgid "Changes Applied"
+msgstr "التغييرات المطبقة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_wizard_form
+msgid "Assign All Review Products"
+msgstr "تصنيف كل المنتجات التي تحتاج إلى مراجعة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__force_current_category_ids
+msgid "Current Website Categories"
+msgstr "فئات الموقع الحالية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_processed
+msgid "Force Processed"
+msgstr "تمت معالجة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__review_count
+msgid "Review Products"
+msgstr "منتجات تحتاج إلى مراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "One category supported by historical evidence"
+msgstr "فئة واحدة تدعمها البيانات التاريخية"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Force Categorization Progress"
+msgstr "تقدم التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_mode__selected
+msgid "Selected Suggestions"
+msgstr "الاقتراحات المحددة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_state
+msgid "Force Status"
+msgstr "حالة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__previous_values
+msgid "Previous Values"
+msgstr "القيم السابقة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_form
+msgid ""
+"Restore the category assignment saved before force categorization? Later "
+"category edits will be retained."
+msgstr ""
+"هل تريد استعادة ربط الفئات المحفوظ قبل التصنيف الإجباري؟ ستُحفظ تعديلات "
+"الفئات اللاحقة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_result_ids
+msgid "Force Result"
+msgstr "نتيجة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Choose a ready fallback category for products without a suggestion."
+msgstr "اختر فئة بديلة جاهزة للمنتجات التي لا يوجد لها اقتراح."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/js/product_classification.js:0
+msgid "The force categorization action failed. Please try again."
+msgstr "فشل إجراء التصنيف الإجباري. حاول مرة أخرى."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "applied;"
+msgstr "مطبق؛"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product_classification_result__force_suggestion_score
+msgid "Evidence ranking from 0 to 100; this is not a measured probability."
+msgstr "درجة ترتيب الأدلة من 0 إلى 100؛ وليست احتمالًا مقاسًا."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_preview_list
+msgid "Apply Selected Suggestions"
+msgstr "تطبيق الاقتراحات المحددة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_form
+msgid "Apply Suggestion"
+msgstr "تطبيق الاقتراح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Explicit force categorization"
+msgstr "تصنيف إجباري معتمد صراحةً"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__fallback_node_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_fallback_node_id
+msgid "Fallback Category"
+msgstr "الفئة البديلة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__force_suggestion_score
+msgid "Suggestion Score"
+msgstr "درجة الاقتراح"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_assignment__mode__forced
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_result__method__forced
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_review__decision__force
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_result_search
+msgid "Force Categorized"
+msgstr "مصنف إجباريًا"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_checkpoint
+msgid "Force Checkpoint"
+msgstr "نقطة تحقق التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__force_suggested_node_id
+msgid "Suggested Category"
+msgstr "الفئة المقترحة"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_wizard_form
+msgid "Automatically Assign All Review Products"
+msgstr "تصنيف كل المنتجات التي تحتاج إلى مراجعة تلقائيًا"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Force Categorization %s"
+msgstr "التصنيف الإجباري %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_generation
+msgid "Force Generation"
+msgstr "دورة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_classification_force_wizard
+msgid "Automatic Force Categorization"
+msgstr "التصنيف الإجباري التلقائي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_mode
+msgid "Force Operation"
+msgstr "عملية التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__force_suggestion_reason
+msgid "Suggestion Reason"
+msgstr "سبب الاقتراح"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "skipped;"
+msgstr "تم تخطيه؛"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Select products from this classification run."
+msgstr "حدد منتجات من عملية التصنيف الحالية."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__idle
+msgid "Not Started"
+msgstr "لم تبدأ"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_review__force_undone
+msgid "Force Undone"
+msgstr "تم التراجع عن التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Choose a valid force operation."
+msgstr "اختر عملية تصنيف إجباري صالحة."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_preview_list
+msgid ""
+"Apply the suggested or chosen categories to the selected review products?"
+msgstr ""
+"هل تريد تطبيق الفئات المقترحة أو المختارة على المنتجات المحددة التي تحتاج "
+"إلى مراجعة؟"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Force Progress"
+msgstr "تقدم التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "failed."
+msgstr "فشل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "There are no review products to assign."
+msgstr "لا توجد منتجات تحتاج إلى مراجعة لتصنيفها."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_cursor
+msgid "Force Cursor"
+msgstr "مؤشر التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Force Categorization Preview"
+msgstr "معاينة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Choose a Review Category for selected products without a suggestion."
+msgstr "اختر فئة المراجعة للمنتجات المحددة التي لا يوجد لها اقتراح."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_progress_form
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Finish or stop the active classification operation first."
+msgstr "أكمل عملية التصنيف النشطة أو أوقفها أولًا."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_review__decision__undo_force
+msgid "Force Categorization Undone"
+msgstr "تم التراجع عن التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Medicine flag and dosage form support the main category"
+msgstr "نوع المنتج كدواء وشكله الدوائي يدعمان الفئة الرئيسية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_product_classification_result__force_current_category_ids
+msgid ""
+"The product will be available in each mentioned eCommerce category. Go to "
+"Shop > Edit Click on the page and enable 'Categories' to view all eCommerce "
+"categories."
+msgstr ""
+"سيكون المنتج متاحًا في كل فئة متجر إلكتروني مذكورة. انتقل إلى المتجر > "
+"تحرير، وانقر على الصفحة وفعّل «الفئات» لعرض جميع فئات المتجر الإلكتروني."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_run__force_queue_uuid
+msgid "Force Queue Uuid"
+msgstr "معرّف مهمة التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Product data matches a classification rule"
+msgstr "بيانات المنتج تطابق قاعدة تصنيف"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_progress_form
+msgid "Stop Force Operation"
+msgstr "إيقاف التصنيف الإجباري"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_mode__all
+msgid "All Review Products"
+msgstr "كل المنتجات التي تحتاج إلى مراجعة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Select only review products that have not been ignored."
+msgstr "حدد فقط المنتجات التي تحتاج إلى مراجعة ولم يتم تجاهلها."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,help:ab_website_sale_product.field_ab_classification_force_wizard__fallback_node_id
+msgid ""
+"Used only when no category suggestion is available. Select a main category "
+"or subcategory."
+msgstr "تُستخدم فقط عند عدم وجود فئة مقترحة. اختر فئة رئيسية أو فرعية."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
+msgid "Existing approved website category"
+msgstr "فئة الموقع المعتمدة الحالية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__ab_classification_assignment_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__ab_classification_assignment_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__ab_classification_assignment_ids
+msgid "Ab Classification Assignment"
+msgstr "روابط تصنيف المنتجات"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__ab_classification_result_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__ab_classification_result_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__ab_classification_result_ids
+msgid "Ab Classification Result"
+msgstr "نتائج تصنيف المنتجات"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Current catalog classification"
+msgstr "نسبة تصنيف المنتجات الحالية"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "With a category"
+msgstr "منتجات لها تصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Without a category"
+msgstr "منتجات بدون تصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Ready for classification"
+msgstr "منتجات جاهزة للتصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid ""
+"Coverage reflects products that currently have a category and refreshes "
+"automatically. New products without a category lower this percentage."
+msgstr ""
+"تعكس النسبة المنتجات التي لها تصنيف حاليًا وتتحدث تلقائيًا. إضافة منتجات "
+"جديدة بدون تصنيف تقلل هذه النسبة."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid ""
+"Start processes only new products without a category and explicitly reset "
+"decisions. Previously reviewed or failed products remain in their original "
+"run."
+msgstr ""
+"يتم تصنيف المنتجات الجديدة بدون تصنيف فقط، والمنتجات التي أُعيد تعيين قرار "
+"تصنيفها صراحةً. تظل المنتجات التي تمت مراجعتها أو فشل تصنيفها في العملية "
+"الأصلية."
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Run processing progress"
+msgstr "تقدم معالجة عملية التصنيف"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid ""
+"There are no new products to classify. Existing unresolved products remain "
+"in the review queue."
+msgstr ""
+"لا توجد منتجات جديدة لتصنيفها. تظل المنتجات السابقة غير المحسومة في قائمة "
+"المراجعة."

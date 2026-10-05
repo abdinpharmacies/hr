@@ -1,0 +1,15 @@
+.ab_product_classification {
+    max-width: 1440px;
+    margin-inline: auto;
+    width: 100%;
+
+    .card { border-radius: 12px; }
+    .progress { height: 12px; border-radius: 8px; }
+    .ab_classification_metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 20px;
+        span { display: block; color: var(--o-main-text-color, #495057); }
+        strong { display: block; font-size: 1.8rem; }
+    }
+}

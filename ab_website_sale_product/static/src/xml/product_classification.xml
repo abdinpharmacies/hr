@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_website_sale_product.ProductClassification">
+        <div class="ab_product_classification h-100 overflow-auto p-4">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+                <div><h1>Product Classification</h1><p class="text-muted mb-0">Classify the e-commerce catalog using the approved taxonomy.</p></div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-secondary" t-on-click="openDescriptions">Category Descriptions</button>
+                    <button class="btn btn-secondary" t-on-click="openRuns">Run History</button>
+                    <button class="btn btn-secondary" t-on-click="openTaxonomy">Taxonomy Bindings</button>
+                </div>
+            </div>
+            <div t-if="state.error" class="alert alert-warning" role="alert"><t t-esc="state.error"/></div>
+            <div t-if="state.loading" class="text-muted" role="status">Loading classification progress…</div>
+            <t t-if="state.data">
+                <section class="card p-4 mb-4">
+                    <div class="d-flex flex-wrap gap-3 align-items-end">
+                        <div><label for="ab_classification_scope" class="form-label">Product Scope</label>
+                            <select id="ab_classification_scope" class="form-select" t-on-change="changeScope" t-att-value="state.scope">
+                                <option value="website">Website Products</option><option value="all">All Abdin Products</option>
+                            </select>
+                        </div>
+                        <div><label for="ab_classification_website" class="form-label">Website</label>
+                            <select id="ab_classification_website" class="form-select" t-on-change="changeWebsite" t-att-value="state.websiteId">
+                                <option t-foreach="state.data.websites" t-as="website" t-key="website.id" t-att-value="website.id" t-esc="website.name"/>
+                            </select>
+                        </div>
+                        <div><label for="ab_classification_batch" class="form-label">Products Per Batch</label>
+                            <input id="ab_classification_batch" class="form-control" type="number" min="1" max="250" t-model="state.batchSize"/>
+                        </div>
+                        <div class="ms-auto"><span class="text-muted">Products in selected scope</span><strong class="d-block fs-3" t-esc="state.data.population.toLocaleString()"/></div>
+                        <button class="btn btn-primary" t-att-disabled="state.busy || !canStart || !state.data.coverage.pending" t-on-click="() => this.perform('start_classification')">Start Classification</button>
+                    </div>
+                    <div t-if="!state.data.taxonomy_ready" class="alert alert-info mt-3 mb-0">
+                        <p>Prepare the approved taxonomy before starting. Existing ambiguous categories require a binding and correct parent.</p>
+                        <button class="btn btn-primary" t-att-disabled="state.busy" t-on-click="prepareTaxonomy">Prepare Taxonomy</button>
+                    </div>
+                </section>
+                <section class="card p-4 mb-4 ab_classification_coverage" aria-live="polite">
+                    <h2 class="h5">Current catalog classification</h2>
+                    <div class="ab_classification_metrics my-3">
+                        <div><span>With a category</span><strong t-esc="state.data.coverage.classified.toLocaleString()"/></div>
+                        <div><span>Without a category</span><strong t-esc="state.data.coverage.unclassified.toLocaleString()"/></div>
+                        <div><span>Ready for classification</span><strong t-esc="state.data.coverage.pending.toLocaleString()"/></div>
+                    </div>
+                    <div class="d-flex gap-3 align-items-center">
+                        <div class="progress flex-grow-1" role="progressbar" t-att-aria-valuenow="state.data.coverage.percent" aria-valuemin="0" aria-valuemax="100" aria-label="Current catalog classification">
+                            <div class="progress-bar" t-att-style="'width:' + state.data.coverage.percent + '%'"/>
+                        </div>
+                        <strong class="ab_classification_coverage_percent"><t t-esc="(Math.floor(state.data.coverage.percent * 100) / 100).toFixed(2)"/>%</strong>
+                    </div>
+                    <p class="text-muted small mt-3 mb-0">Coverage reflects products that currently have a category and refreshes automatically. New products without a category lower this percentage.</p>
+                    <p class="text-muted small mt-2 mb-0">Start processes only new products without a category and explicitly reset decisions. Previously reviewed or failed products remain in their original run.</p>
+                </section>
+                <t t-set="run" t-value="state.data.run"/>
+                <t t-if="run">
+                    <section class="card p-4 mb-4" aria-live="polite">
+                        <div class="d-flex justify-content-between gap-3 mb-3"><h2 class="h5" t-esc="run.name"/><span class="badge text-bg-primary align-self-start" t-esc="run.state_label"/></div>
+                        <div t-if="run.preparing" class="text-muted mb-3">Preparing the product snapshot in the background…</div>
+                        <div t-if="run.needs_review" class="d-flex flex-wrap gap-2 mb-3">
+                            <button class="btn btn-outline-primary" t-att-disabled="state.busy" t-on-click="() => this.openForce('action_force_preview')">Review Suggestions</button>
+                            <button class="btn btn-primary" t-att-disabled="state.busy || !canStart" t-on-click="() => this.openForce('action_force_all')">Automatically Assign All Review Products</button>
+                        </div>
+                        <div t-if="run.force &amp;&amp; run.force.state !== 'idle'" class="alert alert-info mb-3">
+                            <div class="d-flex flex-wrap justify-content-between gap-2">
+                                <span>Force operation: <t t-esc="run.force.processed.toLocaleString()"/> / <t t-esc="run.force.total.toLocaleString()"/> processed; <t t-esc="run.force.applied.toLocaleString()"/> applied; <t t-esc="run.force.skipped.toLocaleString()"/> skipped; <t t-esc="run.force.failed.toLocaleString()"/> failed.</span>
+                                <button class="btn btn-link p-0" t-on-click="() => this.openForce('action_force_progress')">Force Progress</button>
+                            </div>
+                            <div t-if="run.force.error" t-esc="run.force.error"/>
+                        </div>
+                        <div class="ab_classification_metrics mb-4">
+                            <div><span>Products</span><strong t-esc="run.total.toLocaleString()"/></div>
+                            <div><span>Processed</span><strong t-esc="run.processed.toLocaleString()"/></div>
+                            <div><span>Remaining</span><strong t-esc="run.remaining.toLocaleString()"/></div>
+                            <button class="btn text-start p-0" t-on-click="() => this.openResults('needs_review')"><span>Needs Review</span><strong t-esc="run.needs_review.toLocaleString()"/></button>
+                            <button class="btn text-start p-0" t-on-click="() => this.openResults('failed')"><span>Failed</span><strong t-esc="run.failed.toLocaleString()"/></button>
+                        </div>
+                        <p class="text-muted small mb-2">Run processing progress</p>
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="progress flex-grow-1" role="progressbar" t-att-aria-valuenow="run.percent" aria-valuemin="0" aria-valuemax="100" aria-label="Classification progress"><div class="progress-bar" t-att-style="'width:' + run.percent + '%'"/></div>
+                            <strong><t t-esc="run.percent.toFixed(1)"/>%</strong>
+                        </div>
+                        <div class="d-flex flex-wrap justify-content-between gap-3 mt-4">
+                            <div class="text-muted"><div>Current batch: <t t-esc="run.current_batch"/></div><div>Last processed: <t t-esc="run.last_product"/></div></div>
+                            <div class="d-flex gap-2">
+                                <button t-if="['queued', 'running'].includes(run.state)" class="btn btn-secondary" t-att-disabled="state.busy" t-on-click="() => this.perform('action_pause')">Pause</button>
+                                <button t-if="['paused', 'stopped', 'failed'].includes(run.state)" class="btn btn-primary" t-att-disabled="state.busy" t-on-click="() => this.perform('action_resume')">Resume</button>
+                                <button t-if="['queued', 'running', 'paused', 'failed'].includes(run.state)" class="btn btn-outline-danger" t-att-disabled="state.busy" t-on-click="() => this.perform('action_stop')">Stop</button>
+                            </div>
+                        </div>
+                        <p t-if="['queued', 'running'].includes(run.state)" class="text-muted small mt-3 mb-0">Pause and stop take effect between committed batches. Queued jobs require the integration queue runner.</p>
+                        <div t-if="run.error" class="alert alert-danger mt-3 mb-0" t-esc="run.error"/>
+                    </section>
+                    <section class="card p-4">
+                        <div class="d-flex justify-content-between mb-3"><h2 class="h5">Classification Results</h2><button class="btn btn-link p-0" t-on-click="() => this.openResults()">All Results</button></div>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead><tr><th>Primary Category</th><th class="text-end">Classified</th><th class="text-end">Needs Review</th><th class="text-end">Percentage</th></tr></thead>
+                                <tbody>
+                                    <tr t-foreach="run.category_counts" t-as="category" t-key="category.id">
+                                        <td><button class="btn btn-link p-0" t-on-click="() => this.openResults('classified', category.id)" t-esc="category.name"/></td>
+                                        <td class="text-end" t-esc="category.classified.toLocaleString()"/>
+                                        <td class="text-end"><button class="btn btn-link p-0" t-on-click="() => this.openResults('needs_review', category.id)" t-esc="category.needs_review.toLocaleString()"/></td>
+                                        <td class="text-end"><t t-esc="run.total ? (category.classified / run.total * 100).toFixed(1) : '0.0'"/>%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-link align-self-start p-0" t-on-click="() => this.openResults('needs_review')">Open Review Queue</button>
+                        <p class="text-muted small mb-0 mt-2">Products without a proposed category remain in the review queue and are excluded from category totals.</p>
+                    </section>
+                </t>
+            </t>
+        </div>
+    </t>
+</templates>

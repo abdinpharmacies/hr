@@ -22,6 +22,7 @@ class TestWebsiteCategoryMapping(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.Group = cls.env["ab_product_group"]
+        cls.env["ab_product_classification_taxonomy"].action_prepare()
 
     def test_l3_group_maps_to_canonical_category(self):
         group = self.Group.create({"name": "Body Care L3"})
@@ -29,7 +30,7 @@ class TestWebsiteCategoryMapping(TransactionCase):
         category = group._get_or_create_website_category()
 
         self.assertEqual(category.name, "Body Care")
-        self.assertEqual(category.parent_id.name, "Beauty & Skin Care")
+        self.assertEqual(category.parent_id.name, "Skin Care & Beauty")
 
     def test_brand_group_does_not_become_raw_category(self):
         existing_categories = self.env["product.public.category"].search_count([
@@ -46,12 +47,12 @@ class TestWebsiteCategoryMapping(TransactionCase):
             existing_categories,
         )
 
-    def test_unknown_only_product_group_uses_everyday_essentials(self):
+    def test_unknown_only_product_group_has_no_fallback(self):
         group = self.Group.create({"name": "Unknown Brand Name"})
 
         categories = group._get_or_create_website_categories()
 
-        self.assertEqual(categories.name, "Everyday Essentials")
+        self.assertFalse(categories)
 
     def test_missing_product_image_gets_placeholder(self):
         card = self.env["ab_product_card"].create({

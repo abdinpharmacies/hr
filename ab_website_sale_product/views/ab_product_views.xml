@@ -10,6 +10,7 @@
                 <field name="website_product_synced" optional="hide"/>
                 <field name="website_product_tmpl_id" optional="hide"/>
                 <field name="website_product_is_published" optional="hide"/>
+                <field name="ab_shop_need_ids" widget="many2many_tags" optional="show"/>
             </xpath>
         </field>
     </record>

@@ -12,6 +12,7 @@ class TestWebsiteProductSync(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.env['ir.config_parameter'].sudo().set_param('ir_attachment.location', 'db')
+        cls.env['ab_product_classification_taxonomy'].action_prepare()
         cls.Product = cls.env['ab_product'].sudo()
         cls.Job = cls.env['ab_website_product_sync_job'].sudo()
         cls.Job.search([]).write({'state': 'done', 'background_requested': False})
@@ -76,14 +77,14 @@ class TestWebsiteProductSync(TransactionCase):
         product._sync_website_products()
         self.assertFalse(template.product_tag_ids)
 
-    def test_missing_category_created_once(self):
+    def test_invalid_taxonomy_binding_does_not_create_categories(self):
         Category = self.env['product.public.category'].with_context(lang=False)
         existing = Category.search([('name', '=', 'Body Care')])
         existing.write({'name': 'Archived Test Category Name'})
         products = self.product('SYNC-A') | self.product('SYNC-B')
         templates = products._sync_website_products()
-        self.assertEqual(len(templates.public_categ_ids), 1)
-        self.assertEqual(templates.public_categ_ids.name, 'Body Care')
+        self.assertFalse(templates.public_categ_ids)
+        self.assertFalse(Category.search([('name', '=', 'Body Care')]))
 
     def test_dirty_card_ancestor_barcode_and_membership(self):
         product = self.product()

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="classification_queue_channel" model="queue.job.channel">
+        <field name="name">classification</field>
+        <field name="parent_id" ref="integration_queue_job.channel_root"/>
+    </record>
+    <record id="classification_queue_function" model="queue.job.function">
+        <field name="model_id" ref="model_ab_product_classification_run"/>
+        <field name="method">_process_checkpoint</field>
+        <field name="channel_id" ref="classification_queue_channel"/>
+    </record>
+    <record id="classification_control_function" model="queue.job.function">
+        <field name="model_id" ref="model_ab_product_classification_run"/>
+        <field name="method">_apply_control</field>
+        <field name="channel_id" ref="classification_queue_channel"/>
+    </record>
+    <record id="classification_force_queue_function" model="queue.job.function">
+        <field name="model_id" ref="model_ab_product_classification_run"/>
+        <field name="method">_force_checkpoint</field>
+        <field name="channel_id" ref="classification_queue_channel"/>
+    </record>
+    <data noupdate="1">
+        <record id="classification_recovery_cron" model="ir.cron">
+            <field name="name">Recover interrupted product classification</field>
+            <field name="model_id" ref="model_ab_product_classification_run"/>
+            <field name="state">code</field>
+            <field name="code">model._recover_interrupted()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+    </data>
+</odoo>
