@@ -110,3 +110,17 @@ User-facing changes:
 Files changed:
 
 - `ab_ecommerce_storefront/models/product_template.py`
+
+
+## Commits reviewed on 2026-10-05
+
+See [the commit review](2026-10-05-commit-review.md) for commit hashes, authors, subjects, affected files, and validation. Detailed feature records remain in this folder.
+
+## Current changes before commit:
+
+- Replace the completed-work list with references to the actual focused commits.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/changelog.d/2026-10-05-commit-review.md`
