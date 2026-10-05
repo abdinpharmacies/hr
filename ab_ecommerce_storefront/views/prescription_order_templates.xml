@@ -89,7 +89,7 @@
                                         <strong>Upload or photograph the prescription</strong>
                                         <small>JPG, PNG, or WebP up to <t t-out="prescription_max_upload_mb"/> MB.</small>
                                         <div class="ab-prescription-upload-actions">
-                                            <label for="abPrescriptionCamera" class="btn btn-primary">
+                                            <label for="abPrescriptionCamera" class="btn btn-primary" data-ab-prescription-camera-open="">
                                                 <i class="fa fa-camera" aria-hidden="true"/>
                                                 <span>Take prescription photo</span>
                                             </label>
@@ -98,6 +98,21 @@
                                                 <span>Upload image</span>
                                             </label>
                                         </div>
+                                    </div>
+
+                                    <div class="ab-prescription-camera d-none" data-ab-prescription-camera="">
+                                        <video autoplay="autoplay" muted="muted" playsinline="playsinline" aria-label="Live camera preview" data-ab-prescription-camera-video=""></video>
+                                        <div class="ab-prescription-camera-actions">
+                                            <button type="button" class="btn btn-primary" data-ab-prescription-camera-capture="" disabled="disabled">
+                                                <i class="fa fa-camera" aria-hidden="true"/>
+                                                <span>Take photo</span>
+                                            </button>
+                                            <button type="button" class="btn ab-prescription-secondary-btn" data-ab-prescription-camera-close="">Cancel</button>
+                                        </div>
+                                    </div>
+                                    <div class="ab-prescription-camera-help d-none" data-ab-prescription-camera-help="" role="alert">
+                                        <p data-ab-prescription-camera-message=""></p>
+                                        <button type="button" class="btn ab-prescription-secondary-btn" data-ab-prescription-camera-retry="">Try camera again</button>
                                     </div>
 
                                     <div class="ab-prescription-uploading d-none" data-ab-prescription-uploading="" role="status">

@@ -5015,3 +5015,78 @@ msgstr "العروض الحالية"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
 msgid "New offers are coming soon"
 msgstr "عروض جديدة قريبًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                                <span>Take photo</span>"
+msgstr ""
+"<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
+"                                                <span>التقاط صورة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Live camera preview"
+msgstr "معاينة الكاميرا المباشرة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+msgid "Try camera again"
+msgstr "إعادة محاولة تشغيل الكاميرا"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid "Waiting for camera permission..."
+msgstr "جارٍ انتظار إذن استخدام الكاميرا..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid ""
+"Live camera access needs HTTPS or a loopback address (127.0.0.x) in a "
+"supported browser. You can use the camera picker or upload an image."
+msgstr ""
+"يتطلب تشغيل الكاميرا مباشرة اتصال HTTPS أو عنوانًا محليًا من نطاق "
+"(127.0.0.x) في متصفح مدعوم. يمكنك استخدام منتقي الكاميرا أو رفع صورة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid ""
+"Camera access is blocked. Allow Camera in the site settings beside the "
+"address bar, and allow your browser in device settings if needed. Then try "
+"again."
+msgstr ""
+"تم حظر الوصول إلى الكاميرا. اسمح باستخدام الكاميرا من إعدادات الموقع بجانب "
+"شريط العنوان، واسمح للمتصفح باستخدامها من إعدادات الجهاز إذا لزم الأمر. ثم "
+"حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid "No camera was found. Connect a camera or upload an image."
+msgstr "لم يتم العثور على كاميرا. وصّل كاميرا أو ارفع صورة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid ""
+"The camera is unavailable or already in use. Close other apps using it and "
+"try again."
+msgstr ""
+"الكاميرا غير متاحة أو قيد الاستخدام. أغلق التطبيقات الأخرى التي تستخدمها ثم "
+"حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid "Unable to capture the photo. Please try again or upload an image."
+msgstr "تعذر التقاط الصورة. حاول مرة أخرى أو ارفع صورة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid "Unable to open the camera. Please try again or upload an image."
+msgstr "تعذر فتح الكاميرا. حاول مرة أخرى أو ارفع صورة."
