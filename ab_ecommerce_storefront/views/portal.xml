@@ -720,7 +720,7 @@
                                     </strong>
                                 </div>
                             </div>
-                            <span class="ab-customer-order-action">View order</span>
+                            <span class="ab-customer-order-action">View progress</span>
                         </a>
                     </t>
                     <t t-foreach="ab_order_prescriptions" t-as="prescription">
@@ -753,7 +753,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="ab-customer-order-action">View prescription details</span>
+                            <span class="ab-customer-order-action">View progress</span>
                         </a>
                     </t>
                     <div class="ab-customer-orders-filter-empty" data-ab-order-empty="order" t-if="not orders" hidden="">

@@ -6973,3 +6973,8 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
 msgid "Unable to open the camera. Please try again or upload an image."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
+msgid "View progress"
+msgstr ""

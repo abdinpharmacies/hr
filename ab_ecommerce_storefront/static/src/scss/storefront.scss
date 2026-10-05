@@ -18467,7 +18467,7 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
 
 .ab-customer-order-card {
     display: grid;
-    grid-template-columns: 48px minmax(0, 1fr) auto;
+    grid-template-columns: 48px minmax(0, 1fr) 180px;
     align-items: center;
     gap: .9rem;
     min-width: 0;
@@ -18529,7 +18529,14 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
     min-width: 0;
 }
 
-.ab-customer-order-topline,
+.ab-customer-order-topline {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) max-content;
+    align-items: start;
+    gap: .5rem .8rem;
+    min-width: 0;
+}
+
 .ab-customer-order-meta {
     display: flex;
     flex-wrap: wrap;
@@ -18564,6 +18571,7 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
     display: inline-flex;
     min-height: 27px;
     align-items: center;
+    justify-self: end;
     padding: .28rem .62rem;
     color: #286487;
     border: 1px solid rgba($ab-blue, .13);
@@ -18640,6 +18648,7 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
 
 .ab-customer-order-action {
     display: inline-flex;
+    width: 100%;
     min-height: 40px;
     align-items: center;
     justify-content: center;
@@ -18728,6 +18737,8 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
     }
 
     .ab-customer-order-topline {
+        display: flex;
+        flex-wrap: wrap;
         align-items: flex-start;
     }
 
