@@ -128,6 +128,13 @@
             <attribute name="class" add="ab-storefront-product-price" separator=" "/>
         </xpath>
         <xpath expr="//div[@name='product_price_container']" position="after">
+            <t t-set="ab_product_offer" t-value="website._ab_storefront_offer_details(product).get(product.id, {})"/>
+            <div t-if="ab_product_offer.get('free_qty')" class="ab-storefront-product-bundle-offer my-3">
+                <strong class="badge text-bg-primary" dir="ltr">
+                    <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['free_qty']"/> <span>free</span>
+                </strong>
+                <small class="d-block mt-2">Free items are added to your cart automatically.</small>
+            </div>
             <div class="ab-storefront-total-price"
                  data-ab-animated-total-price="1"
                  aria-live="polite">

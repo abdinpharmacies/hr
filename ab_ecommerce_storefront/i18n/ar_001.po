@@ -4978,3 +4978,40 @@ msgstr "يجب إرجاع المنتجات خلال أربعة عشر يومًا
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "The following items cannot be returned or exchanged:"
 msgstr "لا يمكن إرجاع المنتجات التالية أو استبدالها:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "<span>free</span>"
+msgstr "<span>مجانًا</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid ""
+"<small class=\"d-block mt-2\">Free items are added to your cart "
+"automatically.</small>"
+msgstr ""
+"<small class=\"d-block mt-2\">تُضاف الوحدات المجانية إلى سلتك "
+"تلقائيًا.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Current offers"
+msgstr "العروض الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "New offers are coming soon"
+msgstr "عروض جديدة قريبًا"

@@ -44,6 +44,13 @@ _AB_PRODUCT_VARIANT_IMAGE_FIELDS = (
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    def _get_sales_prices(self, website):
+        prices = super()._get_sales_prices(website)
+        offers = website._ab_storefront_offer_details(self)
+        for product_id, values in prices.items():
+            values["ab_offer"] = offers.get(product_id, {})
+        return prices
+
     def _ab_storefront_has_real_image(self):
         self.ensure_one()
         image_attachment = self.env["ir.attachment"].sudo().search([

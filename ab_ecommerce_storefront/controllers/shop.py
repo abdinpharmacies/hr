@@ -1,4 +1,4 @@
-from odoo import fields
+from odoo import fields, http
 from odoo.http import request
 from odoo.tools import SQL, float_round
 
@@ -7,6 +7,17 @@ from odoo.addons.website_sale.controllers.main import WebsiteSale
 
 class AbEcommerceStorefrontShop(WebsiteSale):
     """Storefront shop refinements that keep Odoo's native /shop behavior."""
+
+    @http.route(["/shop/offers", "/shop/offers/page/<int:page>"], type="http", auth="public", website=True, sitemap=False)
+    def ab_storefront_offers(self, page=1, **kwargs):
+        page = max(page, 1)
+        catalog = request.website._ab_storefront_home_catalog(
+            product_limit=24, offers_offset=(page - 1) * 24
+        )
+        return request.render("ab_ecommerce_storefront.offers_page", {
+            "ab_catalog": catalog,
+            "ab_offers_page": page,
+        })
 
     def _get_default_country(self, order_sudo=False, **kwargs):
         country = super()._get_default_country(order_sudo=order_sudo, **kwargs)

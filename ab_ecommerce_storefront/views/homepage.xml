@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="offers_page" name="Abdin Offers">
+        <t t-call="website.layout">
+            <div id="wrap" class="ab-storefront-home">
+                <section class="ab-storefront-section ab-storefront-offers py-5">
+                    <div class="container">
+                        <h1 class="mb-4">Current offers</h1>
+                        <div t-if="ab_catalog['offers']" class="row g-3 g-lg-4">
+                            <div t-foreach="ab_catalog['offers']" t-as="product" class="col-6 col-md-4 col-lg-3">
+                                <t t-call="ab_ecommerce_storefront.home_product_card"/>
+                            </div>
+                        </div>
+                        <div t-else="" class="ab-storefront-offers-empty">
+                            <h2>New offers are coming soon</h2>
+                            <a href="/shop" class="btn btn-primary">Browse products</a>
+                        </div>
+                        <nav t-if="ab_offers_page &gt; 1 or ab_catalog['has_more_offers']" class="d-flex justify-content-center gap-3 mt-4">
+                            <a t-if="ab_offers_page &gt; 1" t-att-href="'/shop/offers/page/%s' % (ab_offers_page - 1)" class="btn btn-outline-primary">Previous</a>
+                            <a t-if="ab_catalog['has_more_offers']" t-att-href="'/shop/offers/page/%s' % (ab_offers_page + 1)" class="btn btn-outline-primary">Next</a>
+                        </nav>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
     <template id="home_product_card" name="Abdin Home Product Card">
         <t t-set="ab_card_variants" t-value="ab_catalog['variants']"/>
         <t t-set="ab_card_prices" t-value="ab_catalog['prices']"/>
@@ -18,7 +43,8 @@
         <t t-set="ab_card_data" t-value="product._ab_storefront_card_data(ab_card_price)"/>
         <t t-set="ab_card_options" t-value="ab_card_data['purchase_options']"/>
         <t t-set="ab_card_default_option" t-value="ab_card_options[0]"/>
-        <t t-set="ab_card_is_offer" t-value="product.id in ab_card_offer_product_ids"/>
+        <t t-set="ab_card_offer" t-value="ab_card_price.get('ab_offer', {})"/>
+        <t t-set="ab_card_is_offer" t-value="bool(ab_card_offer)"/>
         <t t-set="ab_card_discount"
            t-value="ab_card_price.get('base_price', 0) and max(0, round((ab_card_price.get('base_price', 0) - ab_card_price.get('price_reduce', 0)) * 100 / ab_card_price.get('base_price', 0))) or 0"/>
         <t t-set="ab_card_requires_configuration"
@@ -65,9 +91,12 @@
                     </svg>
                 </button>
                 <span t-if="ab_card_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
-                <span t-elif="ab_card_is_offer and ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
+                <span t-elif="ab_card_offer.get('free_qty')" class="ab-storefront-offer-badge">
+                    <bdi dir="ltr"><t t-out="ab_card_offer['buy_qty']"/> + <t t-out="ab_card_offer['free_qty']"/> <span>free</span></bdi>
+                </span>
+                <span t-elif="ab_card_price.get('base_price', 0) &gt; ab_card_price.get('price_reduce', 0)"
                       class="ab-storefront-offer-badge">
-                    <t t-if="ab_card_discount">-<t t-out="ab_card_discount"/>%</t>
+                    <bdi t-if="ab_card_discount" dir="ltr">-<t t-out="ab_card_discount"/>%</bdi>
                     <t t-else="">Offer</t>
                 </span>
                 <span t-elif="ab_card_is_offer" class="ab-storefront-offer-badge">Offer</span>
@@ -124,7 +153,7 @@
                                   class="ab-storefront-sale-price"
                                   t-out="ab_option['price_reduce']"
                                   t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
-                            <del t-if="ab_card_is_offer and ab_option['base_price'] &gt; ab_option['price_reduce']"
+                            <del t-if="ab_option['base_price'] &gt; ab_option['price_reduce']"
                                  class="ab-storefront-base-price"
                                  t-out="ab_option['base_price']"
                                  t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
@@ -305,7 +334,7 @@
                                 <span class="ab-storefront-kicker">Promotions</span>
                                 <h2 class="mb-0">Current offers</h2>
                             </div>
-                            <a href="/#ab-storefront-offers" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">Shop offers</a>
+                            <a href="/shop/offers" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">Shop offers</a>
                         </div>
                         <div t-if="ab_catalog['offers']" class="row g-3 g-lg-4">
                             <div t-foreach="ab_catalog['offers']" t-as="product" class="col-6 col-md-4 col-lg-3">

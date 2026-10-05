@@ -88,7 +88,8 @@
                 <t t-set="ab_header_need_menu" t-value="website._ab_storefront_header_need_menu()"/>
                 <t t-set="ab_header_nav_labels" t-value="website._ab_storefront_header_nav_labels()"/>
                 <t t-set="ab_current_path" t-value="request.httprequest.path.rstrip('/') or '/'"/>
-                <t t-set="ab_offers_href" t-value="'/#ab-storefront-offers'"/>
+                <t t-set="ab_offers_href" t-value="'/shop/offers'"/>
+                <t t-set="ab_offers_active" t-value="ab_current_path.endswith('/shop/offers') or '/shop/offers/page/' in ab_current_path"/>
                 <t t-set="ab_prescription_href" t-value="'/prescription-order'"/>
                 <t t-set="ab_offers_badge" t-value="False"/>
                 <t t-set="ab_location_partner" t-value="False if request.env.user._is_public() else request.env.user.partner_id"/>
@@ -365,7 +366,8 @@
                             <span t-out="ab_header_nav_labels['home']"/>
                         </a>
                         <a t-att-href="ab_offers_href"
-                           class="ab-storefront-offers-link nav-link d-inline-flex align-items-center gap-1 text-nowrap"
+                           t-attf-class="ab-storefront-offers-link nav-link d-inline-flex align-items-center gap-1 text-nowrap #{'active' if ab_offers_active else ''}"
+                           t-att-aria-current="'page' if ab_offers_active else None"
                            t-att-aria-label="ab_header_nav_labels['offers_aria']">
                             <i class="fa fa-tag" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['offers']"/>
@@ -448,7 +450,8 @@
                             <span t-out="ab_header_nav_labels['home']"/>
                         </a>
                         <a t-att-href="ab_offers_href"
-                           class="ab-storefront-mobile-offers-link"
+                           t-attf-class="ab-storefront-mobile-offers-link #{'active' if ab_offers_active else ''}"
+                           t-att-aria-current="'page' if ab_offers_active else None"
                            t-att-aria-label="ab_header_nav_labels['offers_aria']">
                             <i class="fa fa-tag" aria-hidden="true"/>
                             <span t-out="ab_header_nav_labels['offers']"/>

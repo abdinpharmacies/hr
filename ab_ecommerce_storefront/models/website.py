@@ -1,3 +1,5 @@
+from math import ceil, floor
+
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
@@ -229,7 +231,7 @@ class Website(models.Model):
         ], limit=1)
         return not prior_wish
 
-    def _ab_storefront_home_catalog(self, product_limit=8, category_limit=8):
+    def _ab_storefront_home_catalog(self, product_limit=8, category_limit=8, offers_offset=0):
         self.ensure_one()
         categories = self._ab_storefront_categories(limit=category_limit)
         candidate_limit = max(product_limit * 8, 32)
@@ -239,7 +241,10 @@ class Website(models.Model):
             limit=candidate_limit,
         )
         prices = candidates._get_sales_prices(self)
-        offers = self._ab_storefront_offer_products(candidates)[:product_limit]
+        offers, offer_prices, has_more_offers = self._ab_storefront_offer_catalog(
+            product_limit, offers_offset
+        )
+        prices.update(offer_prices)
         best_sellers = candidates[:product_limit]
         displayed_products = best_sellers | offers
         category_ids = set(categories.ids)
@@ -270,59 +275,120 @@ class Website(models.Model):
             "products": best_sellers,
             "best_sellers": best_sellers,
             "offers": offers,
+            "has_more_offers": has_more_offers,
             "prices": prices,
             "variants": variants_by_template,
             "offer_product_ids": set(offers.ids),
             "wishlist_product_ids": wishlist_product_ids,
         }
 
-    def _ab_storefront_offer_products(self, candidates):
+    def _ab_storefront_offer_catalog(self, limit=8, offset=0):
+        self.ensure_one()
+        products = self.env["product.template"].with_context(bin_size=True)
+        domain = Domain.AND([self.sale_product_domain(), self._ab_storefront_offer_candidate_domain()])
+        offers = products.browse()
+        prices = {}
+        position = 0
+        while len(offers) <= offset + limit:
+            candidates = products.search(
+                domain, order="website_sequence, id DESC",
+                offset=position, limit=128,
+            )
+            if not candidates:
+                break
+            batch_prices = candidates._get_sales_prices(self)
+            offers |= candidates.filtered(
+                lambda product: batch_prices[product.id].get("ab_offer")
+                or batch_prices[product.id].get("base_price", 0)
+                > batch_prices[product.id]["price_reduce"]
+            )
+            prices.update(batch_prices)
+            position += len(candidates)
+        displayed = offers[offset:offset + limit]
+        return displayed, {product.id: prices[product.id] for product in displayed}, len(offers) > offset + limit
+
+    def _ab_storefront_offer_candidate_domain(self):
+        domains = [Domain("compare_list_price", ">", 0)]
+        programs = self.env["loyalty.program"].sudo().search(self._ab_storefront_offer_program_domain())
+        for program in programs:
+            if program.limit_usage and program.total_order_count >= program.max_usage:
+                continue
+            rewards = program.reward_ids.filtered("active")
+            if len(rewards) != 1:
+                continue
+            reward = rewards
+            if reward.reward_type == "product":
+                reward_domain = Domain("product_variant_ids", "in", reward.reward_product_ids.ids)
+            elif reward.discount_applicability == "specific":
+                reward_domain = Domain("product_variant_ids", "any", reward._get_discount_product_domain())
+            else:
+                continue
+            for rule in program.rule_ids.filtered(lambda rule: rule.active and rule.mode == "auto"):
+                domains.append(reward_domain & Domain("product_variant_ids", "any", rule._get_valid_product_domain()))
+        pricelist = getattr(request, "pricelist", False) if request else False
+        now = fields.Datetime.now()
+        if pricelist:
+            for item in pricelist.sudo().item_ids:
+                if (
+                    not item._show_discount_on_shop() or item.min_quantity > 1
+                    or (item.date_start and item.date_start > now)
+                    or (item.date_end and item.date_end < now)
+                ):
+                    continue
+                if item.product_id:
+                    domains.append(Domain("product_variant_ids", "in", item.product_id.ids))
+                elif item.product_tmpl_id:
+                    domains.append(Domain("id", "in", item.product_tmpl_id.ids))
+                elif item.categ_id:
+                    domains.append(Domain("categ_id", "child_of", item.categ_id.ids))
+                else:
+                    return Domain.TRUE
+        return Domain.OR(domains)
+
+    def _ab_storefront_offer_details(self, candidates):
         self.ensure_one()
         if not candidates:
-            return candidates
+            return {}
 
         programs = self.env["loyalty.program"].sudo().search(
             self._ab_storefront_offer_program_domain()
         )
-        if not programs:
-            return candidates.browse()
-
         candidate_variants = candidates.product_variant_ids
-        offer_products = candidates.browse()
+        details = {}
         for program in programs:
-            if program.program_type in ("gift_card", "ewallet"):
-                offer_products |= program.trigger_product_ids.product_tmpl_id & candidates
+            if program.limit_usage and program.total_order_count >= program.max_usage:
                 continue
-
-            program_products = candidates.browse()
-            rules = program.rule_ids.filtered("active")
-            constrained_rules = rules.filtered(
-                lambda rule: rule.product_ids
-                or rule.product_category_id
-                or rule.product_tag_id
-                or (rule.product_domain and rule.product_domain != "[]")
-            )
-            for rule in constrained_rules or rules:
-                rule_products = candidate_variants.filtered_domain(
-                    rule._get_valid_product_domain()
-                ).product_tmpl_id
-                program_products |= rule_products
-
-            for reward in program.reward_ids.filtered("active"):
+            rules = program.rule_ids.filtered(lambda rule: rule.active and rule.mode == "auto")
+            rewards = program.reward_ids.filtered("active")
+            for rule in rules:
+                eligible = candidate_variants.filtered_domain(rule._get_valid_product_domain())
+                if not eligible or len(rewards) != 1:
+                    continue
+                reward = rewards
                 if reward.reward_type == "product":
-                    program_products |= reward.reward_product_ids.product_tmpl_id
+                    if (
+                        len(rules) != 1 or rule.minimum_amount
+                        or rule.reward_point_mode != "unit" or reward.multi_product
+                    ):
+                        continue
+                    eligible &= reward.reward_product_ids
+                    buy_qty = ceil(reward.required_points / rule.reward_point_amount)
+                    if rule.minimum_qty > buy_qty:
+                        continue
+                    reward_count = 1 if reward.clear_wallet else floor(
+                        buy_qty * rule.reward_point_amount / reward.required_points
+                    )
+                    offer = {"buy_qty": buy_qty, "free_qty": reward.reward_product_qty * reward_count}
                 elif reward.discount_applicability == "specific":
-                    program_products |= candidate_variants.filtered_domain(
-                        reward._get_discount_product_domain()
-                    ).product_tmpl_id
-                elif (
-                    not program_products
-                    and program.program_type not in ("gift_card", "ewallet")
-                ):
-                    program_products |= candidates
-
-            offer_products |= program_products & candidates
-        return offer_products.sorted(key=lambda product: (product.website_sequence, -product.id))
+                    eligible = eligible.filtered_domain(reward._get_discount_product_domain())
+                    offer = {"program_id": program.id}
+                else:
+                    continue
+                for product in eligible.product_tmpl_id:
+                    if product.product_variant_count == 1:
+                        if offer.get("free_qty") or product.id not in details:
+                            details[product.id] = offer
+        return details
 
     def _ab_storefront_offer_program_domain(self):
         self.ensure_one()
@@ -330,6 +396,9 @@ class Website(models.Model):
         domain = [
             ("active", "=", True),
             ("ecommerce_ok", "=", True),
+            ("program_type", "in", ["promotion", "buy_x_get_y"]),
+            ("trigger", "=", "auto"),
+            ("applies_on", "=", "current"),
             *self.env["loyalty.program"]._check_company_domain(
                 [self.company_id.id, self.company_id.parent_id.id]
             ),

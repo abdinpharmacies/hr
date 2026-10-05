@@ -676,8 +676,9 @@ export class AbStorefrontOffersNavState extends Interaction {
     }
 
     syncState() {
-        const offersActive = window.location.hash === "#ab-storefront-offers";
         const normalizedPath = window.location.pathname.replace(/\/$/, "") || "/";
+        const offersActive = window.location.hash === "#ab-storefront-offers"
+            || /\/shop\/offers(?:\/page\/\d+)?$/.test(normalizedPath);
         const homeActive = (normalizedPath === "/" || normalizedPath === "/ar") && !offersActive;
 
         this.el

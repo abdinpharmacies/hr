@@ -6884,3 +6884,26 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 msgid "The following items cannot be returned or exchanged:"
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "<span>free</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid ""
+"<small class=\"d-block mt-2\">Free items are added to your cart "
+"automatically.</small>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Previous"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Next"
+msgstr ""
