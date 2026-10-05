@@ -30,7 +30,29 @@ class AbEcommerceStorefrontShop(WebsiteSale):
     def _get_additional_shop_values(self, values, **kwargs):
         result = super()._get_additional_shop_values(values, **kwargs)
         result.update(self._ab_storefront_price_range_values(values))
+        need_key = request.params.get('need')
+        result['ab_shop_need'] = request.env['product.tag'].search(
+            fields.Domain('ab_shop_need_key', '=', need_key), limit=1
+        ) if need_key else request.env['product.tag']
         return result
+
+    def _get_search_options(self, *args, **kwargs):
+        options = super()._get_search_options(*args, **kwargs)
+        options['ab_shop_need_key'] = request.params.get('need')
+        return options
+
+    def _get_shop_domain(self, search, category, attribute_value_dict, search_in_description=True):
+        domain = super()._get_shop_domain(search, category, attribute_value_dict, search_in_description)
+        need_key = request.params.get('need')
+        if need_key:
+            need = request.env['product.tag'].search(fields.Domain('ab_shop_need_key', '=', need_key))
+            domain &= fields.Domain('public_categ_ids', 'child_of', need._ab_shop_category_ids(request.website))
+        return domain
+
+    def _shop_get_query_url_kwargs(self, *args, **kwargs):
+        values = super()._shop_get_query_url_kwargs(*args, **kwargs)
+        values['need'] = request.params.get('need') or None
+        return values
 
     def _ab_storefront_price_range_values(self, values):
         website = request.website

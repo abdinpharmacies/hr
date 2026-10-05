@@ -90,16 +90,16 @@ _CATEGORY_ICON_FALLBACKS = (
 )
 
 _HEADER_NEED_MENU = (
-    (_lt("Acne treatment"), "fa-medkit", "green"),
-    (_lt("Skin brightening and tone correction"), "fa-sun-o", "orange"),
-    (_lt("Dry skin hydration"), "fa-tint", "blue"),
-    (_lt("Hair loss treatment"), "fa-leaf", "green"),
-    (_lt("Dandruff control"), "fa-shield", "blue"),
-    (_lt("Sun protection"), "fa-sun-o", "orange"),
-    (_lt("Anti-aging and wrinkle care"), "fa-heart", "orange"),
-    (_lt("Immune support"), "fa-plus-square", "green"),
-    (_lt("Energy and vitality"), "fa-bolt", "orange"),
-    (_lt("Sensitive skin care"), "fa-heart-o", "blue"),
+    ('acne_treatment', _lt("Acne treatment"), "fa-medkit", "green"),
+    ('skin_brightening', _lt("Skin brightening and tone correction"), "fa-sun-o", "orange"),
+    ('dry_skin_hydration', _lt("Dry skin hydration"), "fa-tint", "blue"),
+    ('hair_loss_treatment', _lt("Hair loss treatment"), "fa-leaf", "green"),
+    ('dandruff_control', _lt("Dandruff control"), "fa-shield", "blue"),
+    ('sun_protection', _lt("Sun protection"), "fa-sun-o", "orange"),
+    ('anti_aging', _lt("Anti-aging and wrinkle care"), "fa-heart", "orange"),
+    ('immune_support', _lt("Immune support"), "fa-plus-square", "green"),
+    ('energy_vitality', _lt("Energy and vitality"), "fa-bolt", "orange"),
+    ('sensitive_skin', _lt("Sensitive skin care"), "fa-heart-o", "blue"),
 )
 
 
@@ -193,12 +193,12 @@ class Website(models.Model):
             {
                 "label": self.env._(label),
                 "href": "/shop?%s" % url_encode({
-                    "search": self.env._(label),
+                    "need": key,
                 }),
                 "icon": icon,
                 "tone": tone,
             }
-            for label, icon, tone in _HEADER_NEED_MENU
+            for key, label, icon, tone in _HEADER_NEED_MENU
         ]
 
     def _ab_storefront_is_first_cart_addition(self):

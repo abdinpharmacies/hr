@@ -84,11 +84,13 @@
             <section class="ab-storefront-shop-hero">
                 <div class="container py-4 py-lg-5">
                     <span class="ab-storefront-kicker">
-                        <t t-if="category">Browse category</t>
+                        <t t-if="ab_shop_need">Shop by Need</t>
+                        <t t-elif="category">Browse category</t>
                         <t t-else="">Abdin online pharmacy</t>
                     </span>
                     <h1 class="mb-2">
-                        <span t-if="category" t-out="website._ab_storefront_category_label(category)"/>
+                        <span t-if="ab_shop_need" t-out="ab_shop_need.name"/>
+                        <span t-elif="category" t-out="website._ab_storefront_category_label(category)"/>
                         <span t-else="">Healthcare products for every day</span>
                     </h1>
                     <p class="mb-0">
