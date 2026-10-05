@@ -1,11 +1,11 @@
 # ab_queue_monitor
 
-## Current changes before commit:
+## Implementation record
 
 Author: Mohamed Fawzy
-Date: 2026-10-04
-Commit: uncommitted (new module; no previous module commits)
-Subject: Add manual background job discovery and monitoring
+Date: 2026-10-05
+Commit: `f4a5294ff2f6a55dd44c51b683b6ff9617a09906`
+Original subject: `feat(queue-monitor): add job discovery and execution dashboard`
 
 - Discover installed-addon background work through bounded AST scans, queue
   declarations, existing schedules and runtime evidence. Scan only on an
@@ -56,3 +56,12 @@ Files changed:
 - `tests/test_ui.py`
 - `docs/architecture.md`
 - `changelog.d/current.md`
+
+## Current changes before commit:
+
+- Record the module commit and link the current review validation in [the commit review](2026-10-05-commit-review.md).
+
+Files changed:
+
+- `ab_queue_monitor/changelog.d/current.md`
+- `ab_queue_monitor/changelog.d/2026-10-05-commit-review.md`
