@@ -3085,6 +3085,25 @@ body.ab-storefront-location-picker-open {
     }
 }
 
+@media (max-width: 444px) {
+    .ab-storefront-testimonial-rail {
+        grid-auto-columns: unquote("min(300px, 82%)");
+        gap: .75rem;
+    }
+
+    .ab-storefront-testimonial-card {
+        padding: .75rem;
+    }
+
+    .ab-storefront-testimonial-source {
+        gap: .4rem;
+    }
+
+    .ab-storefront-testimonial-source-type > span {
+        white-space: normal;
+    }
+}
+
 @media (max-width: 991.98px) {
     .ab-storefront-products-grid {
         #o_wsale_products_header {
