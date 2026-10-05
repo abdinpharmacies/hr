@@ -1,0 +1,981 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_queue_monitor
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-04 13:13+0000\n"
+"PO-Revision-Date: 2026-10-04 16:00+0300\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_queue_monitor
+#: model:ir.model.constraint,message:ab_queue_monitor.constraint_ab_queue_monitor_session_one_scan
+msgid "A discovery is already in progress."
+msgstr "هناك عملية اكتشاف قيد التنفيذ بالفعل."
+
+#. module: ab_queue_monitor
+#: model:ir.model.constraint,message:ab_queue_monitor.constraint_ab_queue_monitor_definition_unique_key
+msgid "A job definition must be unique."
+msgstr "يجب أن يكون تعريف المهمة فريداً."
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__active
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Active Only"
+msgstr "النشطة فقط"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "All Channels"
+msgstr "جميع القنوات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "All Discovery Types"
+msgstr "جميع أنواع الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "All Modules"
+msgstr "جميع الموديولات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "All States"
+msgstr "جميع الحالات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Arguments and Result"
+msgstr "المعاملات والنتيجة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__backend
+msgid "Backend"
+msgstr "محرك التنفيذ"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.actions.client,name:ab_queue_monitor.dashboard_action
+msgid "Background Job Monitor"
+msgstr "مراقبة المهام الخلفية"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__discovery_type__both
+msgid "Both"
+msgstr "كلاهما"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Cancel Discovery"
+msgstr "إلغاء الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_session__state__cancelled
+msgid "Cancelled"
+msgstr "ملغاة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__candidates
+msgid "Candidates"
+msgstr "نتائج الاكتشاف الأولية"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__changes
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.session_form
+msgid "Changes"
+msgstr "التغييرات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__channel
+msgid "Channel"
+msgstr "القناة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Child Jobs"
+msgstr "المهام التابعة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Choose a valid date."
+msgstr "اختر تاريخاً صالحاً."
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/services/runtime.py:0
+msgid "Classification Run"
+msgstr "عملية التصنيف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Classified"
+msgstr "تم تصنيفها"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Clear Filters"
+msgstr "مسح عوامل التصفية"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_session__state__done
+msgid "Completed"
+msgstr "مكتملة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Completed Today"
+msgstr "المكتملة اليوم"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Created"
+msgstr "الإنشاء"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Created Since"
+msgstr "أُنشئت منذ"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__create_uid
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__create_uid
+msgid "Created by"
+msgstr "أُنشئت بواسطة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__create_date
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Database"
+msgstr "قاعدة البيانات"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/definition.py:0
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Declared / Idle"
+msgstr "مُعرّفة / خاملة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Dependencies"
+msgstr "الاعتماديات"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__signature
+msgid "Detection Evidence"
+msgstr "دليل الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Discover Jobs"
+msgstr "اكتشاف المهام"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__discovered_at
+msgid "Discovered At"
+msgstr "وقت الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Discovering Jobs"
+msgstr "جارٍ اكتشاف المهام"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Discovery Complete"
+msgstr "اكتمل الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.actions.act_window,name:ab_queue_monitor.sessions_action
+#: model:ir.ui.menu,name:ab_queue_monitor.menu_sessions
+msgid "Discovery History"
+msgstr "سجل الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Discovery Paused"
+msgstr "الاكتشاف متوقف مؤقتاً"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__discovery_type
+msgid "Discovery Type"
+msgstr "نوع الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Discovery contains warnings."
+msgstr "توجد تحذيرات في عملية الاكتشاف."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Discovery paused. Resume to continue."
+msgstr "توقف الاكتشاف مؤقتاً. استأنف للمتابعة."
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/discovery.py:0
+msgid "Discovery session no longer exists."
+msgstr "جلسة الاكتشاف لم تعد موجودة."
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor__display_name
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__display_name
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__documentation
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_form
+msgid "Documentation"
+msgstr "التوثيق"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Duration"
+msgstr "المدة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__duration
+msgid "Duration (seconds)"
+msgstr "المدة بالثواني"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Error"
+msgstr "الخطأ"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Errors Only"
+msgstr "الأخطاء فقط"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Execution details are unavailable."
+msgstr "تفاصيل التنفيذ غير متاحة."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__execution_count
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_form
+msgid "Executions"
+msgstr "عمليات التنفيذ"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Failed"
+msgstr "فشلت"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__failure_count
+msgid "Failures"
+msgstr "حالات الفشل"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__files_scanned
+msgid "Files Scanned"
+msgstr "الملفات المفحوصة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__files_total
+msgid "Files Total"
+msgstr "إجمالي الملفات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Finished"
+msgstr "الانتهاء"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__finished_at
+msgid "Finished At"
+msgstr "وقت الانتهاء"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor__id
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__id
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__incomplete_modules
+msgid "Incomplete Modules"
+msgstr "الموديولات غير المكتملة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__backend__queue
+msgid "Integration Queue"
+msgstr "طابور التكامل"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Job"
+msgstr "المهمة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model,name:ab_queue_monitor.model_ab_queue_monitor_definition
+msgid "Job Definition"
+msgstr "تعريف المهمة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.actions.act_window,name:ab_queue_monitor.definitions_action
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__definitions_count
+#: model:ir.ui.menu,name:ab_queue_monitor.menu_definitions
+msgid "Job Definitions"
+msgstr "تعريفات المهام"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Job Details"
+msgstr "تفاصيل المهمة"
+
+#. module: ab_queue_monitor
+#: model:ir.model,name:ab_queue_monitor.model_ab_queue_monitor_session
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.session_form
+msgid "Job Discovery"
+msgstr "اكتشاف المهام"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Job Execution"
+msgstr "تنفيذ المهمة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__key
+msgid "Key"
+msgstr "المفتاح"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Last Activity"
+msgstr "آخر نشاط"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__session_id
+msgid "Last Discovery"
+msgstr "آخر اكتشاف"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__last_seen_at
+msgid "Last Seen At"
+msgstr "آخر ظهور"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__write_uid
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__write_date
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Last discovery:"
+msgstr "آخر اكتشاف:"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__latest_at
+msgid "Latest Execution"
+msgstr "آخر تنفيذ"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__latest_state
+msgid "Latest State"
+msgstr "آخر حالة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__latest_uuid
+msgid "Latest UUID"
+msgstr "معرّف آخر تنفيذ"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__method_name
+msgid "Method"
+msgstr "الدالة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__model_name
+msgid "Model"
+msgstr "النموذج"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__module_name
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_search
+msgid "Module"
+msgstr "الموديول"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__module_label
+msgid "Module Display Name"
+msgstr "اسم الموديول المعروض"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Modules"
+msgstr "الموديولات"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__modules_scanned
+msgid "Modules Scanned"
+msgstr "الموديولات المفحوصة"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__modules_total
+msgid "Modules Total"
+msgstr "إجمالي الموديولات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__modules_count
+msgid "Modules with Jobs"
+msgstr "موديولات تحتوي على مهام"
+
+#. module: ab_queue_monitor
+#: model:ir.ui.menu,name:ab_queue_monitor.menu_dashboard
+msgid "Monitor"
+msgstr "المراقبة"
+
+#. module: ab_queue_monitor
+#: model:res.groups,name:ab_queue_monitor.group_admin
+msgid "Monitor Administrator"
+msgstr "مسؤول مراقبة المهام"
+
+#. module: ab_queue_monitor
+#: model:res.groups,name:ab_queue_monitor.group_user
+msgid "Monitor User"
+msgstr "مستخدم مراقبة المهام"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Needs Review"
+msgstr "تحتاج مراجعة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__new_count
+msgid "New"
+msgstr "جديدة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "No matching jobs"
+msgstr "لا توجد مهام مطابقة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/services/runtime.py:0
+msgid ""
+"No runner lease observed. Configuration alone does not establish health."
+msgstr "لم يُرصد قفل تشغيل للمنفّذ. الإعدادات وحدها لا تثبت سلامة التشغيل."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "ONLINE"
+msgstr "متصل"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/discovery.py:0
+msgid "Only Queue Monitor administrators can discover jobs."
+msgstr "يمكن لمسؤولي مراقبة المهام فقط اكتشاف المهام."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Open Related Record"
+msgstr "فتح السجل المرتبط"
+
+#. module: ab_queue_monitor
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_form
+msgid "Overview"
+msgstr "نظرة عامة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Parent Jobs"
+msgstr "المهام الأصلية"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Pause"
+msgstr "إيقاف مؤقت"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/services/runtime.py:0
+msgid "Payload values are withheld."
+msgstr "قيم بيانات التنفيذ محجوبة."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Pending"
+msgstr "في الانتظار"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Processed"
+msgstr "تمت معالجتها"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Python Files"
+msgstr "ملفات بايثون"
+
+#. module: ab_queue_monitor
+#: model:ir.model,name:ab_queue_monitor.model_ab_queue_monitor
+#: model:ir.module.category,name:ab_queue_monitor.category_monitor
+#: model:ir.ui.menu,name:ab_queue_monitor.menu_root
+#: model:res.groups.privilege,name:ab_queue_monitor.privilege_monitor
+msgid "Queue Monitor"
+msgstr "مراقبة المهام"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Queue Monitor access is required."
+msgstr "يلزم امتلاك صلاحية مراقبة المهام."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Queue State"
+msgstr "حالة الطابور"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__removed_count
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_search
+msgid "Removed"
+msgstr "لم تعد موجودة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Resume Discovery"
+msgstr "استئناف الاكتشاف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Retries"
+msgstr "إعادات المحاولة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Retrying"
+msgstr "إعادة المحاولة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Runner Health"
+msgstr "صحة المنفّذ"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/services/runtime.py:0
+msgid ""
+"Runner database lease is held; dispatch responsiveness is not measured."
+msgstr ""
+"قفل المنفّذ موجود في قاعدة البيانات؛ لم يتم قياس استجابة إرسال المهام."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__discovery_type__runtime
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_form
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_search
+msgid "Runtime"
+msgstr "التنفيذ الفعلي"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__runtime_count
+msgid "Runtime Executions"
+msgstr "عمليات التنفيذ الفعلية"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__runtime_found
+msgid "Runtime Found"
+msgstr "تم العثور على تنفيذ فعلي"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Runtime Refresh"
+msgstr "تحديث حالات التنفيذ"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__runtime_support
+msgid "Runtime Support"
+msgstr "دعم مراقبة التنفيذ"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Runtime details are unavailable for this job."
+msgstr "تفاصيل التنفيذ غير متاحة لهذه المهمة."
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__warnings
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.session_form
+msgid "Scan Warnings"
+msgstr "تحذيرات الفحص"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_session__state__scanning
+msgid "Scanning"
+msgstr "جارٍ الفحص"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__backend__cron
+msgid "Scheduled Action"
+msgstr "إجراء مجدول"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Search jobs"
+msgstr "بحث عن مهمة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_form
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__source_class
+msgid "Source Class"
+msgstr "الفئة في المصدر"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__source_file
+msgid "Source File"
+msgstr "ملف المصدر"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__source_line
+msgid "Source Line"
+msgstr "سطر المصدر"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/discovery.py:0
+msgid "Source could not be inspected."
+msgstr "تعذر فحص المصدر."
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/discovery.py:0
+msgid "Source inventory unavailable or limit exceeded."
+msgstr "تعذر حصر ملفات المصدر أو تم تجاوز الحد المسموح."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Started"
+msgstr "البدء"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__started_at
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__discovery_type__static
+#: model_terms:ir.ui.view,arch_db:ab_queue_monitor.definition_search
+msgid "Static"
+msgstr "من المصدر"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__static_found
+msgid "Static Found"
+msgstr "تم العثور عليها في المصدر"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+msgid "The monitor could not be refreshed."
+msgstr "تعذر تحديث شاشة المراقبة."
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/discovery.py:0
+msgid "This discovery is being advanced by another request."
+msgstr "تجري متابعة هذا الاكتشاف من طلب آخر."
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "This execution is no longer retained by its queue."
+msgstr "لم يعد طابور المهام يحتفظ بهذا التنفيذ."
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__backend__thread
+msgid "Thread"
+msgstr "مسار تنفيذ مستقل"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "UNKNOWN"
+msgstr "غير معروف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "UUID"
+msgstr "UUID"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__unchanged_count
+msgid "Unchanged"
+msgstr "دون تغيير"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/definition.py:0
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Unknown"
+msgstr "غير معروف"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "View History"
+msgstr "عرض السجل"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/services/runtime.py:0
+msgid "Website Product Sync"
+msgstr "مزامنة منتجات الموقع"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields.selection,name:ab_queue_monitor.selection__ab_queue_monitor_definition__backend__website
+msgid "Website Worker"
+msgstr "منفّذ مهام الموقع"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_session__work
+msgid "Work"
+msgstr "قائمة الفحص"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Worker"
+msgstr "المنفّذ"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "cancelled"
+msgstr "ملغاة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "completed"
+msgstr "مكتملة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "failed"
+msgstr "فشلت"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "pending"
+msgstr "في الانتظار"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "retrying"
+msgstr "إعادة المحاولة"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "running"
+msgstr "قيد التشغيل"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "s"
+msgstr "ث"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "unknown"
+msgstr "غير معروف"
