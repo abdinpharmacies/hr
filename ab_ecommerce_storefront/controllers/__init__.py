@@ -1,5 +1,6 @@
 from . import legacy_routes
 from . import auth
+from . import auth_security
 from . import portal
 from . import prescription_order
 from . import shop

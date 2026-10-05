@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="auth_settings_view" model="ir.ui.view">
+        <field name="name">Storefront authentication settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app name="ab_storefront_auth" string="Storefront Authentication" groups="base.group_system">
+                    <block title="Verification and Recovery">
+                        <setting string="Telegram authentication"><field name="ab_auth_telegram_enabled"/></setting>
+                        <setting string="Telegram bot"><field name="ab_auth_bot_username"/></setting>
+                        <setting string="Telegram webhook"><field name="ab_auth_webhook_url"/></setting>
+                        <setting string="Public authentication URL"><field name="ab_auth_base_url"/></setting>
+                        <setting string="OTP lifetime"><field name="ab_auth_otp_expiration"/></setting>
+                        <setting string="Link lifetime"><field name="ab_auth_token_expiration"/></setting>
+                        <setting string="OTP attempts"><field name="ab_auth_otp_attempts"/></setting>
+                        <setting string="Resend cooldown"><field name="ab_auth_resend_cooldown"/></setting>
+                        <setting string="Identity rate limit"><field name="ab_auth_rate_limit"/></setting>
+                        <setting string="IP rate limit"><field name="ab_auth_ip_rate_limit"/></setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

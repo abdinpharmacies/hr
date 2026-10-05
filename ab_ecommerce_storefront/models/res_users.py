@@ -1,6 +1,8 @@
 import re
 
 from odoo import api, fields, models
+from .auth_identity import normalize_identity
+from odoo.exceptions import ValidationError
 
 _ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 _EGYPT_MOBILE_RE = re.compile(r"^01[0125]\d{8}$")
@@ -32,14 +34,24 @@ class ResUsers(models.Model):
         domain = super()._get_login_domain(login)
         normalized = normalize_egyptian_phone(login)
         if normalized and normalized != login and is_valid_egyptian_mobile(normalized):
-            return fields.Domain.OR([domain, super()._get_login_domain(normalized)])
+            domain = fields.Domain.OR([domain, super()._get_login_domain(normalized)])
+        kind = "email" if "@" in (login or "") else "phone"
+        try:
+            value = normalize_identity(kind, login)
+        except ValidationError:
+            return domain
+        identity = self.env["ab_storefront_auth_identity"].sudo().search([
+            ("kind", "=", kind), ("value", "=", value), ("user_id.active", "=", True),
+        ], limit=1)
+        if identity:
+            return fields.Domain("id", "=", identity.user_id.id)
         return domain
 
     @api.model
     def signup(self, values, token=None):
         values = dict(values)
-        normalized = normalize_egyptian_phone(values.get("phone") or values.get("login"))
-        if is_valid_egyptian_mobile(normalized):
+        normalized = normalize_egyptian_phone(values.get("login"))
+        if not token and is_valid_egyptian_mobile(normalized):
             values["login"] = normalized
             values["phone"] = normalized
         login, password = super().signup(values, token=token)

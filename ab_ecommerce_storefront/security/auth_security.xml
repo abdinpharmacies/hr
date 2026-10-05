@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="auth_identity_admin_rule" model="ir.rule">
+        <field name="name">Authentication identities: administrators</field>
+        <field name="model_id" ref="model_ab_storefront_auth_identity"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+    <record id="auth_challenge_admin_rule" model="ir.rule">
+        <field name="name">Authentication challenges: administrators</field>
+        <field name="model_id" ref="model_ab_storefront_auth_challenge"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+    <record id="auth_rate_admin_rule" model="ir.rule">
+        <field name="name">Authentication rate limits: administrators</field>
+        <field name="model_id" ref="model_ab_storefront_auth_rate"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+    <record id="auth_event_admin_rule" model="ir.rule">
+        <field name="name">Authentication delivery: administrators</field>
+        <field name="model_id" ref="model_ab_storefront_auth_event"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+</odoo>

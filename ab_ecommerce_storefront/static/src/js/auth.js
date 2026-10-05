@@ -52,6 +52,10 @@ function normalizeEgyptianPhone(value = "") {
     return phone;
 }
 
+function isValidEgyptianMobile(value = "") {
+    return EGYPT_MOBILE_RE.test(normalizeEgyptianPhone(value));
+}
+
 function isUsernameLogin(value = "") {
     return /[A-Za-z@._-]/.test(value.trim());
 }
@@ -106,10 +110,12 @@ export class AbStorefrontAuth extends Interaction {
     setup() {
         this.isTransitioning = false;
         this.isSubmitting = false;
+        this.rateLimitTimer = null;
         this.onModeNavigation = this.onModeNavigation.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
         this.onPhoneInput = this.onPhoneInput.bind(this);
         this.onPhoneBlur = this.onPhoneBlur.bind(this);
+        this.onSignupIdentityInput = this.onSignupIdentityInput.bind(this);
         this.onPasswordToggle = this.onPasswordToggle.bind(this);
         this.onPasswordFocus = this.onPasswordFocus.bind(this);
         this.onDelegatedPointerDown = this.onDelegatedPointerDown.bind(this);
@@ -134,6 +140,7 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     destroy() {
+        this.clearRateLimitCountdown();
         this.el.removeEventListener("pointerdown", this.onDelegatedPointerDown, true);
         this.el.removeEventListener("click", this.onDelegatedClick);
         this.el.removeEventListener("input", this.onDelegatedInput);
@@ -249,7 +256,12 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     onDelegatedSubmit(ev) {
-        const form = ev.target.closest("[data-ab-auth-form]");
+        const submittedForm = ev.target.closest("form");
+        if (submittedForm && this.el.contains(submittedForm) && this.el.querySelector("[data-ab-rate-limit-seconds]")) {
+            ev.preventDefault();
+            return;
+        }
+        const form = submittedForm?.matches("[data-ab-auth-form]") ? submittedForm : null;
         if (form && this.el.contains(form)) {
             this.onSubmit(this.withCurrentTarget(ev, form));
         }
@@ -381,7 +393,14 @@ export class AbStorefrontAuth extends Interaction {
             return;
         }
         ev.preventDefault();
+        if (form.querySelector("[data-ab-rate-limit-seconds]")) {
+            return;
+        }
 
+        const signupIdentity = form.querySelector("[data-ab-signup-identity]");
+        if (signupIdentity) {
+            this.onSignupIdentityInput({currentTarget: signupIdentity});
+        }
         const firstInvalid = this.validateForm(form);
         if (firstInvalid) {
             firstInvalid.focus();
@@ -422,6 +441,15 @@ export class AbStorefrontAuth extends Interaction {
             const hasBackendError = Boolean(nextCard?.querySelector(".ab-auth-alert-error"));
             const hasAuthForm = Boolean(nextCard?.querySelector("[data-ab-auth-form]"));
 
+            if (response.headers.get("X-Ab-Auth-Error") === "https-required") {
+                this.showInlineFailure(form, _t("Open the HTTPS website to continue. Local HTTP testing requires development mode."));
+                return;
+            }
+            if (response.ok && !hasBackendError && nextCard?.querySelector("[data-ab-telegram-link]")) {
+                this.renderBackendResponse(nextCard, html);
+                window.history.replaceState(null, "", response.url);
+                return;
+            }
             if (!response.ok || hasBackendError || hasAuthForm) {
                 this.renderBackendResponse(nextCard, html);
                 this.shakeBackendError();
@@ -435,6 +463,15 @@ export class AbStorefrontAuth extends Interaction {
             if (!this.el.classList.contains("is-auth-success")) {
                 this.isSubmitting = false;
                 this.el.classList.remove("is-auth-submitting");
+                if (button?.isConnected) {
+                    button.disabled = false;
+                    button.classList.remove("is-loading");
+                    button.textContent = button.dataset.originalText || _t("Continue");
+                }
+                const currentIdentity = this.el.querySelector("[data-ab-signup-identity]");
+                if (currentIdentity) {
+                    this.onSignupIdentityInput({currentTarget: currentIdentity});
+                }
             }
         }
     }
@@ -467,8 +504,44 @@ export class AbStorefrontAuth extends Interaction {
         return input.closest(".ab-auth-field")?.querySelector("[data-ab-phone-message]");
     }
 
+    onSignupIdentityInput(ev) {
+        const input = ev.currentTarget;
+        const form = input.closest("form");
+        const value = input.value.trim();
+        const phoneMode = Boolean(value && !value.includes("@") && /^[+\d\s().\-٠-٩۰-۹]+$/.test(value));
+        const validPhone = phoneMode && isValidEgyptianMobile(value);
+        form.dataset.abPhoneSignup = phoneMode ? "true" : "false";
+        form.querySelector("[data-ab-phone-signup-notice]")?.classList.toggle("d-none", !phoneMode);
+        for (const section of form.querySelectorAll("[data-ab-signup-credentials], [data-ab-signup-avatar]")) {
+            section.classList.toggle("d-none", phoneMode);
+            section.querySelectorAll("input").forEach((field) => {
+                field.disabled = phoneMode;
+                if (phoneMode && field.type === "password") {
+                    field.value = "";
+                }
+            });
+        }
+        const button = form.querySelector("[data-ab-auth-submit]");
+        if (button && !this.isSubmitting) {
+            button.textContent = phoneMode ? (form.dataset.abPhoneSignupLabel || _t("Start Telegram verification")) : (form.dataset.abEmailSignupLabel || _t("Create account"));
+            button.dataset.loadingText = phoneMode ? (form.dataset.abSignupContinuingLabel || _t("Continuing...")) : (form.dataset.abSignupLoadingLabel || _t("Creating account..."));
+            button.disabled = Boolean(form.querySelector("[data-ab-rate-limit-seconds]")) || (phoneMode && !validPhone);
+        }
+        this.clearFieldError(input);
+    }
+
     validateForm(form) {
-        const requiredInputs = [...form.querySelectorAll("input[required]")];
+        const identity = form.querySelector("[data-ab-signup-identity]");
+        if (identity && identity.value.trim()) {
+            const value = identity.value.trim();
+            const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+            const validPhone = /^[+\d\s().\-٠-٩۰-۹]+$/.test(value) && isValidEgyptianMobile(value);
+            if (!validEmail && !validPhone) {
+                this.setFieldError(identity, _t("Please enter a valid email or phone number."));
+                return identity;
+            }
+        }
+        const requiredInputs = [...form.querySelectorAll("input[required]:not(:disabled)")];
         for (const input of requiredInputs) {
             if (input.matches("[data-ab-phone-input]")) {
                 if (!this.validatePhone(input, true)) {
@@ -485,7 +558,7 @@ export class AbStorefrontAuth extends Interaction {
 
         const password = form.querySelector("input[name='password']");
         const confirm = form.querySelector("input[name='confirm_password']");
-        if (password && form.matches(".oe_signup_form, .oe_reset_password_form")) {
+        if (password && !password.disabled && form.matches(".oe_signup_form, .oe_reset_password_form")) {
             const strength = evaluatePassword(password.value);
             if (password.value && !strength.isStrong) {
                 this.updatePasswordExperience(password, {reveal: true});
@@ -493,7 +566,7 @@ export class AbStorefrontAuth extends Interaction {
                 return password;
             }
         }
-        if (password && confirm && password.value !== confirm.value) {
+        if (password && !password.disabled && confirm && password.value !== confirm.value) {
             this.setFieldError(confirm, _t("Passwords do not match"));
             this.updateConfirmExperience(form, {shakeOnMismatch: true});
             return confirm;
@@ -650,6 +723,7 @@ export class AbStorefrontAuth extends Interaction {
     renderBackendResponse(nextCard, fallbackHtml) {
         const card = this.el.querySelector(".ab-auth-card");
         if (nextCard && card) {
+            this.el.classList.toggle("ab-auth-security-page", Boolean(nextCard.closest(".ab-auth-page")?.classList.contains("ab-auth-security-page")));
             card.innerHTML = nextCard.innerHTML;
             this.prepareMotionItems();
             this.services["public.interactions"]?.startInteractions(card);
@@ -732,9 +806,69 @@ export class AbStorefrontAuth extends Interaction {
             this.ensurePasswordSuggestion(input.closest(".ab-auth-field"));
         });
         this.updateConfirmExperience(form);
+        this.startRateLimitCountdown();
+    }
+
+    clearRateLimitCountdown() {
+        if (this.rateLimitTimer) {
+            window.clearInterval(this.rateLimitTimer);
+            this.rateLimitTimer = null;
+        }
+    }
+
+    startRateLimitCountdown() {
+        this.clearRateLimitCountdown();
+        const alert = this.el.querySelector("[data-ab-rate-limit-seconds]");
+        const seconds = Number.parseInt(alert?.dataset.abRateLimitSeconds || "0", 10);
+        const time = alert?.querySelector("[data-ab-rate-limit-time]");
+        if (!alert || !time || !Number.isFinite(seconds) || seconds <= 0) {
+            return;
+        }
+
+        const scope = alert.closest("form") || alert.closest(".ab-auth-form") || this.el;
+        const buttons = [...scope.querySelectorAll("button[type='submit']")];
+        for (const button of buttons) {
+            button.disabled = true;
+            button.dataset.abRateLimitDisabled = "true";
+        }
+        const deadline = Date.now() + seconds * 1000;
+        const update = () => {
+            const remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+            const hours = Math.floor(remaining / 3600);
+            const minutes = Math.floor((remaining % 3600) / 60);
+            const secondsPart = remaining % 60;
+            time.textContent = [hours, minutes, secondsPart]
+                .map((part) => String(part).padStart(2, "0"))
+                .join(":");
+            if (remaining > 0) {
+                return;
+            }
+            this.clearRateLimitCountdown();
+            delete alert.dataset.abRateLimitSeconds;
+            alert.querySelector("[data-ab-rate-limit-wait]")?.classList.add("d-none");
+            time.classList.add("d-none");
+            alert.querySelector("[data-ab-rate-limit-ready]")?.classList.remove("d-none");
+            for (const button of buttons) {
+                if (button.dataset.abRateLimitDisabled === "true") {
+                    delete button.dataset.abRateLimitDisabled;
+                    button.disabled = false;
+                }
+            }
+            const identity = scope.querySelector("[data-ab-signup-identity]");
+            if (identity) {
+                this.onSignupIdentityInput({currentTarget: identity});
+            }
+        };
+        update();
+        this.rateLimitTimer = window.setInterval(update, 1000);
     }
 
     bindCurrentControls() {
+        this.el.querySelectorAll("[data-ab-signup-identity]:not([data-ab-identity-bound])").forEach((input) => {
+            input.dataset.abIdentityBound = "true";
+            input.addEventListener("input", this.onSignupIdentityInput);
+            this.onSignupIdentityInput({currentTarget: input});
+        });
         this.el.querySelectorAll("[data-ab-auth-nav]:not([data-ab-motion-bound])").forEach((link) => {
             link.dataset.abMotionBound = "true";
             link.addEventListener("click", this.onModeNavigation);

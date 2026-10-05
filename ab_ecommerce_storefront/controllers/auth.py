@@ -13,6 +13,7 @@ from odoo.addons.web.models.res_users import SKIP_CAPTCHA_LOGIN
 from odoo.exceptions import UserError
 from odoo.http import request
 from werkzeug.urls import url_encode
+from ..models.auth_identity import normalize_identity
 
 _logger = logging.getLogger(__name__)
 
@@ -76,6 +77,13 @@ def _read_custom_avatar_upload(field_name="ab_storefront_avatar_upload"):
 
 
 class AbStorefrontAuth(OAuthLogin):
+    def get_auth_signup_config(self):
+        config = super().get_auth_signup_config()
+        config["ab_telegram_enabled"] = request.env["ab_storefront_auth_telegram"].sudo()._enabled()
+        config["ab_auth_retry_after"] = 0
+        config.update(ab_phone_signup_label=_("Start Telegram verification"), ab_email_signup_label=_("Create account"), ab_signup_loading_label=_("Creating account..."), ab_signup_continuing_label=_("Continuing..."))
+        return config
+
     def _is_backend_login_request(self, redirect=None):
         target = redirect or request.params.get("redirect") or ""
         return target.startswith(("/odoo", "/web"))
@@ -120,12 +128,13 @@ class AbStorefrontAuth(OAuthLogin):
     @http.route()
     def web_login(self, redirect=None, **kw):
         if request.httprequest.method == "POST" and not self._is_backend_login_request(redirect):
+            from .auth_security import StorefrontAuthSecurity
+            StorefrontAuthSecurity()._secure()
             login = request.params.get("login") or request.params.get("phone")
             if not self._is_username_login(login):
-                phone = self._prepare_phone_login_params()
-                if not phone:
-                    request.params["login"] = "__empty_phone__"
-                elif not is_valid_egyptian_mobile(phone):
+                try:
+                    request.params["login"] = normalize_identity("phone", login)
+                except UserError:
                     request.params["login"] = "__invalid_phone__"
 
         response = super().web_login(redirect=redirect, **kw)
@@ -143,29 +152,33 @@ class AbStorefrontAuth(OAuthLogin):
 
     def get_auth_signup_qcontext(self):
         qcontext = super().get_auth_signup_qcontext()
+        if not qcontext.get("token") and request.params.get("from_phone") == "1":
+            qcontext["login"] = request.session.get("ab_auth_phone", "")
+            request.session["ab_auth_telegram_auto_open"] = False
         phone = qcontext.get("phone") or qcontext.get("login")
-        if phone:
+        if phone and not self._is_username_login(phone):
             qcontext["phone"] = normalize_egyptian_phone(phone)
         return qcontext
 
     def _prepare_signup_values(self, qcontext):
-        phone = normalize_egyptian_phone(qcontext.get("phone") or qcontext.get("login"))
-        if not phone:
-            raise UserError(_("Phone number is required."))
-        if not is_valid_egyptian_mobile(phone):
-            raise UserError(_("Please enter a valid phone number."))
+        from .auth_security import StorefrontAuthSecurity
+        if not qcontext.get("token"):
+            StorefrontAuthSecurity()._secure()
         if not validate_storefront_password(qcontext.get("password")):
             raise UserError(_("Use at least 8 characters with uppercase, lowercase, number, and special symbol."))
+        if len(qcontext.get("password") or "") > 4096:
+            raise UserError(_("Use at least 8 characters with uppercase, lowercase, number, and special symbol."))
         _read_custom_avatar_upload()
-
-        qcontext["phone"] = phone
-        qcontext["login"] = phone
+        if qcontext.get("token"):
+            return super()._prepare_signup_values(qcontext)
+        qcontext["login"] = normalize_identity("email", qcontext.get("login"))
+        service = request.env["ab_storefront_auth_service"].sudo()
+        service._base_url()
+        if not service._rate_allow("signup-ip", request.httprequest.remote_addr or "unknown", 10):
+            raise UserError(_("Please wait before trying again."))
+        service._assert_available_identity(None, "email", qcontext["login"])
         values = super()._prepare_signup_values(qcontext)
-        values["login"] = phone
-        values["phone"] = phone
-        # Keep phone-first accounts compatible with mail features without
-        # pretending the mobile number is an email address.
-        values["email"] = False
+        values["email"] = qcontext["login"]
         return values
 
     @http.route()
@@ -177,6 +190,23 @@ class AbStorefrontAuth(OAuthLogin):
 
         if "error" not in qcontext and request.httprequest.method == "POST":
             try:
+                if not qcontext.get("token") and "@" not in (qcontext.get("login") or ""):
+                    from .auth_security import StorefrontAuthSecurity
+                    security = StorefrontAuthSecurity()
+                    security._secure()
+                    phone = normalize_identity("phone", qcontext.get("login"))
+                    name = (qcontext.get("name") or "").strip()[:100]
+                    if not name:
+                        raise UserError(_("Please fill in this field."))
+                    token, url = security._service()._request_link(None, phone, security._browser(), security._ip())
+                    request.session.update(
+                        ab_auth_link=token,
+                        ab_auth_deep_link=url,
+                        ab_auth_phone=phone,
+                        ab_auth_signup_name=name,
+                        ab_auth_telegram_auto_open=False,
+                    )
+                    return request.redirect("/ab_storefront/auth/phone", 303)
                 self.do_signup(qcontext)
                 if request.session.uid is None:
                     public_user = request.env.ref("base.public_user")
@@ -185,12 +215,20 @@ class AbStorefrontAuth(OAuthLogin):
                 return self.web_login(*args, **kw)
             except UserError as e:
                 qcontext["error"] = e.args[0]
+                qcontext["ab_auth_retry_after"] = getattr(e, "retry_after", 0)
+            except werkzeug.exceptions.Forbidden as error:
+                if error.response is None or error.response.headers.get("X-Ab-Auth-Error") != "https-required":
+                    raise
+                qcontext["error"] = _("Open the HTTPS website to continue. Local HTTP testing requires development mode.")
+                response = request.render("auth_signup.signup", qcontext, status=403)
+                response.headers.update({"X-Ab-Auth-Error": "https-required", "Cache-Control": "no-store", "X-Frame-Options": "SAMEORIGIN", "Content-Security-Policy": "frame-ancestors 'self'"})
+                return response
             except (SignupError, AssertionError) as e:
                 User = request.env["res.users"]
                 if User.sudo().with_context(active_test=False).search_count(
                     User._get_login_domain(qcontext.get("login")), limit=1
                 ):
-                    qcontext["error"] = _("This phone number is already used. Try signing in instead of creating a new account.")
+                    qcontext["error"] = _("This email is already used. Try signing in instead of creating a new account.")
                 else:
                     _logger.warning("%s", e)
                     qcontext["error"] = _("An unexpected error occurred. Please try again.")
@@ -219,6 +257,10 @@ class AbStorefrontAuth(OAuthLogin):
                 partner_values["mobile"] = login
             user.partner_id.write(partner_values)
         if user:
+            if not token and "@" in user.login:
+                request.env["ab_storefront_auth_service"].sudo()._request_email_verification(
+                    user, user.email, "", request.httprequest.remote_addr or "unknown",
+                )
             avatar = request.params.get("ab_storefront_avatar")
             avatar_completed = request.params.get("ab_storefront_avatar_completed") == "1"
             avatar_upload = _read_custom_avatar_upload()
@@ -241,14 +283,12 @@ class AbStorefrontAuth(OAuthLogin):
 
     @http.route()
     def web_auth_reset_password(self, *args, **kw):
-        if request.httprequest.method == "POST":
-            self._prepare_phone_login_params()
-        response = super().web_auth_reset_password(*args, **kw)
-        if hasattr(response, "qcontext") and response.qcontext.get("error"):
-            response.qcontext["error"] = _("We could not send a recovery link for this number. Contact us on 19036 for help.")
-        elif hasattr(response, "qcontext") and response.qcontext.get("message"):
-            response.qcontext["message"] = _("If the number is registered with us, you will receive account recovery instructions.")
-        return response
+        if request.params.get("token"):
+            return super().web_auth_reset_password(*args, **kw)
+        from .auth_security import StorefrontAuthSecurity
+        post = dict(kw)
+        post.setdefault("identifier", request.params.get("login", ""))
+        return StorefrontAuthSecurity().recover(**post)
 
     @http.route("/ab_storefront/avatar/update", type="http", auth="user", website=True, methods=["POST"], csrf=True)
     def ab_storefront_avatar_update(self, **post):

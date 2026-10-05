@@ -8,3 +8,7 @@ access_ab_ecommerce_browsing_history_portal,ab.ecommerce.browsing.history.portal
 access_ab_ecommerce_customer_testimonial_designer,ab.ecommerce.customer.testimonial.designer,model_ab_ecommerce_customer_testimonial,website.group_website_designer,1,1,1,1
 access_ab_ecommerce_customer_testimonial_public,ab.ecommerce.customer.testimonial.public,model_ab_ecommerce_customer_testimonial,base.group_public,1,0,0,0
 access_ab_ecommerce_customer_testimonial_portal,ab.ecommerce.customer.testimonial.portal,model_ab_ecommerce_customer_testimonial,base.group_portal,1,0,0,0
+access_auth_identity_admin,auth.identity.admin,model_ab_storefront_auth_identity,base.group_system,1,0,0,0
+access_auth_challenge_admin,auth.challenge.admin,model_ab_storefront_auth_challenge,base.group_system,1,0,0,0
+access_auth_rate_admin,auth.rate.admin,model_ab_storefront_auth_rate,base.group_system,1,0,0,0
+access_auth_event_admin,auth.event.admin,model_ab_storefront_auth_event,base.group_system,1,0,0,0

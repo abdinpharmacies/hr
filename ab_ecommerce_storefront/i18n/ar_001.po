@@ -578,6 +578,7 @@ msgstr "تصفح المنتجات الموثوقة عبر الإنترنت أو 
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
 msgid "Browse products"
 msgstr "تصفح المنتجات"
 
@@ -991,7 +992,9 @@ msgid "Return Policy"
 msgstr "سياسة الاسترجاع"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
 msgid "Help"
 msgstr "المساعدة"
 
@@ -1437,6 +1440,7 @@ msgstr "عنوان الفوترة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 msgid "Cancel"
 msgstr "إلغاء"
@@ -1632,6 +1636,9 @@ msgstr "تعديل عنوان التوصيل والفوترة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__email_from
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__email
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -2379,6 +2386,7 @@ msgstr "التوصيل"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__failed
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_event__state__failed
 msgid "Failed"
 msgstr "فشل"
 
@@ -3049,6 +3057,13 @@ msgstr "تم التواصل"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -3069,6 +3084,20 @@ msgstr "خدمة العملاء"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order_line__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_website__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_channel__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_email__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_service__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_telegram__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_compose_message__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_template__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -3180,6 +3209,20 @@ msgstr "كيف يمكننا مساعدتك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order_line__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_website__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_channel__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_email__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_service__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_telegram__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_compose_message__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_template__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -3234,12 +3277,26 @@ msgstr "المسمى الوظيفي"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -3348,6 +3405,8 @@ msgstr "فرص الشراكة"
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__phone
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__phone
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__phone
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
 msgid "Phone"
 msgstr "الهاتف"
 
@@ -3450,6 +3509,9 @@ msgstr "لنتعرف على فرص التعاون"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__state
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__state
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__state
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__state
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "State"
 msgstr "الحالة"
 
@@ -3908,6 +3970,8 @@ msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__name
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__name
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
 msgid "Name"
 msgstr "الاسم"
 
@@ -4116,6 +4180,7 @@ msgstr "فشل الدفع ويحتاج إلى متابعة."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__pending
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_event__state__pending
 msgid "Pending"
 msgstr "قيد الانتظار"
 
@@ -4853,12 +4918,9 @@ msgid "Prescription request"
 msgstr "طلب روشتة"
 
 #. module: ab_ecommerce_storefront
-msgid "View order"
-msgstr "عرض الطلب"
-
-#. module: ab_ecommerce_storefront
-msgid "View prescription details"
-msgstr "عرض تفاصيل الروشتة"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
+msgid "View progress"
+msgstr "عرض التقدم"
 
 #. module: ab_ecommerce_storefront
 msgid "No regular orders yet"
@@ -4980,43 +5042,6 @@ msgid "The following items cannot be returned or exchanged:"
 msgstr "لا يمكن إرجاع المنتجات التالية أو استبدالها:"
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
-msgid "<span>free</span>"
-msgstr "<span>مجانًا</span>"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
-msgid ""
-"<small class=\"d-block mt-2\">Free items are added to your cart "
-"automatically.</small>"
-msgstr ""
-"<small class=\"d-block mt-2\">تُضاف الوحدات المجانية إلى سلتك "
-"تلقائيًا.</small>"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
-msgid "Previous"
-msgstr "السابق"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
-msgid "Next"
-msgstr "التالي"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
-msgid "Current offers"
-msgstr "العروض الحالية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
-msgid "New offers are coming soon"
-msgstr "عروض جديدة قريبًا"
-
-#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid ""
 "<i class=\"fa fa-camera\" aria-hidden=\"true\"/>\n"
@@ -5092,6 +5117,1119 @@ msgid "Unable to open the camera. Please try again or upload an image."
 msgstr "تعذر فتح الكاميرا. حاول مرة أخرى أو ارفع صورة."
 
 #. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
-msgid "View progress"
-msgstr "عرض التقدم"
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_portal_security_link
+msgid "<i class=\"fa fa-shield\" aria-hidden=\"true\"/><span>Account security</span>"
+msgstr "<i class=\"fa fa-shield\" aria-hidden=\"true\"/><span>أمان الحساب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Account recovery"
+msgstr "استعادة الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_email_confirm
+msgid "Account security"
+msgstr "أمان الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_identity_unique_user_kind
+msgid "An account can have one identity of each type."
+msgstr "يمكن ربط هوية واحدة من كل نوع بالحساب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__attempts
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__attempts
+msgid "Attempts"
+msgstr "المحاولات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Authentication is temporarily unavailable."
+msgstr "خدمة التحقق غير متاحة مؤقتًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Back to account registration"
+msgstr "العودة لتسجيل الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Back to sign in"
+msgstr "العودة لتسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Back to personal page"
+msgstr "العودة للصفحة الشخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__browser_hash
+msgid "Browser Hash"
+msgstr "بصمة المتصفح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__challenge_id
+msgid "Challenge"
+msgstr "طلب التحقق"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_challenge_unique_token
+msgid "Challenge tokens must be unique."
+msgstr "يجب أن تكون رموز طلبات التحقق فريدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Change password"
+msgstr "تغيير كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__channel
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__channel
+msgid "Channel"
+msgstr "قناة التحقق"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__chat_id
+msgid "Chat"
+msgstr "المحادثة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Check verification"
+msgstr "التحقق من الحالة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Check your email to verify your address."
+msgstr "راجع بريدك الإلكتروني لتأكيد عنوانك."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__code_hash
+msgid "Code Hash"
+msgstr "بصمة الرمز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Complete Telegram phone verification first."
+msgstr "أكمل تأكيد رقم الهاتف عبر Telegram أولًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Configure an HTTPS webhook and a webhook secret first."
+msgstr "اضبط رابط webhook آمنًا وسر التحقق أولًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Configure the public authentication URL first."
+msgstr "اضبط رابط خدمة التحقق العام أولًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Confirm Telegram connection"
+msgstr "تأكيد ربط Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Connected"
+msgstr "تم الربط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Continue to password reset"
+msgstr "متابعة استعادة كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Continue with phone"
+msgstr "المتابعة برقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__count
+msgid "Count"
+msgstr "العدد"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Create account"
+msgstr "إنشاء حساب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__credential_stamp
+msgid "Credential Stamp"
+msgstr "بصمة بيانات الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Current password"
+msgstr "كلمة المرور الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_event__state__done
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Email or phone number"
+msgstr "البريد الإلكتروني أو رقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_email_confirm
+msgid "Email verified."
+msgstr "تم تأكيد البريد الإلكتروني."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
+msgid "Email, phone number, or password is incorrect."
+msgstr "البريد الإلكتروني أو رقم الهاتف أو كلمة المرور غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_telegram_enabled
+msgid "Enable Telegram authentication"
+msgstr "تفعيل التحقق عبر Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__expires_at
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__expires_at
+msgid "Expires At"
+msgstr "وقت انتهاء الصلاحية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid ""
+"Follow this link to continue. It expires shortly and can only be used once."
+msgstr ""
+"اتبع هذا الرابط للمتابعة. تنتهي صلاحيته قريبًا ويمكن استخدامه مرة واحدة فقط."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "IP rate limit"
+msgstr "حد الطلبات لكل عنوان IP"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Identity rate limit"
+msgstr "حد الطلبات لكل هوية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid ""
+"If an eligible account exists, you will receive recovery instructions "
+"shortly."
+msgstr "إذا كان هناك حساب مؤهل، ستصلك تعليمات استعادة الحساب قريبًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "If you did not request this, ignore this message."
+msgstr "إذا لم تطلب ذلك، تجاهل هذه الرسالة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_identity.py:0
+msgid "Invalid authentication identity."
+msgstr "بيانات هوية التحقق غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Invalid recovery channel."
+msgstr "قناة استعادة الحساب غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__key
+msgid "Key"
+msgstr "المفتاح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Link lifetime"
+msgstr "مدة صلاحية الرابط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_token_expiration
+msgid "Link lifetime in seconds"
+msgstr "صلاحية الرابط بالثواني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Link phone and Telegram"
+msgstr "ربط الهاتف وTelegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_otp_attempts
+msgid "Maximum OTP attempts"
+msgstr "الحد الأقصى لمحاولات الرمز"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__next_attempt
+msgid "Next Attempt"
+msgstr "المحاولة التالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Not connected"
+msgstr "غير مربوط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Not verified"
+msgstr "غير مؤكد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "OTP attempts"
+msgstr "محاولات الرمز"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "OTP lifetime"
+msgstr "مدة صلاحية الرمز"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_otp_expiration
+msgid "OTP lifetime in seconds"
+msgstr "صلاحية الرمز بالثواني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Open Telegram"
+msgstr "فتح Telegram"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Password reset"
+msgstr "استعادة كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Passwords do not match; please retype them."
+msgstr "كلمتا المرور غير متطابقتين؛ أعد إدخالهما."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__payload
+msgid "Payload"
+msgstr "بيانات الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__phone_verified
+msgid "Phone Verified"
+msgstr "تم تأكيد الهاتف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Phone number"
+msgstr "رقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid ""
+"Phone registration requires linking Telegram for verification and password "
+"recovery."
+msgstr ""
+"التسجيل برقم الهاتف يتطلب ربط حساب Telegram لاستخدامه في التحقق واستعادة "
+"كلمة المرور."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Phone verified. Confirm your Telegram connection."
+msgstr "تم تأكيد الهاتف. أكد ربط حساب Telegram."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid ""
+"Phone verified. Return to the pharmacy website and confirm the Telegram "
+"connection."
+msgstr "تم تأكيد الهاتف. ارجع إلى موقع الصيدلية وأكد ربط Telegram."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_identity.py:0
+msgid "Please enter a valid email address."
+msgstr "يرجى إدخال بريد إلكتروني صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/models/auth_identity.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Please enter a valid email or phone number."
+msgstr "يرجى إدخال بريد إلكتروني أو رقم هاتف صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_identity.py:0
+msgid "Please enter a valid phone number."
+msgstr "يرجى إدخال رقم هاتف صحيح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Please fill in this field."
+msgstr "يرجى ملء هذا الحقل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Please wait before trying again."
+msgstr "يرجى الانتظار قبل المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Polling is available only in development mode."
+msgstr "الاستعلام الدوري متاح في وضع التطوير فقط."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_base_url
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Public authentication URL"
+msgstr "رابط خدمة التحقق العام"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__purpose
+msgid "Purpose"
+msgstr "الغرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_rate_unique_key
+msgid "Rate buckets must be unique."
+msgstr "يجب أن تكون مفاتيح حدود الطلبات فريدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Recover via Telegram"
+msgstr "الاستعادة عبر Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Recover via email"
+msgstr "الاستعادة عبر البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Recovery method"
+msgstr "طريقة استعادة الحساب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Remove the webhook before using development polling."
+msgstr "أزل webhook قبل استخدام الاستعلام الدوري في التطوير."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_ip_rate_limit
+msgid "Requests per IP per hour"
+msgstr "الطلبات لكل عنوان IP في الساعة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_rate_limit
+msgid "Requests per identity per hour"
+msgstr "الطلبات لكل هوية في الساعة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Resend code"
+msgstr "إعادة إرسال الرمز"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Resend cooldown"
+msgstr "فترة الانتظار لإعادة الإرسال"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_resend_cooldown
+msgid "Resend cooldown in seconds"
+msgstr "فترة الانتظار لإعادة الإرسال بالثواني"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Security code"
+msgstr "رمز الأمان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Send recovery instructions"
+msgstr "إرسال تعليمات الاستعادة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Send verification email"
+msgstr "إرسال بريد التحقق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Set new password"
+msgstr "تعيين كلمة مرور جديدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Share my phone number"
+msgstr "مشاركة رقم هاتفي"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid ""
+"Press the “Share my phone number” button below to verify the phone entered "
+"on the website. Do not type the number or send another contact. Then return "
+"to the website and confirm the connection."
+msgstr ""
+"اضغط زر «مشاركة رقم هاتفي» بالأسفل لتأكيد رقم الهاتف المُدخل على الموقع. "
+"لا تكتب الرقم يدويًا ولا ترسل جهة اتصال أخرى. ثم ارجع إلى الموقع وأكد الربط."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid ""
+"In Abdin Pharma Pharmacies Bot, press the “Share my phone number” button. Do "
+"not type the number or send another contact. Then return here and press the "
+"“Check verification” button below."
+msgstr ""
+"عند abdin pharma pharmacies bot، اضغط زر «مشاركة رقم هاتفي». لا تكتب الرقم "
+"يدويًا ولا ترسل جهة اتصال أخرى. ثم ارجع هنا واضغط زر «تحقق من الحالة» أدناه."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Signup is not allowed for uninvited users."
+msgstr "إنشاء الحساب غير متاح دون دعوة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Start Telegram verification"
+msgstr "بدء التحقق عبر Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Storefront Authentication"
+msgstr "التحقق بحساب المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_challenge
+msgid "Storefront Authentication Challenge"
+msgstr "طلب تحقق حساب المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_event
+msgid "Storefront Authentication Delivery Queue"
+msgstr "قائمة إرسال التحقق بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_rate
+msgid "Storefront Authentication Rate Bucket"
+msgstr "عداد حدود طلبات التحقق بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_service
+msgid "Storefront Authentication Service"
+msgstr "خدمة التحقق بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_email
+msgid "Storefront Email Verification Channel"
+msgstr "قناة التحقق بالبريد الإلكتروني بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_telegram
+msgid "Storefront Telegram Verification Channel"
+msgstr "قناة التحقق عبر Telegram بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_channel
+msgid "Storefront Verification Channel"
+msgstr "قناة التحقق بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_identity
+msgid "Storefront Verified Identity"
+msgstr "هوية حساب المتجر المؤكدة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.server,name:ab_ecommerce_storefront.cron_auth_delivery_ir_actions_server
+msgid "Storefront authentication delivery"
+msgstr "إرسال رسائل التحقق بالمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__telegram
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Telegram"
+msgstr "Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__telegram_chat_id
+msgid "Telegram Chat"
+msgstr "محادثة Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__telegram_user_id
+msgid "Telegram User"
+msgstr "مستخدم Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Telegram account ID:"
+msgstr "معرّف حساب Telegram:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Telegram authentication"
+msgstr "التحقق عبر Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Telegram bot"
+msgstr "بوت Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_bot_username
+msgid "Telegram bot username"
+msgstr "اسم مستخدم بوت Telegram"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Telegram delivery is unavailable."
+msgstr "الإرسال عبر Telegram غير متاح."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_event_unique_update
+msgid "Telegram updates must be unique."
+msgstr "يجب أن تكون تحديثات Telegram فريدة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_identity.py:0
+msgid "Telegram verification requires a private chat."
+msgstr "التحقق عبر Telegram يتطلب محادثة خاصة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Telegram webhook"
+msgstr "رابط webhook لبوت Telegram"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__ab_auth_webhook_url
+msgid "Telegram webhook URL"
+msgstr "عنوان webhook لبوت Telegram"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "The code or link is invalid or expired."
+msgstr "الرمز أو الرابط غير صحيح أو انتهت صلاحيته."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "The configured Telegram bot username does not match the token."
+msgstr "اسم مستخدم بوت Telegram لا يطابق بيانات الاعتماد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid ""
+"The contact must be your own Telegram contact and match the phone entered on"
+" the website."
+msgstr ""
+"يجب مشاركة جهة اتصالك الشخصية في Telegram، وأن تطابق رقم الهاتف المُدخل على "
+"الموقع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "The current password is incorrect."
+msgstr "كلمة المرور الحالية غير صحيحة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "This Telegram account cannot be linked. Return to the website."
+msgstr "لا يمكن ربط حساب Telegram هذا. ارجع إلى الموقع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid ""
+"This bot is used by Abdin Pharmacy to verify your account and send security "
+"codes. Start linking from the pharmacy website. Never send your password "
+"here."
+msgstr ""
+"هذا البوت مخصص لصيدليات عابدين لتأكيد حسابك وإرسال رموز الأمان. ابدأ الربط "
+"من موقع الصيدلية. لا ترسل كلمة المرور هنا مطلقًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_identity_unique_value
+msgid "This identity is already linked to an account."
+msgstr "هذه الهوية مرتبطة بحساب بالفعل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid ""
+"This linking request is invalid or expired. Start again from the website."
+msgstr "طلب الربط غير صحيح أو انتهت صلاحيته. ابدأ من الموقع مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__token_hash
+msgid "Token Hash"
+msgstr "بصمة رمز التحقق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Unsupported Telegram operation."
+msgstr "عملية Telegram غير مدعومة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__update_key
+msgid "Update Key"
+msgstr "مفتاح التحديث"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid ""
+"Use at least 8 characters with uppercase, lowercase, number, and special "
+"symbol."
+msgstr "استخدم 8 أحرف على الأقل مع حرف كبير وحرف صغير ورقم ورمز خاص."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__used_at
+msgid "Used At"
+msgstr "وقت الاستخدام"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_res_users
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__value
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_settings_view
+msgid "Verification and Recovery"
+msgstr "التحقق واستعادة الحساب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+msgid "Verification cancelled. Return to the pharmacy website to try again."
+msgstr "تم إلغاء التحقق. ارجع إلى موقع الصيدلية للمحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Verified"
+msgstr "مؤكد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__verified_at
+msgid "Verified At"
+msgstr "وقت التأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Verify code"
+msgstr "تأكيد الرمز"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_email_confirm
+msgid "Verify email"
+msgstr "تأكيد البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_service.py:0
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid ""
+"Your Abdin Pharmacy security code is: %s. Do not share it. It expires "
+"shortly."
+msgstr ""
+"رمز الأمان الخاص بك في صيدليات عابدين هو: %s. لا تشاركه مع أحد. تنتهي "
+"صلاحيته قريبًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Your password has been reset successfully."
+msgstr "تم تعيين كلمة المرور بنجاح."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__email_reset
+msgid "email_reset"
+msgstr "استعادة بالبريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__email_verify
+msgid "email_verify"
+msgstr "تأكيد البريد الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__grant
+msgid "grant"
+msgstr "تصريح استعادة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__link
+msgid "link"
+msgstr "ربط"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__otp
+msgid "otp"
+msgstr "رمز لمرة واحدة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__phone_signup
+msgid "phone_signup"
+msgstr "تسجيل برقم الهاتف"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid ""
+"This email is already used. Try signing in instead of creating a new "
+"account."
+msgstr ""
+"هذا البريد الإلكتروني مستخدم بالفعل. حاول تسجيل الدخول بدلًا من إنشاء حساب "
+"جديد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_recovery
+msgid "Resend instructions"
+msgstr "إعادة إرسال التعليمات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Account verification"
+msgstr "تأكيد الحساب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_channels.py:0
+msgid "Cancel verification"
+msgstr "إلغاء التحقق"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "An unexpected error occurred. Please try again."
+msgstr "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_reset_password
+msgid "Continue"
+msgstr "متابعة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Continuing..."
+msgstr "جارٍ المتابعة..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+msgid "Could not reach the server. Please try again."
+msgstr "تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Creating account..."
+msgstr "جارٍ إنشاء الحساب..."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid ""
+"Open the HTTPS website to continue. Local HTTP testing requires development "
+"mode."
+msgstr ""
+"افتح الموقع عبر HTTPS للمتابعة. يتطلب الاختبار المحلي عبر HTTP تفعيل وضع "
+"التطوير."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid "<span>free</span>"
+msgstr "<span>مجانًا</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
+msgid ""
+"<small class=\"d-block mt-2\">Free items are added to your cart "
+"automatically.</small>"
+msgstr ""
+"<small class=\"d-block mt-2\">تُضاف الوحدات المجانية إلى سلتك "
+"تلقائيًا.</small>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "Current offers"
+msgstr "العروض الحالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "New offers are coming soon"
+msgstr "عروض جديدة قريبًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Account actions"
+msgstr "إجراءات الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Connect your verified phone number to Telegram."
+msgstr "اربط رقم هاتفك المؤكد بحساب Telegram."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Enter your current password to continue with security settings."
+msgstr "أدخل كلمة المرور الحالية لمتابعة إعدادات الأمان."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Manage the security and recovery options for your account."
+msgstr "أدر إعدادات الأمان والاسترداد الخاصة بحسابك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid ""
+"Protect your account and data by connecting secure recovery and verification "
+"methods."
+msgstr "احمِ حسابك وبياناتك من خلال ربط وسائل الاسترداد والتحقق الآمنة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Recover access using a verified security method."
+msgstr "استعد الوصول باستخدام إحدى وسائل الأمان المؤكدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Security methods"
+msgstr "طرق تأمين الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Security status"
+msgstr "حالة الأمان"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Update your password securely."
+msgstr "حدّث كلمة مرورك بأمان."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "Used to recover your account and verify your identity."
+msgstr "يُستخدم لاستعادة الحساب والتحقق من هويتك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+msgid "of 3 methods secured"
+msgstr "من 3 طرق مؤمنة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_portal_security_link
+msgid "<span>Account security</span>"
+msgstr "<span>أمان الحساب</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>My account</span>"
+msgstr "<span>حسابي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>My addresses</span>"
+msgstr "<span>عناويني</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>My invoices</span>"
+msgstr "<span>فواتيري</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>My orders</span>"
+msgstr "<span>طلباتي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>Sign out</span>"
+msgstr "<span>تسجيل الخروج</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "<span>Wishlist</span>"
+msgstr "<span>المفضلة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.account_navigation
+msgid "Account navigation"
+msgstr "التنقل في الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Close notification"
+msgstr "إغلاق الإشعار"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Phone verification completed successfully."
+msgstr "تم التحقق من رقم الهاتف بنجاح."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Telegram has not responded yet. Open Telegram, press Start, share your own phone number, and try again."
+msgstr "لم يستجب Telegram بعد. افتح Telegram واضغط «بدء»، ثم شارك رقم هاتفك واضغط التحقق مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Telegram is connected, but the phone number is not verified yet. In Telegram, share your own phone number and try again."
+msgstr "تم الاتصال بـ Telegram، لكن لم يتم التحقق من رقم الهاتف بعد. شارك رقم هاتفك الشخصي من داخل Telegram ثم حاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+msgid "Telegram opened. Press Start, then share your own phone number. Return here and check verification."
+msgstr "تم فتح Telegram. اضغط «بدء»، ثم شارك رقم هاتفك الشخصي. بعد ذلك ارجع إلى هنا واضغط التحقق."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "This verification request is invalid or expired. Start Telegram verification again."
+msgstr "طلب التحقق غير صالح أو انتهت صلاحيته. ابدأ التحقق عبر Telegram مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Verification request created. Open Telegram and complete the steps."
+msgstr "تم إنشاء طلب التحقق. افتح Telegram وأكمل الخطوات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Please wait before trying again. Remaining time:"
+msgstr "يرجى الانتظار قبل المحاولة مرة أخرى. الوقت المتبقي:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "You can try again now."
+msgstr "يمكنك المحاولة الآن."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid ""
+"Phone verification completed successfully. Complete your details to create "
+"your account."
+msgstr "تم التحقق من رقم الهاتف بنجاح. أكمل بياناتك لتسجيل الحساب."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
+msgid "Phone verification completed successfully. Confirm your Telegram connection."
+msgstr "تم التحقق من رقم الهاتف بنجاح. أكّد ربط حساب Telegram."
+
+#. module: ab_ecommerce_storefront
+msgid "View order"
+msgstr "عرض الطلب"
+
+#. module: ab_ecommerce_storefront
+msgid "View prescription details"
+msgstr "عرض تفاصيل الروشتة"

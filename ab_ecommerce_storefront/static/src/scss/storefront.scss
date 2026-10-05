@@ -11820,6 +11820,15 @@ html.ab-avatar-picker-open body {
     background: #fff4f1;
 }
 
+.ab-auth-rate-limit-time {
+    display: inline-block;
+    min-width: 4.75rem;
+    margin-inline-start: .35rem;
+    color: #a94719;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .04em;
+}
+
 .ab-auth-alert-success {
     color: $ab-green-dark;
     border: 1px solid rgba($ab-green, .2);
@@ -11933,6 +11942,17 @@ html.ab-avatar-picker-open body {
     &.is-loading {
         opacity: .86;
         cursor: wait;
+    }
+
+    &:disabled:not(.is-loading) {
+        border-color: #d4e2dc !important;
+        color: #789087;
+        background: #e7efeb !important;
+        box-shadow: none;
+        cursor: not-allowed;
+        filter: none;
+        opacity: 1;
+        transform: none;
     }
 }
 

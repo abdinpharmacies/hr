@@ -4,6 +4,10 @@ from . import ir_http
 from . import product_wishlist
 from . import res_partner
 from . import res_users
+from . import auth_identity
+from . import auth_channels
+from . import auth_service
+from . import auth_settings
 from . import mail_template
 from . import mail_compose_message
 from . import sale_order

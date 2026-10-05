@@ -38,13 +38,15 @@
         <xpath expr="//div[hasclass('oe_website_login_container')]" position="replace">
             <t t-set="no_header" t-value="True"/>
             <t t-set="no_footer" t-value="True"/>
-            <div class="ab-auth-page" dir="rtl">
+            <t t-set="ab_auth_profile_recovery" t-value="request.session.uid and request.httprequest.path.rstrip('/').endswith('/ab_storefront/auth/recover')"/>
+            <div t-attf-class="ab-auth-page #{'ab-auth-security-page' if ab_auth_security else ''}" dir="rtl">
                 <header class="ab-auth-header">
                     <a href="/" class="ab-auth-brand ab-storefront-brand-logo" aria-label="Abdin Pharmacies">
                         <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="Abdin Pharmacies"/>
                     </a>
-                    <a href="/shop" class="ab-auth-store-link">
-                        <span>Shop now</span>
+                    <a t-att-href="'/my/home' if ab_auth_profile_recovery else '/shop'" class="ab-auth-store-link">
+                        <span t-if="ab_auth_profile_recovery">Back to personal page</span>
+                        <span t-else="">Shop now</span>
                         <t t-set="icon" t-value="'arrow'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
                     </a>
@@ -85,11 +87,11 @@
                     <p>Sign in to your account to continue</p>
                 </div>
                 <div class="ab-auth-field field-login">
-                    <label for="login">Phone number</label>
+                    <label for="login">Email or phone number</label>
                     <div class="ab-auth-input">
                         <t t-set="icon" t-value="'phone'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
-                        <input t-att-type="'text' if backend_login else 'tel'" t-att-inputmode="'text' if backend_login else 'tel'" placeholder="01XXXXXXXXX" name="login" t-att-value="login" id="login" required="required" autocapitalize="off" autocomplete="username" t-att-data-ab-phone-input="None if backend_login else ''"/>
+                        <input type="text" placeholder="Email or phone number" name="login" t-att-value="login" id="login" required="required" autocapitalize="off" autocomplete="username"/>
                     </div>
                     <p t-if="not backend_login" class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
                 </div>
@@ -109,7 +111,7 @@
                     </div>
                 </div>
                 <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
-                    Phone number or password is incorrect.
+                    Email, phone number, or password is incorrect.
                 </p>
                 <p class="ab-auth-alert ab-auth-alert-success" t-if="message" role="status">
                     <t t-esc="message"/>
@@ -235,7 +237,7 @@
 
     <template id="auth_signup" name="Abdin Phone Signup" inherit_id="auth_signup.signup" priority="220">
         <xpath expr="//form[hasclass('oe_signup_form')]" position="replace">
-            <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup">
+            <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup" t-att-data-ab-phone-signup-label="ab_phone_signup_label" t-att-data-ab-email-signup-label="ab_email_signup_label" t-att-data-ab-signup-loading-label="ab_signup_loading_label" t-att-data-ab-signup-continuing-label="ab_signup_continuing_label">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="ab-auth-form-head">
                     <span class="ab-auth-form-mark">Start an easier experience</span>
@@ -251,17 +253,18 @@
                     </div>
                 </div>
                 <div class="ab-auth-field field-login">
-                    <label for="phone">Phone number</label>
+                    <label for="signup_email">Email or phone number</label>
                     <div class="ab-auth-input">
                         <t t-set="icon" t-value="'phone'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
-                        <input type="tel" inputmode="tel" name="phone" t-att-value="phone or login" id="phone" required="required" autocapitalize="off" autocomplete="tel" placeholder="01XXXXXXXXX" data-ab-phone-input=""/>
-                        <input type="hidden" name="login" t-att-value="phone or login"/>
+                        <input type="text" name="login" t-att-value="login" id="signup_email" required="required" maxlength="254" autocapitalize="off" autocomplete="username" placeholder="Email or phone number" t-att-data-ab-signup-identity="None if token else ''" t-att-readonly="'readonly' if token else None"/>
                     </div>
                     <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
                 </div>
-                <t t-call="auth_signup.fields"/>
+                <p t-if="not token" class="small text-muted" data-ab-phone-signup-notice="">Phone registration requires linking Telegram for verification and password recovery.</p>
+                <div data-ab-signup-credentials=""><t t-call="auth_signup.fields"/></div>
                 <section class="ab-auth-avatar-choice"
+                         data-ab-signup-avatar=""
                          data-ab-avatar-scope="signup"
                          data-ab-avatar-current="avatar_none">
                     <input type="hidden" name="ab_storefront_avatar" value="avatar_none" data-ab-avatar-input=""/>
@@ -287,8 +290,16 @@
                     <t t-set="avatar_current" t-value="'avatar_none'"/>
                     <t t-call="ab_ecommerce_storefront.avatar_picker"/>
                 </section>
-                <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
-                    <t t-esc="error"/>
+                <t t-set="rate_limit_wait_message">Please wait before trying again. Remaining time:</t>
+                <t t-set="rate_limit_ready_message">You can try again now.</t>
+                <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert"
+                   t-att-data-ab-rate-limit-seconds="ab_auth_retry_after or None">
+                    <t t-if="ab_auth_retry_after">
+                        <span data-ab-rate-limit-wait="" t-out="rate_limit_wait_message"/>
+                        <strong class="ab-auth-rate-limit-time" dir="ltr" data-ab-rate-limit-time="">--:--:--</strong>
+                        <span class="d-none" data-ab-rate-limit-ready="" t-out="rate_limit_ready_message"/>
+                    </t>
+                    <t t-else="" t-esc="error"/>
                 </p>
                 <input type="hidden" name="redirect" t-att-value="redirect"/>
                 <input type="hidden" name="token" t-att-value="token"/>

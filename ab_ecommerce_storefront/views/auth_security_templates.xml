@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="auth_recovery" name="Account recovery">
+        <t t-call="website.login_layout">
+            <div class="ab-auth-form" data-ab-proof-page="">
+                <div class="ab-auth-form-head"><h2>Account recovery</h2></div>
+                <p t-if="message" class="ab-auth-alert ab-auth-alert-success" role="status" t-out="message"/>
+                <p t-if="error" class="ab-auth-alert ab-auth-alert-error" role="alert" t-out="error"/>
+                <form action="/ab_storefront/auth/recover" method="post" data-ab-email-proof="" hidden="hidden">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="action" value="email"/>
+                    <input type="hidden" name="proof"/>
+                    <button class="btn btn-primary ab-auth-primary" type="submit">Continue to password reset</button>
+                </form>
+                <div data-ab-without-proof="">
+                    <form t-if="step == 'request'" action="/ab_storefront/auth/recover" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="action" value="request"/>
+                        <fieldset class="mb-3">
+                            <legend class="fs-6">Recovery method</legend>
+                            <label t-if="'email' in available_channels" class="d-block mb-2"><input type="radio" name="channel" value="email" checked="checked"/> Recover via email</label>
+                            <label t-if="'telegram' in available_channels" class="d-block"><input type="radio" name="channel" value="telegram" t-att-checked="'checked' if 'email' not in available_channels else None"/> Recover via Telegram</label>
+                        </fieldset>
+                        <div class="ab-auth-field">
+                            <label for="recovery_identifier">Email or phone number</label>
+                            <div class="ab-auth-input"><input id="recovery_identifier" name="identifier" type="text" required="required" maxlength="254" autocomplete="username" dir="ltr"/></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary ab-auth-primary">Send recovery instructions</button>
+                    </form>
+                    <t t-if="step == 'otp'">
+                        <form action="/ab_storefront/auth/recover" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="action" value="otp"/>
+                            <div class="ab-auth-field"><label for="security_code">Security code</label><div class="ab-auth-input"><input id="security_code" name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required="required" autocomplete="one-time-code" dir="ltr"/></div></div>
+                            <button type="submit" class="btn btn-primary ab-auth-primary">Verify code</button>
+                        </form>
+                        <form action="/ab_storefront/auth/recover" method="post" class="mt-3">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="action" value="resend"/>
+                            <button type="submit" class="btn ab-auth-secondary">Resend code</button>
+                        </form>
+                    </t>
+                    <form t-if="step == 'password'" action="/ab_storefront/auth/recover" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="action" value="password"/>
+                        <t t-call="auth_signup.fields"><t t-set="autofocus" t-value="True"/><t t-set="only_passwords" t-value="True"/></t>
+                        <button type="submit" class="btn btn-primary ab-auth-primary">Set new password</button>
+                    </form>
+                    <form t-if="step == 'sent'" action="/ab_storefront/auth/recover" method="post" class="mt-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="action" value="resend"/>
+                        <button type="submit" class="btn ab-auth-secondary">Resend instructions</button>
+                    </form>
+                    <a t-if="not request.session.uid" href="/web/login" class="btn ab-auth-secondary mt-3">Back to sign in</a>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="auth_email_confirm" name="Verify email">
+        <t t-call="website.login_layout">
+            <div class="ab-auth-form" data-ab-proof-page="">
+                <div class="ab-auth-form-head"><h2>Verify email</h2></div>
+                <p t-if="done" class="ab-auth-alert ab-auth-alert-success">Email verified.</p>
+                <p t-if="error" class="ab-auth-alert ab-auth-alert-error" t-out="error"/>
+                <form t-if="not done" action="/ab_storefront/auth/confirm" method="post" data-ab-email-proof="">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="proof"/>
+                    <button type="submit" class="btn btn-primary ab-auth-primary">Verify email</button>
+                </form>
+                <a href="/my/authentication" class="btn ab-auth-secondary mt-3">Account security</a>
+            </div>
+        </t>
+    </template>
+    <template id="auth_phone_link" name="Telegram phone verification">
+        <t t-call="website.login_layout">
+            <t t-set="telegram_opened_toast">Telegram opened. Press Start, then share your own phone number. Return here and check verification.</t>
+            <t t-set="rate_limit_wait_message">Please wait before trying again. Remaining time:</t>
+            <t t-set="rate_limit_ready_message">You can try again now.</t>
+            <div class="ab-auth-form" data-ab-phone-verification="">
+                <div class="ab-auth-toast-stack" aria-live="polite" aria-atomic="true">
+                    <div t-attf-class="ab-auth-toast is-#{toast_type or 'info'} #{'is-visible' if toast_message else ''}"
+                         t-att-hidden="None if toast_message else 'hidden'"
+                         data-ab-phone-toast="" role="status">
+                        <i t-attf-class="fa #{'fa-check-circle' if toast_type == 'success' else 'fa-exclamation-triangle' if toast_type == 'warning' else 'fa-exclamation-circle' if toast_type == 'error' else 'fa-info-circle'}"
+                           data-ab-phone-toast-icon="" aria-hidden="true"/>
+                        <span data-ab-phone-toast-message="" t-out="toast_message or ''"/>
+                        <button type="button" data-ab-phone-toast-close="" aria-label="Close notification">
+                            <i class="fa fa-times" aria-hidden="true"/>
+                        </button>
+                    </div>
+                </div>
+                <div class="ab-auth-form-head"><h2 t-if="not signed_in">Continue with phone</h2><h2 t-else="">Link phone and Telegram</h2></div>
+                <p>Phone registration requires linking Telegram for verification and password recovery.</p>
+                <p t-if="error" class="ab-auth-alert ab-auth-alert-error" role="alert"
+                    t-att-data-ab-rate-limit-seconds="retry_after or None">
+                    <t t-if="retry_after">
+                        <span data-ab-rate-limit-wait="" t-out="rate_limit_wait_message"/>
+                        <strong class="ab-auth-rate-limit-time" dir="ltr" data-ab-rate-limit-time="">--:--:--</strong>
+                        <span class="d-none" data-ab-rate-limit-ready="" t-out="rate_limit_ready_message"/>
+                    </t>
+                    <t t-else="" t-out="error"/>
+                </p>
+                <form t-if="not link" action="/ab_storefront/auth/phone" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/><input type="hidden" name="action" value="link"/>
+                    <div class="ab-auth-field"><label for="link_phone">Phone number</label><div class="ab-auth-input"><input id="link_phone" type="tel" name="phone" t-att-value="phone" autocomplete="tel" required="required" maxlength="30" dir="ltr"/></div></div>
+                    <div t-if="signed_in" class="ab-auth-field"><label for="link_password">Current password</label><div class="ab-auth-input"><input id="link_password" type="password" name="current_password" required="required" maxlength="4096" autocomplete="current-password"/></div></div>
+                    <button type="submit" class="btn ab-auth-secondary">Start Telegram verification</button>
+                </form>
+                <t t-if="link">
+                    <div class="ab-auth-field">
+                        <label for="link_phone_status">Phone number</label>
+                        <div class="ab-auth-input">
+                            <input id="link_phone_status" type="tel" t-att-value="phone" readonly="readonly" autocomplete="tel" dir="ltr"/>
+                        </div>
+                    </div>
+                    <a t-att-href="link" data-ab-telegram-link=""
+                       t-att-data-ab-toast-message="telegram_opened_toast"
+                       target="_blank" rel="noopener noreferrer"
+                       class="btn ab-auth-secondary">Start Telegram verification</a>
+                    <p class="mt-3">In Abdin Pharma Pharmacies Bot, press the “Share my phone number” button. Do not type the number or send another contact. Then return here and press the “Check verification” button below.</p>
+                    <a href="/ab_storefront/auth/phone?check=1" class="btn ab-auth-secondary">Check verification</a>
+                </t>
+                <t t-if="verified">
+                    <p class="ab-auth-alert ab-auth-alert-success d-none d-sm-block" t-out="verified_message"/>
+                    <p>Telegram account ID: <b dir="ltr" t-out="telegram_id"/></p>
+                    <form action="/ab_storefront/auth/phone" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="action" t-att-value="'finish' if signed_in else 'signup'"/>
+                        <t t-if="not signed_in">
+                            <div class="ab-auth-field"><label for="phone_name">Name</label><div class="ab-auth-input"><input id="phone_name" name="name" t-att-value="name" autocomplete="name" required="required" maxlength="100"/></div></div>
+                            <t t-call="auth_signup.fields"><t t-set="autofocus" t-value="False"/><t t-set="only_passwords" t-value="True"/></t>
+                        </t>
+                        <button type="submit" class="btn btn-primary ab-auth-primary"><t t-if="signed_in">Confirm Telegram connection</t><t t-else="">Create account</t></button>
+                    </form>
+                </t>
+                <a t-if="not signed_in" href="/web/signup?from_phone=1" class="btn ab-auth-secondary mt-3">Back to account registration</a>
+                <a t-else="" href="/web/login" class="btn ab-auth-secondary mt-3">Back to sign in</a>
+            </div>
+        </t>
+    </template>
+    <template id="auth_account_security" name="Account security">
+        <t t-call="portal.portal_layout">
+            <t t-set="no_breadcrumbs" t-value="True"/>
+            <t t-set="email_verified" t-value="bool(identities.get('email'))"/>
+            <t t-set="phone_verified" t-value="bool(identities.get('phone'))"/>
+            <t t-set="telegram_connected" t-value="bool(identities.get('telegram'))"/>
+            <t t-set="email_value" t-value="identities.get('email') or request.env.user.email or ''"/>
+            <t t-set="phone_value" t-value="identities.get('phone') or request.env.user.phone or ''"/>
+            <t t-set="secured_method_count" t-value="(1 if email_verified else 0) + (1 if phone_verified else 0) + (1 if telegram_connected else 0)"/>
+            <t t-set="verified_label">Verified</t>
+            <t t-set="not_verified_label">Not verified</t>
+            <t t-set="connected_label">Connected</t>
+            <t t-set="not_connected_label">Not connected</t>
+            <t t-set="verification_action_label">Send verification email</t>
+            <t t-set="security_status_label">Security status</t>
+            <t t-set="secured_methods_label">of 3 methods secured</t>
+            <t t-set="link_phone_label">Link phone and Telegram</t>
+            <t t-set="link_phone_description">Connect your verified phone number to Telegram.</t>
+            <t t-set="recovery_label">Account recovery</t>
+            <t t-set="recovery_description">Recover access using a verified security method.</t>
+            <t t-set="change_password_label">Change password</t>
+            <t t-set="change_password_description">Update your password securely.</t>
+            <main class="ab-security-dashboard" dir="rtl">
+                <div class="container ab-security-container">
+                    <div class="ab-account-shell ab-security-shell">
+                        <t t-set="account_nav_active" t-value="'security'"/>
+                        <t t-call="ab_ecommerce_storefront.account_navigation"/>
+                        <div class="ab-security-content">
+                    <header class="ab-security-header">
+                        <div class="ab-security-heading">
+                            <span class="ab-security-heading-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 19 6v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6Z"/><path d="m8.7 11.8 2.1 2.1 4.6-4.8"/></svg>
+                            </span>
+                            <div>
+                                <h1>Account security</h1>
+                                <p>Protect your account and data by connecting secure recovery and verification methods.</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div t-if="message" class="ab-security-alert is-success" role="status">
+                        <i class="fa fa-check-circle" aria-hidden="true"/>
+                        <span t-out="message"/>
+                    </div>
+                    <div t-if="error" class="ab-security-alert is-error" role="alert">
+                        <i class="fa fa-exclamation-circle" aria-hidden="true"/>
+                        <span t-out="error"/>
+                    </div>
+
+                    <section class="ab-security-summary" aria-labelledby="abSecurityStatusTitle">
+                        <span class="ab-security-summary-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false"><path d="M12 3 19 6v5c0 4.8-2.9 8.1-7 10-4.1-1.9-7-5.2-7-10V6Z"/><path d="m8.7 11.8 2.1 2.1 4.6-4.8"/></svg>
+                        </span>
+                        <div class="ab-security-summary-copy">
+                            <span id="abSecurityStatusTitle" t-out="security_status_label"/>
+                            <strong><b t-out="secured_method_count"/> <span t-out="secured_methods_label"/></strong>
+                            <div class="ab-security-progress" role="progressbar" aria-valuemin="0" aria-valuemax="3"
+                                 t-att-aria-valuenow="secured_method_count"
+                                 t-att-style="'--ab-security-progress: ' + str((secured_method_count * 100) // 3) + '%'">
+                                <span/>
+                            </div>
+                        </div>
+                        <strong class="ab-security-summary-count" dir="ltr"><t t-out="secured_method_count"/>/3</strong>
+                    </section>
+
+                    <form action="/my/authentication" method="post" class="ab-security-form">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <section class="ab-security-methods" aria-labelledby="abSecurityMethodsTitle">
+                            <h2 id="abSecurityMethodsTitle">Security methods</h2>
+
+                            <article t-attf-class="ab-security-method #{'is-verified' if email_verified else 'is-pending'}">
+                                <span class="ab-security-method-icon is-email" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+                                </span>
+                                <div class="ab-security-method-copy">
+                                    <h3>Email</h3>
+                                    <p>Used to recover your account and verify your identity.</p>
+                                </div>
+                                <div class="ab-security-method-value">
+                                    <label for="security_email" class="visually-hidden">Email</label>
+                                    <input id="security_email" name="email" type="email" required="required" maxlength="254"
+                                           autocomplete="email" dir="ltr" t-att-value="email_value"/>
+                                </div>
+                                <span t-if="email_verified" class="ab-security-status is-success">
+                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="verified_label"/>
+                                </span>
+                                <span t-else="" class="ab-security-status is-warning">
+                                    <i class="fa fa-exclamation-circle" aria-hidden="true"/><span t-out="not_verified_label"/>
+                                </span>
+                                <button type="submit" class="ab-security-verify-button">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"/><span t-out="verification_action_label"/>
+                                </button>
+                            </article>
+
+                            <article t-attf-class="ab-security-method #{'is-verified' if phone_verified else 'is-unavailable'}">
+                                <span class="ab-security-method-icon is-phone" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="M7.2 3h3l1.5 4-2.1 1.4a15 15 0 0 0 6 6l1.4-2.1 4 1.5v3c0 1.3-1 2.3-2.3 2.2C11.3 18.4 5.6 12.7 5 5.3 4.9 4 5.9 3 7.2 3Z"/></svg>
+                                </span>
+                                <div class="ab-security-method-copy">
+                                    <h3>Phone</h3>
+                                    <p>Used to recover your account and verify your identity.</p>
+                                </div>
+                                <div class="ab-security-method-value" dir="ltr">
+                                    <span t-out="phone_value or '—'"/>
+                                </div>
+                                <span t-if="phone_verified" class="ab-security-status is-success">
+                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="verified_label"/>
+                                </span>
+                                <span t-else="" class="ab-security-status is-neutral">
+                                    <i class="fa fa-minus-circle" aria-hidden="true"/><span t-out="not_verified_label"/>
+                                </span>
+                            </article>
+
+                            <article t-attf-class="ab-security-method #{'is-connected' if telegram_connected else 'is-unavailable'}">
+                                <span class="ab-security-method-icon is-telegram" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><path d="m3.5 11.4 16-6.2c.8-.3 1.5.2 1.2 1.6l-2.7 12.5c-.2.9-.8 1.1-1.6.7l-4.1-3-2 1.9c-.2.2-.4.4-.8.4l.3-4.2 7.7-7c.3-.3-.1-.5-.5-.2l-9.5 6-4.1-1.3c-.9-.3-.9-.9.1-1.2Z"/></svg>
+                                </span>
+                                <div class="ab-security-method-copy">
+                                    <h3>Telegram</h3>
+                                    <p>Used to recover your account and verify your identity.</p>
+                                </div>
+                                <div class="ab-security-method-value">
+                                    <span t-if="telegram_connected" t-out="connected_label"/>
+                                    <span t-else="" t-out="not_connected_label"/>
+                                </div>
+                                <span t-if="telegram_connected" class="ab-security-status is-linked">
+                                    <i class="fa fa-check-circle" aria-hidden="true"/><span t-out="connected_label"/>
+                                </span>
+                                <span t-else="" class="ab-security-status is-neutral">
+                                    <i class="fa fa-link" aria-hidden="true"/><span t-out="not_connected_label"/>
+                                </span>
+                            </article>
+                        </section>
+
+                        <section class="ab-security-password" aria-labelledby="abSecurityPasswordTitle">
+                            <span class="ab-security-password-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg>
+                            </span>
+                            <div class="ab-security-password-copy">
+                                <h2 id="abSecurityPasswordTitle">Current password</h2>
+                                <p>Enter your current password to continue with security settings.</p>
+                            </div>
+                            <div class="ab-security-password-field">
+                                <label for="security_password" class="visually-hidden">Current password</label>
+                                <span aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg>
+                                </span>
+                                <input id="security_password" name="current_password" type="password" required="required"
+                                       maxlength="4096" autocomplete="current-password" placeholder="Current password"/>
+                            </div>
+                        </section>
+                    </form>
+
+                    <section class="ab-security-actions" aria-labelledby="abSecurityActionsTitle">
+                        <div class="ab-security-actions-heading">
+                            <span aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+                            </span>
+                            <div>
+                                <h2 id="abSecurityActionsTitle">Account actions</h2>
+                                <p>Manage the security and recovery options for your account.</p>
+                            </div>
+                        </div>
+                        <div class="ab-security-action-grid">
+                            <a t-if="telegram_enabled" href="/ab_storefront/auth/phone" class="ab-security-action is-primary">
+                                <span class="ab-security-action-icon" aria-hidden="true"><i class="fa fa-link"/></span>
+                                <span class="ab-security-action-copy"><strong t-out="link_phone_label"/><small t-out="link_phone_description"/></span>
+                                <i class="fa fa-angle-left ab-security-action-arrow" aria-hidden="true"/>
+                            </a>
+                            <a href="/ab_storefront/auth/recover" class="ab-security-action">
+                                <span class="ab-security-action-icon" aria-hidden="true"><i class="fa fa-user-o"/></span>
+                                <span class="ab-security-action-copy"><strong t-out="recovery_label"/><small t-out="recovery_description"/></span>
+                                <i class="fa fa-angle-left ab-security-action-arrow" aria-hidden="true"/>
+                            </a>
+                            <a href="/my/security" class="ab-security-action">
+                                <span class="ab-security-action-icon" aria-hidden="true"><i class="fa fa-key"/></span>
+                                <span class="ab-security-action-copy"><strong t-out="change_password_label"/><small t-out="change_password_description"/></span>
+                                <i class="fa fa-angle-left ab-security-action-arrow" aria-hidden="true"/>
+                            </a>
+                        </div>
+                    </section>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </t>
+    </template>
+</odoo>
