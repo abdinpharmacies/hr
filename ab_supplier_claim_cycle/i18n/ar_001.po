@@ -73,10 +73,9 @@ msgid "Copy"
 msgstr "صورة"
 
 #. module: ab_supplier_claim_cycle
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__copy
-msgid "bank statement"
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__bank_statement
+msgid "Bank Statement"
 msgstr "كشف حساب"
-
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_uid
