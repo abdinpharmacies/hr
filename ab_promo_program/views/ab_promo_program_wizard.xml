@@ -7,9 +7,12 @@
             <field name="model">ab_promo_program_wizard</field>
             <field name="arch" type="xml">
                 <form string="Import Promotions from Excel">
+                    <group string="Optional Approval Attachments">
+                        <field name="approval_attachment_ids" widget="many2many_binary"/>
+                    </group>
                     <group>
                         <field name="from_excel" nolabel="1" colspan="4"
-                               placeholder="name&#9;product_code&#9;promo_text&#9;rule_date_from&#9;rule_date_to&#9;Compensation way&#9;Compensation Type&#9;promotion_ownership&#9;Compensation Company&#10;Back to School Vitamin Deal&#9;PWIZ-TST-001&#9;1+1&#9;2026-09-01 00:00:00&#9;2026-09-30 23:59:59&#9;Before&#9;Products&#9;Other Promotion&#9;1-1490"/>
+                               placeholder="name&#9;product_code&#9;promo_text&#9;rule_date_from&#9;rule_date_to&#9;Compensation way&#9;Compensation Type&#9;promotion_ownership&#9;Compensation Company&#9;Approval Attachment File Name&#10;Back to School Vitamin Deal&#9;PWIZ-TST-001&#9;1+1&#9;2026-09-01 00:00:00&#9;2026-09-30 23:59:59&#9;Before&#9;Products&#9;Other Promotion&#9;1-1490&#9;approval_1.pdf"/>
                     </group>
                     <footer>
                         <button string="Add Promotions"
