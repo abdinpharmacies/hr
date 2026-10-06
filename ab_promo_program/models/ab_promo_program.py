@@ -28,10 +28,11 @@ class AbPromoProgram(models.Model):
         required=True,
     )
     compensation_company_id = fields.Many2one(
-        'ab_product_company',
-        string="Compensation Company",
-        help="The manufacturing or supplier company responsible for compensating the pharmacy for this promotion.",
+        'ab_costcenter', required=True, ondelete='restrict', tracking=True,
+        domain=fields.Domain('code', '=like', '1-%'),
     )
+
+
     compensation_timing = fields.Selection(
         [
             ('before', 'Before'),
