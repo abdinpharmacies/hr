@@ -19,9 +19,12 @@ class AbPromoProgramWizard(models.TransientModel):
             "Use technical field names as headers, e.g.:\n"
             "name, max_repetition_per_invoice, rule_date_from, rule_date_to,\n"
             "rule_min_amount, rule_min_qty, disc_percent, apply_disc_on,\n"
-            "fixed_price, product_code, disc_specific_product_ids\n\n"
+            "fixed_price, product_code, Compensation Company, "
+            "disc_specific_product_ids\n\n"
             "- All headers are technical names EXCEPT 'product_code',\n"
             "  which is used to link to product_ids via ab_product.code.\n"
+            "- 'Compensation Company' must contain the exact "
+            "ab_costcenter.code.\n"
             "- 'disc_specific_product_ids' should contain product CODES\n"
             "  (comma-separated) that will be mapped to the Many2many field."
         ),
@@ -256,8 +259,56 @@ class AbPromoProgramWizard(models.TransientModel):
                 'Compensation Way',
                 'Compensation Type',
                 'promotion_ownership',
+                'Compensation Company',
             ]
         )
+
+        company_codes_by_line = {}
+        for line_no, row in enumerate(rows[1:], start=2):
+            if not row or not any((c or "").strip() for c in row):
+                continue
+
+            company_code = (
+                self._get_cell(row, header_map, 'Compensation Company') or ''
+            ).strip()
+            if not company_code:
+                raise UserError(
+                    _("Line %s: 'Compensation Company' is required.") % line_no
+                )
+            if not company_code.startswith('1-'):
+                raise UserError(
+                    _(
+                        "Line %(line)s: invalid Compensation Company code "
+                        "'%(code)s'. The code must start with '1-'."
+                    ) % {'line': line_no, 'code': company_code}
+                )
+            company_codes_by_line[line_no] = company_code
+
+        company_codes = set(company_codes_by_line.values())
+        companies = self.env['ab_costcenter'].search([
+            ('code', 'in', list(company_codes)),
+            ('code', '=like', '1-%'),
+        ])
+        companies_by_code = {}
+        ambiguous_codes = set()
+        for company in companies:
+            if company.code in companies_by_code:
+                ambiguous_codes.add(company.code)
+            else:
+                companies_by_code[company.code] = company
+
+        if ambiguous_codes:
+            raise UserError(
+                _("Ambiguous Compensation Company code(s): %s")
+                % ', '.join(sorted(ambiguous_codes))
+            )
+
+        unknown_codes = company_codes - set(companies_by_code)
+        if unknown_codes:
+            raise UserError(
+                _("Unknown Compensation Company code(s): %s")
+                % ', '.join(sorted(unknown_codes))
+            )
 
         promo_map = {}
         # promo_map[key] = {
@@ -280,6 +331,8 @@ class AbPromoProgramWizard(models.TransientModel):
             product_code = (self._get_cell(row, header_map, 'product_code') or '').strip()
             if not product_code:
                 raise UserError(_("Line %s: 'product_code' is required.") % line_no)
+
+            compensation_company = companies_by_code[company_codes_by_line[line_no]]
 
             promo_text = self._get_cell(row, header_map, 'promo_text')
 
@@ -375,6 +428,7 @@ class AbPromoProgramWizard(models.TransientModel):
                 compensation_timing or '',
                 compensation_type or '',
                 promotion_ownership,
+                compensation_company.id,
             )
 
             if key not in promo_map:
@@ -389,6 +443,7 @@ class AbPromoProgramWizard(models.TransientModel):
                         'disc_percent': disc_percent,
                         'apply_disc_on': apply_disc_on,
                         'fixed_price': fixed_price,
+                        'compensation_company_id': compensation_company.id,
                     },
                     'product_codes': set(),
                     'disc_codes': set(),
