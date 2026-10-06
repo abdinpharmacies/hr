@@ -11,6 +11,18 @@ class AbPromoProgramWizard(models.TransientModel):
     _name = 'ab_promo_program_wizard'
     _description = 'Promo Program Excel Import Wizard'
 
+    approval_attachment_ids = fields.Many2many(
+        comodel_name='ir.attachment',
+        relation='ab_promo_program_wizard_attachment_rel',
+        column1='wizard_id',
+        column2='attachment_id',
+        string="Approval Attachments",
+        help=(
+            "Optional files referenced by the 'Approval Attachment File Name' "
+            "column. Any file type is accepted."
+        ),
+    )
+
     from_excel = fields.Text(
         string="Paste Excel Data",
         help=(
@@ -20,11 +32,13 @@ class AbPromoProgramWizard(models.TransientModel):
             "name, max_repetition_per_invoice, rule_date_from, rule_date_to,\n"
             "rule_min_amount, rule_min_qty, disc_percent, apply_disc_on,\n"
             "fixed_price, product_code, Compensation Company, "
+            "Approval Attachment File Name, "
             "disc_specific_product_ids\n\n"
-            "- All headers are technical names EXCEPT 'product_code',\n"
-            "  which is used to link to product_ids via ab_product.code.\n"
+            "- 'product_code' links to product_ids via ab_product.code.\n"
             "- 'Compensation Company' must contain the exact "
             "ab_costcenter.code.\n"
+            "- 'Approval Attachment File Name' is optional and must match "
+            "one uploaded file name.\n"
             "- 'disc_specific_product_ids' should contain product CODES\n"
             "  (comma-separated) that will be mapped to the Many2many field."
         ),
@@ -131,6 +145,11 @@ class AbPromoProgramWizard(models.TransientModel):
         if idx is None or idx >= len(row):
             return ''
         return row[idx] or ''
+
+    @staticmethod
+    def _normalize_attachment_filename(value):
+        """Normalize uploaded and pasted file names for matching/grouping."""
+        return (value or '').strip().casefold()
 
     @staticmethod
     def _build_header_map(header_row):
@@ -263,6 +282,12 @@ class AbPromoProgramWizard(models.TransientModel):
             ]
         )
 
+        attachments_by_filename = {}
+        for attachment in self.approval_attachment_ids:
+            normalized_name = self._normalize_attachment_filename(attachment.name)
+            if normalized_name:
+                attachments_by_filename.setdefault(normalized_name, []).append(attachment)
+
         company_codes_by_line = {}
         for line_no, row in enumerate(rows[1:], start=2):
             if not row or not any((c or "").strip() for c in row):
@@ -333,6 +358,39 @@ class AbPromoProgramWizard(models.TransientModel):
                 raise UserError(_("Line %s: 'product_code' is required.") % line_no)
 
             compensation_company = companies_by_code[company_codes_by_line[line_no]]
+
+            approval_attachment_filename = (
+                self._get_cell(row, header_map, 'Approval Attachment File Name') or ''
+            ).strip()
+            normalized_attachment_filename = self._normalize_attachment_filename(
+                approval_attachment_filename
+            )
+            approval_attachment = False
+            if normalized_attachment_filename:
+                matching_attachments = attachments_by_filename.get(
+                    normalized_attachment_filename, []
+                )
+                if not matching_attachments:
+                    raise UserError(
+                        _(
+                            "Line %(line)s: no uploaded attachment matches "
+                            "'%(filename)s'."
+                        ) % {
+                            'line': line_no,
+                            'filename': approval_attachment_filename,
+                        }
+                    )
+                if len(matching_attachments) > 1:
+                    raise UserError(
+                        _(
+                            "Line %(line)s: multiple uploaded attachments match "
+                            "'%(filename)s'. Remove the duplicate files."
+                        ) % {
+                            'line': line_no,
+                            'filename': approval_attachment_filename,
+                        }
+                    )
+                approval_attachment = matching_attachments[0]
 
             promo_text = self._get_cell(row, header_map, 'promo_text')
 
@@ -429,6 +487,7 @@ class AbPromoProgramWizard(models.TransientModel):
                 compensation_type or '',
                 promotion_ownership,
                 compensation_company.id,
+                normalized_attachment_filename,
             )
 
             if key not in promo_map:
@@ -453,6 +512,11 @@ class AbPromoProgramWizard(models.TransientModel):
                 if compensation_type:
                     promo_map[key]['vals']['compensation_type'] = compensation_type
                 promo_map[key]['vals']['promotion_ownership'] = promotion_ownership
+                if approval_attachment:
+                    promo_map[key]['vals'].update({
+                        'approval_email_attachment': approval_attachment.datas,
+                        'approval_email_attachment_filename': approval_attachment.name,
+                    })
 
             promo_map[key]['product_codes'].add(product_code)
             for c in disc_codes:
