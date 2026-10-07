@@ -139,7 +139,7 @@ class AbOdooSyncMappingController(http.Controller):
         started = time.monotonic()
         payload = self._payload()
         try:
-            self._authorized_branch(payload)
+            branch = self._authorized_branch(payload)
         except (
             SyncAuthorizationError,
             SyncHardwarePendingError,
@@ -151,10 +151,17 @@ class AbOdooSyncMappingController(http.Controller):
             result = (
                 request.env["ab_odoo_sync_service"]
                 .sudo()
-                .receive_upload_batch(payload)
+                .receive_upload_batch(payload, branch)
             )
+            # Complete durable storage before constructing a delivery acknowledgement.
+            request.env.cr.commit()
         except ValueError as ex:
+            request.env.cr.rollback()
             return _json_response({"ok": False, "error": str(ex)}, status=400)
+        except Exception:
+            request.env.cr.rollback()
+            _logger.error("AB sync receipt storage failed branch=%s", branch.db_serial)
+            return _json_response({"ok": False, "error": _("Upload storage is unavailable; retry delivery.")}, status=503)
         result["ok"] = True
         _logger.info("AB sync upload branch=%s records=%s accepted=%s failed=%s duration_ms=%.2f", payload.get("db_serial"), len(payload.get("records", [])), result.get("accepted"), result.get("failed"), (time.monotonic() - started) * 1000)
         return _json_response(result)

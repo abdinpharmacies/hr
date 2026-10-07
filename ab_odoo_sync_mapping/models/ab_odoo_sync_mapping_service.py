@@ -80,84 +80,24 @@ class AbOdooSyncMappingService(models.AbstractModel):
         raise SyncHardwareMismatchError()
 
     @api.private
-    def receive_upload_batch(self, payload):
-        if not isinstance(payload, dict):
-            raise ValueError(_("Upload payload must be a JSON object."))
-
-        db_serial = self.parse_positive_int(payload.get("db_serial"), "db_serial")
-        branch = self.get_registered_branch(db_serial)
+    def receive_upload_batch(self, payload, branch):
+        """The controller supplies the authenticated identity, never a row claim."""
+        branch.ensure_one()
+        if branch._name != "ab_odoo_sync_branch_registry" or not branch.active:
+            raise SyncAuthorizationError()
+        if not isinstance(payload, dict) or self.parse_positive_int(payload.get("db_serial"), "db_serial") != branch.db_serial:
+            raise SyncAuthorizationError()
         records = payload.get("records")
         if not isinstance(records, list):
             raise ValueError(_("records must be a JSON array."))
-
-        upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
-        result = {
-            "accepted": 0,
-            "queued": 0,
-            "ignored": 0,
-            "failed": 0,
-            "errors": [],
-        }
-        for index, row in enumerate(records):
-            if not isinstance(row, dict):
-                result["failed"] += 1
-                result["errors"].append(
-                    {"index": index, "error": _("record must be a JSON object.")}
-                )
-                continue
-            try:
-                model_name = upload_model.validate_source_model_name(
-                    row.get("model_name")
-                )
-                security_error = self._upload_source_security_error(model_name)
-                if security_error:
-                    raise ValueError(security_error)
-                rec_id = self.parse_positive_int(row.get("rec_id"), "rec_id")
-                payload_json = row.get("payload")
-                if not isinstance(payload_json, dict):
-                    raise ValueError(_("payload must be a JSON object."))
-                profile, pending_mapping_error = self._ensure_same_name_passive_profile(
-                    model_name,
-                    payload=payload_json,
-                )
-                upload_record, changed = upload_model.upsert_from_upload(
-                    db_serial=db_serial,
-                    model_name=model_name,
-                    rec_id=rec_id,
-                    payload=payload_json,
-                    event_uuid=row.get("event_uuid"),
-                    source_revision=row.get("source_revision") or 1,
-                    source_operation=row.get("operation") or "upsert",
-                    source_write_date=row.get("source_write_date") or False,
-                )
-                result["accepted"] += 1
-                if (
-                    pending_mapping_error
-                    and upload_record.status == "pending_mapping"
-                    and upload_record.error_message != pending_mapping_error
-                ):
-                    upload_record.write({"error_message": pending_mapping_error})
-                if not changed:
-                    result["ignored"] += 1
-                    continue
-                profile = upload_record.apply_profile_id
-                if (
-                    profile
-                    and profile.auto_apply
-                    and profile.apply_mode in {"mirror_sync", "business_model"}
-                ):
-                    result["queued"] += upload_record._queue_apply_records()
-            except Exception as ex:
-                result["failed"] += 1
-                result["errors"].append(
-                    {
-                        "index": index,
-                        "model_name": row.get("model_name"),
-                        "rec_id": row.get("rec_id"),
-                        "error": str(ex),
-                    }
-                )
-
+        Receipts = self.env["ab_odoo_sync_upload_receipt"].sudo()
+        result = {"accepted": 0, "queued": 0, "ignored": 0, "failed": 0, "errors": []}
+        for row in records:
+            receipt, created = Receipts._store(branch, row)
+            result["accepted"] += 1
+            if not created:
+                result["ignored"] += 1
+            result["queued"] += receipt._queue_processing()
         branch._touch_last_upload()
         return result
 

@@ -209,6 +209,10 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__create_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__create_uid
 msgid "Created by"
 msgstr "إنشاء"
 
@@ -219,6 +223,10 @@ msgstr "إنشاء"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__create_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__create_date
 msgid "Created on"
 msgstr "إنشاء"
 
@@ -226,6 +234,9 @@ msgstr "إنشاء"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__db_serial
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__db_serial
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__db_serial
 msgid "DB Serial"
 msgstr "رقم قاعدة البيانات"
 
@@ -257,6 +268,7 @@ msgstr "قيمة مباشرة"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__display_name
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -267,6 +279,7 @@ msgstr "رسالة الخطأ"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__event_uuid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__event_uuid
 msgid "Event UUID"
 msgstr "معرف الحدث المصدر"
 
@@ -324,6 +337,7 @@ msgstr "الحقل الذي يتم البحث به في نموذج العلاق�
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__id
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_token__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -359,6 +373,10 @@ msgstr "أبقِه معطلاً أثناء فحص الحمولات الخام و
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__write_uid
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -369,6 +387,10 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__write_date
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_reject_wizard__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_hardware_replace_wizard__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -596,6 +618,7 @@ msgstr "إعادة تطبيق التعيين"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__received_at
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__received_at
 msgid "Received At"
 msgstr "تم الاستلام في"
 
@@ -1655,3 +1678,182 @@ msgstr "يجب أن تكون بصمة الرمز فريدة."
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_token__scope__upload_health
 msgid "Upload and health"
 msgstr "الرفع وفحص الاتصال"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__branch_id
+msgid "Authenticated Branch"
+msgstr "الفرع المعتمد"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_upload_receipt
+msgid "Branch Upload Receipt"
+msgstr "إيصال استلام رفع الفرع"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__application_status
+msgid "Current Application Status"
+msgstr "حالة التطبيق الحالية"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Event ID was reused with different content."
+msgstr "أعيد استخدام معرّف الحدث بمحتوى مختلف."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_audit__event_type
+msgid "Event Type"
+msgstr "نوع الحدث"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__payload_json
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_field_override__payload_json
+msgid "Full Source Payload"
+msgstr "كامل بيانات المصدر"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Invalid row metadata. Original data is preserved for inspection."
+msgstr "بيانات تعريف السجل غير صالحة. تم حفظ البيانات الأصلية للفحص."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__ignored
+msgid "Older or Duplicate Revision"
+msgstr "إصدار أقدم أو مكرر"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Only administrators can retry receipt processing."
+msgstr "يمكن للمسؤولين فقط إعادة محاولة معالجة الإيصال."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__raw_row
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_receipt_form
+msgid "Original Uploaded Row"
+msgstr "السجل الأصلي المرفوع"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Original upload receipts cannot be deleted."
+msgstr "لا يمكن حذف إيصالات الرفع الأصلية."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Original upload receipts cannot be edited."
+msgstr "لا يمكن تعديل إيصالات الرفع الأصلية."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__payload_hash
+msgid "Payload Hash"
+msgstr "بصمة البيانات"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Process stored branch upload receipt"
+msgstr "معالجة إيصال رفع الفرع المحفوظ"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__processed
+msgid "Processed"
+msgstr "تمت المعالجة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__processed_at
+msgid "Processed At"
+msgstr "وقت المعالجة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__error_message
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_receipt_form
+msgid "Processing Details"
+msgstr "تفاصيل المعالجة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__failed
+msgid "Processing Failed"
+msgstr "فشلت المعالجة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__queued
+msgid "Processing Queued"
+msgstr "المعالجة في قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__quarantined
+msgid "Quarantined"
+msgstr "معزول"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__status
+msgid "Receipt Status"
+msgstr "حالة الإيصال"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Receipt is stored. Processing could not be queued; retry processing."
+msgstr ""
+"تم حفظ الإيصال. تعذرت إضافة المعالجة إلى قائمة الانتظار؛ أعد محاولة "
+"المعالجة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid ""
+"Receipt is stored. Processing failed (%s); correct the mapping and retry."
+msgstr "تم حفظ الإيصال. فشلت المعالجة (%s)؛ صحح الربط وأعد المحاولة."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_receipt_unique_branch_hash
+msgid "Receipt must be unique per branch and payload."
+msgstr "يجب أن يكون الإيصال فريداً لكل فرع وبيانات مرفوعة."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_receipt__status__pending
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_receipt_form
+msgid "Retry Processing"
+msgstr "إعادة محاولة المعالجة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Row branch identity does not match the authenticated branch."
+msgstr "هوية الفرع في السجل لا تطابق الفرع المعتمد."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Source model is protected; this receipt will not be applied."
+msgstr "النموذج المصدر محمي؛ لن يتم تطبيق هذا الإيصال."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_upload_receipt
+#: model:ir.ui.menu,name:ab_odoo_sync_mapping.menu_ab_odoo_sync_upload_receipts
+msgid "Upload Receipts"
+msgstr "إيصالات الرفع"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_receipt__upload_record_id
+msgid "Upload Record"
+msgstr "سجل الرفع"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_receipt.py:0
+msgid "Upload receipts are created only by the authenticated receiver."
+msgstr "يتم إنشاء إيصالات الرفع بواسطة المستقبِل المعتمد فقط."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/controllers/report.py:0
+msgid "Upload storage is unavailable; retry delivery."
+msgstr "تخزين الرفع غير متاح؛ أعد محاولة الإرسال."
