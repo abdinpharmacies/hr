@@ -397,8 +397,12 @@ class BranchApi(models.AbstractModel):
     def submit_sale(self, db_serial, token, payload, push_to_eplus=True, *, store_eplus_serial=STORE_UNSET):
         store = request_store(self)
         self._business_permissions('sale', post=True)
+        if push_to_eplus is not True:
+            raise UserError(_('Callcenter sale transport selection is no longer supported. Upgrade the callcenter module.'))
         operation = self._operation(store, token, 'sale')
-        request = {'payload': payload, 'push': bool(push_to_eplus)}
+        # Posting is a branch-owned invariant. The compatibility value is kept
+        # in the digest so existing successful requests still replay safely.
+        request = {'payload': payload, 'push': True}
         self._prepare_post(operation, request)
         if operation.state == 'done':
             self.env['ab_sales_header'].browse(operation.record_id).check_access('read')
@@ -445,10 +449,11 @@ class BranchApi(models.AbstractModel):
         header.line_ids.check_access('write')
 
         def post():
-            if push_to_eplus:
-                header.with_context(pos_submit=True).action_push_to_eplus()
-                if not header.eplus_serial or header.status not in ('pending', 'saved'):
-                    raise UserError(_('Branch sale was not pushed to E-Plus.'))
+            # Use the normal branch sale action. It performs the E-Plus write
+            # and is the only path allowed to promote PrePending to Pending.
+            header.with_context(pos_submit=True).action_submit()
+            if not header.eplus_serial or header.status not in ('pending', 'saved'):
+                raise UserError(_('Branch sale was not pushed to E-Plus.'))
             return {**self._identity(store, db_serial), 'remote_callcenter': True, 'branch_header_id': header.id,
                     'remote_header_id': header.id, 'status': header.status,
                     'eplus_serial': int(header.eplus_serial or 0), 'pos_header_id': False,
@@ -475,7 +480,7 @@ class BranchApi(models.AbstractModel):
         return values
 
 
-class BranchReturnEmployee(models.Model):
+class BranchSaleAndReturnEmployee(models.Model):
     _inherit = 'ab_sales_header'
 
     @api.model
@@ -484,3 +489,19 @@ class BranchReturnEmployee(models.Model):
         if not employee and actor:
             employee = self.env['ab_hr_employee'].browse(actor)
         return super()._get_eplus_emp_id(employee=employee)
+
+    @api.model
+    def _get_employee_delivery_id(self, employee=False):
+        delivery_id = super()._get_employee_delivery_id(employee=employee)
+        if delivery_id or employee or not self:
+            return delivery_id
+        self.ensure_one()
+        if not self.is_callcenter_order or not self.is_delivery:
+            return delivery_id
+        # Callcenter users do not select branch delivery staff. E-Plus still
+        # requires a delivery representative, so use the same branch employee
+        # already validated by the normal sale posting workflow.
+        sales_employee = self.employee_id
+        if 'pos_hr_employee_id' in self._fields and self.pos_hr_employee_id:
+            sales_employee = self.pos_hr_employee_id
+        return self._get_eplus_emp_id(employee=sales_employee) or None
