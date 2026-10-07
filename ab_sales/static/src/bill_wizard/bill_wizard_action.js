@@ -61,6 +61,12 @@ class AbSalesBillWizardAction extends Component {
     static template = "ab_sales.BillWizardAction";
     static components = {ABMany2many};
 
+    billStatusLabel(status) {
+        if (status === "unknown") return _t("Unknown");
+        if (status === "rejected") return _t("Rejected");
+        return status || "";
+    }
+
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");

@@ -48,6 +48,7 @@ class AbSalesCallcenterRpcLog(models.Model):
     )
     submitted_at = fields.Datetime(string="Submitted At", readonly=True, index=True)
     remote_header_id = fields.Integer(string="Remote Header ID", readonly=True)
+    request_revision = fields.Integer(string='Request Revision', readonly=True)
     remote_status = fields.Char(string="Remote Status", readonly=True)
     remote_eplus_serial = fields.Integer(string="Remote E-Plus Serial", readonly=True)
     response_message = fields.Text(string="Response Message", readonly=True)

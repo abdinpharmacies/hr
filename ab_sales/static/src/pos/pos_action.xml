@@ -80,7 +80,7 @@
                                 </div>
                                 <button class="btn btn-sm btn-outline-danger ab_pos_bill_item_btn_remove"
                                         type="button"
-                                        t-on-click.stop="() => removeBill(bill.id)">
+                                        t-att-disabled="bill.submission?.attempted" t-on-click.stop="() => removeBill(bill.id)">
                                     Remove
                                 </button>
                             </div>
@@ -148,7 +148,8 @@
                                     <div class="o_ab_sales_pos_top_stack ab_pos_topbar_stack_store">
                                         <div class="o_ab_sales_pos_top_group ab_pos_topbar_group_store">
                                         <div class="o_ab_sales_pos_field_row ab_pos_store_field_row">
-                                            <ABMany2one
+                                            <fieldset t-att-disabled="currentBill?.submission?.attempted || currentBill?.submission?.checking">
+                                                <ABMany2one
                                                     relation="'ab_store'"
                                                     value="storeValue()"
                                                     update="onStoreM2OUpdate"
@@ -161,6 +162,7 @@
                                                     canWrite="true"
                                                     string="'Store'"
                                             />
+                                            </fieldset>
                                             <span class="o_ab_sales_pos_inline_label ab_pos_store_code_label">Code</span>
                                             <span class="o_ab_sales_pos_inline_value ab_pos_store_code_value"
                                                   t-esc="currentBill.header.store_code or '-'"/>
@@ -207,7 +209,8 @@
                                              t-ref="customerM2O"
                                              t-on-input="onCustomerInput"
                                              t-on-pointerdown="onCustomerPointerDown">
-                                            <ABMany2one
+                                            <fieldset t-att-disabled="!branchBillEditable(currentBill)">
+                                                <ABMany2one
                                                     relation="'ab_customer'"
                                                     value="customerValue()"
                                                     update="onCustomerM2OUpdate"
@@ -220,10 +223,11 @@
                                                     canWrite="true"
                                                     string="'Customer'"
                                             />
+                                            </fieldset>
                                             <button class="btn btn-outline-primary btn-sm o_ab_sales_pos_customer_add ab_pos_customer_btn_add"
                                                     type="button"
                                                     t-on-pointerdown="captureCustomerInput"
-                                                    t-on-click="openCustomerLookup">
+                                                    t-att-disabled="!branchBillEditable(currentBill)" t-on-click="openCustomerLookup">
                                                 Add
                                             </button>
                                             <button class="btn btn-outline-secondary btn-sm ab_pos_customer_btn_invoices"
@@ -280,17 +284,22 @@
                                                             </button>
                                                         </div>
                             -->
+                            <div t-if="currentBill?.submission?.attempted" class="alert alert-warning py-1 mb-1" role="status">
+                                <t t-if="currentBill.submission.status === 'unknown'">Unknown</t>
+                                <t t-elif="currentBill.submission.status === 'rejected'">Rejected</t>
+                                <t t-esc="currentBill.submission.message"/>
+                            </div>
                             <button class="btn btn-success ab_pos_btn_submit_bill"
                                     type="button"
                                     t-on-click="submitCurrentBill"
-                                    t-att-disabled="state.submitting">
+                                    t-att-disabled="state.submitting || state.branchEditInFlight || currentBill?.submission?.checking">
                                 <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
                                 <span class="ab_pos_btn_submit_bill_text">
-                                    <t t-if="state.submitting">Submitting...</t>
+                                    <t t-if="state.submitting">Submitting...</t><t t-elif="currentBill?.submission?.attempted">Retry</t>
                                 </span>
                             </button>
                             <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button"
-                                    t-on-click="removeCurrentBill">
+                                    t-on-click="removeCurrentBill" t-att-disabled="currentBill?.submission?.attempted">
                                 <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
                             </button>
                             <button class="btn btn-outline-secondary ab_pos_btn_open_invoices"
@@ -424,12 +433,13 @@
                                                 </td>
                                                 <td class="ab_pos_line_cell_qty">
                                                     <input class="form-control form-control-sm ab_pos_line_qty_input"
-                                                           data-field="qty_str"
+                                                           t-att-disabled="!branchBillEditable(currentBill)" data-field="qty_str"
                                                            t-att-value="line.qty_str"
                                                            t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
                                                 </td>
                                                 <td class="ab_pos_line_cell_uom">
-                                                    <ABMany2one
+                                                    <fieldset t-att-disabled="!branchBillEditable(currentBill)">
+                                                <ABMany2one
                                                             relation="'ab_product_uom'"
                                                             value="lineUomValue(line)"
                                                             update="(value) => onLineUomUpdate(line, value)"
@@ -441,10 +451,11 @@
                                                             canWrite="true"
                                                             string="'UoM'"
                                                     />
+                                            </fieldset>
                                                 </td>
                                                 <td class="ab_pos_line_cell_sell_price">
                                                     <input class="form-control form-control-sm ab_pos_line_sell_price_input"
-                                                           inputmode="decimal"
+                                                           t-att-disabled="!branchBillEditable(currentBill)" inputmode="decimal"
                                                            t-att-value="line.sell_price_str ?? line.sell_price"
                                                            t-on-input="(ev) => updateLineSellPrice(line, ev.target.value)"/>
                                                 </td>
@@ -457,7 +468,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-outline-secondary o_ab_sales_pos_price_badge ab_pos_line_price_badge_btn"
                                                                         t-attf-class="#{p.is_default ? 'btn-outline-primary' : 'btn-outline-secondary'}"
-                                                                        t-on-click="() => onAvailablePriceSelect(line, p.price)">
+                                                                        t-att-disabled="!branchBillEditable(currentBill)" t-on-click="() => onAvailablePriceSelect(line, p.price)">
                                                                     <span class="o_ab_sales_pos_badge_price ab_pos_line_price_badge_value"
                                                                           t-esc="formatMoney2(p.price)"/>
                                                                     <span class="o_ab_sales_pos_badge_sep ab_pos_line_price_badge_sep">:</span>
@@ -476,7 +487,7 @@
                                                 <td class="text-end ab_pos_line_cell_actions">
                                                     <button class="btn btn-sm btn-outline-danger ab_pos_line_btn_remove"
                                                             type="button"
-                                                            t-on-click="() => removeLine(line)">
+                                                            t-att-disabled="!branchBillEditable(currentBill)" t-on-click="() => removeLine(line)">
                                                         <i class="fa fa-trash ab_pos_line_btn_remove_icon"
                                                            aria-hidden="true"/>
                                                     </button>

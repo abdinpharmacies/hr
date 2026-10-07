@@ -1,6 +1,6 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.3.6.1',
+    'version': '19.0.3.7.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,

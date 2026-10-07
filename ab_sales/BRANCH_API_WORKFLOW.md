@@ -1,9 +1,50 @@
 # Callcenter and Branch Connection Guide
 
-API version remains **1**. All eight methods require positive JSON integer `db_serial` and accept optional
+API version remains **1**. All API methods require positive JSON integer `db_serial` and accept optional
 keyword `store_eplus_serial`. Callcenter always sends the selected store serial. `store_serial` is rejected. URLs remain `/json/2/ab_branch_api/<method>`.
 The branch implementation lives in `custom-addons/ab_branch_api`; the callcenter
 adapter lives in `worktrees/callcenter/ab_sales`.
+
+## Protected sale submission (19.0.3.7.0)
+
+Upgrade branch `ab_branch_api` to 19.0.5.5.1 first, then callcenter `ab_sales`
+to 19.0.3.7.0. Restart the relevant workers and reload each POS browser. Use
+only targeted module upgrades. The provider must advertise
+`sales_submission_guard: 1`; stale POS clients must reload before sending sales.
+
+| Local status | Meaning | Operator action |
+|---|---|---|
+| PrePending | No protected submission has started | Edit and submit |
+| Unknown | Branch outcome cannot be confirmed | Retry the same bill; edits are locked |
+| Rejected | Branch confirmed a safe rejection | Correct and retry the same bill |
+| Pending | Branch accepted an invoice with a positive E-Plus serial | Continue the existing branch cashier workflow |
+| Saved | Branch confirms the saved invoice | Completed |
+
+Before outbound HTTP, callcenter commits Unknown together with its original
+request token, revision, exact encoded payload and pinned branch endpoint,
+database and store identity. Timeouts, malformed results and generic RPC errors
+retain Unknown. They do not authorize correction or another token. Retries of
+Unknown ignore browser changes and send the frozen request. Changed data after
+a confirmed rejection advances the revision while preserving both bill IDs and
+the token. Each RPC log includes its request revision and actual outcome.
+
+The local ORM guards header/line edits, copying, deletion, archive and identity
+changes after an attempt; sudo alone cannot bypass these guards. Rejected bills
+allow business corrections while keeping identity fixed. Existing ACLs, branch
+rules and optional employee session permissions still apply.
+
+The POS keeps unresolved bills in its cache, shows Retry and the diagnostic,
+locks business edits and protects delayed promotion/contract callbacks. Reload,
+focus and cache events query authoritative local/branch states; stale responses
+cannot regress a newer attempt. Only confirmed Pending/Saved clears the cached
+bill and reports success. Existing list/search status refresh can observe the
+same records and never repost them.
+
+Callcenter communicates only with branch Odoo through `ab_branch_api`. It has
+no new B-Connect dependency or SQL connection. Promotions and contracts keep
+their existing pricing logic; their modules are unchanged. Returns and customer
+creation keep the older recovery adapter described below; sales now use this
+guarded protocol instead of automatic replay after RPC errors.
 
 ## Provisioning
 
@@ -12,10 +53,10 @@ replica metadata, and server configuration through your deployment system. The
 addon creates no users, groups, bindings, or credentials. There is no branch
 preparation wizard or dedicated API role.
 
-Any active internal non-administrator user with the required business permissions
-may connect using their own key. User IDs and logins need not match across
-servers. Settings administrators, access administrators, the superuser, and
-portal/public users cannot call this API.
+Any active internal user with the required business permissions may connect
+using their own key, including Settings administrators, access administrators
+and an active superuser. User IDs and logins need not match across servers.
+Inactive and portal/public users cannot call this API.
 
 For provisioned native `res_users_apikeys` records, the owner must be the correct
 **local branch user**. Store a native PBKDF2-SHA512 key hash in `key` and the first
@@ -247,7 +288,7 @@ The provider requires exactly one active branch HR employee
 with an active cost center and a positive cost center E-Plus serial. It checks
 that mapping before an invoice reservation or external invoice query. The
 callcenter Administrator is separate from the native API-key owner, which must
-remain an eligible internal non-administrator branch user.
+be an active internal branch user; branch administrators are also eligible.
 
 To test, submit a new draft without an employee and verify local rejection.
 Select an employee whose branch mapping is missing and verify a branch mapping
@@ -373,7 +414,7 @@ on callcenter. This change does not make new branch operations available offline
 
 ### Automatic submission recovery (19.0.3.4.0)
 
-If a sale/return API response fails, callcenter invokes `reconcile_operation`
+For return API response failures, callcenter invokes `reconcile_operation`
 using the original database/store identity and token. When the branch confirms
 completion, callcenter repeats the original API method to obtain the stored
 result with payload-hash validation; it does not create another bill. A proven

@@ -220,6 +220,10 @@ class AbSalesBranchRpcConfig(models.Model):
         writes = ('submit_sale', 'submit_return', 'create_customer')
         status_values = {'db_serial': self.db_serial, 'store_eplus_serial': selected_serial,
                          'token': values.get('token')}
+        if method == 'submit_sale':
+            result = self._json_call(model_name, method, values)
+            self._validate_identity(result)
+            return result
         if method == 'create_customer':
             status = self._json_call('ab_branch_api', 'get_operation_status', status_values)
             self._validate_identity(status)

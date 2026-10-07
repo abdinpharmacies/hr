@@ -65,7 +65,8 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _sale_payload(self, payload):
-        ignored = {'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
+        ignored = {'branch_submission_payload', 'branch_submission_started', 'branch_request_revision',
+                   'branch_header_id', 'push_state', 'push_message', 'eplus_serial', 'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
                    'pos_hr_shift_id', 'pos_hr_session_id', 'pos_hr_service_user_id',
                    # Contract POS display values; branch business logic computes totals.
                    'contract_name', 'company_pay', 'cust_pay'}

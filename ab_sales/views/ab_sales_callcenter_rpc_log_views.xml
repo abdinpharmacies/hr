@@ -51,6 +51,28 @@
             </field>
         </record>
 
+        <record id="guarded_rpc_log_list" model="ir.ui.view">
+            <field name="name">ab_sales_callcenter_rpc_log.guarded_list</field>
+            <field name="model">ab_sales_callcenter_rpc_log</field>
+            <field name="inherit_id" ref="ab_sales_callcenter_rpc_log_view_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payload_token']" position="after">
+                    <field name="request_revision" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="guarded_rpc_log_form" model="ir.ui.view">
+            <field name="name">ab_sales_callcenter_rpc_log.guarded_form</field>
+            <field name="model">ab_sales_callcenter_rpc_log</field>
+            <field name="inherit_id" ref="ab_sales_callcenter_rpc_log_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payload_token']" position="after">
+                    <field name="request_revision" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
         <record id="ab_sales_callcenter_rpc_log_view_search" model="ir.ui.view">
             <field name="name">ab_sales_callcenter_rpc_log.search</field>
             <field name="model">ab_sales_callcenter_rpc_log</field>

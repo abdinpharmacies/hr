@@ -26,7 +26,7 @@
                 <field name="branch_submission_started" invisible="1"/>
                 <field name="branch_header_id" invisible="1"/>
                 <button name="action_retry_branch_submission" type="object" string="Retry Submission"
-                        class="btn-primary" invisible="not local_bill_storage or status != 'prepending' or not pos_client_token"/>
+                        class="btn-primary" invisible="not local_bill_storage or status not in ('prepending', 'unknown', 'rejected') or not pos_client_token"/>
             </xpath>
             <xpath expr="//header/span[contains(@class, 'bg-success')]" position="attributes">
                 <attribute name="invisible" add="local_bill_storage" separator=" or "/>
@@ -35,7 +35,46 @@
                 <attribute name="invisible" add="local_bill_storage" separator=" or "/>
             </xpath>
             <xpath expr="//button[@name='action_open_add_products']" position="attributes">
-                <attribute name="invisible" add="branch_submission_started" separator=" or "/>
+                <attribute name="invisible" add="branch_submission_started and status != 'rejected'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='bill_customer_address'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='bill_customer_name'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='bill_customer_phone'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='customer_id'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='description'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_address'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='new_customer_address'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='new_customer_name'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='new_customer_phone'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='store_id'][@readonly]" position="attributes">
+                <attribute name="readonly" add="status == 'unknown'" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='store_id'][@readonly]" position="attributes">
+                <attribute name="readonly" add="branch_submission_started" separator=" or "/>
+            </xpath>
+            <xpath expr="//field[@name='status']" position="attributes">
+                <attribute name="readonly">1</attribute>
             </xpath>
             <xpath expr="//field[@name='description']" position="after">
                 <field name="push_state" readonly="1" invisible="push_state == 'none'"/>

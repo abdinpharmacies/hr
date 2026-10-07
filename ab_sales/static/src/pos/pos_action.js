@@ -1155,7 +1155,14 @@ class AbSalesPosAction extends Component {
             useExternalListener(window.visualViewport, "resize", () => this._syncWindowToViewport());
         }
 
+        useExternalListener(window, "focus", () => {
+            if (!this.state.submitting) this.refreshBranchSubmissions();
+        });
+        useExternalListener(window, "storage", (ev) => {
+            if (ev.key?.startsWith(CACHE_PREFIX) && !this.state.submitting) this.refreshBranchSubmissions();
+        });
         onWillStart(async () => {
+            this._installBranchMutationGuards();
             this.state.branchApiStatus = await user.hasGroup("ab_sales.group_call_center");
             await this.loadStores();
             await this.loadPrinterSettings();
@@ -1339,6 +1346,7 @@ class AbSalesPosAction extends Component {
             ? serverSelectedId
             : (this.state.bills[0]?.id || null);
         this._writeLocalCache();
+        await this.refreshBranchSubmissions();
 
         if (serverLoaded) {
             const mergedPayload = this._cachePayloadSnapshot().payloadText;
@@ -1617,6 +1625,7 @@ class AbSalesPosAction extends Component {
     }
 
     openCustomerLookup() {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -1635,6 +1644,7 @@ class AbSalesPosAction extends Component {
     }
 
     async applyCustomerLookup(customer) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         if (!customer || !customer.id) {
             return;
         }
@@ -1750,6 +1760,7 @@ class AbSalesPosAction extends Component {
     }
 
     async copyLastAddress() {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const text = this.state.customerInsights?.customer?.last_address || "";
         if (!text) {
             this.notification.add("No address to copy.", {type: "warning"});
@@ -1791,6 +1802,7 @@ class AbSalesPosAction extends Component {
     }
 
     addLastInvoiceItems(invoice) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const lines = invoice?.lines || [];
         if (!lines.length) {
             this.notification.add("No items in selected invoice.", {type: "warning"});
@@ -2030,6 +2042,8 @@ class AbSalesPosAction extends Component {
     }
 
     removeBill(billId) {
+        const target = this.state.bills.find(b => b.id === billId);
+        if (target?.submission?.attempted && !this._branchCompleting) return;
         this.state.bills = this.state.bills.filter((b) => b.id !== billId);
         if (this.state.selectedId === billId) {
             this.state.selectedId = this.state.bills.length ? this.state.bills[0].id : null;
@@ -2049,6 +2063,7 @@ class AbSalesPosAction extends Component {
     }
 
     updateHeaderField(field, value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2061,7 +2076,7 @@ class AbSalesPosAction extends Component {
     }
 
     _openSubmitDialog(bill) {
-        if (!bill) {
+        if (!this.branchBillEditable(bill)) {
             return;
         }
         const defaultEmployee = this._submitDialogDefaultEmployee(bill);
@@ -2071,6 +2086,7 @@ class AbSalesPosAction extends Component {
             preferredBillAddress: this.state.customerInsights?.customer?.last_address || "",
             defaultEmployee,
             onSubmit: async (payload) => {
+                if (!this.branchBillEditable(bill)) return;
                 await this._applySubmitDialog(bill, payload);
                 await this._submitBillInternal(bill);
             },
@@ -2105,6 +2121,7 @@ class AbSalesPosAction extends Component {
     }
 
     _openDuplicateTokenDialog(bill, payload) {
+        if (bill?.submission?.attempted) return;
         if (!bill) {
             return;
         }
@@ -2114,6 +2131,7 @@ class AbSalesPosAction extends Component {
             existing,
             message,
             onCreateNewToken: async () => {
+                if (bill?.submission?.attempted) return;
                 const storeId = bill.header?.store_id || existing?.store?.id;
                 bill.header.pos_client_token = generatePosToken(session.user_id, storeId);
                 bill.updated_at = new Date().toISOString();
@@ -2131,6 +2149,7 @@ class AbSalesPosAction extends Component {
     }
 
     _applySubmitDialog(bill, payload) {
+        if (!this.branchBillEditable(bill)) return;
         if (!bill) {
             return;
         }
@@ -2265,6 +2284,7 @@ class AbSalesPosAction extends Component {
     }
 
     async onLineUomUpdate(line, value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill || !line) {
             return;
@@ -2284,8 +2304,10 @@ class AbSalesPosAction extends Component {
         }
         if (line.uom_id) {
             const selectedFactor = await this._getUomFactor(line.uom_id);
+            if (!this.branchBillEditable(bill)) return;
             const defaultUomId = line.default_uom_id || line.uom_id;
             const defaultFactor = defaultUomId ? await this._getUomFactor(defaultUomId) : 0;
+            if (!this.branchBillEditable(bill)) return;
             if (defaultFactor > 0) {
                 line.default_uom_factor = defaultFactor;
             }
@@ -2314,6 +2336,7 @@ class AbSalesPosAction extends Component {
     }
 
     async onStoreM2OUpdate(value) {
+        if (this.currentBill?.submission?.attempted) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2343,6 +2366,7 @@ class AbSalesPosAction extends Component {
     }
 
     async onCustomerM2OUpdate(value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2412,6 +2436,7 @@ class AbSalesPosAction extends Component {
     }
 
     setCustomerMode(mode) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2482,6 +2507,7 @@ class AbSalesPosAction extends Component {
     }
 
     selectCustomer(cust) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill || !cust) {
             return;
@@ -2863,6 +2889,7 @@ class AbSalesPosAction extends Component {
     }
 
     addProduct(product, qty = 1) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill || !product?.id) {
             return null;
@@ -3227,6 +3254,7 @@ class AbSalesPosAction extends Component {
     }
 
     _applyBarcodeResults(barcode, products) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         this.state.productQuery = barcode || "";
         this.state.productResults = Array.isArray(products) ? products : [];
         this.state.selectionIndex = -1;
@@ -3512,6 +3540,7 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineQty(line, value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         line.qty_str = value;
         this._recomputeLine(line);
         this._recomputeBill(this.currentBill);
@@ -3519,6 +3548,7 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineSellPrice(line, value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         line.sell_price_str = value;
         const price = parseFloat(value || 0) || 0;
         line.sell_price = price;
@@ -3531,11 +3561,13 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineTargetPrice(line, value) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         line.target_sell_price = parseFloat(value || 0) || 0;
         this._recomputeBill(this.currentBill);
     }
 
     onAvailablePriceSelect(line, priceValue) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const price = parseFloat(priceValue || "");
         if (!Number.isFinite(price)) {
             return;
@@ -3550,6 +3582,7 @@ class AbSalesPosAction extends Component {
     }
 
     removeLine(line) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -3565,6 +3598,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
+        if (!this.branchBillEditable(target)) return;
         if (!target) {
             return;
         }
@@ -3610,6 +3644,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
+        if (!this.branchBillEditable(target)) return;
         if (!target) {
             return;
         }
@@ -3633,7 +3668,7 @@ class AbSalesPosAction extends Component {
                 applied_program_id: target.promo.selected_id || false,
                 manual_clear: !!target.promo.manual_clear,
             });
-            if (requestId !== this._promoRequestId) {
+            if (!this.branchBillEditable(target) || requestId !== this._promoRequestId) {
                 return;
             }
             target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
@@ -3673,6 +3708,7 @@ class AbSalesPosAction extends Component {
     }
 
     selectPromotion(program) {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill || !program) {
             return;
@@ -3699,6 +3735,7 @@ class AbSalesPosAction extends Component {
     }
 
     clearPromotion() {
+        if (!this.branchBillEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -3731,6 +3768,7 @@ class AbSalesPosAction extends Component {
 
     async loadLineDetails(line, options = {}) {
         const bill = this.currentBill;
+        if (!this.branchBillEditable(bill)) return;
         const storeId = bill?.header?.store_id;
         if (!storeId || !line?.product_id) {
             return;
@@ -3741,6 +3779,7 @@ class AbSalesPosAction extends Component {
                 store_id: storeId,
                 product_id: line.product_id,
             });
+            if (!this.branchBillEditable(bill)) return;
             line.balance = details.balance || 0;
             const totalBalance = Number.isFinite(details?.total_balance)
                 ? details.total_balance
@@ -3831,6 +3870,7 @@ class AbSalesPosAction extends Component {
     }
 
     _recomputeBill(bill, {persist = true} = {}) {
+        if (!this.branchBillEditable(bill)) return;
         if (!bill) {
             return;
         }
@@ -3928,12 +3968,131 @@ class AbSalesPosAction extends Component {
         });
     }
 
+    _installBranchMutationGuards() {
+        // Optional pricing/employee modules patch this action. Wrap the final
+        // instance methods after every setup has run, within ab_sales only.
+        const billMethods = ["_recomputeBill", "schedulePromoRefresh", "refreshPromotions",
+            "_resetPromotions", "_scheduleContractTotals", "_refreshContractTotals"];
+        for (const name of billMethods) {
+            const original = this[name];
+            if (!original) continue;
+            this[name] = (bill, ...args) => {
+                const target = bill || this.currentBill;
+                if (!this.branchBillEditable(target)) return;
+                return original.call(this, this._protectBranchCallbackBill(target), ...args);
+            };
+        }
+        for (const name of ["onContractM2OUpdate", "onTotalInvoiceDiscountInput", "onStoreM2OUpdate"]) {
+            const original = this[name];
+            if (!original) continue;
+            this[name] = async (...args) => {
+                if (!this.branchBillEditable(this.currentBill) ||
+                    (name === "onStoreM2OUpdate" && this.currentBill?.submission?.attempted)) return;
+                this.state.branchEditInFlight = (this.state.branchEditInFlight || 0) + 1;
+                try { return await original.apply(this, args); }
+                finally { this.state.branchEditInFlight -= 1; }
+            };
+        }
+    }
+
+    _protectBranchCallbackBill(bill) {
+        const version = bill.submission?.version || 0;
+        const proxies = new WeakMap();
+        const protect = value => {
+            if (!value || typeof value !== "object") return value;
+            if (proxies.has(value)) return proxies.get(value);
+            const proxy = new Proxy(value, {
+                get: (target, key) => protect(Reflect.get(target, key)),
+                set: (target, key, next) => {
+                    if (this.branchBillEditable(bill) && (bill.submission?.version || 0) === version) {
+                        Reflect.set(target, key, next);
+                    }
+                    return true;
+                },
+                deleteProperty: (target, key) => {
+                    if (this.branchBillEditable(bill) && (bill.submission?.version || 0) === version) {
+                        Reflect.deleteProperty(target, key);
+                    }
+                    return true;
+                },
+            });
+            proxies.set(value, proxy);
+            return proxy;
+        };
+        return protect(bill);
+    }
+
+    branchBillEditable(bill) {
+        return !!bill && !bill.submission?.checking &&
+            !["unknown", "pending", "saved"].includes(bill.submission?.status);
+    }
+
+    applyBranchSubmission(bill, result) {
+        if (result?.token !== bill.header?.pos_client_token || result?.submission_guard_version !== 1 ||
+            !["prepending", "unknown", "rejected", "pending", "saved"].includes(result.status) ||
+            !Number.isInteger(result.request_revision) || result.request_revision < 1 ||
+            !Number.isInteger(result.local_header_id) || result.local_header_id <= 0 ||
+            !Number.isInteger(result.branch_header_id) || result.branch_header_id < 0 ||
+            !Number.isInteger(result.eplus_serial) || result.eplus_serial < 0 ||
+            (["pending", "saved"].includes(result.status) && (!result.branch_header_id || !result.eplus_serial)) ||
+            (bill.submission?.revision && result.request_revision < bill.submission.revision) ||
+            (["pending", "saved"].includes(bill.submission?.status) && !["pending", "saved"].includes(result.status)) ||
+            (bill.submission?.status === "saved" && result.status !== "saved")) return false;
+        bill.submission = {...bill.submission, attempted: !!result.local_header_id,
+            status: result.status, message: result.message || "", checking: false,
+            local_header_id: result.local_header_id, revision: result.request_revision,
+            branch_header_id: result.branch_header_id};
+        this.persistCache();
+        return true;
+    }
+
+    async refreshBranchSubmissions() {
+        const snapshots = (this.state.bills || []).map(bill => ({bill, version: bill.submission?.version || 0}));
+        const foundTokens = [];
+        const seq = this._branchReadSeq = (this._branchReadSeq || 0) + 1;
+        for (const {bill} of snapshots) bill.submission = {...bill.submission, checking: true};
+        try {
+            for (let offset = 0; offset < snapshots.length; offset += 200) {
+                const batch = snapshots.slice(offset, offset + 200);
+                const results = await this.orm.call("ab_sales_pos_api", "pos_submission_states", [], {
+                    tokens: batch.map(({bill}) => bill.header.pos_client_token),
+                    pos_hr_session_token: this._posDraftSessionToken(),
+                });
+                if (seq !== this._branchReadSeq) return;
+                if (!Array.isArray(results)) throw new Error("Invalid submission states");
+                for (const result of results) {
+                    foundTokens.push(result.token);
+                    const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
+                    if (snap && (snap.bill.submission?.version || 0) === snap.version) this.applyBranchSubmission(snap.bill, result);
+                }
+            }
+            return foundTokens;
+        } catch { /* Retain the last known state and original token when offline. */ }
+        finally {
+            if (seq === this._branchReadSeq) {
+                for (const {bill} of snapshots) {
+                    bill.submission = {...bill.submission, checking: false};
+                    if (["pending", "saved"].includes(bill.submission?.status)) {
+                        this._branchCompleting = true;
+                        try { this.removeBill(bill.id); } finally { this._branchCompleting = false; }
+                    }
+                }
+                this.persistCache();
+            }
+        }
+    }
+
     async submitCurrentBill() {
         const bill = this.currentBill;
-        if (!bill || this.state.submitting) {
+        if (!bill || this.state.submitting || this.state.branchEditInFlight) {
             return;
         }
         if (document.body.classList.contains("modal-open")) {
+            return;
+        }
+        if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
+        if (bill.submission?.status === "unknown") {
+            await this._submitBillInternal(bill);
             return;
         }
         this._openSubmitDialog(bill);
@@ -3943,11 +4102,14 @@ class AbSalesPosAction extends Component {
         if (!bill) {
             return;
         }
-        if (this.state.submitting) {
+        if (this.state.submitting || this.state.branchEditInFlight) {
             return;
         }
         this.state.submitting = true;
         const storeId = bill.header?.store_id;
+        bill.submission = {...bill.submission, status: "unknown", attempted: true,
+            version: (bill.submission?.version || 0) + 1, message: _t("Checking branch submission...")};
+        this.persistCache();
         try {
             const header = this._buildSubmitHeader(bill);
             const lines = bill.lines.map((line) => ({
@@ -3962,49 +4124,33 @@ class AbSalesPosAction extends Component {
                 lines,
                 applied_program_id: bill.promo?.applied_id || false,
                 on_existing_token: "warn",
+                submission_guard_version: 1,
             });
-            if (result?.duplicate_token) {
-                this._openDuplicateTokenDialog(bill, result);
+            if (result?.submission_guard_version === 1) {
+                if (!this.applyBranchSubmission(bill, result)) {
+                    throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
+                }
+                if (!["pending", "saved"].includes(result.status)) {
+                    this.notification.add(result.message || _t("Submission needs attention. Retry the original bill."), {type: "warning"});
+                    return;
+                }
+                this.notification.add(_t("Submitted to branch invoice ID %(id)s", {id: result.branch_header_id}), {type: "success"});
+                this._branchCompleting = true;
+                try { this.removeBill(bill.id); } finally { this._branchCompleting = false; }
+                if (storeId) this.createNewBill(storeId);
                 return;
             }
-            if (result?.type === "ir.actions.act_window") {
-                const headerId = result.pos_header_id;
-                if (!result.views) {
-                    const mode = (result.view_mode || "form").split(",")[0];
-                    result.views = [[result.view_id || false, mode]];
-                }
-                this.action.doAction(result, {
-                    onClose: async () => {
-                        if (!headerId) {
-                            return;
-                        }
-                        const rows = await this.orm.read("ab_sales_header", [headerId], ["status"]);
-                        const status = rows?.[0]?.status;
-                        if (status && status !== "prepending") {
-                            this.removeBill(bill.id);
-                            if (storeId) {
-                                this.createNewBill(storeId);
-                                if (this.state.productResults && this.state.productResults.length) {
-                                    this.schedulePosBalanceRefresh(this.state.productResults, storeId);
-                                }
-                            }
-                        }
-                    },
-                });
-                return;
-            }
-            const successMessage = result?.remote_callcenter
-                ? _t("Submitted to branch invoice ID %(id)s", {id: result?.branch_header_id || ""})
-                : `Submitted invoice #${result?.eplus_serial || result?.id || ""}`;
-            this.notification.add(successMessage, {type: "success"});
-            this.removeBill(bill.id);
-            if (storeId) {
-                this.createNewBill(storeId);
-                if (this.state.productResults && this.state.productResults.length) {
-                    this.schedulePosBalanceRefresh(this.state.productResults, storeId);
-                }
-            }
+            throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
         } catch (err) {
+            const foundTokens = await this.refreshBranchSubmissions();
+            const failureName = err?.data?.name || err?.response?.data?.name || "";
+            if (/odoo.exceptions.(UserError|ValidationError)/.test(failureName) &&
+                Array.isArray(foundTokens) && !foundTokens.includes(bill.header.pos_client_token)) {
+                // The local RPC completed with a validation error and an
+                // authoritative local read confirms that it stored no bill.
+                bill.submission = {...bill.submission, status: "prepending", attempted: false};
+                this.persistCache();
+            }
             const message = this._getRpcErrorMessage(err);
             const data = err?.data || err?.response?.data || {};
             const errorName = data?.name || "";

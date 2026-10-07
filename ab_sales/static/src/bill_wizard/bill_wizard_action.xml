@@ -98,7 +98,7 @@
                         <label class="form-label mb-1">Status</label>
                         <select class="form-select" t-model="state.filters.status">
                             <option value="">All statuses</option><option value="prepending">Draft</option>
-                            <option value="pending">Pending</option><option value="saved">Saved</option>
+                            <option value="unknown">Unknown</option><option value="rejected">Rejected</option><option value="pending">Pending</option><option value="saved">Saved</option>
                         </select>
                     </div>
                     <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_product"
@@ -190,7 +190,7 @@
                                             </span>
                                             <span class="badge"
                                                   t-att-class="bill.status === 'saved' ? 'text-bg-success' : 'text-bg-info'"
-                                                  t-esc="bill.status"/>
+                                                  t-esc="billStatusLabel(bill.status)"/>
                                         </div>
                                     </div>
                                     <div class="o_ab_sales_bill_wizard_list_row o_ab_sales_bill_wizard_list_row_muted">
@@ -251,7 +251,7 @@
                                             <t t-esc="state.details.document_type === 'return' ? 'Return' : 'Sales'"/>
                                         </span>
                                     </span>
-                                    <span><i class="fa fa-flag" aria-hidden="true"/> <t t-esc="state.details.status || ''"/></span>
+                                    <span><i class="fa fa-flag" aria-hidden="true"/> <t t-esc="billStatusLabel(state.details.status)"/></span>
                                 </div>
                                 <div class="o_ab_sales_bill_wizard_bill_meta_line">
                                     <span><i class="fa fa-phone" aria-hidden="true"/> <t t-esc="state.details.customer_phone || '-'"/></span>

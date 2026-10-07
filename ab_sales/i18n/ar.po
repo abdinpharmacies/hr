@@ -1867,3 +1867,95 @@ msgstr ""
 #: model:ir.actions.server,name:ab_sales.ir_cron_sync_sales_status_from_store_ir_actions_server
 msgid "Sales: Synchronize Branch Sale Statuses"
 msgstr "المبيعات: مزامنة حالات مبيعات الفروع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__rejected
+msgid "Rejected"
+msgstr "مرفوضة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__unknown
+msgid "Unknown"
+msgstr "غير مؤكدة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__request_revision
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_request_revision
+msgid "Request Revision"
+msgstr "مراجعة الطلب"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Callcenter bills must start in PrePending status."
+msgstr "يجب أن تبدأ فواتير مركز الاتصال بالحالة الأولية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "The submitted bill identity cannot be changed."
+msgstr "لا يمكن تغيير هوية الفاتورة التي تم إرسالها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid ""
+"This bill is locked until its branch submission is resolved. Use Retry."
+msgstr ""
+"هذه الفاتورة مقفلة حتى تتضح نتيجة إرسالها إلى الفرع. استخدم إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "This bill is being submitted. Retry shortly using the same bill."
+msgstr ""
+"جارٍ إرسال هذه الفاتورة. أعد المحاولة بعد قليل باستخدام الفاتورة نفسها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Reload the POS to use protected branch submission."
+msgstr "أعد تحميل شاشة البيع لاستخدام إرسال الفواتير المحمي إلى الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Upgrade the branch API before submitting this bill."
+msgstr "قم بترقية واجهة اتصال الفرع قبل إرسال هذه الفاتورة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Provide at most 200 request tokens."
+msgstr "حدد ما لا يزيد عن ٢٠٠ رمز طلب."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Employee role does not allow sales."
+msgstr "صلاحيات الموظف لا تسمح بالبيع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Checking branch submission..."
+msgstr "جارٍ التحقق من إرسال الفاتورة إلى الفرع..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submission needs attention. Retry the original bill."
+msgstr ""
+"تحتاج نتيجة الإرسال إلى مراجعة. أعد المحاولة باستخدام الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "The branch submission response could not be confirmed. Use Retry."
+msgstr "تعذر تأكيد نتيجة الإرسال إلى الفرع. استخدم إعادة المحاولة."

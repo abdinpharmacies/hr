@@ -74,6 +74,7 @@ if (PosAction) {
         },
 
         updateLineUnavailableReason(line, value) {
+            if (!this.branchBillEditable(this.currentBill)) return;
             if (!line) {
                 return;
             }
@@ -85,6 +86,7 @@ if (PosAction) {
         },
 
         updateLineUnavailableReasonOther(line, value) {
+            if (!this.branchBillEditable(this.currentBill)) return;
             if (!line) {
                 return;
             }

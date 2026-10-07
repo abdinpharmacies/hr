@@ -11,7 +11,7 @@ class LocalBills(models.TransientModel):
                            date_start=False, date_end=False, eplus_serial='', page=1, per_page=20,
                            store_id=False, document_type='', status='', search_token=False,
                            refresh_status=False, **kwargs):
-        if document_type not in ('', 'sale', 'return') or status not in ('', 'prepending', 'pending', 'saved'):
+        if document_type not in ('', 'sale', 'return') or status not in ('', 'prepending', 'pending', 'saved', 'unknown', 'rejected'):
             raise UserError(_('Invalid bill filter.'))
         if query and not any((product_query, product_ids, customer_query, eplus_serial)):
             if str(query).isdigit():
