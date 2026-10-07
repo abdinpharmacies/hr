@@ -1,5 +1,33 @@
 Current changes before commit:
 
+- Reenable eligible working employees even when their allowed POS store list is empty; preserve existing configured stores.
+- Continue assigning exactly the department store when assigning a missing role. Missing department stores, inactive employees, terminated employment and archived roles still block login.
+- Empty allowed stores retain the existing POS behavior: access to sales-enabled stores available to the service user.
+- Remove the unused local allowed-store variable from synchronization.
+
+Files changed:
+
+- ab_employee_access_sales/changelog.d
+- ab_employee_access_sales/models/ab_employee_access.py
+
+Validation:
+
+- Targeted ab_employee_access_sales upgrade passed in isolated codex_employee_sales_recheck_20261006 using ports 5069/5072 with cron workers disabled.
+- Revised regression tests passed for empty-store reenabling, unchanged configured stores, department-scoped new assignments, missing department stores, archived/nonworking employees, session revocation, PIN preservation, savepoints, idempotency and 500-employee batches.
+- Tests and results retained outside the runtime addon in /tmp/employee-sales-empty-stores-validation/; all business fixtures rolled back.
+- No user-facing strings changed; existing Arabic translation entries remain applicable.
+
+Rollout:
+
+- Load the updated Python code in the deployed Odoo process, then run Synchronize Employee Sales Access or wait for its next scheduled run.
+- No profile backfill is required. Existing empty store lists are preserved, and otherwise eligible profiles are reenabled by the cron.
+
+commit 4380e2b5bf8821f8f007424dc05fb789d6f7e061
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Wed Oct 7 09:48:02 2026 +0300
+
+    ab_employee_access_sales/FEAT(#20674): Automatic Employee Sales Role Assignment
+
 - Add manager-only Job Role Mappings under POS HR Configuration, with one active job-to-role selection per job and restricted reference deletion.
 - Add administrator-controlled, initially inactive four-hour employee sales access synchronization. Preserve cron activation, PIN arguments and scheduling on upgrade.
 - Assign only missing roles, restrict new assignments to the department store, and preserve existing roles, PINs, custom permissions and configured stores.
