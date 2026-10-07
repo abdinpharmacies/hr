@@ -1,50 +1,15 @@
 # -*- coding: utf-8 -*-
 import logging
-import math
 from datetime import datetime, time, timedelta
 
 from odoo import api, fields, models, _
 
-from .ab_sales_header import PARAM_STR
 
 _logger = logging.getLogger(__name__)
-
-SALES_PER_DAY_QTY_EXPR = """
-    CASE sd.itm_unit
-        WHEN 1 THEN CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
-        WHEN 2 THEN
-            CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
-            / NULLIF(CAST(ic.itm_unit1_unit2 AS DECIMAL(18, 4)), 0)
-        WHEN 3 THEN
-            CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
-            / NULLIF(CAST(ic.itm_unit1_unit3 AS DECIMAL(18, 4)), 0)
-        ELSE CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
-    END
-"""
-
-SALES_PER_DAY_SQL = """
-    SELECT
-        sh.sto_id AS store_eplus_serial,
-        sd.itm_id AS product_eplus_serial,
-        SUM(%s) AS sales_qty
-    FROM r_sales_trans_d sd WITH (NOLOCK)
-    INNER JOIN r_sales_trans_h sh WITH (NOLOCK)
-        ON sd.sth_id = sh.sth_id
-        AND sd.std_stock_id = sh.sto_id
-    INNER JOIN item_catalog ic WITH (NOLOCK)
-        ON ic.itm_id = sd.itm_id
-    WHERE sd.sec_insert_date >= ?
-      AND sd.sec_insert_date < ?
-      AND sh.sto_id IN ({store_placeholders})
-    GROUP BY
-        sh.sto_id,
-        sd.itm_id
-""" % SALES_PER_DAY_QTY_EXPR
 
 
 class AbSalesPerDay(models.Model):
     _name = "ab_sales_per_day"
-    _inherit = ["ab_eplus_connect"]
     _description = "Sales Per Store/Product/Day"
     _order = "sale_date desc, store_id, product_eplus_serial"
 
@@ -248,103 +213,6 @@ class AbSalesPerDay(models.Model):
         self.env.cr.commit()
         return state
 
-    @api.model
-    def _fetch_remote_sales_day(self, sale_date):
-        sale_date = fields.Date.to_date(sale_date)
-        day_start = datetime.combine(sale_date, time.min)
-        day_end = day_start + timedelta(days=1)
-
-        stores = self.env["ab_store"].sudo().search([("eplus_serial", "!=", False)])
-        store_by_sql_id = {}
-        for store in stores:
-            store_sql_id = self._safe_int(store.eplus_serial)
-            if store_sql_id:
-                store_by_sql_id[store_sql_id] = store
-        store_sql_ids = sorted(store_by_sql_id)
-        if not store_sql_ids:
-            return []
-
-        sales_by_key = {}
-        with self.connect_eplus(param_str=PARAM_STR, charset="CP1256") as conn:
-            with conn.cursor() as cursor:
-                for store_chunk in self._chunks(store_sql_ids, 1900):
-                    placeholders = ", ".join([PARAM_STR] * len(store_chunk))
-                    sql = SALES_PER_DAY_SQL.format(store_placeholders=placeholders)
-                    cursor.execute(sql, (day_start, day_end, *store_chunk))
-                    for store_sql_id, product_serial, sales_qty in cursor.fetchall() or []:
-                        store_sql_id = self._safe_int(store_sql_id)
-                        product_serial = self._safe_int(product_serial)
-                        if not store_sql_id or not product_serial:
-                            continue
-                        store = store_by_sql_id.get(store_sql_id)
-                        if not store:
-                            continue
-                        qty = float(sales_qty or 0.0)
-                        if math.isclose(qty, 0.0, abs_tol=0.0001):
-                            continue
-                        key = (store.id, product_serial)
-                        sales_by_key[key] = sales_by_key.get(key, 0.0) + qty
-
-        product_serials = sorted({product_serial for _, product_serial in sales_by_key})
-        products_by_serial = self._products_by_eplus_serial(product_serials)
-        return [
-            {
-                "store_id": store_id,
-                "product_eplus_serial": product_serial,
-                "product_id": products_by_serial.get(product_serial),
-                "sale_date": sale_date,
-                "sales_qty": qty,
-            }
-            for (store_id, product_serial), qty in sales_by_key.items()
-        ]
-
-    @api.model
-    def _replace_sales_day(self, sale_date, rows):
-        sale_date = fields.Date.to_date(sale_date)
-        sync_at = fields.Datetime.now()
-        user_id = self.env.uid
-
-        self.env.cr.execute(
-            "DELETE FROM ab_sales_per_day WHERE sale_date = %s",
-            [sale_date],
-        )
-
-        insert_rows = [
-            (
-                row["store_id"],
-                row["product_eplus_serial"],
-                row.get("product_id") or None,
-                sale_date,
-                row["sales_qty"],
-                sync_at,
-                user_id,
-                sync_at,
-                user_id,
-                sync_at,
-            )
-            for row in rows or []
-            if row.get("store_id") and row.get("product_eplus_serial")
-        ]
-        if insert_rows:
-            self.env.cr.executemany(
-                """
-                INSERT INTO ab_sales_per_day (
-                    store_id,
-                    product_eplus_serial,
-                    product_id,
-                    sale_date,
-                    sales_qty,
-                    sync_at,
-                    create_uid,
-                    create_date,
-                    write_uid,
-                    write_date
-                )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """,
-                insert_rows,
-            )
-        return len(insert_rows)
 
     @api.model
     def _products_by_eplus_serial(self, product_serials):

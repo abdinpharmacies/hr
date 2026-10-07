@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from odoo.tests.common import TransactionCase
 
 
@@ -126,19 +128,27 @@ class TestInventoryTotalBalance(TransactionCase):
         self.assertEqual(row["balance"], 5.0)
         self.assertEqual(row["pos_balance"], 2.0)
 
-    def test_remote_balance_store_pairs_exclude_default_store(self):
-        self.store_a.has_working_balance = True
-        self.store_b.has_working_balance = True
-        pairs = self.env["ab_sales_inventory"].sudo()._get_working_balance_store_pairs(
-            exclude_default=True,
-            default_store=self.store_a,
-        )
-        pair_store_ids = {store.id for store, _serial in pairs}
+    def test_api_branch_stores_respect_allowed_store_scope(self):
+        self.store_a.allow_sale = True
+        self.store_b.allow_sale = True
+        Config = self.env["ab_sales_branch_rpc_config"].sudo()
+        for index, store in enumerate((self.store_a, self.store_b), start=1):
+            Config.create({
+                "store_id": store.id,
+                "db_serial": 8000 + index,
+                "rpc_url": "https://inventory-%s.example.test" % index,
+                "rpc_db": "inventory_%s" % index,
+                "administrator_id": self.env.ref("base.user_admin").id,
+            })
 
-        self.assertNotIn(self.store_a.id, pair_store_ids)
-        self.assertIn(self.store_b.id, pair_store_ids)
+        Client = self.env["ab_sales_branch_client"]
+        with patch.object(type(self.env["ab_sales_header"]), "_get_allowed_store_ids", return_value=[self.store_b.id]):
+            stores = Client._stores()
 
-    def test_apply_store_balance_rows_updates_only_target_store_rows(self):
+        self.assertNotIn(self.store_a, stores)
+        self.assertIn(self.store_b, stores)
+
+    def test_apply_api_balances_updates_only_target_store_rows(self):
         stale_line = self.env["ab_sales_inventory"].sudo().create({
             "product_eplus_serial": self.product.eplus_serial,
             "product_id": self.product.id,
@@ -154,13 +164,25 @@ class TestInventoryTotalBalance(TransactionCase):
             "balance": 3.0,
         })
 
-        stats = self.env["ab_sales_inventory"].sudo()._apply_store_balance_rows(
+        self.store_a.allow_sale = True
+        self.env["ab_sales_branch_rpc_config"].sudo().create({
+            "store_id": self.store_a.id,
+            "db_serial": 8101,
+            "rpc_url": "https://inventory-cache.example.test",
+            "rpc_db": "inventory_cache",
+            "administrator_id": self.env.ref("base.user_admin").id,
+        })
+        self.env["ab_sales_inventory"].sudo()._apply_api_balances(
             self.store_a,
-            1001,
-            [(self.product.eplus_serial, 1001, 4.0)],
+            [{
+                "product_eplus_serial": self.product.eplus_serial,
+                "store_eplus_serial": self.store_a.eplus_serial,
+                "balance": 4.0,
+                "default_price": 10.0,
+            }],
+            "2026-10-06 12:00:00",
+            complete=True,
         )
 
-        self.assertEqual(stats["product_count"], 1)
-        self.assertEqual(stats["created_count"], 0)
         self.assertEqual(stale_line.balance, 4.0)
         self.assertEqual(other_store_line.balance, 3.0)

@@ -3000,8 +3000,8 @@ msgstr "المبيعات: تحديث ذاكرة التخزين المؤقت لل
 
 #. module: ab_sales
 #: model:ir.actions.server,name:ab_sales.ir_cron_sync_sales_status_from_store_ir_actions_server
-msgid "Sales: Sync Pending Status From Store"
-msgstr "المبيعات: مزامنة الحالة المعلقة من المخزن"
+msgid "Sales: Synchronize Branch Sale Statuses"
+msgstr "المبيعات: مزامنة حالات مبيعات الفروع"
 
 #. module: ab_sales
 #. odoo-javascript
@@ -5234,3 +5234,12 @@ msgstr ""
 "خطأ الإرسال: %(submission)s\n"
 "خطأ التحقق من النتيجة: %(recovery)s\n"
 "فاتورتك محفوظة برمز الطلب الأصلي."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__api_key
+msgid ""
+"Stored in plaintext. Only Settings administrators can access this key; "
+"exports are blocked."
+msgstr ""
+"يُخزّن كنص صريح. يمكن لمسؤولي الإعدادات فقط الوصول إلى هذا المفتاح؛ ولا يمكن"
+" تصديره."

@@ -112,18 +112,12 @@ class ApiInventory(models.Model):
         return True
 
     def btn_update_balance_total(self):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().btn_update_balance_total()
         return self._api_refresh_stores(self.env['ab_sales_branch_client']._stores())
 
     def btn_update_balance_per_pos(self):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().btn_update_balance_per_pos()
         return self._api_refresh_stores(self.env['ab_sales_branch_client']._stores())
 
     def btn_update_balance_default_sales_store(self):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().btn_update_balance_default_sales_store()
         store = self._get_default_sales_store()
         return self._api_refresh_stores(store or self.env['ab_sales_branch_client']._stores())
 
@@ -133,8 +127,6 @@ class ApiSalesDay(models.Model):
 
     def _fetch_remote_sales_day(self, sale_date):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super()._fetch_remote_sales_day(sale_date)
         stores = client._stores()
         if not stores:
             raise UserError(_('No authorized branches are configured.'))
@@ -155,8 +147,6 @@ class ApiSalesDay(models.Model):
 
     def _replace_sales_day(self, sale_date, rows):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super()._replace_sales_day(sale_date, rows)
         stores = client._stores()
         if not stores:
             raise UserError(_('No authorized branches are configured.'))
@@ -172,25 +162,17 @@ class ApiSalesDay(models.Model):
 class ApiSalesHeader(models.Model):
     _inherit = 'ab_sales_header'
 
-    def get_connection(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            raise AccessError(_('Callcenter sales must use the branch API.'))
-        return super().get_connection()
 
     @api.onchange('store_id')
     def _onchange_store_id(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            for header in self:
-                if header.store_id and header.line_ids:
-                    header.line_ids._recompute_inventory_json()
-            return
-        return super()._onchange_store_id()
+        for header in self:
+            if header.store_id and header.line_ids:
+                header.line_ids._recompute_inventory_json()
+        return
 
     @api.model
     def cron_update_status_from_store(self):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().cron_update_status_from_store()
         self.refresh_bill_statuses()
         return True
 
@@ -201,8 +183,6 @@ class ApiPosServices(models.TransientModel):
     @api.model
     def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().pos_refresh_pos_balances(store_id=store_id, product_ids=product_ids)
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
         products.check_access('read')
@@ -234,8 +214,6 @@ class ApiPosServices(models.TransientModel):
     @api.model
     def pos_customer_lookup(self, phone=None, store_id=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().pos_customer_lookup(phone=phone, store_id=store_id)
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         client._config(store)
         return self._api_customer(store, client._call(store, 'lookup_customer', phone))
@@ -243,8 +221,6 @@ class ApiPosServices(models.TransientModel):
     @api.model
     def pos_customer_create(self, phone=None, name=None, address=None, store_id=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().pos_customer_create(phone=phone, name=name, address=address, store_id=store_id)
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         config = client._config(store)
         validated = self._validate_new_customer_payload(phone=phone, name=name, address=address)
@@ -281,8 +257,6 @@ class ApiProductBalances(models.Model):
 
     def _get_all_stores_balance_html(self, product_serials=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super()._get_all_stores_balance_html(product_serials)
         rows = []
         for store in client._stores():
             try:
@@ -305,8 +279,6 @@ class ApiProductSearch(models.TransientModel):
     @api.model
     def search_products(self, *args, **kwargs):
         rows = super().search_products(*args, **kwargs)
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return rows
         store_id = self._resolve_store_id(header_id=kwargs.get('header_id'), store_id=kwargs.get('store_id'))
         if store_id:
             serials = self.env['ab_product'].browse([r['id'] for r in rows]).mapped('eplus_serial')

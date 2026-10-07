@@ -1,3 +1,5 @@
+import json
+
 from odoo.tests.common import TransactionCase
 
 
@@ -68,3 +70,22 @@ class TestBillWizardProductFilter(TransactionCase):
         )
 
         self.assertEqual([item["id"] for item in result["items"]], [exact_bill.id])
+
+    def test_invoice_form_computes_customer_address_datalist(self):
+        customer = self.env["ab_customer"].sudo().create({
+            "name": "Invoice Address Customer",
+            "code": "BW-ADDRESS-CUSTOMER",
+            "address": "Primary address",
+        })
+        header = self.env["ab_sales_header"].sudo().create({
+            "store_id": self.store.id,
+            "customer_id": customer.id,
+            "invoice_address": "Previous address",
+            "status": "prepending",
+        })
+
+        header._compute_invoice_address_datalist()
+
+        addresses = json.loads(header.invoice_address_datalist)
+        self.assertIn("Primary address", addresses)
+        self.assertIn("Previous address", addresses)

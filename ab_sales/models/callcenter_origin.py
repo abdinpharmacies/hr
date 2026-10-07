@@ -81,9 +81,4 @@ class CallcenterReturnOrigin(models.Model):
     def web_save(self, vals, specification, next_id=None):
         # A new return entered in the call-center form is a trusted creation path.
         # Existing records and imports never gain an origin marker this way.
-        if not self and self.env['ab_sales_branch_client']._is_callcenter():
-            if vals.get('is_callcenter_order'):
-                raise AccessError(_('The call-center origin cannot be changed.'))
-            record = self._create_callcenter_order(vals)
-            return super(CallcenterReturnOrigin, record).web_save({}, specification, next_id=next_id)
         return super().web_save(vals, specification, next_id=next_id)

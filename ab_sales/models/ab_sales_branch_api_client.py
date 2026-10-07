@@ -1,7 +1,6 @@
 """Callcenter adapters for the versioned ab_branch_api provider."""
 import math
 from uuid import uuid4
-from .access_policy import is_callcenter
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
@@ -10,9 +9,6 @@ class BranchClient(models.AbstractModel):
     _name = 'ab_sales_branch_client'
     _description = 'Sales Branch API Client'
 
-    @api.model
-    def _is_callcenter(self):
-        return is_callcenter()
 
     @api.model
     def _config(self, store):
@@ -108,8 +104,6 @@ class BranchStockLine(models.Model):
 
     def _recompute_inventory_json(self, crx=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super()._recompute_inventory_json(crx=crx)
         for store in self.header_id.store_id:
             lines = self.filtered(lambda line: line.header_id.store_id == store)
             serials = list({int(p.eplus_serial) for p in lines.product_id if p.eplus_serial})
@@ -125,8 +119,6 @@ class BranchPos(models.TransientModel):
     @api.model
     def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().pos_refresh_pos_balances(store_id=store_id, product_ids=product_ids)
         store = self.env['ab_store'].browse(int(store_id or 0))
         products = self.env['ab_product'].browse([int(pid) for pid in product_ids or []]).exists()
         rows = client._stock(store, [int(p.eplus_serial) for p in products if p.eplus_serial])
@@ -139,13 +131,12 @@ class BranchPos(models.TransientModel):
     @api.model
     def pos_product_details(self, store_id, product_id):
         response = super().pos_product_details(store_id, product_id)
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            balances = self.pos_refresh_pos_balances(store_id=store_id, product_ids=[product_id])
-            response['pos_balance'] = balances.get(int(product_id), 0.0)
-            response['balance'] = response['pos_balance']
-            product = self.env['ab_product'].browse(int(product_id))
-            response['sell_price'] = self._store_default_price(int(store_id), product)
-            response['default_price'] = response['sell_price']
+        balances = self.pos_refresh_pos_balances(store_id=store_id, product_ids=[product_id])
+        response['pos_balance'] = balances.get(int(product_id), 0.0)
+        response['balance'] = response['pos_balance']
+        product = self.env['ab_product'].browse(int(product_id))
+        response['sell_price'] = self._store_default_price(int(store_id), product)
+        response['default_price'] = response['sell_price']
         return response
 
 
@@ -220,8 +211,6 @@ class BranchReturn(models.Model):
 
     def action_load_lines(self):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().action_load_lines()
         self.ensure_one()
         self.check_access('write')
         if not self.origin_header_id:
@@ -265,8 +254,6 @@ class BranchReturn(models.Model):
 
     def action_push_to_eplus_return(self):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().action_push_to_eplus_return()
         self.ensure_one()
         self.check_access('write')
         employee_ref = self._branch_return_employee_reference()
@@ -292,15 +279,9 @@ class BranchReturn(models.Model):
             raise
         return True
 
-    def get_connection(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            raise AccessError(_('Callcenter returns must use the branch API.'))
-        return super().get_connection()
 
     def _return_router_mode(self, source_header=False):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            return 'original', self.env['ab_sales_header']
-        return super()._return_router_mode(source_header=source_header)
+        return 'original', self.env['ab_sales_header']
 
 
 class BranchReturnPreview(models.TransientModel):
@@ -310,23 +291,13 @@ class BranchReturnPreview(models.TransientModel):
     def get_state(self, return_header_id, **kwargs):
         result = super().get_state(return_header_id, **kwargs)
         client = self.env['ab_sales_branch_client']
-        if client._is_callcenter():
-            header = self._get_return_header(return_header_id)
-            if header.status != 'saved' and header.line_ids:
-                response = client._call(header.store_id, 'get_return_invoice', int(header.origin_header_id),
-                                        header.branch_request_token, header._branch_selections())
-                header._branch_snapshot(response)
-                result = super().get_state(return_header_id, **kwargs)
+        header = self._get_return_header(return_header_id)
+        if header.status != 'saved' and header.line_ids:
+            response = client._call(header.store_id, 'get_return_invoice', int(header.origin_header_id),
+                                    header.branch_request_token, header._branch_selections())
+            header._branch_snapshot(response)
+            result = super().get_state(return_header_id, **kwargs)
         return result
-
-
-class BranchSaleHeader(models.Model):
-    _inherit = 'ab_sales_header'
-
-    def action_push_to_eplus(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            raise AccessError(_('Callcenter sales must be submitted through POS using the branch API.'))
-        return super().action_push_to_eplus()
 
 
 class BranchStoreStatus(models.TransientModel):
@@ -335,8 +306,6 @@ class BranchStoreStatus(models.TransientModel):
     @api.model
     def pos_store_status(self, store_id=None):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return super().pos_store_status(store_id=store_id)
         if not store_id:
             return False
         store = self.env['ab_store'].browse(int(store_id)).exists()

@@ -6,8 +6,6 @@ from odoo.tools.translate import _
 from odoo.exceptions import UserError
 import decimal
 
-PARAM_STR = '?'  # ظ†ظپط³ ط§ظ„ظ…طھط؛ظٹط± ط§ظ„ظ…ظˆط¬ظˆط¯ ط¹ظ†ط¯ظƒ
-
 
 def _to_native(v):
     """Normalize all values so Odoo never receives Decimal or strange types."""

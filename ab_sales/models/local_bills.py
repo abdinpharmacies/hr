@@ -14,8 +14,6 @@ class BillAccess(models.Model):
 
     def _ab_sales_bill_domain(self, prefix=''):
         self.ensure_one()
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return []
         replica = self.env['ab_replica_db'].sudo().get_current_from_config()
         allowed = replica.allowed_sales_store_ids.ids if replica else []
         # Historical bills remain visible when a branch stops accepting new sales.
@@ -40,9 +38,8 @@ class LocalSales(models.Model):
     local_bill_storage = fields.Boolean(compute='_compute_local_bill_storage')
 
     def _compute_local_bill_storage(self):
-        value = self.env['ab_sales_branch_client']._is_callcenter()
         for record in self:
-            record.local_bill_storage = value
+            record.local_bill_storage = True
 
     branch_submission_started = fields.Boolean(string='Branch Submission Started', readonly=True, copy=False)
 
@@ -60,20 +57,14 @@ class LocalSales(models.Model):
         return super().write(vals)
 
     def action_submit(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            return self.action_retry_branch_submission()
-        return super().action_submit()
+        return self.action_retry_branch_submission()
 
     def unlink(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            raise UserError(_('Archive callcenter bills instead of deleting them.'))
-        return super().unlink()
+        raise UserError(_('Archive callcenter bills instead of deleting them.'))
 
     def action_retry_branch_submission(self):
         self.ensure_one()
         self.check_access('write')
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            raise UserError(_('This action is only available on the callcenter.'))
         payload = self.sudo().branch_submission_payload
         if not payload:
             raise UserError(_('This bill has no stored branch submission request.'))
@@ -83,13 +74,12 @@ class LocalSales(models.Model):
     @api.model
     def refresh_bill_statuses(self, domain=None):
         """Explicit UI operation; never called implicitly by ORM search/read."""
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return {'unavailable_branches': []}
         # Status filters are applied after synchronization. Other filters still scope work.
         domain = fields.Domain(domain or []).optimize(self).map_conditions(
             lambda c: fields.Domain.TRUE if c.field_expr == 'status' else c)
-        records = self.search(domain & fields.Domain('status', '=', 'pending')
-                              & fields.Domain('eplus_serial', '>', 0))
+        records = self.search(domain & fields.Domain('status', 'in', ('prepending', 'pending'))
+                              & fields.Domain('branch_submission_started', '=', True)
+                              & fields.Domain('pos_client_token', '!=', False))
         return {'unavailable_branches': records._refresh_local_bill_statuses()}
 
     def _refresh_local_bill_statuses(self):
@@ -97,7 +87,10 @@ class LocalSales(models.Model):
         client = self.env['ab_sales_branch_client']
         errors = []
         for store in self.store_id:
-            bills = self.filtered(lambda h: h.store_id == store and h.status == 'pending' and h.eplus_serial > 0)
+            bills = self.filtered(lambda h: h.store_id == store
+                                  and h.status in ('prepending', 'pending')
+                                  and h.branch_submission_started
+                                  and bool((h.pos_client_token or '').strip()))
             try:
                 with self.env.cr.savepoint():
                     config = client._config(store)
@@ -105,28 +98,48 @@ class LocalSales(models.Model):
                         original_db = (bill.branch_submission_payload or {}).get('_branch_db_serial')
                         if original_db is not None and original_db != config.db_serial:
                             raise UserError(_('The branch database changed. Reconcile the original request before retrying.'))
-                    serials = sorted(set(bills.mapped('eplus_serial')))
-                    for offset in range(0, len(serials), 200):
-                        batch = serials[offset:offset + 200]
-                        response = client._call(store, 'get_invoice_statuses', batch)
+                    by_token = {bill.pos_client_token.strip(): bill for bill in bills}
+                    tokens = sorted(by_token)
+                    for offset in range(0, len(tokens), 200):
+                        batch = tokens[offset:offset + 200]
+                        response = client._call(store, 'get_sale_statuses', batch)
                         if not isinstance(response, dict):
                             raise UserError(_('The branch returned invalid invoice status.'))
                         config._validate_identity(response)
                         if not isinstance(response.get('data'), list):
                             raise UserError(_('The branch returned invalid invoice status.'))
-                        seen, saved = set(), []
+                        seen = set()
                         for row in response['data']:
-                            if (not isinstance(row, dict) or type(row.get('invoice')) is not int
-                                    or row['invoice'] not in batch or row['invoice'] in seen
-                                    or row.get('status') not in ('pending', 'saved')):
+                            token = row.get('token') if isinstance(row, dict) else False
+                            branch_header_id = row.get('branch_header_id') if isinstance(row, dict) else False
+                            serial = row.get('eplus_serial') if isinstance(row, dict) else False
+                            status = row.get('status') if isinstance(row, dict) else False
+                            if (not isinstance(row, dict) or not isinstance(token, str)
+                                    or token not in batch or token in seen
+                                    or type(branch_header_id) is not int or branch_header_id <= 0
+                                    or type(serial) is not int or serial < 0
+                                    or status not in ('prepending', 'pending', 'saved')
+                                    or (status == 'prepending' and serial != 0)
+                                    or (status in ('pending', 'saved') and serial <= 0)):
                                 raise UserError(_('The branch returned invalid invoice status.'))
-                            seen.add(row['invoice'])
-                            if row['status'] == 'saved':
-                                saved.append(row['invoice'])
-                        # Elevation is limited to readable, branch-validated bills and one field.
-                        targets = bills.filtered(lambda h: h.eplus_serial in saved)
-                        targets.invalidate_recordset(['status'])
-                        targets.filtered(lambda h: h.status == 'pending').sudo().write({'status': 'saved'})
+                            seen.add(token)
+                            bill = by_token[token]
+                            if bill.branch_header_id and bill.branch_header_id != branch_header_id:
+                                raise UserError(_('The branch returned invalid invoice status.'))
+                            if bill.eplus_serial and bill.eplus_serial != serial:
+                                raise UserError(_('The branch returned invalid invoice status.'))
+                            if bill.status == 'pending' and status == 'prepending':
+                                raise UserError(_('The branch returned invalid invoice status.'))
+                            values = {}
+                            if bill.branch_header_id != branch_header_id:
+                                values['branch_header_id'] = branch_header_id
+                            if bill.eplus_serial != serial:
+                                values['eplus_serial'] = serial
+                            if bill.status != status:
+                                values['status'] = status
+                            if values:
+                                # Elevation is limited to validated lifecycle fields for this owned token.
+                                bill.sudo().write(values)
             except (UserError, AccessError):
                 _logger.warning('Bill status refresh failed for store %s; local bills retained.', store.id)
                 errors.append(_('%s: status refresh unavailable; showing local bills.') % store.display_name)
@@ -134,11 +147,9 @@ class LocalSales(models.Model):
 
     def _compute_store_server_online(self):
         # Local forms must not depend on a live connectivity probe.
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            for record in self:
-                record.store_server_online = False
-            return
-        return super()._compute_store_server_online()
+        for record in self:
+            record.store_server_online = False
+        return
 
 
 class LocalSaleLines(models.Model):
@@ -181,8 +192,6 @@ class LocalSubmission(models.TransientModel):
     @api.model
     def _pos_submit_to_branch_rpc(self, payload):
         client = self.env['ab_sales_branch_client']
-        if not client._is_callcenter():
-            return False
         payload = {k: deepcopy(v) for k, v in payload.items() if not k.startswith('_branch_')}
         values = payload.setdefault('header', {})
         token = str(values.get('pos_client_token') or uuid4()).strip()
@@ -205,7 +214,8 @@ class LocalSubmission(models.TransientModel):
             header.write(header._get_bill_customer_snapshot_vals())
             header.sudo().write({'branch_submission_payload': payload, 'branch_submission_started': True})
         self.env.cr.commit()
-        if header.branch_header_id:
+        if (header.branch_header_id and header.eplus_serial > 0
+                and header.status in ('pending', 'saved')):
             return dict(self._pos_remote_submit_response(header, duplicate_token=True),
                         branch_header_id=header.branch_header_id, remote_header_id=header.branch_header_id,
                         local_header_id=header.id)
@@ -215,8 +225,14 @@ class LocalSubmission(models.TransientModel):
             config = client._config(header.store_id)
             if '_branch_wire_payload' not in payload:
                 payload = dict(payload, _branch_wire_payload=client._sale_payload(payload),
-                               _branch_push_to_eplus=bool(config.push_to_eplus_on_submit),
                                _branch_db_serial=config.db_serial)
+                header.sudo().write({'branch_submission_payload': payload})
+            if '_branch_push_to_eplus' in payload:
+                # Earlier callcenter versions persisted this transport choice.
+                # Submission policy now belongs to the branch; retain the token
+                # and business payload while removing the obsolete local setting.
+                payload = dict(payload)
+                payload.pop('_branch_push_to_eplus', None)
                 header.sudo().write({'branch_submission_payload': payload})
             if payload['_branch_db_serial'] != config.db_serial:
                 raise UserError(_('The branch database changed. Reconcile the original request before retrying.'))
@@ -228,15 +244,14 @@ class LocalSubmission(models.TransientModel):
                 payload['_branch_wire_payload']['header'].pop('status')
                 header.sudo().write({'branch_submission_payload': payload})
             log = log.sudo().create({'rpc_config_id': config.id, 'store_id': header.store_id.id,
-                'payload_token': token, 'push_to_eplus_requested': payload['_branch_push_to_eplus'],
+                'payload_token': token, 'push_to_eplus_requested': True,
                 'state': 'started', 'submitted_by_id': self.env.uid, 'submitted_at': fields.Datetime.now()})
             self.env.cr.commit()
             response = config._execute_kw('ab_branch_api', 'submit_sale',
-                [config.db_serial, token, payload['_branch_wire_payload'], payload['_branch_push_to_eplus']])
+                [config.db_serial, token, payload['_branch_wire_payload']])
             if (not isinstance(response, dict) or type(response.get('branch_header_id')) is not int
                     or response['branch_header_id'] <= 0 or type(response.get('eplus_serial')) is not int
-                    or response['eplus_serial'] < 0 or response.get('status') not in ('prepending', 'pending', 'saved')
-                    or (response['status'] != 'prepending' and not response['eplus_serial'])):
+                    or response['eplus_serial'] <= 0 or response.get('status') not in ('pending', 'saved')):
                 raise UserError(_('Branch RPC submit returned an invalid response.'))
             config._validate_identity(response)
             header.sudo().write({'branch_header_id': response['branch_header_id'],
@@ -314,6 +329,4 @@ class LocalReturns(models.Model):
     active = fields.Boolean(default=True)
 
     def unlink(self):
-        if self.env['ab_sales_branch_client']._is_callcenter():
-            raise UserError(_('Archive callcenter bills instead of deleting them.'))
-        return super().unlink()
+        raise UserError(_('Archive callcenter bills instead of deleting them.'))

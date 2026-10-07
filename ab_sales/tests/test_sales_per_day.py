@@ -31,14 +31,17 @@ class TestSalesPerDay(TransactionCase):
             "sales_qty": 12,
         })
 
-        rows_synced = SalesPerDay._replace_sales_day(sale_date, [
-            {
-                "store_id": store.id,
-                "product_eplus_serial": 1002,
-                "sale_date": sale_date,
-                "sales_qty": 5.5,
-            },
-        ])
+        client = self.env["ab_sales_branch_client"]
+        with patch.object(type(client), "_stores", return_value=store):
+            rows_synced = SalesPerDay._replace_sales_day(sale_date, [
+                {
+                    "store_id": store.id,
+                    "product_eplus_serial": 1002,
+                    "product_id": False,
+                    "sale_date": sale_date,
+                    "sales_qty": 5.5,
+                },
+            ])
 
         self.assertEqual(rows_synced, 1)
         self.assertFalse(SalesPerDay.search([

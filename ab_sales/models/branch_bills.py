@@ -11,10 +11,6 @@ class LocalBills(models.TransientModel):
                            date_start=False, date_end=False, eplus_serial='', page=1, per_page=20,
                            store_id=False, document_type='', status='', search_token=False,
                            refresh_status=False, **kwargs):
-        if not self.env['ab_sales_branch_client']._is_callcenter():
-            return super().bill_wizard_search(query=query, product_query=product_query, product_ids=product_ids,
-                customer_query=customer_query, date_start=date_start, date_end=date_end,
-                eplus_serial=eplus_serial, page=page, per_page=per_page, **kwargs)
         if document_type not in ('', 'sale', 'return') or status not in ('', 'prepending', 'pending', 'saved'):
             raise UserError(_('Invalid bill filter.'))
         if query and not any((product_query, product_ids, customer_query, eplus_serial)):

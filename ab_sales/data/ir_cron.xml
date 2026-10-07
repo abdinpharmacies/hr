@@ -42,7 +42,7 @@
             <field name="code">model.cron_sync_last_90_sales_per_day()</field>
         </record>
         <record id="ir_cron_sync_sales_status_from_store" model="ir.cron">
-            <field name="name">Sales: Sync Pending Status From Store</field>
+            <field name="name">Sales: Synchronize Branch Sale Statuses</field>
             <field name="active" eval="True"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="interval_number" eval="5"/>
@@ -65,6 +65,6 @@
     <!-- This release explicitly enables the existing status poller on upgrade. -->
     <function model="ir.cron" name="write">
         <value eval="[ref('ab_sales.ir_cron_sync_sales_status_from_store')]"/>
-        <value eval="{'active': True, 'interval_number': 5, 'interval_type': 'minutes'}"/>
+        <value eval="{'name': 'Sales: Synchronize Branch Sale Statuses', 'active': True, 'interval_number': 5, 'interval_type': 'minutes'}"/>
     </function>
 </odoo>

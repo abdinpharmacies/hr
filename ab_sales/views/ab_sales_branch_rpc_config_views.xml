@@ -37,7 +37,6 @@
                             <group>
                                 <field name="store_id" string="Branch"/>
                                 <field name="db_serial"/>
-                                <field name="push_to_eplus_on_submit"/>
                             </group>
                             <group>
                                 <field name="rpc_url" placeholder="https://branch.example.com"/>

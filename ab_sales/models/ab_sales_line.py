@@ -6,8 +6,6 @@ from odoo.tools.translate import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import html_escape
 
-from .ab_sales_header import PARAM_STR
-
 
 class AbdinSalesLines(models.Model):
     _name = 'ab_sales_line'
@@ -354,122 +352,7 @@ class AbdinSalesLines(models.Model):
     #     return [('id', 'in', uom_list)]
 
     # ---------------------- Inventory recompute ---------------------- #
-    def _recompute_inventory_json(self, crx=None):
-        store_eplus_serial = None
-        if not self.header_id:
-            return
-        if len(self.header_id) != 1:
-            raise UserError(_("Can not get data for multiple headers"))
-        if not crx:
-            conn = self.header_id.get_connection()
-            crx = conn.cursor()
-            crx.execute("select top 1 sto_id, sto_name_ar from store where activated=1 ")
-            eplus_store = crx.fetchall()
-            if not eplus_store:
-                raise UserError(_("No matching stores found for this sell store"))
-            eplus_store = tuple(eplus_store[0])
-            store_eplus_serial = eplus_store[0]
-            store_eplus_name = eplus_store[1]
-            odoo_eplus_serial = self.header_id.store_id.eplus_serial
 
-            if store_eplus_serial != odoo_eplus_serial:
-                raise UserError(_(
-                    "Current sell store is not equal ePlus DB store!\n"
-                    "ePlus DB store is %s\n"
-                    "with serial %s"
-                ) % (store_eplus_name, store_eplus_serial))
-            crx = conn.cursor(as_dict=True)
-
-        for line in self:
-            if line.product_id:
-                self._update_default_price(crx, line.product_id, self.header_id.store_id)
-                crx.execute(
-                    f"""
-                        SELECT c_id source_id,
-                               ics.itm_id product_eplus_serial,
-                               ics.sto_id store_eplus_serial,
-                               ics.sell_price price,
-                               ics.itm_qty qty_in_small_unit,
-                               ics.itm_qty / ic.itm_unit1_unit3 qty,
-                               ics.pharm_price + sell_tax cost,
-                               ics.itm_expiry_date exp_date
-                        FROM item_class_store ics
-                        JOIN item_catalog ic on ic.itm_id = ics.itm_id
-                        where ics.sto_id = {PARAM_STR}
-                          AND ics.itm_id = {PARAM_STR}
-                          AND ics.itm_qty > 0
-                    """,
-                    (store_eplus_serial, line.product_id.eplus_serial,)
-                )
-                data = crx.fetchall()
-                inventory_list = []
-
-                for row in data:
-                    qty_big = float(row['qty'])
-                    if qty_big < 0.01:
-                        continue
-
-                    inventory_dict = {
-                        'store_id': line.get_store_id(row['store_eplus_serial']),
-                        'store_eplus_serial': int(row['store_eplus_serial']),
-                        'product_id': line.get_product_id(row['product_eplus_serial']),
-                        'product_eplus_serial': int(row['product_eplus_serial']),
-                        'qty': qty_big,
-                        'qty_in_small_unit': float(row['qty_in_small_unit']),
-                        'price': float(row['price']),
-                        'cost': float(row['cost']),
-                        'source_id': int(row['source_id']),
-                        'exp_date': str(row['exp_date']),
-                    }
-                    inventory_list.append(inventory_dict)
-
-                line.inventory_json = {"data": inventory_list}
-
-    def _update_default_price(self, crx, product_id, store_id=None):
-        prod_eplus_serial = product_id.eplus_serial
-        store = store_id
-        if isinstance(store_id, models.BaseModel):
-            store = store_id.exists()
-        elif store_id:
-            store = self.env["ab_store"].browse(int(store_id)).exists()
-        store_id = store.id if store else False
-
-        crx.execute(
-            f"""
-                SELECT itm_def_sell_price
-                FROM item_catalog
-                WHERE itm_id = {PARAM_STR}
-            """,
-            (prod_eplus_serial,)
-        )
-        data = crx.fetchone()
-        if not data or not store_id:
-            return
-        if isinstance(data, dict):
-            itm_def_sell_price = data.get("itm_def_sell_price")
-        else:
-            itm_def_sell_price = data[0]
-        try:
-            itm_def_sell_price = float(itm_def_sell_price or 0.0)
-        except Exception:
-            itm_def_sell_price = 0.0
-
-        Inventory = self.env["ab_sales_inventory"].sudo()
-        inv_line = Inventory.search([
-            ("store_id", "=", store_id),
-            ("product_eplus_serial", "=", int(prod_eplus_serial or 0)),
-        ], limit=1)
-        curr_default_price = float(inv_line.default_price or 0.0) if inv_line else 0.0
-        if not math.isclose(itm_def_sell_price, curr_default_price, abs_tol=0.01):
-            if inv_line:
-                inv_line.write({"default_price": itm_def_sell_price})
-            else:
-                Inventory.create({
-                    "store_id": store_id,
-                    "product_eplus_serial": int(prod_eplus_serial or 0),
-                    "balance": 0.0,
-                    "default_price": itm_def_sell_price,
-                })
 
     # ---------------------- Inventory data compute ------------------- #
     @api.depends('product_id', 'header_id.store_id', 'inventory_json')
@@ -514,7 +397,7 @@ class AbdinSalesLines(models.Model):
         return self.ab_msg(title="Store Balances", message=html)
 
     @api.onchange('product_id')
-    def _fetch_eplus_inventory_data(self):
+    def _fetch_branch_inventory_data(self):
         if not self.header_id.store_id:
             return
         if self.product_id and self.product_id.uom_id:

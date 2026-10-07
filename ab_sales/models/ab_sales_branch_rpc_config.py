@@ -5,11 +5,8 @@ import logging
 import requests
 from urllib.parse import urlparse
 
-from cryptography.fernet import Fernet, InvalidToken
-
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tools import config
 
 
 _logger = logging.getLogger(__name__)
@@ -29,9 +26,9 @@ class AbSalesBranchRpcConfig(models.Model):
     rpc_url = fields.Char(string="Branch Odoo URL", required=True)
     rpc_db = fields.Char(string="Branch Database", required=True)
     rpc_user = fields.Char(string="Verified Integration User", readonly=True)
-    api_key = fields.Char(string="API Key", compute='_compute_api_key', inverse='_inverse_api_key',
-                          groups='base.group_system', exportable=False)
-    api_key_encrypted = fields.Char(readonly=True, copy=False, groups='base.group_system', exportable=False)
+    api_key = fields.Char(string="API Key", copy=False, tracking=False,
+                          groups='base.group_system', exportable=False,
+                          help="Stored in plaintext. Only Settings administrators can access this key; exports are blocked.")
     enrollment_state = fields.Selection(
         [('required', 'Verification Required'), ('ready', 'Ready')],
         string='Connection Status', default='required', readonly=True, copy=False)
@@ -44,10 +41,6 @@ class AbSalesBranchRpcConfig(models.Model):
     alert_activity_id = fields.Many2one('mail.activity', readonly=True, copy=False)
 
     connection_timeout = fields.Integer(default=15)
-    push_to_eplus_on_submit = fields.Boolean(
-        string="Push to E-Plus on Submit",
-        help="When enabled, call-center POS submit asks the branch Odoo to push the remote prepending invoice to E-Plus immediately.",
-    )
     last_test_state = fields.Selection(
         selection=[
             ("untested", "Untested"),
@@ -72,17 +65,6 @@ class AbSalesBranchRpcConfig(models.Model):
         if not self.env.user.has_group('base.group_system'):
             raise AccessError(_('Settings administrator access is required.'))
 
-    def _compute_api_key(self):
-        for record in self:
-            record.api_key = False
-
-    def _inverse_api_key(self):
-        self._require_admin()
-        for record in self:
-            if record.api_key:
-                record.write({'api_key_encrypted': record._encrypt_secret(record.api_key.strip()),
-                              'enrollment_state': 'required',
-                              'remote_user_id': 0, 'expires_at': False})
 
     def export_data(self, fields_to_export):
         if any('key' in path.split('/')[0] for path in fields_to_export):
@@ -91,14 +73,14 @@ class AbSalesBranchRpcConfig(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        vals_list = [self._normalize_vals(vals) for vals in vals_list]
+        vals_list = [dict(self._normalize_vals(vals), enrollment_state='required') for vals in vals_list]
         records = super().create(vals_list)
         records._sync_display_name()
         return records
 
     def write(self, vals):
         vals = self._normalize_vals(dict(vals or {}))
-        if set(vals) & {'rpc_url', 'rpc_db', 'store_id', 'db_serial', 'api_key_encrypted', 'active'}:
+        if set(vals) & {'rpc_url', 'rpc_db', 'store_id', 'db_serial', 'api_key', 'active'}:
             vals = dict(vals, enrollment_state='required', remote_user_id=0, rpc_user=False,
                         remote_store_id=0, remote_store_name=False, can_post=False, expires_at=False,
                         last_test_state='untested', last_test_message=False, last_tested_at=False)
@@ -112,7 +94,7 @@ class AbSalesBranchRpcConfig(models.Model):
         normalized = dict(vals or {})
         if "rpc_url" in normalized and normalized["rpc_url"]:
             normalized["rpc_url"] = str(normalized["rpc_url"]).strip().rstrip("/")
-        for key in ("rpc_db", "rpc_user"):
+        for key in ("rpc_db", "rpc_user", "api_key"):
             if key in normalized and normalized[key]:
                 normalized[key] = str(normalized[key]).strip()
         return normalized
@@ -159,32 +141,11 @@ class AbSalesBranchRpcConfig(models.Model):
             if timeout < 3 or timeout > 120:
                 raise ValidationError(_("Connection timeout must be between 3 and 120 seconds."))
 
-    @api.model
-    def _fernet(self):
-        key = config.get("decryption_key")
-        if not key:
-            raise UserError(_("Odoo configuration key 'decryption_key' is required for RPC secrets."))
-        return Fernet(bytes(key, "utf-8"))
-
-    def _encrypt_secret(self, value):
-        value = str(value or "")
-        if not value:
-            return False
-        return self._fernet().encrypt(bytes(value, "utf-8")).decode("utf-8")
-
-    def _decrypt_secret(self, encrypted_value):
-        encrypted_value = str(encrypted_value or "")
-        if not encrypted_value:
-            return ""
-        try:
-            return self._fernet().decrypt(bytes(encrypted_value, "utf-8")).decode("utf-8")
-        except InvalidToken as error:
-            raise UserError(_("Stored RPC secret cannot be decrypted with the current decryption key.")) from error
 
     def _json_call(self, model, method, values, key=None):
         self.ensure_one()
         self._check_rpc_url()
-        secret = key or self._decrypt_secret(self.api_key_encrypted)
+        secret = key or self.api_key
         if not secret:
             raise UserError(_('Enroll a branch API credential first.'))
         try:
@@ -197,6 +158,8 @@ class AbSalesBranchRpcConfig(models.Model):
         try:
             body = response.json()
         except ValueError:
+            if response.ok and not response.is_redirect:
+                raise UserError(_('The branch returned an invalid JSON response.')) from None
             body = {}
         if not response.ok or response.is_redirect:
             if isinstance(body, dict) and body.get('name') in (
@@ -231,14 +194,14 @@ class AbSalesBranchRpcConfig(models.Model):
             'render_bill_print': ('db_serial', 'reference', 'print_format'),
             'get_stock_lines': ('db_serial', 'product_serials'),
             'search_products': ('db_serial', 'query', 'limit', 'offset'),
-            'submit_sale': ('db_serial', 'token', 'payload', 'push_to_eplus'),
+            'submit_sale': ('db_serial', 'token', 'payload'),
             'get_return_invoice': ('db_serial', 'invoice', 'token', 'selections'),
             'submit_return': ('db_serial', 'invoice', 'token', 'lines', 'notes', 'employee_ref'),
             'get_operation_status': ('db_serial', 'token'),
             'reconcile_operation': ('db_serial', 'token'),
         }
         self.ensure_one()
-        if not self.active or self.enrollment_state != 'ready':
+        if not self.active or not self.api_key or self.enrollment_state != 'ready':
             raise UserError(_('Verify and activate the branch connection before using it.'))
         if model_name != 'ab_branch_api' or method not in signatures or len(args or []) > len(signatures[method]):
             raise UserError(_('Unsupported branch API operation.'))
@@ -339,10 +302,11 @@ class AbSalesBranchRpcConfig(models.Model):
     def action_test_connection(self):
         self._require_admin()
         for record in self:
-            record.job_manage_connection('check')
+            record._check_connection()
         return True
 
     def _check_connection(self):
+        self.ensure_one()
         try:
             result = self._status()
             self.write({'last_test_state': 'success', 'last_test_message': _('Connection verified.'),
@@ -352,12 +316,13 @@ class AbSalesBranchRpcConfig(models.Model):
                 'expires_at': result['expires_at'], 'can_post': result['can_post'], 'enrollment_state': 'ready'})
         except (UserError, AccessError) as error:
             self.write({'last_test_state': 'error', 'last_test_message': str(error),
-                        'last_tested_at': fields.Datetime.now()})
+                        'last_tested_at': fields.Datetime.now(), 'enrollment_state': 'required',
+                        'can_post': False})
         self._update_alert()
 
     def _update_alert(self):
         warning = self.last_test_state == 'error'
-        activity = self.alert_activity_id.exists()
+        activity = self.alert_activity_id.exists().filtered("active")
         if warning and not activity:
             self.alert_activity_id = self.activity_schedule(
                 'mail.mail_activity_data_todo', user_id=self.administrator_id.id,
@@ -365,49 +330,10 @@ class AbSalesBranchRpcConfig(models.Model):
                 note=_('Review the connection address, credential, and branch permissions.'))
         elif not warning and activity:
             activity.action_feedback()
+            self.alert_activity_id = False
 
     def action_check_connections(self):
         self._require_admin()
         for record in self.filtered('active'):
-            record.with_delay(identity_key='branch-check-%s' % record.id).job_manage_connection('check')
+            record._check_connection()
         return True
-
-    def job_manage_connection(self, operation='check'):
-        self._require_admin()
-        self.ensure_one()
-        # Only health checks may run; queued rotation requests perform no action.
-        if operation != 'check' or not self.active:
-            return
-        slot = None
-        for candidate in range(4):
-            self.env.cr.execute('SELECT pg_try_advisory_lock(%s, %s)', (190902, candidate))
-            if self.env.cr.fetchone()[0]:
-                slot = candidate
-                break
-        if slot is None:
-            return
-        # Serialize health checks for the same connection.
-        self.env.cr.execute('SELECT pg_try_advisory_lock(%s, %s)', (190901, self.id))
-        if not self.env.cr.fetchone()[0]:
-            self.env.cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190902, slot))
-            return
-        try:
-            self.flush_recordset()
-            self.invalidate_recordset()
-            if not self.active:
-                return
-            self._check_connection()
-            self.env.cr.commit()
-        except Exception:
-            self.env.cr.rollback()
-            raise
-        finally:
-            self.env.cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190901, self.id))
-            self.env.cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190902, slot))
-
-    @api.model
-    def _cron_connections(self, operation='check'):
-        if operation != 'check':
-            return
-        for record in self.search(fields.Domain('active', '=', True)):
-            record.with_delay(identity_key='branch-check-%s' % record.id).job_manage_connection('check')

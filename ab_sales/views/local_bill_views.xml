@@ -26,7 +26,7 @@
                 <field name="branch_submission_started" invisible="1"/>
                 <field name="branch_header_id" invisible="1"/>
                 <button name="action_retry_branch_submission" type="object" string="Retry Submission"
-                        class="btn-primary" invisible="not local_bill_storage or status != 'prepending' or branch_header_id or not pos_client_token"/>
+                        class="btn-primary" invisible="not local_bill_storage or status != 'prepending' or not pos_client_token"/>
             </xpath>
             <xpath expr="//header/span[contains(@class, 'bg-success')]" position="attributes">
                 <attribute name="invisible" add="local_bill_storage" separator=" or "/>

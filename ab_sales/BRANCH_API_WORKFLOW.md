@@ -59,15 +59,18 @@ to the resolved branch store.
 3. Save and run **Test Connection**. Require **Ready** and **Success**. Review the
    returned store, user, expiry, and posting capability.
 
-Credentials are encrypted with the callcenter's configured Fernet
-`decryption_key`. The branch does not need that encryption key. The API Key
-input reads blank after saving, and credentials cannot be exported. Replacing a
-key may change its branch owner; a successful test records the new user. Changing
-the credential, URL, database name, store, DB serial, or activation clears the
-verified state and requires testing again. Runtime calls validate the selected
-store's availability and the positive DB serial. The connection test checks the
-serial returned by the branch server. Existing health checks remain; no key
-generation, rotation, or revocation is performed by callcenter.
+API keys are stored as plaintext in the callcenter database. The GUI masks the
+stored value; only Settings administrators can access it, it is not copied or
+tracked in chatter, and credential exports are blocked. Errors redact the key.
+No branch-connection encryption configuration is required.
+
+Replacing or clearing a key, or changing the URL, database, store, DB serial or
+activation, invalidates verification. Test again before business use. Connections
+without a key cannot be used even if an older release marked them Ready.
+**Test Connection** and **Check Connections** run synchronously and manually.
+Results and administrator alerts remain; there are no scheduled connection checks,
+queued connection checks, or credential rotation actions. Inventory, sales-history
+and submitted-invoice status synchronization retain their existing API schedules.
 
 ## Manual test checklist
 
@@ -89,25 +92,24 @@ this change.
    Log in as a callcenter employee and select each branch in turn.
 3. **Stock:** select a known product and check that displayed availability and
    prices correspond to the selected branch.
-4. **Draft sale:** leave **Push to E-Plus on Submit** off, submit a small sale,
-   and verify a draft (`prepending`) invoice is created on the selected branch.
-   Repeat for the other branch and confirm the first branch does not receive
-   that sale. The option controls immediate sale posting; stock checks still
-   need the branch's existing E-Plus connection.
+4. **Sale submission:** submit a small sale and verify the branch first creates
+   its Odoo invoice as `prepending`, automatically runs the normal branch sale
+   submission, and returns `pending` with a positive E-Plus serial. Repeat for
+   the other branch and confirm the first branch does not receive that sale.
 5. **Return preview:** select the branch and enter an existing saved invoice
    from it. Load the return lines and verify products, quantities, costs and
    totals. Loading creates/updates a return draft without posting a return.
-6. **Full posting:** use a test branch and test E-Plus database. Enable the sale
-   posting option to verify the resulting E-Plus invoice; submit a return there
-   and verify its return/financial identifiers. Returns post immediately when
-   submitted, regardless of the sale posting option.
+6. **Full posting:** use a test branch and test E-Plus database. Verify the
+   resulting sale is visible to cashier, complete it, and confirm callcenter
+   synchronizes `pending` to `saved`. Submit a return there and verify its
+   return/financial identifiers.
 7. **Wrong identity:** change a connection's DB Serial to a different positive
    value and test it. Expect rejection. Restore the correct value and test again
    to recover **Ready**. Saving an identity or credential change requires fresh
    verification before business use.
 
 The form shows connection essentials and the last test result. **Advanced
-Settings** contains activation, the administrator responsible for health alerts,
+Settings** contains activation, the administrator responsible for connection alerts,
 and request timeout. The duplicate connection name/code, raw remote store ID,
 and extra success timestamp are not shown. Credential expiry appears only when
 one exists. **Verification Required** replaces the old **Enrollment Required**
@@ -136,12 +138,16 @@ calls continue through the inherited implementation.
 | `get_capabilities` | None |
 | `search_products` | `query`, `limit`, `offset` |
 | `get_stock_lines` | `product_serials` |
-| `submit_sale` | `token`, `payload`, `push_to_eplus` |
+| `submit_sale` | `token`, `payload` |
 | `get_return_invoice` | `invoice`, `token`, `selections` |
 | `submit_return` | `invoice`, `token`, `lines`, `notes`, `employee_ref` |
 | `get_operation_status` | `token` |
 
 Callcenter sends both identity arguments in addition to those listed above.
+The callcenter has no E-Plus submission setting and sends no transport choice.
+The branch first creates the sale as PrePending, then automatically runs its
+normal sale submission logic. A normal successful response is Pending with a
+positive E-Plus serial, making the invoice visible to the branch cashier.
 Capabilities return `version`, `db_serial`, `store_eplus_serial`, `branch_store_id`, `store_name`,
 `can_post`, and `methods`. Connection status adds `credential_id`, `expires_at`,
 `user_id`, and `login`. No raw credential or hash is returned; no-expiry keys
@@ -271,22 +277,29 @@ selections never fall back. Callcenter always sends its selected store; there is
 no automatic provisioning.
 
 
-## API-only correction (19.0.3.0.0)
+## API-only callcenter (19.0.3.5.0)
 
-Set `AB_ODOO_SERVER_ROLE=callcenter` in the call-center Odoo service environment
-and restart the process after upgrading `ab_sales`. Missing/invalid role values
-also fail closed in this checkout. The only value permitting SQL is explicit
-`branch`; never set it on call-center. User groups, administrators, cron users,
-`sudo()` and RPC context cannot select the SQL transport.
+This checkout always uses the branch API. It contains no SQL connector inheritance,
+external SQL posting or fallback, connection probes, or transport-role selection.
+The branch provider retains its E-Plus connection and owns automatic sale posting.
+Response identifiers retain their branch API meaning; this release does not make
+the branch backend independent of E-Plus.
 
-The call-center `ab_sales` addon inherits the connector to reject credential
-access, SQL probes, validation and connection creation before any network call.
-No change to the filesystem-protected connector addon is needed. A restart is
-mandatory to discard connections created by previously loaded code. For an
-independent operational boundary, deny call-center egress to E-Plus hosts/SQL
-ports and remove its SQL credentials. Keep `decryption_key`: it encrypts branch
-API keys too. These service/firewall/credential changes are deployment steps,
-not module hooks or actions executed during development validation.
+### Deployment
+
+1. Before upgrading, manually disable the former connection health/rotation
+   scheduled actions and cancel unfinished jobs targeting the removed connection
+   management method. Pause the callcenter service while performing the upgrade.
+2. Target-upgrade branch **ab_branch_api**, then callcenter **ab_sales**; never
+   upgrade base. No credential conversion, migration, hooks, historical import
+   or automatic cleanup is shipped.
+3. Remove the former server-role environment setting from the callcenter service.
+   Retain queue-runner configuration and the encryption configuration key wherever
+   other installed addons still need them. Do not uninstall shared dependencies
+   merely because ab_sales no longer requires them.
+4. Restart callcenter. Enter each existing API key manually, save, and run
+   **Test Connection**. Require Ready and Success and inspect identity, expiry and
+   posting capability before using the branch.
 
 Active Branch Connections define available remote stores. Existing configured
 local Allowed Sales Stores, when present, further restrict them; normal store
@@ -319,25 +332,25 @@ No historical branch bills are imported or reconstructed from RPC logs.
   remains protected metadata for existing submission workflows.
 - A failed sale remains a local PrePending draft. Open it in Bills and use
   **Retry Submission**. The original request, branch database identity, posting
-  option and request token are retained. Submitted request contents are locked.
+  payload and request token are retained. Submitted request contents are locked.
   The branch API automatically checks the original transaction before retrying:
   it returns an already-posted bill or safely reuses the same draft after a
   proven rollback. There is no automatic submission queue.
 - A successful branch response supplies the local bill's status, branch bill ID
   and `eplus_serial`. Returns retain their submission response status and
   `sales_return_id`.
-- The existing **Sales: Sync Pending Status From Store** cron runs every five
-  minutes. It requests only local Pending sales with a positive `eplus_serial`,
-  using `get_invoice_statuses` in batches of up to 200. Matching includes branch
-  database/store identity. Only status is updated; bill content is retained.
+- The **Sales: Synchronize Branch Sale Statuses** cron runs every five minutes.
+  It requests locally submitted PrePending and Pending sales by their original
+  tokens, using `get_sale_statuses` in batches of up to 200. Matching includes
+  branch database/store identity and branch header ID. Only validated lifecycle
+  fields are updated; bill content is retained.
 - Explicit wizard searches and changes to the sales list's search domain run
   the same status refresh before applying status filters. Initial browsing,
   pagination, details and printing do not require branch connections. Missing
   or malformed results and unavailable branches retain the previous status;
   searches still show local records with a warning.
-- Drafts, Saved sales and returns are not polled. A branch submission accepted
-  as PrePending without an E-Plus serial remains PrePending locally; the status
-  cron does not discover a later serial for it.
+- Saved sales and returns are not polled. Missing tokens, malformed results,
+  invalid serials and lifecycle regressions leave the local record unchanged.
 - Branch-assigned users are limited to their department/employee branches.
   Managers and Settings administrators bypass that assignment restriction.
   Unassigned Call Center users can see the server's authorized sales branches.
@@ -347,12 +360,11 @@ No historical branch bills are imported or reconstructed from RPC logs.
   ORM access, wizard details and printing. Assignment changes invalidate cached
   rules. Local bills are archived rather than physically deleted.
 
-The existing API endpoint and five-minute cron are reused. The module upgrade
-explicitly enables that cron and sets its interval to five minutes. No branch addon
-change is required for this release. Target-upgrade `ab_sales` on callcenter and
-restart its Odoo process after deployment; do not upgrade `base`. Translation
-updates support both `ar` and `ar_001`. No migration hooks or historical imports
-are installed.
+The existing token-scoped API endpoint and five-minute cron are reused. The module
+upgrade explicitly enables that cron and sets its interval to five minutes. Deploy
+the paired branch API correction before target-upgrading `ab_sales` on callcenter;
+do not upgrade `base`. Translation updates support both `ar` and `ar_001`. No
+migration hooks or historical imports are installed.
 
 Stock lookup, customer operations, return eligibility checks and submission
 continue through the existing branch API. Direct E-Plus access remains disabled
@@ -370,8 +382,9 @@ retry. An unavailable/busy branch keeps the bill and asks the operator to retry
 the same bill later, without routine manual branch inspection.
 
 Use **Bills → Retry Submission** for a retained sale. The branch handles all
-external transaction checks. The five-minute cron and search refresh remain
-status-only for Pending sales matched by `eplus_serial`; they never repost drafts.
+external transaction checks. The five-minute cron and search refresh query
+PrePending and Pending submissions by their original request tokens; they never
+repost drafts.
 Conflicting evidence and legacy returns without sufficient durable identifiers
 remain blocked and require support rather than risking duplicate inventory or
 cash changes. Customer-creation recovery is unchanged.
