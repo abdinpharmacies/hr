@@ -1,5 +1,6 @@
 from . import ab_employee_access_sales_role
 from . import ab_employee_access
+from . import ab_employee_access_sales_job_role_mapping
 from . import ab_store
 from . import ab_employee_access_sales_shift
 from . import ab_employee_access_sales_pos_session

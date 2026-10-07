@@ -1,0 +1,121 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-06 13:23+0000\n"
+"PO-Revision-Date: 2026-10-06 13:23+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access.py:0
+msgid "Default POS PIN must be a string containing exactly four digits."
+msgstr ""
+"يجب أن يكون رمز الدخول الافتراضي لنقطة البيع نصًا مكونًا من أربعة أرقام "
+"بالضبط."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_role__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_cashier_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.constraint,message:ab_employee_access_sales.constraint_ab_employee_access_sales_job_role_mapping_job_unique
+msgid "Each job can only have one sales role mapping."
+msgstr "يمكن ربط كل وظيفة بدور مبيعات واحد فقط."
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_job_role_mapping
+msgid "Employee Sales Job Role Mapping"
+msgstr "ربط وظائف الموظفين بأدوار المبيعات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_role__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_cashier_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__job_id
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_employee_access_sales
+#: model:ir.actions.act_window,name:ab_employee_access_sales.action_job_role_mapping
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_job_role_mapping
+msgid "Job Role Mappings"
+msgstr "ربط الوظائف بالأدوار"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_job_role_mapping__role_id
+msgid "Sales Role"
+msgstr "دور المبيعات"
+
+#. module: ab_employee_access_sales
+#: model:ir.actions.server,name:ab_employee_access_sales.cron_sync_employee_sales_roles_ir_actions_server
+msgid "Synchronize Employee Sales Access"
+msgstr "مزامنة صلاحيات مبيعات الموظفين"

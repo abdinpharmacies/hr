@@ -24,6 +24,10 @@
                 sequence="10"
                 groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"
         />
+        <menuitem id="menu_job_role_mapping" name="Job Role Mappings"
+                  parent="menu_ab_employee_access_sales_config"
+                  action="action_job_role_mapping" sequence="15"
+                  groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"/>
         <menuitem
                 id="menua_ab_employee_access_sales_employee"
                 name="Employees"
