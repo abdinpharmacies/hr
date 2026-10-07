@@ -21,7 +21,9 @@ Files changed:
 - ab_sales_cashier/views/cashier_action.xml
 - ab_sales_cashier/views/cashier_close_wizard.xml
 
-## Current changes before commit:
+## 028099df0774151cfbef9b6d918af490ac0dc7d5 - emadco88 - 2026-10-07
+
+Original commit subject: ab_sales_cashier/ FIX save bill with new eplus guard
 
 User-facing changes:
 - Mark Odoo bills Saved through the protected sales submission workflow after successful cashier saves, preventing them from remaining Pending on refresh.

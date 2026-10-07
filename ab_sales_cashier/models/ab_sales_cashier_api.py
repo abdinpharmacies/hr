@@ -183,15 +183,6 @@ class AbSalesCashierApi(models.TransientModel):
         return store
 
     @api.model
-    def _bconnect_flag_to_status(self, flag):
-        value = (flag or "").strip().upper()
-        if value == "P":
-            return "pending"
-        if value == "C":
-            return "saved"
-        return value.lower() if value else ""
-
-    @api.model
     def _normalize_document_type(self, document_type):
         value = str(document_type or "sale").strip().lower()
         return "return" if value == "return" else "sale"
@@ -383,29 +374,6 @@ class AbSalesCashierApi(models.TransientModel):
         )
 
     @api.model
-    def _pending_sale_header_payload_from_bconnect(self, row, store):
-        invoice_id = self._safe_int(row.get("sth_id"), 0)
-        create_date = row.get("sec_insert_date")
-        write_date = row.get("sec_update_date") or create_date
-        total_price = self._safe_float(row.get("total_bill"), 0.0)
-        total_net_amount = self._safe_float(row.get("total_bill_net"), 0.0) or total_price
-        total_amount = total_net_amount or total_price
-        return self._build_sale_header_payload(
-            invoice_id=invoice_id,
-            status=self._bconnect_flag_to_status(row.get("sth_flag")),
-            create_date=create_date,
-            write_date=write_date,
-            customer_name=row.get("customer_name") or "",
-            customer_phone=row.get("customer_phone") or "",
-            total_amount=total_amount,
-            total_price=total_price,
-            total_net_amount=total_net_amount,
-            item_count=self._safe_int(row.get("no_of_items"), 0),
-            store_name=store.display_name if store else "",
-            note=row.get("sth_notice") or "",
-        )
-
-    @api.model
     def _source_sale_header_for_return(self, return_header):
         if not return_header or not return_header.origin_header_id:
             return self.env["ab_sales_header"].sudo().browse()
@@ -570,148 +538,6 @@ class AbSalesCashierApi(models.TransientModel):
         )
 
     @api.model
-    def _line_payload_from_bconnect(self, row):
-        qty = self._safe_float(row.get("qnty"), 0.0)
-        sell_price = self._safe_float(row.get("itm_sell"), 0.0)
-        net_amount = self._safe_float(row.get("line_total_net"), 0.0)
-        if not net_amount:
-            net_amount = (qty * sell_price) - self._safe_float(row.get("itm_dis_mon"), 0.0)
-        itm_unit = self._safe_int(row.get("itm_unit"), 0)
-        return self._build_sale_line_payload(
-            line_id=self._safe_int(row.get("std_id"), 0),
-            product_name=row.get("product_name") or "",
-            product_code=row.get("itm_code") or str(self._safe_int(row.get("itm_id"), 0)),
-            qty=qty,
-            qty_str=str(qty),
-            uom_name=str(itm_unit) if itm_unit else "",
-            sell_price=sell_price,
-            net_amount=net_amount,
-        )
-
-    @api.model
-    def _fetch_pending_headers_from_bconnect(self, store, limit):
-        store_server = self._get_store_server(store)
-        if not store_server:
-            raise UserError(_("Store %s has no IP configured.") % (store.display_name,))
-        sql = f"""
-            SELECT TOP ({int(limit)})
-                h.sth_id,
-                h.sth_flag,
-                h.no_of_items,
-                h.total_bill,
-                h.total_bill_net,
-                h.sth_notice,
-                h.sec_insert_date,
-                h.sec_update_date,
-                COALESCE(
-                    NULLIF(LTRIM(RTRIM(c.cust_name_ar)), ''),
-                    ''
-                ) AS customer_name,
-                COALESCE(
-                    NULLIF(LTRIM(RTRIM(cd.cd_tel)), ''),
-                    NULLIF(LTRIM(RTRIM(c.cust_mobile)), ''),
-                    NULLIF(LTRIM(RTRIM(c.cust_tel)), ''),
-                    ''
-                ) AS customer_phone
-            FROM sales_trans_h h WITH (NOLOCK)
-            LEFT JOIN customer c WITH (NOLOCK)
-                ON c.cust_id = h.cust_id
-            LEFT JOIN customer_delivery cd WITH (NOLOCK)
-                ON cd.cd_cust_id = c.cust_id AND cd.cd_id = 1
-            WHERE h.sth_flag = 'P'
-              AND h.sto_id = {PARAM_STR}
-            ORDER BY h.sec_insert_date DESC, h.sth_id DESC
-        """
-        with self.connect_eplus(
-                server=store_server,
-                param_str=PARAM_STR,
-                charset="CP1256",
-                propagate_error=True,
-        ) as conn:
-            with conn.cursor(as_dict=True) as cur:
-                cur.execute(sql, (int(store.eplus_serial),))
-                return cur.fetchall() or []
-
-    @api.model
-    def _fetch_invoice_snapshot_header_from_bconnect(self, store, invoice_id):
-        store_server = self._get_store_server(store)
-        if not store_server:
-            raise UserError(_("Store %s has no IP configured.") % (store.display_name,))
-        sql = f"""
-            SELECT TOP (1)
-                h.sth_id,
-                h.sth_flag,
-                h.no_of_items,
-                h.total_bill,
-                h.total_bill_net,
-                h.sth_notice,
-                h.sec_insert_date,
-                h.sec_update_date,
-                COALESCE(
-                    NULLIF(LTRIM(RTRIM(c.cust_name_ar)), ''),
-                    ''
-                ) AS customer_name,
-                COALESCE(
-                    NULLIF(LTRIM(RTRIM(cd.cd_tel)), ''),
-                    NULLIF(LTRIM(RTRIM(c.cust_mobile)), ''),
-                    NULLIF(LTRIM(RTRIM(c.cust_tel)), ''),
-                    ''
-                ) AS customer_phone
-            FROM sales_trans_h h WITH (NOLOCK)
-            LEFT JOIN customer c WITH (NOLOCK)
-                ON c.cust_id = h.cust_id
-            LEFT JOIN customer_delivery cd WITH (NOLOCK)
-                ON cd.cd_cust_id = c.cust_id AND cd.cd_id = 1
-            WHERE h.sth_id = {PARAM_STR}
-              AND h.sto_id = {PARAM_STR}
-        """
-        with self.connect_eplus(
-                server=store_server,
-                param_str=PARAM_STR,
-                charset="CP1256",
-                propagate_error=True,
-        ) as conn:
-            with conn.cursor(as_dict=True) as cur:
-                cur.execute(sql, (int(invoice_id), int(store.eplus_serial)))
-                rows = cur.fetchall() or []
-                return rows[0] if rows else {}
-
-    @api.model
-    def _fetch_pending_lines_from_bconnect(self, store, invoice_id):
-        store_server = self._get_store_server(store)
-        if not store_server:
-            raise UserError(_("Store %s has no IP configured.") % (store.display_name,))
-        sql = f"""
-            SELECT
-                d.std_id,
-                d.itm_id,
-                d.qnty,
-                d.itm_sell,
-                d.itm_dis_mon,
-                d.itm_unit,
-                i.itm_code,
-                COALESCE(
-                    NULLIF(LTRIM(RTRIM(i.itm_name_ar)), ''),
-                    CONVERT(varchar(32), d.itm_id)
-                ) AS product_name,
-                (ISNULL(d.qnty, 0) * ISNULL(d.itm_sell, 0)) - ISNULL(d.itm_dis_mon, 0) AS line_total_net
-            FROM sales_trans_d d WITH (NOLOCK)
-            LEFT JOIN item_catalog i WITH (NOLOCK)
-                ON i.itm_id = d.itm_id
-            WHERE d.sth_id = {PARAM_STR}
-            ORDER BY d.std_id
-        """
-        with self.connect_eplus(
-                server=store_server,
-                param_str=PARAM_STR,
-                charset="CP1256",
-                propagate_error=True,
-        ) as conn:
-            with conn.cursor(as_dict=True) as cur:
-                cur.execute(sql, (int(invoice_id),))
-                return cur.fetchall() or []
-
-    @api.model
     def _pending_sales_source_odoo(self, store, limit):
         headers = self._fetch_pending_sale_headers_from_odoo(store=store, limit=limit)
         payload = []
@@ -728,22 +554,6 @@ class AbSalesCashierApi(models.TransientModel):
                 continue
             payload.append(row)
             invoice_ids.add(int(row["id"]))
-        return payload, invoice_ids
-
-    @api.model
-    def _pending_sales_source_bconnect(self, store, limit, excluded_invoice_ids=None):
-        excluded = {self._safe_int(x, 0) for x in (excluded_invoice_ids or set())}
-        excluded.discard(0)
-        rows = self._fetch_pending_headers_from_bconnect(store=store, limit=limit)
-        payload = []
-        for row in rows:
-            normalized = self._pending_sale_header_payload_from_bconnect(row, store)
-            invoice_id = self._safe_int(normalized.get("id"), 0)
-            if not invoice_id:
-                continue
-            if invoice_id in excluded:
-                continue
-            payload.append(normalized)
         return payload
 
     @api.model
@@ -762,19 +572,6 @@ class AbSalesCashierApi(models.TransientModel):
         snapshot["line_count"] = len(lines)
         if not snapshot["total_amount"] and lines:
             snapshot["total_amount"] = sum(self._safe_float(line.get("net_amount"), 0.0) for line in lines)
-        return snapshot
-
-    @api.model
-    def _sale_snapshot_source_bconnect(self, store, invoice_id):
-        header_row = self._fetch_invoice_snapshot_header_from_bconnect(store=store, invoice_id=invoice_id)
-        if not header_row:
-            return {}
-        lines_rows = self._fetch_pending_lines_from_bconnect(store=store, invoice_id=invoice_id)
-        snapshot = self._pending_sale_header_payload_from_bconnect(header_row, store)
-        snapshot["lines"] = [self._line_payload_from_bconnect(row) for row in lines_rows]
-        snapshot["line_count"] = len(snapshot["lines"])
-        if not snapshot["total_amount"] and snapshot["lines"]:
-            snapshot["total_amount"] = sum(line.get("net_amount", 0.0) for line in snapshot["lines"])
         return snapshot
 
     @api.model
@@ -1177,18 +974,9 @@ class AbSalesCashierApi(models.TransientModel):
         __, __, store = self._resolve_cashier_context(
             session_token=session_token,
             store_id=store_id,
-            require_connection=True,
+            require_connection=False,
         )
-        # Source priority for sales:
-        # 1) Odoo ab_sales_header/ab_sales_line
-        # 2) BConnect sales_trans_h/sales_trans_d (fallback only)
-        sale_payload_odoo, covered_invoice_ids = self._pending_sales_source_odoo(store=store, limit=limit)
-        sale_payload_bconnect = self._pending_sales_source_bconnect(
-            store=store,
-            limit=limit,
-            excluded_invoice_ids=covered_invoice_ids,
-        )
-        sale_payload = sale_payload_odoo + sale_payload_bconnect
+        sale_payload = self._pending_sales_source_odoo(store=store, limit=limit)
         return_payload = self._pending_returns_source_odoo(store=store, limit=limit)
         payload = sale_payload + return_payload
         payload.sort(key=self._payload_sort_datetime, reverse=True)
@@ -1210,7 +998,7 @@ class AbSalesCashierApi(models.TransientModel):
         __, __, store = self._resolve_cashier_context(
             session_token=session_token,
             store_id=store_id,
-            require_connection=True,
+            require_connection=False,
         )
         document_type = self._normalize_document_type(document_type)
         if document_type == "return":
@@ -1226,10 +1014,6 @@ class AbSalesCashierApi(models.TransientModel):
             return snapshot
 
         snapshot = self._sale_snapshot_source_odoo(store=store, invoice_id=invoice_id)
-        if snapshot:
-            return snapshot
-
-        snapshot = self._sale_snapshot_source_bconnect(store=store, invoice_id=invoice_id)
         if not snapshot:
             raise UserError(_("Invoice not found."))
         return snapshot
