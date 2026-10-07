@@ -1,0 +1,6 @@
+<odoo noupdate="1">
+    <record id="config_ssh_threads" model="ir.config_parameter">
+        <field name="key">ab_deploy.ssh_threads</field>
+        <field name="value">10</field>
+    </record>
+</odoo>

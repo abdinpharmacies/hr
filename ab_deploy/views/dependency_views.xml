@@ -1,0 +1,13 @@
+<odoo>
+    <record id="view_request_dependency_form" model="ir.ui.view">
+        <field name="name">ab_deploy_request_dependency_form</field>
+        <field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="view_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='description']" position="after">
+                <field name="dependency_request_id" readonly="state != 'draft' or queued or not can_manage_request"
+                       domain="[('id', '!=', id)]" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

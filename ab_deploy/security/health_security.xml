@@ -1,0 +1,7 @@
+<odoo>
+  <record id="rule_health_report_participants" model="ir.rule">
+    <field name="name">Health report: request participants</field>
+    <field name="model_id" ref="model_ab_deploy_health_report"/>
+    <field name="domain_force">([(1, '=', 1)] if user.has_group('ab_deploy.group_administrator') else ['|', '|', ('request_id.developer_id', '=', user.id), ('request_id.approver_id', '=', user.id if user.has_group('ab_deploy.group_approver') else -1), ('request_id.executor_id', '=', user.id if user.has_group('ab_deploy.group_executor') else -1)]) + ([('request_id.company_id', 'in', company_ids)] if 'company_id' in user.env['ab_deploy_request']._fields else [])</field>
+  </record>
+</odoo>

@@ -1,0 +1,19 @@
+<odoo>
+    <record id="view_script_update_form" model="ir.ui.view">
+        <field name="name">ab_deploy_script_update_form</field>
+        <field name="model">ab_deploy_script_update</field>
+        <field name="arch" type="xml">
+            <form string="Update Commands">
+                <group><field name="request_id"/>
+                    <field name="target_ids" widget="many2many_tags" options="{'no_open': True}"/>
+                    <field name="reason" required="1"/></group>
+                <p>Updated scripts run from the beginning. Earlier steps may already have completed. Review each server's script before approval.</p>
+                <field name="preview" nolabel="1"/>
+                <footer>
+                    <button name="action_confirm" string="Confirm Update" type="object" class="btn-primary"/>
+                    <button string="Close" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

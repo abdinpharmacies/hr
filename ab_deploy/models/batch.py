@@ -2,7 +2,6 @@
 import queue
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
 
 from odoo import api, fields, models, _, SUPERUSER_ID
 from odoo.exceptions import AccessError, UserError, LockError
@@ -105,11 +104,12 @@ class DeployJobProgress(models.Model):
             raise UserError(_('Deployment selection requires an approved request.'))
         requests._validate_executor()
         if any(job.target_id._retry_job() != job for job in self):
-            raise UserError(_('Only the latest SSH or script failure can be retried.'))
+            raise UserError(_('Only the latest retryable failure can be retried.'))
         self._check_not_busy()
+        self.target_id._validate_dependencies()
         selected = self.env['ab_deploy_job']
         for job in self:
-            if job.failure_kind == 'script':
+            if job.failure_kind == 'script' or job._uses_revised_script():
                 selected |= self.env['ab_deploy_job']._make(job.target_id, retry_of=job)
             else:
                 job._set({'state': 'unknown' if job.launch_intent else 'queued', 'error': False,
@@ -183,11 +183,11 @@ class DeployRequestBatch(models.Model):
             raise UserError(_('Deployment selection requires an approved request.'))
         targets = self.target_ids.filtered('deploy')
         if not targets:
-            raise UserError(_('Select at least one SSH or script failure to retry.'))
+            raise UserError(_('Select at least one failure to retry.'))
         targets.sorted('id')._lock()
         targets.job_ids.sorted('id')._lock()
         if any(not target._retry_job() for target in targets):
-            raise UserError(_('Retry Selected Failures accepts only SSH or script failures. Clear delayed or other ineligible servers from the selection.'))
+            raise UserError(_('Retry Selected Failures accepts only retryable failures. Clear delayed or other ineligible servers from the selection.'))
         jobs = self.env['ab_deploy_job']
         for target in targets:
             jobs |= target._retry_job()
@@ -228,6 +228,14 @@ class DeployRun(models.Model):
     def _update(self, vals):
         return super(DeployRun, self.sudo()).write(vals)
 
+    def _has_remaining(self, excluded):
+        jobs = self.job_ids.filtered(lambda job: job.id not in excluded and (
+            job.state in ('queued', 'running', 'unknown') or job._needs_logs()))
+        blocked = {target.id for target, reason in
+                   jobs.filtered(lambda job: job.state == 'queued').target_id._dependency_blockers()}
+        blocked.update(jobs.filtered(lambda job: job.state == 'queued').target_id._pending_revision_targets().ids)
+        return any(job.state != 'queued' or job.target_id.id not in blocked for job in jobs)
+
     def _claim(self, excluded, limit):
         payloads = []
         blockers = self.env['ab_deploy_job'].search(
@@ -251,13 +259,27 @@ class DeployRun(models.Model):
                     job._set({'state': 'cancelled'})
                     excluded.add(job.id)
                     continue
+                if job.target_id._pending_revision_targets():
+                    job._set({'error': _('Cancel the existing pending script revision before queueing or retrying these servers.')})
+                    excluded.add(job.id)
+                    continue
+                if not job.launch_intent and job.target_id._commands_need_update():
+                    job._set({'state': 'failed', 'failure_kind': 'setup', 'error': _(
+                        'Commands have changed or are invalid. An administrator must confirm Update Commands before deploying these servers.')})
+                    excluded.add(job.id)
+                    continue
+                if job.target_id._dependency_blockers():
+                    job._set({'error': _('Prerequisite deployment has not succeeded or been manually resolved on this server. Resume monitoring after either condition is met.')})
+                    excluded.add(job.id)
+                    continue
                 blockers = self.env['ab_deploy_job'].search(
                     fields.Domain('server_id', '=', job.server_id.id) & fields.Domain('id', '!=', job.id)
                     & (fields.Domain('state', 'in', ['running', 'unknown'])
                        | (fields.Domain('state', '=', 'queued') & fields.Domain('id', '<', job.id))))
                 if blockers:
                     continue
-                if not job.server_id.active or job.server_id.maintenance_mode or engine.checksum(job.target_id.script or '') != job.target_id.script_hash:
+                execution = job._execution_values()
+                if not job.server_id.active or job.server_id.maintenance_mode or engine.checksum(execution['script'] or '') != execution['script_hash']:
                     job._set({'state': 'failed', 'failure_kind': 'setup', 'error': _('Server unavailable or approved script invalid.')})
                     excluded.add(job.id)
                     continue
@@ -275,9 +297,10 @@ class DeployRun(models.Model):
                 a.run_id == self or a.run_id.queue_job_id.state not in ACTIVE_QUEUE))._update(
                     {'outcome': 'interrupted', 'finished_at': fields.Datetime.now()})
             attempt = self.env['ab_deploy_attempt']._start(job, self)
-            snapshot = job.target_id.snapshot
+            execution = job._execution_values()
+            snapshot = execution['snapshot']
             payloads.append({'id': job.id, 'attempt': attempt.id, 'alias': snapshot['ssh_alias'],
-                'key': job.job_key, 'script': job.target_id.script, 'digest': job.target_id.script_hash,
+                'key': job.job_key, 'script': execution['script'], 'digest': execution['script_hash'],
                 'capture': snapshot.get('odoo_log'), 'timeout': snapshot.get('timeout', 600), 'intent': intent,
                 'command_offset': int(job.command_log_offset or '0'), 'odoo_offset': int(job.odoo_log_offset or '0')})
         return payloads
@@ -345,9 +368,19 @@ class DeployRun(models.Model):
             attempt._update({'outcome': job.state, 'stage': job.stage, 'finished_at': fields.Datetime.now()})
         return not (done or unknown)
 
+    @api.model
+    def _ssh_threads(self):
+        parameter = self.env['ir.config_parameter'].sudo().search(
+            fields.Domain('key', '=', 'ab_deploy.ssh_threads'), limit=1)
+        value = (parameter.value if parameter else '10').strip()
+        if not value.isascii() or not value.isdecimal() or not 1 <= int(value) <= 16:
+            raise UserError(_('System parameter ab_deploy.ssh_threads must be an integer from 1 to 16.'))
+        return int(value)
+
     def _execute(self):
         """The queue-job transaction only owns queue_job; progress uses fresh cursors."""
         self.ensure_one()
+        ssh_threads = self._ssh_threads()
         dbname, run_id = self.env.cr.dbname, self.id
 
         def transaction(callback):
@@ -366,13 +399,16 @@ class DeployRun(models.Model):
         transaction(lambda run: run._update({'started_at': fields.Datetime.now(), 'finished_at': False}))
         deadline = time.monotonic() + BATCH_SECONDS
         events, stop = queue.Queue(maxsize=140), threading.Event()
-        excluded, pending, observed = set(), {}, {}
+        excluded, pending, observed, claimed = set(), {}, {}, {}
         next_claim = 0
-        pool = ThreadPoolExecutor(max_workers=70, thread_name_prefix='ab_deploy_ssh')
+        pool, runner_failed = None, False
         try:
+            pool = threaded.worker_pool(ssh_threads)
             while time.monotonic() < deadline:
-                if time.monotonic() >= next_claim and len(pending) < 70:
-                    candidates = transaction(lambda run: run._claim(excluded | set(pending) | {key for key, until in observed.items() if until > time.monotonic()}, 70 - len(pending)))
+                if time.monotonic() >= next_claim and len(pending) < ssh_threads:
+                    candidates = transaction(lambda run: run._claim(excluded | set(pending) | {key for key, until in observed.items() if until > time.monotonic()}, ssh_threads - len(pending)))
+                    # Track every committed claim, including submissions that fail.
+                    claimed.update({payload['id']: payload['attempt'] for payload in candidates})
                     for payload in candidates:
                         pending[payload['id']] = (pool.submit(threaded.host, payload, events, stop, deadline), payload['attempt'])
                     next_claim = time.monotonic() + (2 if candidates else 30)
@@ -393,26 +429,46 @@ class DeployRun(models.Model):
                         else:
                             observed[job_id] = time.monotonic() + 60
                         del pending[job_id]
+                        claimed.pop(job_id, None)
                         next_claim = min(next_claim, time.monotonic())
                 if not pending:
-                    remaining = transaction(lambda run: bool(run.job_ids.filtered(lambda j: j.id not in excluded and
-                        (j.state in ('queued', 'running', 'unknown') or j._needs_logs()))))
+                    remaining = transaction(lambda run: run._has_remaining(excluded))
                     if not remaining:
                         break
+        except Exception:
+            runner_failed = True
+            raise
         finally:
             stop.set()
-            pool.shutdown(wait=True, cancel_futures=True)
+            if pool:
+                pool.shutdown(wait=True, cancel_futures=True)
+            # Preserve output already received. Never acknowledge a new launch
+            # intent after shutdown, even if a worker was waiting for that ack.
+            while True:
+                try:
+                    event = events.get_nowait()
+                except queue.Empty:
+                    break
+                if event['kind'] != 'intent' and event['id'] in claimed:
+                    transaction(lambda run: run._event(event, claimed[event['id']]))
+                event['ack'].put(False)
             def finish(run):
-                for job_id, (future, attempt_id) in pending.items():
+                for job_id, attempt_id in claimed.items():
                     job = run.env['ab_deploy_job'].browse(job_id)
                     job._lock()
                     vals = {}
                     if job.state == 'running':
-                        vals.update(state='unknown', stage='needs_check', failure_kind='timeout',
-                                    error=_('Observation stopped; the remote script was not terminated.'))
-                    if job.command_log_status == 'pending':
+                        if not job.launch_intent:
+                            vals.update(state='queued', stage='waiting', failure_kind=False,
+                                        started_at=False, finished_at=False,
+                                        error=_('Collector observation stopped before launch. Resume monitoring to run this execution.'))
+                        else:
+                            vals.update(state='unknown', stage='needs_check', failure_kind='monitor' if runner_failed else 'timeout',
+                                        error=_('Collector worker failed; the remote execution needs checking.') if runner_failed else
+                                        _('Observation stopped; the remote script was not terminated.'))
+                    if job.launch_intent and job.command_log_status == 'pending':
                         vals['command_log_status'] = 'error'
-                    if job.odoo_log_status == 'pending':
+                    if job.launch_intent and job.odoo_log_status == 'pending':
                         vals.update(odoo_log_status='error', odoo_log_error=_('Log download interrupted. Resume monitoring to collect remaining output.'))
                     if vals:
                         job._set(vals)

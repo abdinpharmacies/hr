@@ -76,6 +76,7 @@ class DeployConflict(models.TransientModel):
         request._require_role('executor')
         request._lock()
         request._selected_targets().server_id.sorted('id')._lock()
+        request._selected_targets()._validate_dependencies()
         jobs = request._queue_conflicts()
         jobs.sorted('id')._lock()
         if self.fingerprint != self._fingerprint(jobs, request):

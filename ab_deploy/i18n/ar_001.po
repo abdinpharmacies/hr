@@ -104,6 +104,7 @@ msgstr "اعتماد"
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__approved
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_script_revision__state__approved
 msgid "Approved"
 msgstr "معتمد"
 
@@ -186,6 +187,7 @@ msgstr "إلغاء"
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__cancelled
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__cancelled
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__cancelled
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_script_revision__state__cancelled
 msgid "Cancelled"
 msgstr "ملغى"
 
@@ -235,6 +237,8 @@ msgstr "مسار ملف الإعدادات"
 msgid "Created"
 msgstr "تم الإنشاء"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__create_uid
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_uid
@@ -251,9 +255,15 @@ msgstr "تم الإنشاء"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__create_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__create_date
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__create_date
@@ -270,9 +280,17 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__create_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__create_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__health_status__critical
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__reported_health__critical
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__latest_health__critical
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_release__risk_level__critical
 msgid "Critical"
@@ -424,6 +442,9 @@ msgstr "المطور"
 msgid "Development"
 msgstr "التطوير"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_parameter_guard__display_name
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__display_name
@@ -441,6 +462,13 @@ msgstr "التطوير"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__display_name
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ir_attachment__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_ir_binary__display_name
+#: model:ir.model.fields,field_description:ab_deploy.field_mail_message__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -543,6 +571,9 @@ msgstr "بصمة الخادم"
 msgid "Hostname"
 msgstr "اسم المضيف"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_parameter_guard__id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__id
@@ -560,6 +591,13 @@ msgstr "اسم المضيف"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ir_attachment__id
+#: model:ir.model.fields,field_description:ab_deploy.field_ir_binary__id
+#: model:ir.model.fields,field_description:ab_deploy.field_mail_message__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -588,6 +626,8 @@ msgstr "إذا تم تحديده، فهناك خطأ في تسليم بعض ال
 msgid "Is Follower"
 msgstr "متابع"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__write_uid
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_uid
@@ -604,9 +644,15 @@ msgstr "متابع"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_uid
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__write_uid
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__write_date
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_audit_log__write_date
@@ -623,6 +669,10 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server_import__write_date
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__write_date
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -829,6 +879,7 @@ msgstr "رفض"
 
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__state__rejected
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_script_revision__state__rejected
 msgid "Rejected"
 msgstr "مرفوض"
 
@@ -871,12 +922,17 @@ msgstr "تمت الإزالة"
 msgid "Repository"
 msgstr "المستودع"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__request_id
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_conflict__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_run__request_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__request_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__request_id
 msgid "Request"
 msgstr "الطلب"
 
@@ -971,6 +1027,8 @@ msgstr "اختر خادمًا مستهدفًا واحدًا على الأقل."
 msgid "Sequence"
 msgstr "الترتيب"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__server_id
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__server_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__server_id
@@ -1016,6 +1074,7 @@ msgstr "مستخدم SSH"
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__state
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__state
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__state
 msgid "State"
 msgstr "الحالة"
 
@@ -1037,8 +1096,10 @@ msgstr ""
 msgid "Tag"
 msgstr "الوسم"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__target_id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__target_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__target_id
 msgid "Target"
 msgstr "الهدف"
 
@@ -1262,9 +1323,12 @@ msgstr "يغير قاعدة البيانات"
 
 #. module: ab_deploy
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_server_import_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
 msgid "Close"
 msgstr "إغلاق"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__command_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_parameter_guard__command_id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request_command__command_id
 msgid "Command"
@@ -1420,6 +1484,8 @@ msgstr "حالة التنفيذ"
 msgid "Execution snapshots can only be set by the deployment workflow."
 msgstr "لا يمكن تعيين لقطات التنفيذ إلا من خلال سير عمل النشر."
 
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__collection_status__failed
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__health_collection_status__failed
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_attempt__outcome__failed
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__failed
@@ -1487,6 +1553,7 @@ msgstr "حالة منفذ المهام غير صالحة."
 msgid "Invalid server settings or timeout in CSV row: %s"
 msgstr "إعدادات الخادم أو مهلة الانتظار غير صالحة في صف CSV: %s"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__job_id
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_attempt__job_id
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_log_part__job_id
@@ -1836,6 +1903,10 @@ msgstr "يحتوي هذا الطلب بالفعل على مهام تنفيذ."
 msgid "Uninstall Modules"
 msgstr "إلغاء تثبيت الوحدات"
 
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__health_status__unknown
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__reported_health__unknown
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__latest_health__unknown
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__state__unknown
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_target__deployment_status__unknown
@@ -1960,6 +2031,7 @@ msgstr "العنوان (للمعلومات فقط)"
 msgid "An unknown execution and an inspection note are required."
 msgstr "يجب اختيار تنفيذ بحالة غير معروفة وإدخال ملاحظة الفحص."
 
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__template
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_editor_form
@@ -2204,6 +2276,7 @@ msgstr ""
 #. module: ab_deploy
 #. odoo-python
 #: code:addons/ab_deploy/models/deployment.py:0
+#: code:addons/ab_deploy/models/script_revisions.py:0
 msgid "Select active commands before requesting approval."
 msgstr "اختر أوامر نشطة قبل طلب الموافقة."
 
@@ -2332,12 +2405,15 @@ msgstr "تم الجمع"
 msgid "Collected with Warnings"
 msgstr "تم الجمع مع تحذيرات"
 
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__collection_status__collecting
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__health_collection_status__collecting
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__pending
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__pending
 msgid "Collecting"
 msgstr "جارٍ الجمع"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__collection_error
 #. module: ab_deploy
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__command_log_status__error
 #: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__odoo_log_status__error
@@ -3600,6 +3676,8 @@ msgstr ""
 msgid "Deployment Command Parameter"
 msgstr "معامل أمر النشر"
 
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter_default__value
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_parameter_guard__value
 #. module: ab_deploy
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter__value
 #: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
@@ -3636,6 +3714,8 @@ msgstr ""
 msgid "Server Parameters"
 msgstr "معاملات السرفر"
 
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter_default__bash_placeholder
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_parameter_guard__bash_placeholder
 #. module: ab_deploy
 #: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command_parameter__bash_placeholder
 msgid ""
@@ -3663,11 +3743,16 @@ msgstr ""
 "العادية. لا يتم تطبيق نسخ احتياطية أو إعادة تشغيل أو ترقية موديولات أو "
 "فحوصات Git تلقائيًا. تحتفظ الطلبات المقدمة بالسكربت المعتمد."
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__parameter_value
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__value
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_parameter_guard__value
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__value
 msgid "Value"
 msgstr "القيمة"
 
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter_default__bash_placeholder
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_parameter_guard__bash_placeholder
 #. module: ab_deploy
 #: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command_parameter__bash_placeholder
 msgid "Variable Name"
@@ -3889,3 +3974,1091 @@ msgid ""
 msgstr ""
 "لم يعد هذا التنفيذ ضمن التعارضات. أعد فتح قائمة انتظار النشر لمراجعة "
 "العمليات التي تعطل النشر حالياً."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__dependency_request_id
+msgid "Depends On"
+msgstr "يعتمد على"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__dependency_request_id
+msgid ""
+"Each selected server must succeed in this request before it can be queued "
+"here."
+msgstr ""
+"يجب أن ينجح كل خادم محدد في هذا الطلب قبل إضافته إلى قائمة الانتظار هنا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/dependencies.py:0
+msgid ""
+"Deployment dependencies cannot contain a cycle or reference themselves."
+msgstr "لا يمكن أن تتضمن تبعيات النشر حلقة أو أن يشير طلب النشر إلى نفسه."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/dependencies.py:0
+msgid "Prerequisite not satisfied; details are restricted."
+msgstr "لم يتحقق متطلب النشر السابق؛ التفاصيل غير متاحة لصلاحياتك."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/dependencies.py:0
+msgid "Server is not included in the prerequisite request."
+msgstr "الخادم غير مدرج في طلب النشر السابق المطلوب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/dependencies.py:0
+msgid ""
+"Cannot queue this selection. Prerequisite deployment has not succeeded:\n"
+"%s"
+msgstr ""
+"لا يمكن إضافة الخوادم المحددة إلى قائمة الانتظار. لم ينجح النشر السابق المطلوب:\n"
+"%s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Prerequisite deployment has not succeeded on this server. Resume monitoring "
+"after it succeeds."
+msgstr ""
+"لم ينجح النشر السابق المطلوب على هذا الخادم. استأنف المراقبة بعد نجاحه."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"A command type changed. Create a new deployment request to change command "
+"types."
+msgstr "تغير نوع أحد الأوامر. أنشئ طلب نشر جديداً لتغيير أنواع الأوامر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"A script update is awaiting approval for selected servers. Approve, reject "
+"or cancel it before queueing or retrying."
+msgstr ""
+"يوجد تحديث للسكربت بانتظار الموافقة للخوادم المحددة. اعتمده أو ارفضه أو "
+"ألغِه قبل الإضافة إلى قائمة الانتظار أو إعادة المحاولة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "A script update is awaiting approval for this server."
+msgstr "يوجد تحديث للسكربت بانتظار الموافقة لهذا الخادم."
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_script_revision_line_unique_target
+msgid "A server may appear only once in a script revision."
+msgstr "يمكن إدراج الخادم مرة واحدة فقط في مراجعة السكربت."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__activity_id
+msgid "Activity"
+msgstr "النشاط"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__after_snapshot
+msgid "After Snapshot"
+msgstr "النسخة المحفوظة بعد التحديث"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_form
+msgid "Approve Script Update"
+msgstr "اعتماد تحديث السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__baseline_job_id
+msgid "Baseline Job"
+msgstr "التنفيذ المرجعي"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__before_snapshot
+msgid "Before Snapshot"
+msgstr "النسخة المحفوظة قبل التحديث"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__can_cancel
+msgid "Can Cancel"
+msgstr "يمكنه الإلغاء"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__can_decide
+msgid "Can Decide"
+msgstr "يمكنه اتخاذ القرار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__can_retry_revised
+msgid "Can Retry Revised"
+msgstr "يمكنه إعادة محاولة النسخة المحدثة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_form
+msgid "Cancel Script Update"
+msgstr "إلغاء تحديث السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__decided_at
+msgid "Decided At"
+msgstr "تاريخ القرار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__decided_by
+msgid "Decided By"
+msgstr "صاحب القرار"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__decision_note
+msgid "Decision Reason"
+msgstr "سبب القرار"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_script_revision
+msgid "Deployment Script Revision"
+msgstr "مراجعة سكربت النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_script_revision_line
+msgid "Deployment Script Revision Server"
+msgstr "خادم مراجعة سكربت النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__eligible_target_ids
+msgid "Eligible Target"
+msgstr "الخادم المؤهل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Enter a reason before rejecting the script update."
+msgstr "أدخل سبباً قبل رفض تحديث السكربت."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__script_for_review
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_job_script_revision_form
+msgid "Execution Script"
+msgstr "سكربت التنفيذ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__execution_snapshot
+msgid "Frozen Execution Settings"
+msgstr "إعدادات التنفيذ المحفوظة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__execution_script
+msgid "Frozen Script"
+msgstr "السكربت المحفوظ"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__execution_script_hash
+msgid "Frozen Script SHA-256"
+msgstr "بصمة SHA-256 للسكربت المحفوظ"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"No script changes were found for server %s. Remove it from this update."
+msgstr "لم يُعثر على تغييرات في سكربت الخادم %s. أزل الخادم من هذا التحديث."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Only an independent assigned approver or Deployment Administrator can decide"
+" this script update."
+msgstr ""
+"يمكن فقط للموافق المعيّن أو مسؤول النشر المستقل عن مقدم التحديث ومالك الطلب "
+"اتخاذ قرار بشأن هذا التحديث."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Only pending script updates can be cancelled."
+msgstr "يمكن إلغاء تحديثات السكربت التي تنتظر الموافقة فقط."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_script_revision__state__pending
+msgid "Pending Approval"
+msgstr "بانتظار الموافقة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
+msgid "Preview Updated Scripts"
+msgstr "معاينة السكربتات المحدثة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__before_hash
+msgid "Previous SHA-256"
+msgstr "بصمة SHA-256 السابقة"
+
+#. module: ab_deploy
+#. odoo-python
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__before_script
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_line_form
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Previously Approved Script"
+msgstr "السكربت المعتمد سابقاً"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__proposals
+msgid "Proposals"
+msgstr "التحديثات المقترحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__after_hash
+msgid "Proposed SHA-256"
+msgstr "بصمة SHA-256 المقترحة"
+
+#. module: ab_deploy
+#. odoo-python
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__after_script
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_line_form
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Proposed Script"
+msgstr "السكربت المقترح"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Reason: %s"
+msgstr "السبب: %s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_form
+msgid "Reject Script Update"
+msgstr "رفض تحديث السكربت"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Review script update: %s"
+msgstr "مراجعة تحديث السكربت: %s"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__name
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__revision_id
+msgid "Revision"
+msgstr "المراجعة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__script_diff
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__preview
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_line_form
+msgid "Script Changes"
+msgstr "تغييرات السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__execution_revision_id
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_target__revision_id
+msgid "Script Revision"
+msgstr "مراجعة السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__revision_ids
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_script_revisions_form
+msgid "Script Revisions"
+msgstr "مراجعات السكربت"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Script previews are generated by the deployment workflow."
+msgstr "يتم إنشاء معاينات السكربت من خلال إجراءات النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script revision history cannot be deleted."
+msgstr "لا يمكن حذف سجل مراجعات السكربت."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script revision snapshots and workflow fields cannot be edited."
+msgstr "لا يمكن تعديل نسخ مراجعات السكربت المحفوظة أو حقول سير العمل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script revisions can only be created through Update Commands."
+msgstr "يمكن إنشاء مراجعات السكربت من خلال تحديث الأوامر فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script update approved and applied. Ready for manual queue or retry."
+msgstr ""
+"تم اعتماد تحديث السكربت وتطبيقه. جاهز للإضافة إلى قائمة الانتظار أو إعادة "
+"المحاولة يدوياً."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script update cancelled. Previously approved scripts remain available."
+msgstr "تم إلغاء تحديث السكربت. تظل السكربتات المعتمدة سابقاً متاحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script update rejected. Previously approved scripts remain available."
+msgstr "تم رفض تحديث السكربت. تظل السكربتات المعتمدة سابقاً متاحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script update submitted for approval. Selected servers are paused."
+msgstr ""
+"تم إرسال تحديث السكربت للموافقة. تم تعليق التنفيذ الجديد للخوادم المحددة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Script updates require an approved deployment request."
+msgstr "تحديث السكربت يتطلب طلب نشر معتمداً."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Select only Delayed or Failed servers from an approved request."
+msgstr "حدد فقط الخوادم المؤجلة أو الفاشلة من طلب معتمد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Select servers belonging to this deployment request."
+msgstr "حدد خوادم تابعة لطلب النشر هذا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Select servers, enter an update reason, and preview the scripts first."
+msgstr "حدد الخوادم وأدخل سبب التحديث وعاين السكربتات أولاً."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__target_ids
+msgid "Servers to Update"
+msgstr "الخوادم المطلوب تحديثها"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Servers: %s"
+msgstr "الخوادم: %s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
+msgid "Submit Script Update"
+msgstr "إرسال تحديث السكربت"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__submitted_at
+msgid "Submitted At"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__submitted_by
+msgid "Submitted By"
+msgstr "أُرسل بواسطة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Submitted by %(submitter)s; action by %(actor)s. %(decision)s"
+msgstr "أُرسل بواسطة %(submitter)s؛ الإجراء بواسطة %(actor)s. %(decision)s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "The proposed script snapshot is inconsistent. Prepare a new revision."
+msgstr "نسخة السكربت المقترحة غير متسقة. أعدّ مراجعة جديدة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"The selected execution or approved script changed. Cancel this update and "
+"prepare a new revision."
+msgstr ""
+"تغير التنفيذ المحدد أو السكربت المعتمد. ألغِ هذا التحديث وأعدّ مراجعة جديدة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "The updated script must include valid required post-deployment checks."
+msgstr "يجب أن يتضمن السكربت المحدث فحوصات صحيحة ومطلوبة بعد النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "This request already has a script update awaiting approval."
+msgstr "يوجد بالفعل تحديث للسكربت بانتظار الموافقة لهذا الطلب."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+#: code:addons/ab_deploy/wizard/script_update.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_request_script_revisions_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
+msgid "Update Commands"
+msgstr "تحديث الأوامر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_script_update
+msgid "Update Deployment Commands"
+msgstr "تحديث أوامر النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__reason
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__reason
+msgid "Update Reason"
+msgstr "سبب التحديث"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision_line__changed_commands
+msgid "Updated Commands"
+msgstr "الأوامر المحدثة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_revision__line_ids
+msgid "Updated Servers"
+msgstr "الخوادم المحدثة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Updated commands: %s"
+msgstr "الأوامر المحدثة: %s"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_revision_form
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
+msgid ""
+"Updated scripts run from the beginning. Earlier steps may already have "
+"completed. Review each server's script before approval."
+msgstr ""
+"تُشغّل السكربتات المحدثة من البداية. ربما اكتملت بعض الخطوات السابقة بالفعل."
+" راجع سكربت كل خادم قبل الموافقة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Wait for active queue runs on the selected servers to finish before updating"
+" scripts."
+msgstr ""
+"انتظر انتهاء مهام قائمة الانتظار النشطة على الخوادم المحددة قبل تحديث "
+"السكربتات."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Only the latest retryable failure can be retried."
+msgstr "يمكن إعادة محاولة آخر تنفيذ فاشل مؤهل فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Retry Selected Failures accepts only retryable failures. Clear delayed or "
+"other ineligible servers from the selection."
+msgstr ""
+"إعادة محاولة حالات الفشل المحددة تقبل حالات الفشل المؤهلة فقط. أزل الخوادم "
+"المؤجلة أو غير المؤهلة من التحديد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Select at least one failure to retry."
+msgstr "حدد تنفيذاً فاشلاً واحداً على الأقل لإعادة المحاولة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Cancel the existing pending script revision before preparing a new update."
+msgstr "ألغِ مراجعة السكربت السابقة التي تنتظر الموافقة قبل إعداد تحديث جديد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Cancel the existing pending script revision before queueing or retrying "
+"these servers."
+msgstr ""
+"ألغِ مراجعة السكربت السابقة التي تنتظر الموافقة قبل إضافة هذه الخوادم إلى "
+"قائمة الانتظار أو إعادة المحاولة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__commands_update_available
+msgid "Commands Update Available"
+msgstr "يتوفر تحديث للأوامر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Commands or server executions changed since preview. Close this dialog and "
+"reopen Update Commands."
+msgstr ""
+"تغيرت الأوامر أو عمليات تنفيذ الخوادم منذ المعاينة. أغلق هذه النافذة وأعد "
+"فتح تحديث الأوامر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Commands updated and approved."
+msgstr "تم تحديث الأوامر واعتمادها."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_script_update_form
+msgid "Confirm Update"
+msgstr "تأكيد التحديث"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_script_update__confirmed
+msgid "Confirmed"
+msgstr "تم التأكيد"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Enter an update reason before confirming."
+msgstr "أدخل سبب التحديث قبل التأكيد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "No changed commands were found for Delayed or Failed servers."
+msgstr "لم يُعثر على أوامر متغيرة للخوادم المؤجلة أو الفاشلة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "Open Update Commands from the deployment request."
+msgstr "افتح تحديث الأوامر من طلب النشر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/wizard/script_update.py:0
+msgid "This command update has already been confirmed."
+msgstr "تم تأكيد تحديث الأوامر هذا بالفعل."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid ""
+"Commands have changed or are invalid. An administrator must confirm Update "
+"Commands before deploying these servers."
+msgstr ""
+"تغيرت الأوامر أو أصبحت غير صالحة. يجب على المسؤول تأكيد تحديث الأوامر قبل "
+"النشر على هذه الخوادم."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/deployment.py:0
+msgid "SSH connection failures"
+msgstr "فشل الاتصال عبر SSH"
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_request__dependency_request_id
+msgid ""
+"Each selected server must succeed or be manually resolved in this request "
+"before it can be queued here."
+msgstr ""
+"يجب أن ينجح كل خادم محدد أو تتم معالجته يدويًا في هذا الطلب قبل إضافته إلى "
+"قائمة الانتظار هنا."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/dependencies.py:0
+msgid ""
+"Cannot queue this selection. Prerequisite deployment has not succeeded or been manually resolved:\n"
+"%s"
+msgstr ""
+"لا يمكن إضافة هذا التحديد إلى قائمة الانتظار. لم ينجح النشر السابق المطلوب ولم تتم معالجته يدويًا:\n"
+"%s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Prerequisite deployment has not succeeded or been manually resolved on this "
+"server. Resume monitoring after either condition is met."
+msgstr ""
+"لم ينجح النشر السابق المطلوب على هذا الخادم ولم تتم معالجته يدويًا. استأنف "
+"المراقبة بعد تحقق أي من الشرطين."
+
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_command_parameter_default_unique_parameter
+msgid "A command can define a default only once per variable."
+msgstr "يمكن للأمر تحديد قيمة افتراضية واحدة فقط لكل متغير."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid "Add All Deployment Servers"
+msgstr "إضافة جميع خوادم النشر"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid "DEPLOY_MODULES"
+msgstr "DEPLOY_MODULES"
+
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__parameter_default_ids
+msgid "Default Parameters"
+msgstr "المعاملات الافتراضية"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_command_parameter_default
+msgid "Deployment Command Default Parameter"
+msgstr "المعامل الافتراضي لأمر النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_parameter_guard
+msgid "Deployment Parameter Guard"
+msgstr "حماية معاملات النشر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid "Enter a parameter value."
+msgstr "أدخل قيمة المعامل."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__parameter_key
+msgid "Key"
+msgstr "المفتاح"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid ""
+"Leave empty to set a default for deployment servers without a server-"
+"specific value."
+msgstr ""
+"اترك الاختيار فارغًا لتعيين قيمة افتراضية لخوادم النشر التي ليس لها قيمة "
+"خاصة بالخادم."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid "Parameter %(key)s set for %(count)s servers."
+msgstr "تم تعيين المعامل %(key)s لعدد %(count)s من الخوادم."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__parameter_server_ids
+msgid "Parameter Servers"
+msgstr "خوادم المعامل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid "Set Parameter"
+msgstr "تعيين المعامل"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/command_parameters.py:0
+msgid "Shared default set for parameter %s."
+msgstr "تم تعيين القيمة الافتراضية المشتركة للمعامل %s."
+
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_command_parameters_form
+msgid "<i class=\"fa fa-info-circle me-2\" aria-hidden=\"true\"/>Parameter Notes"
+msgstr "<i class=\"fa fa-info-circle me-2\" aria-hidden=\"true\"/>ملاحظات المعاملات"
+
+
+#. module: ab_deploy
+#: model:ir.model.constraint,message:ab_deploy.constraint_ab_deploy_health_report_unique_job
+msgid "An execution can have only one health report."
+msgstr "يمكن أن يكون لكل تنفيذ تقرير صحة واحد فقط."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__check_details
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_form
+msgid "Check Details"
+msgstr "تفاصيل الفحوصات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__check_count
+msgid "Checks"
+msgstr "الفحوصات"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_command__collect_health_report
+msgid "Collect Health Report"
+msgstr "جمع تقرير الصحة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
+msgid "Collection Date"
+msgstr "تاريخ الجمع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__finished_at
+msgid "Collection Finished"
+msgstr "انتهاء الجمع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__started_at
+msgid "Collection Started"
+msgstr "بدء الجمع"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__collection_status
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
+msgid "Collection Status"
+msgstr "حالة الجمع"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Combined report exceeds 500 checks."
+msgstr "يتجاوز التقرير المجمع 500 فحص."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Command %s: %s"
+msgstr "الأمر %s: %s"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Command output is invalid, oversized, or incomplete."
+msgstr "مخرجات الأمر غير صالحة أو تتجاوز الحجم المسموح أو غير مكتملة."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__collection_status__complete
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__health_collection_status__complete
+msgid "Complete"
+msgstr "مكتمل"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__critical_count
+msgid "Critical Checks"
+msgstr "الفحوصات الحرجة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__request_purpose__deployment
+msgid "Deployment"
+msgstr "النشر"
+
+#. module: ab_deploy
+#: model:ir.model,name:ab_deploy.model_ab_deploy_health_report
+msgid "Deployment Health Report"
+msgstr "تقرير صحة خادم النشر"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__json_download
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_form
+msgid "Download JSON"
+msgstr "تنزيل JSON"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Expected one complete health JSON block and command completion."
+msgstr "يلزم مقطع JSON واحد مكتمل للصحة مع اكتمال الأمر."
+
+#. module: ab_deploy
+#: model:ir.model.fields,help:ab_deploy.field_ab_deploy_command__collect_health_report
+msgid ""
+"For check commands that emit one marked health JSON block. Output and "
+"diagnostics must not contain secrets."
+msgstr ""
+"لأوامر الفحص التي تُخرج مقطع JSON واحدًا للصحة بعلامات محددة. يجب ألا تتضمن "
+"المخرجات والتشخيصات أي أسرار."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
+msgid "Health"
+msgstr "الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_request__request_purpose__health
+msgid "Health Collection"
+msgstr "جمع تقارير الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__health_collection_status
+msgid "Health Collection Status"
+msgstr "حالة جمع تقرير الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__payload
+msgid "Health JSON"
+msgstr "بيانات الصحة بصيغة JSON"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Health JSON does not match the required schema or limits."
+msgstr "بيانات الصحة بصيغة JSON لا تطابق البنية المطلوبة أو الحدود المسموحة."
+
+#. module: ab_deploy
+#: model:ir.actions.act_window,name:ab_deploy.action_health_reports
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__health_report_ids
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__health_report_ids
+#: model:ir.ui.menu,name:ab_deploy.menu_health_reports
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_request_form
+msgid "Health Reports"
+msgstr "تقارير الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__health_status
+msgid "Health Status"
+msgstr "حالة الصحة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Health collection accepts only health-report check commands."
+msgstr "يقبل جمع تقارير الصحة أوامر الفحص المخصصة لتقارير الصحة فقط."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_request_form
+msgid ""
+"Health collection runs your approved checks over SSH. A critical result can "
+"accompany a successful execution. Failed commands allow remaining checks to "
+"run."
+msgstr ""
+"يجري جمع تقارير الصحة فحوصاتك المعتمدة عبر SSH. قد تظهر نتيجة حرجة مع تنفيذ "
+"ناجح. يستمر تشغيل الفحوصات المتبقية عند فشل أحد الأوامر."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/runner/health.py:0
+msgid "Health command exited with a nonzero status."
+msgstr "انتهى أمر الصحة برمز خروج غير صفري."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid ""
+"Health output collection is incomplete. Resume monitoring to collect "
+"remaining output."
+msgstr "جمع مخرجات الصحة غير مكتمل. استأنف المراقبة لجمع المخرجات المتبقية."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "Health report history cannot be deleted."
+msgstr "لا يمكن حذف سجل تقارير الصحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "Health reports can only be created by the execution workflow."
+msgstr "لا يمكن إنشاء تقارير الصحة إلا من خلال مسار التنفيذ."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "Health reports cannot be modified manually."
+msgstr "لا يمكن تعديل تقارير الصحة يدويًا."
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__health_status__healthy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__reported_health__healthy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__latest_health__healthy
+msgid "Healthy"
+msgstr "سليم"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__collection_status__incomplete
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__health_collection_status__incomplete
+msgid "Incomplete"
+msgstr "غير مكتمل"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
+msgid "Incomplete Collection"
+msgstr "جمع غير مكتمل"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_form
+msgid "JSON"
+msgstr "JSON"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__json_preview
+msgid "JSON Preview"
+msgstr "معاينة JSON"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__json_filename
+msgid "Json Filename"
+msgstr "اسم ملف JSON"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__last_health_collection_at
+msgid "Last Health Collection"
+msgstr "آخر جمع لتقرير الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__latest_health
+msgid "Latest Health"
+msgstr "آخر حالة صحة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_server_form
+msgid "Latest Health Collection"
+msgstr "آخر جمع لتقرير الصحة"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_server__latest_health_report_id
+msgid "Latest Health Report"
+msgstr "آخر تقرير صحة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_server_form
+msgid "No health collection yet."
+msgstr "لم يتم جمع تقرير صحة بعد."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_server_form
+msgid ""
+"On-demand snapshot. Collection time shows when these results were last "
+"collected; it is not a heartbeat."
+msgstr ""
+"لقطة عند الطلب. يوضح وقت الجمع متى جُمعت هذه النتائج آخر مرة؛ وهو ليس إشارة "
+"اتصال دورية."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "Only check commands can collect health reports."
+msgstr "يمكن لأوامر الفحص فقط جمع تقارير الصحة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_job__reported_health
+msgid "Reported Health"
+msgstr "الصحة المبلغ عنها"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_request__request_purpose
+msgid "Request Purpose"
+msgstr "غرض الطلب"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__source_revision
+msgid "Source Revision"
+msgstr "مراجعة المصدر"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "The approved health collection settings are missing or inconsistent."
+msgstr "إعدادات جمع تقارير الصحة المعتمدة مفقودة أو غير متسقة."
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__unknown_count
+msgid "Unknown Checks"
+msgstr "الفحوصات غير المعروفة"
+
+#. module: ab_deploy
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_health_report__health_status__warning
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_job__reported_health__warning
+#: model:ir.model.fields.selection,name:ab_deploy.selection__ab_deploy_server__latest_health__warning
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_report_search
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: ab_deploy
+#: model:ir.model.fields,field_description:ab_deploy.field_ab_deploy_health_report__warning_count
+msgid "Warnings"
+msgstr "التحذيرات"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_request_form
+msgid "Run Selected Health Checks"
+msgstr "تشغيل فحوصات الصحة المحددة"
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_health_request_targets_form
+msgid "Select All for Health Collection"
+msgstr "تحديد الكل لجمع تقارير الصحة"
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid ""
+"Run Selected Health Checks is only available for health collection requests."
+msgstr "تشغيل فحوصات الصحة المحددة متاح لطلبات جمع تقارير الصحة فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid "Select at least one server for health collection."
+msgstr "حدد خادمًا واحدًا على الأقل لجمع تقرير الصحة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/health_report.py:0
+msgid ""
+"Finish or resolve earlier health executions and collect their remaining "
+"output before running these servers again."
+msgstr ""
+"أكمل عمليات فحص الصحة السابقة أو عالجها واجمع مخرجاتها المتبقية قبل تشغيل "
+"هذه الخوادم مرة أخرى."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "No changed commands were found for idle health collection servers."
+msgstr "لم يُعثر على أوامر متغيرة لخوادم جمع تقارير الصحة غير المشغولة."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/script_revisions.py:0
+msgid "Select only idle health collection servers from an approved request."
+msgstr "حدد فقط خوادم جمع تقارير الصحة غير المشغولة من طلب معتمد."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"Collector observation stopped before launch. Resume monitoring to run this "
+"execution."
+msgstr ""
+"توقفت مراقبة خادم التجميع قبل التشغيل. استأنف المراقبة لتشغيل هذا التنفيذ."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid "Collector worker failed; the remote execution needs checking."
+msgstr "تعطل عامل خادم التجميع؛ يلزم التحقق من التنفيذ على الخادم البعيد."
+
+#. module: ab_deploy
+#: model_terms:ir.ui.view,arch_db:ab_deploy.view_conflict_form
+msgid ""
+"Cancelling failed Job Queue records does not resolve Deployment Execution "
+"Jobs. Use Check and Resolve for unknown executions; only older waiting "
+"executions can be cancelled here."
+msgstr ""
+"إلغاء سجلات قائمة المهام الفاشلة لا يعالج مهام تنفيذ النشر. استخدم التحقق "
+"والمعالجة للتنفيذات غير المعروفة؛ يمكن هنا إلغاء التنفيذات الأقدم المنتظرة "
+"فقط."
+
+#. module: ab_deploy
+#. odoo-python
+#: code:addons/ab_deploy/models/batch.py:0
+msgid ""
+"System parameter ab_deploy.ssh_threads must be an integer from 1 to 16."
+msgstr ""
+"يجب أن تكون قيمة معامل النظام ab_deploy.ssh_threads عددًا صحيحًا من 1 إلى "
+"16."

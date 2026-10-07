@@ -22,10 +22,12 @@ def validate_server(values):
         raise ValueError(_('Monitoring timeout must be between 1 and 86400 seconds.'))
 
 
-def render(commands):
+def render(commands, health_collection=False):
     # A separate Bash process preserves errexit even when its result is tested
     # by the parent, and prevents an explicit exit from skipping final markers.
     parts = ['#!/usr/bin/env bash', 'set -e -o pipefail', 'cd "$HOME"']
+    if health_collection:
+        parts.append('health_execution_rc=0')
     for index, command in enumerate(commands, 1):
         label = ' '.join(command['name'].splitlines())
         kind = command.get('command_type', 'action')
@@ -33,12 +35,20 @@ def render(commands):
         delimiter = 'AB_DEPLOY_' + hashlib.sha256(command['bash'].encode()).hexdigest()
         while delimiter in command['bash'].splitlines():
             delimiter += '_'
+        if health_collection:
+            parts.append("printf '%s\\n' " + shlex.quote('__AB_DEPLOY_HEALTH_COMMAND_START__ %s' % index))
         parts += ["printf '%s\\n' " + shlex.quote('START ' + marker),
                   "if bash -e -o pipefail /dev/fd/3 3<<'" + delimiter + "'",
                   command['bash'], delimiter,
                   'then command_rc=0; else command_rc=$?; fi',
-                  "printf '%s exit_code=%s\\n' " + shlex.quote('END ' + marker) + ' "$command_rc"',
-                  'if [ "$command_rc" -ne 0 ]; then exit "$command_rc"; fi']
+                  "printf '%s exit_code=%s\\n' " + shlex.quote('END ' + marker) + ' "$command_rc"']
+        if health_collection:
+            parts += ["printf '\\n%s %s %s\\n' __AB_DEPLOY_HEALTH_COMMAND_END__ " + str(index) + ' "$command_rc"',
+                      'if [ "$command_rc" -ne 0 ]; then health_execution_rc=1; fi']
+        else:
+            parts.append('if [ "$command_rc" -ne 0 ]; then exit "$command_rc"; fi')
+    if health_collection:
+        parts.append('exit "$health_execution_rc"')
     return '\n'.join(parts) + '\n'
 
 

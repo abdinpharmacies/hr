@@ -12,7 +12,7 @@ class DeployJob(models.Model):
     _name = 'ab_deploy_job'
     _inherit = 'ab_deploy_guard'
     _description = 'Deployment Job'
-    _order = 'id desc'
+    _order = 'last_checked_at desc, id desc'
     _rec_name = 'job_key'
 
     target_id = fields.Many2one('ab_deploy_target', required=True, readonly=True, ondelete='restrict')
@@ -65,8 +65,10 @@ class DeployJob(models.Model):
             if not target.script or engine.checksum(target.script) != target.script_hash:
                 raise UserError(_('The approved script is missing or its checksum is invalid.'))
         return super(DeployJob, self.sudo()).create([
-            {'target_id': target.id, 'job_key': uuid.uuid4().hex if retry_of else target.job_key,
+            {'target_id': target.id, 'job_key': uuid.uuid4().hex if retry_of or target.request_id.request_purpose == 'health' else target.job_key,
              'retry_of_id': retry_of.id if retry_of else False,
+             'execution_script': target.script, 'execution_script_hash': target.script_hash,
+             'execution_snapshot': target.snapshot, 'execution_revision_id': target.revision_id.id,
              'odoo_log_status': 'pending' if target.snapshot.get('odoo_log') else 'disabled'} for target in targets])
 
     def _schedule(self, delay=0):
@@ -143,7 +145,7 @@ class DeployJob(models.Model):
         if self.state != 'unknown' or not (note or '').strip():
             raise UserError(_('An unknown execution and an inspection note are required.'))
         try:
-            response = engine.ssh(self.target_id.snapshot['ssh_alias'], engine.monitor_command(self.job_key))
+            response = engine.ssh(self._execution_values()['snapshot']['ssh_alias'], engine.monitor_command(self.job_key))
             if response.returncode:
                 raise ValueError('SSH failed')
             report = engine.parse_monitor(response.stdout)

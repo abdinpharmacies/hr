@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_deploy.SshFailureReport">
+        <div class="ab_deploy_ssh_failure_report overflow-auto" style="max-height: 60vh;">
+            <p t-out="summary"/>
+            <div t-foreach="failures" t-as="failure" t-key="failure_index" class="mb-2">
+                <strong dir="ltr" style="color: #dc3545; display: inline-block;">
+                    <span t-if="failure.serial" dir="ltr"><t t-out="failure.serial"/>- </span><span dir="auto" t-out="failure.name"/>
+                </strong>
+                <div dir="auto" t-out="failure.reason"/>
+            </div>
+        </div>
+    </t>
+</templates>

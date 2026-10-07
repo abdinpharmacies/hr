@@ -165,6 +165,7 @@ class DeployAttachmentSecurity(models.Model):
     @api.depends('res_model', 'res_id')
     def _compute_ab_deploy_request(self):
         paths = {'ab_deploy_request': None, 'ab_deploy_target': 'request_id',
+                 'ab_deploy_script_revision': 'request_id', 'ab_deploy_script_revision_line': 'request_id',
                  'ab_deploy_job': 'request_id', 'ab_deploy_request_command': 'request_id',
                  'ab_deploy_run': 'request_id', 'ab_deploy_attempt': 'job_id.request_id',
                  'ab_deploy_log_part': 'job_id.request_id', 'mail.message': 'ab_deploy_request_id'}
@@ -190,6 +191,7 @@ class DeployBinarySecurity(models.AbstractModel):
         record = super()._find_record(xmlid=xmlid, res_model=res_model, res_id=res_id,
                                       access_token=access_token, field=field)
         paths = {'ab_deploy_request': None, 'ab_deploy_target': 'request_id',
+                 'ab_deploy_script_revision': 'request_id', 'ab_deploy_script_revision_line': 'request_id',
                  'ab_deploy_job': 'request_id', 'ab_deploy_request_command': 'request_id',
                  'ab_deploy_run': 'request_id', 'ab_deploy_attempt': 'job_id.request_id',
                  'ab_deploy_log_part': 'job_id.request_id', 'mail.message': 'ab_deploy_request_id',

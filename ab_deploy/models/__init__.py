@@ -11,3 +11,6 @@ from . import display_order
 from . import command_parameters
 
 from . import request_security
+from . import dependencies
+from . import script_revisions
+from . import health_report

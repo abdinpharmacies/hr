@@ -2,21 +2,61 @@
     <record id="view_command_parameters_form" model="ir.ui.view">
         <field name="name">ab_deploy_command_parameters_form</field>
         <field name="model">ab_deploy_command</field>
-        <field name="inherit_id" ref="view_command_form"/>
+        <field name="inherit_id" ref="view_command_editor_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <group string="Server Parameters" groups="ab_deploy.group_administrator">
-                    <p>Ordinary values only. Values are visible in approved scripts and audit history; do not store secrets.</p>
-                    <p>Reference variables as "${DEPLOY_MODULES}". Names must start with DEPLOY_ and use uppercase letters, digits or underscores. Missing referenced values block submission. DEPLOY_ references in comments and literal text are also checked.</p>
-                    <p>Automatic server variables: DEPLOY_DATABASE, DEPLOY_PYTHON, DEPLOY_CONFIG, DEPLOY_SERVER_PATH, DEPLOY_LOG_PATH and DEPLOY_ODOO_BIN (Odoo Server Path + /server/odoo-bin). These names cannot be overridden.</p>
-                    <field name="parameter_ids" nolabel="1">
-                        <list editable="bottom">
-                            <field name="server_id" options="{'no_create': True}"/>
-                            <field name="bash_placeholder"/>
-                            <field name="value"/>
-                        </list>
-                    </field>
-                </group>
+            <xpath expr="//div[hasclass('ab_deploy_command_editor')]" position="before">
+                <notebook name="command_configuration">
+                    <page name="command_script" string="Bash Script"/>
+                    <page name="command_parameters" string="Server Parameters" groups="ab_deploy.group_administrator">
+                        <div class="ab_deploy_parameters">
+                            <div class="ab_deploy_parameter_notes" role="note">
+                                <h3><i class="fa fa-info-circle me-2" aria-hidden="true"/>Parameter Notes</h3>
+                                <p>Ordinary values only. Values are visible in approved scripts and audit history; do not store secrets.</p>
+                                <p>Reference variables as "${DEPLOY_MODULES}". Names must start with DEPLOY_ and use uppercase letters, digits or underscores. Missing referenced values block submission. DEPLOY_ references in comments and literal text are also checked.</p>
+                                <p>Automatic server variables: DEPLOY_DATABASE, DEPLOY_PYTHON, DEPLOY_CONFIG, DEPLOY_SERVER_PATH, DEPLOY_LOG_PATH and DEPLOY_ODOO_BIN (Odoo Server Path + /server/odoo-bin). These names cannot be overridden.</p>
+                            </div>
+                            <div class="ab_deploy_parameter_card">
+                                <h3>Set Parameter</h3>
+                                <group>
+                                    <group>
+                                        <field name="parameter_server_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                                        <div colspan="2" class="ab_deploy_parameter_selection_help">
+                                            <button name="action_add_all_parameter_servers" string="Add All Deployment Servers" type="object" class="btn-secondary" icon="fa-server"/>
+                                            <p class="text-muted mt-2 mb-0">Leave empty to set a default for deployment servers without a server-specific value.</p>
+                                        </div>
+                                    </group>
+                                    <group>
+                                        <field name="parameter_key" placeholder="DEPLOY_MODULES"/>
+                                        <field name="parameter_value"/>
+                                    </group>
+                                </group>
+                                <button name="action_set_parameter" string="Set Parameter" type="object" class="btn-primary" icon="fa-check"/>
+                            </div>
+                            <div class="ab_deploy_parameter_card">
+                                <h3>Default Parameters</h3>
+                                <field name="parameter_default_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="bash_placeholder"/>
+                                        <field name="value"/>
+                                    </list>
+                                </field>
+                            </div>
+                            <div class="ab_deploy_parameter_card">
+                                <h3>Server Parameters</h3>
+                                <field name="parameter_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="server_id" options="{'no_create': True}"/>
+                                        <field name="bash_placeholder"/>
+                                        <field name="value"/>
+                                    </list>
+                                </field>
+                            </div>
+                        </div>
+                    </page>
+                </notebook>
+            </xpath>
+            <xpath expr="//page[@name='command_script']" position="inside">
+                <xpath expr="//div[hasclass('ab_deploy_command_editor')]" position="move"/>
             </xpath>
         </field>
     </record>

@@ -1,0 +1,75 @@
+<odoo>
+    <record id="view_health_command_form" model="ir.ui.view">
+        <field name="name">ab_deploy_command_health_form</field><field name="model">ab_deploy_command</field>
+        <field name="inherit_id" ref="view_command_type_form"/>
+        <field name="arch" type="xml"><field name="command_type" position="after"><field name="collect_health_report" invisible="command_type != 'check'"/></field></field>
+    </record>
+    <record id="view_health_request_form" model="ir.ui.view">
+        <field name="name">ab_deploy_request_health_form</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_queue']" position="attributes">
+                <attribute name="invisible">state != 'approved' or not can_execute or request_purpose == 'health'</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_run_health_checks" string="Run Selected Health Checks" type="object" class="btn-primary" groups="ab_deploy.group_executor" invisible="state != 'approved' or not can_execute or request_purpose != 'health'"/>
+            </xpath>
+            <field name="title" position="before"><field name="request_purpose" readonly="state != 'draft' or not can_manage_request"/></field>
+            <xpath expr="//field[@name='command_ids']/list/field[@name='command_id']" position="attributes">
+                <attribute name="domain">[('active', '=', True)] if parent.request_purpose != 'health' else [('active', '=', True), ('command_type', '=', 'check'), ('collect_health_report', '=', True)]</attribute>
+            </xpath>
+            <notebook position="inside"><page string="Health Reports" invisible="request_purpose != 'health'"><p>Health collection runs your approved checks over SSH. A critical result can accompany a successful execution. Failed commands allow remaining checks to run.</p><field name="health_report_ids" readonly="1"/></page></notebook>
+        </field>
+    </record>
+    <record id="view_health_request_targets_form" model="ir.ui.view">
+        <field name="name">ab_deploy_request_health_targets_form</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_targets_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_select_all_targets']" position="attributes"><attribute name="invisible">request_purpose == 'health'</attribute></xpath>
+            <xpath expr="//button[@name='action_select_all_targets']" position="after"><button name="action_select_all_targets" string="Select All for Health Collection" type="object" class="btn-secondary me-2" invisible="request_purpose != 'health'"/></xpath>
+        </field>
+    </record>
+    <record id="view_health_request_list" model="ir.ui.view">
+        <field name="name">ab_deploy_request_health_list</field><field name="model">ab_deploy_request</field><field name="inherit_id" ref="view_request_list"/>
+        <field name="arch" type="xml"><field name="title" position="after"><field name="request_purpose" optional="show"/></field></field>
+    </record>
+    <record id="view_health_job_form" model="ir.ui.view">
+        <field name="name">ab_deploy_job_health_form</field><field name="model">ab_deploy_job</field><field name="inherit_id" ref="view_job_form"/>
+        <field name="arch" type="xml"><field name="error" position="before"><group invisible="not health_report_ids"><field name="health_collection_status"/><field name="reported_health"/></group><field name="health_report_ids" readonly="1" invisible="not health_report_ids"/></field></field>
+    </record>
+    <record id="view_health_job_list" model="ir.ui.view">
+        <field name="name">ab_deploy_job_health_list</field><field name="model">ab_deploy_job</field><field name="inherit_id" ref="view_job_list"/>
+        <field name="arch" type="xml"><field name="state" position="after"><field name="health_collection_status" optional="hide"/><field name="reported_health" optional="hide"/></field></field>
+    </record>
+    <record id="view_health_server_form" model="ir.ui.view">
+        <field name="name">ab_deploy_server_health_form</field><field name="model">ab_deploy_server</field><field name="inherit_id" ref="view_server_form"/>
+        <field name="arch" type="xml"><sheet position="inside"><group string="Latest Health Collection"><field name="latest_health_report_id"/><field name="latest_health"/><field name="last_health_collection_at"/><p invisible="latest_health_report_id">No health collection yet.</p><p>On-demand snapshot. Collection time shows when these results were last collected; it is not a heartbeat.</p></group></sheet></field>
+    </record>
+    <record id="view_health_server_list" model="ir.ui.view">
+        <field name="name">ab_deploy_server_health_list</field><field name="model">ab_deploy_server</field><field name="inherit_id" ref="view_server_list"/>
+        <field name="arch" type="xml"><field name="maintenance_mode" position="after"><field name="latest_health" optional="show"/><field name="last_health_collection_at" optional="show"/></field></field>
+    </record>
+    <record id="view_health_report_list" model="ir.ui.view">
+        <field name="name">ab_deploy_health_report_list</field><field name="model">ab_deploy_health_report</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0" decoration-danger="health_status == 'critical'" decoration-warning="health_status in ('warning', 'unknown')" decoration-success="health_status == 'healthy' and collection_status == 'complete'">
+            <field name="server_id"/><field name="request_id"/><field name="job_id" optional="hide"/><field name="started_at"/><field name="finished_at" optional="show"/><field name="collection_status"/><field name="health_status"/><field name="check_count"/><field name="critical_count"/><field name="warning_count"/><field name="unknown_count"/>
+        </list></field>
+    </record>
+    <record id="view_health_report_form" model="ir.ui.view">
+        <field name="name">ab_deploy_health_report_form</field><field name="model">ab_deploy_health_report</field>
+        <field name="arch" type="xml"><form create="0" edit="0" delete="0"><header><button name="action_download_json" string="Download JSON" type="object" class="btn-primary"/></header><sheet>
+            <group><group><field name="server_id"/><field name="request_id"/><field name="job_id"/><field name="target_id"/></group><group><field name="started_at"/><field name="finished_at"/><field name="collection_status"/><field name="health_status"/></group></group>
+            <group><field name="check_count"/><field name="critical_count"/><field name="warning_count"/><field name="unknown_count"/></group>
+            <field name="collection_error" invisible="not collection_error"/>
+            <notebook><page string="Check Details"><field name="check_details" nolabel="1"/></page><page string="JSON"><field name="json_preview" nolabel="1"/><field name="payload" invisible="1"/></page></notebook>
+        </sheet></form></field>
+    </record>
+    <record id="view_health_report_search" model="ir.ui.view">
+        <field name="name">ab_deploy_health_report_search</field><field name="model">ab_deploy_health_report</field>
+        <field name="arch" type="xml"><search><field name="server_id"/><field name="request_id"/><field name="job_id"/>
+            <filter name="critical" string="Critical" domain="[('health_status', '=', 'critical')]"/><filter name="warning" string="Warning" domain="[('health_status', '=', 'warning')]"/><filter name="unknown" string="Unknown" domain="[('health_status', '=', 'unknown')]"/><filter name="incomplete" string="Incomplete Collection" domain="[('collection_status', '!=', 'complete')]"/><separator/><filter name="collection_date" string="Collection Date" date="started_at"/>
+            <group><filter name="server" string="Server" context="{'group_by': 'server_id'}"/><filter name="request" string="Request" context="{'group_by': 'request_id'}"/><filter name="health" string="Health" context="{'group_by': 'health_status'}"/><filter name="collection" string="Collection Status" context="{'group_by': 'collection_status'}"/></group>
+        </search></field>
+    </record>
+    <record id="action_health_reports" model="ir.actions.act_window"><field name="name">Health Reports</field><field name="res_model">ab_deploy_health_report</field><field name="view_mode">list,form</field><field name="search_view_id" ref="view_health_report_search"/></record>
+    <menuitem id="menu_health_reports" name="Health Reports" parent="menu_deploy_reports" action="action_health_reports" sequence="15" groups="group_viewer"/>
+</odoo>

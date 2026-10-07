@@ -23,7 +23,7 @@
             </xpath>
             <xpath expr="//field[@name='command_ids']" position="before">
                 <button name="action_refresh_linked_checks" type="object" string="Refresh Linked Checks" invisible="state != 'draft'" class="btn-secondary"/>
-                <p>Save or refresh to add each action's required checks immediately after it. Linked checks are read-only. Sequence orders actions; standalone checks run last. Any nonzero exit fails that server and stops later commands.</p>
+                <p invisible="request_purpose == 'health'">Save or refresh to add each action's required checks immediately after it. Linked checks are read-only. Sequence orders actions; standalone checks run last. Any nonzero exit fails that server and stops later commands.</p>
             </xpath>
         </field>
     </record>

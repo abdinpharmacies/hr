@@ -3,9 +3,13 @@
         <field name="name">ab_deploy_target_display_order</field><field name="model">ab_deploy_request</field>
         <field name="inherit_id" ref="view_request_targets_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='target_ids']/list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute></xpath>
+            <xpath expr="//field[@name='target_ids']/list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute>
+                <attribute name="decoration-danger">deployment_status in ('failed', 'unknown')</attribute>
+                <attribute name="decoration-bf">deployment_status in ('failed', 'unknown')</attribute></xpath>
             <xpath expr="//field[@name='target_ids']/list" position="inside"><field name="display_status_rank" column_invisible="True"/><field name="display_serial_kind" column_invisible="True"/><field name="display_serial_length" column_invisible="True"/><field name="display_serial_value" column_invisible="True"/><field name="display_server_name" column_invisible="True"/></xpath>
-            <xpath expr="//field[@name='target_ids'][@readonly=&quot;state != 'approved'&quot;]/list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute></xpath>
+            <xpath expr="//field[@name='target_ids'][@readonly=&quot;state != 'approved'&quot;]/list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute>
+                <attribute name="decoration-danger">deployment_status in ('failed', 'unknown')</attribute>
+                <attribute name="decoration-bf">deployment_status in ('failed', 'unknown')</attribute></xpath>
             <xpath expr="//field[@name='target_ids'][@readonly=&quot;state != 'approved'&quot;]/list" position="inside"><field name="display_status_rank" column_invisible="True"/><field name="display_serial_kind" column_invisible="True"/><field name="display_serial_length" column_invisible="True"/><field name="display_serial_value" column_invisible="True"/><field name="display_server_name" column_invisible="True"/></xpath>
         </field>
     </record>
@@ -13,7 +17,10 @@
         <field name="name">ab_deploy_request_job_display_order</field><field name="model">ab_deploy_request</field>
         <field name="inherit_id" ref="view_request_batch_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='job_ids']/list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute></xpath>
+            <xpath expr="//field[@name='job_ids']/list" position="attributes">
+                <attribute name="limit">80</attribute>
+                <attribute name="decoration-danger">state in ('failed', 'unknown')</attribute>
+                <attribute name="decoration-bf">state in ('failed', 'unknown')</attribute></xpath>
             <xpath expr="//field[@name='job_ids']/list" position="inside"><field name="display_status_rank" column_invisible="True"/><field name="display_serial_kind" column_invisible="True"/><field name="display_serial_length" column_invisible="True"/><field name="display_serial_value" column_invisible="True"/><field name="display_server_name" column_invisible="True"/></xpath>
         </field>
     </record>
@@ -21,7 +28,6 @@
         <field name="name">ab_deploy_job_display_order</field><field name="model">ab_deploy_job</field>
         <field name="inherit_id" ref="view_job_batch_list"/>
         <field name="arch" type="xml">
-            <xpath expr="//list" position="attributes"><attribute name="default_order">display_status_rank,display_serial_kind,display_serial_length,display_serial_value,display_server_name,id</attribute></xpath>
             <xpath expr="//list" position="inside"><field name="display_status_rank" column_invisible="True"/><field name="display_serial_kind" column_invisible="True"/><field name="display_serial_length" column_invisible="True"/><field name="display_serial_value" column_invisible="True"/><field name="display_server_name" column_invisible="True"/></xpath>
         </field>
     </record>

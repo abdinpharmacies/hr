@@ -1,0 +1,63 @@
+<odoo>
+    <record id="view_script_revision_line_form" model="ir.ui.view">
+        <field name="name">ab_deploy_script_revision_line_form</field>
+        <field name="model">ab_deploy_script_revision_line</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0"><sheet>
+                <group><field name="revision_id"/><field name="target_id"/><field name="changed_commands"/><field name="baseline_job_id"/></group>
+                <notebook>
+                    <page string="Script Changes"><field name="script_diff" nolabel="1"/></page>
+                    <page string="Previously Approved Script"><field name="before_hash"/><field name="before_script" nolabel="1"/></page>
+                    <page string="Proposed Script"><field name="after_hash"/><field name="after_script" nolabel="1"/></page>
+                </notebook>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="view_script_revision_form" model="ir.ui.view">
+        <field name="name">ab_deploy_script_revision_form</field>
+        <field name="model">ab_deploy_script_revision</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0"><header>
+                <button name="action_cancel" string="Cancel Script Update" type="object" invisible="not can_cancel"/>
+                <field name="state" widget="statusbar"/>
+            </header><sheet>
+                <field name="can_cancel" invisible="1"/>
+                <h1><field name="name"/></h1>
+                <group><field name="request_id"/><field name="reason"/><field name="submitted_by"/><field name="submitted_at"/>
+                    <field name="decided_by"/><field name="decided_at"/><field name="decision_note" readonly="1"/></group>
+                <p>Updated scripts run from the beginning. Earlier steps may already have completed. Review each server's script before approval.</p>
+                <field name="line_ids"><list create="0" edit="0" delete="0"><field name="target_id"/><field name="changed_commands"/><field name="before_hash"/><field name="after_hash"/></list></field>
+            </sheet></form>
+        </field>
+    </record>
+    <record id="view_request_script_revisions_form" model="ir.ui.view">
+        <field name="name">ab_deploy_request_script_revisions_form</field>
+        <field name="model">ab_deploy_request</field>
+        <field name="inherit_id" ref="view_request_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="commands_update_available" invisible="1"/>
+                <button name="action_update_commands" string="Update Commands" type="object" class="btn-danger" groups="ab_deploy.group_administrator" invisible="not commands_update_available"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Script Revisions"><field name="revision_ids"><list create="0" edit="0" delete="0">
+                    <field name="name"/><field name="state"/><field name="reason"/><field name="submitted_by"/><field name="submitted_at"/><field name="decided_by"/><field name="decided_at"/>
+                </list></field></page>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_job_script_revision_form" model="ir.ui.view">
+        <field name="name">ab_deploy_job_script_revision_form</field>
+        <field name="model">ab_deploy_job</field>
+        <field name="inherit_id" ref="view_job_batch_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_retry_failure']" position="attributes">
+                <attribute name="invisible">not (can_retry_revised or failure_kind == 'ssh' and state in ('failed', 'unknown') or failure_kind == 'script' and state == 'failed')</attribute>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <field name="can_retry_revised" invisible="1"/>
+                <group string="Execution Script"><field name="execution_revision_id"/><field name="execution_script_hash"/><field name="script_for_review"/></group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

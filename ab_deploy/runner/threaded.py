@@ -4,9 +4,34 @@ import os
 import queue
 import selectors
 import subprocess
+import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 from . import engine
+
+
+def worker_pool(size):
+    """Start all threads before any durable execution is claimed."""
+    pool = ThreadPoolExecutor(max_workers=size, thread_name_prefix='ab_deploy_ssh')
+    ready, release = queue.Queue(), threading.Event()
+
+    def warm():
+        ready.put(True)
+        release.wait()
+
+    try:
+        futures = [pool.submit(warm) for _ in range(size)]
+        for _ in range(size):
+            ready.get(timeout=10)
+        release.set()
+        for future in futures:
+            future.result()
+        return pool
+    except BaseException:
+        release.set()
+        pool.shutdown(wait=True, cancel_futures=True)
+        raise
 
 
 class TransportError(Exception):

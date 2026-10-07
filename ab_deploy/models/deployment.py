@@ -1,5 +1,6 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
+from markupsafe import Markup
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -257,18 +258,40 @@ class DeployRequest(models.Model):
                                'message': _('Select at least one server to test SSH.'),
                                'type': 'warning', 'sticky': False}}
         # Materialize all ORM data before starting worker threads.
-        servers = [(target.server_id.name, target.server_id.ssh_alias or '') for target in targets]
+        servers = [(target.server_id.serial or '', target.server_id.name, target.server_id.ssh_alias or '') for target in targets]
         from ..runner import engine
         with ThreadPoolExecutor(max_workers=min(70, len(servers))) as pool:
-            results = list(pool.map(engine.test_ssh, [alias for name, alias in servers]))
-        failures = [(name, _ssh_test_reason(code, self.env)) for (name, alias), code in zip(servers, results) if code != 'ok']
+            results = list(pool.map(engine.test_ssh, [alias for serial, name, alias in servers]))
+        failures = [{'serial': serial, 'name': name, 'reason': _ssh_test_reason(code, self.env)}
+                    for (serial, name, alias), code in zip(servers, results) if code != 'ok']
+        if failures:
+            return self._ssh_failure_report(len(servers), failures)
         message = _('Tested: %(total)s; Successful: %(success)s; Failed: %(failed)s.',
                     total=len(servers), success=len(servers) - len(failures), failed=len(failures))
-        if failures:
-            message += ' ' + '; '.join('%s: %s' % failure for failure in failures)
         return {'type': 'ir.actions.client', 'tag': 'display_notification',
                 'params': {'title': _('Test Selected SSH'), 'message': message,
-                           'type': 'warning' if failures else 'success', 'sticky': bool(failures)}}
+                           'type': 'success', 'sticky': False}}
+
+    def _ssh_failure_report(self, total, failures):
+        """One escaped report for chatter and the module's structured popup."""
+        self.ensure_one()
+        def serial_order(row):
+            serial = row['serial']
+            return (0, int(serial), row['name']) if serial.isdecimal() else (1, serial.casefold(), row['name'])
+
+        failures = sorted(failures, key=serial_order)
+        title = _('SSH connection failures')
+        summary = _('Tested: %(total)s; Successful: %(success)s; Failed: %(failed)s.',
+                    total=total, success=total - len(failures), failed=len(failures))
+        rows = []
+        for row in failures:
+            serial = Markup('<span dir="ltr">%s- </span>') % row['serial'] if row['serial'] else Markup('')
+            rows.append(Markup('<div><strong dir="ltr" style="color: #dc3545; display: inline-block;">%s<span dir="auto">%s</span></strong>'
+                               '<div dir="auto">%s</div></div>') % (serial, row['name'], row['reason']))
+        body = Markup('<p><strong>%s</strong></p><p>%s</p>%s') % (title, summary, Markup('').join(rows))
+        self.message_post(body=body, subtype_xmlid='mail.mt_note')
+        return {'type': 'ir.actions.client', 'tag': 'ab_deploy_ssh_failure_notification',
+                'params': {'title': title, 'summary': summary, 'failures': failures}}
 
     def action_select_all_targets(self):
         return self._select_targets(True)
@@ -289,7 +312,8 @@ class DeployRequest(models.Model):
             raise UserError(_('Deployment selection requires an approved request.'))
         self.target_ids._clear_selection()
         if selected:
-            targets = self.target_ids.filtered(lambda target: target._retry_job() if retry else not target.job_ids)
+            targets = self.target_ids.filtered(lambda target: target._retry_job() if retry else (
+                target._health_repeat_eligible() if target.request_id.request_purpose == 'health' else not target.job_ids))
             targets.write({'deploy': True})
         return True
 
@@ -413,6 +437,7 @@ class DeployRequest(models.Model):
         self._lock()
         targets = self._selected_targets()
         targets.server_id.sorted('id')._lock()
+        targets._validate_dependencies()
         conflicts = self._queue_conflicts()
         if conflicts:
             return self.env['ab_deploy_conflict']._open(self, conflicts)
@@ -431,6 +456,7 @@ class DeployRequest(models.Model):
         targets = self._selected_targets()
         targets._check_available()
         targets.sorted('id')._lock()
+        targets._validate_dependencies()
         jobs = self.env['ab_deploy_job']._make(targets)
         targets._clear_selection()
         self._transition({'queued': True})
@@ -476,10 +502,13 @@ class DeployTarget(models.Model):
         self.request_id._require_role('executor')
         from ..runner import engine
         reason = _ssh_test_reason(engine.test_ssh(self.server_id.ssh_alias or ''), self.env)
-        title = _('SSH connection failed: %s', self.server_id.name) if reason else _('SSH connection successful: %s', self.server_id.name)
+        if reason:
+            return self.request_id._ssh_failure_report(1, [{
+                'serial': self.server_id.serial or '', 'name': self.server_id.name, 'reason': reason}])
+        title = _('SSH connection successful: %s', self.server_id.name)
         return {'type': 'ir.actions.client', 'tag': 'display_notification',
-                'params': {'title': title, 'message': reason or _('SSH authentication and remote command execution succeeded.'),
-                           'type': 'danger' if reason else 'success', 'sticky': bool(reason)}}
+                'params': {'title': title, 'message': _('SSH authentication and remote command execution succeeded.'),
+                           'type': 'success', 'sticky': False}}
 
     def _retry_job(self):
         self.ensure_one()
@@ -534,7 +563,8 @@ class DeployTarget(models.Model):
             if any(r.state != 'approved' for r in requests):
                 raise UserError(_('Deployment selection requires an approved request.'))
             self.job_ids.sorted('id')._lock()
-            if vals['deploy'] and any(t.job_ids and not t._retry_job() for t in self):
+            if vals['deploy'] and any(t.job_ids and not t._retry_job() and not (
+                    t.request_id.request_purpose == 'health' and t._health_repeat_eligible()) for t in self):
                 raise UserError(_('Only delayed servers or retryable SSH and script failures can be selected.'))
             return super().write(vals)
         if set(vals) - {'server_id'}:
@@ -566,7 +596,7 @@ class DeployTarget(models.Model):
             if (policy not in (1, 2) or not types or 'check' not in types
                     or any(kind not in ('action', 'check') for kind in types)
                     or not valid_order
-                    or target.script != engine.render(commands)
+                    or target.script != engine.render(commands, snapshot.get('request_purpose') == 'health')
                     or target.script_hash != engine.checksum(target.script)):
                 raise ValidationError(_('The approved post-deployment checks are missing or inconsistent. Return this request to draft and submit it again.'))
 
@@ -621,9 +651,14 @@ class DeployTarget(models.Model):
                          'parent_line_id': l.parent_line_id.id or False,
                          'required_check_ids': l.command_id.required_check_ids.sorted(
                              lambda check: (check.check_sequence, check.id)).ids} for l in lines]
-            script = engine.render(commands)
+            health_collection = target.request_id.request_purpose == 'health'
+            if health_collection:
+                commands = [dict(command, collect_health_report=True) for command in commands]
+            script = engine.render(commands, health_collection)
             snapshot = {'check_policy_version': 2, 'ssh_alias': target.server_id.ssh_alias,
                         'timeout': target.server_id.monitor_timeout_seconds, 'commands': commands}
+            if health_collection:
+                snapshot['request_purpose'] = 'health'
             if target.request_id.get_recent_odoo_log:
                 snapshot['odoo_log'] = {name: target.server_id[name] for name in target.server_id._log_path_fields}
             super(DeployTarget, target).write({'script': script, 'script_hash': engine.checksum(script),
