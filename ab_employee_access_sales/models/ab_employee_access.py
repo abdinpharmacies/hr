@@ -1,6 +1,5 @@
 import logging
 import re
-from collections import defaultdict
 
 from psycopg2 import IntegrityError
 
@@ -17,10 +16,10 @@ class AbEmployeeAccess(models.Model):
 
     @api.model
     def _cron_sync_employee_sales_roles(self, default_pin=None):
-        """Synchronize access using HR's searchable working status, in batches.
+        """Create missing access profiles using HR's searchable working status.
 
         This private administrator automation intentionally covers all employees.
-        Existing roles, PINs, custom permissions and allowed stores are retained.
+        Existing profiles and sessions are never updated by this automation.
         """
         if default_pin is not None and (
             not isinstance(default_pin, str)
@@ -35,8 +34,7 @@ class AbEmployeeAccess(models.Model):
             & fields.Domain("role_id.active", "=", True)
         )
         roles_by_job = {mapping.job_id.id: mapping.role_id for mapping in mappings}
-        session_model = self.env["ab_employee_access_sales_pos_session"].sudo()
-        operation_api = self.env["ab_employee_access_sales_pos_api"].sudo()
+        # Retain result/log keys for callers; update counters always stay zero.
         counts = dict.fromkeys(
             ("created", "assigned", "disabled", "reenabled", "revoked", "skipped", "failures"), 0
         )
@@ -50,59 +48,34 @@ class AbEmployeeAccess(models.Model):
                 & fields.Domain("is_working", "=", True)
             ).ids)
             profiles = profiles_model.search(fields.Domain("employee_id", "in", employees.ids))
-            profiles_by_employee = {profile.employee_id.id: profile for profile in profiles}
-            sessions_by_employee = defaultdict(lambda: session_model.browse())
-            for session in session_model.search(
-                fields.Domain("employee_id", "in", employees.ids)
-                & fields.Domain("state", "in", ["active", "locked"])
-            ):
-                sessions_by_employee[session.employee_id.id] |= session
+            employees_with_profiles = set(profiles.employee_id.ids)
 
             for employee in employees:
+                if employee.id in employees_with_profiles:
+                    counts["skipped"] += 1
+                    continue
                 delta = dict.fromkeys(counts, 0)
                 try:
                     # SQL exception parameters can contain PINs. Log only the
                     # employee ID and exception type after the savepoint rolls back.
                     with mute_logger("odoo.sql_db"), self.env.cr.savepoint():
-                        profile = profiles_by_employee.get(employee.id, profiles_model.browse())
                         working = employee.active and employee.id in working_ids
-                        store = employee.department_id.store_id
-                        values = {}
-                        role = profile.pos_role_id
-                        if working and not role:
-                            role = roles_by_job.get(employee.job_id.id)
-                            if role:
-                                values["pos_role_id"] = role.id
-                                if profile.pos_allowed_store_ids != store:
-                                    values["pos_allowed_store_ids"] = [fields.Command.set(store.ids)]
-                                delta["assigned"] = 1
-                        enabled = bool(working and role and role.active and store)
-                        if not profile and values:
-                            values.update({
+                        role = roles_by_job.get(employee.job_id.id) if working else None
+                        if role:
+                            store = employee.department_id.store_id
+                            values = {
                                 "employee_id": employee.id,
                                 "costcenter_id": employee.costcenter_id.id,
-                                "pos_allow_login": enabled,
-                            })
+                                "pos_role_id": role.id,
+                                "pos_allowed_store_ids": [fields.Command.set(store.ids)],
+                                "pos_allow_login": bool(store),
+                            }
                             if default_pin is not None:
                                 values["pos_pin"] = default_pin
-                            profile = profiles_model.create(values)
+                            profiles_model.create(values)
                             delta["created"] = 1
-                        elif profile:
-                            if profile.pos_allow_login != enabled:
-                                values["pos_allow_login"] = enabled
-                                delta["reenabled" if enabled else "disabled"] = 1
-                            if values:
-                                profile.write(values)
-                        if not enabled:
-                            sessions = sessions_by_employee[employee.id]
-                            sessions.close_session()
-                            for session in sessions:
-                                operation_api._log_operation(
-                                    "logout", employee, profile=profile, session=session,
-                                    details={"reason": "automatic_employee_sales_access_sync"},
-                                )
-                            delta["revoked"] = len(sessions)
-                        if not any(delta.values()):
+                            delta["assigned"] = 1
+                        else:
                             delta["skipped"] = 1
                     for key, value in delta.items():
                         counts[key] += value
