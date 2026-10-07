@@ -3,7 +3,9 @@
 Version **1** uses native bearer API keys and existing
 `/json/2/ab_branch_api/<method>` URLs. Every request requires a positive JSON
 integer `db_serial` matching server configuration and exactly one active replica.
-The key must belong to the executing active internal non-administrator user.
+The key must belong to the executing active internal user, including Settings
+administrators, access administrators and an active superuser. Inactive and
+portal/public users cannot connect.
 Business ACLs and record rules remain in force; no users or mappings are created.
 
 ## Store selection and contract
@@ -323,3 +325,36 @@ branch/store isolation, permissions, and completed-result replay remain intact.
 Upgrade `ab_branch_api` before callcenter `ab_sales`, restart both services,
 retest the existing Branch Connection, and submit a controlled invoice through
 Pending and cashier Saved states.
+
+
+## Guarded callcenter sales (19.0.5.5.1)
+
+Deploy this provider before callcenter `ab_sales` 19.0.3.7.0, target-upgrade each
+module and restart its workers, then reload the POS. The capability
+`sales_submission_guard: 1` and result `submission_guard_version: 1` extend API
+version 1; endpoint URLs and authentication are unchanged.
+
+`submit_sale` accepts optional `request_revision` (default 1). Results include
+`token`, `request_revision`, `branch_header_id`, `eplus_serial`, `status`,
+`message`, `can_edit`, `can_retry`, and the existing database/store identity.
+Unknown means the outcome cannot be confirmed; Rejected means a safe business
+rejection. Only Pending/Saved with positive branch and E-Plus identifiers is a
+successful submission.
+
+Unknown retries must use the exact original token, revision, target and payload.
+A confirmed rejection may accept a changed payload at the next revision, on the
+same branch header and token. Completed requests replay without posting. The
+operation records the current payload, prepared revision and earlier outcome
+hashes; a failed correction is revalidated rather than posting previous lines.
+
+New sales use the native `ab_sales` transaction guard and a dedicated connector
+session with no automatic reconnect or statement replay. API preparation reads
+retain the established connector factory for that isolated session. Session
+locks protect operations across PostgreSQL commits. Promo/contract preparation,
+permissions, UoM resolution and branch stock filters still run normally.
+
+`get_sale_statuses` observes owned tokens only. Unknown records may be reconciled
+against the existing committed branch invoice marker; this reads E-Plus and
+never creates a sale or consumes stock. Missing, ambiguous, incomplete or
+unavailable evidence leaves the outcome Unknown. Return posting/recovery keeps
+its existing protocol.

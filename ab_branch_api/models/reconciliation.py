@@ -11,6 +11,7 @@ import logging
 from odoo import api, models, _
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import config
+from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 
 from .routing import api_request, current_request, request_store, STORE_UNSET
 from .sales_workflow import ReturnConnection
@@ -101,7 +102,8 @@ class BranchRecovery(models.AbstractModel):
         header = self.env[model].browse(operation.record_id).exists()
         if (not header or operation.user_id.id != self.env.uid
                 or operation.store_id != request_store(self)
-                or header.store_id != operation.store_id):
+                or header.store_id != operation.store_id
+                or (operation.kind == 'sale' and header.pos_client_token != operation.token)):
             raise AccessError(_('The stored bill does not match the authorized branch operation.'))
         header.check_access(access)
         header.line_ids.check_access(access)
@@ -147,6 +149,8 @@ class BranchRecovery(models.AbstractModel):
                 'message': _('Branch sale submitted.')}
 
     def _reconcile_post(self, operation):
+        if operation.kind == 'sale' and operation.sale_guard_version == 1:
+            return self._reconcile_guarded_sale(operation)
         header = self._operation_header(operation, access='read')
         connection = self._guard_connection(header.get_connection(), operation)
         cur = connection.cursor()
@@ -179,7 +183,7 @@ class BranchRecovery(models.AbstractModel):
                 # Only the original operation's lifecycle/transaction fields are
                 # finalized here, just as in the existing posting workflow.
                 # Pending/Saved records remain read-only to ordinary ORM edits.
-                header.sudo().write({'active': True, 'pos_client_token': operation.token,
+                header.sudo()._write_submission_state({'active': True, 'pos_client_token': operation.token,
                               'eplus_serial': int(serial), 'status': 'saved' if flag == 'C' else 'pending',
                               'push_state': 'success', 'push_message': _('Branch sale submitted.')})
                 committed = True
@@ -230,7 +234,10 @@ class BranchRecovery(models.AbstractModel):
             # A failed commit may have left Pending/Saved in PostgreSQL. Restore
             # only lifecycle fields after proving external rollback; a later
             # submit still checks ordinary draft header/line write permission.
-            header.sudo().write(values)
+            if operation.kind == 'sale':
+                header.sudo()._write_submission_state(values)
+            else:
+                header.sudo().write(values)
             operation.write({'state': 'retryable', 'result': False})
         self.env.cr.commit()
 
@@ -261,10 +268,25 @@ class BranchRecovery(models.AbstractModel):
 class RecoverableSale(models.Model):
     _inherit = 'ab_sales_header'
 
+    def _get_submission_connection(self):
+        scope = current_request(self)
+        if not scope:
+            return super()._get_submission_connection()
+        pooled = self.get_connection()
+        if not isinstance(pooled, ConnectionProxy):
+            return pooled
+        factory = scope.connection_factories.get(id(pooled))
+        if not factory:
+            raise UserError(_('Branch submission could not be confirmed. Retry the original bill.'))
+        # The API read pool disables reconnect. Native sales still need a new
+        # physical session, with neither reconnection nor statement replay.
+        return ConnectionProxy(factory(), wrap_dict_cursor=pooled._wrap_dict_cursor)
+
     def get_connection(self):
         connection = super().get_connection()
         scope = current_request(self)
-        if scope and scope.posting_operation:
+        if (scope and scope.posting_operation
+                and not (scope.posting_operation.kind == 'sale' and scope.posting_operation.sale_guard_version == 1)):
             return self.env['ab_branch_api']._guard_connection(connection, scope.posting_operation)
         return connection
 

@@ -933,3 +933,76 @@ msgstr ""
 #: code:addons/ab_branch_api/models/branch_api.py:0
 msgid "Callcenter sale transport selection is no longer supported. Upgrade the callcenter module."
 msgstr "لم يعد اختيار مسار إرسال مبيعات مركز الاتصال مدعومًا. يرجى ترقية وحدة مركز الاتصال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "A positive request revision is required."
+msgstr "يجب تحديد رقم مراجعة طلب موجب."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__attempt_history
+msgid "Attempt History"
+msgstr "سجل المحاولات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Branch submission could not be confirmed. Retry the original bill."
+msgstr ""
+"تعذر تأكيد إرسال الفاتورة إلى الفرع. أعد المحاولة باستخدام الفاتورة الأصلية."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Invalid sale payload."
+msgstr "بيانات فاتورة البيع غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "Only a confirmed rejected bill can accept the next corrected revision."
+msgstr "يمكن إرسال المراجعة المصححة التالية فقط لفاتورة تأكد رفضها."
+
+#. module: ab_branch_api
+#: model:ir.model.fields.selection,name:ab_branch_api.selection__ab_branch_api_operation__state__rejected
+msgid "Rejected"
+msgstr "مرفوضة"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__request_payload
+msgid "Request Payload"
+msgstr "بيانات الطلب"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__request_revision
+msgid "Request Revision"
+msgstr "مراجعة الطلب"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__sale_guard_version
+msgid "Sale Guard Version"
+msgstr "إصدار حماية إرسال البيع"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_api_operation__sale_prepared_revision
+msgid "Sale Prepared Revision"
+msgstr "مراجعة البيع التي تم تجهيزها"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "The branch invoice is incomplete; the original bill remains Unknown."
+msgstr "فاتورة الفرع غير مكتملة؛ تظل الفاتورة الأصلية غير مؤكدة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/guarded_sales.py:0
+msgid "The first request revision must be one."
+msgstr "يجب أن يكون رقم مراجعة الطلب الأول واحدًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/credentials.py:0
+msgid "Use an active internal user."
+msgstr "استخدم مستخدمًا داخليًا نشطًا."

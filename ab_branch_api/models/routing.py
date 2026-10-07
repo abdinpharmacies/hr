@@ -29,6 +29,7 @@ class SqlRequest:
     posting_operation: object = None
     guarded: dict = field(default_factory=dict)
     deferred_commits: dict = field(default_factory=dict)
+    connection_factories: dict = field(default_factory=dict)
 
 
 def current_request(model):
@@ -147,6 +148,9 @@ class ApiSqlConnector(models.AbstractModel):
                 yield connection
             return
         connection = cm.__enter__()
+        # Keep the established connector factory for an isolated native sale
+        # session, while disabling replay on this API read/pool connection.
+        scope.connection_factories.setdefault(id(connection), connection._reconnect_cb)
         connection._reconnect_cb = None
         scope.opened[key] = connection
         try:
