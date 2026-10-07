@@ -997,6 +997,9 @@ those ports are occupied.
 
 ### Test Port Isolation
 
+- Treat ports `4091` and `4092` as reserved for the user's PyCharm-managed
+  pos19 and callcenter19 processes. Never bind a temporary agent process to
+  either port unless the user explicitly requests it.
 - Do not stop or restart the Odoo process managed by PyCharm merely because its
   configured HTTP or gevent port is already in use.
 - Run module upgrades, test suites, asset checks, and temporary development
@@ -1004,6 +1007,10 @@ those ports are occupied.
   `--gevent-port` explicitly.
 - If a selected test port is occupied, choose another unused port; do not
   terminate the existing PyCharm process to free it.
+- Prefer `--stop-after-init` when validation does not require live HTTP. If a
+  temporary server is required, track its process or execution session, stop it
+  before finishing the task, and verify its HTTP and gevent ports are released
+  with `ss -ltnp`.
 
 Preferred replica upgrade example:
 
