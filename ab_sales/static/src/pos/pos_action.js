@@ -705,80 +705,6 @@ class AbSalesPosCustomerLookupDialog extends Component {
     }
 }
 
-class AbSalesPosDuplicateTokenDialog extends Component {
-    static template = "ab_sales.PosDuplicateTokenDialog";
-    static components = {Dialog};
-    static props = {
-        existing: Object,
-        message: {type: String, optional: true},
-        onCreateNewToken: Function,
-        close: Function,
-    };
-
-    setup() {
-        this.state = useState({submitting: false});
-        this.submitNewToken = this.submitNewToken.bind(this);
-        this.formatMoney2 = this.formatMoney2.bind(this);
-        this.formatQty = this.formatQty.bind(this);
-        this.formatDateTime = this.formatDateTime.bind(this);
-    }
-
-    get existing() {
-        return this.props.existing || {};
-    }
-
-    formatMoney2(value) {
-        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
-        if (!Number.isFinite(numberValue)) {
-            return "0.00";
-        }
-        return numberValue.toFixed(2);
-    }
-
-    formatQty(value) {
-        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
-        if (!Number.isFinite(numberValue)) {
-            return "0";
-        }
-        const fixed = numberValue.toFixed(2);
-        return fixed.replace(/(?:\.0+|(\.\d*?)0+)$/, "$1");
-    }
-
-    formatDateTime(value) {
-        if (!value) {
-            return "-";
-        }
-        try {
-            const dt = new Date(value);
-            return `${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}`;
-        } catch {
-            return value;
-        }
-    }
-
-    async submitNewToken() {
-        if (this.state.submitting) {
-            return;
-        }
-        this.state.submitting = true;
-        try {
-            if (this.props.onCreateNewToken) {
-                await this.props.onCreateNewToken();
-            }
-            if (this.props.close) {
-                this.props.close();
-            }
-        } finally {
-            this.state.submitting = false;
-        }
-    }
-
-    cancel() {
-        if (this.props.close) {
-            this.props.close();
-        }
-    }
-}
 
 class AbSalesPosValidationDialog extends Component {
     static template = "ab_sales.PosValidationDialog";
@@ -1073,6 +999,7 @@ class AbSalesPosAction extends Component {
         this.loadLineDetails = this.loadLineDetails.bind(this);
         this.removeLine = this.removeLine.bind(this);
         this.submitCurrentBill = this.submitCurrentBill.bind(this);
+        this.retryCurrentBill = this.retryCurrentBill.bind(this);
         this.openBillWizard = this.openBillWizard.bind(this);
         this.openStoresBalance = this.openStoresBalance.bind(this);
         this.scheduleLinePosBalanceRefresh = this.scheduleLinePosBalanceRefresh.bind(this);
@@ -1149,6 +1076,16 @@ class AbSalesPosAction extends Component {
         useExternalListener(window, "keydown", (ev) => this.onKeydown(ev), {capture: true});
         useExternalListener(window, "resize", () => this._syncWindowToViewport());
         useExternalListener(window, "pagehide", () => this._saveCacheToServer());
+        useExternalListener(window, "focus", () => this.refreshSubmissionStates());
+        useExternalListener(window, "storage", (ev) => {
+            if (ev.key === this._localCacheKey()) {
+                this._submissionRevision = (this._submissionRevision || 0) + 1;
+                for (const bill of this.state.bills) {
+                    bill.submission_checking = true;
+                }
+                this.refreshSubmissionStates();
+            }
+        });
         useExternalListener(document, "visibilitychange", () => {
             if (document.visibilityState === "hidden") {
                 this._saveCacheToServer();
@@ -1340,6 +1277,10 @@ class AbSalesPosAction extends Component {
         this.state.selectedId = hasServerSelected
             ? serverSelectedId
             : (this.state.bills[0]?.id || null);
+        for (const bill of this.state.bills) {
+            bill.submission_checking = true;
+        }
+        await this.refreshSubmissionStates();
         this._writeLocalCache();
 
         if (serverLoaded) {
@@ -1619,6 +1560,7 @@ class AbSalesPosAction extends Component {
     }
 
     openCustomerLookup() {
+        if (!this.billEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -1637,6 +1579,9 @@ class AbSalesPosAction extends Component {
     }
 
     async applyCustomerLookup(customer) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         if (!customer || !customer.id) {
             return;
         }
@@ -1752,6 +1697,9 @@ class AbSalesPosAction extends Component {
     }
 
     async copyLastAddress() {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const text = this.state.customerInsights?.customer?.last_address || "";
         if (!text) {
             this.notification.add("No address to copy.", {type: "warning"});
@@ -1793,6 +1741,9 @@ class AbSalesPosAction extends Component {
     }
 
     addLastInvoiceItems(invoice) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const lines = invoice?.lines || [];
         if (!lines.length) {
             this.notification.add("No items in selected invoice.", {type: "warning"});
@@ -1947,7 +1898,8 @@ class AbSalesPosAction extends Component {
         normalized.header.customer_phone = normalized.header.customer_phone || "";
         normalized.header.customer_code = normalized.header.customer_code || "";
         normalized.header.pos_client_token =
-            normalized.header.pos_client_token || generatePosToken(session.user_id, normalized.header.store_id);
+            normalized.header.pos_client_token || (normalized.submission_attempted
+                ? "" : generatePosToken(session.user_id, normalized.header.store_id));
         normalized.updated_at = normalized.updated_at || new Date().toISOString();
         normalized.local_number = normalized.local_number || String(Date.now());
         normalized.id = normalized.id || generateId("bill");
@@ -2031,7 +1983,11 @@ class AbSalesPosAction extends Component {
         this.searchProducts((this.state.productQuery || "").trim());
     }
 
-    removeBill(billId) {
+    removeBill(billId, completed = false) {
+        const bill = this.state.bills.find((item) => item.id === billId);
+        if (!completed && (bill?.submission_attempted || !this.billEditable(bill))) {
+            return;
+        }
         this.state.bills = this.state.bills.filter((b) => b.id !== billId);
         if (this.state.selectedId === billId) {
             this.state.selectedId = this.state.bills.length ? this.state.bills[0].id : null;
@@ -2076,8 +2032,8 @@ class AbSalesPosAction extends Component {
         this._storeStatusRequestId += 1;
         this._customerInsightsRequestId += 1;
 
-        this.state.bills = [];
-        this.state.selectedId = null;
+        this.state.bills = this.state.bills.filter((bill) => bill.submission_attempted || !this.billEditable(bill));
+        this.state.selectedId = this.state.bills[0]?.id || null;
         this.state.storeQuery = "";
         this.state.storeResults = [];
         this.state.productQuery = "";
@@ -2106,6 +2062,11 @@ class AbSalesPosAction extends Component {
     }
 
     updateHeaderField(field, value) {
+        if (["pos_client_token", "status", "eplus_serial"].includes(field) ||
+            (field === "store_id" && this.currentBill?.submission_attempted)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2118,6 +2079,9 @@ class AbSalesPosAction extends Component {
     }
 
     _openSubmitDialog(bill) {
+        if (!this.billEditable(bill)) {
+            return;
+        }
         if (!bill) {
             return;
         }
@@ -2162,22 +2126,10 @@ class AbSalesPosAction extends Component {
     }
 
     _openDuplicateTokenDialog(bill, payload) {
-        if (!bill) {
-            return;
+        if (bill && payload?.existing_header?.id) {
+            this._applySubmissionState(bill, payload.existing_header);
+            this.persistCache();
         }
-        const existing = payload?.existing_header || {};
-        const message = payload?.message || "An invoice already exists with the same token.";
-        this.dialog.add(AbSalesPosDuplicateTokenDialog, {
-            existing,
-            message,
-            onCreateNewToken: async () => {
-                const storeId = bill.header?.store_id || existing?.store?.id;
-                bill.header.pos_client_token = generatePosToken(session.user_id, storeId);
-                bill.updated_at = new Date().toISOString();
-                this.persistCache();
-                await this._submitBillInternal(bill);
-            },
-        });
     }
 
     _openSubmitErrorDialog(message, title) {
@@ -2188,6 +2140,9 @@ class AbSalesPosAction extends Component {
     }
 
     _applySubmitDialog(bill, payload) {
+        if (!this.billEditable(bill)) {
+            return;
+        }
         if (!bill) {
             return;
         }
@@ -2322,6 +2277,12 @@ class AbSalesPosAction extends Component {
     }
 
     async onLineUomUpdate(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !line) {
             return;
@@ -2343,6 +2304,9 @@ class AbSalesPosAction extends Component {
             const selectedFactor = await this._getUomFactor(line.uom_id);
             const defaultUomId = line.default_uom_id || line.uom_id;
             const defaultFactor = defaultUomId ? await this._getUomFactor(defaultUomId) : 0;
+            if (!this.billEditable(bill) || this.currentBill !== bill) {
+                return;
+            }
             if (defaultFactor > 0) {
                 line.default_uom_factor = defaultFactor;
             }
@@ -2371,6 +2335,10 @@ class AbSalesPosAction extends Component {
     }
 
     async onStoreM2OUpdate(value) {
+        if (this.currentBill?.submission_attempted) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2400,6 +2368,9 @@ class AbSalesPosAction extends Component {
     }
 
     async onCustomerM2OUpdate(value) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2469,6 +2440,9 @@ class AbSalesPosAction extends Component {
     }
 
     setCustomerMode(mode) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2539,6 +2513,9 @@ class AbSalesPosAction extends Component {
     }
 
     selectCustomer(cust) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !cust) {
             return;
@@ -2954,6 +2931,9 @@ class AbSalesPosAction extends Component {
     }
 
     addProduct(product, qty = 1) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !product?.id) {
             return null;
@@ -3603,6 +3583,12 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineQty(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.qty_str = value;
         this._recomputeLine(line);
         this._recomputeBill(this.currentBill);
@@ -3610,6 +3596,12 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineSellPrice(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.sell_price_str = value;
         const price = parseFloat(value || 0) || 0;
         line.sell_price = price;
@@ -3622,11 +3614,23 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineTargetPrice(line, value) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.target_sell_price = parseFloat(value || 0) || 0;
         this._recomputeBill(this.currentBill);
     }
 
     onAvailablePriceSelect(line, priceValue) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const price = parseFloat(priceValue || "");
         if (!Number.isFinite(price)) {
             return;
@@ -3641,6 +3645,12 @@ class AbSalesPosAction extends Component {
     }
 
     removeLine(line) {
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -3656,7 +3666,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
-        if (!target) {
+        if (!this.billEditable(target)) {
             return;
         }
         if (this._promoTimer) {
@@ -3724,7 +3734,7 @@ class AbSalesPosAction extends Component {
                 applied_program_id: target.promo.selected_id || false,
                 manual_clear: !!target.promo.manual_clear,
             });
-            if (requestId !== this._promoRequestId) {
+            if (requestId !== this._promoRequestId || !this.billEditable(target)) {
                 return;
             }
             target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
@@ -3764,6 +3774,9 @@ class AbSalesPosAction extends Component {
     }
 
     selectPromotion(program) {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !program) {
             return;
@@ -3790,6 +3803,9 @@ class AbSalesPosAction extends Component {
     }
 
     clearPromotion() {
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -3822,6 +3838,7 @@ class AbSalesPosAction extends Component {
 
     async loadLineDetails(line, options = {}) {
         const bill = this.currentBill;
+        if (!this.billEditable(bill) || !bill.lines.includes(line)) return;
         const storeId = bill?.header?.store_id;
         if (!storeId || !line?.product_id) {
             return;
@@ -3832,6 +3849,7 @@ class AbSalesPosAction extends Component {
                 store_id: storeId,
                 product_id: line.product_id,
             });
+            if (!this.billEditable(bill) || this.currentBill !== bill || !bill.lines.includes(line)) return;
             line.balance = details.balance || 0;
             const totalBalance = Number.isFinite(details?.total_balance)
                 ? details.total_balance
@@ -4016,94 +4034,159 @@ class AbSalesPosAction extends Component {
         });
     }
 
+    billEditable(bill = this.currentBill) {
+        return !!bill && !this.state.submitting && !bill.submission_checking &&
+            ["prepending", "rejected"].includes(bill.submission_status || "prepending");
+    }
+
+    submissionStatusLabel(bill) {
+        const status = bill?.submission_status || "prepending";
+        if (bill?.submission_checking) return _t("Checking submission...");
+        if (status === "unknown") return _t("Unknown");
+        if (status === "rejected") return _t("Rejected");
+        if (status === "pending") return _t("Pending");
+        if (status === "saved") return _t("Saved");
+        return _t("PrePending");
+    }
+
+    _applySubmissionState(bill, result) {
+        bill.odoo_header_id = result.id || result.recovery_header_id || bill.odoo_header_id || false;
+        bill.submission_status = result.status || "unknown";
+        bill.submission_message = result.message || "";
+        bill.submission_checking = false;
+        bill.submission_attempted = !!bill.odoo_header_id || bill.submission_attempted;
+        bill.eplus_serial = result.eplus_serial || false;
+    }
+
+    async refreshSubmissionStates() {
+        const bills = [...this.state.bills];
+        if (!bills.length || this._submissionRefreshInFlight || this.state.submitting) return;
+        this._submissionRefreshInFlight = true;
+        const revision = this._submissionRevision || 0;
+        try {
+            const states = await this.orm.call("ab_sales_pos_api", "pos_submission_status", [], {
+                tokens: bills.map((bill) => bill.header.pos_client_token),
+            });
+            if (revision !== (this._submissionRevision || 0)) return;
+            for (const bill of bills) {
+                const result = states[bill.header.pos_client_token];
+                if (result) {
+                    this._applySubmissionState(bill, result);
+                } else {
+                    bill.submission_checking = false;
+                    // A completed validation error plus authoritative absence
+                    // means no invoice was saved. Keep its token, allow correction.
+                    bill.submission_status = bill.submission_validation_failed
+                        ? "rejected" : bill.submission_attempted ? "unknown" : "prepending";
+                }
+            }
+            this.state.bills = this.state.bills.filter((bill) =>
+                !["pending", "saved"].includes(bill.submission_status));
+            if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+                this.state.selectedId = this.state.bills[0]?.id || null;
+            }
+            this.persistCache();
+        } catch {
+            // Preserve the lock until the server can authoritatively answer.
+            if (revision === (this._submissionRevision || 0)) {
+                for (const bill of bills) bill.submission_checking = true;
+            }
+        } finally {
+            this._submissionRefreshInFlight = false;
+            if (revision !== (this._submissionRevision || 0) && !this.state.submitting) {
+                await this.refreshSubmissionStates();
+            }
+        }
+    }
+
+    async retryCurrentBill() {
+        const bill = this.currentBill;
+        if (!bill || this.state.submitting) return;
+        if (bill.submission_checking) {
+            await this.refreshSubmissionStates();
+            if (bill.submission_checking || !this.state.bills.includes(bill)) return;
+        }
+        if (bill.submission_status === "rejected") {
+            this._openSubmitDialog(bill);
+        } else {
+            await this._sendBillSubmission(bill);
+        }
+    }
+
     async submitCurrentBill() {
         const bill = this.currentBill;
-        if (!bill || this.state.submitting) {
-            return;
-        }
-        if (document.body.classList.contains("modal-open")) {
-            return;
+        if (!bill || this.state.submitting || document.body.classList.contains("modal-open")) return;
+        if (bill.submission_status === "unknown" || bill.submission_checking) {
+            return this.retryCurrentBill();
         }
         this._openSubmitDialog(bill);
     }
 
     async _submitBillInternal(bill) {
-        if (!bill) {
-            return;
-        }
-        if (this.state.submitting) {
-            return;
-        }
-        this.state.submitting = true;
+        if (!this.billEditable(bill)) return;
+        return this._sendBillSubmission(bill);
+    }
+
+    async _sendBillSubmission(bill) {
+        if (!bill || this.state.submitting) return;
+        this._submissionRevision = (this._submissionRevision || 0) + 1;
+        const wasUnknown = bill.submission_status === "unknown";
         const storeId = bill.header?.store_id;
-        try {
-            const header = this._buildSubmitHeader(bill);
-            const lines = bill.lines.map((line) => ({
-                product_id: line.product_id,
-                qty_str: line.qty_str || DEFAULT_QTY,
-                sell_price: line.sell_price,
-                target_sell_price: line.target_sell_price,
+        const payload = wasUnknown && bill.submission_payload ? bill.submission_payload : {
+            header: this._buildSubmitHeader(bill),
+            lines: bill.lines.map((line) => ({
+                product_id: line.product_id, qty_str: line.qty_str || DEFAULT_QTY,
+                sell_price: line.sell_price, target_sell_price: line.target_sell_price,
                 uom_id: line.uom_id || false,
-            }));
-            const result = await this.orm.call("ab_sales_pos_api", "pos_submit", [], {
-                header,
-                lines,
-                applied_program_id: bill.promo?.applied_id || false,
-                on_existing_token: "warn",
-            });
-            if (result?.duplicate_token) {
-                this._openDuplicateTokenDialog(bill, result);
-                return;
-            }
+                unavailable_reason: line.unavailable_reason || false,
+                unavailable_reason_other: line.unavailable_reason_other || false,
+            })),
+            applied_program_id: bill.promo?.applied_id || false,
+        };
+        payload.submission_ui_version = "1";
+        bill.submission_payload = JSON.parse(JSON.stringify(payload));
+        bill.submission_status = "unknown";
+        bill.submission_attempted = true;
+        bill.submission_checking = false;
+        bill.submission_validation_failed = false;
+        this.state.submitting = true;
+        this._promoRequestId += 1;
+        this.persistCache();
+        try {
+            const result = bill.odoo_header_id
+                ? await this.orm.call("ab_sales_pos_api", "pos_retry", [], {
+                    header_id: bill.odoo_header_id, token: bill.header.pos_client_token,
+                    payload: wasUnknown ? null : payload,
+                    pos_hr_session_token: this._posDraftSessionToken() || false,
+                })
+                : await this.orm.call("ab_sales_pos_api", "pos_submit", [], payload);
             if (result?.type === "ir.actions.act_window") {
-                const headerId = result.pos_header_id;
-                if (!result.views) {
-                    const mode = (result.view_mode || "form").split(",")[0];
-                    result.views = [[result.view_id || false, mode]];
-                }
-                this.action.doAction(result, {
-                    onClose: async () => {
-                        if (!headerId) {
-                            return;
-                        }
-                        const rows = await this.orm.read("ab_sales_header", [headerId], ["status"]);
-                        const status = rows?.[0]?.status;
-                        if (status && status !== "prepending") {
-                            this.removeBill(bill.id);
-                            if (storeId) {
-                                this.createNewBill(storeId);
-                                if (this.state.productResults && this.state.productResults.length) {
-                                    this.schedulePosBalanceRefresh(this.state.productResults, storeId);
-                                }
-                            }
-                        }
-                    },
-                });
+                bill.odoo_header_id = result.pos_header_id;
+                bill.submission_status = "prepending";
+                if (!result.views) result.views = [[result.view_id || false, "form"]];
+                this.action.doAction(result, {onClose: () => this.refreshSubmissionStates()});
                 return;
             }
-            this.notification.add(
-                `Submitted invoice #${result?.eplus_serial || result?.id || ""}`,
-                {type: "success"}
-            );
-            this.removeBill(bill.id);
-            if (storeId) {
-                this.createNewBill(storeId);
-                if (this.state.productResults && this.state.productResults.length) {
-                    this.schedulePosBalanceRefresh(this.state.productResults, storeId);
-                }
+            this._applySubmissionState(bill, result || {});
+            if (["pending", "saved"].includes(bill.submission_status) && bill.eplus_serial) {
+                this.notification.add(_t("Submitted invoice #%s", bill.eplus_serial), {type: "success"});
+                this.removeBill(bill.id, true);
+                if (storeId) this.createNewBill(storeId);
+            } else if (bill.submission_message) {
+                this._openSubmitErrorDialog(bill.submission_message,
+                    bill.submission_status === "rejected" ? _t("Rejected") : _t("Unknown"));
             }
         } catch (err) {
-            const message = this._getRpcErrorMessage(err);
             const data = err?.data || err?.response?.data || {};
-            const errorName = data?.name || "";
-            const title = errorName.includes("ValidationError")
-                ? "Validation Error"
-                : errorName.includes("UserError")
-                    ? "Warning"
-                    : "Submit failed";
-            this._openSubmitErrorDialog(message, title);
+            const name = data.name || "";
+            bill.submission_validation_failed = name.includes("UserError") || name.includes("ValidationError");
+            bill.submission_checking = true;
+            bill.submission_message = this._getRpcErrorMessage(err);
+            this._openSubmitErrorDialog(bill.submission_message, _t("Submit failed"));
         } finally {
             this.state.submitting = false;
+            this.persistCache();
+            if (bill.submission_checking) await this.refreshSubmissionStates();
         }
     }
 

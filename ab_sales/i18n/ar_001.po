@@ -3948,3 +3948,128 @@ msgstr "من"
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "To"
 msgstr "إلى"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__unknown
+msgid "Unknown"
+msgstr "غير مؤكد"
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Retry"
+msgstr "إعادة المحاولة"
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Checking submission..."
+msgstr "جارٍ التحقق من الإرسال..."
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submitted invoice #%s"
+msgstr "تم إرسال الفاتورة رقم %s"
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submit failed"
+msgstr "فشل الإرسال"
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "POS invoices must start in PrePending status."
+msgstr "يجب أن تبدأ فواتير نقطة البيع بحالة قبل الإرسال."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "POS invoice token is required."
+msgstr "رمز فاتورة نقطة البيع مطلوب."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "The invoice identity and submission state cannot be changed manually."
+msgstr "لا يمكن تغيير هوية الفاتورة وحالة إرسالها يدويًا."
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"This invoice is locked until its E-Plus submission is resolved. Use Retry."
+msgstr ""
+"هذه الفاتورة مقفلة حتى يتم التأكد من نتيجة إرسالها إلى إي بلس. استخدم إعادة "
+"المحاولة."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"Multiple E-Plus invoices match this bill. Contact support; the bill remains "
+"locked."
+msgstr ""
+"توجد عدة فواتير في إي بلس تطابق هذه الفاتورة. تواصل مع الدعم؛ ستظل الفاتورة "
+"مقفلة."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "This invoice cannot be submitted in its current status."
+msgstr "لا يمكن إرسال هذه الفاتورة في حالتها الحالية."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Recovered E-Plus invoice (sth_id=%s)."
+msgstr "تم استرجاع فاتورة إي بلس (sth_id=%s)."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Employee has no E-Plus serial. Contact support."
+msgstr "الموظف ليس لديه رقم تسلسلي في إي بلس. تواصل مع الدعم."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "B-Connect did not accept any invoice lines. Contact support."
+msgstr "لم يقبل بي كونكت أي بنود للفاتورة. تواصل مع الدعم."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"This invoice already has an E-Plus serial. Use recovery instead of "
+"submitting again."
+msgstr ""
+"هذه الفاتورة لديها رقم تسلسلي في إي بلس بالفعل. استخدم الاسترجاع بدلًا من "
+"إرسالها مجددًا."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"POS invoices cannot be deleted. Their submission identity must be preserved."
+msgstr "لا يمكن حذف فواتير نقطة البيع. يجب الحفاظ على هوية إرسالها."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Too many invoice tokens."
+msgstr "عدد رموز الفواتير أكبر من المسموح."
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "The invoice token does not match the saved invoice."
+msgstr "رمز الفاتورة لا يطابق الفاتورة المحفوظة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid ""
+"E-Plus submission needs attention. Reload POS and use Retry on the original "
+"invoice."
+msgstr ""
+"إرسال الفاتورة إلى إي بلس يحتاج إلى مراجعة. أعد تحميل نقطة البيع واستخدم "
+"إعادة المحاولة على الفاتورة الأصلية."

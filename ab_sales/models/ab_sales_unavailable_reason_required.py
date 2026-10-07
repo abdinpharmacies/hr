@@ -38,6 +38,8 @@ class AbSalesHeaderUnavailableReasonRequired(models.Model):
         self.ensure_one()
         if not (self.pos_client_token or "").strip():
             raise UserError(_("Submit is only allowed for bills created from POS."))
+        if self.status in ("unknown", "pending", "saved"):
+            return super().action_submit()
         missing_lines = self._unavailable_lines_missing_reason()
         if missing_lines:
             labels = []

@@ -15,6 +15,36 @@ class AbdinSalesLines(models.Model):
     _description = 'ab_sales_line'
     _rec_name = 'product_id'
 
+    def _check_submission_edit(self, headers):
+        if self.env["ab_sales_header"]._submission_internal():
+            return
+        headers._lock_for_push()
+        if any(header.status == "unknown" for header in headers):
+            raise UserError(_("This invoice is locked until its E-Plus submission is resolved. Use Retry."))
+        # Version the locked parent too: PostgreSQL repeatable-read submissions
+        # must detect line edits committed after their earlier validation reads.
+        if headers:
+            headers._write_submission_state({"write_date": fields.Datetime.now()})
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        headers = self.env["ab_sales_header"].browse(list({
+            int(vals["header_id"]) for vals in vals_list if vals.get("header_id")
+        }))
+        self._check_submission_edit(headers)
+        return super().create(vals_list)
+
+    def write(self, vals):
+        headers = self.mapped("header_id")
+        if vals.get("header_id"):
+            headers |= self.env["ab_sales_header"].browse(int(vals["header_id"]))
+        self._check_submission_edit(headers)
+        return super().write(vals)
+
+    def unlink(self):
+        self._check_submission_edit(self.mapped("header_id"))
+        return super().unlink()
+
     product_id = fields.Many2one('ab_product', required=True, index=True)
     product_code = fields.Char(related='product_id.code', string='Code')
 
@@ -265,7 +295,7 @@ class AbdinSalesLines(models.Model):
     @api.depends('product_id', 'product_id.default_price')
     def _compute_sell_price(self):
         for rec in self:
-            if rec.header_id.status not in ('saved', 'pending'):
+            if rec.header_id.status not in ('saved', 'pending', 'unknown'):
                 rec.sell_price = rec.product_id.default_price
 
     # ------------------- Inventory table HTML ------------------------ #
@@ -355,7 +385,7 @@ class AbdinSalesLines(models.Model):
 
     # ---------------------- Inventory recompute ---------------------- #
     def _recompute_inventory_json(self, crx=None):
-        store_eplus_serial = None
+        store_eplus_serial = self.header_id.store_id.eplus_serial
         if not self.header_id:
             return
         if len(self.header_id) != 1:

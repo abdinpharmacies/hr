@@ -7,7 +7,7 @@
                 <div class="mt-2 d-flex flex-column gap-1 ab_pos_line_unavailable_reason_panel">
                     <select class="form-select form-select-sm ab_pos_line_unavailable_reason_select"
                             t-att-value="line.unavailable_reason || ''"
-                            t-on-change="(ev) => updateLineUnavailableReason(line, ev.target.value)">
+                            t-att-disabled="!billEditable(currentBill)" t-on-change="(ev) => updateLineUnavailableReason(line, ev.target.value)">
                         <option class="ab_pos_line_unavailable_reason_option_placeholder" value="">Select unavailable reason...</option>
                         <option class="ab_pos_line_unavailable_reason_option_not_transferred" value="not_transferred">Not transferred yet from main store</option>
                         <option class="ab_pos_line_unavailable_reason_option_wrong_price" value="wrong_price">Wrong price in system</option>
@@ -21,7 +21,7 @@
                                type="text"
                                placeholder="Required details..."
                                t-att-value="line.unavailable_reason_other || ''"
-                               t-on-input="(ev) => updateLineUnavailableReasonOther(line, ev.target.value)"/>
+                               t-att-disabled="!billEditable(currentBill)" t-on-input="(ev) => updateLineUnavailableReasonOther(line, ev.target.value)"/>
                     </t>
                 </div>
             </t>

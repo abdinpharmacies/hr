@@ -5,7 +5,7 @@
     'category': 'AbdinSupplyChain',
     'application': True,
     'depends': ['base', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_eplus_connect',
-                'abdin_et', 'ab_widgets'],
+                'abdin_et', 'ab_widgets', 'ab_hr'],
     'data': [
         'data/ir_cron.xml',
         'security/groups_sales.xml',
