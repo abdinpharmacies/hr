@@ -927,3 +927,9 @@ msgid ""
 msgstr ""
 "تعذر التحقق من نتيجة عملية الفرع %(operation)s: %(reason)s لم تتم إعادة "
 "إرسال أي فاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "Callcenter sale transport selection is no longer supported. Upgrade the callcenter module."
+msgstr "لم يعد اختيار مسار إرسال مبيعات مركز الاتصال مدعومًا. يرجى ترقية وحدة مركز الاتصال."

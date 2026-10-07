@@ -303,3 +303,23 @@ Upgrade branch `ab_branch_api` to 19.0.5.3.2 and restart its workers. Existing
 requests can be retried using the same bill/token; a stale Pending value left by
 the rejected checkpoint is repaired only after the branch verifies the outcome.
 This correction requires no callcenter code change or additional user privileges.
+
+
+## Automatic branch-owned callcenter sale posting (19.0.5.4.2)
+
+`submit_sale` creates the branch Odoo invoice as `prepending` and immediately
+runs the normal branch `action_submit()` workflow. Only that workflow may post
+to E-Plus and promote the invoice to `pending` with a positive E-Plus serial,
+which makes it visible to cashier. The callcenter sends no transport choice.
+
+Callcenter users do not have to select a branch delivery employee. When a
+callcenter delivery invoice has no explicit courier, the branch submission uses
+the same E-Plus employee already resolved and validated as the invoice salesperson
+to satisfy the branch E-Plus delivery record. An explicit delivery employee still
+takes precedence. A failed post retains the branch draft and original request
+token for reconciliation and safe retry. Authentication, payload hashing,
+branch/store isolation, permissions, and completed-result replay remain intact.
+
+Upgrade `ab_branch_api` before callcenter `ab_sales`, restart both services,
+retest the existing Branch Connection, and submit a controlled invoice through
+Pending and cashier Saved states.
