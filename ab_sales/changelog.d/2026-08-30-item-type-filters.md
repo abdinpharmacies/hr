@@ -151,15 +151,51 @@ Files changed:
 - ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
+## 9976c13d3fcb90a8bebf025fe79f530a376ace5f - emadco88 - 2026-10-01
 
-## Current changes before commit:
+Original commit subject: Merge team/pos19 into pos19; preserve sales changelog entries
 
 User-facing changes:
-- Integrate the incoming From/To price placeholders and Arabic translations while retaining the customer-and-product-code delivery default.
-- Resolve duplicate changelog headings and preserve both committed changes with their original authors, dates, and subjects.
+- Merge the From/To POS price placeholders and Arabic translations while preserving the customer-and-product-code delivery default.
+- Retain the original authors and descriptions of both incoming sales changes.
 
 Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 - ab_sales/i18n/ar.po
 - ab_sales/i18n/ar_001.po
 - ab_sales/static/src/pos/pos_action.xml
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Add Unknown and Rejected invoice statuses while preserving the original Odoo record, ID, POS token, and branch across retries.
+- Save Unknown before contacting E-Plus. Recover an existing branch-scoped invoice serial without replaying invoice lines, delivery updates, or inventory consumption.
+- Allow corrected Rejected bills to replace their saved invoice data and submit again on the same identity; never archive a failed bill or clear its token.
+- Lock Unknown headers and lines in Python and POS controls, including quantities, prices, customers, promotions, unavailable reasons, barcode additions, and delayed callbacks. Prevent deletion, copying, and branch/token changes for submitted POS identities.
+- Serialize attempts across durable commits and detect concurrent line edits before using a stale invoice snapshot.
+- Reuse the connector factory for a dedicated transaction connection with automatic statement replay disabled; preserve Unknown when commit or rollback outcomes are uncertain.
+- Add Retry and diagnostic messages in POS and backend views. Reconcile cached bills on reload and cross-tab changes; keep unresolved bills when using Remove All.
+- Require the updated POS response contract for failed submissions so an older browser cannot mistake an unresolved invoice for success.
+- Declare the existing HR model dependency and maintain English source strings with Arabic translations in both catalogs.
+
+Validation:
+- Isolated backend scenarios passed for lost commit acknowledgements before and after commit, confirmed rejection with corrected data, offline recovery, failed rollback, ambiguous matches, concurrent retries and line edits, ordinary-user/RPC guards, branch scope, token mismatch, and transaction connection isolation.
+- Executable frontend scenarios passed for locked edits, cached-state reconciliation, lost RPC responses, preserved tokens, corrected-data retry, delayed product responses, retained unresolved bills, and correction after a completed local validation error with no saved invoice.
+- Both Arabic catalogs pass `msgfmt --check-format`; runtime `ar_001` status labels, Retry button, validation text, and form view differ from English. Combined Odoo backend JavaScript, OWL template assets, and CSS compile successfully.
+- Targeted `ab_sales` upgrades passed in isolated database `codex_sales_recovery_20261007`; E-Plus calls were simulated and no production invoice or stock was changed.
+
+Files changed:
+- ab_sales/__manifest__.py
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/models/ab_sales_header.py
+- ab_sales/models/ab_sales_line.py
+- ab_sales/models/ab_sales_pos_api.py
+- ab_sales/models/ab_sales_unavailable_reason_required.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/static/src/pos/zz_pos_unavailable_reason.xml
+- ab_sales/static/src/pos/zz_pos_unavailable_reason_patch.js
+- ab_sales/views/sales_header.xml

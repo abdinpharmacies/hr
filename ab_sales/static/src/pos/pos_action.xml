@@ -86,11 +86,11 @@
                                 <div class="o_ab_sales_pos_list_title ab_pos_bill_item_title">
                                     <span class="o_ab_sales_pos_list_id ab_pos_bill_item_id">#<t
                                             t-esc="bill.local_number"/></span>
-                                    <span class="o_ab_sales_pos_list_status ab_pos_bill_item_status">Prepending</span>
+                                    <span class="o_ab_sales_pos_list_status ab_pos_bill_item_status" t-esc="submissionStatusLabel(bill)"/>
                                 </div>
                                 <button class="btn btn-sm btn-outline-danger ab_pos_bill_item_btn_remove"
                                         type="button"
-                                        t-on-click.stop="() => removeBill(bill.id)">
+                                        t-on-click.stop="() => removeBill(bill.id)" t-att-disabled="bill.submission_attempted or !billEditable(bill)">
                                     Remove
                                 </button>
                             </div>
@@ -158,7 +158,7 @@
                                     <div class="o_ab_sales_pos_top_stack ab_pos_topbar_stack_store">
                                         <div class="o_ab_sales_pos_top_group ab_pos_topbar_group_store">
                                         <div class="o_ab_sales_pos_field_row ab_pos_store_field_row">
-                                            <ABMany2one
+                                            <t t-if="billEditable(currentBill) and !currentBill.submission_attempted"><ABMany2one
                                                     relation="'ab_store'"
                                                     value="storeValue()"
                                                     update="onStoreM2OUpdate"
@@ -170,7 +170,7 @@
                                                     canOpen="false"
                                                     canWrite="true"
                                                     string="'Store'"
-                                            />
+                                            /></t><span t-else=""><t t-esc="currentBill.header.store_name or '-'"/></span>
                                             <span class="o_ab_sales_pos_inline_label ab_pos_store_code_label">Code</span>
                                             <span class="o_ab_sales_pos_inline_value ab_pos_store_code_value"
                                                   t-esc="currentBill.header.store_code or '-'"/>
@@ -211,7 +211,7 @@
                                              t-ref="customerM2O"
                                              t-on-input="onCustomerInput"
                                              t-on-pointerdown="onCustomerPointerDown">
-                                            <ABMany2one
+                                            <t t-if="billEditable(currentBill)"><ABMany2one
                                                     relation="'ab_customer'"
                                                     value="customerValue()"
                                                     update="onCustomerM2OUpdate"
@@ -223,11 +223,11 @@
                                                     canOpen="false"
                                                     canWrite="true"
                                                     string="'Customer'"
-                                            />
+                                            /></t><span t-else=""><t t-esc="currentBill.header.customer_name or '-'"/></span>
                                             <button class="btn btn-outline-primary btn-sm o_ab_sales_pos_customer_add ab_pos_customer_btn_add"
                                                     type="button"
                                                     t-on-pointerdown="captureCustomerInput"
-                                                    t-on-click="openCustomerLookup">
+                                                    t-on-click="openCustomerLookup" t-att-disabled="!billEditable(currentBill)">
                                                 Add
                                             </button>
                                             <button class="btn btn-outline-secondary btn-sm ab_pos_customer_btn_invoices"
@@ -287,14 +287,18 @@
                             <button class="btn btn-success ab_pos_btn_submit_bill"
                                     type="button"
                                     t-on-click="submitCurrentBill"
-                                    t-att-disabled="state.submitting">
+                                    t-if="!currentBill.submission_attempted and !currentBill.submission_checking"
+                                    t-att-disabled="!billEditable(currentBill)">
                                 <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
                                 <span class="ab_pos_btn_submit_bill_text">
                                     <t t-if="state.submitting">Submitting...</t>
                                 </span>
                             </button>
+                            <button class="btn btn-warning" type="button"
+                                    t-if="currentBill.submission_attempted or currentBill.submission_checking"
+                                    t-att-disabled="state.submitting" t-on-click="retryCurrentBill">Retry</button>
                             <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button"
-                                    t-on-click="removeCurrentBill">
+                                    t-on-click="removeCurrentBill" t-att-disabled="currentBill.submission_attempted or !billEditable(currentBill)">
                                 <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
                             </button>
                             <button class="btn btn-outline-secondary ab_pos_btn_open_invoices"
@@ -305,6 +309,13 @@
                             </button>
                         </div>
                     </div>
+
+                            <div class="alert alert-warning mb-0 ab_pos_submission_notice" role="status"
+                                 t-if="currentBill.submission_attempted or currentBill.submission_checking">
+                                <strong class="d-block" t-esc="submissionStatusLabel(currentBill)"/>
+                                <span class="d-block" t-if="!billEditable(currentBill)">This invoice is locked until its E-Plus submission is resolved. Use Retry.</span>
+                                <span class="d-block" t-esc="currentBill.submission_message or ''"/>
+                            </div>
 
                             <div class="o_ab_sales_pos_layout ab_pos_layout_main">
                         <section class="o_ab_sales_pos_card o_ab_sales_pos_product_panel ab_pos_section_products">
@@ -388,7 +399,7 @@
                             </div>
                                     <t t-if="state.productResults.length">
                                 <div class="o_ab_sales_pos_product_results row row-cols-1 g-2 ab_pos_product_cards"
-                                     t-ref="cardsContainer">
+                                     t-ref="cardsContainer" t-att-inert="!billEditable(currentBill)">
                                     <t t-foreach="state.productResults" t-as="p" t-key="p.id" t-foreach-index="idx">
                                         <t t-call="ab_sales.ProductCard">
                                             <t t-set="p" t-value="p"/>
@@ -452,10 +463,10 @@
                                                     <input class="form-control form-control-sm ab_pos_line_qty_input"
                                                            data-field="qty_str"
                                                            t-att-value="line.qty_str"
-                                                           t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
+                                                           t-att-disabled="!billEditable(currentBill)" t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
                                                 </td>
                                                 <td class="ab_pos_line_cell_uom">
-                                                    <ABMany2one
+                                                    <t t-if="billEditable(currentBill)"><ABMany2one
                                                             relation="'ab_product_uom'"
                                                             value="lineUomValue(line)"
                                                             update="(value) => onLineUomUpdate(line, value)"
@@ -466,13 +477,13 @@
                                                             canOpen="false"
                                                             canWrite="true"
                                                             string="'UoM'"
-                                                    />
+                                                    /></t><span t-else=""><t t-esc="line.uom_name or '-'"/></span>
                                                 </td>
                                                 <td class="ab_pos_line_cell_sell_price">
                                                     <input class="form-control form-control-sm ab_pos_line_sell_price_input"
                                                            inputmode="decimal"
                                                            t-att-value="line.sell_price_str ?? line.sell_price"
-                                                           t-on-input="(ev) => updateLineSellPrice(line, ev.target.value)"/>
+                                                           t-att-disabled="!billEditable(currentBill)" t-on-input="(ev) => updateLineSellPrice(line, ev.target.value)"/>
                                                 </td>
                                                 <td class="ab_pos_line_cell_prices">
                                                     <div class="o_ab_sales_pos_price_badges ab_pos_line_price_badges">
@@ -483,7 +494,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-outline-secondary o_ab_sales_pos_price_badge ab_pos_line_price_badge_btn"
                                                                         t-attf-class="#{p.is_default ? 'btn-outline-primary' : 'btn-outline-secondary'}"
-                                                                        t-on-click="() => onAvailablePriceSelect(line, p.price)">
+                                                                        t-att-disabled="!billEditable(currentBill)" t-on-click="() => onAvailablePriceSelect(line, p.price)">
                                                                     <span class="o_ab_sales_pos_badge_price ab_pos_line_price_badge_value"
                                                                           t-esc="formatMoney2(p.price)"/>
                                                                     <span class="o_ab_sales_pos_badge_sep ab_pos_line_price_badge_sep">:</span>
@@ -502,7 +513,7 @@
                                                 <td class="text-end ab_pos_line_cell_actions">
                                                     <button class="btn btn-sm btn-outline-danger ab_pos_line_btn_remove"
                                                             type="button"
-                                                            t-on-click="() => removeLine(line)">
+                                                            t-att-disabled="!billEditable(currentBill)" t-on-click="() => removeLine(line)">
                                                         <i class="fa fa-trash ab_pos_line_btn_remove_icon"
                                                            aria-hidden="true"/>
                                                     </button>
@@ -762,120 +773,6 @@
                 </t>
                 <div class="o_ab_sales_pos_submit_footer">
                     <button class="btn btn-outline-secondary" type="button" t-on-click="close">Close</button>
-                </div>
-            </div>
-        </Dialog>
-    </t>
-
-    <t t-name="ab_sales.PosDuplicateTokenDialog">
-        <Dialog title="'Duplicate Token'" size="'lg'">
-            <div class="o_ab_sales_pos_duplicate_dialog">
-                <div class="alert alert-warning d-flex flex-column gap-1 mb-0">
-                    <strong>Duplicate token detected.</strong>
-                    <span t-esc="props.message || ''"/>
-                    <span class="small">Generate a new token to submit this bill.</span>
-                </div>
-
-                <div class="o_ab_sales_pos_duplicate_summary">
-                    <div class="row g-2">
-                        <div class="col-12 col-md-6">
-                            <div class="o_ab_sales_pos_duplicate_card">
-                                <div class="label">Store</div>
-                                <div class="value"
-                                     t-esc="existing.store &amp;&amp; (existing.store.name || existing.store.code) || '-'"/>
-                                <div class="meta"
-                                     t-esc="existing.store &amp;&amp; existing.store.code ? ('Code: ' + existing.store.code) : ''"/>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="o_ab_sales_pos_duplicate_card">
-                                <div class="label">Customer</div>
-                                <div class="value" t-esc="existing.customer &amp;&amp; existing.customer.name || '-'"/>
-                                <div class="meta"
-                                     t-esc="existing.customer &amp;&amp; (existing.customer.phone || existing.customer.code) || ''"/>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="o_ab_sales_pos_duplicate_card">
-                                <div class="label">Invoice</div>
-                                <div class="value"
-                                     t-esc="existing.eplus_serial ? ('#' + existing.eplus_serial) : ('ID ' + (existing.id || '-'))"/>
-                                <div class="meta"
-                                     t-esc="existing.status ? ('Status: ' + existing.status) : ''"/>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="o_ab_sales_pos_duplicate_card">
-                                <div class="label">Created</div>
-                                <div class="value" t-esc="formatDateTime(existing.create_date)"/>
-                                <div class="meta"
-                                     t-esc="existing.totals ? ('Items: ' + (existing.totals.number_of_products || 0)) : ''"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="o_ab_sales_pos_duplicate_totals">
-                        <div class="o_ab_sales_pos_duplicate_total">
-                            <span class="label">Total</span>
-                            <span t-esc="formatMoney2(existing.totals &amp;&amp; existing.totals.total_price)"/>
-                        </div>
-                        <div class="o_ab_sales_pos_duplicate_total">
-                            <span class="label">Net</span>
-                            <span t-esc="formatMoney2(existing.totals &amp;&amp; existing.totals.total_net_amount)"/>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="o_ab_sales_pos_duplicate_lines">
-                    <div class="o_ab_sales_pos_section_title">Lines</div>
-                    <table class="table table-sm mb-1">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th class="text-end">Qty</th>
-                                <th class="text-end">Price</th>
-                                <th class="text-end">Net</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="existing.lines || []" t-as="line" t-key="line.id">
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold" t-esc="line.product_name || '-'"/>
-                                        <div class="text-muted small" t-esc="line.product_code || ''"/>
-                                    </td>
-                                    <td class="text-end">
-                                        <span t-esc="line.qty_str || formatQty(line.qty)"/>
-                                        <t t-if="line.uom_name">
-                                            <span class="text-muted small" t-esc="' ' + line.uom_name"/>
-                                        </t>
-                                    </td>
-                                    <td class="text-end" t-esc="formatMoney2(line.sell_price)"/>
-                                    <td class="text-end" t-esc="formatMoney2(line.net_amount)"/>
-                                </tr>
-                            </t>
-                            <t t-if="!existing.lines || !existing.lines.length">
-                                <tr>
-                                    <td colspan="4" class="text-muted text-center">No lines available.</td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
-                    <t t-if="existing.lines_truncated">
-                        <div class="text-muted small">
-                            <t t-esc="(existing.line_count || 0) - (existing.lines ? existing.lines.length : 0)"/>
-                            more lines not shown.
-                        </div>
-                    </t>
-                </div>
-
-                <div class="o_ab_sales_pos_submit_footer">
-                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Cancel</button>
-                    <button class="btn btn-warning"
-                            type="button"
-                            t-att-disabled="state.submitting"
-                            t-on-click="submitNewToken">
-                        Create new token &amp; submit
-                    </button>
                 </div>
             </div>
         </Dialog>

@@ -74,6 +74,7 @@ if (PosAction) {
         },
 
         updateLineUnavailableReason(line, value) {
+            if (!this.billEditable(this.currentBill) || !this.currentBill.lines.includes(line)) return;
             if (!line) {
                 return;
             }
@@ -85,6 +86,7 @@ if (PosAction) {
         },
 
         updateLineUnavailableReasonOther(line, value) {
+            if (!this.billEditable(this.currentBill) || !this.currentBill.lines.includes(line)) return;
             if (!line) {
                 return;
             }
@@ -101,6 +103,7 @@ if (PosAction) {
             const sourceLines = targetBill?.lines || [];
             const baseLines = Array.isArray(kwargs?.lines) ? kwargs.lines : [];
             payload.lines = baseLines.map((line, idx) => {
+                if (Object.hasOwn(line, "unavailable_reason")) return line;
                 const source = sourceLines[idx] || line || {};
                 const requireReason = this.isUnavailableLine(source);
                 return {

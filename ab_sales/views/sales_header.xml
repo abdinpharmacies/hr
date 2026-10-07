@@ -5,8 +5,11 @@
             <field name="name">ab_sales_header_view_form</field>
             <field name="model">ab_sales_header</field>
             <field name="arch" type="xml">
-                <form string="ab_sales_header_form" create="0">
+                <form string="ab_sales_header_form" create="0" duplicate="0">
                     <header>
+                        <button name="action_retry" type="object" string="Retry" class="btn-primary"
+                                invisible="status not in ('unknown', 'rejected')"/>
+                        <field name="status" widget="statusbar" statusbar_visible="prepending,unknown,rejected,pending,saved"/>
                         <button name="action_open_sales_return"
                                 type="object"
                                 string="Return"
@@ -14,13 +17,17 @@
                                 invisible="status not in ('saved', 'pending') or not eplus_serial"/>
                         <button name="action_open_add_products" type="object" string="Add Products"
                                 class="btn-secondary" data-hotkey="f2"
-                                invisible="status in ('saved', 'pending')"/>
+                                invisible="status in ('saved', 'pending', 'unknown')"/>
                         <span class="badge text-bg-success ms-2"
                               invisible="not store_id or store_server_online == False">Connected</span>
                         <span class="badge text-bg-danger ms-2"
                               invisible="not store_id or store_server_online == True">Offline</span>
                     </header>
                     <sheet>
+                        <div class="alert alert-warning" role="status" invisible="status != 'unknown'">
+                            This invoice is locked until its E-Plus submission is resolved. Use Retry.
+                        </div>
+                        <field name="push_message" readonly="1" invisible="not push_message"/>
                         <div class="oe_button_box" name="button_box">
                             <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar">
                                 <div class="o_field_widget o_stat_info mr4">
@@ -66,14 +73,14 @@
                         <group>
                             <group>
                                 <field name="store_id"
-                                       readonly="status in ('saved', 'pending')"/>
+                                       readonly="pos_client_token or status in ('saved', 'pending', 'unknown')"/>
                                 <field name="eplus_serial"/>
                                 <field name="pos_client_token" readonly="1"/>
                                 <field name="store_code"/>
                                 <field name="store_ip"/>
                                 <field name="store_server_online" invisible="True"/>
                                 <field name="description" placeholder="Write your feedback here"
-                                       readonly="status in ('saved', 'pending')"/>
+                                       readonly="status in ('saved', 'pending', 'unknown')"/>
 
                             </group>
                             <group>
@@ -81,19 +88,19 @@
                                     <page name="bill_customer" string="Bill Customer Data">
                                         <group>
                                             <field name="bill_customer_name" string="Name"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="bill_customer_phone" string="Phone"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="bill_customer_address" string="Address"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                         </group>
                                     </page>
                                     <page name="current_customer" string="Current Customer">
                                         <group>
                                             <field name="invoice_address_datalist" invisible="True"/>
-                                            <field name="customer_id" readonly="status in ('saved', 'pending')"/>
+                                            <field name="customer_id" readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="invoice_address" class="datalist-invoice_address_datalist"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="customer_address"/>
                                             <field name="customer_mobile"/>
                                             <field name="customer_phone"/>
@@ -103,24 +110,24 @@
                                     <page name="new_customer" string="New Customer">
                                         <group>
                                             <field name="new_customer_name" string="Name"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="new_customer_phone" string="Phone"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                             <field name="new_customer_address" string="Address"
-                                                   readonly="status in ('saved', 'pending')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
                                         </group>
                                     </page>
                                 </notebook>
                             </group>
                         </group>
-                        <field name="store_id" invisible="True" readonly="False"/>
-                        <field name="status" invisible="True" readonly="False"/>
+                        <field name="store_id" invisible="True" readonly="True"/>
+                        <field name="status" invisible="True" readonly="True"/>
                         <field name="number_of_products" invisible="True" readonly="False"/>
                         <div class="d-flex justify-content-between">
                         </div>
                         <notebook>
                             <page string="Sales Detail">
-                                <field name="line_ids" readonly="status in ('saved', 'pending')">
+                                <field name="line_ids" readonly="status in ('saved', 'pending', 'unknown')">
                                     <list editable="bottom">
                                         <field name="product_id" decoration-danger="balance==0" class="text-wrap"
                                                context="{'pos_store_id': parent.store_id, 'search_default_filter_has_balance': 1, 'search_default_filter_has_pos_balance': 1}"
@@ -186,7 +193,7 @@
                     <field name="total_price"/>
                     <field name="total_net_amount"/>
                     <field name="status" widget="badge" decoration-info="status=='pending'"
-                           decoration-warning="status=='prepending'" decoration-success="status=='saved'"/>
+                           decoration-warning="status in ('prepending', 'unknown')" decoration-danger="status=='rejected'" decoration-success="status=='saved'"/>
                     <field name="description"/>
                     <field name="create_uid" optional="hide"/>
                     <field name="create_date" optional="hide"/>

@@ -668,19 +668,136 @@ class AbSalesPosApi(models.TransientModel):
     def _pos_submit_response(self, header, apply_submit=True):
         if not header:
             return {}
+        header.check_access("read")
+        header._check_store_allowed()
         if apply_submit:
-            # Persist the local bill first so a later remote timeout does not
-            # erase the Odoo record for the same transaction.
             self.env.cr.commit()
-            action = header.action_submit()
+            try:
+                action = header.action_submit()
+            except (UserError, ValidationError) as ex:
+                # Validation may happen in an inherited action before any push.
+                # Never downgrade Unknown: it might already exist remotely.
+                header._lock_for_push()
+                if header.status in ("prepending", "rejected"):
+                    header._write_submission_state({
+                        "status": "rejected", "push_state": "error", "push_message": str(ex),
+                    })
+                    self.env.cr.commit()
+                else:
+                    raise
+                action = False
             if isinstance(action, dict) and action.get("type"):
                 action["pos_header_id"] = header.id
                 return action
+        if header.status in ("unknown", "rejected") and not self.env.context.get("_ab_sales_submission_ui_v1"):
+            # An older POS treats every non-action response as success and drops
+            # the bill. Force its existing error path to retain the original token.
+            raise UserError(_("E-Plus submission needs attention. Reload POS and use Retry on the original invoice."))
+        response = self._pos_submission_payload(header)
+        if header.status == "unknown" or not apply_submit:
+            # Existing HR extension writes post-submit metadata when `id` is
+            # returned. Uncertain invoices must stay immutable, including there.
+            response["recovery_header_id"] = response.pop("id")
+        return response
+
+    @api.model
+    def _pos_submission_payload(self, header):
         return {
-            "id": header.id,
-            "status": header.status,
-            "eplus_serial": header.eplus_serial,
+            "id": header.id, "status": header.status,
+            "eplus_serial": header.eplus_serial, "message": header.push_message or "",
         }
+
+    @api.model
+    def pos_submission_status(self, tokens=None):
+        tokens = list({str(token).strip() for token in (tokens or []) if str(token).strip()})
+        if len(tokens) > 200:
+            raise UserError(_("Too many invoice tokens."))
+        headers = self.env["ab_sales_header"].with_context(active_test=False).search(
+            fields.Domain("pos_client_token", "in", tokens)
+        )
+        allowed = self.env["ab_sales_header"]._get_allowed_store_ids()
+        return {
+            header.pos_client_token: self._pos_submission_payload(header)
+            for header in headers if not allowed or header.store_id.id in allowed
+        }
+
+    @api.model
+    def _pos_editable_header_vals(self, values):
+        fields_map = self.env["ab_sales_header"]._fields
+        excluded = {"id", "status", "eplus_serial", "pos_client_token", "push_state", "push_message",
+                    "active", "create_uid", "create_date", "write_uid", "write_date"}
+        return {
+            name: value for name, value in (values or {}).items()
+            if name in fields_map and name not in excluded and not name.startswith("pos_hr_")
+            and not fields_map[name].readonly
+        }
+
+    @api.model
+    def pos_retry(self, header_id=None, token=None, payload=None, pos_hr_session_token=None):
+        self = self.with_context(_ab_sales_submission_ui_v1=True)
+        header = self.env["ab_sales_header"].with_context(active_test=False).browse(int(header_id or 0)).exists()
+        if not header:
+            raise UserError(_("Existing invoice not found."))
+        header.check_access("read")
+        if not token or header.pos_client_token != str(token).strip():
+            raise UserError(_("The invoice token does not match the saved invoice."))
+        allowed = header._get_allowed_store_ids()
+        if allowed and header.store_id.id not in allowed:
+            raise UserError(_("Store %s is not allowed for sales.") % header.store_id.display_name)
+        if hasattr(self, "_validate_pos_hr_payload"):
+            self._validate_pos_hr_payload({
+                "pos_hr_session_token": pos_hr_session_token,
+                "header": {"store_id": header.store_id.id},
+            })
+        if header.status in ("pending", "saved"):
+            return self._pos_submission_payload(header)
+        header._lock_for_push()
+        if payload and header.status in ("rejected", "prepending"):
+            with self.env.cr.savepoint():
+                values = self._pos_editable_header_vals(payload.get("header") or {})
+                values.pop("store_id", None)
+                header.write(values)
+                self._pos_replace_lines(header, payload.get("lines") or [])
+                self._pos_apply_program(header, payload.get("applied_program_id"))
+                self._fill_lines_balance_from_offline(header)
+        # Unknown ignores payload entirely and replays only the saved invoice.
+        return self._pos_submit_response(header.with_context(pos_submit=True))
+
+    @api.model
+    def _pos_replace_lines(self, header, lines):
+        products = self.env["ab_product"].browse(list({
+            int(line.get("product_id") or 0) for line in lines if line.get("product_id")
+        })).exists()
+        by_id = {product.id: product for product in products}
+        vals_list = []
+        for line in lines:
+            vals = {name: value for name, value in line.items() if name in {
+                "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
+                "unavailable_reason", "unavailable_reason_other",
+            }}
+            product_id = int(vals.get("product_id") or 0)
+            if product_id not in by_id:
+                raise UserError(_("Line with missing product E-Plus serial."))
+            vals.update({"header_id": header.id, "qty_str": vals.get("qty_str") or "1"})
+            vals["uom_id"] = self._pos_line_uom_id(by_id[product_id], vals.get("uom_id"))
+            self._pos_fill_inventory_json_for_price_validation(header, vals)
+            vals_list.append(vals)
+        if not vals_list:
+            raise UserError(_("No lines to send."))
+        header.line_ids.unlink()
+        self.env["ab_sales_line"].create(vals_list)
+
+    @api.model
+    def _pos_apply_program(self, header, program_id):
+        if "applied_program_ids" not in header._fields:
+            return
+        if isinstance(program_id, (list, tuple)):
+            program_id = program_id[0] if program_id else False
+        header.applied_program_ids = [(6, 0, [int(program_id)] if program_id else [])]
+        if program_id and hasattr(header, "btn_apply_promotion"):
+            # Existing promotion extensions accept prepending, not rejected.
+            header._write_submission_state({"status": "prepending"})
+            header.btn_apply_promotion()
 
     @api.model
     def _pos_unavailable_action(self, header):
@@ -806,21 +923,20 @@ class AbSalesPosApi(models.TransientModel):
         if not payload or not isinstance(payload, dict):
             raise UserError(_("Invalid payload."))
 
-        header_vals = self._filter_vals("ab_sales_header", payload.get("header") or {})
+        self = self.with_context(_ab_sales_submission_ui_v1=payload.get("submission_ui_version") == "1")
+        header_vals = self._pos_editable_header_vals(payload.get("header") or {})
+        header_vals["pos_client_token"] = (payload.get("header") or {}).get("pos_client_token")
         if not header_vals.get("employee_id"):
             header_vals.pop("employee_id", None)
         line_vals = payload.get("lines") or []
         token = (header_vals.get("pos_client_token") or "").strip()
-        on_existing_token = (payload.get("on_existing_token") or "").strip().lower()
         if token:
-            existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
+            existing = self.env["ab_sales_header"].with_context(active_test=False).search(fields.Domain("pos_client_token", "=", token), limit=1)
             if existing:
-                if on_existing_token == "warn":
-                    return self._pos_existing_header_payload(existing)
-                return self._pos_existing_header_action(existing)
+                return self._pos_submit_response(existing, apply_submit=existing.status in ("prepending", "unknown"))
             header_vals["pos_client_token"] = token
         else:
-            header_vals.pop("pos_client_token", None)
+            raise UserError(_("POS invoice token is required."))
         if not header_vals.get("store_id"):
             raise UserError(_("Store is required."))
         allowed_store_ids = self.env["ab_sales_header"]._get_allowed_store_ids()
@@ -830,16 +946,15 @@ class AbSalesPosApi(models.TransientModel):
                 raise UserError(_("Store %s is not allowed for sales.") % (store.display_name,))
         self.env["ab_sales_header"].new(header_vals)._validate_new_customer()
         try:
-            header = self.env["ab_sales_header"].create(header_vals)
+            with self.env.cr.savepoint():
+                header = self.env["ab_sales_header"].create(header_vals)
         except (UserError, ValidationError):
             raise
         except Exception:
             if token:
-                existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
+                existing = self.env["ab_sales_header"].with_context(active_test=False).search(fields.Domain("pos_client_token", "=", token), limit=1)
                 if existing:
-                    if on_existing_token == "warn":
-                        return self._pos_existing_header_payload(existing)
-                    return self._pos_existing_header_action(existing)
+                    return self._pos_submit_response(existing, apply_submit=existing.status in ("prepending", "unknown"))
             raise
 
         product_ids = []
@@ -856,7 +971,10 @@ class AbSalesPosApi(models.TransientModel):
 
         lines_to_create = []
         for line in line_vals:
-            vals = self._filter_vals("ab_sales_line", line or {})
+            vals = {name: value for name, value in (line or {}).items() if name in {
+                "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
+                "unavailable_reason", "unavailable_reason_other",
+            }}
             if not vals.get("product_id"):
                 continue
             product_id = int(vals.get("product_id"))
@@ -882,5 +1000,18 @@ class AbSalesPosApi(models.TransientModel):
                 if hasattr(header, "btn_apply_promotion"):
                     header.btn_apply_promotion()
 
+        if hasattr(self, "_validate_pos_hr_payload"):
+            hr_session = self._validate_pos_hr_payload(payload)
+            header.write({
+                "pos_hr_employee_id": hr_session.employee_id.id,
+                "pos_hr_profile_id": hr_session._get_pos_profile().id,
+                "pos_hr_role_id": hr_session.role_id.id,
+                "pos_hr_shift_id": hr_session.shift_id.id,
+                "pos_hr_session_id": hr_session.id,
+                "pos_hr_service_user_id": hr_session.service_user_id.id,
+                "pos_hr_device_uid": hr_session.device_uid or False,
+                "pos_hr_device_name": hr_session.device_name or False,
+                "pos_hr_device_ip": hr_session.device_ip or False,
+            })
         self._fill_lines_balance_from_offline(header)
         return self._pos_submit_response(header.with_context(pos_submit=True), apply_submit=True)

@@ -1,4 +1,5 @@
 import logging
+from contextlib import contextmanager
 import math
 import re
 from datetime import datetime, time
@@ -10,8 +11,13 @@ from odoo import api, fields, models
 from odoo.tools.translate import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import config
+from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 
 PARAM_STR = '?'
+
+# An RPC context cannot reproduce this process-local capability.
+_SUBMISSION_WORKFLOW = object()
+_SUBMISSION_LOCK_NAMESPACE = 19419019
 
 _logger = logging.getLogger(__name__)
 
@@ -329,6 +335,8 @@ class AbdinSalesHeader(models.Model):
     description = fields.Text()
     status = fields.Selection(
         selection=[('prepending', 'PrePending'),
+                   ('unknown', 'Unknown'),
+                   ('rejected', 'Rejected'),
                    ('pending', 'Pending'),
                    ('saved', 'Saved')],
         default='prepending'
@@ -357,7 +365,7 @@ class AbdinSalesHeader(models.Model):
     bill_customer_address = fields.Char()
     customer_insurance_name = fields.Char()
     customer_insurance_number = fields.Char()
-    pos_client_token = fields.Char(index=True)
+    pos_client_token = fields.Char(index=True, copy=False)
     employee_id = fields.Many2one(
         "ab_hr_employee",
         string="Actual Salesperson",
@@ -955,8 +963,8 @@ class AbdinSalesHeader(models.Model):
         }
 
     def _validate_before_push(self):
-        if self.status != 'prepending':
-            raise UserError(_("Invoice must be in prepending status"))
+        if self.status not in ('prepending', 'rejected', 'unknown'):
+            raise UserError(_("This invoice cannot be submitted in its current status."))
         if not self.store_id or not self.store_id.eplus_serial:
             raise UserError(_("Store is required and must have an E-Plus serial."))
         if not self.line_ids:
@@ -967,18 +975,104 @@ class AbdinSalesHeader(models.Model):
             if line.qty <= 0:
                 raise UserError(_("Invalid quantity in a line (<= 0)."))
 
+    def _submission_internal(self):
+        return self.env.context.get("_ab_sales_submission_workflow") is _SUBMISSION_WORKFLOW
+
+    def _submission_records(self):
+        return self.with_context(_ab_sales_submission_workflow=_SUBMISSION_WORKFLOW)
+
+    def _write_submission_state(self, vals):
+        return self._submission_records().write(vals)
+
     def _lock_for_push(self):
-        """Serialize push attempts for the same local bill."""
-        self.ensure_one()
+        """Lock/reload before checking a state, including ordinary edits."""
+        if not self:
+            return
+        self.check_access("write")
+        state_fields = ["status", "pos_client_token", "store_id", "eplus_serial"]
+        self.flush_recordset(state_fields)
         try:
-            self.env.cr.execute(
-                "SELECT id FROM ab_sales_header WHERE id = %s FOR UPDATE NOWAIT",
-                (int(self.id),),
-            )
+            with self.env.cr.savepoint():
+                self.env.cr.execute(
+                    "SELECT id FROM ab_sales_header WHERE id IN %s ORDER BY id FOR UPDATE NOWAIT",
+                    (tuple(sorted(self.ids)),),
+                )
         except Exception as ex:
-            raise UserError(
-                _("This bill is being submitted by another process. Please retry in a moment.")
-            ) from ex
+            raise UserError(_("This bill is being submitted by another process. Please retry in a moment.")) from ex
+        self.invalidate_recordset(state_fields)
+
+    @contextmanager
+    def _submission_attempt(self):
+        """A session lock survives the commit that makes Unknown durable."""
+        self.ensure_one()
+        self.check_access("write")
+        with self.env.registry.cursor() as lock_cr:
+            lock_cr.execute(
+                "SELECT pg_try_advisory_lock(%s, %s)",
+                (_SUBMISSION_LOCK_NAMESPACE, self.id),
+            )
+            if not lock_cr.fetchone()[0]:
+                raise UserError(_("This bill is being submitted by another process. Please retry in a moment."))
+            try:
+                self._lock_for_push()
+                self.invalidate_recordset()
+                self.mapped("line_ids").invalidate_recordset()
+                yield
+            finally:
+                lock_cr.execute(
+                    "SELECT pg_advisory_unlock(%s, %s)",
+                    (_SUBMISSION_LOCK_NAMESPACE, self.id),
+                )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self._submission_internal():
+            for vals in vals_list:
+                if vals.get("pos_client_token") and (
+                    vals.get("status", "prepending") != "prepending" or vals.get("eplus_serial")
+                ):
+                    raise UserError(_("POS invoices must start in PrePending status."))
+        return super().create(vals_list)
+
+    def copy(self, default=None):
+        if any(self.mapped("pos_client_token")):
+            raise UserError(_("The invoice identity and submission state cannot be changed manually."))
+        return super().copy(default=default)
+
+    def write(self, vals):
+        if not self._submission_internal():
+            self._lock_for_push()
+            for rec in self:
+                if rec.pos_client_token:
+                    for name in ("pos_client_token", "store_id", "eplus_serial", "status", "push_state", "push_message"):
+                        if name in vals:
+                            current = rec[name].id if name == "store_id" else rec[name]
+                            if vals[name] != current:
+                                raise UserError(_("The invoice identity and submission state cannot be changed manually."))
+                # Ignore harmless no-op writes, including the existing HR audit wrapper.
+                if rec.status == "unknown" and any(
+                    rec[name] != value for name, value in vals.items()
+                ):
+                    raise UserError(_("This invoice is locked until its E-Plus submission is resolved. Use Retry."))
+        return super().write(vals)
+
+    def _find_committed_eplus_invoice(self, cur):
+        """Range-lock the branch/key, including absence, until commit/rollback.
+
+        Never use NOLOCK here: a dirty absence could duplicate stock consumption.
+        The same transaction retains the range lock through any subsequent insert.
+        """
+        self.ensure_one()
+        cur.execute(
+            f"""SELECT TOP 2 sth_id FROM sales_trans_h WITH (UPDLOCK, HOLDLOCK)
+                WHERE temp_col6 = {PARAM_STR} AND sto_id = {PARAM_STR}
+                ORDER BY sth_id""",
+            (DB_SERIAL + self.id, int(self.store_id.eplus_serial)),
+        )
+        rows = cur.fetchall()
+        if len(rows) > 1:
+            raise UserError(_("Multiple E-Plus invoices match this bill. Contact support; the bill remains locked."))
+        return int(rows[0][0]) if rows else False
 
     def _maybe_delay_push_after_remote_commit(self):
         """Dev-only hook to widen the failure window after the remote commit."""
@@ -998,113 +1092,144 @@ class AbdinSalesHeader(models.Model):
     # -------------------------------------------------
     def action_push_to_eplus(self):
         self.ensure_one()
-        self._lock_for_push()
+        with self._submission_attempt():
+            return self._push_or_recover_eplus()
+
+    def _push_or_recover_eplus(self):
+        self.ensure_one()
+        self._check_store_allowed()
+        if self.status in ("pending", "saved"):
+            return True
+        if not self.pos_client_token:
+            raise UserError(_("Submit is only allowed for bills created from POS."))
         replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if not replica_db:
             raise UserError(_("This is not Replica DB"))
-
-        self.line_ids._recompute_inventory_json()
-
-        self._validate_before_push()
-        is_new_customer = self._validate_new_customer()
-        if is_new_customer:
-            # remove current customer field
-            self.customer_id = False
-
-        # Keep "Actual Salesperson" on employee_id, but for POS HR sessions
-        # the E-Plus operator must be the logged-in POS employee.
-        eplus_employee = self.employee_id
-        if "pos_hr_employee_id" in self._fields and self.pos_hr_employee_id:
-            eplus_employee = self.pos_hr_employee_id
-        emp_code = self._get_eplus_emp_id(employee=eplus_employee)
-
-        if not emp_code:
-            raise UserError("Employee has no eplus_serial to use! please contact support")
-        pc_name = self._get_pc_name()
-
-        bill_typ = 4 if self.is_delivery else 1
-
-        conn = self.get_connection()
-        if not conn:
-            raise UserError(_("Connection to E-Plus failed."))
-
+        if self.status not in ("prepending", "rejected", "unknown"):
+            raise UserError(_("This invoice cannot be submitted in its current status."))
+        if self.status != "unknown":
+            self._validate_before_push()
+            self._validate_new_customer()
+        # Preserve identity and commit a locked record before any external operation.
+        self._write_submission_state({"status": "unknown", "push_state": "none", "push_message": False})
+        self.env.cr.commit()
+        self._lock_for_push()
+        rec = self._submission_records()
+        conn = None
+        commit_started = False
+        absence_confirmed = False
         try:
+            conn = rec._get_submission_connection()
+            if not conn:
+                raise UserError(_("Connection to E-Plus failed."))
             cur = conn.cursor()
-            totals = self._compute_header_numbers(cur=cur)
-
-            # 1) Header
-            sth_id = self._insert_sales_trans_h(
-                cur=cur,
-                totals=totals,
-                emp_code=emp_code,
-                pc_name=pc_name,
-                bill_typ=bill_typ,
+            sth_id = rec._find_committed_eplus_invoice(cur)
+            if sth_id:
+                # Recovery is read-only remotely. Do not replay details or inventory.
+                conn.rollback()
+                rec.write({
+                    "eplus_serial": sth_id, "status": "pending", "push_state": "success",
+                    "push_message": _("Recovered E-Plus invoice (sth_id=%s).") % sth_id,
+                    **rec._get_bill_customer_snapshot_vals(),
+                })
+                self.env.cr.commit()
+                _logger.info("Recovered POS header %s, store %s, E-Plus invoice %s", self.id, self.store_id.id, sth_id)
+                return True
+            absence_confirmed = True
+            cur.execute(
+                f"SELECT sto_id FROM Store WHERE sto_id = {PARAM_STR} AND activated = 1",
+                (int(rec.store_id.eplus_serial),),
             )
-            if not self._sales_trans_h_exists(cur=cur, sth_id=sth_id):
-                raise UserError(
-                    _("Header insert failed; header record not found (sth_id=%s).") % sth_id
-                )
-
-            # 2) Details
-            lines_count = self._insert_sales_trans_d(
-                cur=cur,
-                sth_id=sth_id,
-                emp_code=emp_code,
+            if not cur.fetchone():
+                raise UserError(_("No matching stores found for this sell store"))
+            rec.line_ids._recompute_inventory_json(crx=conn.cursor(as_dict=True))
+            rec._validate_before_push()
+            if rec._validate_new_customer():
+                rec.customer_id = False
+            eplus_employee = rec.employee_id
+            if "pos_hr_employee_id" in rec._fields and rec.pos_hr_employee_id:
+                eplus_employee = rec.pos_hr_employee_id
+            emp_code = rec._get_eplus_emp_id(employee=eplus_employee)
+            if not emp_code:
+                raise UserError(_("Employee has no E-Plus serial. Contact support."))
+            totals = rec._compute_header_numbers(cur=cur)
+            sth_id = rec._insert_sales_trans_h(
+                cur=cur, totals=totals, emp_code=emp_code,
+                pc_name=rec._get_pc_name(), bill_typ=4 if rec.is_delivery else 1,
             )
-
+            if not rec._sales_trans_h_exists(cur=cur, sth_id=sth_id):
+                raise UserError(_("Header insert failed; header record not found (sth_id=%s).") % sth_id)
+            lines_count = rec._insert_sales_trans_d(cur=cur, sth_id=sth_id, emp_code=emp_code)
             if not lines_count:
-                raise UserError("BConnect Error no lines_count!\nContact Abdin Support.")
-
+                raise UserError(_("B-Connect did not accept any invoice lines. Contact support."))
             cur.execute(
                 f"UPDATE sales_trans_h SET no_of_items = {PARAM_STR} WHERE sth_id = {PARAM_STR}",
-                (int(lines_count or 0), int(sth_id),)
+                (int(lines_count), int(sth_id)),
             )
-
-            # 2.5) Bconnect total guard
-            self._bconnect_total_guard(cur=cur, sth_id=sth_id)
-
-            # 3) Inventory consumption / updates
-            self._update_item_class_store(cur=cur)
-            if self.customer_id:
-                self._insert_sales_deliv_info(cur, sth_id, emp_code)
-
-            snapshot_vals = self._get_bill_customer_snapshot_vals()
-            self.sudo().write({
-                'eplus_serial': sth_id,
-                'status': 'pending',
-                'push_state': 'success',
-                'push_message': _("Pushed to E-Plus successfully (sth_id=%s).") % sth_id,
+            rec._bconnect_total_guard(cur=cur, sth_id=sth_id)
+            rec._update_item_class_store(cur=cur)
+            if rec.customer_id:
+                rec._insert_sales_deliv_info(cur, sth_id, emp_code)
+            snapshot_vals = rec._get_bill_customer_snapshot_vals()
+            commit_started = True
+            conn.commit()
+            # A lost commit acknowledgement MUST leave Unknown, even if rollback succeeds.
+            rec._maybe_delay_push_after_remote_commit()
+            rec.write({
+                "eplus_serial": sth_id, "status": "pending", "push_state": "success",
+                "push_message": _("Pushed to E-Plus successfully (sth_id=%s).") % sth_id,
                 **snapshot_vals,
             })
-            conn.commit()
-            # self._maybe_delay_push_after_remote_commit()
+            self.env.cr.commit()
+            _logger.info("Submitted POS header %s, store %s, E-Plus invoice %s", self.id, self.store_id.id, sth_id)
+            return True
         except Exception as ex:
-            try:
-                conn.rollback()
-            except Exception:
-                pass
-            msg = self._format_eplus_error(ex)
-            if self.status == "prepending":
+            rollback_confirmed = False
+            if conn:
                 try:
-                    self.active = False
-                    self.pos_client_token = None
+                    conn.rollback()
+                    rollback_confirmed = True
                 except Exception:
-                    self.sudo().write({
-                        'push_state': 'error',
-                        'push_message': msg,
-                    })
-                raise UserError(_("E-Plus push failed: %s") % msg)
-            self.sudo().write({
-                'push_state': 'error',
-                'push_message': msg,
+                    pass
+            # Discard any local intermediate changes while retaining the durable Unknown.
+            self.env.cr.rollback()
+            self.invalidate_recordset()
+            rejected = absence_confirmed and rollback_confirmed and not commit_started
+            msg = self._format_eplus_error(ex)
+            rec.write({
+                "status": "rejected" if rejected else "unknown", "eplus_serial": False,
+                "push_state": "error", "push_message": msg,
             })
-            raise UserError(_("E-Plus push failed: %s") % msg)
+            self.env.cr.commit()
+            _logger.warning("POS header %s, store %s: %s (%s)", self.id, self.store_id.id, rec.status, msg)
+            return False
         finally:
-            try:
-                self.line_ids._recompute_inventory_json()
-                self.env.cr.commit()
-            except Exception:
-                pass
+            if conn:
+                try:
+                    conn.close()
+                except Exception:
+                    _logger.debug("Failed to close POS E-Plus connection", exc_info=True)
+
+    def _get_submission_connection(self):
+        """Reuse connector configuration, but isolate the invoice transaction.
+
+        The ordinary connector pool shares a session and replays statements after
+        reconnecting. A POS transaction must own its session and fail on disconnect
+        so that neither another request nor a silent reconnect can commit half a bill.
+        """
+        pooled = self.get_connection()
+        if isinstance(pooled, ConnectionProxy):
+            if not pooled._reconnect_cb:
+                raise UserError(_("Connection to E-Plus failed."))
+            return ConnectionProxy(
+                pooled._reconnect_cb(),
+                wrap_dict_cursor=pooled._wrap_dict_cursor,
+            )
+        return pooled
+
+    def action_retry(self):
+        """Recover/submit the saved invoice, without accepting browser changes."""
+        return self.action_submit()
 
     # -------------------------------------------------
     # Private helpers
@@ -1149,27 +1274,7 @@ class AbdinSalesHeader(models.Model):
         self.ensure_one()
         rec = self
         if rec.eplus_serial:
-            try:
-                eplus_serial = int(rec.eplus_serial)
-                return eplus_serial
-            except Exception as ex:
-                pass
-
-        # Use temp_col6 as an idempotency key to avoid duplicate header inserts.
-        if rec.id:
-            temp_col6 = DB_SERIAL + rec.id
-            cur.execute(
-                f"""
-                    SELECT TOP 1 sth_id
-                    FROM sales_trans_h
-                    WHERE temp_col6 = {PARAM_STR} AND sto_id = {PARAM_STR}
-                    ORDER BY sth_id DESC
-                """,
-                (temp_col6, int(rec.store_id.eplus_serial)),
-            )
-            row = cur.fetchone()
-            if row and row[0] is not None:
-                return int(row[0])
+            raise UserError(_("This invoice already has an E-Plus serial. Use recovery instead of submitting again."))
 
         no_of_items = int(totals['no_of_items'])
         total_bill = totals['total_bill']
@@ -1705,9 +1810,10 @@ class AbdinSalesHeader(models.Model):
 
     # ---------------------- delete / submit ---------------------- #
     def unlink(self):
+        self._lock_for_push()
         for rec in self:
-            if rec.status != 'prepending':
-                raise UserError("You Can Only Delete Prepending Bills")
+            if rec.pos_client_token or rec.status != 'prepending':
+                raise UserError(_("POS invoices cannot be deleted. Their submission identity must be preserved."))
         return super().unlink()
 
     def action_submit(self):
@@ -1796,7 +1902,7 @@ class AbdinSalesHeader(models.Model):
                                 ('status', '=', 'pending'),
                                 ('store_id', '=', store.id),
                                 ('eplus_serial', 'in', list(set(saved_serials))),
-                            ]).write({'status': 'saved'})
+                            ])._write_submission_state({'status': 'saved'})
 
                         if missing_serials:
                             headers_to_archive = Header.search([
