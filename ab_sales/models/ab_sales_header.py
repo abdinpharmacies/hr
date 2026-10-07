@@ -627,11 +627,13 @@ class AbdinSalesHeader(models.Model):
             raise UserError(_("Please Submit this invoice first."))
 
         ReturnHeader = self.env['ab_sales_return_header']
-        return_header = ReturnHeader.search([
-            ('origin_header_id', '=', int(self.eplus_serial)),
-            ('store_id', '=', self.store_id.id),
-            ('status', '=', 'prepending'),
-        ], order='id desc', limit=1)
+        domain = fields.Domain('origin_header_id', '=', int(self.eplus_serial)) & fields.Domain('store_id', '=', self.store_id.id)
+        return_header = ReturnHeader.search(domain & fields.Domain('status', '=', 'unknown'), order='id desc', limit=1)
+        if return_header:
+            return {'type': 'ir.actions.act_window', 'res_model': 'ab_sales_return_header',
+                    'view_mode': 'form', 'res_id': return_header.id, 'target': 'new'}
+        return_header = ReturnHeader.search(domain & fields.Domain('status', 'in', ['prepending', 'pending', 'rejected']),
+                                          order='id desc', limit=1)
         if not return_header:
             return_header = ReturnHeader.create({
                 'store_id': self.store_id.id,

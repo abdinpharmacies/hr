@@ -28,6 +28,9 @@
                     </div>
                 </div>
 
+                <div t-if="state.record.push_message" class="alert alert-warning" role="status" t-esc="state.record.push_message"/>
+                <div t-if="state.checking" class="alert alert-info" role="status">Checking submission...</div>
+
                 <div class="row g-3">
                     <div class="col-12 col-xl-8">
                         <div class="card shadow-sm h-100">
@@ -37,19 +40,19 @@
                                     <button class="btn btn-outline-primary btn-sm"
                                             type="button"
                                             t-on-click="reloadLines"
-                                            t-att-disabled="state.busy || !state.record.can_reload">
+                                            t-att-disabled="state.busy || state.checking || !state.record.can_reload">
                                         Load Lines
                                     </button>
                                     <button class="btn btn-outline-success btn-sm"
                                             type="button"
                                             t-on-click="totalReturnInvoice"
-                                            t-att-disabled="state.busy || !state.record.can_total_return">
+                                            t-att-disabled="state.busy || state.checking || !state.record.can_total_return">
                                         Total Return Invoice
                                     </button>
                                     <button class="btn btn-outline-danger btn-sm"
                                             type="button"
                                             t-on-click="clearLines"
-                                            t-att-disabled="state.busy || !state.record.can_clear">
+                                            t-att-disabled="state.busy || state.checking || !state.record.can_clear">
                                         Clear Lines
                                     </button>
                                 </div>
@@ -85,7 +88,7 @@
                                                 <td style="min-width: 11rem;">
                                                     <select class="form-select form-select-sm"
                                                             t-att-value="line.uom_id || ''"
-                                                            t-att-disabled="state.busy || state.record.status === 'saved'"
+                                                            t-att-disabled="!editable"
                                                             t-on-change="(ev) => this.onUomChange(line.id, ev)">
                                                         <option t-if="!line.uom_options.length" value="">No UoM</option>
                                                         <option t-foreach="line.uom_options" t-as="uom" t-key="uom.id"
@@ -100,7 +103,7 @@
                                                     <input class="form-control form-control-sm text-end"
                                                            type="text"
                                                            t-att-value="line.qty_str"
-                                                           t-att-disabled="state.busy || state.record.status === 'saved'"
+                                                           t-att-disabled="!editable"
                                                            t-on-input="(ev) => this.onQtyInput(line.id, ev)"
                                                            t-on-blur="() => this.onQtyBlur(line.id)"
                                                            t-on-keydown="(ev) => this.onQtyKeydown(line.id, ev)"/>
@@ -148,7 +151,7 @@
                                 <button class="btn btn-outline-primary btn-sm"
                                         type="button"
                                         t-on-click="saveNotes"
-                                        t-att-disabled="state.savingNotes">
+                                        t-att-disabled="state.savingNotes || !editable">
                                     Save Notes
                                 </button>
                             </div>
@@ -156,7 +159,7 @@
                                 <textarea class="form-control"
                                           rows="6"
                                           placeholder="Add notes"
-                                          t-model="state.notesDraft"/>
+                                          t-model="state.notesDraft" t-att-disabled="!editable"/>
                             </div>
                         </div>
 
@@ -169,7 +172,7 @@
                                     <button class="btn btn-primary"
                                             type="button"
                                             t-on-click="setPending"
-                                            t-att-disabled="state.busy || !state.record.can_set_pending">
+                                            t-att-disabled="state.busy || state.checking || !state.record.can_set_pending">
                                         Set Pending
                                     </button>
                             -->
@@ -177,7 +180,7 @@
                                         type="button"
                                         t-on-click="pushToEplus"
                                         t-att-disabled="state.busy || !state.record.can_push">
-                                    Push to E-Plus
+                                    <t t-if="state.record.can_retry">Retry</t><t t-else="">Push to E-Plus</t>
                                 </button>
                             </div>
                         </div>

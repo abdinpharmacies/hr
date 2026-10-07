@@ -13,15 +13,10 @@ _logger = logging.getLogger(__name__)
 class AbSalesReturnHeaderReplicationTransInherit(models.Model):
     _inherit = "ab_sales_return_header"
 
-    def action_push_to_eplus_return(self):
-        result = super().action_push_to_eplus_return()
-        for rec in self:
-            rec._insert_replication_trans_rows_for_return()
-        return result
-
-    def _insert_replication_trans_rows_for_return(self):
+    def _insert_replication_trans_rows_for_return(self, cur=None, emp_id=None):
         self.ensure_one()
-        if self.status != "saved":
+        owned = cur is None
+        if owned and (self.status != "saved" or self.return_client_token or self.replication_posted):
             return
 
         lines = self.line_ids.filtered(lambda l: float(l.qty or 0.0) > 0 and l.itm_eplus_id and l.c_id)
@@ -30,16 +25,19 @@ class AbSalesReturnHeaderReplicationTransInherit(models.Model):
 
         store_id = int(self.sto_eplus_serial or 0)
         sth_id = int(self.origin_header_id or 0)
-        emp_id = int(self.env["ab_sales_header"]._get_eplus_emp_id() or 0)
+        emp_id = int(emp_id or self.env["ab_sales_header"]._get_eplus_emp_id() or 0)
         if not store_id or not sth_id or not emp_id:
             raise UserError(_("Missing required values to insert Replication_Trans rows."))
 
-        conn = self.get_connection()
-        if not conn:
-            raise UserError(_("Connection to B-Connect failed while inserting Replication_Trans."))
+        conn = None
+        if owned:
+            conn = self._get_return_submission_connection()
+            if not conn:
+                raise UserError(_("Connection to B-Connect failed while inserting Replication_Trans."))
 
         try:
-            cur = conn.cursor()
+            if owned:
+                cur = conn.cursor()
             cur.execute(
                 f"""
                     INSERT INTO Replication_Trans (
@@ -100,8 +98,11 @@ class AbSalesReturnHeaderReplicationTransInherit(models.Model):
                     ),
                 )
 
-            conn.commit()
+            if owned:
+                conn.commit()
         except Exception as ex:
+            if not owned:
+                raise
             try:
                 conn.rollback()
             except Exception as rollback_ex:
@@ -109,6 +110,10 @@ class AbSalesReturnHeaderReplicationTransInherit(models.Model):
             raise UserError(
                 _("E-Plus return was saved, but Replication_Trans insert failed: %s") % repr(ex)
             )
+
+        finally:
+            if conn:
+                conn.close()
 
     def action_server_insert_replication_trans_rows(self):
         records = self
@@ -124,7 +129,7 @@ class AbSalesReturnHeaderReplicationTransInherit(models.Model):
         errors = []
 
         for rec in records:
-            if rec.status != "saved":
+            if rec.status != "saved" or rec.return_client_token or rec.replication_posted:
                 skipped += 1
                 continue
             if not rec.store_id or not rec._get_store_server(rec.store_id):

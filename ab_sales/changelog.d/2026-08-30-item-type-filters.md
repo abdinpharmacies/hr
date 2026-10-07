@@ -166,7 +166,9 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.xml
 
 
-## Current changes before commit:
+## 84512db554063f558cd311e392cc461763b578e1 - emadco88 - 2026-10-07
+
+Original commit subject: ab_sales/FIX: preserve invoice identity and recover uncertain E-Plus submissions
 
 User-facing changes:
 - Add Unknown and Rejected invoice statuses while preserving the original Odoo record, ID, POS token, and branch across retries.
@@ -199,3 +201,41 @@ Files changed:
 - ab_sales/static/src/pos/zz_pos_unavailable_reason.xml
 - ab_sales/static/src/pos/zz_pos_unavailable_reason_patch.js
 - ab_sales/views/sales_header.xml
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Add Unknown/Rejected return states, durable submission tokens, diagnostic messages, and Retry in the return dialog and backend form.
+- Recover committed returns using a branch-scoped token in the existing financial note without repeating invoice-line updates, stock refunds, cash adjustments, payments, or replication entries.
+- Commit return posting, promotion/contract return-value corrections, and replication entries in one dedicated E-Plus transaction with reconnect/replay disabled.
+- Preserve current full/partial return pricing and unit conversions. Keep ab_sales_promo and ab_sales_contract unchanged and use their existing repricing helpers.
+- Lock uncertain and saved returns in ORM and UI; preserve attempted returns on close and prevent changing their branch/source identity, copying, or deletion.
+- Serialize attempts per branch/source invoice, refresh returnable quantities in the posting transaction, and reject another return while the source invoice has an Unknown return.
+- Reopen unresolved returns, reconcile lost RPC responses, and ignore stale state responses, including when the employee-session UI extension is loaded.
+- Import the return window's focus listener from OWL so opening Return from the Bill Wizard does not crash component setup.
+- Validate recovery-marker note capacity before posting and skip bulk replication replay for returns handled by the atomic workflow.
+- Merge new Arabic entries and references into both catalogs while preserving every existing translation.
+
+Validation:
+- Isolated Odoo backend scenarios verify lost commit acknowledgements, confirmed/unconfirmed rollback, offline retry, ambiguous/inconsistent recovery, corrected rejection, duplicate retry, branch/source guards, and PostgreSQL submission serialization.
+- Actual promotion/contract repricing helpers verify partial/full return posting, copay rules, caps, and both invoice-discount sources with simulated E-Plus calls.
+- Frontend scenarios verify immutable uncertain returns, corrected rejection, lost-RPC reconciliation, stale-response protection, and compatibility with the employee-session extension.
+- Import-aware checks validate all return component named imports against actual Odoo exports and detect the original invalid focus-hook import.
+- Headless Chrome checks with real OWL, real web hooks, return templates, and mocked RPCs verify component mount/render, focus reload, and listener cleanup both with and without the employee-session extension; the browser rejects the original incorrect import.
+- Targeted ab_sales upgrades and combined backend asset compilation passed in codex_sales_recovery_20261007. Runtime ar_001 labels, Retry, fields, validation, and form translation were verified; both catalogs pass msgfmt --check-format.
+- No live E-Plus posting or production stock/financial changes were performed. Development test harnesses remain outside the runtime addon.
+
+Files changed:
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/models/ab_sales_header.py
+- ab_sales/models/ab_sales_return_header.py
+- ab_sales/models/ab_sales_return_header_replication_trans_inherit.py
+- ab_sales/models/ab_sales_return_line.py
+- ab_sales/models/ab_sales_return_router.py
+- ab_sales/models/ab_sales_return_ui_api.py
+- ab_sales/static/src/sales_return/ab_sales_return_ui_api.js
+- ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml
+- ab_sales/views/ab_sales_return.xml
