@@ -394,3 +394,31 @@ msgstr "غير معروف"
 #: code:addons/ab_deploy_telegram/models/deployment.py:0
 msgid "Manually Resolved"
 msgstr "تمت المعالجة يدويًا"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__can_manage_telegram_notifications
+msgid "Can Manage Telegram Notifications"
+msgstr "يمكن إدارة إشعارات تليجرام"
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,field_description:ab_deploy_telegram.field_ab_deploy_request__send_telegram_notifications
+msgid "Send Telegram Notifications"
+msgstr "إرسال إشعارات تليجرام"
+
+#. module: ab_deploy_telegram
+#. odoo-python
+#: code:addons/ab_deploy_telegram/models/deployment.py:0
+msgid ""
+"Only request participants or deployment administrators can change Telegram "
+"notifications."
+msgstr "يمكن فقط للمشاركين في الطلب أو مسؤولي النشر تغيير إشعارات تليجرام."
+
+#. module: ab_deploy_telegram
+#: model:ir.model.fields,help:ab_deploy_telegram.field_ab_deploy_request__send_telegram_notifications
+msgid ""
+"Send automatic reports when a batch finishes. Already queued reports "
+"continue delivery. Manual sending remains available when unchecked."
+msgstr ""
+"إرسال التقارير تلقائيًا عند انتهاء دفعة التنفيذ. يستمر إرسال التقارير "
+"الموجودة بالفعل في قائمة الانتظار. يظل الإرسال اليدوي متاحًا عند إلغاء "
+"التحديد."

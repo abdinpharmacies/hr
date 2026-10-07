@@ -3,6 +3,10 @@
         <field name="name">ab_deploy_request_telegram</field><field name="model">ab_deploy_request</field>
         <field name="inherit_id" ref="ab_deploy.view_request_batch_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='title']" position="after">
+                <field name="can_manage_telegram_notifications" invisible="1"/>
+                <field name="send_telegram_notifications" readonly="not can_manage_telegram_notifications"/>
+            </xpath>
             <xpath expr="//header" position="inside">
                 <button name="action_send_deployment_report" type="object" string="Send Deployment Report" groups="ab_deploy.group_executor,ab_deploy.group_administrator"/>
             </xpath>

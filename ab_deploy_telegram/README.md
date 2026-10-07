@@ -12,7 +12,7 @@ approval callbacks or automatic log attachments are implemented.
 3. Grant request authors read access by adding them to the bot's Authorized Users.
    Deployment developers, approvers and executors inherit Telegram Viewer only;
    they do not gain token access or permission to send arbitrary messages.
-4. Notifications apply automatically to every deployment; there is no request checkbox.
+4. **Send Telegram Notifications** appears beside the request title and is checked by default for new and existing requests. Copies start checked. The owner, assigned approver, assigned executor, and deployment administrators can change it at any stage, including while execution runs. Other users see it read-only. Changes are recorded in chatter and audit history.
    In the **Telegram Notifications** tab, leave overrides empty for subscription defaults, or override the bot, group/chat
    and topic. An explicit chat ID takes precedence over a selected group. Topic zero
    inherits the subscription topic; use a subscription without a topic for the main chat.
@@ -21,7 +21,8 @@ approval callbacks or automatic log attachments are implemented.
    without a saved destination retry configuration at their next notification event.
    Existing saved destinations are preserved. No Telegram network call is required to approve.
 6. Approve and queue selected targets as usual. Reports are sent only when a batch finishes.
-   Executors and deployment administrators can also use **Send Deployment Report** on
+   Unchecking suppresses future automatic completion reports. Already queued reports continue delivery, and rechecking does not replay skipped events.
+   Executors and deployment administrators can still use **Send Deployment Report** when unchecked on
    any request form, including before execution or while it is running.
 
 The request company scopes its targets, jobs, runs, attempts and captured logs. Existing

@@ -16,6 +16,10 @@ class DeploymentTelegram(models.Model):
     _inherit = 'ab_deploy_request'
 
     company_id = fields.Many2one('res.company', required=True, default=lambda self: self.env.company)
+    send_telegram_notifications = fields.Boolean(string='Send Telegram Notifications',
+        default=True, copy=False, tracking=True,
+        help='Send automatic reports when a batch finishes. Already queued reports continue delivery. Manual sending remains available when unchecked.')
+    can_manage_telegram_notifications = fields.Boolean(compute='_compute_telegram_notification_access')
     telegram_bot_id = fields.Many2one('ab_telegram_bot', string='Telegram Bot Override',
                                       domain="[('company_id', '=', company_id), ('active', '=', True)]")
     telegram_group_id = fields.Many2one('ab_telegram_bot_group', string='Telegram Group Override',
@@ -24,6 +28,20 @@ class DeploymentTelegram(models.Model):
     telegram_topic_id = fields.Integer(string='Telegram Topic ID Override', help='Zero uses the subscription topic.')
     telegram_snapshot = fields.Json(readonly=True, copy=False)
     telegram_note = fields.Text(string='Telegram Notification Notes', readonly=True, copy=False)
+
+    @api.depends('developer_id', 'approver_id', 'executor_id')
+    @api.depends_context('uid')
+    def _compute_telegram_notification_access(self):
+        user = self.env.user
+        admin = user.has_group('ab_deploy.group_administrator')
+        developer = user.has_group('ab_deploy.group_developer')
+        approver = user.has_group('ab_deploy.group_approver')
+        executor = user.has_group('ab_deploy.group_executor')
+        for request in self:
+            request.can_manage_telegram_notifications = admin or (
+                developer and request.developer_id == user or
+                approver and request.approver_id == user or
+                executor and request.executor_id == user)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -34,6 +52,15 @@ class DeploymentTelegram(models.Model):
     def write(self, vals):
         if {'telegram_snapshot', 'telegram_note'} & set(vals):
             raise AccessError(_('Telegram notification history cannot be changed manually.'))
+        if 'send_telegram_notifications' in vals:
+            self.check_access('write')
+            self.sorted('id')._lock()
+            if any(not request.can_manage_telegram_notifications for request in self):
+                raise AccessError(_('Only request participants or deployment administrators can change Telegram notifications.'))
+            if set(vals) == {'send_telegram_notifications'}:
+                # Change only this preference outside draft; the normal request
+                # write path continues to protect all approved settings.
+                return self._transition(vals)
         return super().write(vals)
 
     @api.constrains('company_id', 'telegram_bot_id', 'telegram_group_id', 'telegram_topic_id', 'telegram_chat_id')
@@ -108,7 +135,10 @@ class DeploymentTelegram(models.Model):
 
     def _telegram_notify(self, event, run=None):
         self.ensure_one()
-        if event != 'finished' or not self._telegram_prepare_destination():
+        if event != 'finished':
+            return
+        self._lock()
+        if not self.send_telegram_notifications or not self._telegram_prepare_destination():
             return
         # Never let delivery construction failure roll back approval or execution progress.
         try:
