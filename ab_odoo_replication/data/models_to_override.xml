@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="override_ab_costcenter" model="ab_odoo_replication_override">
+        <field name="model_name">ab_costcenter</field>
+    </record>
+    <record id="override_ab_store" model="ab_odoo_replication_override">
+        <field name="model_name">ab_store</field>
+    </record>
+    <record id="override_ab_hr_region" model="ab_odoo_replication_override">
+        <field name="model_name">ab_hr_region</field>
+    </record>
+    <record id="override_ab_hr_job" model="ab_odoo_replication_override">
+        <field name="model_name">ab_hr_job</field>
+    </record>
+    <record id="override_ab_hr_department" model="ab_odoo_replication_override">
+        <field name="model_name">ab_hr_department</field>
+    </record>
+    <record id="override_ab_hr_employee" model="ab_odoo_replication_override">
+        <field name="model_name">ab_hr_employee</field>
+    </record>
+    <record id="override_ab_product_company" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_company</field>
+    </record>
+    <record id="override_ab_product_origin" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_origin</field>
+    </record>
+    <record id="override_ab_product_group" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_group</field>
+    </record>
+    <record id="override_ab_usage_causes" model="ab_odoo_replication_override">
+        <field name="model_name">ab_usage_causes</field>
+    </record>
+    <record id="override_ab_usage_manner" model="ab_odoo_replication_override">
+        <field name="model_name">ab_usage_manner</field>
+    </record>
+    <record id="override_ab_product_card" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product_card</field>
+    </record>
+    <record id="override_ab_uom_type" model="ab_odoo_replication_override">
+        <field name="model_name">ab_uom_type</field>
+    </record>
+    <record id="override_ab_uom" model="ab_odoo_replication_override">
+        <field name="model_name">ab_uom</field>
+    </record>
+    <record id="override_ab_product" model="ab_odoo_replication_override">
+        <field name="model_name">ab_product</field>
+    </record>
+    <record id="override_ab_promo_program" model="ab_odoo_replication_override">
+        <field name="model_name">ab_promo_program</field>
+        <field name="control_server_bypass" eval="True"/>
+        <field name="allow_replication_create" eval="True"/>
+        <field name="allow_replication_unlink" eval="True"/>
+    </record>
+</odoo>
