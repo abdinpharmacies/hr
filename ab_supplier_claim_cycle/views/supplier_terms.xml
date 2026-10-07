@@ -24,11 +24,11 @@
             <field name="type_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
           </group>
         </group>
-        <group name="claim_secretarial_review" class="o_scc_panel o_scc_secretarial_review" invisible="state not in ('draft', 'returned_secretarial')">
+        <group name="claim_secretarial_review" class="o_scc_panel o_scc_secretarial_review">
           <group string="Secretarial">
-            <field name="secretarial_notes" readonly="not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="secretarial_notes" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
             <field name="secretarial_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-            <field name="attachment" readonly="not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="attachment" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
             <field name="attachment" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
           </group>
         </group>

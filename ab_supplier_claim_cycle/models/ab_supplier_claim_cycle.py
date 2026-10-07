@@ -261,7 +261,9 @@ class SupplierClaimCycle(models.Model):
                 supplier_id,
                 {name: False for name in CLAIM_DEFAULT_FIELDS},
             )
-            clean.append({**previous_values, **vals, **defaults})
+            # Preserve an explicit draft upload, but ignore default_attachment context.
+            clean.append({**previous_values, **vals, **defaults,
+                          'attachment': vals.get('attachment', False)})
         # Explicit defaults neutralize forged default_* context values.
         claims = super().create(clean)
         claims._record_secretarial_notes()

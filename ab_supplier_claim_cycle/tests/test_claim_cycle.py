@@ -1,5 +1,7 @@
 import base64
 from datetime import timedelta
+from types import SimpleNamespace
+from unittest.mock import patch
 from lxml import etree
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -621,6 +623,9 @@ class TestSupplierClaimCycle(TransactionCase):
             'attachment': draft_file,
         })
         self.assertEqual(claim.attachment, draft_file)
+        context_claim = self.Claim.with_user(self.users['user']).with_context(
+            default_attachment=draft_file).create(self.values())
+        self.assertFalse(context_claim.attachment)
 
         updated_file = base64.b64encode(b'updated attachment')
         claim.write({'attachment': updated_file})
@@ -629,6 +634,70 @@ class TestSupplierClaimCycle(TransactionCase):
         claim.action_submit()
         with self.assertRaises(AccessError):
             claim.with_user(self.users['inventory']).write({'attachment': draft_file})
+
+    def test_claim_attachment_download_and_protection_through_workflow(self):
+        content = b'Secretary claim evidence'
+        claim = self.claim()
+        claim.write({'attachment': base64.b64encode(content)})
+        claim.action_submit()
+        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+            with self.subTest(department=department):
+                reader = claim.with_user(self.users[department])
+                self.assertEqual(reader.attachment, base64.b64encode(content))
+                binary = self.env['ir.binary'].with_user(self.users[department])
+                record = binary._find_record(res_model=claim._name, res_id=claim.id, field='attachment')
+                with patch('odoo.http.request', SimpleNamespace(env=reader.env)):
+                    self.assertEqual(binary._get_stream_from(record, 'attachment').read(), content)
+                for role in (department, 'user', 'admin'):
+                    for value in (False, base64.b64encode(b'replacement')):
+                        with self.assertRaises(AccessError):
+                            claim.with_user(self.users[role]).write({'attachment': value})
+                self.decide(claim, department)
+        self.assertEqual(claim.state, 'ready_to_close')
+        with self.assertRaises(AccessError):
+            claim.write({'attachment': False})
+        claim.action_close()
+        self.assertEqual(claim.attachment, base64.b64encode(content))
+        with self.assertRaises(UserError):
+            claim.write({'attachment': False})
+        with self.assertRaises(AccessError):
+            self.env['ir.binary'].with_user(self.outsider)._find_record(
+                res_model=claim._name, res_id=claim.id, field='attachment')
+
+    def test_claim_attachment_return_and_resubmission(self):
+        claim = self.claim()
+        claim.write({'attachment': base64.b64encode(b'original')})
+        claim.action_submit()
+        self.decide(claim, 'inventory', decision='rejected', reason='Replace evidence')
+        self.assertEqual(claim.state, 'returned_secretarial')
+        replacement = base64.b64encode(b'corrected evidence')
+        claim.write({'attachment': replacement})
+        self.assertEqual(claim.attachment, replacement)
+        claim.action_submit()
+        with self.assertRaises(AccessError):
+            claim.write({'attachment': False})
+        self.assertEqual(claim.attachment, replacement)
+
+    def test_claim_attachment_form_visibility_and_readonly(self):
+        from odoo.tools.safe_eval import safe_eval
+
+        view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
+        states = [key for key, label in self.Claim._fields['state'].selection]
+        for role in self.roles:
+            for lang in ('en_US', 'ar_001'):
+                arch = etree.fromstring(self.Claim.with_user(self.users[role]).with_context(lang=lang).get_view(
+                    view_id=view.id, view_type='form')['arch'])
+                panel, = arch.xpath('//group[@name="claim_secretarial_review"]')
+                attachment, = panel.xpath('.//field[@name="attachment"]')
+                for state in states:
+                    for active in (True, False):
+                        with self.subTest(role=role, lang=lang, state=state, active=active):
+                            values = {'state': state, 'active': active}
+                            for node in [attachment, *attachment.iterancestors()]:
+                                self.assertFalse(safe_eval(node.get('invisible', 'False'), values))
+                            expected = not (role in ('user', 'admin') and active
+                                            and state in ('draft', 'returned_secretarial'))
+                            self.assertEqual(bool(safe_eval(attachment.get('readonly', 'False'), values)), expected)
 
     def test_secretarial_note_api_and_form_visibility(self):
         claim = self.Claim.with_user(self.users['user']).create({**self.values(), 'secretarial_notes': 'First note'})
