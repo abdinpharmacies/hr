@@ -161,30 +161,45 @@ class CallcenterServices(models.AbstractModel):
             raise UserError(_('Provide at most 200 valid sale request tokens.'))
         operations = self.env['ab_branch_api_operation'].sudo().search(
             fields.Domain('token', 'in', tokens) & fields.Domain('user_id', '=', self.env.uid)
-            & fields.Domain('store_id', '=', store.id) & fields.Domain('kind', '=', 'sale')
-            & fields.Domain('state', '=', 'done'))
-        # Normal business record rules still apply after the scoped operation lookup.
+            & fields.Domain('store_id', '=', store.id) & fields.Domain('kind', '=', 'sale'))
         headers = self.env['ab_sales_header'].search(
             fields.Domain('id', 'in', operations.mapped('record_id')) & fields.Domain('store_id', '=', store.id))
         by_id = {header.id: header for header in headers}
-        owned = [(op.token, by_id[op.record_id]) for op in operations
-                 if op.record_id in by_id and by_id[op.record_id].pos_client_token == op.token]
-        invoices = sorted({int(header.eplus_serial) for _token, header in owned
+        invoices = sorted({int(header.eplus_serial) for header in headers
                            if header.status == 'pending' and header.eplus_serial > 0})
         statuses = {}
         if invoices:
             response = self.get_invoice_statuses(db_serial, invoices, store_eplus_serial=store.eplus_serial)
             statuses = {row['invoice']: row['status'] for row in response['data']}
         rows = []
-        for token, header in owned:
-            status = header.status
-            if status == 'pending':
-                # An absent E-Plus row is not a cancellation or a completed sale.
-                status = statuses.get(int(header.eplus_serial or 0))
-            if status not in ('prepending', 'pending', 'saved'):
-                continue
-            rows.append({'token': token, 'branch_header_id': header.id,
-                         'eplus_serial': int(header.eplus_serial or 0), 'status': status})
+        found = set()
+        for operation in operations:
+            header = by_id.get(operation.record_id)
+            if operation.record_id and (not header or header.pos_client_token != operation.token):
+                raise AccessError(_('The stored bill does not match the authorized branch operation.'))
+            if operation.sale_guard_version == 1:
+                if header and header.status == 'unknown':
+                    try:
+                        self._operation(store, operation.token, 'sale')
+                        self._reconcile_guarded_sale(operation)
+                    except UserError:
+                        pass  # An in-flight submission keeps its Unknown observation.
+                row = self._guarded_sale_result(operation)
+            elif header and operation.state == 'done':
+                row = {'token': operation.token, 'branch_header_id': header.id,
+                       'eplus_serial': int(header.eplus_serial or 0), 'status': header.status,
+                       'request_revision': 1, 'submission_guard_version': 1, 'message': ''}
+            else:
+                row = {'token': operation.token, 'branch_header_id': header.id if header else 0,
+                       'eplus_serial': 0, 'status': 'unknown', 'request_revision': 1,
+                       'submission_guard_version': 1, 'message': operation.message or ''}
+            if row['status'] == 'pending':
+                row['status'] = statuses.get(row['eplus_serial']) or 'pending'
+            rows.append(row)
+            found.add(operation.token)
+        rows.extend({'token': token, 'state': 'not_found', 'status': 'unknown',
+                     'request_revision': 0, 'branch_header_id': 0, 'eplus_serial': 0,
+                     'submission_guard_version': 1, 'message': ''} for token in tokens if token not in found)
         return {**self._identity(store, db_serial), 'data': rows}
 
     def _customer_result(self, result, store, db_serial):

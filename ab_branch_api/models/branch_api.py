@@ -28,7 +28,13 @@ class BranchApiOperation(models.Model):
     state = fields.Selection([
         ('draft', 'Draft'), ('processing', 'Processing'), ('done', 'Done'),
         ('uncertain', 'Needs Reconciliation'), ('retryable', 'Ready to Retry'),
+        ('rejected', 'Rejected'),
     ], default='draft', required=True)
+    sale_guard_version = fields.Integer(readonly=True, copy=False)
+    sale_prepared_revision = fields.Integer(readonly=True, copy=False)
+    request_revision = fields.Integer(default=1, readonly=True, copy=False)
+    request_payload = fields.Json(readonly=True, copy=False)
+    attempt_history = fields.Json(readonly=True, copy=False)
     recovery_enabled = fields.Boolean(readonly=True)
     commit_evidence = fields.Json(readonly=True)
     payload_hash = fields.Char(readonly=True)
@@ -116,7 +122,7 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('sale')
         can_post = all(self._business_permissions(kind, post=True, raise_exception=False)
                        for kind in ('sale', 'return'))
-        return {'version': 1, **self._identity(store, db_serial),
+        return {'version': 1, 'sales_submission_guard': 1, **self._identity(store, db_serial),
                 'store_name': store.display_name or '', 'branch_store_id': store.id, 'can_post': can_post,
                 'methods': ['get_capabilities', 'get_connection_status', 'search_products',
                             'get_stock_lines', 'submit_sale', 'get_return_invoice',
@@ -204,12 +210,15 @@ class BranchApi(models.AbstractModel):
             fields.Domain('user_id', '=', self.env.uid) & fields.Domain('token', '=', token)
             & fields.Domain('store_id', '=', store.id), limit=1)
         if not operation:
-            return {**self._identity(store, db_serial), 'state': 'not_found'}
+            return {**self._identity(store, db_serial), 'state': 'not_found', 'token': token, 'request_revision': 0}
         self._business_permissions(operation.kind)
         if operation.record_id:
             if operation.kind in ('sale', 'return'):
                 model = 'ab_sales_header' if operation.kind == 'sale' else 'ab_sales_return_header'
                 self.env[model].browse(operation.record_id).check_access('read')
+        if operation.kind == 'sale' and operation.sale_guard_version == 1:
+            result = self._guarded_sale_result(operation)
+            return dict(result, state=operation.state, result=result)
         return {**self._identity(store, db_serial), 'state': operation.state,
                 'result': ({**operation.result, **self._identity(store, db_serial)} if operation.result else {}),
                 'message': operation.message or ''}
@@ -240,6 +249,12 @@ class BranchApi(models.AbstractModel):
             raise AccessError(_('Only call-center invoices can be returned.'))
         header = self.env['ab_sales_return_header'].browse(operation.record_id).exists()
         if header:
+            # A corrected revision replaces the request. Omitted business fields
+            # take fresh-create defaults instead of retaining the previous bill.
+            defaults = header_model.default_get([name for name in allowed if name in header_model._fields])
+            for name in allowed:
+                if name in header_model._fields and name not in values:
+                    values[name] = defaults.get(name, False)
             header.check_access('write')
             header.line_ids.check_access('write')
             if (header.store_id != store or header.origin_header_id != int(invoice)
@@ -394,73 +409,59 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     @api_request
-    def submit_sale(self, db_serial, token, payload, push_to_eplus=True, *, store_eplus_serial=STORE_UNSET):
+    def submit_sale(self, db_serial, token, payload, push_to_eplus=True, *, request_revision=1, store_eplus_serial=STORE_UNSET):
+        return self._submit_guarded_sale(db_serial, token, payload, request_revision, push_to_eplus)
+
+    def _prepare_sale_header(self, operation, payload, header=False):
         store = request_store(self)
-        self._business_permissions('sale', post=True)
-        if push_to_eplus is not True:
-            raise UserError(_('Callcenter sale transport selection is no longer supported. Upgrade the callcenter module.'))
-        operation = self._operation(store, token, 'sale')
-        # Posting is a branch-owned invariant. The compatibility value is kept
-        # in the digest so existing successful requests still replay safely.
-        request = {'payload': payload, 'push': True}
-        self._prepare_post(operation, request)
-        if operation.state == 'done':
-            self.env['ab_sales_header'].browse(operation.record_id).check_access('read')
-            return self._run_post(operation, request, lambda: {})
-        header = self._operation_header(operation) if operation.record_id else False
-        if not header:
-            Pos = self.env['ab_sales_pos_api']
-            header_model = self.env['ab_sales_header']
-            allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
-                       'is_delivery', 'description', 'invoice_address', 'new_customer_name',
-                       'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
-                       'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
-                       'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',
-                       'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
-            values = self._sale_values(header_model, payload.get('header', {}), allowed)
-            values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
-            header_model.new(values)._validate_new_customer()
+        token = operation.token
+        Pos = self.env['ab_sales_pos_api']
+        header_model = self.env['ab_sales_header']
+        allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
+                   'is_delivery', 'description', 'invoice_address', 'new_customer_name',
+                   'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
+                   'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
+                   'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',
+                   'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
+        values = self._sale_values(header_model, payload.get('header', {}), allowed)
+        values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
+        header_model.new(values)._validate_new_customer()
+        if header:
+            header.check_access('write')
+            header.line_ids.check_access('write')
+            header.line_ids.unlink()
+            values.pop('pos_client_token')
+            values.pop('status')
+            header.write(values)
+            if 'applied_program_ids' in header._fields:
+                header.applied_program_ids = [fields.Command.clear()]
+        else:
             header = header_model._create_callcenter_order(values)
             operation.record_id = header.id
-            Line = self.env['ab_sales_line']
-            line_values = []
-            for source in payload.get('lines', []):
-                line_source = {key: value for key, value in source.items() if key != 'uom_factor'}
-                vals = self._sale_values(Line, line_source, {'product_id', 'qty_str', 'sell_price',
-                    'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product', 'uom_factor'})
-                product = self.env['ab_product'].browse(vals.get('product_id')).exists()
-                if not product:
-                    raise UserError(_('Product is required.'))
-                factor = float(source.get('uom_factor') or product.uom_id.factor)
-                uom = self.env['ab_product_uom'].search(fields.Domain('category_id', '=', product.uom_category_id.id)
-                                                       & fields.Domain('factor', '=', factor), limit=2)
-                if len(uom) != 1:
-                    raise UserError(_('Branch product unit is missing or ambiguous.'))
-                vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
-                Pos._pos_fill_inventory_json_for_price_validation(header, vals)
-                line_values.append(vals)
-            Line.create(line_values)
-            if payload.get('promotion'):
-                program = self._resolve('ab_promo_program', payload['promotion'])
-                header.applied_program_ids = [fields.Command.set(program.ids)]
-                header.btn_apply_promotion()
-            Pos._fill_lines_balance_from_offline(header)
-        header.check_access('write')
-        header.line_ids.check_access('write')
-
-        def post():
-            # Use the normal branch sale action. It performs the E-Plus write
-            # and is the only path allowed to promote PrePending to Pending.
-            header.with_context(pos_submit=True).action_submit()
-            if not header.eplus_serial or header.status not in ('pending', 'saved'):
-                raise UserError(_('Branch sale was not pushed to E-Plus.'))
-            return {**self._identity(store, db_serial), 'remote_callcenter': True, 'branch_header_id': header.id,
-                    'remote_header_id': header.id, 'status': header.status,
-                    'eplus_serial': int(header.eplus_serial or 0), 'pos_header_id': False,
-                    'message': _('Branch sale submitted.')}
-        return self._run_post(operation, request, post, lambda: {
-            **self._identity(store, db_serial),
-            'branch_header_id': header.id, 'eplus_serial': int(header.eplus_serial or 0), 'status': header.status})
+        Line = self.env['ab_sales_line']
+        line_values = []
+        for source in payload.get('lines', []):
+            line_source = {key: value for key, value in source.items() if key != 'uom_factor'}
+            vals = self._sale_values(Line, line_source, {'product_id', 'qty_str', 'sell_price',
+                'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product', 'uom_factor'})
+            product = self.env['ab_product'].browse(vals.get('product_id')).exists()
+            if not product:
+                raise UserError(_('Product is required.'))
+            factor = float(source.get('uom_factor') or product.uom_id.factor)
+            uom = self.env['ab_product_uom'].search(fields.Domain('category_id', '=', product.uom_category_id.id)
+                                                   & fields.Domain('factor', '=', factor), limit=2)
+            if len(uom) != 1:
+                raise UserError(_('Branch product unit is missing or ambiguous.'))
+            vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
+            Pos._pos_fill_inventory_json_for_price_validation(header, vals)
+            line_values.append(vals)
+        Line.create(line_values)
+        if payload.get('promotion'):
+            program = self._resolve('ab_promo_program', payload['promotion'])
+            header.applied_program_ids = [fields.Command.set(program.ids)]
+            header.btn_apply_promotion()
+        Pos._fill_lines_balance_from_offline(header)
+        return header
 
     @api.model
     def _sale_values(self, model, source, allowed):

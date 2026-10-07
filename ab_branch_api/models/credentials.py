@@ -33,10 +33,8 @@ class BranchCredentials(models.AbstractModel):
         user = self.env.user
         if not owner or owner != user.id:
             raise AccessError(_('The credential does not belong to this integration user.'))
-        if (not user.active or user.share or not user.has_group('base.group_user')
-                or user.has_group('base.group_system') or user.has_group('base.group_erp_manager')
-                or user._is_superuser()):
-            raise AccessError(_('Use an active internal non-administrator user.'))
+        if not user.active or user.share or not user.has_group('base.group_user'):
+            raise AccessError(_('Use an active internal user.'))
         return key
 
     @api.model

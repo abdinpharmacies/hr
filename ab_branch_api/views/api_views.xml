@@ -10,6 +10,16 @@
             </list>
         </field>
     </record>
+    <record id="guarded_operation_list" model="ir.ui.view">
+        <field name="name">ab_branch_api_operation.guarded_list</field>
+        <field name="model">ab_branch_api_operation</field>
+        <field name="inherit_id" ref="operation_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='token']" position="after">
+                <field name="request_revision" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
     <record id="operation_action" model="ir.actions.act_window">
         <field name="name">Branch API Operations</field><field name="res_model">ab_branch_api_operation</field>
         <field name="view_mode">list,form</field>
