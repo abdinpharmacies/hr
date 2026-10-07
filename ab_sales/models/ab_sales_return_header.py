@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 import math
+import re
+import uuid
+from contextlib import contextmanager
 from typing import Literal
 
 from odoo import api, fields, models
 from odoo.tools.translate import _
 from odoo.exceptions import UserError, ValidationError
+from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 import decimal
 import logging
 
 _logger = logging.getLogger(__name__)
 
 PARAM_STR = '?'  # Parameter placeholder used in E-Plus SQL.
+_RETURN_WORKFLOW = object()
 
 
 def _to_native(v):
@@ -69,9 +74,181 @@ class AbdinSalesReturnHeader(models.Model):
     # Document status.
     status = fields.Selection(
         selection=[('prepending', 'PrePending'),
+                   ('unknown', 'Unknown'),
+                   ('rejected', 'Rejected'),
                    ('pending', 'Pending'),
                    ('saved', 'Saved')],
         default='prepending')
+
+    return_client_token = fields.Char(readonly=True, index=True, copy=False)
+    push_message = fields.Text(readonly=True, copy=False)
+    replication_posted = fields.Boolean(readonly=True, copy=False)
+
+    _uniq_return_client_token = models.Constraint(
+        'UNIQUE(return_client_token)', 'Return submission token must be unique.',
+    )
+
+    def _return_internal(self):
+        return self.env.context.get('_ab_sales_return_workflow') is _RETURN_WORKFLOW
+
+    def _return_records(self):
+        return self.with_context(_ab_sales_return_workflow=_RETURN_WORKFLOW)
+
+    def _write_return_state(self, values):
+        return self._return_records().write(values)
+
+    def _lock_return(self):
+        if not self:
+            return
+        self.check_access('write')
+        self.flush_recordset()
+        try:
+            with self.env.cr.savepoint():
+                self.env.cr.execute(
+                    'SELECT id FROM ab_sales_return_header WHERE id IN %s ORDER BY id FOR UPDATE NOWAIT',
+                    (tuple(sorted(self.ids)),),
+                )
+        except Exception as exc:
+            raise UserError(_('This return is being submitted by another process. Please retry in a moment.')) from exc
+        self.invalidate_recordset()
+
+    def _check_return_store(self):
+        allowed = self.env['ab_sales_header']._get_allowed_store_ids()
+        for rec in self:
+            if not rec.store_id or not rec.sto_eplus_serial:
+                raise UserError(_('Store is required and must have an E-Plus serial.'))
+            if allowed and rec.store_id.id not in allowed:
+                raise UserError(_('Store %s is not allowed for sales.') % rec.store_id.display_name)
+
+    def _check_return_edit(self):
+        self._check_return_store()
+        self._lock_return()
+        if any(rec.status in ('unknown', 'saved') for rec in self):
+            raise UserError(_('This return is locked. Use Retry to resolve an uncertain submission.'))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if not self._return_internal():
+            for vals in vals_list:
+                if (vals.get('return_client_token') or vals.get('sales_return_id')
+                        or vals.get('f_transaction_id') or vals.get('replication_posted')
+                        or vals.get('status', 'prepending') != 'prepending'):
+                    raise UserError(_('Return submission identity and state cannot be changed manually.'))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if not self._return_internal():
+            self._check_return_edit()
+            protected = {'return_client_token', 'sales_return_id', 'f_transaction_id',
+                         'status', 'push_message', 'replication_posted'}
+            if protected.intersection(vals):
+                raise UserError(_('Return submission identity and state cannot be changed manually.'))
+            for rec in self:
+                if rec.return_client_token and (
+                    ('store_id' in vals and vals['store_id'] != rec.store_id.id)
+                    or ('origin_header_id' in vals and vals['origin_header_id'] != rec.origin_header_id)
+                ):
+                    raise UserError(_('Return submission identity and state cannot be changed manually.'))
+        return super().write(vals)
+
+    def copy(self, default=None):
+        if any(rec.return_client_token or rec.status != 'prepending' for rec in self):
+            raise UserError(_('Attempted returns cannot be copied.'))
+        return super().copy(default=default)
+
+    def unlink(self):
+        self._lock_return()
+        if any(rec.return_client_token or rec.status != 'prepending' for rec in self):
+            raise UserError(_('Attempted returns cannot be deleted.'))
+        return super().unlink()
+
+    @contextmanager
+    def _return_attempt(self):
+        self.ensure_one()
+        self._lock_return()
+        self._check_return_store()
+        # One session lock per branch/source invoice; it survives durable commits.
+        key = 'ab_sales_return:%s:%s' % (self.store_id.id, self.origin_header_id)
+        with self.env.registry.cursor() as lock_cr:
+            lock_cr.execute('SELECT pg_try_advisory_lock(hashtextextended(%s, 0))', (key,))
+            if not lock_cr.fetchone()[0]:
+                raise UserError(_('This return is being submitted by another process. Please retry in a moment.'))
+            try:
+                lock_cr.execute(
+                    "SELECT id FROM ab_sales_return_header WHERE store_id = %s AND origin_header_id = %s "
+                    "AND status = 'unknown' AND id != %s LIMIT 1",
+                    (self.store_id.id, self.origin_header_id, self.id),
+                )
+                if lock_cr.fetchone():
+                    raise UserError(_('Resolve the Unknown return for this invoice before submitting another return.'))
+                self.line_ids.invalidate_recordset()
+                yield
+            finally:
+                lock_cr.execute('SELECT pg_advisory_unlock(hashtextextended(%s, 0))', (key,))
+
+    def _get_return_submission_connection(self):
+        pooled = self.get_connection()
+        # Authorized connector wrappers may forward the same factory attributes.
+        factory = getattr(pooled, '_reconnect_cb', None)
+        if not factory:
+            raise UserError(_('Connection to B-Connect failed.'))
+        return ConnectionProxy(factory(), wrap_dict_cursor=getattr(pooled, '_wrap_dict_cursor', False))
+
+    def _return_marker_prefix(self):
+        self.ensure_one()
+        return '[ODOO_RETURN:%s;SR:' % self.return_client_token
+
+    def _find_committed_return(self, cur):
+        # The source invoice UPDLOCK serializes all attempts for this immutable token.
+        # Use committed reads; a dirty absence could refund the same stock twice.
+        # Recovery precedes quantity/window validation: posting already changed them.
+        cur.execute(
+            'SELECT TOP 2 fh_id, fh_notes, fh_value FROM F_Transaction_Header '
+            'WHERE fh_sto_id = ? AND fh_trans_type = 1 AND fh_trans_type2 = 2 '
+            'AND fh_form_type = 2 AND CHARINDEX(?, CONVERT(NVARCHAR(MAX), fh_notes)) > 0 ORDER BY fh_id',
+            (int(self.sto_eplus_serial), self._return_marker_prefix()),
+        )
+        rows = cur.fetchall()
+        if len(rows) > 1:
+            raise UserError(_('Multiple E-Plus returns match this token. Contact support.'))
+        if not rows:
+            return False
+        fh_id, note, value = rows[0]
+        match = re.search(re.escape(self._return_marker_prefix()) + r'(\d+)\]', note or '')
+        if not match:
+            raise UserError(_('The E-Plus return recovery marker is invalid. Contact support.'))
+        sr_id = int(match.group(1))
+        cur.execute(
+            'SELECT sr.sth_id, p.srp_value FROM sales_return sr '
+            'JOIN sales_return_payment p ON p.srp_sr_id = sr.sr_id '
+            'WHERE sr.sr_id = ? AND p.srp_sto_id = ? AND p.srp_sr_type = 2',
+            (sr_id, int(self.sto_eplus_serial)),
+        )
+        payments = cur.fetchall()
+        if (len(payments) != 1 or int(payments[0][0]) != int(self.origin_header_id)
+                or not math.isclose(float(payments[0][1] or 0), -float(value or 0), abs_tol=0.05)):
+            raise UserError(_('The E-Plus return recovery records are inconsistent. Contact support.'))
+        return {'sales_return_id': sr_id, 'f_transaction_id': int(fh_id)}
+
+    def _validate_return_note_capacity(self, cur):
+        cur.execute(
+            "SELECT CHARACTER_MAXIMUM_LENGTH, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS "
+            "WHERE TABLE_SCHEMA = 'dbo' AND TABLE_NAME = 'F_Transaction_Header' AND COLUMN_NAME = 'fh_notes'"
+        )
+        row = cur.fetchone()
+        # IDs are SQL Server BIGINT at most; reserve twenty digits for sr_id.
+        note = self._return_financial_note(9999999999999999999)
+        if not row or row[1] not in ('nvarchar', 'nchar', 'ntext', 'varchar', 'char', 'text') or (row[0] not in (-1, None) and int(row[0]) < (len(note.encode('utf-8')) if row[1] in ('varchar', 'char') else len(note))):
+            raise UserError(_('E-Plus financial notes cannot preserve the return recovery marker. Contact support.'))
+
+    def _return_financial_note(self, sr_id):
+        # Preserve the established E-Plus business note, including its Arabic wording.
+        return ' مرتجع بيع على فاتورة رقم %s %s%s]' % (
+            self.origin_header_id, self._return_marker_prefix(), int(sr_id),
+        )
+
+    def action_retry_return(self):
+        return self.action_push_to_eplus_return()
 
     line_ids = fields.One2many(
         'ab_sales_return_line',
@@ -246,12 +423,12 @@ class AbdinSalesReturnHeader(models.Model):
         return float(price_source or 0.0) * target_factor / source_factor
 
     def action_clear_lines(self):
+        self._check_return_edit()
         self.line_ids.unlink()
 
     def action_total_return_invoice(self):
         self.ensure_one()
-        if self.status == 'saved':
-            raise UserError(_("Saved returns cannot be modified."))
+        self._check_return_edit()
         if not self.line_ids:
             self.action_load_lines()
         for line in self.line_ids:
@@ -263,6 +440,7 @@ class AbdinSalesReturnHeader(models.Model):
 
     def action_set_pending(self):
         for rec in self:
+            rec._check_return_edit()
             if rec.status == 'saved':
                 raise UserError(_("Saved returns cannot be moved back to pending."))
             if rec.status == 'pending':
@@ -270,12 +448,18 @@ class AbdinSalesReturnHeader(models.Model):
             if rec.status != 'prepending':
                 raise UserError(_("Only prepending returns can be moved to pending."))
             rec._validate_return()
-            rec.status = 'pending'
+            rec._write_return_state({'status': 'pending'})
         return True
 
     def action_load_lines(self):
-        """Load source sales lines from B-Connect and map them to return lines."""
+        return self._load_return_lines()
+
+    def _load_return_lines(self, cur=None):
+        """Refresh through the caller's transaction without changing the public action signature."""
         self.ensure_one()
+        if not self._return_internal():
+            self._check_return_edit()
+        self._check_return_store()
         if not self.origin_header_id:
             raise UserError(_("Please enter sth_id (Original Invoice) first."))
         if not self.store_id or not self.store_id.ip1:
@@ -288,18 +472,19 @@ class AbdinSalesReturnHeader(models.Model):
         SalesHeader = self.env['ab_sales_header'].sudo()
         Uom = self.env['ab_product_uom'].sudo()
 
-        conn = self.get_connection()
-        if not conn:
-            raise UserError(_("Connection to B-Connect failed."))
+        if cur is None:
+            conn = self.get_connection()
+            if not conn:
+                raise UserError(_("Connection to B-Connect failed."))
+            cur = conn.cursor()
 
         eplus_lines = []
         sth_id = int(self.origin_header_id or 0)
 
         try:
-            cur = conn.cursor()
             cur.execute(
-                f"SELECT total_bill_net FROM sales_trans_h WHERE sth_id = {PARAM_STR}",
-                (sth_id,),
+                f"SELECT total_bill_net FROM sales_trans_h WHERE sth_id = {PARAM_STR} AND sto_id = {PARAM_STR}",
+                (sth_id, int(self.sto_eplus_serial)),
             )
             row = cur.fetchone()
             if not row:
@@ -311,9 +496,10 @@ class AbdinSalesReturnHeader(models.Model):
                     SELECT std_id, itm_id, c_id, qnty, itm_unit, itm_sell, itm_cost, itm_aver_cost, itm_back, itm_nexist
                     FROM sales_trans_d
                     WHERE sth_id={PARAM_STR}
+                      AND EXISTS (SELECT 1 FROM sales_trans_h h WHERE h.sth_id = sales_trans_d.sth_id AND h.sto_id = ?)
                     ORDER BY std_id
                 """,
-                (sth_id,),
+                (sth_id, int(self.sto_eplus_serial)),
             )
             rows = cur.fetchall()
             if not rows:
@@ -400,6 +586,9 @@ class AbdinSalesReturnHeader(models.Model):
         finally:
             pass
 
+        source_keys = {(v['sth_id'], v['std_id']) for v in eplus_lines}
+        if any(line.qty > 0 and (line.sth_id, line.std_id) not in source_keys for line in self.line_ids):
+            raise UserError(_('A selected return line no longer exists in the source invoice. Reload the return.'))
         for vals in eplus_lines:
             existing = ReturnLine.search(
                 [
@@ -446,171 +635,313 @@ class AbdinSalesReturnHeader(models.Model):
         }
 
     def action_push_to_eplus_return(self):
-        """
-        Execute return on B-Connect with UoM-aware posting.
-        """
-        replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
-        if not replica_db:
-            raise UserError(_("This is not Replica DB"))
         self.ensure_one()
-        self.action_load_lines()
-        self._validate_return()
-        if not self.line_ids:
-            raise UserError(_("No lines to return."))
+        self._lock_return()
+        if self.status == 'saved':
+            return True
+        with self._return_attempt():
+            if self.status not in ('prepending', 'pending', 'rejected', 'unknown'):
+                raise UserError(_('This return cannot be submitted in its current status.'))
+            if not self.env['ab_replica_db'].sudo().get_current_from_config():
+                raise UserError(_('This is not Replica DB'))
+            if not self.origin_header_id:
+                raise UserError(_('Please enter sth_id (Original Invoice) first.'))
+            if self.status != 'unknown':
+                self._validate_return()
+            if (self.sales_return_id or self.f_transaction_id) and not self.return_client_token:
+                raise UserError(_('This legacy return has remote identifiers. Contact support before retrying.'))
+            self._write_return_state({
+                'return_client_token': self.return_client_token or uuid.uuid4().hex,
+                'status': 'unknown', 'push_message': False,
+            })
+            self.env.cr.commit()
+            self._lock_return()
+            rec = self._return_records()
+            conn = None
+            commit_started = False
+            absence_confirmed = False
+            try:
+                conn = rec._get_return_submission_connection()
+                if not conn:
+                    raise UserError(_('Connection to B-Connect failed.'))
+                cur = conn.cursor()
+                cur.execute(
+                    'SELECT sth_id FROM sales_trans_h WITH (UPDLOCK, HOLDLOCK) WHERE sth_id = ? AND sto_id = ?',
+                    (int(rec.origin_header_id), int(rec.sto_eplus_serial)),
+                )
+                if not cur.fetchone():
+                    raise UserError(_('Source invoice was not found in the selected branch.'))
+                recovered = rec._find_committed_return(cur)
+                if recovered:
+                    conn.rollback()
+                    rec.write({**recovered, 'status': 'saved', 'replication_posted': True,
+                               'push_message': _('Recovered E-Plus return (sr_id=%s).') % recovered['sales_return_id']})
+                    self.env.cr.commit()
+                    _logger.info('Recovered return %s, branch %s, sr_id %s', self.id, self.sto_eplus_serial, recovered['sales_return_id'])
+                    return True
+                absence_confirmed = True
+                rec._validate_return_note_capacity(cur)
+                rec._load_return_lines(cur=cur)
+                rec._validate_return()
+                # Keep the actual source snapshot durable before any external writes.
+                self.env.cr.commit()
+                rec._lock_return()
+                ids = rec._post_return(cur)
+                commit_started = True
+                conn.commit()
+                rec.write({**ids, 'status': 'saved', 'replication_posted': True,
+                           'push_message': _('Pushed return to E-Plus successfully (sr_id=%s).') % ids['sales_return_id']})
+                self.env.cr.commit()
+                _logger.info('Posted return %s, branch %s, sr_id %s, fh_id %s', self.id, self.sto_eplus_serial, ids['sales_return_id'], ids['f_transaction_id'])
+                return True
+            except Exception as exc:
+                rollback_confirmed = False
+                if conn:
+                    try:
+                        conn.rollback()
+                        rollback_confirmed = True
+                    except Exception:
+                        _logger.warning('Return rollback was not acknowledged', exc_info=True)
+                self.env.cr.rollback()
+                self.invalidate_recordset()
+                state = 'rejected' if absence_confirmed and rollback_confirmed and not commit_started else 'unknown'
+                rec.write({'status': state, 'sales_return_id': False, 'f_transaction_id': False,
+                           'push_message': str(exc), 'replication_posted': False})
+                self.env.cr.commit()
+                _logger.warning('Return %s, branch %s: %s (%s)', self.id, self.sto_eplus_serial, state, exc)
+                return False
+            finally:
+                if conn:
+                    try:
+                        conn.close()
+                    except Exception:
+                        _logger.debug('Failed to close return connection', exc_info=True)
 
+    def _post_return(self, cur):
+        """Post all business, payment and replication effects in the caller's transaction."""
+        self.ensure_one()
         total_sold_qty_source = sum(
             float(line.qty_sold_source or line._qty_to_source_unit(line.qty_sold or 0.0))
             for line in self.line_ids
         )
         total_return_qty_source = 0.0
-
-        conn = self.get_connection()
-        if not conn:
-            raise UserError(_("Connection to B-Connect failed."))
-
-        try:
-            cur = conn.cursor()
-            sth_id = int(self.origin_header_id or 0)
-
-            invoice_status = self._get_invoice_status(cur, sth_id)
-            if invoice_status == 'Not Exist':
-                raise UserError(_("Invoice does not Exist"))
-            elif invoice_status == 'Pending':
-                raise UserError(
-                    _("Source sales invoice #%s is still pending. Save the source invoice first, then push the return.")
-                    % sth_id
-                )
-
-            cur.execute(
-                f"SELECT ISNULL(total_bill_net, 0) FROM sales_trans_h WHERE sth_id = {PARAM_STR}",
-                (int(sth_id),),
+        sth_id = int(self.origin_header_id)
+        invoice_status = self._get_invoice_status(cur, sth_id)
+        if invoice_status == 'Not Exist':
+            raise UserError(_("Invoice does not Exist"))
+        elif invoice_status == 'Pending':
+            raise UserError(
+                _("Source sales invoice #%s is still pending. Save the source invoice first, then push the return.")
+                % sth_id
             )
-            net_row = cur.fetchone()
-            source_total_sales_net = float(net_row[0] or 0.0) if net_row else 0.0
-            self.total_sales_net = source_total_sales_net
-            self._compute_totals()
-            if float(self.total_return_value or 0.0) > float(source_total_sales_net or 0.0) + 0.05:
-                raise UserError(
-                    _(
-                        "Return value (%s) cannot exceed invoice net (%s)."
-                    ) % (
-                        f"{float(self.total_return_value or 0.0):.2f}",
-                        f"{float(source_total_sales_net or 0.0):.2f}",
-                    )
+
+        cur.execute(
+            f"SELECT ISNULL(total_bill_net, 0) FROM sales_trans_h WHERE sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        net_row = cur.fetchone()
+        source_total_sales_net = float(net_row[0] or 0.0) if net_row else 0.0
+        self.total_sales_net = source_total_sales_net
+        self._compute_totals()
+        if float(self.total_return_value or 0.0) > float(source_total_sales_net or 0.0) + 0.05:
+            raise UserError(
+                _(
+                    "Return value (%s) cannot exceed invoice net (%s)."
+                ) % (
+                    f"{float(self.total_return_value or 0.0):.2f}",
+                    f"{float(source_total_sales_net or 0.0):.2f}",
                 )
-            cur.execute(
-                f"SELECT ISNULL(sec_insert_date, 0) FROM sales_trans_h WHERE sth_id = {PARAM_STR}",
-                (int(sth_id),),
             )
-            sec_insert_date_row = cur.fetchone()
-            sec_insert_date = sec_insert_date_row[0] if sec_insert_date_row else None
+        cur.execute(
+            f"SELECT ISNULL(sec_insert_date, 0) FROM sales_trans_h WHERE sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        sec_insert_date_row = cur.fetchone()
+        sec_insert_date = sec_insert_date_row[0] if sec_insert_date_row else None
 
-            self._validate_invoice_return_window(sth_id=sth_id, sec_insert_date=sec_insert_date)
+        self._validate_invoice_return_window(sth_id=sth_id, sec_insert_date=sec_insert_date)
 
-            emp_id = self.env['ab_sales_header']._get_eplus_emp_id()
-            if not emp_id:
-                raise UserError("Employee has no eplus_serial to use! please contact support")
+        emp_id = self.env['ab_sales_header']._get_eplus_emp_id()
+        if not emp_id:
+            raise UserError("Employee has no eplus_serial to use! please contact support")
 
-            fcs_id = 1
-            pc_name = self.env.user.login or 'ODOO'
+        fcs_id = 1
+        pc_name = self.env.user.login or 'ODOO'
 
-            total_qty = 0.0
-            total_value = 0.0
-            total_return_invoice = self._is_total_return_invoice()
+        total_qty = 0.0
+        total_value = 0.0
+        total_return_invoice = self._is_total_return_invoice()
 
-            for line in self.line_ids:
-                if line.qty <= 0:
-                    continue
+        for line in self.line_ids:
+            if line.qty <= 0:
+                continue
 
-                q_back_source = float(line._qty_to_source_unit())
-                if q_back_source <= 0:
-                    continue
+            q_back_source = float(line._qty_to_source_unit())
+            if q_back_source <= 0:
+                continue
 
-                itm_id = int(line.itm_eplus_id or 0)
-                c_id = int(line.c_id or 0)
-                std_id = int(line.std_id or 0)
-                sto_id = int(line.sto_id or self.sto_eplus_serial or 0)
-                is_nexist = bool(line.itm_nexist)
-                missing_base_keys = (not itm_id) or (not std_id) or (not sto_id)
-                allow_zero_c_id = is_nexist
-                if (not c_id) and (not allow_zero_c_id) and itm_id and sto_id:
-                    cur.execute(
-                        f"""
-                            SELECT COUNT(1)
-                            FROM Item_Class_Store
-                            WHERE itm_id = {PARAM_STR} AND sto_id = {PARAM_STR}
-                        """,
-                        (itm_id, sto_id),
-                    )
-                    ics_row = cur.fetchone()
-                    has_ics_rows = int(_to_native(ics_row[0] if ics_row else 0) or 0) > 0
-                    if not has_ics_rows:
-                        allow_zero_c_id = True
-                missing_class_key = (not c_id) and (not allow_zero_c_id)
-                if missing_base_keys or missing_class_key:
-                    raise UserError(_("Missing key values for return line update."))
-
-                source_factor = float(line._get_source_factor())
-                source_unit = int(line.source_itm_unit or 3)
-                unit12 = float(line.item_unit1_unit2 or 1.0)
-                unit13 = float(line.item_unit1_unit3 or 1.0)
-
-                sell_source = float(line._price_to_source_unit(line.sell_price or 0.0))
-                cost_source = float(line._price_to_source_unit(line.cost or 0.0))
-
-                total_qty += q_back_source
-                total_value += q_back_source * sell_source
-                total_return_qty_source += q_back_source
-
+            itm_id = int(line.itm_eplus_id or 0)
+            c_id = int(line.c_id or 0)
+            std_id = int(line.std_id or 0)
+            sto_id = int(line.sto_id or self.sto_eplus_serial or 0)
+            is_nexist = bool(line.itm_nexist)
+            missing_base_keys = (not itm_id) or (not std_id) or (not sto_id)
+            allow_zero_c_id = is_nexist
+            if (not c_id) and (not allow_zero_c_id) and itm_id and sto_id:
                 cur.execute(
                     f"""
-                        SELECT ISNULL(SUM(itm_qty),0)
-                        FROM item_class_store
+                        SELECT COUNT(1)
+                        FROM Item_Class_Store
                         WHERE itm_id = {PARAM_STR} AND sto_id = {PARAM_STR}
                     """,
                     (itm_id, sto_id),
                 )
-                stock_row = cur.fetchone()
-                stock_small = float(stock_row[0] or 0.0) if stock_row else 0.0
+                ics_row = cur.fetchone()
+                has_ics_rows = int(_to_native(ics_row[0] if ics_row else 0) or 0) > 0
+                if not has_ics_rows:
+                    allow_zero_c_id = True
+            missing_class_key = (not c_id) and (not allow_zero_c_id)
+            if missing_base_keys or missing_class_key:
+                raise UserError(_("Missing key values for return line update."))
+
+            source_factor = float(line._get_source_factor())
+            source_unit = int(line.source_itm_unit or 3)
+            unit12 = float(line.item_unit1_unit2 or 1.0)
+            unit13 = float(line.item_unit1_unit3 or 1.0)
+
+            sell_source = float(line._price_to_source_unit(line.sell_price or 0.0))
+            cost_source = float(line._price_to_source_unit(line.cost or 0.0))
+
+            total_qty += q_back_source
+            total_value += q_back_source * sell_source
+            total_return_qty_source += q_back_source
+
+            cur.execute(
+                f"""
+                    SELECT ISNULL(SUM(itm_qty),0)
+                    FROM item_class_store
+                    WHERE itm_id = {PARAM_STR} AND sto_id = {PARAM_STR}
+                """,
+                (itm_id, sto_id),
+            )
+            stock_row = cur.fetchone()
+            stock_small = float(stock_row[0] or 0.0) if stock_row else 0.0
+
+            cur.execute(
+                f"""
+                    UPDATE sales_trans_d
+                       SET itm_back = ISNULL(itm_back, 0) + {PARAM_STR},
+                           itm_unit = {PARAM_STR},
+                           itm_back_price = {PARAM_STR},
+                           itm_sell = {PARAM_STR},
+                           itm_cost = {PARAM_STR},
+                           itm_aver_cost = {PARAM_STR},
+                           itm_back_tax = 0.0000,
+                           itm_tax = 0.0000,
+                           sec_update_uid = {PARAM_STR},
+                           sec_update_date = GETDATE(),
+                           std_r_itm_purchase_unit = 1,
+                           std_r_itm_unit1_unit2 = {PARAM_STR},
+                           std_r_itm_unit1_unit3 = {PARAM_STR},
+                           std_r_itm_stock = {PARAM_STR},
+                           itm_nexist = CASE
+                               WHEN ABS(ISNULL(qnty, 0) - (ISNULL(itm_back, 0) + {PARAM_STR})) <= 0.0001
+                                   THEN 0
+                               ELSE itm_nexist
+                           END
+                     WHERE sth_id = {PARAM_STR}
+                       AND itm_id = {PARAM_STR}
+                       AND c_id = {PARAM_STR}
+                       AND std_id = {PARAM_STR}
+                """,
+                (
+                    q_back_source,
+                    source_unit,
+                    sell_source,
+                    sell_source,
+                    cost_source,
+                    cost_source,
+                    int(emp_id),
+                    unit12,
+                    unit13,
+                    stock_small,
+                    q_back_source,
+                    int(sth_id),
+                    itm_id,
+                    c_id,
+                    std_id,
+                ),
+            )
+
+            sold_source = float(line.qty_sold_source or 0.0)
+            max_return_source = float(line.max_returnable_source or 0.0)
+            existing_back_source = max(sold_source - max_return_source, 0.0)
+            should_split = (
+                    existing_back_source <= 1e-4
+                    and q_back_source > 1e-4
+                    and (sold_source - q_back_source) > 1e-4
+            )
+
+            if should_split:
+                remain_qty = sold_source - q_back_source
+                cur.execute(
+                    f"SELECT ISNULL(MAX(std_id), 0) + 1 FROM sales_trans_d WHERE sth_id = {PARAM_STR}",
+                    (int(sth_id),),
+                )
+                next_std_row = cur.fetchone()
+                next_std_id = int(next_std_row[0] or 1) if next_std_row else 1
+
+                cur.execute(
+                    f"""
+                        INSERT INTO sales_trans_d
+                        (
+                            std_id, sth_id, itm_id, c_id, exp_date,
+                            qnty, itm_unit, itm_sell, itm_cost,
+                            itm_dis_mon, itm_dis_per, itm_back,
+                            itm_back_price, itm_aver_cost,
+                            sec_insert_uid, sec_insert_date,
+                            sec_update_uid, sec_update_date,
+                            itm_nexist, std_itm_purchase_unit,
+                            std_itm_unit1_unit2, std_itm_unit1_unit3, std_itm_stock
+                        )
+                        SELECT
+                            {PARAM_STR}, sth_id, itm_id, c_id, exp_date,
+                            {PARAM_STR}, itm_unit, itm_sell, itm_cost,
+                            itm_dis_mon, itm_dis_per, 0,
+                            itm_back_price, itm_aver_cost,
+                            sec_insert_uid, sec_insert_date,
+                            sec_update_uid, sec_update_date,
+                            itm_nexist, 1,
+                            {PARAM_STR}, {PARAM_STR}, {PARAM_STR}
+                        FROM sales_trans_d
+                        WHERE sth_id = {PARAM_STR}
+                          AND itm_id = {PARAM_STR}
+                          AND c_id = {PARAM_STR}
+                          AND std_id = {PARAM_STR}
+                    """,
+                    (
+                        next_std_id,
+                        remain_qty,
+                        unit12,
+                        unit13,
+                        stock_small,
+                        int(sth_id),
+                        itm_id,
+                        c_id,
+                        std_id,
+                    ),
+                )
 
                 cur.execute(
                     f"""
                         UPDATE sales_trans_d
-                           SET itm_back = ISNULL(itm_back, 0) + {PARAM_STR},
-                               itm_unit = {PARAM_STR},
-                               itm_back_price = {PARAM_STR},
-                               itm_sell = {PARAM_STR},
-                               itm_cost = {PARAM_STR},
-                               itm_aver_cost = {PARAM_STR},
-                               itm_back_tax = 0.0000,
-                               itm_tax = 0.0000,
-                               sec_update_uid = {PARAM_STR},
-                               sec_update_date = GETDATE(),
-                               std_r_itm_purchase_unit = 1,
-                               std_r_itm_unit1_unit2 = {PARAM_STR},
-                               std_r_itm_unit1_unit3 = {PARAM_STR},
-                               std_r_itm_stock = {PARAM_STR},
-                               itm_nexist = CASE
-                                   WHEN ABS(ISNULL(qnty, 0) - (ISNULL(itm_back, 0) + {PARAM_STR})) <= 0.0001
-                                       THEN 0
-                                   ELSE itm_nexist
-                               END
+                           SET qnty = {PARAM_STR}
                          WHERE sth_id = {PARAM_STR}
                            AND itm_id = {PARAM_STR}
                            AND c_id = {PARAM_STR}
                            AND std_id = {PARAM_STR}
                     """,
                     (
-                        q_back_source,
-                        source_unit,
-                        sell_source,
-                        sell_source,
-                        cost_source,
-                        cost_source,
-                        int(emp_id),
-                        unit12,
-                        unit13,
-                        stock_small,
                         q_back_source,
                         int(sth_id),
                         itm_id,
@@ -619,296 +950,208 @@ class AbdinSalesReturnHeader(models.Model):
                     ),
                 )
 
-                sold_source = float(line.qty_sold_source or 0.0)
-                max_return_source = float(line.max_returnable_source or 0.0)
-                existing_back_source = max(sold_source - max_return_source, 0.0)
-                should_split = (
-                        existing_back_source <= 1e-4
-                        and q_back_source > 1e-4
-                        and (sold_source - q_back_source) > 1e-4
-                )
-
-                if should_split:
-                    remain_qty = sold_source - q_back_source
-                    cur.execute(
-                        f"SELECT ISNULL(MAX(std_id), 0) + 1 FROM sales_trans_d WHERE sth_id = {PARAM_STR}",
-                        (int(sth_id),),
-                    )
-                    next_std_row = cur.fetchone()
-                    next_std_id = int(next_std_row[0] or 1) if next_std_row else 1
-
-                    cur.execute(
-                        f"""
-                            INSERT INTO sales_trans_d
-                            (
-                                std_id, sth_id, itm_id, c_id, exp_date,
-                                qnty, itm_unit, itm_sell, itm_cost,
-                                itm_dis_mon, itm_dis_per, itm_back,
-                                itm_back_price, itm_aver_cost,
-                                sec_insert_uid, sec_insert_date,
-                                sec_update_uid, sec_update_date,
-                                itm_nexist, std_itm_purchase_unit,
-                                std_itm_unit1_unit2, std_itm_unit1_unit3, std_itm_stock
-                            )
-                            SELECT
-                                {PARAM_STR}, sth_id, itm_id, c_id, exp_date,
-                                {PARAM_STR}, itm_unit, itm_sell, itm_cost,
-                                itm_dis_mon, itm_dis_per, 0,
-                                itm_back_price, itm_aver_cost,
-                                sec_insert_uid, sec_insert_date,
-                                sec_update_uid, sec_update_date,
-                                itm_nexist, 1,
-                                {PARAM_STR}, {PARAM_STR}, {PARAM_STR}
-                            FROM sales_trans_d
-                            WHERE sth_id = {PARAM_STR}
-                              AND itm_id = {PARAM_STR}
-                              AND c_id = {PARAM_STR}
-                              AND std_id = {PARAM_STR}
-                        """,
-                        (
-                            next_std_id,
-                            remain_qty,
-                            unit12,
-                            unit13,
-                            stock_small,
-                            int(sth_id),
-                            itm_id,
-                            c_id,
-                            std_id,
-                        ),
-                    )
-
-                    cur.execute(
-                        f"""
-                            UPDATE sales_trans_d
-                               SET qnty = {PARAM_STR}
-                             WHERE sth_id = {PARAM_STR}
-                               AND itm_id = {PARAM_STR}
-                               AND c_id = {PARAM_STR}
-                               AND std_id = {PARAM_STR}
-                        """,
-                        (
-                            q_back_source,
-                            int(sth_id),
-                            itm_id,
-                            c_id,
-                            std_id,
-                        ),
-                    )
-
-                q_back_small = q_back_source * source_factor
-                cur.execute(
-                    f"""
-                        UPDATE Item_Class_Store
-                           SET itm_qty = itm_qty + {PARAM_STR},
-                               sec_update_uid = {PARAM_STR},
-                               sec_update_date = GETDATE()
-                         WHERE itm_id = {PARAM_STR}
-                           AND c_id = {PARAM_STR}
-                           AND sto_id = {PARAM_STR}
-                    """,
-                    (
-                        q_back_small,
-                        int(emp_id),
-                        itm_id,
-                        c_id,
-                        sto_id,
-                    ),
-                )
-
-            if total_qty <= 0:
-                raise UserError(_("Nothing to return."))
-
+            q_back_small = q_back_source * source_factor
             cur.execute(
                 f"""
-                    INSERT INTO sales_return (
-                        sth_id, returned_items_no, returned_items_value,
-                        new_items_no, new_items_value,
-                        sec_insert_uid, sth_extra_expenses_back, total_back_tax
-                    )
-                    VALUES ({PARAM_STR}, {PARAM_STR}, {PARAM_STR},
-                            0, 0,
-                            {PARAM_STR}, 0.0000, 0.0000)
-                """,
-                (
-                    int(sth_id),
-                    total_qty,
-                    total_value,
-                    int(emp_id),
-                ),
-            )
-
-            sr_id = self._get_identity(cur, label="sales_return.sr_id")
-            self.sales_return_id = sr_id
-
-            # if invoice is totally returned, then net_return = total_net_amount
-            if abs(total_return_qty_source - total_sold_qty_source) < 0.01 or total_return_invoice:
-                net_return = self.total_sales_net
-            else:
-                net_return = self.total_return_value
-
-            return_adjustments = self._get_return_adjustments(
-                cur=cur,
-                sth_id=sth_id,
-                total_value=total_value,
-                net_return=net_return,
-            ) or {}
-            total_bill_after_disc_delta = float(
-                return_adjustments.get('total_bill_after_disc_delta', total_value) or 0.0
-            )
-            total_bill_net_delta = float(
-                return_adjustments.get('total_bill_net_delta', net_return) or 0.0
-            )
-            fcs_current_balance_delta = float(
-                return_adjustments.get('fcs_current_balance_delta', net_return) or 0.0
-            )
-            fh_value_delta = float(
-                return_adjustments.get('fh_value_delta', fcs_current_balance_delta) or 0.0
-            )
-            sales_return_payment_value = float(
-                return_adjustments.get('sales_return_payment_value', -fh_value_delta) or 0.0
-            )
-
-            cur.execute(
-                f"""
-                    UPDATE sales_trans_h
-                       SET total_bill = total_bill - {PARAM_STR},
-                           total_bill_after_disc = total_bill_after_disc - {PARAM_STR},
-                           total_bill_net = total_bill_net - {PARAM_STR},
-                           total_des_mon = total_des_mon - 0.00,
-                           emp_id = {PARAM_STR},
-                           sth_back = 1,
+                    UPDATE Item_Class_Store
+                       SET itm_qty = itm_qty + {PARAM_STR},
                            sec_update_uid = {PARAM_STR},
-                           sec_update_date = GETDATE(),
-                           sth_return_payment = 1
-                     WHERE sth_id = {PARAM_STR}
+                           sec_update_date = GETDATE()
+                     WHERE itm_id = {PARAM_STR}
+                       AND c_id = {PARAM_STR}
+                       AND sto_id = {PARAM_STR}
                 """,
                 (
-                    total_value,
-                    total_bill_after_disc_delta,
-                    total_bill_net_delta,
+                    q_back_small,
                     int(emp_id),
-                    int(emp_id),
-                    int(sth_id),
+                    itm_id,
+                    c_id,
+                    sto_id,
                 ),
             )
 
+        if total_qty <= 0:
+            raise UserError(_("Nothing to return."))
+
+        cur.execute(
+            f"""
+                INSERT INTO sales_return (
+                    sth_id, returned_items_no, returned_items_value,
+                    new_items_no, new_items_value,
+                    sec_insert_uid, sth_extra_expenses_back, total_back_tax
+                )
+                VALUES ({PARAM_STR}, {PARAM_STR}, {PARAM_STR},
+                        0, 0,
+                        {PARAM_STR}, 0.0000, 0.0000)
+            """,
+            (
+                int(sth_id),
+                total_qty,
+                total_value,
+                int(emp_id),
+            ),
+        )
+
+        sr_id = self._get_identity(cur, label="sales_return.sr_id")
+
+        # if invoice is totally returned, then net_return = total_net_amount
+        if abs(total_return_qty_source - total_sold_qty_source) < 0.01 or total_return_invoice:
+            net_return = self.total_sales_net
+        else:
+            net_return = self.total_return_value
+
+        return_adjustments = self._get_return_adjustments(
+            cur=cur,
+            sth_id=sth_id,
+            total_value=total_value,
+            net_return=net_return,
+        ) or {}
+        if 'returned_items_value' in return_adjustments:
+            cur.execute('UPDATE sales_return SET returned_items_value = ? WHERE sr_id = ?',
+                        (float(return_adjustments['returned_items_value'] or 0.0), int(sr_id)))
+        total_bill_after_disc_delta = float(
+            return_adjustments.get('total_bill_after_disc_delta', total_value) or 0.0
+        )
+        total_bill_net_delta = float(
+            return_adjustments.get('total_bill_net_delta', net_return) or 0.0
+        )
+        fcs_current_balance_delta = float(
+            return_adjustments.get('fcs_current_balance_delta', net_return) or 0.0
+        )
+        fh_value_delta = float(
+            return_adjustments.get('fh_value_delta', fcs_current_balance_delta) or 0.0
+        )
+        sales_return_payment_value = float(
+            return_adjustments.get('sales_return_payment_value', -fh_value_delta) or 0.0
+        )
+
+        cur.execute(
+            f"""
+                UPDATE sales_trans_h
+                   SET total_bill = total_bill - {PARAM_STR},
+                       total_bill_after_disc = total_bill_after_disc - {PARAM_STR},
+                       total_bill_net = total_bill_net - {PARAM_STR},
+                       total_des_mon = total_des_mon - 0.00,
+                       emp_id = {PARAM_STR},
+                       sth_back = 1,
+                       sec_update_uid = {PARAM_STR},
+                       sec_update_date = GETDATE(),
+                       sth_return_payment = 1
+                 WHERE sth_id = {PARAM_STR}
+            """,
+            (
+                total_value,
+                total_bill_after_disc_delta,
+                total_bill_net_delta,
+                int(emp_id),
+                int(emp_id),
+                int(sth_id),
+            ),
+        )
+
+        cur.execute(
+            f"UPDATE sales_trans_h SET total_bill_net = 0 WHERE total_bill_net < 0 AND sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        cur.execute(
+            f"UPDATE sales_trans_h SET total_bill_after_disc = 0 WHERE total_bill_after_disc < 0 AND sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        cur.execute(
+            f"UPDATE sales_trans_h SET total_des_mon = 0 WHERE total_des_mon < 0 AND sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        cur.execute(
+            f"UPDATE sales_trans_h SET sth_extra_expenses_back = 0.0000 WHERE sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+
+        cur.execute(
+            f"""
+                UPDATE F_Cash_Store
+                   SET fcs_current_balance = fcs_current_balance - {PARAM_STR}
+                 WHERE fcs_id = {PARAM_STR}
+            """,
+            (fcs_current_balance_delta, int(fcs_id)),
+        )
+
+        note = self._return_financial_note(sr_id)
+        cur.execute(
+            f"""
+                INSERT INTO F_Transaction_Header (
+                    fh_trans_type, fh_trans_type2, fh_code,
+                    fh_value, fh_From_type, fh_from_id,
+                    fh_to_type, fh_to_id, fh_notes,
+                    sec_insert_uid, fh_actual_date,
+                    fh_computer, fh_actual_cashier_id,
+                    fh_form_type, fh_sto_id, fh_cost_sto_id
+                )
+                VALUES (1, 2, '', {PARAM_STR},
+                        '3', {PARAM_STR},
+                        '1', 0, {PARAM_STR},
+                        {PARAM_STR}, GETDATE(),
+                        {PARAM_STR}, {PARAM_STR},
+                        2, {PARAM_STR}, 0)
+            """,
+            (
+                fh_value_delta,
+                int(fcs_id),
+                note,
+                int(emp_id),
+                pc_name,
+                int(emp_id),
+                int(self.sto_eplus_serial or 0),
+            ),
+        )
+
+        fh_id = self._get_identity(cur, label="F_Transaction_Header.fh_id")
+        if fh_id:
             cur.execute(
-                f"UPDATE sales_trans_h SET total_bill_net = 0 WHERE total_bill_net < 0 AND sth_id = {PARAM_STR}",
-                (int(sth_id),),
-            )
-            cur.execute(
-                f"UPDATE sales_trans_h SET total_bill_after_disc = 0 WHERE total_bill_after_disc < 0 AND sth_id = {PARAM_STR}",
-                (int(sth_id),),
-            )
-            cur.execute(
-                f"UPDATE sales_trans_h SET total_des_mon = 0 WHERE total_des_mon < 0 AND sth_id = {PARAM_STR}",
-                (int(sth_id),),
-            )
-            cur.execute(
-                f"UPDATE sales_trans_h SET sth_extra_expenses_back = 0.0000 WHERE sth_id = {PARAM_STR}",
-                (int(sth_id),),
+                f"UPDATE F_Transaction_Header SET fh_code = fh_id WHERE fh_id = {PARAM_STR}",
+                (int(fh_id),),
             )
 
+        if sr_id:
             cur.execute(
                 f"""
-                    UPDATE F_Cash_Store
-                       SET fcs_current_balance = fcs_current_balance - {PARAM_STR}
-                     WHERE fcs_id = {PARAM_STR}
-                """,
-                (fcs_current_balance_delta, int(fcs_id)),
-            )
-
-            note = f" مرتجع بيع على فاتورة رقم {sth_id}"
-            cur.execute(
-                f"""
-                    INSERT INTO F_Transaction_Header (
-                        fh_trans_type, fh_trans_type2, fh_code,
-                        fh_value, fh_From_type, fh_from_id,
-                        fh_to_type, fh_to_id, fh_notes,
-                        sec_insert_uid, fh_actual_date,
-                        fh_computer, fh_actual_cashier_id,
-                        fh_form_type, fh_sto_id, fh_cost_sto_id
+                    INSERT INTO sales_return_payment (
+                        srp_sto_id, srp_sr_id, srp_sr_type,
+                        srp_pt_id, srp_fcs_id,
+                        srp_value, srp_version,
+                        srp_pc_name, srp_insert_uid
                     )
-                    VALUES (1, 2, '', {PARAM_STR},
-                            '3', {PARAM_STR},
-                            '1', 0, {PARAM_STR},
-                            {PARAM_STR}, GETDATE(),
-                            {PARAM_STR}, {PARAM_STR},
-                            2, {PARAM_STR}, 0)
+                    VALUES (
+                        {PARAM_STR}, {PARAM_STR}, 2,
+                        1, {PARAM_STR},
+                        {PARAM_STR}, '13.0.86',
+                        {PARAM_STR}, {PARAM_STR}
+                    )
                 """,
                 (
-                    fh_value_delta,
+                    int(self.sto_eplus_serial or 0),
+                    int(sr_id),
                     int(fcs_id),
-                    note,
-                    int(emp_id),
+                    sales_return_payment_value,
                     pc_name,
                     int(emp_id),
-                    int(self.sto_eplus_serial or 0),
                 ),
             )
 
-            fh_id = self._get_identity(cur, label="F_Transaction_Header.fh_id")
-            self.f_transaction_id = fh_id
-            if fh_id:
-                cur.execute(
-                    f"UPDATE F_Transaction_Header SET fh_code = fh_id WHERE fh_id = {PARAM_STR}",
-                    (int(fh_id),),
-                )
-
-            if sr_id:
-                cur.execute(
-                    f"""
-                        INSERT INTO sales_return_payment (
-                            srp_sto_id, srp_sr_id, srp_sr_type,
-                            srp_pt_id, srp_fcs_id,
-                            srp_value, srp_version,
-                            srp_pc_name, srp_insert_uid
-                        )
-                        VALUES (
-                            {PARAM_STR}, {PARAM_STR}, 2,
-                            1, {PARAM_STR},
-                            {PARAM_STR}, '13.0.86',
-                            {PARAM_STR}, {PARAM_STR}
-                        )
-                    """,
-                    (
-                        int(self.sto_eplus_serial or 0),
-                        int(sr_id),
-                        int(fcs_id),
-                        sales_return_payment_value,
-                        pc_name,
-                        int(emp_id),
-                    ),
-                )
-
-            conn.commit()
-            self.status = 'saved'
-
-        except (UserError, ValidationError):
-            try:
-                conn.rollback()
-            except Exception as e2:
-                _logger.warning(repr(e2))
-            raise
-        except Exception as ex:
-            try:
-                conn.rollback()
-            except Exception as e2:
-                _logger.warning(repr(e2))
-            raise UserError(_("E-Plus return push failed: %s") % str(ex))
-        finally:
-            pass
+        self._insert_replication_trans_rows_for_return(cur=cur, emp_id=emp_id)
+        return {'sales_return_id': int(sr_id), 'f_transaction_id': int(fh_id)}
 
     def _validate_return(self):
         """Validate quantities before push."""
-        if self.status == 'saved':
-            raise UserError(_("Already Saved"))
+        if self.status not in ('prepending', 'pending', 'rejected', 'unknown'):
+            raise UserError(_("This return cannot be submitted in its current status."))
         if not self.line_ids:
             raise UserError(_("No lines to return."))
 
         total_source = 0.0
+        selected_keys = set()
         for line in self.line_ids:
+            if line.sth_id != self.origin_header_id or line.sto_id != self.sto_eplus_serial:
+                raise UserError(_('Return lines must belong to the selected invoice and branch.'))
             qty_selected = float(line.qty or 0.0)
             if qty_selected < 0:
                 raise UserError(
@@ -921,6 +1164,11 @@ class AbdinSalesReturnHeader(models.Model):
                     % (line.product_id.display_name or line.itm_eplus_id, line.max_returnable_qty)
                 )
 
+            if qty_selected > 0:
+                key = (line.sth_id, line.std_id)
+                if key in selected_keys:
+                    raise UserError(_('A source invoice line can only be selected once per return.'))
+                selected_keys.add(key)
             qty_source = float(line._qty_to_source_unit() or 0.0)
             sold_source = float(line.qty_sold_source or line._qty_to_source_unit(line.qty_sold or 0.0))
             if line.itm_nexist and qty_source and not math.isclose(qty_source, sold_source, rel_tol=0.0, abs_tol=1e-4):

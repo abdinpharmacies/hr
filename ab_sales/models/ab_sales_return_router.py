@@ -1,14 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from odoo import api, models
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
-
-from odoo.addons.ab_sales.models.ab_sales_return_header import PARAM_STR
-
-_logger = logging.getLogger(__name__)
 
 
 class AbSalesReturnHeaderRouter(models.Model):
@@ -80,23 +74,16 @@ class AbSalesReturnHeaderRouter(models.Model):
         mode, _source_header = self._return_router_mode()
 
         if mode == "contract" and hasattr(self, "_contract_return_reprice_values"):
-            before_after_disc = False
-            before_net = False
-            try:
-                cur.execute(
-                    f"""
-                        SELECT ISNULL(total_bill_after_disc, 0), ISNULL(total_bill_net, 0)
-                          FROM sales_trans_h
-                         WHERE sth_id = {PARAM_STR}
-                    """,
-                    (int(sth_id),),
-                )
-                row = cur.fetchone()
-                if row:
-                    before_after_disc = float(row[0] or 0.0)
-                    before_net = float(row[1] or 0.0)
-            except Exception:
-                _logger.exception("Failed to read pre-return totals for contract return %s", self.id)
+            cur.execute(
+                'SELECT ISNULL(total_bill_after_disc, 0), ISNULL(total_bill_net, 0) '
+                'FROM sales_trans_h WHERE sth_id = ? AND sto_id = ?',
+                (int(sth_id), int(self.sto_eplus_serial)),
+            )
+            row = cur.fetchone()
+            if not row:
+                raise UserError(_('Source invoice was not found in the selected branch.'))
+            before_after_disc = float(row[0] or 0.0)
+            before_net = float(row[1] or 0.0)
 
             repriced = self._contract_return_reprice_values(
                 before_after_disc=before_after_disc,
@@ -111,6 +98,7 @@ class AbSalesReturnHeaderRouter(models.Model):
                     "fcs_current_balance_delta": refund_net,
                     "fh_value_delta": refund_net,
                     "sales_return_payment_value": -refund_net,
+                    "returned_items_value": refund_net,
                 }
             )
             return adjustments
@@ -125,82 +113,10 @@ class AbSalesReturnHeaderRouter(models.Model):
                     "fcs_current_balance_delta": refund_total,
                     "fh_value_delta": refund_total,
                     "sales_return_payment_value": -refund_total,
+                    "returned_items_value": refund_total,
                 }
             )
             return adjustments
 
         return adjustments
-
-    def action_push_to_eplus_return(self):
-        updates_by_id = {}
-        for rec in self:
-            if rec._is_total_return_invoice():
-                continue
-            mode, _source_header = rec._return_router_mode()
-            if mode == "contract" and hasattr(rec, "_contract_return_reprice_values"):
-                before_after_disc = False
-                before_net = False
-                conn = rec.get_connection()
-                if conn and rec.origin_header_id:
-                    try:
-                        cur = conn.cursor()
-                        cur.execute(
-                            f"""
-                                SELECT ISNULL(total_bill_after_disc, 0), ISNULL(total_bill_net, 0)
-                                  FROM sales_trans_h
-                                 WHERE sth_id = {PARAM_STR}
-                            """,
-                            (int(rec.origin_header_id),),
-                        )
-                        row = cur.fetchone()
-                        if row:
-                            before_after_disc = float(row[0] or 0.0)
-                            before_net = float(row[1] or 0.0)
-                    except Exception:
-                        _logger.exception(
-                            "Failed to read pre-return totals before push for contract return %s",
-                            rec.id,
-                        )
-                repriced = rec._contract_return_reprice_values(
-                    before_after_disc=before_after_disc,
-                    before_net=before_net,
-                )
-                updates_by_id[rec.id] = float(repriced.get("refund_net") or 0.0)
-            elif mode == "promo" and hasattr(rec, "_promo_return_reprice_values"):
-                repriced = rec._promo_return_reprice_values()
-                updates_by_id[rec.id] = float(repriced.get("refund_total") or 0.0)
-
-        result = super().action_push_to_eplus_return()
-
-        for rec in self:
-            if rec.id not in updates_by_id:
-                continue
-            if not rec.sales_return_id:
-                continue
-            conn = rec.get_connection()
-            if not conn:
-                continue
-            try:
-                cur = conn.cursor()
-                cur.execute(
-                    """
-                        UPDATE sales_return
-                           SET returned_items_value = ?
-                         WHERE sr_id = ?
-                    """,
-                    (
-                        float(updates_by_id.get(rec.id) or 0.0),
-                        int(rec.sales_return_id),
-                    ),
-                )
-                conn.commit()
-            except Exception as exc:
-                _logger.exception("Failed to update sales_return.returned_items_value for return %s", rec.id)
-                raise UserError(
-                    _(
-                        "Return was saved, but updating sales_return.returned_items_value failed: %s"
-                    ) % str(exc)
-                )
-
-        return result
 

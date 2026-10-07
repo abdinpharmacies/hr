@@ -22,8 +22,11 @@
             <field name="model">ab_sales_return_header</field>
             <field name="arch" type="xml">
 
-                <form string="Sales Return">
+                <form string="Sales Return" duplicate="0">
                     <header>
+                        <button name="action_retry_return" type="object" string="Retry" class="btn-warning"
+                                invisible="status not in ('unknown', 'rejected')"/>
+                        <field name="status" widget="statusbar" statusbar_visible="prepending,pending,unknown,rejected,saved"/>
                         <!--
                                                 <button name="action_set_pending"
                                                         type="object"
@@ -37,10 +40,15 @@
                                 string="Push to E-Plus"
                                 class="btn-success"
                                 confirm="Are you sure you want to push this return to E-Plus?"
-                                invisible="status == 'saved'"/>
+                                invisible="status in ('unknown', 'rejected', 'saved')"/>
                     </header>
 
                     <sheet>
+                        <field name="return_client_token" invisible="1"/>
+                        <field name="push_message" readonly="1" invisible="not push_message"/>
+                        <div class="alert alert-warning" invisible="status != 'unknown'">
+                            This return is locked. Use Retry to resolve an uncertain submission.
+                        </div>
                         <field name="status" invisible="1"/>
                         <widget name="web_ribbon" title="Pre-Pending" bg_color="bg-info"
                                 invisible="status != 'prepending'"/>
@@ -50,18 +58,18 @@
 
                         <group>
                             <group>
-                                <field name="store_id" readonly="status == 'saved'"/>
-                                <field name="origin_header_id" readonly="status == 'saved'"/>
+                                <field name="store_id" readonly="return_client_token or status == 'saved'"/>
+                                <field name="origin_header_id" readonly="return_client_token or status == 'saved'"/>
                                 <button name="action_load_lines"
                                         type="object"
                                         string="Load Lines"
                                         class="btn-primary"
-                                        invisible="status == 'saved'"/>
+                                        invisible="status in ('unknown', 'saved')"/>
                                 <button name="action_clear_lines"
                                         type="object"
                                         string="Clear Lines"
                                         class="btn-danger"
-                                        invisible="status == 'saved'"/>
+                                        invisible="status in ('unknown', 'saved')"/>
 
                             </group>
                             <group>
@@ -73,13 +81,13 @@
                             </group>
                         </group>
                         <group>
-                            <field name="notes" colspan="4"/>
+                            <field name="notes" colspan="4" readonly="status in ('unknown', 'saved')"/>
                         </group>
 
                         <notebook>
                             <page name="Lines" string="Lines">
                                 <group>
-                                    <field name="line_ids" nolabel="1">
+                                    <field name="line_ids" nolabel="1" readonly="status in ('unknown', 'saved')">
                                         <list editable="bottom" create="0" delete="0">
                                             <!-- Product -->
                                             <field name="itm_eplus_id"

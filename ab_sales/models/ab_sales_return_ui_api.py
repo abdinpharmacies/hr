@@ -15,6 +15,8 @@ class AbSalesReturnUiApi(models.TransientModel):
         header = self.env["ab_sales_return_header"].browse(int(return_header_id or 0)).exists()
         if not header:
             raise UserError(_("Sales return was not found."))
+        header.check_access("read")
+        header._check_return_store()
         return header
 
     @api.model
@@ -33,7 +35,9 @@ class AbSalesReturnUiApi(models.TransientModel):
     def _status_class(self, status):
         if status == "saved":
             return "text-bg-success"
-        if status == "pending":
+        if status == "rejected":
+            return "text-bg-danger"
+        if status in ("pending", "unknown"):
             return "text-bg-warning"
         return "text-bg-info"
 
@@ -79,6 +83,7 @@ class AbSalesReturnUiApi(models.TransientModel):
     @api.model
     def _serialize_header(self, header):
         header.ensure_one()
+        editable = header.status in ("prepending", "pending", "rejected")
         return {
             "id": header.id,
             "store_id": header.store_id.id if header.store_id else False,
@@ -93,9 +98,13 @@ class AbSalesReturnUiApi(models.TransientModel):
             "total_sales_net": float(header.total_sales_net or 0.0),
             "sales_return_id": int(header.sales_return_id or 0),
             "f_transaction_id": int(header.f_transaction_id or 0),
-            "can_reload": header.status != "saved",
-            "can_clear": header.status != "saved",
-            "can_total_return": header.status != "saved",
+            "push_message": header.push_message or "",
+            "submission_attempted": bool(header.return_client_token),
+            "can_edit": editable,
+            "can_retry": header.status in ("unknown", "rejected"),
+            "can_reload": editable,
+            "can_clear": editable,
+            "can_total_return": editable,
             "can_set_pending": header.status == "prepending",
             "can_push": header.status != "saved",
             "lines": [self._serialize_line(line) for line in header.line_ids],
@@ -241,7 +250,9 @@ class AbSalesReturnUiApi(models.TransientModel):
         header = self.env["ab_sales_return_header"].browse(int(return_header_id or 0)).exists()
         if not header:
             return {"deleted": False}
-        if header.status != "prepending":
+        header._check_return_store()
+        header._lock_return()
+        if header.return_client_token or header.status != "prepending":
             return {"deleted": False, "status": header.status}
         header.unlink()
         return {"deleted": True}

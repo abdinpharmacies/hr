@@ -27,6 +27,32 @@ class AbdinSalesReturnLine(models.Model):
     _inherit = ['ab_product_qty']
     _order = 'id'
 
+    def _check_return_line_edit(self, headers):
+        if self.env['ab_sales_return_header']._return_internal():
+            return
+        headers._check_return_edit()
+        if headers:
+            headers._write_return_state({'write_date': fields.Datetime.now()})
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        headers = self.env['ab_sales_return_header'].browse(list({
+            int(vals['header_id']) for vals in vals_list if vals.get('header_id')
+        }))
+        self._check_return_line_edit(headers)
+        return super().create(vals_list)
+
+    def write(self, vals):
+        headers = self.mapped('header_id')
+        if vals.get('header_id'):
+            headers |= self.env['ab_sales_return_header'].browse(int(vals['header_id']))
+        self._check_return_line_edit(headers)
+        return super().write(vals)
+
+    def unlink(self):
+        self._check_return_line_edit(self.mapped('header_id'))
+        return super().unlink()
+
     header_id = fields.Many2one(
         'ab_sales_return_header',
         string="Return Header",

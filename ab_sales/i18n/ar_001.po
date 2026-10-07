@@ -2529,6 +2529,7 @@ msgstr "البروتوكول"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__push_message
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__push_message
 msgid "Push Message"
 msgstr "رسالة الإرسال"
 
@@ -3953,23 +3954,28 @@ msgstr "إلى"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__unknown
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__unknown
 msgid "Unknown"
 msgstr "غير مؤكد"
 #. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__rejected
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__rejected
 msgid "Rejected"
 msgstr "مرفوض"
 #. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
 msgid "Retry"
 msgstr "إعادة المحاولة"
 #. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
 msgid "Checking submission..."
 msgstr "جارٍ التحقق من الإرسال..."
 #. module: ab_sales
@@ -4073,3 +4079,150 @@ msgid ""
 msgstr ""
 "إرسال الفاتورة إلى إي بلس يحتاج إلى مراجعة. أعد تحميل نقطة البيع واستخدم "
 "إعادة المحاولة على الفاتورة الأصلية."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__return_client_token
+msgid "Return Client Token"
+msgstr "رمز إرسال المرتجع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__replication_posted
+msgid "Replication Posted"
+msgstr "تم إرسال بيانات المزامنة"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_return_header_uniq_return_client_token
+msgid "Return submission token must be unique."
+msgstr "يجب أن يكون رمز إرسال المرتجع فريدًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"This return is being submitted by another process. Please retry in a moment."
+msgstr ""
+"يتم إرسال هذا المرتجع بواسطة عملية أخرى. يرجى إعادة المحاولة بعد قليل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "This return is locked. Use Retry to resolve an uncertain submission."
+msgstr ""
+"هذا المرتجع مقفل. استخدم إعادة المحاولة للتأكد من نتيجة الإرسال غير المؤكدة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Return submission identity and state cannot be changed manually."
+msgstr "لا يمكن تغيير هوية المرتجع وحالة إرساله يدويًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Attempted returns cannot be copied."
+msgstr "لا يمكن نسخ المرتجعات التي تمت محاولة إرسالها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Attempted returns cannot be deleted."
+msgstr "لا يمكن حذف المرتجعات التي تمت محاولة إرسالها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"Resolve the Unknown return for this invoice before submitting another "
+"return."
+msgstr "تحقق من نتيجة المرتجع غير المؤكد لهذه الفاتورة قبل إرسال مرتجع آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Multiple E-Plus returns match this token. Contact support."
+msgstr "توجد عدة مرتجعات في إي بلس تطابق هذا الرمز. تواصل مع الدعم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "The E-Plus return recovery marker is invalid. Contact support."
+msgstr "علامة استرجاع المرتجع في إي بلس غير صالحة. تواصل مع الدعم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "The E-Plus return recovery records are inconsistent. Contact support."
+msgstr "سجلات استرجاع المرتجع في إي بلس غير متطابقة. تواصل مع الدعم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"E-Plus financial notes cannot preserve the return recovery marker. Contact "
+"support."
+msgstr ""
+"لا يمكن للملاحظات المالية في إي بلس حفظ علامة استرجاع المرتجع. تواصل مع "
+"الدعم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"A selected return line no longer exists in the source invoice. Reload the "
+"return."
+msgstr ""
+"أحد بنود المرتجع المحددة لم يعد موجودًا في الفاتورة الأصلية. أعد تحميل "
+"المرتجع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "This return cannot be submitted in its current status."
+msgstr "لا يمكن إرسال هذا المرتجع في حالته الحالية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"This legacy return has remote identifiers. Contact support before retrying."
+msgstr ""
+"هذا المرتجع القديم لديه أرقام مرجعية في النظام الخارجي. تواصل مع الدعم قبل "
+"إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+#: code:addons/ab_sales/models/ab_sales_return_router.py:0
+msgid "Source invoice was not found in the selected branch."
+msgstr "لم يتم العثور على الفاتورة الأصلية في الفرع المحدد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Recovered E-Plus return (sr_id=%s)."
+msgstr "تم استرجاع مرتجع إي بلس (sr_id=%s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Pushed return to E-Plus successfully (sr_id=%s)."
+msgstr "تم إرسال المرتجع إلى إي بلس بنجاح (sr_id=%s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Return lines must belong to the selected invoice and branch."
+msgstr "يجب أن تنتمي بنود المرتجع إلى الفاتورة والفرع المحددين."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "A source invoice line can only be selected once per return."
+msgstr "يمكن تحديد بند الفاتورة الأصلية مرة واحدة فقط لكل مرتجع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Return submission needs attention. Use Retry."
+msgstr "إرسال المرتجع يحتاج إلى متابعة. استخدم إعادة المحاولة."
