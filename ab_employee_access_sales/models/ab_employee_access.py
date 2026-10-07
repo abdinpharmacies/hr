@@ -69,16 +69,14 @@ class AbEmployeeAccess(models.Model):
                         store = employee.department_id.store_id
                         values = {}
                         role = profile.pos_role_id
-                        allowed_stores = profile.pos_allowed_store_ids
                         if working and not role:
                             role = roles_by_job.get(employee.job_id.id)
                             if role:
                                 values["pos_role_id"] = role.id
-                                allowed_stores = store
                                 if profile.pos_allowed_store_ids != store:
                                     values["pos_allowed_store_ids"] = [fields.Command.set(store.ids)]
                                 delta["assigned"] = 1
-                        enabled = bool(working and role and role.active and store and allowed_stores)
+                        enabled = bool(working and role and role.active and store)
                         if not profile and values:
                             values.update({
                                 "employee_id": employee.id,
