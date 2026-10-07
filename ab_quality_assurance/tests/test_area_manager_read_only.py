@@ -21,14 +21,32 @@ class TestAreaManagerReadOnly(TransactionCase):
         )
         cls.env['ab_hr_employee'].create({'name': 'QA Inspector', 'user_id': cls.manager.id})
         cls.area_employee = cls.env['ab_hr_employee'].create({'name': 'Area Head', 'user_id': cls.area_user.id})
-        direct = cls.env['ab_hr_employee'].create({'name': 'Direct Manager', 'parent_id': cls.area_employee.id})
-        nested = cls.env['ab_hr_employee'].create({'name': 'Nested Manager', 'parent_id': direct.id})
-        unrelated = cls.env['ab_hr_employee'].create({'name': 'Unrelated Manager'})
-        cls.branches = cls.env['ab_hr_department'].create([
-            {'name': f'فرع {name}', 'manager_id': employee.id}
-            for name, employee in [('Area', cls.area_employee), ('Direct', direct), ('Nested', nested), ('Other', unrelated)]
+        cls.other_user = new_test_user(cls.env, login='qa_other_area', groups=f'base.group_user,{cls.area_group}')
+        cls.other_employee = cls.env['ab_hr_employee'].create({'name': 'Other Head', 'user_id': cls.other_user.id})
+        cls.region = cls.env['ab_hr_region'].create({'name': 'Shared QA Region'})
+        cls.stores = cls.env['ab_store'].create([
+            {'name': name, 'code': f'QA-AREA-{index}', 'store_type': 'branch'}
+            for index, name in enumerate(('Office', 'Direct', 'Nested', 'Other'))
         ])
-        # Neither explicit department grants nor department ancestry may broaden the area role.
+        cls.managed = cls.env['ab_hr_department'].create({
+            'name': 'فرع Area Office', 'manager_id': cls.area_employee.id, 'store_id': cls.stores[0].id,
+        })
+        cls.other_managed = cls.env['ab_hr_department'].create({
+            'name': 'Other Area Office', 'manager_id': cls.other_employee.id, 'store_id': cls.stores[0].id,
+        })
+        cls.direct = cls.env['ab_hr_department'].create({
+            'name': 'فرع Direct', 'parent_id': cls.managed.id,
+            'store_id': cls.stores[1].id, 'workplace_region': cls.region.id,
+        })
+        cls.nested = cls.env['ab_hr_department'].create({
+            'name': 'فرع Nested', 'parent_id': cls.direct.id, 'store_id': cls.stores[2].id,
+        })
+        cls.other = cls.env['ab_hr_department'].create({
+            'name': 'فرع Other', 'parent_id': cls.other_managed.id,
+            'store_id': cls.stores[3].id, 'workplace_region': cls.region.id,
+        })
+        cls.branches = cls.managed | cls.direct | cls.nested | cls.other
+        # Explicit grants and employee department membership must not broaden area access.
         cls.area_user.ab_department_ids = cls.branches[-1]
         cls.area_employee.department_id = cls.branches[-1]
         cls.section = cls.env['ab_quality_assurance_section'].create({'name': 'Area Security Section'})
@@ -43,7 +61,7 @@ class TestAreaManagerReadOnly(TransactionCase):
                     visit.visit_section_ids.visit_line_ids.write({'score': 8})
                     visit.action_submit_visit()
                 cls.visits |= visit.with_env(cls.env)
-        cls.allowed = cls.visits.filtered(lambda visit: visit.department_id != cls.branches[-1])
+        cls.allowed = cls.visits.filtered(lambda visit: visit.department_id == cls.direct)
         cls.denied = cls.visits - cls.allowed
         cls.draft = cls.allowed.filtered(lambda visit: visit.state == 'draft')[:1]
         cls.activity_type = cls.env.ref('mail.mail_activity_data_todo')
@@ -67,22 +85,60 @@ class TestAreaManagerReadOnly(TransactionCase):
         self.env.flush_all()
         dashboard = self.env['ab_quality_assurance_department_dashboard'].with_user(self.area_user)
         rows = dashboard.search([])
-        self.assertEqual(set(rows.department_id.ids), set(self.branches[:-1].ids))
-        self.assertEqual(sum(rows.mapped('visit_count')), 6)
+        self.assertEqual(set(rows.department_id.ids), set(self.direct.ids))
+        self.assertEqual(sum(rows.mapped('visit_count')), 2)
         for row in rows:
             self.assertEqual((row.visit_count, row.draft_visit_count, row.submitted_visit_count), (2, 1, 1))
             self.assertEqual(row.avg_percentage, 80)
-        self.assertEqual(dashboard._read_group([], [], ['visit_count:sum']), [(6,)])
+        self.assertEqual(dashboard._read_group([], [], ['visit_count:sum']), [(2,)])
         self.assertFalse(dashboard.with_user(self.unlinked_user).search([]))
         other = dashboard.sudo().search(fields.Domain('department_id', '=', self.branches[-1].id))
         with self.assertRaises(AccessError):
             other.with_user(self.area_user).read(['visit_count'])
 
-    def test_reparenting_branch_manager_updates_scope(self):
-        visits = self.visits.with_user(self.area_user)
-        self.assertEqual(len(visits.search([])), 6)
-        self.branches[1].manager_id.parent_id = self.branches[-1].manager_id
-        self.assertEqual(set(visits.search([]).department_id.ids), {self.branches[0].id})
+    def test_reparenting_department_updates_scope_after_cache_refresh(self):
+        self.direct.parent_id = self.other_managed
+        self.env.registry.clear_cache()
+        self.assertFalse(self.env['ab_quality_assurance_visit'].with_user(self.area_user).search([]))
+        visible = self.env['ab_quality_assurance_visit'].with_user(self.other_user).search([])
+        self.assertEqual(set(visible.department_id.ids), set((self.direct | self.other).ids))
+
+    def test_same_region_and_employee_hierarchy_do_not_grant_access(self):
+        self.other_employee.parent_id = self.area_employee
+        self.env.registry.clear_cache()
+        self.test_hierarchy_scope_and_no_department_rule_leak()
+        visible = self.env['ab_quality_assurance_visit'].with_user(self.other_user).search([])
+        self.assertEqual(set(visible.department_id.ids), set(self.other.ids))
+        self.direct.workplace_region = False
+        self.env.registry.clear_cache()
+        self.test_hierarchy_scope_and_no_department_rule_leak()
+
+    def test_missing_or_inactive_mapping_denies_all(self):
+        for record, field, value in (
+            (self.direct, 'store_id', False), (self.direct, 'parent_id', False),
+            (self.direct, 'active', False), (self.managed, 'active', False),
+            (self.managed, 'manager_id', False), (self.stores[1], 'active', False),
+            (self.stores[1], 'store_type', 'main'), (self.area_employee, 'active', False),
+            (self.area_employee, 'user_id', False),
+        ):
+            with self.subTest(model=record._name, field=field):
+                previous = record[field]
+                record[field] = value
+                self.env.registry.clear_cache()
+                self.assertEqual(self.area_user._get_quality_assurance_area_department_ids(), [])
+                for model in ('ab_quality_assurance_visit', 'ab_quality_assurance_visit_section',
+                              'ab_quality_assurance_visit_line', 'ab_quality_assurance_department_dashboard'):
+                    self.assertFalse(self.env[model].with_user(self.area_user).search([]))
+                record[field] = previous
+                self.env.registry.clear_cache()
+
+    def test_multiple_employee_mappings(self):
+        self.other_employee.user_id = self.area_user
+        self.env.registry.clear_cache()
+        self.assertEqual(set(self.area_user._get_quality_assurance_area_department_ids()),
+                         set((self.direct | self.other).ids))
+        visible = self.env['ab_quality_assurance_visit'].with_user(self.area_user).search([])
+        self.assertEqual(set(visible.department_id.ids), set((self.direct | self.other).ids))
 
     def test_menu_visibility(self):
         menus = self.env['ir.ui.menu'].with_user(self.area_user)._visible_menu_ids()
@@ -98,7 +154,7 @@ class TestAreaManagerReadOnly(TransactionCase):
         )
         user.ab_department_ids = self.branches[-1]
         visible = self.visits.with_user(user).search(fields.Domain('id', 'in', self.visits.ids))
-        self.assertEqual(set(visible.ids), set(self.denied.ids))
+        self.assertEqual(set(visible.ids), set(self.visits.filtered(lambda visit: visit.department_id == self.other).ids))
         visit = visible.filtered(lambda item: item.state == 'draft')[:1]
         self.assertTrue(visit.can_use_chatter)
         self.assertTrue(visit.message_post(body='Existing RO behavior'))
@@ -114,7 +170,7 @@ class TestAreaManagerReadOnly(TransactionCase):
         self.branches[-1].manager_id = employee
         user.ab_department_ids = self.branches[-1]
         self.section.department_id = self.branches[-1]
-        visit = self.denied.filtered(lambda item: item.state == 'submitted')[:1].with_user(user)
+        visit = self.visits.filtered(lambda item: item.department_id == self.other and item.state == 'submitted')[:1].with_user(user)
         self.assertTrue(visit.can_use_chatter)
         self.assertTrue(visit.message_post(body='Department review'))
         line = visit.visit_section_ids.visit_line_ids[:1]

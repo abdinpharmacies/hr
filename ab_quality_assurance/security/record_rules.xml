@@ -170,7 +170,7 @@
             <field name="name">QA Area Manager Read Only: Visit</field>
             <field name="model_id" ref="model_ab_quality_assurance_visit"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
-            <field name="domain_force">[('department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="domain_force">[('department_id', 'in', user._get_quality_assurance_area_department_ids())]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -181,7 +181,7 @@
             <field name="name">QA Area Manager Read Only: Visit Section</field>
             <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
-            <field name="domain_force">[('visit_id.department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="domain_force">[('visit_id.department_id', 'in', user._get_quality_assurance_area_department_ids())]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -192,7 +192,7 @@
             <field name="name">QA Area Manager Read Only: Visit Line</field>
             <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
-            <field name="domain_force">[('visit_id.department_manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="domain_force">[('visit_id.department_id', 'in', user._get_quality_assurance_area_department_ids())]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -203,7 +203,7 @@
             <field name="name">QA Area Manager Read Only: Department Dashboard</field>
             <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_area_manager_ro'))]"/>
-            <field name="domain_force">[('department_id.manager_id', 'child_of', user.ab_employee_ids.ids)] if user.ab_employee_ids else [('id', '=', False)]</field>
+            <field name="domain_force">[('department_id', 'in', user._get_quality_assurance_area_department_ids())]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
