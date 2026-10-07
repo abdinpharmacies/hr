@@ -1128,7 +1128,7 @@ class AbSalesCashierApi(models.TransientModel):
             ("status", "=", "pending"),
         ])
         if headers:
-            headers.write({"status": "saved"})
+            headers._write_submission_state({"status": "saved"})
 
     @api.model
     def get_cashier_bootstrap(self, session_token=False):
@@ -1320,9 +1320,11 @@ class AbSalesCashierApi(models.TransientModel):
         if status == "not_found":
             raise UserError(_("Invoice not found."))
 
+        # Reconcile Odoo even when E-Plus was saved by an earlier attempt.
+        if document_type == "sale" and status in ("saved", "already_saved"):
+            self._sync_odoo_header_status(store=store, invoice_id=invoice_id)
+
         if status == "saved":
-            if document_type == "sale":
-                self._sync_odoo_header_status(store=store, invoice_id=invoice_id)
             result_wallet_id = self._safe_int(wallet_id, 0) or False
             if document_type != "sale":
                 result_wallet_id = False
