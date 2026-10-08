@@ -1,5 +1,38 @@
 Current changes before commit:
 
+- Disable login on every existing profile for a nonworking employee, including archived employees; continue skipping profile creation for nonworking employees.
+- Reenable existing disabled profiles, including manually disabled profiles, when the employee is active and working with an active assigned role and a department store. Preserve the login flag when other eligibility conditions are unmet.
+- Replace an existing single allowed store when it differs from the current department store. Preserve empty and multiple-store lists as administrator configuration; synchronize stores independently of login eligibility.
+- Preserve existing allowed stores when the department has no store. Preserve the existing login flag in that case unless the employee is nonworking.
+- Preserve roles, PINs, custom permissions, sessions, shifts and financial records. Write only changed fields; retain existing result keys and add stores_updated to results and aggregate logs.
+- Retain active-working mapped-employee creation, optional default PIN validation, random PIN generation, 500-employee batches and per-employee savepoint recovery.
+
+Files changed:
+
+- ab_employee_access_sales/changelog.d
+- ab_employee_access_sales/models/ab_employee_access.py
+
+Validation:
+
+- Targeted ab_employee_access_sales upgrade passed in isolated codex_employee_sales_sync_20261008 using ports 5069/5072 with workers and cron workers disabled.
+- Rollback-only ORM regressions passed for termination/return to work, manual reenabling, archived employees, inactive/missing roles, empty/multiple/single stores, missing department stores, creation eligibility and PIN preservation/validation.
+- Verified new-login rejection for disabled profiles and the previous branch after a store change; existing active/locked sessions, shifts, permissions and financial records remained unchanged.
+- Verified exact counters, change-only writes, repeated-run idempotency, recovery after a partially applied failed write, and 505 new employees across the 500-record batch boundary.
+- Validation script and successful results retained outside the runtime addon at /tmp/employee-sales-sync-20261008/validate.py and /tmp/employee-sales-sync-20261008/results.txt. All business fixtures rolled back.
+- No user-facing strings added or changed; existing Arabic translation files both passed msgfmt --check-format. Job Role Mappings action translations verified at runtime for ar and ar_001 with language fixtures rolled back.
+
+Rollout:
+
+- Reload the changed Python code through the normal deployment process. Existing cron activation and four-hour scheduling are unchanged; no live cron execution was performed during implementation.
+- Single-store administrator selections are also replaced when they differ from the department store. Empty and multiple-store selections are preserved.
+- Disabling login prevents new logins only; existing sessions remain open by design.
+
+commit 5a84cf760a61adf57dfae73ea0cc9a4e1fe1bd04
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Wed Oct 7 13:47:52 2026 +0300
+
+    ab_employee_access_sales/FIX(#20674): Make the cron create access profiles only
+
 - Make Synchronize Employee Sales Access create missing access profiles only; skip every existing profile, including roleless or manually disabled profiles.
 - Preserve all existing login flags, roles, PINs, permissions and allowed stores. Remove automatic disabling, reenabling and session revocation.
 - Create profiles only for active, working employees with a usable active job-to-role mapping; explicitly set employee, cost center, role and department store.

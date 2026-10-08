@@ -16,10 +16,11 @@ class AbEmployeeAccess(models.Model):
 
     @api.model
     def _cron_sync_employee_sales_roles(self, default_pin=None):
-        """Create missing access profiles using HR's searchable working status.
+        """Synchronize login and single-store access using HR's working status.
 
         This private administrator automation intentionally covers all employees.
-        Existing profiles and sessions are never updated by this automation.
+        Existing roles, PINs, permissions and sessions are retained. Empty and
+        multiple allowed-store lists are treated as administrator configuration.
         """
         if default_pin is not None and (
             not isinstance(default_pin, str)
@@ -34,9 +35,10 @@ class AbEmployeeAccess(models.Model):
             & fields.Domain("role_id.active", "=", True)
         )
         roles_by_job = {mapping.job_id.id: mapping.role_id for mapping in mappings}
-        # Retain result/log keys for callers; update counters always stay zero.
+        # Retain result/log keys for callers; sessions are never revoked.
         counts = dict.fromkeys(
-            ("created", "assigned", "disabled", "reenabled", "revoked", "skipped", "failures"), 0
+            ("created", "assigned", "disabled", "reenabled", "revoked",
+             "stores_updated", "skipped", "failures"), 0
         )
         last_id = 0
         while employees := employees_model.search(
@@ -48,21 +50,41 @@ class AbEmployeeAccess(models.Model):
                 & fields.Domain("is_working", "=", True)
             ).ids)
             profiles = profiles_model.search(fields.Domain("employee_id", "in", employees.ids))
-            employees_with_profiles = set(profiles.employee_id.ids)
+            profiles_by_employee = {profile.employee_id.id: profile for profile in profiles}
 
             for employee in employees:
-                if employee.id in employees_with_profiles:
-                    counts["skipped"] += 1
-                    continue
                 delta = dict.fromkeys(counts, 0)
                 try:
                     # SQL exception parameters can contain PINs. Log only the
                     # employee ID and exception type after the savepoint rolls back.
                     with mute_logger("odoo.sql_db"), self.env.cr.savepoint():
-                        working = employee.active and employee.id in working_ids
-                        role = roles_by_job.get(employee.job_id.id) if working else None
-                        if role:
-                            store = employee.department_id.store_id
+                        working = employee.id in working_ids
+                        profile = profiles_by_employee.get(employee.id, profiles_model.browse())
+                        store = employee.department_id.store_id
+                        if profile:
+                            values = {}
+                            if not working:
+                                if profile.pos_allow_login:
+                                    values["pos_allow_login"] = False
+                                    delta["disabled"] = 1
+                            elif (
+                                employee.active and profile.pos_role_id.active and store
+                                and not profile.pos_allow_login
+                            ):
+                                values["pos_allow_login"] = True
+                                delta["reenabled"] = 1
+                            if (
+                                len(profile.pos_allowed_store_ids) == 1 and store
+                                and profile.pos_allowed_store_ids != store
+                            ):
+                                values["pos_allowed_store_ids"] = [fields.Command.set(store.ids)]
+                                delta["stores_updated"] = 1
+                            if values:
+                                profile.write(values)
+                        elif (
+                            employee.active and working
+                            and (role := roles_by_job.get(employee.job_id.id))
+                        ):
                             values = {
                                 "employee_id": employee.id,
                                 "costcenter_id": employee.costcenter_id.id,
@@ -75,7 +97,7 @@ class AbEmployeeAccess(models.Model):
                             profiles_model.create(values)
                             delta["created"] = 1
                             delta["assigned"] = 1
-                        else:
+                        if not any(delta.values()):
                             delta["skipped"] = 1
                     for key, value in delta.items():
                         counts[key] += value
@@ -88,7 +110,7 @@ class AbEmployeeAccess(models.Model):
         _logger.info(
             "Employee sales access sync: created=%(created)s assigned=%(assigned)s "
             "disabled=%(disabled)s reenabled=%(reenabled)s revoked=%(revoked)s "
-            "skipped=%(skipped)s failures=%(failures)s", counts,
+            "stores_updated=%(stores_updated)s skipped=%(skipped)s failures=%(failures)s", counts,
         )
         return counts
 
