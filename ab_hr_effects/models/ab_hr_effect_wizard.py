@@ -7,6 +7,7 @@ class AbHrEffectsWizard(models.Model):
     _name = 'ab_hr_effect_wizard'
     _description = 'ab_hr_effect_wizard'
     _inherit = 'ab_hr_effect_mixin'
+    _order = 'id desc'
 
     employee_id = fields.Many2one('ab_hr_employee', string="Employee", readonly=True,
                                   default=lambda self: self._get_context_employee_id())
