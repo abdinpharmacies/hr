@@ -16,7 +16,9 @@
                 <field name="supplier_accounts_decision" widget="badge" optional="show"/>
                 <field name="bank_accounts_decision" widget="badge" optional="show"/>
                 <field name="state" widget="badge"/>
-                <field name="attachment" optional="show"/>
+                <field name="attachment" optional="show" widget="binary"/>
+                <field name="cheque_attachment" optional="show"
+                       widget="binary"/>
             </list>
         </field>
     </record>
