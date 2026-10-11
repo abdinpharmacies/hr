@@ -4061,6 +4061,13 @@ class AbSalesPosAction extends Component {
     async refreshSubmissionStates() {
         const bills = [...this.state.bills];
         if (!bills.length || this._submissionRefreshInFlight || this.state.submitting) return;
+        // Checking is local UI state. Persisting its reset echoes storage
+        // events between tabs even when the actual draft has not changed.
+        const cacheSnapshot = () => JSON.stringify({
+            bills: this.state.bills,
+            selected_id: this.state.selectedId,
+        }, (key, value) => key === "submission_checking" ? undefined : value);
+        const previousCache = cacheSnapshot();
         this._submissionRefreshInFlight = true;
         const revision = this._submissionRevision || 0;
         try {
@@ -4080,12 +4087,17 @@ class AbSalesPosAction extends Component {
                         ? "rejected" : bill.submission_attempted ? "unknown" : "prepending";
                 }
             }
-            this.state.bills = this.state.bills.filter((bill) =>
+            const remainingBills = this.state.bills.filter((bill) =>
                 !["pending", "saved"].includes(bill.submission_status));
+            if (remainingBills.length !== this.state.bills.length) {
+                this.state.bills = remainingBills;
+            }
             if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
                 this.state.selectedId = this.state.bills[0]?.id || null;
             }
-            this.persistCache();
+            if (cacheSnapshot() !== previousCache) {
+                this.persistCache();
+            }
         } catch {
             // Preserve the lock until the server can authoritatively answer.
             if (revision === (this._submissionRevision || 0)) {

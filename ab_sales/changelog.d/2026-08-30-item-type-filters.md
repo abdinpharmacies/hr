@@ -181,7 +181,9 @@ Files changed:
 - ab_sales/views/sales_header.xml
 
 
-## Current changes before commit:
+## 3add36d18296c5b01b7986ab1a07f03c706b1ac3 - emadco88 - 2026-10-07
+
+Original commit subject: ab_sales/ UPD return prevent duplicates
 
 User-facing changes:
 - Add Unknown/Rejected return states, durable submission tokens, diagnostic messages, and Retry in the return dialog and backend form.
@@ -217,3 +219,22 @@ Files changed:
 - ab_sales/static/src/sales_return/ab_sales_return_ui_api.js
 - ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml
 - ab_sales/views/ab_sales_return.xml
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Fix repeated POS flickering when the same user opens multiple browser tabs with different cached drafts.
+- Persist reconciled draft changes only when bill data or the selected bill changes; clearing the temporary submission-checking flag no longer echoes cache writes between tabs.
+- Preserve the bills array when no completed bills are removed, while retaining invoice identity, submission locks, and stale-response protection.
+
+Validation:
+- Playwright reproduced continuous status requests and repeated checking notices in two tabs on the authenticated local Odoo page using synthetic cached drafts and intercepted server draft saves.
+- Updated local Odoo assets settle after a cross-tab cache change with different drafts; the isolated Playwright test also settles after one status check instead of repeating.
+- Seven Playwright submission-state scenarios pass for no-op reconciliation, saved-bill removal, unknown/rejected identity protection, offline locks, superseded responses, and active submissions.
+- JavaScript syntax and git whitespace checks pass. No user-facing strings were added or changed, so both Arabic translation catalogs retain their existing entries.
+- No invoice submissions, stock operations, or persistent draft writes were performed during browser testing. Test harnesses remain outside the runtime addon.
+
+Files changed:
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
