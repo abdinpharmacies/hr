@@ -63,12 +63,13 @@
                     <button t-if="state.bills.length"
                             class="btn btn-outline-danger o_ab_sales_pos_remove_all_btn ab_pos_sidebar_btn_remove_all"
                             type="button"
-                            title="Remove All"
-                            aria-label="Remove All"
-                            t-on-click="removeAllBills">
+                            title="Delete All Drafts"
+                            aria-label="Delete All Drafts"
+                            t-on-click="removeAllBills"
+                            t-att-disabled="state.submitting || state.draftDeleting">
                         <i class="fa fa-trash o_ab_sales_pos_remove_all_icon ab_pos_sidebar_btn_remove_all_icon"
                            aria-hidden="true"/>
-                        <span class="o_ab_sales_pos_remove_all_text ab_pos_sidebar_btn_remove_all_text">Remove All</span>
+                        <span class="o_ab_sales_pos_remove_all_text ab_pos_sidebar_btn_remove_all_text">Delete All Drafts</span>
                     </button>
                 </div>
 
@@ -296,9 +297,9 @@
                             </button>
                             <button class="btn btn-warning" type="button"
                                     t-if="currentBill.submission_attempted or currentBill.submission_checking"
-                                    t-att-disabled="state.submitting" t-on-click="retryCurrentBill">Retry</button>
+                                    t-att-disabled="state.submitting || state.draftDeleting" t-on-click="retryCurrentBill">Retry</button>
                             <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button"
-                                    t-on-click="removeCurrentBill" t-att-disabled="currentBill.submission_attempted or !billEditable(currentBill)">
+                                    t-on-click="removeCurrentBill" t-att-disabled="!billRemovable(currentBill)">
                                 <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
                             </button>
                             <button class="btn btn-outline-secondary ab_pos_btn_open_invoices"

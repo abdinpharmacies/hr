@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 
 class AbSalesPosApi(models.TransientModel):
@@ -705,6 +705,8 @@ class AbSalesPosApi(models.TransientModel):
         return {
             "id": header.id, "status": header.status,
             "eplus_serial": header.eplus_serial, "message": header.push_message or "",
+            "can_discard_draft": not header.line_ids and not header.eplus_serial
+                and header.status in ("prepending", "rejected"),
         }
 
     @api.model
@@ -720,6 +722,53 @@ class AbSalesPosApi(models.TransientModel):
             header.pos_client_token: self._pos_submission_payload(header)
             for header in headers if not allowed or header.store_id.id in allowed
         }
+
+    @api.model
+    def pos_check_draft_discard(self, drafts=None):
+        """Check cache removal only; never delete or change an invoice."""
+        if not isinstance(drafts, list) or len(drafts) > 200:
+            raise UserError(_("Invalid payload."))
+        requests = {}
+        for draft in drafts:
+            if not isinstance(draft, dict):
+                raise UserError(_("Invalid payload."))
+            token = draft.get("token")
+            store_id = draft.get("store_id")
+            if not isinstance(token, str) or not token.strip() or len(token) > 128 \
+                    or not isinstance(store_id, int) or isinstance(store_id, bool) or store_id <= 0:
+                raise UserError(_("Invalid payload."))
+            token = token.strip()
+            if token in requests and requests[token] != store_id:
+                raise UserError(_("Invalid payload."))
+            requests[token] = store_id
+        result = dict.fromkeys(requests, False)
+        headers = self.env["ab_sales_header"].with_context(active_test=False)
+        allowed = headers._get_allowed_store_ids()
+        # Elevated lookup only prevents a hidden invoice being mistaken for
+        # absence. Eligibility always requires normal-user read access.
+        existing = {
+            header.pos_client_token: header.id
+            for header in headers.sudo().search(fields.Domain("pos_client_token", "in", list(requests)))
+        }
+        stores = self.env["ab_store"].search(fields.Domain("id", "in", list(set(requests.values()))))
+        readable_stores = set(stores.ids)
+        for token, store_id in requests.items():
+            if store_id not in readable_stores or (allowed and store_id not in allowed):
+                continue
+            try:
+                headers.check_access("read")
+                if token not in existing:
+                    result[token] = True
+                    continue
+                header = headers.browse(existing[token])
+                header.check_access("read")
+                # Include archived/hidden lines as a reason to deny removal.
+                result[token] = header.store_id.id == store_id \
+                    and header.status in ("prepending", "rejected", "unknown") \
+                    and not header.eplus_serial and not header.sudo().line_ids
+            except AccessError:
+                pass
+        return result
 
     @api.model
     def _pos_editable_header_vals(self, values):
@@ -937,6 +986,8 @@ class AbSalesPosApi(models.TransientModel):
             header_vals["pos_client_token"] = token
         else:
             raise UserError(_("POS invoice token is required."))
+        if not any(isinstance(line, dict) and line.get("product_id") for line in line_vals):
+            raise UserError(_("No lines to send."))
         if not header_vals.get("store_id"):
             raise UserError(_("Store is required."))
         allowed_store_ids = self.env["ab_sales_header"]._get_allowed_store_ids()
