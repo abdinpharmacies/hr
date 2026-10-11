@@ -883,6 +883,8 @@ class AbSalesPosAction extends Component {
 
         this.state = useState({
             bills: [],
+            draftDeleting: false,
+            draftDiscardEligibility: {},
             selectedId: null,
             stores: [],
             storeById: {},
@@ -1272,6 +1274,7 @@ class AbSalesPosAction extends Component {
         const sourceBills = serverLoaded
             ? this._mergeBillCaches(serverBills, localBills)
             : localBills;
+        this.state.draftDiscardEligibility = {};
         this.state.bills = sourceBills.map((b) => this._normalizeBill(b));
         const hasServerSelected = serverSelectedId && this.state.bills.some((bill) => bill.id === serverSelectedId);
         this.state.selectedId = hasServerSelected
@@ -1983,14 +1986,38 @@ class AbSalesPosAction extends Component {
         this.searchProducts((this.state.productQuery || "").trim());
     }
 
-    removeBill(billId, completed = false) {
+    async removeBill(billId, completed = false) {
         const bill = this.state.bills.find((item) => item.id === billId);
-        if (!completed && (bill?.submission_attempted || !this.billEditable(bill))) {
+        if (completed) {
+            this._removeCachedBills(new Set([billId]));
             return;
         }
-        this.state.bills = this.state.bills.filter((b) => b.id !== billId);
-        if (this.state.selectedId === billId) {
-            this.state.selectedId = this.state.bills.length ? this.state.bills[0].id : null;
+        if (bill) await this._deleteDrafts([bill]);
+    }
+
+    async removeCurrentBill() {
+        if (this.currentBill) await this.removeBill(this.currentBill.id);
+    }
+
+    async removeAllBills() {
+        await this._deleteDrafts([...this.state.bills]);
+    }
+
+    _removeCachedBills(ids) {
+        for (const name of ["_productSearchTimer", "_promoTimer", "_posBalanceTimer", "_linePosBalanceTimer"]) {
+            clearTimeout(this[name]);
+            this[name] = null;
+        }
+        this._promoRequestId += 1;
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        this._storeStatusRequestId += 1;
+        this.state.showStoreDetails = false;
+        this.state.showCustomerDetails = false;
+        this.state.showBillDetails = false;
+        this.state.bills = this.state.bills.filter((bill) => !ids.has(bill.id));
+        if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+            this.state.selectedId = this.state.bills[0]?.id || null;
         }
         this._syncInputsForBill(this.currentBill);
         this.refreshPromotions(this.currentBill);
@@ -1999,66 +2026,26 @@ class AbSalesPosAction extends Component {
         this.persistCache();
     }
 
-    removeCurrentBill() {
-        if (!this.currentBill) {
-            return;
+    async _deleteDrafts(bills) {
+        if (!bills.length || this.state.submitting || this.state.draftDeleting) return;
+        this.state.draftDeleting = true;
+        try {
+            const revision = this._submissionRevision || 0;
+            const snapshots = new Map(bills.map((bill) => [bill, this._draftDiscardFingerprint(bill)]));
+            const verified = await this._verifyDraftDiscard(bills);
+            const removable = new Set(bills.filter((bill) =>
+                revision === (this._submissionRevision || 0) && this.state.bills.includes(bill) &&
+                snapshots.get(bill) === this._draftDiscardFingerprint(bill) &&
+                (this._plainDraftRemovable(bill) ||
+                    (this._draftDiscardCandidate(bill) && verified.has(bill.id)))
+            ).map((bill) => bill.id));
+            if (this.state.submitting) return;
+            if (removable.size) this._removeCachedBills(removable);
+            this.notification.add(_t("Deleted %s drafts; retained %s bills.",
+                removable.size, bills.length - removable.size), {type: "info"});
+        } finally {
+            this.state.draftDeleting = false;
         }
-        this.removeBill(this.currentBill.id);
-    }
-
-    removeAllBills() {
-        if (!this.state.bills.length) {
-            return;
-        }
-        if (this._productSearchTimer) {
-            clearTimeout(this._productSearchTimer);
-            this._productSearchTimer = null;
-        }
-        if (this._promoTimer) {
-            clearTimeout(this._promoTimer);
-            this._promoTimer = null;
-        }
-        if (this._posBalanceTimer) {
-            clearTimeout(this._posBalanceTimer);
-            this._posBalanceTimer = null;
-        }
-        if (this._linePosBalanceTimer) {
-            clearTimeout(this._linePosBalanceTimer);
-            this._linePosBalanceTimer = null;
-        }
-        this._promoRequestId += 1;
-        this._posBalanceRequestId += 1;
-        this._linePosBalanceRequestId += 1;
-        this._storeStatusRequestId += 1;
-        this._customerInsightsRequestId += 1;
-
-        this.state.bills = this.state.bills.filter((bill) => bill.submission_attempted || !this.billEditable(bill));
-        this.state.selectedId = this.state.bills[0]?.id || null;
-        this.state.storeQuery = "";
-        this.state.storeResults = [];
-        this.state.productQuery = "";
-        this.state.productMinPrice = "";
-        this.state.productMaxPrice = "";
-        this._productSearchRequestId += 1;
-        this.state.productResults = [];
-        this.state.selectionIndex = -1;
-        this.state.qtyBuffer = "";
-        this.state.qtyBufferProductId = null;
-        this.state.customerQuery = "";
-        this.state.customerResults = [];
-        this.state.customerInsights = null;
-        this.state.loadingCustomerInsights = false;
-        this.state.storeOnline = null;
-        this.state.showStoreDetails = false;
-        this.state.showCustomerDetails = false;
-        this.state.showBillDetails = false;
-
-        this._writeLocalCache();
-        if (this._cacheSaveTimer) {
-            clearTimeout(this._cacheSaveTimer);
-            this._cacheSaveTimer = null;
-        }
-        this._saveCacheToServer();
     }
 
     updateHeaderField(field, value) {
@@ -2083,6 +2070,10 @@ class AbSalesPosAction extends Component {
             return;
         }
         if (!bill) {
+            return;
+        }
+        if (!bill.lines.length) {
+            this.notification.add(_t("No lines to send."), {type: "warning"});
             return;
         }
         const defaultEmployee = this._submitDialogDefaultEmployee(bill);
@@ -4035,8 +4026,75 @@ class AbSalesPosAction extends Component {
     }
 
     billEditable(bill = this.currentBill) {
-        return !!bill && !this.state.submitting && !bill.submission_checking &&
+        return !!bill && !this.state.submitting && !this.state.draftDeleting && !bill.submission_checking &&
             ["prepending", "rejected"].includes(bill.submission_status || "prepending");
+    }
+
+    _plainDraftRemovable(bill) {
+        return !!bill && !bill.submission_checking && !bill.submission_attempted &&
+            !bill.odoo_header_id && !bill.eplus_serial &&
+            ["prepending", "rejected"].includes(bill.submission_status || "prepending");
+    }
+
+    _draftDiscardCandidate(bill) {
+        return !!bill && !bill.submission_checking && !bill.lines.length && !bill.eplus_serial &&
+            ["prepending", "rejected", "unknown"].includes(bill.submission_status || "prepending") &&
+            (!bill.submission_payload || (Array.isArray(bill.submission_payload.lines) &&
+                !bill.submission_payload.lines.length)) &&
+            !!bill.header?.pos_client_token && !!bill.header?.store_id;
+    }
+
+    _draftDiscardFingerprint(bill) {
+        return JSON.stringify(bill, (key, value) => key === "submission_checking" ? undefined : value);
+    }
+
+    billRemovable(bill = this.currentBill) {
+        return !this.state.submitting && !this.state.draftDeleting &&
+            (this._plainDraftRemovable(bill) || (this._draftDiscardCandidate(bill) &&
+                this.state.draftDiscardEligibility[bill.header.pos_client_token] ===
+                    this._draftDiscardFingerprint(bill)));
+    }
+
+    async _verifyDraftDiscard(bills) {
+        const revision = this._submissionRevision || 0;
+        const candidates = bills.filter((bill) => this._draftDiscardCandidate(bill) &&
+            !this._plainDraftRemovable(bill)).map((bill) => ({
+                bill, fingerprint: this._draftDiscardFingerprint(bill),
+                token: bill.header.pos_client_token, store_id: bill.header.store_id,
+            }));
+        const verified = new Set();
+        for (let offset = 0; offset < candidates.length; offset += 200) {
+            const batch = candidates.slice(offset, offset + 200);
+            try {
+                const result = await this.orm.call("ab_sales_pos_api", "pos_check_draft_discard", [], {
+                    drafts: batch.map(({token, store_id}) => ({token, store_id})),
+                });
+                if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+                for (const {bill, fingerprint, token} of batch) {
+                    if (result[token] === true && this.state.bills.includes(bill) &&
+                        this._draftDiscardCandidate(bill) && fingerprint === this._draftDiscardFingerprint(bill)) {
+                        verified.add(bill.id);
+                    }
+                }
+            } catch {
+                // Failed verification retains the bill, including while offline.
+            }
+        }
+        // A later batch can outlive a change to an earlier candidate.
+        if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+        return new Set(candidates.filter(({bill, fingerprint}) => verified.has(bill.id) &&
+            this.state.bills.includes(bill) && this._draftDiscardCandidate(bill) &&
+            fingerprint === this._draftDiscardFingerprint(bill))
+            .map(({bill}) => bill.id));
+    }
+
+    async _refreshDraftDiscardEligibility(bills) {
+        const request = this._draftDiscardRequest = (this._draftDiscardRequest || 0) + 1;
+        this.state.draftDiscardEligibility = {};
+        const verified = await this._verifyDraftDiscard(bills);
+        if (request !== this._draftDiscardRequest) return;
+        this.state.draftDiscardEligibility = Object.fromEntries(bills.filter((bill) => verified.has(bill.id))
+            .map((bill) => [bill.header.pos_client_token, this._draftDiscardFingerprint(bill)]));
     }
 
     submissionStatusLabel(bill) {
@@ -4056,11 +4114,12 @@ class AbSalesPosAction extends Component {
         bill.submission_checking = false;
         bill.submission_attempted = !!bill.odoo_header_id || bill.submission_attempted;
         bill.eplus_serial = result.eplus_serial || false;
+        bill.submission_draft_discardable = !!result.can_discard_draft;
     }
 
     async refreshSubmissionStates() {
         const bills = [...this.state.bills];
-        if (!bills.length || this._submissionRefreshInFlight || this.state.submitting) return;
+        if (!bills.length || this._submissionRefreshInFlight || this.state.submitting || this.state.draftDeleting) return;
         // Checking is local UI state. Persisting its reset echoes storage
         // events between tabs even when the actual draft has not changed.
         const cacheSnapshot = () => JSON.stringify({
@@ -4081,10 +4140,12 @@ class AbSalesPosAction extends Component {
                     this._applySubmissionState(bill, result);
                 } else {
                     bill.submission_checking = false;
-                    // A completed validation error plus authoritative absence
-                    // means no invoice was saved. Keep its token, allow correction.
-                    bill.submission_status = bill.submission_validation_failed
-                        ? "rejected" : bill.submission_attempted ? "unknown" : "prepending";
+                    // Nonempty validation failures with authoritative absence
+                    // can be corrected. Empty Unknown attempts stay read-only.
+                    bill.submission_status = bill.submission_validation_failed &&
+                        (bill.submission_status === "rejected" || bill.lines.length || bill.submission_payload?.lines?.length)
+                        ? "rejected" : (bill.submission_attempted || bill.submission_status === "unknown")
+                            ? "unknown" : "prepending";
                 }
             }
             const remainingBills = this.state.bills.filter((bill) =>
@@ -4095,6 +4156,8 @@ class AbSalesPosAction extends Component {
             if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
                 this.state.selectedId = this.state.bills[0]?.id || null;
             }
+            await this._refreshDraftDiscardEligibility(this.state.bills);
+            if (revision !== (this._submissionRevision || 0)) return;
             if (cacheSnapshot() !== previousCache) {
                 this.persistCache();
             }
@@ -4113,7 +4176,7 @@ class AbSalesPosAction extends Component {
 
     async retryCurrentBill() {
         const bill = this.currentBill;
-        if (!bill || this.state.submitting) return;
+        if (!bill || this.state.submitting || this.state.draftDeleting) return;
         if (bill.submission_checking) {
             await this.refreshSubmissionStates();
             if (bill.submission_checking || !this.state.bills.includes(bill)) return;
@@ -4127,7 +4190,7 @@ class AbSalesPosAction extends Component {
 
     async submitCurrentBill() {
         const bill = this.currentBill;
-        if (!bill || this.state.submitting || document.body.classList.contains("modal-open")) return;
+        if (!bill || this.state.submitting || this.state.draftDeleting || document.body.classList.contains("modal-open")) return;
         if (bill.submission_status === "unknown" || bill.submission_checking) {
             return this.retryCurrentBill();
         }
@@ -4140,7 +4203,11 @@ class AbSalesPosAction extends Component {
     }
 
     async _sendBillSubmission(bill) {
-        if (!bill || this.state.submitting) return;
+        if (!bill || this.state.submitting || this.state.draftDeleting) return;
+        if (!bill.lines.length && !bill.submission_attempted && !bill.odoo_header_id) {
+            this.notification.add(_t("No lines to send."), {type: "warning"});
+            return;
+        }
         this._submissionRevision = (this._submissionRevision || 0) + 1;
         const wasUnknown = bill.submission_status === "unknown";
         const storeId = bill.header?.store_id;
@@ -4159,8 +4226,11 @@ class AbSalesPosAction extends Component {
         bill.submission_payload = JSON.parse(JSON.stringify(payload));
         bill.submission_status = "unknown";
         bill.submission_attempted = true;
+        bill.submission_draft_discardable = false;
         bill.submission_checking = false;
         bill.submission_validation_failed = false;
+        this.state.draftDiscardEligibility = {};
+        this._draftDiscardRequest = (this._draftDiscardRequest || 0) + 1;
         this.state.submitting = true;
         this._promoRequestId += 1;
         this.persistCache();

@@ -243,7 +243,9 @@ Files changed:
 - ab_sales/views/ab_sales_return.xml
 
 
-## Current changes before commit:
+## f1b069027a4c9de79473ac4f809695a6972760c2 - emadco88 - 2026-10-11
+
+Original commit subject: ab_sales/ FIX flickering on mutli tabs
 
 User-facing changes:
 - Fix repeated POS flickering when the same user opens multiple browser tabs with different cached drafts.
@@ -259,4 +261,31 @@ Validation:
 
 Files changed:
 - ab_sales/static/src/pos/pos_action.js
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Keep new empty POS bills in PrePending and deletable; reject empty/productless submissions before creating an invoice while preserving existing-token recovery.
+- Allow single Delete and the existing Delete All Drafts button to remove verified empty Unknown/Rejected drafts from the POS cache. Unknown invoices retain their original status and identity and remain read-only until removed.
+- Check attempted empty drafts against a read-only API immediately before deletion, with at most 200 tokens per request. Require an authorized matching branch, normal-user read access, no external invoice number, and no sales lines including archived lines, or genuine invoice absence.
+- Preserve bills with original submission lines even when the current table is empty. Retain inaccessible, completed, numbered, offline, checking, or changed bills; ignore stale cache flags and verification responses.
+- Disable deletion during active submissions or another deletion, preserve the selected remaining bill, and report deleted/retained counts.
+- Add English source strings and Arabic translations in both catalogs for the bulk control and result summary; preserve existing translations.
+
+Validation:
+- Eleven Playwright deletion scenarios passed, covering single/bulk removal, empty/missing original payloads, original/current lines, serials, completed states, offline checks, stale responses, concurrent operations, legacy Unknown state, and batches of 200.
+- Seven submission-state and four cross-tab regression scenarios passed, retaining the earlier flicker fix.
+- Actual Odoo ORM checks passed for empty/rejected/unknown eligibility, genuine absence, archived lines, protected states, branch mismatches, invalid batches, and unchanged invoice records. Hidden-record and restricted-branch checks were simulated without changing security rules or group membership; all backend fixtures were rolled back.
+- Authenticated local Chrome testing verified the real component, enabled single Delete for a read-only Unknown bill, the existing bulk button, protected-bill retention, and stable duplicated tabs. Employee login remained enforced; synthetic cached bills were tested through component methods behind its overlay, and server draft saves were intercepted.
+- Targeted local ab_sales upgrade and Arabic imports succeeded. Odoo 19 POT export, msgfmt checks for both catalogs, runtime ar_001 menu translation, and the new Arabic web-client labels passed.
+- JavaScript/Python/XML syntax and git whitespace checks passed. No E-Plus submissions or stock/financial operations were performed; test harnesses remain outside the runtime addon.
+
+Files changed:
+- ab_sales/models/ab_sales_pos_api.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
