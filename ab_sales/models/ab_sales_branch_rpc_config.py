@@ -152,7 +152,8 @@ class AbSalesBranchRpcConfig(models.Model):
             response = requests.post(
                 '%s/json/2/%s/%s' % (self.rpc_url, model, method), json=values,
                 headers={'Authorization': 'bearer ' + secret, 'X-Odoo-Database': self.rpc_db},
-                timeout=int(self.connection_timeout), allow_redirects=False)
+                # Accept branch certificates without CA or hostname verification.
+                timeout=int(self.connection_timeout), allow_redirects=False, verify=False)
         except requests.RequestException:
             raise UserError(_('The branch connection failed. Check its network address and availability.')) from None
         try:
