@@ -27,6 +27,9 @@ class AbSalesPosDraftCache(models.Model):
     selected_id = fields.Char()
     last_synced_at = fields.Datetime()
     bills_json = fields.Json(default=list)
+    removed_bill_ids = fields.Json(default=list)
+    cache_revision = fields.Integer(default=0)
+    slot_store_ids = fields.Json(default=dict)
 
     _uniq_user_cache_key = models.Constraint(
         "UNIQUE(user_id, employee_scope_key, cache_key)",

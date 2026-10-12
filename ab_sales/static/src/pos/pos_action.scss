@@ -1104,3 +1104,140 @@
   text-align: center;
   color: var(--pos-muted);
 }
+
+
+// Numbered draft slots are distinct from the branch identifier on bill cards.
+.o_ab_sales_pos_sidebar {
+  .ab_pos_slot_summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px;
+    color: var(--pos-muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .ab_pos_draft_slots {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    > .ab_pos_bill_list_item { grid-column: 1 / -1; }
+  }
+  .ab_pos_draft_slot_empty {
+    position: relative;
+    aspect-ratio: 1;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 4px;
+    border: 1px dashed var(--pos-border);
+    border-radius: 14px;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    &:hover:not(:disabled), &:focus-visible {
+      border-color: var(--pos-accent);
+      background: #f0fdfa;
+      outline: 2px solid var(--pos-accent);
+      outline-offset: 2px;
+    }
+    &:disabled { cursor: default; }
+  }
+  .ab_pos_draft_slot_watermark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(15, 118, 110, 0.13);
+    font-size: 64px;
+    line-height: 1;
+    font-weight: 800;
+    pointer-events: none;
+  }
+  .ab_pos_draft_slot_available, .ab_pos_draft_slot_hint {
+    position: relative;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .ab_pos_draft_slot_branch {
+    position: relative;
+    max-width: 100%;
+    border-radius: 5px;
+    padding: 2px 4px;
+    margin-bottom: 3px;
+    font-size: 10px;
+    color: #334155;
+    background: rgba(241, 245, 249, 0.92);
+  }
+  .ab_pos_draft_slot_hint { font-size: 10px; font-weight: 400; }
+  .ab_pos_bill_slot_badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .ab_pos_bill_slot_number {
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: #0f766e;
+    background: #ccfbf1;
+  }
+  .ab_pos_bill_slot_state { color: #0f766e; }
+  .ab_pos_draft_slots > .ab_pos_bill_slot_ready {
+    position: relative;
+    grid-column: auto;
+    min-width: 0;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #f0fdfa;
+    border-color: #99d5cb;
+    .ab_pos_bill_slot_badges, .ab_pos_bill_item_top { position: relative; }
+    .ab_pos_bill_item_id, .ab_pos_bill_item_status { display: none; }
+  }
+  .ab_pos_bill_branch_badge {
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: #334155;
+    background: #f1f5f9;
+  }
+  .ab_pos_bill_lock_badge, .ab_pos_bill_lock_reason { color: #92400e; }
+  .ab_pos_bill_lock_reason { font-size: 11px; margin: 4px 0; }
+  .ab_pos_locked_bills, .ab_pos_waiting_bills {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid var(--pos-border);
+    padding-top: 12px;
+    h4 { font-size: 13px; margin: 0; }
+    p { font-size: 11px; color: #64748b; margin: 0; }
+  }
+  &.is-collapsed {
+    .ab_pos_draft_slots { grid-template-columns: minmax(0, 1fr); }
+    .ab_pos_draft_slot_watermark { font-size: 28px; }
+    .ab_pos_draft_slot_empty { justify-content: flex-end; padding: 2px; }
+    .ab_pos_draft_slot_branch { font-size: 8px; margin: 0; padding: 0 2px; }
+    .ab_pos_draft_slot_branch_label { display: none; }
+    .ab_pos_draft_slot_available, .ab_pos_draft_slot_hint, .ab_pos_slot_summary,
+    .ab_pos_bill_slot_badges, .ab_pos_bill_lock_reason,
+    .ab_pos_locked_bills > h4, .ab_pos_locked_bills > p,
+    .ab_pos_waiting_bills > h4, .ab_pos_waiting_bills > p { display: none; }
+    .ab_pos_draft_slots > .ab_pos_bill_slot_ready {
+      aspect-ratio: 1;
+      min-height: 46px;
+      .o_ab_sales_pos_bill_thumb { position: relative; margin-top: 24px; font-size: 8px; }
+      .ab_pos_draft_slot_watermark { display: flex; }
+    }
+    .ab_pos_locked_bills .ab_pos_bill_lock_badge { display: inline-flex; }
+    .ab_pos_locked_bills .ab_pos_bill_slot_badges { display: flex; margin: 0; }
+    .ab_pos_locked_bills .ab_pos_bill_branch_badge, .ab_pos_bill_lock_badge > span { display: none; }
+  }
+}

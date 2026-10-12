@@ -109,7 +109,9 @@ class LocalSales(models.Model):
                     for name in ('store_id', 'pos_client_token', 'active'):
                         if name in vals and vals[name] != (record[name].id if name == 'store_id' else record[name]):
                             raise UserError(_('The submitted bill identity cannot be changed.'))
-                    if record.status != 'rejected' and any(record[name] != value for name, value in vals.items()):
+                    if record.status != 'rejected' and any(
+                            (record[name].id if record._fields[name].type == 'many2one' else record[name]) != value
+                            for name, value in vals.items()):
                         raise UserError(_('This bill is locked until its branch submission is resolved. Use Retry.'))
         return super().write(vals)
 
@@ -121,6 +123,17 @@ class LocalSales(models.Model):
     def unlink(self):
         raise UserError(_('Archive callcenter bills instead of deleting them.'))
 
+    def _branch_submission_in_progress(self):
+        """Probe the same session lock used by submission, without waiting."""
+        self.ensure_one()
+        self.check_access('read')
+        with self.env.registry.cursor() as lock_cr:
+            lock_cr.execute('SELECT pg_try_advisory_lock(%s, %s)', (190810, self.id))
+            acquired = lock_cr.fetchone()[0]
+            if acquired:
+                lock_cr.execute('SELECT pg_advisory_unlock(%s, %s)', (190810, self.id))
+            return not acquired
+
     def _branch_result(self):
         self.ensure_one()
         accepted = self.status in ('pending', 'saved')
@@ -131,7 +144,7 @@ class LocalSales(models.Model):
                 'branch_header_id': self.branch_header_id, 'remote_header_id': self.branch_header_id,
                 'token': self.pos_client_token, 'request_revision': self.branch_request_revision,
                 'status': self.status, 'eplus_serial': self.eplus_serial,
-                'message': self.push_message or '', 'can_edit': self.status in ('prepending', 'rejected'),
+                'message': self.push_message or '', 'submission_attempted': self.branch_submission_started, 'can_edit': self.status in ('prepending', 'rejected'),
                 'can_retry': self.status in ('unknown', 'rejected'), 'duplicate_token': False}
 
     def _apply_branch_response(self, response, config):
@@ -379,14 +392,14 @@ class LocalSubmission(models.TransientModel):
     def pos_submission_states(self, tokens=None, pos_hr_session_token=None):
         if not isinstance(tokens, list) or len(tokens) > 200 or any(not isinstance(t, str) for t in tokens):
             raise UserError(_('Provide at most 200 request tokens.'))
-        if 'ab_employee_access_sales_pos_api' in self.env.registry:
-            session = self.env['ab_employee_access_sales_pos_api']._get_session(pos_hr_session_token, states=['active'])
-            profile = session._get_pos_profile()
-            if not profile or not profile._effective_pos_permissions().get('allow_sale'):
-                raise AccessError(_('Employee role does not allow sales.'))
+        self._pos_require_sales_session(pos_hr_session_token)
         headers = self.env['ab_sales_header'].search(fields.Domain('pos_client_token', 'in', tokens))
+        employee = self._pos_draft_employee(pos_hr_session_token=pos_hr_session_token)
+        if employee and 'pos_hr_employee_id' in headers._fields:
+            headers = headers.filtered(lambda header: header.pos_hr_employee_id == employee)
         headers._refresh_local_bill_statuses()
-        return [header._branch_result() for header in headers]
+        return [dict(header._branch_result(), submission_in_progress=header._branch_submission_in_progress())
+                for header in headers]
 
 
 class BillDepartmentAccess(models.Model):

@@ -1,12 +1,32 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 
 class AbSalesPosApi(models.TransientModel):
     _name = "ab_sales_pos_api"
     _description = "Sales POS API"
+
+    @api.model
+    def _pos_require_sales_session(self, pos_hr_session_token=None):
+        """Accept screen-based roles while honoring explicit custom sale denial."""
+        if "ab_employee_access_sales_pos_api" not in self.env.registry:
+            return False
+        session = self.env["ab_employee_access_sales_pos_api"]._get_session(
+            pos_hr_session_token, states=["active"], required=False,
+        )
+        if not session:
+            raise AccessError(_("Employee POS session is missing or expired."))
+        if session.service_user_id.id != self.env.uid:
+            raise AccessError(_("This employee session belongs to another user."))
+        profile = session._get_pos_profile()
+        if not profile:
+            raise AccessError(_("Employee POS profile is missing."))
+        permissions = profile._effective_pos_permissions()
+        if not permissions.get("allow_pos_screen") or not permissions.get("allow_sale", True):
+            raise AccessError(_("Employee role does not allow sales."))
+        return session
 
     @api.model
     def pos_default_employee(self):

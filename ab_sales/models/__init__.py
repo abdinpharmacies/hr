@@ -33,3 +33,5 @@ from . import branch_bills
 from . import local_bills
 
 from . import callcenter_origin
+
+from . import ab_sales_pos_draft_slots

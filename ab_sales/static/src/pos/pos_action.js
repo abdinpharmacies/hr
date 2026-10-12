@@ -958,6 +958,14 @@ class AbSalesPosAction extends Component {
 
         this.state = useState({
             bills: [],
+            draftLimit: 10,
+            draftSlotBranches: {},
+            draftCacheReady: false,
+            draftCacheError: "",
+            draftCacheAccessBlocked: false,
+            draftCreating: false,
+            draftDeleting: false,
+            draftStoreIds: null,
             selectedId: null,
             stores: [],
             storeById: {},
@@ -1156,10 +1164,13 @@ class AbSalesPosAction extends Component {
         }
 
         useExternalListener(window, "focus", () => {
-            if (!this.state.submitting) this.refreshBranchSubmissions();
+            if (!this.state.submitting) this._syncDraftsFromServer().then(() => this.refreshBranchSubmissions());
         });
         useExternalListener(window, "storage", (ev) => {
-            if (ev.key?.startsWith(CACHE_PREFIX) && !this.state.submitting) this.refreshBranchSubmissions();
+            if (ev.key !== this._localCacheKey() || !ev.newValue) return;
+            // Read the server once; do not echo a stale tab's bill JSON back.
+            clearTimeout(this._draftStorageTimer);
+            this._draftStorageTimer = setTimeout(() => this._syncDraftsFromServer(), 100);
         });
         onWillStart(async () => {
             this._installBranchMutationGuards();
@@ -1206,6 +1217,7 @@ class AbSalesPosAction extends Component {
         });
 
         onWillUnmount(() => {
+            clearTimeout(this._draftStorageTimer);
             if (this._viewportCheckTimer) {
                 clearInterval(this._viewportCheckTimer);
                 this._viewportCheckTimer = null;
@@ -1245,7 +1257,10 @@ class AbSalesPosAction extends Component {
 
     _localCacheKey() {
         const employeeId = this._posDraftEmployeeId();
-        return employeeId ? `${this.cacheKey}_employee_${employeeId}` : this.cacheKey;
+        // Odoo 19 moves uid from session into the user service.
+        // Never share fallback bill JSON between browser logins.
+        const userKey = `${this.cacheKey}_user_${user.userId}`;
+        return employeeId ? `${userKey}_employee_${employeeId}` : userKey;
     }
 
     _readLocalCache() {
@@ -1263,10 +1278,10 @@ class AbSalesPosAction extends Component {
 
     _writeLocalCache() {
         try {
-            localStorage.setItem(this._localCacheKey(), JSON.stringify(this.state.bills || []));
-        } catch {
-            // Browser storage is only a fallback; server cache remains authoritative.
-        }
+            const key = this._localCacheKey();
+            const text = JSON.stringify(this._cachePayloadSnapshot().payload.bills);
+            if (localStorage.getItem(key) !== text) localStorage.setItem(key, text);
+        } catch { /* The server remains authoritative if browser storage is unavailable. */ }
     }
 
     _billCacheIdentity(bill) {
@@ -1301,61 +1316,303 @@ class AbSalesPosAction extends Component {
                 }
             }
         }
-        return [...byKey.values()].sort((a, b) => this._billCacheUpdatedAt(b) - this._billCacheUpdatedAt(a));
+        return [...byKey.values()].sort((a, b) => {
+            const difference = this._billCacheUpdatedAt(b) - this._billCacheUpdatedAt(a);
+            if (difference) return difference;
+            const first = this._billCacheIdentity(a), second = this._billCacheIdentity(b);
+            return first < second ? -1 : first > second ? 1 : 0;
+        });
     }
 
     _cachePayloadSnapshot() {
         const payloadText = JSON.stringify({
-            bills: this.state.bills || [],
-            selected_id: this.state.selectedId || "",
-        });
-        return {
-            payloadText,
-            payload: JSON.parse(payloadText),
-        };
+            bills: this.state.bills || [], selected_id: this.state.selectedId || "",
+        }, (key, value) => ["checking", "in_progress"].includes(key) ? undefined : value);
+        return {payloadText, payload: JSON.parse(payloadText)};
+    }
+
+    _handleDraftCacheError(error) {
+        const name = error?.data?.name || error?.response?.data?.name || error?.name || "";
+        const denied = ["odoo.exceptions.AccessError", "odoo.exceptions.AccessDenied",
+            "odoo.http.SessionExpiredException"].includes(name);
+        const fallback = _t("Draft cache could not be synchronized. Your local bills are retained; reconnect before creating or removing drafts.");
+        const message = denied ? this._getRpcErrorMessage(error, _t("Sign in again to access draft bills.")) : fallback;
+        this.state.draftCacheError = message;
+        if (denied) {
+            this.state.draftCacheAccessBlocked = true;
+            this.state.draftCacheReady = false;
+            clearTimeout(this._cacheSaveTimer);
+            this._cacheSaveTimer = null;
+            this._cacheSaveQueued = false;
+        }
+    }
+
+    async retryDraftCache() {
+        if (this._cacheSaveInFlight || this._draftReadInFlight || this.state.submitting) return;
+        await this.loadCache();
+        this._syncInputsForBill(this.currentBill);
     }
 
     async loadCache() {
+        if (this.state.abSalesHr && !this._posDraftSessionToken()) return;
         const localBills = this._readLocalCache();
-        let serverBills = [];
-        let serverSelectedId = "";
-        let serverLoaded = false;
+        const scope = this._localCacheKey();
+        this.state.draftCacheReady = false;
+        this.state.draftCacheAccessBlocked = false;
+        this.state.draftCacheError = "";
+        this.state.bills = [];
+        this.state.selectedId = null;
+        this.state.draftSlotBranches = {};
+        this.state.draftStoreIds = null;
+        this._removedDraftIds = new Set();
+        this._draftCacheRevision = 0;
+        this.state.draftDiscardEligibility = {};
         try {
             const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], {
-                cache_key: this.cacheKey,
-                employee_id: this._posDraftEmployeeId() || false,
-                pos_hr_session_token: this._posDraftSessionToken(),
+                ...this._draftScopeArgs(), bills: localBills,
             });
-            serverLoaded = true;
-            serverBills = Array.isArray(result?.bills) ? result.bills : [];
-            serverSelectedId = String(result?.selected_id || "").trim();
-            this._lastServerCachePayload = JSON.stringify({
-                bills: serverBills,
-                selected_id: serverSelectedId,
-            });
-        } catch {
-            serverLoaded = false;
+            if (scope !== this._localCacheKey()) return;
+            this.state.selectedId = result.selected_id || null;
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            if (scope !== this._localCacheKey()) return;
+            try {
+                const branches = JSON.parse(localStorage.getItem(`${scope}_slot_branches`) || "{}");
+                this.state.draftSlotBranches = branches && typeof branches === "object" && !Array.isArray(branches) ? branches : {};
+            } catch { this.state.draftSlotBranches = {}; }
+            this.state.bills = localBills.map((bill) => this._normalizeBill(bill));
+            this.state.selectedId = this.state.bills[0]?.id || null;
+            this._assignLocalDraftSlots();
+            this._handleDraftCacheError(error);
+            if (!this.state.draftCacheAccessBlocked) this._scheduleCacheSaveToServer(5000);
         }
+        if (!this.state.draftCacheAccessBlocked) await this.refreshBranchSubmissions();
+    }
 
-        const sourceBills = serverLoaded
-            ? this._mergeBillCaches(serverBills, localBills)
-            : localBills;
-        this.state.bills = sourceBills.map((b) => this._normalizeBill(b));
-        const hasServerSelected = serverSelectedId && this.state.bills.some((bill) => bill.id === serverSelectedId);
-        this.state.selectedId = hasServerSelected
-            ? serverSelectedId
-            : (this.state.bills[0]?.id || null);
+    _applyDraftCacheResult(result, snapshot = null) {
+        if (Number.isInteger(result?.revision) && result.revision < (this._draftCacheRevision || 0)) return;
+        const previousSelectedId = this.state.selectedId;
+        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : 10;
+        this.state.draftSlotBranches = result?.slot_branches || {};
+        this._draftCacheRevision = result?.revision || 0;
+        this._removedDraftIds = new Set(result?.removed_ids || []);
+        const rejected = new Set(result?.rejected_ids || []);
+        const serverBills = Array.isArray(result?.bills) ? result.bills : [];
+        // Keep edits made while the RPC was running; server tombstones always win.
+        const sentById = new Map((snapshot?.bills || []).map((bill) => [bill.id, JSON.stringify(bill)]));
+        const newerLocal = snapshot ? this.state.bills.filter((bill) =>
+            JSON.stringify(bill) !== sentById.get(bill.id)) : [];
+        const bills = this._mergeBillCaches(serverBills, newerLocal).filter((bill) =>
+            !this._removedDraftIds.has(bill.id) && !rejected.has(bill.id));
+        const currentById = new Map(this.state.bills.map((bill) => [bill.id, bill]));
+        this.state.bills = bills.map((bill) => {
+            const current = currentById.get(bill.id);
+            if (!current) return this._normalizeBill(bill);
+            if (current === bill) return current;
+            const header = current.header;
+            const lineById = new Map((current.lines || []).map((line) => [line.id, line]));
+            const lines = (bill.lines || []).map((line) => {
+                const existing = lineById.get(line.id);
+                return existing ? Object.assign(existing, line) : line;
+            });
+            Object.assign(header, bill.header);
+            const liveSubmission = current.submission;
+            Object.assign(current, bill, {header, lines});
+            if (liveSubmission?.in_progress || (liveSubmission?.version || 0) > (bill.submission?.version || 0)) {
+                current.submission = liveSubmission;
+            }
+            return current;
+        });
+        if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+            this.state.selectedId = this.state.bills.some((bill) => bill.id === result?.selected_id)
+                ? result.selected_id : (this.state.bills[0]?.id || null);
+        }
+        this._assignLocalDraftSlots();
+        if (previousSelectedId !== this.state.selectedId && this.draftSlotState(this.currentBill) === "ready") {
+            this.state.productQuery = "";
+            this.state.productResults = [];
+            this.state.lastCustomerInput = "";
+            this.state.lastCustomerInputFallback = "";
+            this._syncInputsForBill(this.currentBill);
+        }
+        this.state.draftCacheReady = true;
+        this.state.draftCacheAccessBlocked = false;
+        this.state.draftCacheError = "";
+        this._lastServerCachePayload = JSON.stringify({bills: serverBills, selected_id: this.state.selectedId || ""},
+            (key, value) => ["checking", "in_progress"].includes(key) ? undefined : value);
         this._writeLocalCache();
-        await this.refreshBranchSubmissions();
+        if (rejected.size) this._draftLimitWarning();
+    }
 
-        if (serverLoaded) {
-            const mergedPayload = this._cachePayloadSnapshot().payloadText;
-            if (mergedPayload !== this._lastServerCachePayload) {
+    async removeAllBills() {
+        await this._deleteDrafts([...this.state.bills]);
+    }
+
+    async _syncCompletedDrafts() {
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], {
+                ...this._draftScopeArgs(), ...snapshot,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.refreshStoreStatus(this.currentBill?.header?.store_id);
+        } catch {
+            // The invoice is already confirmed. Retry cache synchronization,
+            // never report a sale failure or replay the submission.
+            this.persistCache();
+        }
+    }
+
+    async _deleteDrafts(bills) {
+        if (!bills.length || this.state.submitting || this.state.draftDeleting || this.state.draftCreating) return;
+        if (!this.state.draftCacheReady) return;
+        // Let an earlier save finish before removal; tombstones reject later stale saves.
+        if (this._cacheSaveInFlight) {
+            this.notification.add(_t("Draft cache is busy. Please try again."), {type: "info"});
+            return;
+        }
+        clearTimeout(this._cacheSaveTimer);
+        this._cacheSaveTimer = null;
+        this.state.draftDeleting = true;
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        try {
+            // Persist unsent edits first, so eligibility uses the current bill.
+            const saved = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
+                ...this._draftScopeArgs(), ...snapshot, revision: this._draftCacheRevision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_ids: bills.map((bill) => bill.id), revision: saved.revision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.searchProducts((this.state.productQuery || "").trim());
+            this.notification.add(_t("Deleted %s drafts; retained %s bills.",
+                result.deleted_ids.length, result.retained_count), {type: "info"});
+        } catch {
+            this.notification.add(_t("Could not remove drafts. Your bills have been retained. Please try again."), {type: "warning"});
+        } finally {
+            this.state.draftDeleting = false;
+            if (this._cacheSaveQueued) {
+                this._cacheSaveQueued = false;
                 this._scheduleCacheSaveToServer(0);
             }
-        } else if (this.state.bills.length) {
-            this._scheduleCacheSaveToServer(0);
         }
+    }
+
+    _draftScopeArgs() {
+        return {
+            cache_key: this.cacheKey,
+            employee_id: this._posDraftEmployeeId() || false,
+            pos_hr_session_token: this._posDraftSessionToken(),
+        };
+    }
+
+    _slotBillLocked(bill) {
+        return !!bill && (bill.submission?.unresolved || bill.submission?.in_progress ||
+            ["unknown", "pending", "saved"].includes(bill.submission?.status));
+    }
+
+    _assignLocalDraftSlots() {
+        const used = new Set();
+        const editable = this.state.bills.filter((bill) =>
+            !this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission?.status));
+        for (const bill of this.state.bills) {
+            if (!editable.includes(bill)) {
+                if (bill.slot_number) bill.previous_slot_number = bill.slot_number;
+                bill.slot_number = null;
+            }
+        }
+        for (const bill of editable) {
+            if (!Number.isInteger(bill.slot_number) || bill.slot_number < 1 ||
+                bill.slot_number > this.state.draftLimit || used.has(bill.slot_number)) {
+                bill.slot_number = null;
+            } else {
+                used.add(bill.slot_number);
+            }
+        }
+        for (const bill of editable) {
+            if (!bill.slot_number) {
+                for (let number = 1; number <= this.state.draftLimit; number++) {
+                    if (!used.has(number)) {
+                        bill.slot_number = number;
+                        used.add(number);
+                        break;
+                    }
+                }
+            }
+            bill.slot_waiting = !bill.slot_number;
+        }
+    }
+
+    get draftSlots() {
+        const slots = Array.from({length: this.state.draftLimit}, (_, index) => ({number: index + 1, bill: null, branch: this.state.draftSlotBranches[String(index + 1)] || null}));
+        for (const bill of this.state.bills) {
+            if (!this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission?.status) &&
+                Number.isInteger(bill.slot_number) && slots[bill.slot_number - 1]) {
+                slots[bill.slot_number - 1].bill = bill;
+            }
+        }
+        return slots;
+    }
+
+    get emptyDraftSlots() {
+        return this.draftSlots.filter((slot) => this.draftSlotState(slot.bill) === "empty");
+    }
+
+    get availableDraftSlots() {
+        return this.emptyDraftSlots.length;
+    }
+
+    draftSlotState(bill) {
+        if (!bill) return "empty";
+        const defaults = new Set(["store_id", "store_name", "store_code", "store_ip", "pos_client_token",
+            "customer_mode",
+            "contract_total_invoice_discount_source", "delivery_ui_version"]);
+        const hasData = bill.lines?.length || bill.promo?.applied_id || bill.promo?.selected_id ||
+            Object.entries(bill.header || {}).some(([key, value]) => !defaults.has(key) &&
+                (typeof value === "string" ? value.trim().length : !!value));
+        return hasData ? "used" : (bill.header?.store_id ? "ready" : "empty");
+    }
+
+    draftSlotStateLabel(bill) {
+        const state = this.draftSlotState(bill);
+        return state === "ready" ? _t("Ready") : state === "used" ? _t("Used") : _t("Empty");
+    }
+
+    get readyDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "ready").length;
+    }
+
+    get usedDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "used").length;
+    }
+
+    get lockedDraftBills() {
+        return this.state.bills.filter((bill) => this._slotBillLocked(bill));
+    }
+
+    get waitingDraftBills() {
+        return this.state.bills.filter((bill) => !this._slotBillLocked(bill) && !bill.slot_number &&
+            !["pending", "saved"].includes(bill.submission?.status));
+    }
+
+    _draftSlotLabel(number) {
+        return _t("Slot %s: Empty. Choose a branch.", number);
+    }
+
+    _draftLimitWarning() {
+        this.notification.add(_t("All %s draft slots are occupied. Complete or remove a draft to create a bill.",
+            this.state.draftLimit), {type: "warning"});
     }
 
     _defaultPosUiSettings() {
@@ -1519,12 +1776,13 @@ class AbSalesPosAction extends Component {
     }
 
     persistCache() {
+        this._assignLocalDraftSlots();
         this._writeLocalCache();
         this._scheduleCacheSaveToServer();
     }
 
     _scheduleCacheSaveToServer(delay = 350) {
-        if (this._cacheSaveStopped) {
+        if (this._cacheSaveStopped || this.state.draftCacheAccessBlocked) {
             return;
         }
         if (this._cacheSaveTimer) {
@@ -1537,36 +1795,29 @@ class AbSalesPosAction extends Component {
     }
 
     async _saveCacheToServer({allowRetry = true} = {}) {
-        if (this._cacheSaveInFlight) {
-            if (allowRetry && !this._cacheSaveStopped) {
-                this._cacheSaveQueued = true;
-            }
+        if (this.state.draftCacheAccessBlocked) return;
+        if (this.state.draftDeleting || this.state.draftCreating || this._cacheSaveInFlight) {
+            if (allowRetry && !this._cacheSaveStopped) this._cacheSaveQueued = true;
             return;
         }
-        let snapshot;
-        try {
-            snapshot = this._cachePayloadSnapshot();
-        } catch {
-            return;
-        }
-        if (snapshot.payloadText === this._lastServerCachePayload) {
-            return;
-        }
-
+        const snapshot = this._cachePayloadSnapshot();
+        if (snapshot.payloadText === this._lastServerCachePayload) return;
+        const scope = this._localCacheKey();
         this._cacheSaveInFlight = true;
         try {
-            await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                cache_key: this.cacheKey,
-                employee_id: this._posDraftEmployeeId() || false,
-                pos_hr_session_token: this._posDraftSessionToken(),
-                bills: snapshot.payload.bills,
-                selected_id: snapshot.payload.selected_id,
+            const method = this.state.draftCacheReady ? "pos_save_draft_cache" : "pos_load_draft_cache";
+            const result = await this.orm.call("ab_sales_pos_api", method, [], {
+                ...this._draftScopeArgs(), ...snapshot.payload,
+                ...(method === "pos_save_draft_cache" ? {revision: this._draftCacheRevision} : {}),
             });
-            this._lastServerCachePayload = snapshot.payloadText;
-        } catch {
-            if (!allowRetry || this._cacheSaveStopped) {
-                return;
-            }
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot.payload);
+            if (this._cachePayloadSnapshot().payloadText !== this._lastServerCachePayload) this._cacheSaveQueued = true;
+            return result;
+        } catch (err) {
+            if (scope !== this._localCacheKey()) return;
+            this._handleDraftCacheError(err);
+            if (!allowRetry || this._cacheSaveStopped || this.state.draftCacheAccessBlocked) return;
             this._scheduleCacheSaveToServer(5000);
         } finally {
             this._cacheSaveInFlight = false;
@@ -1611,17 +1862,39 @@ class AbSalesPosAction extends Component {
         }
     }
 
-    openNewBillDialog() {
-        if (!this.state.stores.length) {
-            this.notification.add("No stores available.", {type: "warning"});
+    async openNewBillDialog(slotNumber = null) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting) return;
+        if (!this.availableDraftSlots) {
+            this._draftLimitWarning();
             return;
         }
-        this.dialog.add(AbSalesPosStoreDialog, {
-            stores: this.state.stores,
-            defaultStoreCode: this.state.defaultStoreCode,
-            domain: this.storeDomain(),
-            onSelect: (storeId) => this.createNewBill(storeId),
-        });
+        this._requestedDraftSlot = Number.isInteger(slotNumber) ? slotNumber : this.emptyDraftSlots[0]?.number;
+        this.state.draftCreating = true;
+        const scope = this._localCacheKey();
+        try {
+            const options = await this.orm.call("ab_sales_pos_api", "pos_draft_store_options", [], {
+                pos_hr_session_token: this._posDraftSessionToken() || false,
+            });
+            if (scope !== this._localCacheKey()) return;
+            const stores = options.stores || [];
+            this.state.draftStoreIds = stores.map((store) => store.id);
+            this.state.stores = stores;
+            this.state.storeById = Object.fromEntries(stores.map((store) => [store.id, store]));
+            if (!stores.length) {
+                this.notification.add(_t("No stores available."), {type: "warning"});
+                return;
+            }
+            this.dialog.add(AbSalesPosStoreDialog, {
+                stores,
+                defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
+                domain: this.storeDomain(),
+                onSelect: (storeId) => this.createNewBill(storeId),
+            });
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally {
+            this.state.draftCreating = false;
+        }
     }
 
     openCustomerLookup() {
@@ -1848,13 +2121,30 @@ class AbSalesPosAction extends Component {
         return domain;
     }
 
-    createNewBill(storeId) {
+    async createNewBill(storeId) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this._cacheSaveInFlight) return;
+        this._assignLocalDraftSlots();
+        const available = this.emptyDraftSlots;
+        if (!available.length) {
+            this._draftLimitWarning();
+            return;
+        }
+        const slotNumber = available.find((slot) => slot.number === this._requestedDraftSlot)?.number || available[0].number;
+        this._requestedDraftSlot = null;
         const store = this.state.storeById[storeId];
         if (!store) {
             return;
         }
+        const emptyBill = available.find((slot) => slot.number === slotNumber)?.bill;
+        if (emptyBill) {
+            this.selectBill(emptyBill.id);
+            await this.onStoreM2OUpdate({ id: store.id, display_name: store.name });
+            return;
+        }
         const bill = {
             id: generateId("bill"),
+            slot_number: slotNumber,
+            submission: {status: "prepending", attempted: false},
             local_number: `${Date.now()}`,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -1874,7 +2164,7 @@ class AbSalesPosAction extends Component {
                 bill_customer_name: "",
                 bill_customer_phone: "",
                 bill_customer_address: "",
-                pos_client_token: generatePosToken(session.user_id, store.id),
+                pos_client_token: generatePosToken(user.userId, store.id),
                 new_customer_name: "",
                 new_customer_phone: "",
                 new_customer_address: "",
@@ -1890,13 +2180,26 @@ class AbSalesPosAction extends Component {
             total_net_amount: 0,
             promo: this._defaultPromo(),
         };
-        this.state.bills.unshift(bill);
-        this.state.selectedId = bill.id;
-        this._syncInputsForBill(bill);
-        this.persistCache();
-        this.refreshStoreStatus(bill.header.store_id);
-        this.refreshCustomerInsights(bill);
-        this.searchProducts((this.state.productQuery || "").trim());
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        this.state.draftCreating = true;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
+                ...this._draftScopeArgs(), bills: [bill, ...snapshot.bills], selected_id: bill.id,
+                revision: this._draftCacheRevision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            if (this.state.bills.some((item) => item.id === bill.id)) this.selectBill(bill.id);
+        } catch {
+            this.notification.add(_t("Could not create a draft bill. Please reconnect and try again."), {type: "warning"});
+        } finally {
+            this.state.draftCreating = false;
+            if (this._cacheSaveQueued) {
+                this._cacheSaveQueued = false;
+                this._scheduleCacheSaveToServer(0);
+            }
+        }
     }
 
     _defaultPromo() {
@@ -2041,25 +2344,17 @@ class AbSalesPosAction extends Component {
         this.searchProducts((this.state.productQuery || "").trim());
     }
 
-    removeBill(billId) {
-        const target = this.state.bills.find(b => b.id === billId);
-        if (target?.submission?.attempted && !this._branchCompleting) return;
-        this.state.bills = this.state.bills.filter((b) => b.id !== billId);
-        if (this.state.selectedId === billId) {
-            this.state.selectedId = this.state.bills.length ? this.state.bills[0].id : null;
-        }
-        this._syncInputsForBill(this.currentBill);
-        this.refreshPromotions(this.currentBill);
-        this.refreshCustomerInsights(this.currentBill);
-        this.searchProducts((this.state.productQuery || "").trim());
-        this.persistCache();
-    }
-
-    removeCurrentBill() {
-        if (!this.currentBill) {
+    async removeBill(billId, completed = false) {
+        const bill = this.state.bills.find((item) => item.id === billId);
+        if (completed) {
+            await this._syncCompletedDrafts();
             return;
         }
-        this.removeBill(this.currentBill.id);
+        if (bill) await this._deleteDrafts([bill]);
+    }
+
+    async removeCurrentBill() {
+        if (this.currentBill) await this.removeBill(this.currentBill.id);
     }
 
     updateHeaderField(field, value) {
@@ -2584,6 +2879,11 @@ class AbSalesPosAction extends Component {
     }
 
     async searchProducts(query) {
+        if (!this.currentBill?.header?.store_id) {
+            this.state.productResults = [];
+            this.state.loadingProducts = false;
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             this.state.productResults = [];
@@ -3881,8 +4181,8 @@ class AbSalesPosAction extends Component {
         bill.number_of_products = bill.lines.length;
         bill.total_price = total;
         bill.total_net_amount = total;
-        bill.updated_at = new Date().toISOString();
         if (persist) {
+            bill.updated_at = new Date().toISOString();
             this.persistCache();
         }
     }
@@ -4022,9 +4322,42 @@ class AbSalesPosAction extends Component {
         return protect(bill);
     }
 
+    billRemovable(bill) {
+        return !!bill && !this.state.submitting && !this.state.draftDeleting &&
+            !this.state.draftCreating && !this._slotBillLocked(bill) &&
+            (bill.slot_removable !== false) && (!bill.slot_protected || !bill.lines?.length);
+    }
+
+    submissionStatusLabel(bill) {
+        if (bill.submission?.in_progress) return _t("Submitting...");
+        if (bill.submission?.unresolved) return _t("Checking submission...");
+        const labels = {prepending: _t("PrePending"), unknown: _t("Unknown"),
+            rejected: _t("Rejected"), pending: _t("Pending"), saved: _t("Saved")};
+        return labels[bill.submission?.status] || _t("Draft");
+    }
+
+    async _syncDraftsFromServer() {
+        if (this.state.draftCacheAccessBlocked) return;
+        if (this._draftReadInFlight || this.state.submitting || this.state.draftCreating ||
+            this.state.draftDeleting || this._cacheSaveInFlight) return;
+        if (this._cachePayloadSnapshot().payloadText !== this._lastServerCachePayload) {
+            await this._saveCacheToServer();
+            return;
+        }
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        this._draftReadInFlight = true;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
+            if (scope === this._localCacheKey()) this._applyDraftCacheResult(result, snapshot);
+        } catch (error) {
+            if (scope === this._localCacheKey()) this._handleDraftCacheError(error);
+        }
+        finally { this._draftReadInFlight = false; }
+    }
+
     branchBillEditable(bill) {
-        return !!bill && !bill.submission?.checking &&
-            !["unknown", "pending", "saved"].includes(bill.submission?.status);
+        return !!bill && !this.state.draftCacheAccessBlocked && !bill.submission?.checking && !this._slotBillLocked(bill);
     }
 
     applyBranchSubmission(bill, result) {
@@ -4038,51 +4371,57 @@ class AbSalesPosAction extends Component {
             (bill.submission?.revision && result.request_revision < bill.submission.revision) ||
             (["pending", "saved"].includes(bill.submission?.status) && !["pending", "saved"].includes(result.status)) ||
             (bill.submission?.status === "saved" && result.status !== "saved")) return false;
-        bill.submission = {...bill.submission, attempted: !!result.local_header_id,
+        bill.submission = {...bill.submission, attempted: result.submission_attempted ?? !!result.local_header_id,
             status: result.status, message: result.message || "", checking: false,
             local_header_id: result.local_header_id, revision: result.request_revision,
-            branch_header_id: result.branch_header_id};
-        this.persistCache();
+            branch_header_id: result.branch_header_id, unresolved: false,
+            in_progress: !!result.submission_in_progress};
         return true;
     }
 
-    async refreshBranchSubmissions() {
+    async refreshBranchSubmissions({force = false} = {}) {
+        if (this.state.draftCacheAccessBlocked) return;
+        if (this._branchRefreshPromise) {
+            if (!force) return this._branchRefreshPromise;
+            await this._branchRefreshPromise;
+        }
+        const scope = this._localCacheKey();
         const snapshots = (this.state.bills || []).map(bill => ({bill, version: bill.submission?.version || 0}));
-        const foundTokens = [];
-        const seq = this._branchReadSeq = (this._branchReadSeq || 0) + 1;
-        for (const {bill} of snapshots) bill.submission = {...bill.submission, checking: true};
-        try {
-            for (let offset = 0; offset < snapshots.length; offset += 200) {
-                const batch = snapshots.slice(offset, offset + 200);
-                const results = await this.orm.call("ab_sales_pos_api", "pos_submission_states", [], {
-                    tokens: batch.map(({bill}) => bill.header.pos_client_token),
-                    pos_hr_session_token: this._posDraftSessionToken(),
-                });
-                if (seq !== this._branchReadSeq) return;
-                if (!Array.isArray(results)) throw new Error("Invalid submission states");
-                for (const result of results) {
-                    foundTokens.push(result.token);
-                    const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
-                    if (snap && (snap.bill.submission?.version || 0) === snap.version) this.applyBranchSubmission(snap.bill, result);
-                }
-            }
-            return foundTokens;
-        } catch { /* Retain the last known state and original token when offline. */ }
-        finally {
-            if (seq === this._branchReadSeq) {
-                for (const {bill} of snapshots) {
-                    bill.submission = {...bill.submission, checking: false};
-                    if (["pending", "saved"].includes(bill.submission?.status)) {
-                        this._branchCompleting = true;
-                        try { this.removeBill(bill.id); } finally { this._branchCompleting = false; }
+        if (!snapshots.length) return [];
+        const previous = this._cachePayloadSnapshot().payloadText;
+        this._branchRefreshPromise = (async () => {
+            const found = [];
+            try {
+                for (let offset = 0; offset < snapshots.length; offset += 200) {
+                    const batch = snapshots.slice(offset, offset + 200);
+                    const results = await this.orm.call("ab_sales_pos_api", "pos_submission_states", [], {
+                        tokens: batch.map(({bill}) => bill.header.pos_client_token),
+                        pos_hr_session_token: this._posDraftSessionToken(),
+                    });
+                    if (scope !== this._localCacheKey()) return;
+                    if (!Array.isArray(results)) throw new Error("Invalid submission states");
+                    for (const result of results) {
+                        const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
+                        if (snap) found.push(result.token);
+                        if (snap && (snap.bill.submission?.version || 0) === snap.version) {
+                            this.applyBranchSubmission(snap.bill, result);
+                        }
                     }
                 }
-                this.persistCache();
-            }
-        }
+                if (snapshots.some(({bill}) => ["pending", "saved"].includes(bill.submission?.status))) {
+                    await this._syncCompletedDrafts();
+                } else if (previous !== this._cachePayloadSnapshot().payloadText) {
+                    this.persistCache();
+                }
+                return found;
+            } catch { /* Keep ambiguous attempts locked while the branch is unavailable. */ }
+        })();
+        try { return await this._branchRefreshPromise; }
+        finally { this._branchRefreshPromise = null; }
     }
 
     async submitCurrentBill() {
+        if (this.state.draftCacheAccessBlocked) return;
         const bill = this.currentBill;
         if (!bill || this.state.submitting || this.state.branchEditInFlight) {
             return;
@@ -4091,7 +4430,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
-        if (bill.submission?.status === "unknown") {
+        if (bill.submission?.status === "unknown" || bill.submission?.unresolved) {
             await this._submitBillInternal(bill);
             return;
         }
@@ -4106,8 +4445,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         this.state.submitting = true;
-        const storeId = bill.header?.store_id;
-        bill.submission = {...bill.submission, status: "unknown", attempted: true,
+        bill.submission = {...bill.submission, attempted: true, unresolved: true, in_progress: true,
             version: (bill.submission?.version || 0) + 1, message: _t("Checking branch submission...")};
         this.persistCache();
         try {
@@ -4135,20 +4473,19 @@ class AbSalesPosAction extends Component {
                     return;
                 }
                 this.notification.add(_t("Submitted to branch invoice ID %(id)s", {id: result.branch_header_id}), {type: "success"});
-                this._branchCompleting = true;
-                try { this.removeBill(bill.id); } finally { this._branchCompleting = false; }
-                if (storeId) this.createNewBill(storeId);
+                await this._syncCompletedDrafts();
                 return;
             }
             throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
         } catch (err) {
-            const foundTokens = await this.refreshBranchSubmissions();
+            const foundTokens = await this.refreshBranchSubmissions({force: true});
             const failureName = err?.data?.name || err?.response?.data?.name || "";
             if (/odoo.exceptions.(UserError|ValidationError)/.test(failureName) &&
                 Array.isArray(foundTokens) && !foundTokens.includes(bill.header.pos_client_token)) {
                 // The local RPC completed with a validation error and an
                 // authoritative local read confirms that it stored no bill.
-                bill.submission = {...bill.submission, status: "prepending", attempted: false};
+                bill.submission = {...bill.submission, status: "prepending", attempted: false,
+                    unresolved: false, in_progress: false};
                 this.persistCache();
             }
             const message = this._getRpcErrorMessage(err);
@@ -4161,7 +4498,9 @@ class AbSalesPosAction extends Component {
                     : "Submit failed";
             this._openSubmitErrorDialog(message, title);
         } finally {
+            bill.submission = {...bill.submission, in_progress: false};
             this.state.submitting = false;
+            this.persistCache();
         }
     }
 

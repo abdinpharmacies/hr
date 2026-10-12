@@ -5335,3 +5335,249 @@ msgstr ""
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "The branch submission response could not be confirmed. Use Retry."
 msgstr "تعذر تأكيد نتيجة الإرسال إلى الفرع. استخدم إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "A valid employee session is required for draft bills."
+msgstr "يلزم تسجيل دخول صالح للموظف لاستخدام مسودات الفواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"All %s draft slots are occupied. Complete or remove a draft to create a "
+"bill."
+msgstr ""
+"جميع خانات المسودات البالغ عددها %s مشغولة. أكمل مسودة أو أزلها لإنشاء "
+"فاتورة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch code:"
+msgstr "كود الفرع:"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__cache_revision
+msgid "Cache Revision"
+msgstr "إصدار ذاكرة المسودات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Checking submission..."
+msgstr "جارٍ التحقق من الإرسال..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Choose branch"
+msgstr "اختر الفرع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Could not create a draft bill. Please reconnect and try again."
+msgstr "تعذر إنشاء مسودة فاتورة. يرجى إعادة الاتصال والمحاولة مرة أخرى."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Could not remove drafts. Your bills have been retained. Please try again."
+msgstr "تعذرت إزالة المسودات. تم الاحتفاظ بفواتيرك. يرجى المحاولة مرة أخرى."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Delete All Drafts"
+msgstr "حذف كل المسودات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Deleted %s drafts; retained %s bills."
+msgstr "تم حذف %s مسودات؛ والإبقاء على %s فواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Draft cache could not be synchronized. Your local bills are retained; "
+"reconnect before creating or removing drafts."
+msgstr ""
+"تعذرت مزامنة ذاكرة المسودات. تم الاحتفاظ بفواتيرك المحلية؛ أعد الاتصال قبل "
+"إنشاء المسودات أو إزالتها."
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft cache is busy. Please try again."
+msgstr "ذاكرة مسودات الفواتير مشغولة. يرجى المحاولة مرة أخرى."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "Drafts changed in another tab. Reload and try again."
+msgstr "تغيرت المسودات في علامة تبويب أخرى. أعد التحميل والمحاولة مرة أخرى."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Empty"
+msgstr "فارغة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Empty:"
+msgstr "فارغة:"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "Invalid draft cache payload."
+msgstr "بيانات ذاكرة مسودات الفواتير غير صالحة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Locked"
+msgstr "مقفلة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Locked bill"
+msgstr "فاتورة مقفلة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Locked bills"
+msgstr "الفواتير المقفلة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Locked:"
+msgstr "المقفلة:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No stores available."
+msgstr "لا توجد فروع متاحة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Ready:"
+msgstr "جاهزة:"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__removed_bill_ids
+msgid "Removed Bill"
+msgstr "الفواتير المحذوفة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Slot"
+msgstr "الخانة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Slot %s: Empty. Choose a branch."
+msgstr "الخانة %s: فارغة. اختر الفرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__slot_store_ids
+msgid "Slot Store"
+msgstr "فرع الخانة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "The draft bill branch does not match its invoice."
+msgstr "فرع مسودة الفاتورة لا يطابق فرع الفاتورة المسجلة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "These bills are retained. Complete or remove a draft to free a slot."
+msgstr "تم الاحتفاظ بهذه الفواتير. أكمل مسودة أو أزلها لإتاحة خانة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid ""
+"These bills do not use draft slots. Check their status or retry the "
+"submission."
+msgstr ""
+"هذه الفواتير لا تشغل خانات المسودات. تحقق من حالتها أو أعد محاولة الإرسال."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Used"
+msgstr "مستخدمة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Used:"
+msgstr "مستخدمة:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Waiting for a slot"
+msgstr "في انتظار خانة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "You cannot access another employee's draft bill."
+msgstr "لا يمكنك الوصول إلى مسودة فاتورة موظف آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "You cannot access the branch of this draft bill."
+msgstr "ليس لديك صلاحية الوصول إلى فرع مسودة الفاتورة هذه."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Employee POS session is missing or expired."
+msgstr "جلسة نقطة البيع للموظف مفقودة أو منتهية الصلاحية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "This employee session belongs to another user."
+msgstr "جلسة الموظف هذه تخص مستخدماً آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Employee POS profile is missing."
+msgstr "ملف نقطة البيع للموظف غير موجود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Sign in again to access draft bills."
+msgstr "سجّل الدخول مجدداً للوصول إلى مسودات الفواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Retry draft sync"
+msgstr "إعادة محاولة مزامنة المسودات"
