@@ -33,7 +33,7 @@ Files changed:
 - ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
-## feef0a29743757b4489f9f39ffcb912cfbe165cf - emadco88 - 2026-10-12
+## f95f158b6856eef96b4c0d439003dcc21512aef7 - emadco88 - 2026-10-12
 
 Original commit subject: ab_sales: add configurable POS draft slots and fix submission recovery
 
@@ -71,7 +71,9 @@ Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 - ab_sales/changelog.d/2026-10-12-draft-slots.md
 
-## Current changes before commit:
+## 148b8cf0767dcc9279dd791142ff861fc2346888 - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales/ UPD remove redundent create new bill button, as you can create new bill by clicking the empty slot, or you can use ready slot
 
 User-facing changes:
 - Remove the redundant sidebar New Bill / + button in expanded and collapsed layouts. Create bills by selecting a numbered Empty slot.
@@ -87,4 +89,31 @@ Verification:
 Files changed:
 - ab_sales/static/src/pos/pos_action.xml
 - ab_sales/static/src/pos/pos_action.scss
+- ab_sales/changelog.d/2026-10-12-draft-slots.md
+
+## Current changes before commit:
+
+User-facing changes:
+- Open New Bill / Restore Draft tabs from an empty slot. Restore one saved draft into the clicked slot without changing its identity or opening unrelated drafts.
+- Show saved draft branch, customer, items, total, update time and lock status. Prevent duplicate restoration of already-open bills; provide confirmed individual and bulk deletion with protected invoices retained.
+- Keep automatic saving while separating per-tab workspaces from the shared saved draft pool. Reload resumes the tab's local bills; other saved bills are opened explicitly through the restore dialog.
+- Remove storage-event blanket locks and save/response feedback. Save changed bills, preserve typing during requests, and retain local drafts on failures or capacity rejection without a retry loop.
+- Keep submission safety signals, deletion tombstones, branch/employee scope, server slot limits and own-bill completion recovery. Remote deletion of another bill preserves the selected bill's inputs.
+- Add scoped single-draft restore validation and completion replacement identifiers to cache responses; no schema changes, hooks or external database writes.
+- Add English source labels and Arabic translations in both catalogs, including accessible deletion tooltips.
+
+Verification:
+- 13 focused frontend checks passed for save acknowledgment, in-flight edits, selective restore, duplicate prevention, independent slot mapping, failures, session changes, deletion and completion safety.
+- Eight rollback-only backend checks passed for restore identity, protected submissions, bulk deletion, tombstones, stale revisions, capacity and branch/user/employee access boundaries.
+- Seven English browser scenarios and an Arabic RTL dialog check passed on `codex_pos_lifecycle_clean_20261012`; no browser errors. Multi-tab verification confirmed no automatic pulls or repeated save loop. External submission was blocked during English browser tests.
+- Targeted `ab_sales` upgrades completed on the isolated database; logs retain the pre-existing unavailable `ab_hr_effects` dependency report. No production database upgrade or live sale was performed.
+- Exported the Odoo 19 module POT, appended missing Arabic entries without rewriting unrelated translations, and passed both `msgfmt --check-format` checks. English/Arabic menu differences and Arabic dialog labels/tooltips were verified at runtime.
+- Python/JavaScript/XML parsing and `git diff --check` passed. Test harnesses and reports remain outside the production addon under `/opt/playwright/tasks/replica_addons/manual-draft-restore/` and `/opt/playwright/artifacts/replica_addons/manual-draft-restore/`.
+
+Files changed:
+- ab_sales/models/ab_sales_pos_draft_slots.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-10-12-draft-slots.md
