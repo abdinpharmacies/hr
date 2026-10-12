@@ -201,11 +201,18 @@ class LocalSales(models.Model):
             try:
                 with self.env.cr.savepoint():
                     config = client._config(store)
-                    for bill in bills.sudo():
-                        target = {'_branch_db_serial': config.db_serial, '_branch_rpc_url': config.rpc_url,
-                                  '_branch_rpc_db': config.rpc_db, '_branch_store_serial': int(config.store_id.eplus_serial)}
-                        if any((bill.branch_submission_payload or {}).get(name) != value for name, value in target.items()):
-                            raise UserError(_('The branch database changed. Reconcile the original request before retrying.'))
+                    target = {'_branch_db_serial': config.db_serial, '_branch_rpc_url': config.rpc_url,
+                              '_branch_rpc_db': config.rpc_db, '_branch_store_serial': int(config.store_id.eplus_serial)}
+                    mismatched = bills.sudo().filtered(lambda bill: any(
+                        (bill.branch_submission_payload or {}).get(name) != value
+                        for name, value in target.items()))
+                    if mismatched:
+                        errors.append('%s [%s]: %s' % (
+                            store.display_name, ', '.join(map(str, sorted(mismatched.ids))),
+                            _('The branch database changed. Reconcile the original request before retrying.')))
+                        bills -= bills.browse(mismatched.ids)
+                    if not bills:
+                        continue
                     by_token = {bill.pos_client_token: bill for bill in bills}
                     tokens = sorted(by_token)
                     for offset in range(0, len(tokens), 200):
