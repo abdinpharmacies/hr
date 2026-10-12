@@ -1029,3 +1029,115 @@ class TestSupplierClaimCycle(TransactionCase):
         with self.assertRaises(UserError), self.env.cr.savepoint():
             popup.action_confirm()
         self.assertEqual(len(claim.exception_history_ids), 1)
+
+    def test_delivery_contacts_persist_and_are_claim_specific(self):
+        contacts = {
+            'delivery_representative_name': 'Company representative',
+            'delivery_representative_phone': '+20 (100) 123-4567',
+        }
+        claim = self.Claim.with_user(self.users['user']).create({**self.values(), **contacts})
+        claim.invalidate_recordset(list(contacts))
+        self.assertEqual({name: claim[name] for name in contacts}, contacts)
+        other = self.claim()
+        self.assertFalse(other.delivery_representative_name)
+        self.assertFalse(other.delivery_representative_phone)
+        duplicate = claim.copy()
+        self.assertFalse(duplicate.delivery_representative_name)
+        self.assertFalse(duplicate.delivery_representative_phone)
+        claim.write(self.values(cash=True))
+        self.assertEqual({name: claim[name] for name in contacts}, contacts)
+        # Both populated and empty contacts survive the full non-cash workflow.
+        claim.write({'payment_nature': 'bank_transfer'})
+        for record in (claim, other):
+            record.action_submit()
+            for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+                self.decide(record, department)
+            record.action_close()
+        for role in self.roles:
+            values = claim.with_user(self.users[role]).read(list(contacts))[0]
+            self.assertEqual({name: values[name] for name in contacts}, contacts)
+        self.assertFalse(other.delivery_representative_name)
+        self.assertFalse(other.delivery_representative_phone)
+
+    def test_delivery_contacts_role_and_stage_permissions(self):
+        names = ('delivery_representative_name', 'delivery_representative_phone')
+        editors = (self.users['user'], self.users['admin'], self.system)
+        for user in editors:
+            claim = self.Claim.with_user(user).create({
+                **self.values(), names[0]: 'Initial', names[1]: '010 1234 5678',
+            })
+            for editor in editors:
+                claim.with_user(editor).write(dict.fromkeys(names, 'Draft correction'))
+            for role in self.roles:
+                if role in ('user', 'admin'):
+                    continue
+                for name in names:
+                    with self.assertRaises(AccessError), self.env.cr.savepoint():
+                        claim.with_user(self.users[role]).write({name: 'Unauthorized'})
+                with self.assertRaises(AccessError), self.env.cr.savepoint():
+                    self.Claim.with_user(self.users[role]).create({**self.values(), names[0]: 'Unauthorized'})
+            claim.action_submit()
+            for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
+                for editor in (*editors, self.users[department]):
+                    for name in names:
+                        with self.assertRaises(AccessError), self.env.cr.savepoint():
+                            claim.with_user(editor).write({name: 'Submitted correction'})
+                self.decide(claim, department, 'rejected', reason='Correct claim')
+                for editor in editors:
+                    claim.with_user(editor).write(dict.fromkeys(names, 'Returned correction'))
+                for name in names:
+                    with self.assertRaises(AccessError), self.env.cr.savepoint():
+                        claim.with_user(self.users[department]).write({name: 'Unauthorized'})
+                claim.action_submit()
+                self.decide(claim, department)
+            for editor in editors:
+                with self.assertRaises(AccessError), self.env.cr.savepoint():
+                    claim.with_user(editor).write({names[0]: 'Ready correction'})
+            claim.action_close()
+            for editor in editors:
+                for name in names:
+                    with self.assertRaises(UserError), self.env.cr.savepoint():
+                        claim.with_user(editor).write({name: 'Closed correction'})
+            self.assertEqual(tuple(claim[name] for name in names), ('Returned correction',) * 2)
+
+    def test_delivery_contact_views_and_translations(self):
+        from odoo.tools.safe_eval import safe_eval
+        names = ('delivery_representative_name', 'delivery_representative_phone')
+        states = dict(self.Claim._fields['state'].selection)
+        for name in names:
+            field = self.Claim._fields[name]
+            self.assertTrue(field.store)
+            self.assertFalse(field.required)
+            self.assertFalse(field.copy)
+        for role, user in [*self.users.items(), ('admin', self.system)]:
+            for lang in ('en_US', 'ar_001'):
+                model = self.Claim.with_user(user).with_context(lang=lang)
+                form = etree.fromstring(model.get_view(
+                    view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id,
+                    view_type='form')['arch'])
+                listing = etree.fromstring(model.get_view(
+                    view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_tree').id,
+                    view_type='list')['arch'])
+                labels = model.fields_get(list(names))
+                for name, english, arabic in (
+                        (names[0], 'Company Representative Name', 'اسم مندوب الشركة'),
+                        (names[1], 'Company Representative Phone', 'رقم هاتف مندوب الشركة')):
+                    self.assertEqual(labels[name]['string'], english if lang == 'en_US' else arabic)
+                    nodes = form.xpath('//group[@name="claim_details"]/field[@name="%s"]' % name)
+                    self.assertEqual(len(nodes), 1)
+                    node = nodes[0]
+                    for state in states:
+                        for active in (True, False):
+                            values = {'state': state, 'active': active}
+                            for ancestor in [node, *node.iterancestors()]:
+                                self.assertFalse(safe_eval(ancestor.get('invisible', 'False'), values))
+                            expected = not (role in ('user', 'admin') and active
+                                            and state in ('draft', 'returned_secretarial'))
+                            self.assertEqual(bool(safe_eval(node.get('readonly', 'False'), values)), expected)
+                    columns = listing.xpath('//list/field[@name="%s"]' % name)
+                    self.assertEqual(len(columns), 1)
+                    self.assertEqual(columns[0].get('optional'), 'hide')
+                    self.assertEqual(columns[0].get('readonly'), 'True')
+                    if name.endswith('phone'):
+                        self.assertEqual(node.get('widget'), 'phone')
+                        self.assertEqual(columns[0].get('widget'), 'phone')

@@ -18,6 +18,10 @@
             <field name="payment_nature" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
           </group>
           <group name="claim_details" string="Claim Details">
+            <field name="delivery_representative_name" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="delivery_representative_name" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="delivery_representative_phone" widget="phone" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+            <field name="delivery_representative_phone" widget="phone" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
             <field name="num_of_invoice" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="num_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="amount_of_check" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="amount_of_check" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="area" readonly="state not in ('draft', 'returned_secretarial') or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="area" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
@@ -47,6 +51,8 @@
       <xpath expr="//field[@name='supplier_id']" position="after">
         <field name="tax_classification" optional="hide"/>
         <field name="section" optional="hide"/>
+        <field name="delivery_representative_name" optional="hide" readonly="True"/>
+        <field name="delivery_representative_phone" optional="hide" readonly="True" widget="phone"/>
       </xpath>
     </field>
   </record>

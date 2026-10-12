@@ -59,6 +59,8 @@ class SupplierClaimCycle(models.Model):
     rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True,
                                             copy=False)
     rejection_reason = fields.Text(readonly=True, copy=False)
+    delivery_representative_name = fields.Char(string='Company Representative Name', copy=False)
+    delivery_representative_phone = fields.Char(string='Company Representative Phone', copy=False)
     secretarial_notes = fields.Text()
     # Inline binary storage protects evidence from direct ir.attachment mutations.
     attachment = fields.Binary(string='Attachment', attachment=False, copy=False)
@@ -240,7 +242,8 @@ class SupplierClaimCycle(models.Model):
     def create(self, vals_list):
         self._require_role('user')
         allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'num_of_invoice',
-                   'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment'}
+                   'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
+                   'delivery_representative_name', 'delivery_representative_phone'}
         defaults = dict(state='draft', user_id=self.env.uid, review_round=0,
                         resume_stage=False,
                         rejection_department=False, rejection_reason=False, active=True, attachment=False,
@@ -285,6 +288,7 @@ class SupplierClaimCycle(models.Model):
             raise UserError(_('Closed or archived claims cannot be changed.'))
         correction_fields = {
             'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
+            'delivery_representative_name', 'delivery_representative_phone',
         }
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):

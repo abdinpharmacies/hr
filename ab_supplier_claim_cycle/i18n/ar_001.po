@@ -1481,3 +1481,13 @@ msgstr "تأجيل المطالبة"
 #, python-format
 msgid "The claim has changed. Close this dialog and open it again."
 msgstr "تم تغيير المطالبة. أغلق هذه النافذة وافتحها مرة أخرى."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__delivery_representative_name
+msgid "Company Representative Name"
+msgstr "اسم مندوب الشركة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__delivery_representative_phone
+msgid "Company Representative Phone"
+msgstr "رقم هاتف مندوب الشركة"
