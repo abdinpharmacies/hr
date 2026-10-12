@@ -60,7 +60,7 @@
                             title="Delete All Drafts"
                             aria-label="Delete All Drafts"
                             t-on-click="removeAllBills"
-                            t-att-disabled="state.submitting || state.draftDeleting || state.draftCreating || !state.draftCacheReady">
+                            t-att-disabled="state.submitting || state.draftManaging || state.draftDeleting || state.draftCreating || !state.draftCacheReady">
                         <i class="fa fa-trash o_ab_sales_pos_remove_all_icon ab_pos_sidebar_btn_remove_all_icon"
                            aria-hidden="true"/>
                         <span class="o_ab_sales_pos_remove_all_text ab_pos_sidebar_btn_remove_all_text">Delete All Drafts</span>
@@ -81,12 +81,12 @@
                                 <t t-call="ab_sales.PosDraftSlotBill"/>
                             </t>
                             <button t-else="" type="button" class="ab_pos_draft_slot_empty"
-                                    t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting"
+                                    t-att-disabled="!state.draftCacheReady or state.draftManaging or state.draftCreating or state.draftDeleting"
                                     t-on-click="() => openNewBillDialog(slot.number)"
                                     t-att-aria-label="_draftSlotLabel(slot.number)">
                                 <span class="ab_pos_draft_slot_watermark" aria-hidden="true" t-esc="slot.number"/>
                                 <span class="ab_pos_draft_slot_available">Empty</span>
-                                <span class="ab_pos_draft_slot_hint">Choose branch</span>
+                                <span class="ab_pos_draft_slot_hint">Create or restore</span>
                             </button>
                         </t>
                     </div>
@@ -119,7 +119,7 @@
                             <p class="ab_pos_blank_message">Create a new cached bill or pick one from the left panel.</p>
                             <button class="btn btn-primary ab_pos_blank_btn_create_bill" type="button"
                                     t-on-click="openNewBillDialog"
-                            t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting or !availableDraftSlots">
+                            t-att-disabled="!state.draftCacheReady or state.draftManaging or state.draftCreating or state.draftDeleting or !availableDraftSlots">
                                 Create Bill
                             </button>
                         </div>
@@ -515,31 +515,60 @@
     </t>
 
     <t t-name="ab_sales.PosStoreDialog">
-        <Dialog title="'Select Store'" size="'md'">
-            <div class="d-flex flex-column gap-3">
-                <div>
-                    <label class="form-label">Store</label>
-                    <ABMany2one
-                            relation="'ab_store'"
-                            value="state.store"
-                            update="onStoreUpdate"
-                            domain="storeDomain"
-                            placeholder="'Select store...'"
-                            canCreate="false"
-                            canCreateEdit="false"
-                            canQuickCreate="false"
-                            canOpen="false"
-                            canWrite="true"
-                            string="'Store'"
-                    />
+        <Dialog title="title" size="'lg'">
+            <div class="ab_pos_draft_manager d-flex flex-column gap-3">
+                <div class="nav nav-tabs" role="tablist">
+                    <button type="button" role="tab" class="nav-link" t-att-class="state.tab === 'new' ? 'active' : ''"
+                            t-att-aria-selected="state.tab === 'new' ? 'true' : 'false'" t-att-disabled="state.busy"
+                            t-on-click="() => state.tab = 'new'">New Bill</button>
+                    <button type="button" role="tab" class="nav-link" t-att-class="state.tab === 'restore' ? 'active' : ''"
+                            t-att-aria-selected="state.tab === 'restore' ? 'true' : 'false'" t-att-disabled="state.busy"
+                            t-on-click="showDrafts"><i class="fa fa-history me-1" aria-hidden="true"/>Restore Draft</button>
                 </div>
-                <div class="d-flex justify-content-end gap-2">
-                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
-                    <button class="btn btn-primary" type="button" t-on-click="confirm" t-att-disabled="!state.store">
-                        Create
-                    </button>
+                <div t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+                <div t-if="state.busy" role="status"><i class="fa fa-spinner fa-spin me-1" aria-hidden="true"/>Loading drafts...</div>
+                <div t-if="state.tab === 'new'">
+                    <label class="form-label">Store</label>
+                    <ABMany2one relation="'ab_store'" value="state.store" update="onStoreUpdate"
+                        domain="storeDomain" placeholder="'Select store...'" canCreate="false"
+                        canCreateEdit="false" canQuickCreate="false" canOpen="false" canWrite="true" string="'Store'"/>
+                    <button class="btn btn-primary mt-3" type="button" t-on-click="confirm"
+                            t-att-disabled="!state.store || state.busy">Create</button>
+                </div>
+                <div t-else="" class="d-flex flex-column gap-2">
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" t-on-click="showDrafts" t-att-disabled="state.busy">Refresh</button>
+                        <button type="button" class="btn btn-outline-danger" t-on-click="() => deleteDrafts()"
+                                t-att-disabled="state.busy || !state.bills.length">Delete All Drafts</button>
+                    </div>
+                    <p t-if="!state.busy &amp;&amp; !state.bills.length">No saved drafts.</p>
+                    <div t-if="state.bills.length" class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead><tr><th>Draft</th><th>Branch</th><th>Customer</th><th>Items</th><th>Total</th><th>Updated</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody>
+                                <tr t-foreach="state.bills" t-as="bill" t-key="bill.id" t-att-data-draft-id="bill.id">
+                                    <td t-esc="bill.local_number || bill.id"/>
+                                    <td t-esc="bill.header.store_name || bill.header.store_code || '-'"/>
+                                    <td t-esc="bill.header.customer_name || bill.header.bill_customer_name || '-'"/>
+                                    <td t-esc="(bill.lines || []).length"/>
+                                    <td t-esc="props.draftManager.formatPrice(bill.total_net_amount || bill.total_price || 0)"/>
+                                    <td t-esc="props.draftManager.formatDate(bill.updated_at || bill.created_at)"/>
+                                    <td t-esc="draftState(bill)"/>
+                                    <td class="text-nowrap">
+                                        <button type="button" class="btn btn-sm btn-primary me-1" t-on-click="() => restore(bill)"
+                                                t-att-disabled="!canRestore(bill)">Restore</button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Delete Draft" aria-label="Delete Draft"
+                                                t-on-click="() => deleteDrafts(bill)" t-att-disabled="state.busy || props.draftManager.locked(bill)">
+                                            <i class="fa fa-trash" aria-hidden="true"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+            <t t-set-slot="footer"><button class="btn btn-secondary" type="button" t-on-click="cancel" t-att-disabled="state.busy">Close</button></t>
         </Dialog>
     </t>
 
