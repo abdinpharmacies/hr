@@ -1114,7 +1114,8 @@ class AbdinSalesHeader(models.Model):
                                 raise UserError(_("The invoice identity and submission state cannot be changed manually."))
                 # Ignore harmless no-op writes, including the existing HR audit wrapper.
                 if (rec.status in ('unknown', 'pending', 'saved') or rec.submission_phase != 'idle') and any(
-                    rec[name] != value for name, value in vals.items()
+                    (rec[name].id if rec._fields[name].type == 'many2one' else rec[name]) != value
+                    for name, value in vals.items()
                     if not (rec.status in ('pending', 'saved') and name.startswith('pos_hr_'))
                 ):
                     rec._check_submission_editable()

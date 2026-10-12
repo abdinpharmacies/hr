@@ -884,6 +884,10 @@ class AbSalesPosAction extends Component {
 
         this.state = useState({
             bills: [],
+            draftLimit: 10,
+            draftSlotBranches: {},
+            draftCacheReady: false,
+            draftCreating: false,
             draftDeleting: false,
             draftDiscardEligibility: {},
             selectedId: null,
@@ -954,6 +958,8 @@ class AbSalesPosAction extends Component {
         this._cacheSaveQueued = false;
         this._cacheSaveStopped = false;
         this._lastServerCachePayload = "";
+        this._draftCacheRevision = 0;
+        this._removedDraftIds = new Set();
         this._barcodeActive = false;
         this._barcodeBuffer = "";
         this._lineFocusObserver = null;
@@ -1079,14 +1085,19 @@ class AbSalesPosAction extends Component {
         useExternalListener(window, "keydown", (ev) => this.onKeydown(ev), {capture: true});
         useExternalListener(window, "resize", () => this._syncWindowToViewport());
         useExternalListener(window, "pagehide", () => this._saveCacheToServer());
-        useExternalListener(window, "focus", () => this.refreshSubmissionStates());
+        useExternalListener(window, "focus", () => {
+            if (!this.state.draftCacheReady) this._scheduleCacheSaveToServer(0);
+            this.refreshSubmissionStates();
+        });
+        useExternalListener(window, "online", () => this._scheduleCacheSaveToServer(0));
         useExternalListener(window, "storage", (ev) => {
             if (ev.key === this._localCacheKey()) {
                 this._submissionRevision = (this._submissionRevision || 0) + 1;
                 for (const bill of this.state.bills) {
                     bill.submission_checking = true;
                 }
-                this.refreshSubmissionStates();
+                this._lastServerCachePayload = "";
+                this._scheduleCacheSaveToServer(0);
             }
         });
         useExternalListener(document, "visibilitychange", () => {
@@ -1202,6 +1213,7 @@ class AbSalesPosAction extends Component {
     _writeLocalCache() {
         try {
             localStorage.setItem(this._localCacheKey(), JSON.stringify(this.state.bills || []));
+            localStorage.setItem(`${this._localCacheKey()}_slot_branches`, JSON.stringify(this.state.draftSlotBranches || {}));
         } catch {
             // Browser storage is only a fallback; server cache remains authoritative.
         }
@@ -1239,7 +1251,12 @@ class AbSalesPosAction extends Component {
                 }
             }
         }
-        return [...byKey.values()].sort((a, b) => this._billCacheUpdatedAt(b) - this._billCacheUpdatedAt(a));
+        return [...byKey.values()].sort((a, b) => {
+            const difference = this._billCacheUpdatedAt(b) - this._billCacheUpdatedAt(a);
+            if (difference) return difference;
+            const first = this._billCacheIdentity(a), second = this._billCacheIdentity(b);
+            return first < second ? -1 : first > second ? 1 : 0;
+        });
     }
 
     _cachePayloadSnapshot() {
@@ -1253,51 +1270,190 @@ class AbSalesPosAction extends Component {
         };
     }
 
+    _draftScopeArgs() {
+        return {
+            cache_key: this.cacheKey,
+            employee_id: this._posDraftEmployeeId() || false,
+            pos_hr_session_token: this._posDraftSessionToken(),
+        };
+    }
+
+    _slotBillLocked(bill) {
+        return !!bill && (bill.submission_checking || bill.submission_in_progress ||
+            bill.submission_can_edit === false || bill.submission_status === "unknown");
+    }
+
+    _assignLocalDraftSlots() {
+        const used = new Set();
+        const editable = this.state.bills.filter((bill) =>
+            !this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status));
+        for (const bill of this.state.bills) {
+            if (!editable.includes(bill)) {
+                if (bill.slot_number) bill.previous_slot_number = bill.slot_number;
+                bill.slot_number = null;
+            }
+        }
+        for (const bill of editable) {
+            if (!Number.isInteger(bill.slot_number) || bill.slot_number < 1 ||
+                bill.slot_number > this.state.draftLimit || used.has(bill.slot_number)) {
+                bill.slot_number = null;
+            } else {
+                used.add(bill.slot_number);
+            }
+        }
+        for (const bill of editable) {
+            if (!bill.slot_number) {
+                for (let number = 1; number <= this.state.draftLimit; number++) {
+                    if (!used.has(number)) {
+                        bill.slot_number = number;
+                        used.add(number);
+                        break;
+                    }
+                }
+            }
+            bill.slot_waiting = !bill.slot_number;
+        }
+    }
+
+    get draftSlots() {
+        const slots = Array.from({length: this.state.draftLimit}, (_, index) => ({number: index + 1, bill: null, branch: this.state.draftSlotBranches[String(index + 1)] || null}));
+        for (const bill of this.state.bills) {
+            if (!this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status) &&
+                Number.isInteger(bill.slot_number) && slots[bill.slot_number - 1]) {
+                slots[bill.slot_number - 1].bill = bill;
+            }
+        }
+        return slots;
+    }
+
+    get emptyDraftSlots() {
+        return this.draftSlots.filter((slot) => this.draftSlotState(slot.bill) === "empty");
+    }
+
+    get availableDraftSlots() {
+        return this.emptyDraftSlots.length;
+    }
+
+    draftSlotState(bill) {
+        if (!bill) return "empty";
+        const defaults = new Set(["store_id", "store_name", "store_code", "store_ip", "pos_client_token",
+            "customer_mode",
+            "contract_total_invoice_discount_source", "delivery_ui_version"]);
+        const hasData = bill.lines?.length || bill.promo?.applied_id || bill.promo?.selected_id ||
+            Object.entries(bill.header || {}).some(([key, value]) => !defaults.has(key) &&
+                (typeof value === "string" ? value.trim().length : !!value));
+        return hasData ? "used" : (bill.header?.store_id ? "ready" : "empty");
+    }
+
+    draftSlotStateLabel(bill) {
+        const state = this.draftSlotState(bill);
+        return state === "ready" ? _t("Ready") : state === "used" ? _t("Used") : _t("Empty");
+    }
+
+    get readyDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "ready").length;
+    }
+
+    get usedDraftSlots() {
+        return this.draftSlots.filter((slot) => slot.bill && this.draftSlotState(slot.bill) === "used").length;
+    }
+
+    get lockedDraftBills() {
+        return this.state.bills.filter((bill) => this._slotBillLocked(bill));
+    }
+
+    get waitingDraftBills() {
+        return this.state.bills.filter((bill) => !this._slotBillLocked(bill) && !bill.slot_number &&
+            !["pending", "saved"].includes(bill.submission_status));
+    }
+
+    _draftSlotLabel(number) {
+        return _t("Slot %s: Empty. Choose a branch.", number);
+    }
+
+    _draftLimitWarning() {
+        this.notification.add(_t("All %s draft slots are occupied. Complete or remove a draft to create a bill.",
+            this.state.draftLimit), {type: "warning"});
+    }
+
+    _applyDraftCacheResult(result, snapshot = null) {
+        const previousSelectedId = this.state.selectedId;
+        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : 10;
+        this.state.draftSlotBranches = result?.slot_branches || {};
+        this._draftCacheRevision = result?.revision || 0;
+        this._removedDraftIds = new Set(result?.removed_ids || []);
+        const rejected = new Set(result?.rejected_ids || []);
+        const serverBills = Array.isArray(result?.bills) ? result.bills : [];
+        // Keep edits made while the RPC was running; server tombstones always win.
+        const sentById = new Map((snapshot?.bills || []).map((bill) => [bill.id, JSON.stringify(bill)]));
+        const newerLocal = snapshot ? this.state.bills.filter((bill) =>
+            JSON.stringify(bill) !== sentById.get(bill.id)) : [];
+        const bills = this._mergeBillCaches(serverBills, newerLocal).filter((bill) =>
+            !this._removedDraftIds.has(bill.id) && !rejected.has(bill.id));
+        const currentById = new Map(this.state.bills.map((bill) => [bill.id, bill]));
+        this.state.bills = bills.map((bill) => {
+            const current = currentById.get(bill.id);
+            if (!current) return this._normalizeBill(bill);
+            if (current === bill) return current;
+            const header = current.header;
+            const lineById = new Map((current.lines || []).map((line) => [line.id, line]));
+            const lines = (bill.lines || []).map((line) => {
+                const existing = lineById.get(line.id);
+                return existing ? Object.assign(existing, line) : line;
+            });
+            Object.assign(header, bill.header);
+            Object.assign(current, bill, {header, lines});
+            return current;
+        });
+        if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+            this.state.selectedId = this.state.bills.some((bill) => bill.id === result?.selected_id)
+                ? result.selected_id : (this.state.bills[0]?.id || null);
+        }
+        this._assignLocalDraftSlots();
+        if (previousSelectedId !== this.state.selectedId && this.draftSlotState(this.currentBill) === "ready") {
+            this.state.productQuery = "";
+            this.state.productResults = [];
+            this.state.lastCustomerInput = "";
+            this.state.lastCustomerInputFallback = "";
+            this._syncInputsForBill(this.currentBill);
+        }
+        this.state.draftCacheReady = true;
+        this._lastServerCachePayload = JSON.stringify({bills: serverBills, selected_id: result?.selected_id || ""});
+        this._writeLocalCache();
+        if (rejected.size) this._draftLimitWarning();
+    }
+
     async loadCache() {
         const localBills = this._readLocalCache();
-        let serverBills = [];
-        let serverSelectedId = "";
-        let serverLoaded = false;
+        const scope = this._localCacheKey();
+        this.state.draftCacheReady = false;
+        this.state.bills = [];
+        this.state.selectedId = null;
+        this.state.draftSlotBranches = {};
+        this.state.draftStoreIds = null;
+        this._removedDraftIds = new Set();
+        this._draftCacheRevision = 0;
+        this.state.draftDiscardEligibility = {};
         try {
             const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], {
-                cache_key: this.cacheKey,
-                employee_id: this._posDraftEmployeeId() || false,
-                pos_hr_session_token: this._posDraftSessionToken(),
+                ...this._draftScopeArgs(), bills: localBills,
             });
-            serverLoaded = true;
-            serverBills = Array.isArray(result?.bills) ? result.bills : [];
-            serverSelectedId = String(result?.selected_id || "").trim();
-            this._lastServerCachePayload = JSON.stringify({
-                bills: serverBills,
-                selected_id: serverSelectedId,
-            });
+            if (scope !== this._localCacheKey()) return;
+            this.state.selectedId = result.selected_id || null;
+            this._applyDraftCacheResult(result);
         } catch {
-            serverLoaded = false;
-        }
-
-        const sourceBills = serverLoaded
-            ? this._mergeBillCaches(serverBills, localBills)
-            : localBills;
-        this.state.draftDiscardEligibility = {};
-        this.state.bills = sourceBills.map((b) => this._normalizeBill(b));
-        const hasServerSelected = serverSelectedId && this.state.bills.some((bill) => bill.id === serverSelectedId);
-        this.state.selectedId = hasServerSelected
-            ? serverSelectedId
-            : (this.state.bills[0]?.id || null);
-        for (const bill of this.state.bills) {
-            bill.submission_checking = true;
+            if (scope !== this._localCacheKey()) return;
+            try {
+                const branches = JSON.parse(localStorage.getItem(`${scope}_slot_branches`) || "{}");
+                this.state.draftSlotBranches = branches && typeof branches === "object" && !Array.isArray(branches) ? branches : {};
+            } catch { this.state.draftSlotBranches = {}; }
+            this.state.bills = localBills.map((bill) => this._normalizeBill(bill));
+            this.state.selectedId = this.state.bills[0]?.id || null;
+            this._assignLocalDraftSlots();
+            this.notification.add(_t("Draft cache could not be synchronized. Your local bills are retained; reconnect before creating or removing drafts."), {type: "warning"});
+            this._scheduleCacheSaveToServer(5000);
         }
         await this.refreshSubmissionStates();
-        this._writeLocalCache();
-
-        if (serverLoaded) {
-            const mergedPayload = this._cachePayloadSnapshot().payloadText;
-            if (mergedPayload !== this._lastServerCachePayload) {
-                this._scheduleCacheSaveToServer(0);
-            }
-        } else if (this.state.bills.length) {
-            this._scheduleCacheSaveToServer(0);
-        }
     }
 
     _defaultPosUiSettings() {
@@ -1461,6 +1617,7 @@ class AbSalesPosAction extends Component {
     }
 
     persistCache() {
+        this._assignLocalDraftSlots();
         this._writeLocalCache();
         this._scheduleCacheSaveToServer();
     }
@@ -1479,36 +1636,27 @@ class AbSalesPosAction extends Component {
     }
 
     async _saveCacheToServer({allowRetry = true} = {}) {
-        if (this._cacheSaveInFlight) {
-            if (allowRetry && !this._cacheSaveStopped) {
-                this._cacheSaveQueued = true;
-            }
+        if (this.state.draftDeleting || this.state.draftCreating || this._cacheSaveInFlight) {
+            if (allowRetry && !this._cacheSaveStopped) this._cacheSaveQueued = true;
             return;
         }
-        let snapshot;
-        try {
-            snapshot = this._cachePayloadSnapshot();
-        } catch {
-            return;
-        }
-        if (snapshot.payloadText === this._lastServerCachePayload) {
-            return;
-        }
-
+        const snapshot = this._cachePayloadSnapshot();
+        if (snapshot.payloadText === this._lastServerCachePayload) return;
+        const scope = this._localCacheKey();
         this._cacheSaveInFlight = true;
         try {
-            await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                cache_key: this.cacheKey,
-                employee_id: this._posDraftEmployeeId() || false,
-                pos_hr_session_token: this._posDraftSessionToken(),
-                bills: snapshot.payload.bills,
-                selected_id: snapshot.payload.selected_id,
+            const method = this.state.draftCacheReady ? "pos_save_draft_cache" : "pos_load_draft_cache";
+            const result = await this.orm.call("ab_sales_pos_api", method, [], {
+                ...this._draftScopeArgs(), ...snapshot.payload,
+                ...(method === "pos_save_draft_cache" ? {revision: this._draftCacheRevision} : {}),
             });
-            this._lastServerCachePayload = snapshot.payloadText;
-        } catch {
-            if (!allowRetry || this._cacheSaveStopped) {
-                return;
-            }
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot.payload);
+            if (this._cachePayloadSnapshot().payloadText !== this._lastServerCachePayload) this._cacheSaveQueued = true;
+            return result;
+        } catch (err) {
+            if (scope !== this._localCacheKey()) return;
+            if (!allowRetry || this._cacheSaveStopped) return;
             this._scheduleCacheSaveToServer(5000);
         } finally {
             this._cacheSaveInFlight = false;
@@ -1544,26 +1692,46 @@ class AbSalesPosAction extends Component {
             byId[store.id] = store;
         }
         this.state.storeById = byId;
-        if (defaultCode) {
+        if (defaultCode && this.state.stores.some((store) => store.code === defaultCode)) {
             this.state.defaultStoreCode = defaultCode;
-        } else if (allowedCodes.length === 1) {
-            this.state.defaultStoreCode = allowedCodes[0];
         } else {
-            this.state.defaultStoreCode = "";
+            this.state.defaultStoreCode = this.state.stores[0]?.code || "";
         }
     }
 
-    openNewBillDialog() {
-        if (!this.state.stores.length) {
-            this.notification.add("No stores available.", {type: "warning"});
+    async openNewBillDialog(slotNumber = null) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting) return;
+        if (!this.availableDraftSlots) {
+            this._draftLimitWarning();
             return;
         }
-        this.dialog.add(AbSalesPosStoreDialog, {
-            stores: this.state.stores,
-            defaultStoreCode: this.state.defaultStoreCode,
-            domain: this.storeDomain(),
-            onSelect: (storeId) => this.createNewBill(storeId),
-        });
+        this._requestedDraftSlot = Number.isInteger(slotNumber) ? slotNumber : this.emptyDraftSlots[0]?.number;
+        this.state.draftCreating = true;
+        const scope = this._localCacheKey();
+        try {
+            const options = await this.orm.call("ab_sales_pos_api", "pos_draft_store_options", [], {
+                pos_hr_session_token: this._posDraftSessionToken() || false,
+            });
+            if (scope !== this._localCacheKey()) return;
+            const stores = options.stores || [];
+            this.state.draftStoreIds = stores.map((store) => store.id);
+            this.state.stores = stores;
+            this.state.storeById = Object.fromEntries(stores.map((store) => [store.id, store]));
+            if (!stores.length) {
+                this.notification.add(_t("No stores available."), {type: "warning"});
+                return;
+            }
+            this.dialog.add(AbSalesPosStoreDialog, {
+                stores,
+                defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
+                domain: this.storeDomain(),
+                onSelect: (storeId) => this.createNewBill(storeId),
+            });
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally {
+            this.state.draftCreating = false;
+        }
     }
 
     openCustomerLookup() {
@@ -1793,16 +1961,35 @@ class AbSalesPosAction extends Component {
         if (this.state.allowedStoreCodes.length) {
             domain.push(["code", "in", this.state.allowedStoreCodes]);
         }
+        if (Array.isArray(this.state.draftStoreIds)) {
+            domain.push(["id", "in", this.state.draftStoreIds]);
+        }
         return domain;
     }
 
-    createNewBill(storeId) {
+    async createNewBill(storeId) {
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this._cacheSaveInFlight) return;
+        this._assignLocalDraftSlots();
+        const available = this.emptyDraftSlots;
+        if (!available.length) {
+            this._draftLimitWarning();
+            return;
+        }
+        const slotNumber = available.find((slot) => slot.number === this._requestedDraftSlot)?.number || available[0].number;
+        this._requestedDraftSlot = null;
         const store = this.state.storeById[storeId];
         if (!store) {
             return;
         }
+        const emptyBill = available.find((slot) => slot.number === slotNumber)?.bill;
+        if (emptyBill) {
+            this.selectBill(emptyBill.id);
+            await this.onStoreM2OUpdate({ id: store.id, display_name: store.name });
+            return;
+        }
         const bill = {
             id: generateId("bill"),
+            slot_number: slotNumber,
             submission_status: "draft",
             local_number: `${Date.now()}`,
             created_at: new Date().toISOString(),
@@ -1839,13 +2026,26 @@ class AbSalesPosAction extends Component {
             total_net_amount: 0,
             promo: this._defaultPromo(),
         };
-        this.state.bills.unshift(bill);
-        this.state.selectedId = bill.id;
-        this._syncInputsForBill(bill);
-        this.persistCache();
-        this.refreshStoreStatus(bill.header.store_id);
-        this.refreshCustomerInsights(bill);
-        this.searchProducts((this.state.productQuery || "").trim());
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        this.state.draftCreating = true;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
+                ...this._draftScopeArgs(), bills: [bill, ...snapshot.bills], selected_id: bill.id,
+                revision: this._draftCacheRevision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            if (this.state.bills.some((item) => item.id === bill.id)) this.selectBill(bill.id);
+        } catch {
+            this.notification.add(_t("Could not create a draft bill. Please reconnect and try again."), {type: "warning"});
+        } finally {
+            this.state.draftCreating = false;
+            if (this._cacheSaveQueued) {
+                this._cacheSaveQueued = false;
+                this._scheduleCacheSaveToServer(0);
+            }
+        }
     }
 
     _defaultPromo() {
@@ -1994,7 +2194,7 @@ class AbSalesPosAction extends Component {
     async removeBill(billId, completed = false) {
         const bill = this.state.bills.find((item) => item.id === billId);
         if (completed) {
-            this._removeCachedBills(new Set([billId]));
+            await this._syncCompletedDrafts();
             return;
         }
         if (bill) await this._deleteDrafts([bill]);
@@ -2006,6 +2206,26 @@ class AbSalesPosAction extends Component {
 
     async removeAllBills() {
         await this._deleteDrafts([...this.state.bills]);
+    }
+
+    async _syncCompletedDrafts() {
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], {
+                ...this._draftScopeArgs(), ...snapshot,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.refreshStoreStatus(this.currentBill?.header?.store_id);
+        } catch {
+            // The invoice is already confirmed. Retry cache synchronization,
+            // never report a sale failure or replay the submission.
+            this.persistCache();
+        }
     }
 
     _removeCachedBills(ids) {
@@ -2032,24 +2252,43 @@ class AbSalesPosAction extends Component {
     }
 
     async _deleteDrafts(bills) {
-        if (!bills.length || this.state.submitting || this.state.draftDeleting) return;
+        if (!bills.length || this.state.submitting || this.state.draftDeleting || this.state.draftCreating) return;
+        if (!this.state.draftCacheReady) return;
+        // Let an earlier save finish before removal; tombstones reject later stale saves.
+        if (this._cacheSaveInFlight) {
+            this.notification.add(_t("Draft cache is busy. Please try again."), {type: "info"});
+            return;
+        }
+        clearTimeout(this._cacheSaveTimer);
+        this._cacheSaveTimer = null;
         this.state.draftDeleting = true;
+        const scope = this._localCacheKey();
+        const snapshot = this._cachePayloadSnapshot().payload;
         try {
-            const revision = this._submissionRevision || 0;
-            const snapshots = new Map(bills.map((bill) => [bill, this._draftDiscardFingerprint(bill)]));
-            const verified = await this._verifyDraftDiscard(bills);
-            const removable = new Set(bills.filter((bill) =>
-                revision === (this._submissionRevision || 0) && this.state.bills.includes(bill) &&
-                snapshots.get(bill) === this._draftDiscardFingerprint(bill) &&
-                (this._plainDraftRemovable(bill) ||
-                    (this._draftDiscardCandidate(bill) && verified.has(bill.id)))
-            ).map((bill) => bill.id));
-            if (this.state.submitting) return;
-            if (removable.size) this._removeCachedBills(removable);
+            // Persist unsent edits first, so eligibility uses the current bill.
+            const saved = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
+                ...this._draftScopeArgs(), ...snapshot, revision: this._draftCacheRevision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_ids: bills.map((bill) => bill.id), revision: saved.revision,
+            });
+            if (scope !== this._localCacheKey()) return;
+            this._applyDraftCacheResult(result, snapshot);
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.searchProducts((this.state.productQuery || "").trim());
             this.notification.add(_t("Deleted %s drafts; retained %s bills.",
-                removable.size, bills.length - removable.size), {type: "info"});
+                result.deleted_ids.length, result.retained_count), {type: "info"});
+        } catch {
+            this.notification.add(_t("Could not remove drafts. Your bills have been retained. Please try again."), {type: "warning"});
         } finally {
             this.state.draftDeleting = false;
+            if (this._cacheSaveQueued) {
+                this._cacheSaveQueued = false;
+                this._scheduleCacheSaveToServer(0);
+            }
         }
     }
 
@@ -2621,7 +2860,7 @@ class AbSalesPosAction extends Component {
     async searchProducts(query) {
         const requestId = ++this._productSearchRequestId;
         const bill = this.currentBill;
-        if (!bill) {
+        if (!bill || !bill.header?.store_id) {
             this.state.productResults = [];
             this.state.selectionIndex = -1;
             this.state.loadingProducts = false;
@@ -3946,8 +4185,8 @@ class AbSalesPosAction extends Component {
         bill.number_of_products = bill.lines.length;
         bill.total_price = total;
         bill.total_net_amount = total;
-        bill.updated_at = new Date().toISOString();
         if (persist) {
+            bill.updated_at = new Date().toISOString();
             this.persistCache();
         }
     }
@@ -4031,7 +4270,7 @@ class AbSalesPosAction extends Component {
     }
 
     billEditable(bill = this.currentBill) {
-        return !!bill && !this.state.submitting && !this.state.draftDeleting && !bill.submission_checking &&
+        return !!bill && !this.state.submitting && !this.state.draftDeleting && !this.state.draftCreating && !bill.submission_checking &&
             !bill.submission_in_progress && bill.submission_can_edit !== false &&
             ["draft", "prepending", "rejected"].includes(bill.submission_status || "draft");
     }
@@ -4162,14 +4401,13 @@ class AbSalesPosAction extends Component {
                     }
                 }
             }
-            const remainingBills = this.state.bills.filter((bill) =>
-                !["pending", "saved"].includes(bill.submission_status));
-            if (remainingBills.length !== this.state.bills.length) {
-                this.state.bills = remainingBills;
+            if (this.state.bills.some((bill) => ["pending", "saved"].includes(bill.submission_status))) {
+                await this._syncCompletedDrafts();
             }
             if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
                 this.state.selectedId = this.state.bills[0]?.id || null;
             }
+            this._assignLocalDraftSlots();
             await this._refreshDraftDiscardEligibility(this.state.bills);
             if (revision !== (this._submissionRevision || 0)) return;
             if (cacheSnapshot() !== previousCache) {
@@ -4224,7 +4462,6 @@ class AbSalesPosAction extends Component {
         }
         this._submissionRevision = (this._submissionRevision || 0) + 1;
         const wasUnknown = bill.submission_status === "unknown";
-        const storeId = bill.header?.store_id;
         const payload = wasUnknown && bill.submission_payload ? bill.submission_payload : {
             header: this._buildSubmitHeader(bill),
             lines: bill.lines.map((line) => ({
@@ -4267,10 +4504,10 @@ class AbSalesPosAction extends Component {
                 return;
             }
             this._applySubmissionState(bill, result || {});
-            if (["pending", "saved"].includes(bill.submission_status) && bill.eplus_serial) {
-                this.notification.add(_t("Submitted invoice #%s", bill.eplus_serial), {type: "success"});
-                this.removeBill(bill.id, true);
-                if (storeId) this.createNewBill(storeId);
+            if (["pending", "saved"].includes(bill.submission_status)) {
+                this.notification.add(bill.eplus_serial ? _t("Submitted invoice #%s", bill.eplus_serial)
+                    : _t("Bill submitted."), {type: "success"});
+                await this.removeBill(bill.id, true);
             } else if (bill.submission_message) {
                 this._openSubmitErrorDialog(bill.submission_message,
                     bill.submission_status === "unknown" ? _t("Unknown") : _t("Submit failed"));

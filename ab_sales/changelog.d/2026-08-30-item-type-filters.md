@@ -271,7 +271,9 @@ Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
 
-## Current changes before commit:
+## d69c7c2c3adaaf4166bb66e1b9631f6a76c1f95e - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales/ FIX locking bill only on no return
 
 User-facing changes:
 - Show cache-only POS bills as Draft; retain JSON per Odoo user and POS employee without creating sales headers or lines.
