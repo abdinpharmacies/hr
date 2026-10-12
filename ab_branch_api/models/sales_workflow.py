@@ -263,6 +263,11 @@ class ReturnCursor:
     _scoped_reads = {
         'select total_bill_net from sales_trans_h where sth_id = ? and sto_id = ?',
         'select sth_flag, sto_id from sales_trans_h where sth_id=? and sto_id=?',
+        'select sth_id from sales_trans_h with (updlock, holdlock) where sth_id = ? and sto_id = ?',
+        'select std_id, itm_id, c_id, qnty, itm_unit, itm_sell, itm_cost, itm_aver_cost, itm_back, itm_nexist '
+        'from sales_trans_d where sth_id=? '
+        'and exists (select 1 from sales_trans_h h where h.sth_id = sales_trans_d.sth_id and h.sto_id = ?) '
+        'order by std_id',
     }
 
     def __init__(self, cursor, header):
