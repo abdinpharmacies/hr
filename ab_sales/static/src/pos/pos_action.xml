@@ -54,13 +54,6 @@
                                aria-hidden="true"/>
                         </button>
                     </div>
-                    <button class="btn btn-primary o_ab_sales_pos_new_btn ab_pos_sidebar_btn_new_bill" type="button"
-                            t-on-click="openNewBillDialog"
-                            t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting or !availableDraftSlots">
-                        <span class="o_ab_sales_pos_new_text ab_pos_sidebar_btn_new_bill_text">New Bill</span>
-                        <span class="o_ab_sales_pos_new_icon ab_pos_sidebar_btn_new_bill_icon"
-                              aria-hidden="true">+</span>
-                    </button>
                     <button t-if="state.bills.length"
                             class="btn btn-outline-danger o_ab_sales_pos_remove_all_btn ab_pos_sidebar_btn_remove_all"
                             type="button"

@@ -33,7 +33,9 @@ Files changed:
 - ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
-## Current changes before commit:
+## feef0a29743757b4489f9f39ffcb912cfbe165cf - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales: add configurable POS draft slots and fix submission recovery
 
 User-facing changes:
 - Configure the employee draft pool using `ab_sales.pos_draft_limit`, defaulting to 10. Reconcile browser/server caches, retain the newest eligible drafts and keep locked work outside the pool.
@@ -67,4 +69,22 @@ Files changed:
 - ab_sales/i18n/ar.po
 - ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
+- ab_sales/changelog.d/2026-10-12-draft-slots.md
+
+## Current changes before commit:
+
+User-facing changes:
+- Remove the redundant sidebar New Bill / + button in expanded and collapsed layouts. Create bills by selecting a numbered Empty slot.
+- Keep the central Create Bill button and existing branch selection, slot limits and deletion behavior.
+- Remove styles used only by the removed sidebar button. No new or changed source strings; existing Arabic translations are preserved.
+
+Verification:
+- Seven headed browser scenarios passed on the isolated database, including branch-picker cancellation, exact-slot creation, Ready/Used selection, deletion and full capacity. Sidebar button absence was verified in expanded/collapsed English and Arabic layouts; no browser errors occurred.
+- XML structure checks retain the Empty-slot and central Create Bill controls. Both Arabic catalogs pass format validation; no source strings were added or changed.
+- Targeted local `ab_sales` upgrade completed successfully. No live sale or production deployment was performed.
+- Screenshots and reports: `/opt/playwright/artifacts/replica_addons/remove-new-bill/`.
+
+Files changed:
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/static/src/pos/pos_action.scss
 - ab_sales/changelog.d/2026-10-12-draft-slots.md
