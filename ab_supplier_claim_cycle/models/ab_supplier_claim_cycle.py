@@ -83,6 +83,24 @@ class SupplierClaimCycle(models.Model):
     supplier_accounts_followup_date = fields.Date(copy=False)
     bank_accounts_followup_date = fields.Date(copy=False)
 
+    can_edit_correction_fields = fields.Boolean(compute='_compute_can_edit_claim_inputs')
+    can_edit_payment_nature = fields.Boolean(compute='_compute_can_edit_claim_inputs')
+
+    @api.depends('state', 'active', 'supplier_accounts_decision')
+    @api.depends_context('uid')
+    def _compute_can_edit_claim_inputs(self):
+        is_admin = self._is_admin()
+        is_secretarial = is_admin or self.env.user.has_group(GROUP_PREFIX + 'user')
+        is_supplier_accounts = is_admin or self.env.user.has_group(GROUP_PREFIX + 'supplier_accounts')
+        for claim in self:
+            claim.can_edit_correction_fields = bool(
+                claim.active and claim.state != 'closed'
+                and (is_admin or (is_secretarial and claim.state in ('draft', 'returned_secretarial'))))
+            claim.can_edit_payment_nature = bool(
+                claim.active and ((is_secretarial and claim.state == 'draft')
+                                  or (is_supplier_accounts and claim.state == 'supplier_accounts'
+                                      and claim.supplier_accounts_decision in ('pending', 'deferred'))))
+
     can_edit_current_review = fields.Boolean(compute='_compute_can_edit_current_review')
 
     @api.depends('state', 'active', *(f'{department}_decision' for department in DEPARTMENTS))
@@ -280,7 +298,7 @@ class SupplierClaimCycle(models.Model):
         self.invalidate_recordset()
         self.check_access('write')
         if set(vals) == {'active'}:
-            self._require_role('user')
+            self._require_role('admin')
             result = super().write(vals)
             self._log('archived' if not vals['active'] else 'restored')
             return result
@@ -288,25 +306,28 @@ class SupplierClaimCycle(models.Model):
             raise UserError(_('Closed or archived claims cannot be changed.'))
         correction_fields = {
             'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
-            'delivery_representative_name', 'delivery_representative_phone',
         }
+        contact_fields = {'delivery_representative_name', 'delivery_representative_phone'}
         for claim in self:
             if claim.state in ('draft', 'returned_secretarial'):
                 claim._require_role('user')
-                allowed = correction_fields | ({'supplier_id', 'tax_classification', 'section', 'payment_nature'}
-                                               if claim.state == 'draft' else set())
+                allowed = correction_fields | contact_fields
+                if claim.state == 'draft':
+                    allowed |= {'supplier_id', 'tax_classification', 'section', 'payment_nature'}
             else:
-                allowed = set()
+                allowed = set(correction_fields) if claim._is_admin() else set()
                 for d in DEPARTMENTS:
                     if claim.state == STAGES[d] and claim[f'{d}_decision'] in ('pending', 'deferred'):
                         if claim._is_admin() or self.env.user.has_group(GROUP_PREFIX + d):
                             allowed |= {f'{d}_notes', f'{d}_followup_date'}
                             if d == 'supplier_accounts':
-                                allowed |= {'cheque_attachment', 'cheque_filename'}
+                                allowed |= {'cheque_attachment', 'cheque_filename', 'payment_nature'}
                             elif d == 'bank_accounts':
                                 allowed |= {'bank_cheque_attachment', 'bank_cheque_filename'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
+            if claim.state == 'supplier_accounts' and 'payment_nature' in vals and not vals['payment_nature']:
+                raise ValidationError(_('Select a payment nature before submitting the claim.'))
         if 'supplier_id' in vals:
             values_by_supplier = self._last_claim_values_by_supplier(
                 [vals['supplier_id']],
@@ -405,6 +426,8 @@ class SupplierClaimCycle(models.Model):
         for claim in self:
             if claim.state != STAGES[department] or claim[f'{department}_decision'] not in ('pending', 'deferred'):
                 raise UserError(_('This department has no pending decision in the current stage.'))
+            if department == 'supplier_accounts' and not claim.payment_nature:
+                raise ValidationError(_('Select a payment nature before submitting the claim.'))
             decision_reason = (reason or '').strip() if decision != 'approved' else False
             followup = fields.Date.to_date(followup_date) if decision == 'deferred' else False
             if decision in ('rejected', 'deferred') and not decision_reason:
@@ -431,7 +454,7 @@ class SupplierClaimCycle(models.Model):
                     vals.update(state='supplier_accounts', supplier_accounts_decision='pending')
                 elif department == 'supplier_accounts':
                     if claim.payment_nature == 'cash':
-                        vals['state'] = 'ready_to_close'
+                        vals.update(state='ready_to_close', bank_accounts_decision='not_required')
                     else:
                         vals.update(state='bank_accounts', bank_accounts_decision='pending')
                 else:
