@@ -249,12 +249,6 @@ class BranchApi(models.AbstractModel):
             raise AccessError(_('Only call-center invoices can be returned.'))
         header = self.env['ab_sales_return_header'].browse(operation.record_id).exists()
         if header:
-            # A corrected revision replaces the request. Omitted business fields
-            # take fresh-create defaults instead of retaining the previous bill.
-            defaults = header_model.default_get([name for name in allowed if name in header_model._fields])
-            for name in allowed:
-                if name in header_model._fields and name not in values:
-                    values[name] = defaults.get(name, False)
             header.check_access('write')
             header.line_ids.check_access('write')
             if (header.store_id != store or header.origin_header_id != int(invoice)
@@ -398,7 +392,11 @@ class BranchApi(models.AbstractModel):
         def post():
             actor_token = _return_employee.set(employee.id if employee else None)
             try:
-                header.action_push_to_eplus_return()
+                posted = header.action_push_to_eplus_return()
+                if (not posted or header.status != 'saved'
+                        or not header.sales_return_id or not header.f_transaction_id):
+                    raise UserError(header.push_message or _(
+                        'The branch could not record the posting identifiers. Retry using the same bill.'))
                 return self._return_snapshot(header, db_serial)
             finally:
                 _return_employee.reset(actor_token)

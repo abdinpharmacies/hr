@@ -113,16 +113,11 @@ class BranchRecovery(models.AbstractModel):
     def _posting_scope(self, operation):
         scope = current_request(self)
         previous = scope.posting_operation
-        scope.posting_operation = operation if operation.kind in ('sale', 'return') else None
+        # Native returns own one physical transaction and a durable return-token
+        # marker. They must not use the older API deferred-commit journal.
+        scope.posting_operation = operation if operation.kind == 'sale' else None
         try:
             yield
-            if scope.posting_operation and operation.kind == 'return':
-                # All existing business methods have completed, including their
-                # replication/repricing extensions. Only now cross the boundary.
-                if len(scope.deferred_commits) != 1:
-                    raise UserError(_('The branch could not record the posting identifiers. Retry using the same bill.'))
-                for connection in scope.deferred_commits.values():
-                    connection._commit_now()
         finally:
             scope.deferred_commits.clear()
             scope.posting_operation = previous
@@ -152,6 +147,8 @@ class BranchRecovery(models.AbstractModel):
         if operation.kind == 'sale' and operation.sale_guard_version == 1:
             return self._reconcile_guarded_sale(operation)
         header = self._operation_header(operation, access='read')
+        if operation.kind == 'return' and header.return_client_token:
+            return self._reconcile_native_return(operation, header)
         connection = self._guard_connection(header.get_connection(), operation)
         cur = connection.cursor()
         cur.execute('SET LOCK_TIMEOUT 5000')
@@ -212,7 +209,7 @@ class BranchRecovery(models.AbstractModel):
                 if returns or finance or payments:
                     if len(returns) != 1 or len(finance) != 1 or len(payments) != 1:
                         self._recovery_conflict(operation, _('The return, cash transaction and payment records do not form one complete transaction.'))
-                    header.sudo().write({'sales_return_id': evidence['sales_return_id'],
+                    header.sudo()._write_return_state({'sales_return_id': evidence['sales_return_id'],
                                          'f_transaction_id': evidence['f_transaction_id'],
                                          'status': 'saved'})
                     committed = True
@@ -237,9 +234,51 @@ class BranchRecovery(models.AbstractModel):
             if operation.kind == 'sale':
                 header.sudo()._write_submission_state(values)
             else:
-                header.sudo().write(values)
+                header.sudo()._write_return_state(values)
             operation.write({'state': 'retryable', 'result': False})
         self.env.cr.commit()
+
+    def _reconcile_native_return(self, operation, header):
+        # _operation_header already checked ownership, branch and read access.
+        # Elevation is restricted to the lifecycle recovery of that header.
+        header = header.sudo()
+        with header._return_attempt():
+            connection = header._get_return_submission_connection()
+            try:
+                cur = connection.cursor()
+                cur.execute('SET LOCK_TIMEOUT 5000')
+                cur.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED')
+                cur.execute(
+                    'SELECT sth_id FROM sales_trans_h WITH (UPDLOCK, HOLDLOCK) WHERE sth_id = ? AND sto_id = ?',
+                    (int(header.origin_header_id), int(header.sto_eplus_serial)))
+                if not cur.fetchone():
+                    raise AccessError(_('Return invoice does not match the request.'))
+                recovered = header._find_committed_return(cur)
+                if recovered:
+                    evidence = operation.commit_evidence or {}
+                    if any((evidence.get(name) and evidence[name] != recovered[name])
+                           or (header[name] and header[name] != recovered[name]) for name in recovered):
+                        self._recovery_conflict(operation, _('The return, cash transaction and payment records do not form one complete transaction.'))
+                    header._write_return_state(dict(recovered, status='saved', replication_posted=True,
+                                                    push_message=False))
+                    result = self._return_snapshot(header, int(config.get('db_serial')))
+                    operation.write({'state': 'done', 'result': result, 'message': '', 'reservation_key': False})
+                    _logger.info('Recovered native branch API return %s: sr_id=%s fh_id=%s',
+                                 operation.id, recovered['sales_return_id'], recovered['f_transaction_id'])
+                else:
+                    # Missing markers cannot invalidate previously recorded success.
+                    if (header.status == 'saved' or header.sales_return_id or header.f_transaction_id
+                            or header.replication_posted or operation.commit_evidence):
+                        self._recovery_conflict(operation, _('The return, cash transaction and payment records do not form one complete transaction.'))
+                    header._write_return_state({'status': 'prepending', 'sales_return_id': False,
+                                                'f_transaction_id': False, 'replication_posted': False})
+                    operation.write({'state': 'retryable', 'result': False})
+                self.env.cr.commit()
+            finally:
+                try:
+                    connection.rollback()  # Read/lock-only reconciliation never posts.
+                finally:
+                    connection.close()
 
     def _recovery_conflict(self, operation, reason):
         _logger.warning('Branch API recovery blocked: operation=%s kind=%s store=%s reason=%s',
@@ -294,9 +333,17 @@ class RecoverableSale(models.Model):
 class RecoverableReturn(models.Model):
     _inherit = 'ab_sales_return_header'
 
-    def get_connection(self):
-        connection = super().get_connection()
+    def _get_return_submission_connection(self):
         scope = current_request(self)
-        if scope and scope.posting_operation:
-            return self.env['ab_branch_api']._guard_connection(connection, scope.posting_operation)
-        return connection
+        if not scope:
+            return super()._get_return_submission_connection()
+        pooled = self.get_connection()
+        while isinstance(pooled, ReturnConnection):
+            pooled = pooled._connection
+        factory = scope.connection_factories.get(id(pooled))
+        if not factory:
+            raise UserError(_('Branch submission could not be confirmed. Retry the original bill.'))
+        # Preserve API branch checks on the fresh native transaction. Neither
+        # this connection nor its cursors may reconnect or replay statements.
+        connection = ConnectionProxy(factory(), wrap_dict_cursor=pooled._wrap_dict_cursor)
+        return ReturnConnection(connection, self)
