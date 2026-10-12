@@ -21,6 +21,10 @@ _SUBMISSION_LOCK_NAMESPACE = 19419019
 
 _logger = logging.getLogger(__name__)
 
+
+class _AmbiguousEPlusInvoice(UserError):
+    """Matching external invoices require recovery, even before new writes."""
+
 DB_SERIAL = int(config.get('db_serial', 0)) * 1000_000_000
 DEBUG_PUSH_DELAY_SECONDS = float(config.get('ab_sales_debug_push_delay_seconds', 0) or 0)
 
@@ -356,6 +360,11 @@ class AbdinSalesHeader(models.Model):
         default='none', readonly=True, copy=False
     )
     push_message = fields.Text(readonly=True, copy=False)
+    submission_phase = fields.Selection(
+        [('idle', 'Idle'), ('preparing', 'Preparing'), ('pushing', 'Pushing')],
+        default='idle', required=True, readonly=True, copy=False,
+        string="Submission Phase",
+    )
 
     new_customer_name = fields.Char()
     new_customer_phone = fields.Char()
@@ -991,7 +1000,7 @@ class AbdinSalesHeader(models.Model):
         if not self:
             return
         self.check_access("write")
-        state_fields = ["status", "pos_client_token", "store_id", "eplus_serial"]
+        state_fields = ["status", "pos_client_token", "store_id", "eplus_serial", "submission_phase"]
         self.flush_recordset(state_fields)
         try:
             with self.env.cr.savepoint():
@@ -1004,8 +1013,8 @@ class AbdinSalesHeader(models.Model):
         self.invalidate_recordset(state_fields)
 
     @contextmanager
-    def _submission_attempt(self):
-        """A session lock survives the commit that makes Unknown durable."""
+    def _try_submission_lock(self):
+        """Hold a session lock across commits without blocking another worker."""
         self.ensure_one()
         self.check_access("write")
         with self.env.registry.cursor() as lock_cr:
@@ -1013,18 +1022,60 @@ class AbdinSalesHeader(models.Model):
                 "SELECT pg_try_advisory_lock(%s, %s)",
                 (_SUBMISSION_LOCK_NAMESPACE, self.id),
             )
-            if not lock_cr.fetchone()[0]:
-                raise UserError(_("This bill is being submitted by another process. Please retry in a moment."))
+            acquired = lock_cr.fetchone()[0]
             try:
-                self._lock_for_push()
-                self.invalidate_recordset()
-                self.mapped("line_ids").invalidate_recordset()
-                yield
+                yield acquired
             finally:
-                lock_cr.execute(
-                    "SELECT pg_advisory_unlock(%s, %s)",
-                    (_SUBMISSION_LOCK_NAMESPACE, self.id),
-                )
+                if acquired:
+                    lock_cr.execute(
+                        "SELECT pg_advisory_unlock(%s, %s)",
+                        (_SUBMISSION_LOCK_NAMESPACE, self.id),
+                    )
+
+    def _submission_attempt_records(self):
+        self.ensure_one()
+        return self.with_context(
+            _ab_sales_submission_attempt=_SUBMISSION_WORKFLOW,
+            _ab_sales_submission_header_id=self.id,
+        )
+
+    def _recover_submission_phase(self):
+        """Caller owns the advisory and row locks; no external writes here."""
+        self.ensure_one()
+        if self.submission_phase == 'idle':
+            return
+        vals = {"submission_phase": "idle"}
+        if self.submission_phase == 'pushing' and self.status not in ('pending', 'saved'):
+            vals.update({
+                "status": "unknown", "push_state": "error",
+                "push_message": _("The previous push was interrupted. Use Retry to check its E-Plus result."),
+            })
+        self._write_submission_state(vals)
+
+    def _recover_interrupted_submission(self):
+        self.ensure_one()
+        if self.submission_phase != 'idle':
+            with self._try_submission_lock() as acquired:
+                if acquired:
+                    self._lock_for_push()
+                    self._recover_submission_phase()
+
+    @contextmanager
+    def _submission_attempt(self):
+        """Serialize retry payload edits, preparation, push, and recovery."""
+        self.ensure_one()
+        if (self.env.context.get('_ab_sales_submission_attempt') is _SUBMISSION_WORKFLOW
+                and self.env.context.get('_ab_sales_submission_header_id') == self.id):
+            yield
+            return
+        with self._try_submission_lock() as acquired:
+            if not acquired:
+                raise UserError(_("This bill is being submitted by another process. Please retry in a moment."))
+            self._lock_for_push()
+            self.invalidate_recordset()
+            self.mapped("line_ids").invalidate_recordset()
+            self._recover_submission_phase()
+            yield
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1032,6 +1083,7 @@ class AbdinSalesHeader(models.Model):
             for vals in vals_list:
                 if vals.get("pos_client_token") and (
                     vals.get("status", "prepending") != "prepending" or vals.get("eplus_serial")
+                    or vals.get("submission_phase", "idle") != "idle"
                 ):
                     raise UserError(_("POS invoices must start in PrePending status."))
         return super().create(vals_list)
@@ -1041,21 +1093,31 @@ class AbdinSalesHeader(models.Model):
             raise UserError(_("The invoice identity and submission state cannot be changed manually."))
         return super().copy(default=default)
 
+    def _check_submission_editable(self):
+        for rec in self:
+            if rec.submission_phase != 'idle':
+                raise UserError(_("Submission is in progress. Editing is temporarily disabled."))
+            if rec.status == 'unknown':
+                raise UserError(_("This invoice is locked until its E-Plus submission is resolved. Use Retry."))
+            if rec.status in ('pending', 'saved'):
+                raise UserError(_("Submitted invoices cannot be edited."))
+
     def write(self, vals):
         if not self._submission_internal():
             self._lock_for_push()
             for rec in self:
                 if rec.pos_client_token:
-                    for name in ("pos_client_token", "store_id", "eplus_serial", "status", "push_state", "push_message"):
+                    for name in ("pos_client_token", "store_id", "eplus_serial", "status", "push_state", "push_message", "submission_phase"):
                         if name in vals:
                             current = rec[name].id if name == "store_id" else rec[name]
                             if vals[name] != current:
                                 raise UserError(_("The invoice identity and submission state cannot be changed manually."))
                 # Ignore harmless no-op writes, including the existing HR audit wrapper.
-                if rec.status == "unknown" and any(
+                if (rec.status in ('unknown', 'pending', 'saved') or rec.submission_phase != 'idle') and any(
                     rec[name] != value for name, value in vals.items()
+                    if not (rec.status in ('pending', 'saved') and name.startswith('pos_hr_'))
                 ):
-                    raise UserError(_("This invoice is locked until its E-Plus submission is resolved. Use Retry."))
+                    rec._check_submission_editable()
         return super().write(vals)
 
     def _find_committed_eplus_invoice(self, cur):
@@ -1073,7 +1135,7 @@ class AbdinSalesHeader(models.Model):
         )
         rows = cur.fetchall()
         if len(rows) > 1:
-            raise UserError(_("Multiple E-Plus invoices match this bill. Contact support; the bill remains locked."))
+            raise _AmbiguousEPlusInvoice(_("Multiple E-Plus invoices match this bill. Contact support; the bill remains locked."))
         return int(rows[0][0]) if rows else False
 
     def _maybe_delay_push_after_remote_commit(self):
@@ -1095,7 +1157,7 @@ class AbdinSalesHeader(models.Model):
     def action_push_to_eplus(self):
         self.ensure_one()
         with self._submission_attempt():
-            return self._push_or_recover_eplus()
+            return self._submission_attempt_records()._push_or_recover_eplus()
 
     def _push_or_recover_eplus(self):
         self.ensure_one()
@@ -1104,33 +1166,37 @@ class AbdinSalesHeader(models.Model):
             return True
         if not self.pos_client_token:
             raise UserError(_("Submit is only allowed for bills created from POS."))
-        replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
-        if not replica_db:
-            raise UserError(_("This is not Replica DB"))
         if self.status not in ("prepending", "rejected", "unknown"):
             raise UserError(_("This invoice cannot be submitted in its current status."))
-        if self.status != "unknown":
-            self._validate_before_push()
-            self._validate_new_customer()
-        # Preserve identity and commit a locked record before any external operation.
-        self._write_submission_state({"status": "unknown", "push_state": "none", "push_message": False})
+        was_unknown = self.status == 'unknown'
+        # Preparation is durable, but is not an uncertain external push.
+        self._write_submission_state({"submission_phase": "preparing", "push_state": "none", "push_message": False})
         self.env.cr.commit()
         self._lock_for_push()
         rec = self._submission_records()
         conn = None
         commit_started = False
         absence_confirmed = False
+        writes_started = False
+        found_invoice = False
         try:
+            replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
+            if not replica_db:
+                raise UserError(_("This is not Replica DB"))
+            if not was_unknown:
+                rec._validate_before_push()
+                rec._validate_new_customer()
             conn = rec._get_submission_connection()
             if not conn:
                 raise UserError(_("Connection to E-Plus failed."))
             cur = conn.cursor()
             sth_id = rec._find_committed_eplus_invoice(cur)
             if sth_id:
+                found_invoice = True
                 # Recovery is read-only remotely. Do not replay details or inventory.
                 conn.rollback()
                 rec.write({
-                    "eplus_serial": sth_id, "status": "pending", "push_state": "success",
+                    "eplus_serial": sth_id, "status": "pending", "push_state": "success", "submission_phase": "idle",
                     "push_message": _("Recovered E-Plus invoice (sth_id=%s).") % sth_id,
                     **rec._get_bill_customer_snapshot_vals(),
                 })
@@ -1155,6 +1221,11 @@ class AbdinSalesHeader(models.Model):
             if not emp_code:
                 raise UserError(_("Employee has no E-Plus serial. Contact support."))
             totals = rec._compute_header_numbers(cur=cur)
+            # A worker crash from this point must require reconciliation.
+            rec.write({"submission_phase": "pushing"})
+            self.env.cr.commit()
+            self._lock_for_push()
+            writes_started = True
             sth_id = rec._insert_sales_trans_h(
                 cur=cur, totals=totals, emp_code=emp_code,
                 pc_name=rec._get_pc_name(), bill_typ=4 if rec.is_delivery else 1,
@@ -1178,7 +1249,7 @@ class AbdinSalesHeader(models.Model):
             # A lost commit acknowledgement MUST leave Unknown, even if rollback succeeds.
             rec._maybe_delay_push_after_remote_commit()
             rec.write({
-                "eplus_serial": sth_id, "status": "pending", "push_state": "success",
+                "eplus_serial": sth_id, "status": "pending", "push_state": "success", "submission_phase": "idle",
                 "push_message": _("Pushed to E-Plus successfully (sth_id=%s).") % sth_id,
                 **snapshot_vals,
             })
@@ -1193,14 +1264,17 @@ class AbdinSalesHeader(models.Model):
                     rollback_confirmed = True
                 except Exception:
                     pass
-            # Discard any local intermediate changes while retaining the durable Unknown.
+            # Preserve identity and classify by commit certainty, not error text.
             self.env.cr.rollback()
             self.invalidate_recordset()
-            rejected = absence_confirmed and rollback_confirmed and not commit_started
+            safe_failure = (not writes_started and not was_unknown and not found_invoice
+                            and not isinstance(ex, _AmbiguousEPlusInvoice)) or (
+                absence_confirmed and rollback_confirmed and not commit_started
+            )
             msg = self._format_eplus_error(ex)
             rec.write({
-                "status": "rejected" if rejected else "unknown", "eplus_serial": False,
-                "push_state": "error", "push_message": msg,
+                "status": "prepending" if safe_failure else "unknown", "eplus_serial": False,
+                "push_state": "error", "push_message": msg, "submission_phase": "idle",
             })
             self.env.cr.commit()
             _logger.warning("POS header %s, store %s: %s (%s)", self.id, self.store_id.id, rec.status, msg)

@@ -3414,6 +3414,7 @@ msgstr "الإرسال مسموح فقط للفواتير التي تم إنشا
 
 #. module: ab_sales
 #. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 #: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
 msgid "Submitting..."
@@ -4241,3 +4242,57 @@ msgstr "حذف كل المسودات"
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Deleted %s drafts; retained %s bills."
 msgstr "تم حذف %s مسودات؛ والإبقاء على %s فواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__submission_phase
+msgid "Submission Phase"
+msgstr "مرحلة الإرسال"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__submission_phase__idle
+msgid "Idle"
+msgstr "غير نشط"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__submission_phase__preparing
+msgid "Preparing"
+msgstr "جارٍ التجهيز"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__submission_phase__pushing
+msgid "Pushing"
+msgstr "جارٍ الإرسال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"The previous push was interrupted. Use Retry to check its E-Plus result."
+msgstr ""
+"توقفت محاولة الإرسال السابقة. استخدم إعادة المحاولة للتحقق من نتيجتها في إي "
+"بلس."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Checking the submission result. Editing is temporarily disabled."
+msgstr "جارٍ التحقق من نتيجة الإرسال. التعديل معطل مؤقتًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Submission is in progress. Editing is temporarily disabled."
+msgstr "الإرسال قيد التنفيذ. التعديل معطل مؤقتًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Submitted invoices cannot be edited."
+msgstr "لا يمكن تعديل الفواتير المرسلة."
