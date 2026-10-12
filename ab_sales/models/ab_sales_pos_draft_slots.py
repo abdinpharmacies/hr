@@ -229,8 +229,11 @@ class AbSalesPosDraftSlots(models.TransientModel):
     def _draft_store_result(self, record, bills, removed, employee, selected_id=None, rejected=()):
         bills = sorted(bills, key=lambda bill: (-self._draft_timestamp(bill), self._draft_id(bill)))
         selected = str(selected_id or record.selected_id or "")
+        replacements = {}
         for bill in bills:
             previous_id = bill.pop("completed_bill_id", None)
+            if previous_id:
+                replacements[previous_id] = self._draft_id(bill)
             if previous_id and previous_id == selected:
                 selected = self._draft_id(bill)
         if selected not in {self._draft_id(bill) for bill in bills}:
@@ -270,7 +273,24 @@ class AbSalesPosDraftSlots(models.TransientModel):
                 "selected_id": selected, "last_synced_at": record.last_synced_at,
                 "updated_at": record.write_date, "revision": record.cache_revision,
                 "removed_ids": sorted(removed), "rejected_ids": list(rejected),
-                "draft_limit": self._pos_draft_limit(), "count": len(bills)}
+                "draft_limit": self._pos_draft_limit(), "count": len(bills), "replacements": replacements}
+
+    @api.model
+    def pos_restore_draft_cache(self, bill_id=None, cache_key=None, employee_id=None,
+                                pos_hr_session_token=None):
+        """Revalidate one existing draft in the caller's employee/branch scope."""
+        if not isinstance(bill_id, str) or not bill_id:
+            raise UserError(_("Invalid draft cache payload."))
+        result = self.pos_load_draft_cache(cache_key=cache_key, employee_id=employee_id,
+                                          pos_hr_session_token=pos_hr_session_token)
+        bill = next((bill for bill in result["bills"] if self._draft_id(bill) == bill_id), None)
+        if not bill:
+            raise UserError(_("This draft is no longer available. Refresh the draft list."))
+        submission = bill.get("submission") or {}
+        if bill.get("slot_locked") or submission.get("unresolved") or submission.get("in_progress"):
+            raise UserError(_("This draft has an unresolved submission and cannot be restored."))
+        result["bills"] = [bill]
+        return result
 
     @api.model
     def pos_load_draft_cache(self, cache_key=None, employee_id=None, pos_hr_session_token=None,
@@ -304,7 +324,8 @@ class AbSalesPosDraftSlots(models.TransientModel):
         merged = self._draft_merge(cached, incoming, removed=removed, prefer_last_equal=not stale_revision)
         merged, completed = self._draft_authoritative_states(merged, pos_hr_session_token)
         merged, excess = self._draft_assign_slots(merged, self._pos_draft_limit())
-        removed |= completed | rejected
+        # Capacity rejection is not deletion: retain the offline identity for a later retry.
+        removed |= completed
         result = self._draft_store_result(record, merged, removed | excess, employee, selected_id, rejected)
         result["stale_revision"] = stale_revision
         return result

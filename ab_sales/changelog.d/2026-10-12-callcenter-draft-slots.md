@@ -49,7 +49,9 @@ Files changed (relevant excerpt):
 - `ab_sales/static/src/pos/pos_action.xml`
 - `ab_sales/static/src/pos/pos_action.scss`
 
-## Current changes before commit:
+## ae0860f51f7a7121d055e50a1d3ea902405d5c25 - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales/ UPD add configurable draft slots and fix submission recovery
 
 - Adapt the source behavior to the existing callcenter branch API and durable local invoice workflow; retain frozen retry payloads, tokens, and request revisions.
 - Configure editable draft slots through `ab_sales.pos_draft_limit`, default 10; show Empty, Ready, Used, locked, and protected overflow bills separately.
@@ -89,3 +91,64 @@ Files changed:
 - Follow-up regression checks cover standard screen-based roles (the original fixtures used custom permissions), explicit permission denial, invalid/locked/foreign sessions, unauthorized branches, reload, employee cache separation, visible authorization failure, retained local drafts, and manual retry recovery.
 - Follow-up results: eight backend cases and sixteen headless browser cases passed, with no browser errors. Arabic runtime errors and the retry button were also verified. Reports: `/opt/playwright/artifacts/callcenter19/slot-role-fix/`.
 - Live callcenter database and PyCharm-managed processes were not upgraded or restarted.
+
+
+## Source follow-up commits reviewed (pos19)
+
+### 148b8cf0767dcc9279dd791142ff861fc2346888 - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales/ UPD remove redundent create new bill button, as you can create new bill by clicking the empty slot, or you can use ready slot
+
+- Create bills through numbered empty slots and the central Create Bill control.
+- Remove the redundant sidebar New Bill button and its unused styles.
+
+Files changed (relevant excerpt):
+- `ab_sales/static/src/pos/pos_action.xml`
+- `ab_sales/static/src/pos/pos_action.scss`
+
+### b7584edd9e31bce6a1059665677c5cf62885e865 - emadco88 - 2026-10-12
+
+Original commit subject: ab_sales/ fix multi-tab flickering with selective draft restoration
+
+- Keep tab workspaces independent and restore saved drafts explicitly.
+- Add a saved-draft list, single restore, confirmed deletion, and scoped restore validation.
+
+Files changed (relevant excerpt):
+- `ab_sales/models/ab_sales_pos_draft_slots.py`
+- `ab_sales/static/src/pos/pos_action.js`
+- `ab_sales/static/src/pos/pos_action.xml`
+- `ab_sales/i18n/ar.po`
+- `ab_sales/i18n/ar_001.po`
+
+## Current changes before commit:
+
+- Adapt the two follow-up commits to callcenter's nested submission state and existing branch/user/employee validation; preserve frozen retries and durable invoices.
+- Store each tab's open drafts, selection, and slot placement in employee-scoped session storage. Keep automatic changed-draft saves and shared safety/deletion signals without importing other tabs' bills or overwriting typing.
+- Add New Bill / Restore Draft tabs to empty-slot selection, with scoped single-draft restoration and saved-draft details. Retain the central Create Bill control; remove the sidebar New Bill/+ button.
+- Keep the remaining Delete All Drafts sidebar control compact when collapsed.
+- Confirm individual and bulk saved-draft deletion, including an explicit Cancel button. Retain protected invoices and reject stale restoration/deletion responses.
+- Add the `pos_restore_draft_cache` API and completion replacement mappings; replace only this workspace's completed bill with a fresh same-branch draft.
+- Preserve offline drafts after save failures or capacity rejection, without automatic error retry loops. Capacity rejection no longer tombstones unsaved draft identities.
+- Merge English/Arabic strings using an Odoo-exported POT and bump the module to `19.0.3.8.1`.
+
+Files changed:
+- `ab_sales/__manifest__.py`
+- `ab_sales/changelog.d/2026-10-12-callcenter-draft-slots.md`
+- `ab_sales/i18n/ar.po`
+- `ab_sales/i18n/ar_001.po`
+- `ab_sales/models/ab_sales_pos_draft_slots.py`
+- `ab_sales/static/src/pos/pos_action.js`
+- `ab_sales/static/src/pos/pos_action.scss`
+- `ab_sales/static/src/pos/pos_action.xml`
+
+
+### Verification of current changes
+
+- 23 focused frontend checks passed for acknowledgments, in-flight edits, local slot placement, selective restore, stale responses, capacity rejection, offline retention, employee changes, submission locks, and fresh recovery reads.
+- Nine rollback-only backend restore/cache checks passed, plus four persisted-invoice protection cases, eight role/session/branch access cases, and six stubbed submission/retry cases.
+- Six English browser scenarios passed with no browser errors: exact-slot creation, independent tabs, explicit restoration, reload/duplicate protection, confirmed cross-tab deletion, and bulk deletion. Settled tabs generated no repeated RPC calls over the observation interval.
+- Arabic RTL dialog, restore tab, deletion tooltip, new empty-slot hint, compact collapsed sidebar, and English/Arabic action differences were verified at runtime. Both catalogs pass `msgfmt --check-format`; new strings were merged using the exported module POT.
+- Targeted `ab_sales` upgrades and Python/JavaScript/XML parsing passed. The isolated database retains its pre-existing missing `ab_users` dependency warning and missing copied attachment warnings; no `ab_sales` upgrade error occurred.
+- External branch/E-Plus operations were blocked in the test server or stubbed in submission tests. The live database and PyCharm-managed servers were not upgraded or restarted.
+- Harnesses and reports remain outside the addon: `/opt/playwright/tasks/callcenter19/manual-draft-restore/` and `/opt/playwright/artifacts/callcenter19/manual-draft-restore/`.
+- Temporary test servers were stopped after verification; HTTP/gevent test ports were released.

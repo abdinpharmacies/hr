@@ -296,20 +296,12 @@
   color: var(--pos-muted);
 }
 
-.o_ab_sales_pos_new_btn {
+.o_ab_sales_pos_remove_all_btn {
   width: 100%;
-  background: var(--pos-accent);
-  border-color: var(--pos-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-}
-
-.o_ab_sales_pos_new_icon {
-  display: none;
-  font-size: 18px;
-  line-height: 1;
 }
 
 .o_ab_sales_pos_collapse_btn {
@@ -359,17 +351,13 @@
 }
 
 .o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_brand_text,
-.o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_new_text {
+.o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_remove_all_text {
   display: none;
 }
 
-.o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_new_btn {
+.o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_remove_all_btn {
   width: auto;
   padding: 10px 12px;
-}
-
-.o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_new_icon {
-  display: inline-flex;
 }
 
 .o_ab_sales_pos_sidebar.is-collapsed .o_ab_sales_pos_list {

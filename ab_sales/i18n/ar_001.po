@@ -4513,6 +4513,8 @@ msgid "Previous Key Encrypted"
 msgstr "المفتاح السابق المشفر"
 
 #. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__enrollment_state__ready
 msgid "Ready"
 msgstr "جاهز"
@@ -5581,3 +5583,117 @@ msgstr "سجّل الدخول مجدداً للوصول إلى مسودات ال
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "Retry draft sync"
 msgstr "إعادة محاولة مزامنة المسودات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"All %s saved draft slots are occupied. Restore or delete a saved draft "
+"before creating a bill."
+msgstr ""
+"جميع خانات المسودات المحفوظة البالغ عددها %s مشغولة. استعد مسودة محفوظة أو "
+"احذفها قبل إنشاء فاتورة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Already open"
+msgstr "مفتوحة بالفعل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Delete Draft"
+msgstr "حذف المسودة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Delete all eligible saved drafts for this employee, including open drafts? "
+"Protected invoices will be retained."
+msgstr ""
+"هل تريد حذف جميع المسودات المحفوظة القابلة للحذف لهذا الموظف، بما فيها "
+"المسودات المفتوحة؟ سيتم الاحتفاظ بالفواتير المحمية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Delete this saved draft? This cannot be undone."
+msgstr "هل تريد حذف هذه المسودة المحفوظة؟ لا يمكن التراجع عن هذا الإجراء."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft Slot"
+msgstr "خانة المسودة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Drafts could not be saved. Please retry before restoring or deleting drafts."
+msgstr "تعذر حفظ المسودات. يرجى إعادة المحاولة قبل استعادة المسودات أو حذفها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Loading drafts..."
+msgstr "جارٍ تحميل المسودات..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No saved drafts."
+msgstr "لا توجد مسودات محفوظة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Restore"
+msgstr "استعادة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Restore Draft"
+msgstr "استعادة مسودة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Slot %s: Empty. Create or restore a draft."
+msgstr "الخانة %s: فارغة. أنشئ مسودة أو استعد مسودة محفوظة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "The employee session changed. Reopen the draft dialog."
+msgstr "تغيرت جلسة الموظف. أعد فتح نافذة المسودات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "This draft has an unresolved submission and cannot be restored."
+msgstr "لم يتم التأكد من نتيجة إرسال هذه المسودة ولا يمكن استعادتها."
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "This draft is no longer available. Refresh the draft list."
+msgstr "لم تعد هذه المسودة متاحة. حدّث قائمة المسودات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "This slot is no longer empty. Choose another slot."
+msgstr "لم تعد هذه الخانة فارغة. اختر خانة أخرى."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Create or restore"
+msgstr "إنشاء أو استعادة"
