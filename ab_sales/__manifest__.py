@@ -8,6 +8,7 @@
                 'abdin_et', 'ab_widgets', 'ab_hr'],
     'data': [
         'data/ir_cron.xml',
+        'data/pos_draft_limit.xml',
         'security/groups_sales.xml',
         'security/rules_sales.xml',
         'security/ir.model.access.csv',

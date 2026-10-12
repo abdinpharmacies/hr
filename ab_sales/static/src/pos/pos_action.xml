@@ -55,7 +55,8 @@
                         </button>
                     </div>
                     <button class="btn btn-primary o_ab_sales_pos_new_btn ab_pos_sidebar_btn_new_bill" type="button"
-                            t-on-click="openNewBillDialog">
+                            t-on-click="openNewBillDialog"
+                            t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting or !availableDraftSlots">
                         <span class="o_ab_sales_pos_new_text ab_pos_sidebar_btn_new_bill_text">New Bill</span>
                         <span class="o_ab_sales_pos_new_icon ab_pos_sidebar_btn_new_bill_icon"
                               aria-hidden="true">+</span>
@@ -66,7 +67,7 @@
                             title="Delete All Drafts"
                             aria-label="Delete All Drafts"
                             t-on-click="removeAllBills"
-                            t-att-disabled="state.submitting || state.draftDeleting">
+                            t-att-disabled="state.submitting || state.draftDeleting || state.draftCreating || !state.draftCacheReady">
                         <i class="fa fa-trash o_ab_sales_pos_remove_all_icon ab_pos_sidebar_btn_remove_all_icon"
                            aria-hidden="true"/>
                         <span class="o_ab_sales_pos_remove_all_text ab_pos_sidebar_btn_remove_all_text">Delete All Drafts</span>
@@ -74,63 +75,42 @@
                 </div>
 
                 <div class="o_ab_sales_pos_list ab_pos_bill_list">
-                    <t t-if="!state.bills.length">
-                        <div class="o_ab_sales_pos_empty ab_pos_bill_list_empty">No cached bills yet.</div>
-                    </t>
-                    <t t-foreach="state.bills" t-as="bill" t-key="bill.id">
-                        <div class="ab_pos_bill_list_item o_ab_sales_pos_list_item"
-                             t-attf-class="#{bill.id == state.selectedId ? 'is-active' : ''}"
-                             t-on-click="() => selectBill(bill.id)">
-                            <span class="o_ab_sales_pos_bill_thumb ab_pos_bill_item_thumb"
-                                  t-esc="bill.header.store_code or '-'"/>
-                            <div class="o_ab_sales_pos_list_top ab_pos_bill_item_top">
-                                <div class="o_ab_sales_pos_list_title ab_pos_bill_item_title">
-                                    <span class="o_ab_sales_pos_list_id ab_pos_bill_item_id">#<t
-                                            t-esc="bill.local_number"/></span>
-                                    <span class="o_ab_sales_pos_list_status ab_pos_bill_item_status" t-esc="submissionStatusLabel(bill)"/>
-                                </div>
-                                <button class="btn btn-sm btn-outline-danger ab_pos_bill_item_btn_remove"
-                                        type="button"
-                                        t-on-click.stop="() => removeBill(bill.id)" t-att-disabled="bill.submission_attempted or !billEditable(bill)">
-                                    Remove
-                                </button>
-                            </div>
-                            <div class="o_ab_sales_pos_list_rows ab_pos_bill_item_rows">
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_store">
-                                    <span class="label ab_pos_bill_item_label_store">Store</span>
-                                    <span class="ab_pos_bill_item_value_store" t-esc="bill.header.store_name or '-'"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_customer">
-                                    <span class="label ab_pos_bill_item_label_customer">Customer</span>
-                                    <span class="ab_pos_bill_item_value_customer"
-                                          t-esc="bill.header.customer_name or '-'"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_items">
-                                    <span class="label ab_pos_bill_item_label_items">Items</span>
-                                    <span class="ab_pos_bill_item_value_items" t-esc="bill.number_of_products"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_total">
-                                    <span class="label ab_pos_bill_item_label_total">Total</span>
-                                    <span class="ab_pos_bill_item_value_total" t-esc="formatPrice(bill.total_price)"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_net">
-                                    <span class="label ab_pos_bill_item_label_net">Net</span>
-                                    <span class="ab_pos_bill_item_value_net"
-                                          t-esc="formatPrice(bill.total_net_amount)"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_updated">
-                                    <span class="label ab_pos_bill_item_label_updated">Updated</span>
-                                    <span class="ab_pos_bill_item_value_updated"
-                                          t-esc="formatDateTime(bill.updated_at)"/>
-                                </div>
-                                <div class="o_ab_sales_pos_list_row o_ab_sales_pos_list_desc ab_pos_bill_item_row_description">
-                                    <span class="label ab_pos_bill_item_label_description">Description</span>
-                                    <span class="ab_pos_bill_item_value_description"
-                                          t-esc="bill.header.description or 'No description'"/>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
+                    <div class="ab_pos_slot_summary" aria-live="polite">
+                        <span>Empty: <t t-esc="availableDraftSlots"/></span>
+                        <span>Ready: <t t-esc="readyDraftSlots"/></span>
+                        <span>Used: <t t-esc="usedDraftSlots"/>/<t t-esc="state.draftLimit"/></span>
+                        <span t-if="lockedDraftBills.length"><i class="fa fa-lock" aria-hidden="true"/> <span>Locked:</span> <t t-esc="lockedDraftBills.length"/></span>
+                    </div>
+                    <div class="ab_pos_draft_slots">
+                        <t t-foreach="draftSlots" t-as="slot" t-key="slot.number">
+                            <t t-if="slot.bill &amp;&amp; draftSlotState(slot.bill) !== 'empty'">
+                                <t t-set="bill" t-value="slot.bill"/>
+                                <t t-call="ab_sales.PosDraftSlotBill"/>
+                            </t>
+                            <button t-else="" type="button" class="ab_pos_draft_slot_empty"
+                                    t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting"
+                                    t-on-click="() => openNewBillDialog(slot.number)"
+                                    t-att-aria-label="_draftSlotLabel(slot.number)">
+                                <span class="ab_pos_draft_slot_watermark" aria-hidden="true" t-esc="slot.number"/>
+                                <span class="ab_pos_draft_slot_available">Empty</span>
+                                <span class="ab_pos_draft_slot_hint">Choose branch</span>
+                            </button>
+                        </t>
+                    </div>
+                    <div t-if="lockedDraftBills.length" class="ab_pos_locked_bills">
+                        <h4><i class="fa fa-lock" aria-hidden="true"/> <span>Locked bills</span></h4>
+                        <p>These bills do not use draft slots. Check their status or retry the submission.</p>
+                        <t t-foreach="lockedDraftBills" t-as="bill" t-key="bill.id">
+                            <t t-call="ab_sales.PosDraftSlotBill"/>
+                        </t>
+                    </div>
+                    <div t-if="waitingDraftBills.length" class="ab_pos_waiting_bills">
+                        <h4>Waiting for a slot</h4>
+                        <p>These bills are retained. Complete or remove a draft to free a slot.</p>
+                        <t t-foreach="waitingDraftBills" t-as="bill" t-key="bill.id">
+                            <t t-call="ab_sales.PosDraftSlotBill"/>
+                        </t>
+                    </div>
                 </div>
             </aside>
                     <div class="o_ab_sales_pos_sidebar_resizer ab_pos_sidebar_resizer"
@@ -145,7 +125,8 @@
                             <h3 class="ab_pos_blank_title">No bill selected</h3>
                             <p class="ab_pos_blank_message">Create a new cached bill or pick one from the left panel.</p>
                             <button class="btn btn-primary ab_pos_blank_btn_create_bill" type="button"
-                                    t-on-click="openNewBillDialog">
+                                    t-on-click="openNewBillDialog"
+                            t-att-disabled="!state.draftCacheReady or state.draftCreating or state.draftDeleting or !availableDraftSlots">
                                 Create Bill
                             </button>
                         </div>
@@ -971,5 +952,70 @@
                        t-on-input="onProductMaxPriceInput" t-on-keydown="onProductSearchKeydown"/>
             </div>
         </xpath>
+    </t>
+    <t t-name="ab_sales.PosDraftSlotBill">
+                        <div class="ab_pos_bill_list_item o_ab_sales_pos_list_item"
+                             t-attf-class="#{bill.id == state.selectedId ? 'is-active' : ''} #{!_slotBillLocked(bill) &amp;&amp; draftSlotState(bill) === 'ready' ? 'ab_pos_bill_slot_ready' : ''}"
+                             t-att-data-slot-state="_slotBillLocked(bill) ? 'locked' : draftSlotState(bill)"
+                             t-on-click="() => selectBill(bill.id)">
+                            <span t-if="!_slotBillLocked(bill) &amp;&amp; draftSlotState(bill) === 'ready'" class="ab_pos_draft_slot_watermark" aria-hidden="true" t-esc="bill.slot_number"/>
+                            <div class="ab_pos_bill_slot_badges">
+                                <span t-if="bill.slot_number" class="ab_pos_bill_slot_number">Slot <t t-esc="bill.slot_number"/></span>
+                                <span t-if="!_slotBillLocked(bill)" class="ab_pos_bill_slot_state" t-esc="draftSlotStateLabel(bill)"/>
+                                <span t-if="_slotBillLocked(bill)" class="ab_pos_bill_lock_badge" title="Locked bill">
+                                    <i class="fa fa-lock" aria-hidden="true"/> <span>Locked</span>
+                                </span>
+                                <span class="ab_pos_bill_branch_badge">Branch code: <t t-esc="bill.header.store_code or '-'"/></span>
+                            </div>
+                            <span class="o_ab_sales_pos_bill_thumb ab_pos_bill_item_thumb"
+                                  t-esc="bill.header.store_code or '-'"/>
+                            <div class="o_ab_sales_pos_list_top ab_pos_bill_item_top">
+                                <div class="o_ab_sales_pos_list_title ab_pos_bill_item_title">
+                                    <span class="o_ab_sales_pos_list_id ab_pos_bill_item_id">#<t
+                                            t-esc="bill.local_number"/></span>
+                                    <span class="o_ab_sales_pos_list_status ab_pos_bill_item_status" t-esc="submissionStatusLabel(bill)"/>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger ab_pos_bill_item_btn_remove"
+                                        type="button"
+                                        t-on-click.stop="() => removeBill(bill.id)" t-att-disabled="!state.draftCacheReady or !billRemovable(bill)">
+                                    Remove
+                                </button>
+                            </div>
+                            <div t-if="_slotBillLocked(bill)" class="ab_pos_bill_lock_reason" t-esc="submissionStatusLabel(bill)"/>
+                            <div t-if="draftSlotState(bill) !== 'ready' || _slotBillLocked(bill)" class="o_ab_sales_pos_list_rows ab_pos_bill_item_rows">
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_store">
+                                    <span class="label ab_pos_bill_item_label_store">Store</span>
+                                    <span class="ab_pos_bill_item_value_store" t-esc="bill.header.store_name or '-'"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_customer">
+                                    <span class="label ab_pos_bill_item_label_customer">Customer</span>
+                                    <span class="ab_pos_bill_item_value_customer"
+                                          t-esc="bill.header.customer_name or '-'"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_items">
+                                    <span class="label ab_pos_bill_item_label_items">Items</span>
+                                    <span class="ab_pos_bill_item_value_items" t-esc="bill.number_of_products"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_total">
+                                    <span class="label ab_pos_bill_item_label_total">Total</span>
+                                    <span class="ab_pos_bill_item_value_total" t-esc="formatPrice(bill.total_price)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_net">
+                                    <span class="label ab_pos_bill_item_label_net">Net</span>
+                                    <span class="ab_pos_bill_item_value_net"
+                                          t-esc="formatPrice(bill.total_net_amount)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_updated">
+                                    <span class="label ab_pos_bill_item_label_updated">Updated</span>
+                                    <span class="ab_pos_bill_item_value_updated"
+                                          t-esc="formatDateTime(bill.updated_at)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row o_ab_sales_pos_list_desc ab_pos_bill_item_row_description">
+                                    <span class="label ab_pos_bill_item_label_description">Description</span>
+                                    <span class="ab_pos_bill_item_value_description"
+                                          t-esc="bill.header.description or 'No description'"/>
+                                </div>
+                            </div>
+                        </div>
     </t>
 </templates>

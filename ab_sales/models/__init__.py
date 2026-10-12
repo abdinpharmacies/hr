@@ -28,3 +28,4 @@ from . import ab_sales_return_header_replication_trans_inherit
 from . import ab_sales_return_uom_repair
 from . import ab_sales_return_line
 from . import ab_sales_return_router
+from . import ab_sales_pos_draft_slots
