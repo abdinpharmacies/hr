@@ -8,8 +8,9 @@
                 <form string="ab_sales_header_form" create="0" duplicate="0">
                     <header>
                         <button name="action_retry" type="object" string="Retry" class="btn-primary"
-                                invisible="status not in ('unknown', 'rejected')"/>
-                        <field name="status" widget="statusbar" statusbar_visible="prepending,unknown,rejected,pending,saved"/>
+                                invisible="status not in ('prepending', 'unknown', 'rejected')"/>
+                        <field name="submission_phase" invisible="True"/>
+                        <field name="status" widget="statusbar" statusbar_visible="prepending,pending,saved"/>
                         <button name="action_open_sales_return"
                                 type="object"
                                 string="Return"
@@ -17,7 +18,7 @@
                                 invisible="status not in ('saved', 'pending') or not eplus_serial"/>
                         <button name="action_open_add_products" type="object" string="Add Products"
                                 class="btn-secondary" data-hotkey="f2"
-                                invisible="status in ('saved', 'pending', 'unknown')"/>
+                                invisible="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                         <span class="badge text-bg-success ms-2"
                               invisible="not store_id or store_server_online == False">Connected</span>
                         <span class="badge text-bg-danger ms-2"
@@ -26,6 +27,9 @@
                     <sheet>
                         <div class="alert alert-warning" role="status" invisible="status != 'unknown'">
                             This invoice is locked until its E-Plus submission is resolved. Use Retry.
+                        </div>
+                        <div class="alert alert-info" role="status" invisible="submission_phase == 'idle'">
+                            Submission is in progress. Editing is temporarily disabled.
                         </div>
                         <field name="push_message" readonly="1" invisible="not push_message"/>
                         <div class="oe_button_box" name="button_box">
@@ -73,14 +77,14 @@
                         <group>
                             <group>
                                 <field name="store_id"
-                                       readonly="pos_client_token or status in ('saved', 'pending', 'unknown')"/>
+                                       readonly="pos_client_token or status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                 <field name="eplus_serial"/>
                                 <field name="pos_client_token" readonly="1"/>
                                 <field name="store_code"/>
                                 <field name="store_ip"/>
                                 <field name="store_server_online" invisible="True"/>
                                 <field name="description" placeholder="Write your feedback here"
-                                       readonly="status in ('saved', 'pending', 'unknown')"/>
+                                       readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
 
                             </group>
                             <group>
@@ -88,19 +92,19 @@
                                     <page name="bill_customer" string="Bill Customer Data">
                                         <group>
                                             <field name="bill_customer_name" string="Name"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="bill_customer_phone" string="Phone"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="bill_customer_address" string="Address"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                         </group>
                                     </page>
                                     <page name="current_customer" string="Current Customer">
                                         <group>
                                             <field name="invoice_address_datalist" invisible="True"/>
-                                            <field name="customer_id" readonly="status in ('saved', 'pending', 'unknown')"/>
+                                            <field name="customer_id" readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="invoice_address" class="datalist-invoice_address_datalist"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="customer_address"/>
                                             <field name="customer_mobile"/>
                                             <field name="customer_phone"/>
@@ -110,11 +114,11 @@
                                     <page name="new_customer" string="New Customer">
                                         <group>
                                             <field name="new_customer_name" string="Name"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="new_customer_phone" string="Phone"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                             <field name="new_customer_address" string="Address"
-                                                   readonly="status in ('saved', 'pending', 'unknown')"/>
+                                                   readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'"/>
                                         </group>
                                     </page>
                                 </notebook>
@@ -127,7 +131,7 @@
                         </div>
                         <notebook>
                             <page string="Sales Detail">
-                                <field name="line_ids" readonly="status in ('saved', 'pending', 'unknown')">
+                                <field name="line_ids" readonly="status in ('saved', 'pending', 'unknown') or submission_phase != 'idle'">
                                     <list editable="bottom">
                                         <field name="product_id" decoration-danger="balance==0" class="text-wrap"
                                                context="{'pos_store_id': parent.store_id, 'search_default_filter_has_balance': 1, 'search_default_filter_has_pos_balance': 1}"

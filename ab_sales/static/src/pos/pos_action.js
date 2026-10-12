@@ -7,6 +7,7 @@ import {Dialog} from "@web/core/dialog/dialog";
 import {useService} from "@web/core/utils/hooks";
 import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
 import {session} from "@web/session";
+import {user} from "@web/core/user";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
 import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
@@ -1179,7 +1180,10 @@ class AbSalesPosAction extends Component {
 
     _localCacheKey() {
         const employeeId = this._posDraftEmployeeId();
-        return employeeId ? `${this.cacheKey}_employee_${employeeId}` : this.cacheKey;
+        // Odoo 19 moves uid from session into the user service.
+        // Never share fallback bill JSON between browser logins.
+        const userKey = `${this.cacheKey}_user_${user.userId}`;
+        return employeeId ? `${userKey}_employee_${employeeId}` : userKey;
     }
 
     _readLocalCache() {
@@ -1799,6 +1803,7 @@ class AbSalesPosAction extends Component {
         }
         const bill = {
             id: generateId("bill"),
+            submission_status: "draft",
             local_number: `${Date.now()}`,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -1818,7 +1823,7 @@ class AbSalesPosAction extends Component {
                 bill_customer_name: "",
                 bill_customer_phone: "",
                 bill_customer_address: "",
-                pos_client_token: generatePosToken(session.user_id, store.id),
+                pos_client_token: generatePosToken(user.userId, store.id),
                 new_customer_name: "",
                 new_customer_phone: "",
                 new_customer_address: "",
@@ -1902,7 +1907,7 @@ class AbSalesPosAction extends Component {
         normalized.header.customer_code = normalized.header.customer_code || "";
         normalized.header.pos_client_token =
             normalized.header.pos_client_token || (normalized.submission_attempted
-                ? "" : generatePosToken(session.user_id, normalized.header.store_id));
+                ? "" : generatePosToken(user.userId, normalized.header.store_id));
         normalized.updated_at = normalized.updated_at || new Date().toISOString();
         normalized.local_number = normalized.local_number || String(Date.now());
         normalized.id = normalized.id || generateId("bill");
@@ -4027,18 +4032,19 @@ class AbSalesPosAction extends Component {
 
     billEditable(bill = this.currentBill) {
         return !!bill && !this.state.submitting && !this.state.draftDeleting && !bill.submission_checking &&
-            ["prepending", "rejected"].includes(bill.submission_status || "prepending");
+            !bill.submission_in_progress && bill.submission_can_edit !== false &&
+            ["draft", "prepending", "rejected"].includes(bill.submission_status || "draft");
     }
 
     _plainDraftRemovable(bill) {
-        return !!bill && !bill.submission_checking && !bill.submission_attempted &&
+        return !!bill && !bill.submission_checking && !bill.submission_in_progress && !bill.submission_attempted &&
             !bill.odoo_header_id && !bill.eplus_serial &&
-            ["prepending", "rejected"].includes(bill.submission_status || "prepending");
+            ["draft", "prepending", "rejected"].includes(bill.submission_status || "draft");
     }
 
     _draftDiscardCandidate(bill) {
-        return !!bill && !bill.submission_checking && !bill.lines.length && !bill.eplus_serial &&
-            ["prepending", "rejected", "unknown"].includes(bill.submission_status || "prepending") &&
+        return !!bill && !bill.submission_checking && !bill.submission_in_progress && !bill.lines.length && !bill.eplus_serial &&
+            ["draft", "prepending", "rejected", "unknown"].includes(bill.submission_status || "draft") &&
             (!bill.submission_payload || (Array.isArray(bill.submission_payload.lines) &&
                 !bill.submission_payload.lines.length)) &&
             !!bill.header?.pos_client_token && !!bill.header?.store_id;
@@ -4098,8 +4104,10 @@ class AbSalesPosAction extends Component {
     }
 
     submissionStatusLabel(bill) {
-        const status = bill?.submission_status || "prepending";
+        const status = bill?.submission_status || "draft";
         if (bill?.submission_checking) return _t("Checking submission...");
+        if (bill?.submission_in_progress) return _t("Submitting...");
+        if (status === "draft") return _t("Draft");
         if (status === "unknown") return _t("Unknown");
         if (status === "rejected") return _t("Rejected");
         if (status === "pending") return _t("Pending");
@@ -4109,7 +4117,9 @@ class AbSalesPosAction extends Component {
 
     _applySubmissionState(bill, result) {
         bill.odoo_header_id = result.id || result.recovery_header_id || bill.odoo_header_id || false;
-        bill.submission_status = result.status || "unknown";
+        bill.submission_status = result.status || bill.submission_status || "draft";
+        bill.submission_in_progress = !!result.submission_in_progress;
+        bill.submission_can_edit = result.can_edit === true;
         bill.submission_message = result.message || "";
         bill.submission_checking = false;
         bill.submission_attempted = !!bill.odoo_header_id || bill.submission_attempted;
@@ -4139,13 +4149,17 @@ class AbSalesPosAction extends Component {
                 if (result) {
                     this._applySubmissionState(bill, result);
                 } else {
-                    bill.submission_checking = false;
-                    // Nonempty validation failures with authoritative absence
-                    // can be corrected. Empty Unknown attempts stay read-only.
-                    bill.submission_status = bill.submission_validation_failed &&
-                        (bill.submission_status === "rejected" || bill.lines.length || bill.submission_payload?.lines?.length)
-                        ? "rejected" : (bill.submission_attempted || bill.submission_status === "unknown")
-                            ? "unknown" : "prepending";
+                    // Absence during a lost RPC can race an uncommitted create.
+                    // Keep checking until a saved record or a definite local
+                    // validation failure establishes the outcome.
+                    const unresolved = bill.submission_attempted && !bill.submission_validation_failed;
+                    bill.submission_checking = !!unresolved || !!bill.odoo_header_id;
+                    if (!bill.submission_checking) {
+                        bill.submission_status = "draft";
+                        bill.submission_in_progress = false;
+                        bill.submission_can_edit = true;
+                        bill.submission_attempted = false;
+                    }
                 }
             }
             const remainingBills = this.state.bills.filter((bill) =>
@@ -4177,11 +4191,11 @@ class AbSalesPosAction extends Component {
     async retryCurrentBill() {
         const bill = this.currentBill;
         if (!bill || this.state.submitting || this.state.draftDeleting) return;
-        if (bill.submission_checking) {
+        if (bill.submission_checking || bill.submission_in_progress) {
             await this.refreshSubmissionStates();
-            if (bill.submission_checking || !this.state.bills.includes(bill)) return;
+            if (bill.submission_checking || bill.submission_in_progress || !this.state.bills.includes(bill)) return;
         }
-        if (bill.submission_status === "rejected") {
+        if (["draft", "prepending", "rejected"].includes(bill.submission_status || "draft")) {
             this._openSubmitDialog(bill);
         } else {
             await this._sendBillSubmission(bill);
@@ -4191,7 +4205,7 @@ class AbSalesPosAction extends Component {
     async submitCurrentBill() {
         const bill = this.currentBill;
         if (!bill || this.state.submitting || this.state.draftDeleting || document.body.classList.contains("modal-open")) return;
-        if (bill.submission_status === "unknown" || bill.submission_checking) {
+        if (bill.submission_status === "unknown" || bill.submission_checking || bill.submission_in_progress) {
             return this.retryCurrentBill();
         }
         this._openSubmitDialog(bill);
@@ -4224,7 +4238,8 @@ class AbSalesPosAction extends Component {
         };
         payload.submission_ui_version = "1";
         bill.submission_payload = JSON.parse(JSON.stringify(payload));
-        bill.submission_status = "unknown";
+        bill.submission_in_progress = true;
+        bill.submission_can_edit = false;
         bill.submission_attempted = true;
         bill.submission_draft_discardable = false;
         bill.submission_checking = false;
@@ -4245,6 +4260,8 @@ class AbSalesPosAction extends Component {
             if (result?.type === "ir.actions.act_window") {
                 bill.odoo_header_id = result.pos_header_id;
                 bill.submission_status = "prepending";
+                bill.submission_in_progress = false;
+                bill.submission_can_edit = true;
                 if (!result.views) result.views = [[result.view_id || false, "form"]];
                 this.action.doAction(result, {onClose: () => this.refreshSubmissionStates()});
                 return;
@@ -4256,7 +4273,7 @@ class AbSalesPosAction extends Component {
                 if (storeId) this.createNewBill(storeId);
             } else if (bill.submission_message) {
                 this._openSubmitErrorDialog(bill.submission_message,
-                    bill.submission_status === "rejected" ? _t("Rejected") : _t("Unknown"));
+                    bill.submission_status === "unknown" ? _t("Unknown") : _t("Submit failed"));
             }
         } catch (err) {
             const data = err?.data || err?.response?.data || {};

@@ -19,8 +19,7 @@ class AbdinSalesLines(models.Model):
         if self.env["ab_sales_header"]._submission_internal():
             return
         headers._lock_for_push()
-        if any(header.status == "unknown" for header in headers):
-            raise UserError(_("This invoice is locked until its E-Plus submission is resolved. Use Retry."))
+        headers._check_submission_editable()
         # Version the locked parent too: PostgreSQL repeatable-read submissions
         # must detect line edits committed after their earlier validation reads.
         if headers:

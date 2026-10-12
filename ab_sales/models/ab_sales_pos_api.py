@@ -670,7 +670,16 @@ class AbSalesPosApi(models.TransientModel):
             return {}
         header.check_access("read")
         header._check_store_allowed()
+        if header.status in ('pending', 'saved'):
+            return self._pos_submit_locked_response(header, False)
+        with header._submission_attempt():
+            return self._pos_submit_locked_response(header._submission_attempt_records(), apply_submit)
+
+    @api.model
+    def _pos_submit_locked_response(self, header, apply_submit):
         if apply_submit:
+            if header.status not in ('pending', 'saved'):
+                header._write_submission_state({"submission_phase": "preparing"})
             self.env.cr.commit()
             try:
                 action = header.action_submit()
@@ -678,18 +687,21 @@ class AbSalesPosApi(models.TransientModel):
                 # Validation may happen in an inherited action before any push.
                 # Never downgrade Unknown: it might already exist remotely.
                 header._lock_for_push()
-                if header.status in ("prepending", "rejected"):
+                if header.status in ("prepending", "rejected") and header.submission_phase != 'pushing':
                     header._write_submission_state({
-                        "status": "rejected", "push_state": "error", "push_message": str(ex),
+                        "status": "prepending", "submission_phase": "idle",
+                        "push_state": "error", "push_message": str(ex),
                     })
                     self.env.cr.commit()
                 else:
                     raise
                 action = False
             if isinstance(action, dict) and action.get("type"):
+                if header.submission_phase == 'preparing':
+                    header._write_submission_state({"submission_phase": "idle"})
                 action["pos_header_id"] = header.id
                 return action
-        if header.status in ("unknown", "rejected") and not self.env.context.get("_ab_sales_submission_ui_v1"):
+        if header.status not in ("pending", "saved") and not self.env.context.get("_ab_sales_submission_ui_v1"):
             # An older POS treats every non-action response as success and drops
             # the bill. Force its existing error path to retain the original token.
             raise UserError(_("E-Plus submission needs attention. Reload POS and use Retry on the original invoice."))
@@ -705,8 +717,10 @@ class AbSalesPosApi(models.TransientModel):
         return {
             "id": header.id, "status": header.status,
             "eplus_serial": header.eplus_serial, "message": header.push_message or "",
+            "submission_in_progress": header.submission_phase != 'idle',
+            "can_edit": header.status in ('prepending', 'rejected') and header.submission_phase == 'idle',
             "can_discard_draft": not header.line_ids and not header.eplus_serial
-                and header.status in ("prepending", "rejected"),
+                and header.status in ("prepending", "rejected") and header.submission_phase == 'idle',
         }
 
     @api.model
@@ -718,9 +732,12 @@ class AbSalesPosApi(models.TransientModel):
             fields.Domain("pos_client_token", "in", tokens)
         )
         allowed = self.env["ab_sales_header"]._get_allowed_store_ids()
+        headers = headers.filtered(lambda header: not allowed or header.store_id.id in allowed)
+        for header in headers:
+            header._recover_interrupted_submission()
         return {
             header.pos_client_token: self._pos_submission_payload(header)
-            for header in headers if not allowed or header.store_id.id in allowed
+            for header in headers
         }
 
     @api.model
@@ -765,6 +782,7 @@ class AbSalesPosApi(models.TransientModel):
                 # Include archived/hidden lines as a reason to deny removal.
                 result[token] = header.store_id.id == store_id \
                     and header.status in ("prepending", "rejected", "unknown") \
+                    and header.submission_phase == 'idle' \
                     and not header.eplus_serial and not header.sudo().line_ids
             except AccessError:
                 pass
@@ -773,7 +791,7 @@ class AbSalesPosApi(models.TransientModel):
     @api.model
     def _pos_editable_header_vals(self, values):
         fields_map = self.env["ab_sales_header"]._fields
-        excluded = {"id", "status", "eplus_serial", "pos_client_token", "push_state", "push_message",
+        excluded = {"id", "status", "eplus_serial", "pos_client_token", "push_state", "push_message", "submission_phase",
                     "active", "create_uid", "create_date", "write_uid", "write_date"}
         return {
             name: value for name, value in (values or {}).items()
@@ -798,19 +816,22 @@ class AbSalesPosApi(models.TransientModel):
                 "pos_hr_session_token": pos_hr_session_token,
                 "header": {"store_id": header.store_id.id},
             })
-        if header.status in ("pending", "saved"):
+        if header.status in ('pending', 'saved'):
             return self._pos_submission_payload(header)
-        header._lock_for_push()
-        if payload and header.status in ("rejected", "prepending"):
-            with self.env.cr.savepoint():
-                values = self._pos_editable_header_vals(payload.get("header") or {})
-                values.pop("store_id", None)
-                header.write(values)
-                self._pos_replace_lines(header, payload.get("lines") or [])
-                self._pos_apply_program(header, payload.get("applied_program_id"))
-                self._fill_lines_balance_from_offline(header)
-        # Unknown ignores payload entirely and replays only the saved invoice.
-        return self._pos_submit_response(header.with_context(pos_submit=True))
+        with header._submission_attempt():
+            header = header._submission_attempt_records()
+            if header.status in ("pending", "saved"):
+                return self._pos_submission_payload(header)
+            if payload and header.status in ("rejected", "prepending"):
+                with self.env.cr.savepoint():
+                    values = self._pos_editable_header_vals(payload.get("header") or {})
+                    values.pop("store_id", None)
+                    header.write(values)
+                    self._pos_replace_lines(header, payload.get("lines") or [])
+                    self._pos_apply_program(header, payload.get("applied_program_id"))
+                    self._fill_lines_balance_from_offline(header)
+            # Unknown ignores payload entirely and replays only the saved invoice.
+            return self._pos_submit_response(header.with_context(pos_submit=True))
 
     @api.model
     def _pos_replace_lines(self, header, lines):

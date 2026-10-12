@@ -264,7 +264,9 @@ Files changed:
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
 
 
-## Current changes before commit:
+## c52d1763f9b2e5ae43c9bb8b0a3e4c49da3769a8 - emadco88 - 2026-10-11
+
+Original commit subject: ab_sales/ FIX delete empty bills
 
 User-facing changes:
 - Keep new empty POS bills in PrePending and deletable; reject empty/productless submissions before creating an invoice while preserving existing-token recovery.
@@ -286,6 +288,39 @@ Files changed:
 - ab_sales/models/ab_sales_pos_api.py
 - ab_sales/static/src/pos/pos_action.js
 - ab_sales/static/src/pos/pos_action.xml
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/changelog.d/2026-08-30-item-type-filters.md
+
+
+## Current changes before commit:
+
+User-facing changes:
+- Show cache-only POS bills as Draft; retain JSON per Odoo user and POS employee without creating sales headers or lines.
+- Isolate browser fallback bill JSON by the Odoo 19 user service ID and POS employee; keep existing server cache ownership and keys.
+- Save the sales header and lines as PrePending before submission logic. Keep confirmed no-push failures and confirmed pre-commit rollbacks editable in PrePending instead of assigning Rejected.
+- Mark confirmed external commits Pending and retain the existing final E-Plus confirmation to Saved. Preserve historical Rejected records and show exception stages only when applicable in the sales status bar.
+- Reserve Unknown for uncertain external writes, lost commit acknowledgement, ambiguous external identities, and interrupted pushes. Recover committed invoices using the original branch-scoped identity without repeating stock changes.
+- Persist preparing/pushing attempt phases, hold the submission lock across local commits, and block header/line edits and concurrent retry payload changes during active or unresolved attempts.
+- Reconcile interrupted preparation safely to editable PrePending; require external reconciliation for an interrupted push. Keep lost browser responses temporarily locked until server status establishes the outcome.
+- Add authoritative editing and progress flags to submission/status responses; show separate submitting, checking, and Unknown notices in POS and sales forms.
+- Add English source labels and Arabic translations in both catalogs, preserving unrelated entries.
+
+Validation:
+- 25 isolated Odoo backend scenarios cover local/connection failures, confirmed/failed rollbacks, lost commit acknowledgement, ambiguous identities, recovery, immutable submitted bills, interrupted phases, concurrent retries, branch-scoped queries, durable header/line creation, and client-token reuse.
+- 19 frontend scenarios cover stage labels, editing guards, lost RPC responses, authoritative reconciliation, frozen Unknown retry payloads, completed-bill cache removal, and user/employee browser cache isolation.
+- Authenticated Playwright checks on a clean isolated Odoo installation verify Draft cache/reload without invoice creation, editable PrePending after a safe local failure, and locked Unknown with its notice.
+- Server cache checks verify user and employee isolation without creating sales records. Test harnesses and fixtures remain outside the runtime addon; external submission operations are mocked and no live external writes are used in verification.
+- Clean module installation and targeted isolated upgrade pass. Odoo POT export, both msgfmt format checks, and ar_001 sales-form/field translations pass.
+- Backed up the local database, upgraded only ab_sales, and restarted local Odoo. Verified unchanged invoice status counts and sales-line counts, preserved both previously visible drafts in the authenticated user/employee server cache, and confirmed both display as Draft in the reloaded POS with the actual user-scoped browser key.
+
+Files changed:
+- ab_sales/models/ab_sales_header.py
+- ab_sales/models/ab_sales_line.py
+- ab_sales/models/ab_sales_pos_api.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.xml
+- ab_sales/views/sales_header.xml
 - ab_sales/i18n/ar.po
 - ab_sales/i18n/ar_001.po
 - ab_sales/changelog.d/2026-08-30-item-type-filters.md
