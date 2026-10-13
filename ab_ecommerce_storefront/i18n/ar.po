@@ -31,9 +31,13 @@ msgstr "تواصل معنا"
 msgid "Style / Ads"
 msgstr "الشكل / الإعلانات"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 msgid "Abdin Pharmacies"
 msgstr "صيدليات عابدين"
 
@@ -273,9 +277,11 @@ msgstr "رعاية صيدلية موثوقة تصل إلى بابك"
 msgid "Hotline"
 msgstr "الخط الساخن"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
 msgid "Contact us"
 msgstr "تواصل معنا"
 
@@ -1368,6 +1374,7 @@ msgstr "الفيتامينات والمعادن"
 msgid "About Abdin"
 msgstr "عن عابدين"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Who We Are"
@@ -2090,6 +2097,7 @@ msgstr "لحماية خصوصيتك، يلزم إدخال رقم الموباي�
 msgid "Full name"
 msgstr "الاسم الكامل"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -2684,10 +2692,14 @@ msgstr "تم الشحن"
 msgid "<span>Order</span>"
 msgstr "<span>الطلب</span>"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
 msgid "Home"
 msgstr "الرئيسية"
 
@@ -3412,6 +3424,8 @@ msgstr "المدينة / المحافظة"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -6646,16 +6660,148 @@ msgstr ""
 "<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
 "                        <span>عروض اليوم</span>"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Breadcrumb"
+msgstr "مسار الصفحة"
+
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Shop offers"
 msgstr "عرض العروض"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Egypt"
+msgstr "مصر"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Cairo"
+msgstr "القاهرة"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Giza"
+msgstr "الجيزة"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Sohag"
+msgstr "سوهاج"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse our products"
+msgstr "تصفح منتجاتنا"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_res_partner
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_form
+msgid "Contact"
+msgstr "جهة الاتصال"
+
+#. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "sun_protection"
 msgstr "sun_protection"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Abdin Pharmacies Pharma Company"
+msgstr "شركة صيدليات عابدين فارما"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "From Sohag, our journey began in 2014."
+msgstr "من سوهاج بدأت رحلتنا عام 2014."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Our milestones"
+msgstr "محطات في رحلتنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Founded in Sohag"
+msgstr "تأسسنا في سوهاج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Branches by 2022"
+msgstr "فرعًا بحلول 2022"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Our story"
+msgstr "قصتنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "An Egyptian pharmacy chain"
+msgstr "سلسلة صيدليات مصرية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid ""
+"Abdin Pharmacies is an Egyptian pharmacy chain founded in 2014 in Sohag "
+"Governorate in Upper Egypt. It expanded to more than sixty branches in 2022,"
+" covering most Upper Egypt governorates, as well as the Red Sea, Cairo, "
+"Giza, and some Nile Delta governorates."
+msgstr ""
+"صيدليات عابدين هي سلسلة صيدليات مصرية بدأت في عام 2014 في محافظة سوهاج في "
+"صعيد مصر، وتوسعت حتى تجاوزت الستين فرعًا في عام 2022، وتغطي معظم محافظات "
+"الصعيد إلى جانب وجودها في البحر الأحمر، والقاهرة، ومحافظات الجيزة، وبعض "
+"محافظات دلتا النيل."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid ""
+"Our services go beyond pharmaceuticals and cosmetics: we also offer the best"
+" services and products for beauty and fitness."
+msgstr ""
+"لا تقتصر خدماتنا على تقديم المستحضرات الصيدلانية ومستحضرات التجميل، بل نقدم "
+"أيضًا أفضل الخدمات والمنتجات فيما يتعلق بالجمال واللياقة البدنية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Stay in touch"
+msgstr "تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Contact the Abdin Pharmacies team."
+msgstr "تواصل مع فريق صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Abdin Pharmacies Pharma."
+msgstr "صيدليات عابدين فارما."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branches"
+msgstr "الفروع"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters

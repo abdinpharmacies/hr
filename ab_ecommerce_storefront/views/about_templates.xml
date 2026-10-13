@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="about_us_page" name="Abdin About Us">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Who We Are</t>
+            <div id="wrap" class="oe_structure ab-about-page">
+                <section class="ab-about-hero">
+                    <div class="container">
+                        <nav class="ab-about-breadcrumb" aria-label="Breadcrumb">
+                            <a href="/">Home</a>
+                            <span aria-hidden="true">/</span>
+                            <span aria-current="page">Who We Are</span>
+                        </nav>
+                        <div class="ab-about-hero-grid">
+                            <div class="ab-about-intro">
+                                <span class="ab-about-eyebrow">Abdin Pharmacies Pharma.</span>
+                                <h1>Who We Are</h1>
+                                <p class="ab-about-company">Abdin Pharmacies Pharma Company</p>
+                                <p class="ab-about-origin">From Sohag, our journey began in 2014.</p>
+                                <a href="/shop" class="btn btn-primary">Browse our products</a>
+                            </div>
+                            <aside class="ab-about-milestones" aria-label="Our milestones">
+                                <div class="ab-about-brand">
+                                    <img t-att-src="website.image_url(website, 'logo')" alt="Abdin Pharmacies" width="220" height="100"/>
+                                </div>
+                                <dl class="ab-about-facts">
+                                    <div>
+                                        <dt>Founded in Sohag</dt>
+                                        <dd><bdi dir="ltr">2014</bdi></dd>
+                                    </div>
+                                    <div>
+                                        <dt>Branches by 2022</dt>
+                                        <dd><bdi dir="ltr">60+</bdi></dd>
+                                    </div>
+                                </dl>
+                            </aside>
+                        </div>
+                    </div>
+                </section>
+                <section class="ab-about-story">
+                    <div class="container ab-about-story-grid">
+                        <div class="ab-about-story-heading">
+                            <span class="ab-about-rule" aria-hidden="true"/>
+                            <h2>Our story</h2>
+                            <p>An Egyptian pharmacy chain</p>
+                        </div>
+                        <div class="ab-about-story-copy">
+                            <p>Abdin Pharmacies is an Egyptian pharmacy chain founded in 2014 in Sohag Governorate in Upper Egypt. It expanded to more than sixty branches in 2022, covering most Upper Egypt governorates, as well as the Red Sea, Cairo, Giza, and some Nile Delta governorates.</p>
+                            <p>Our services go beyond pharmaceuticals and cosmetics: we also offer the best services and products for beauty and fitness.</p>
+                        </div>
+                    </div>
+                </section>
+                <section class="ab-about-contact">
+                    <div class="container">
+                        <div class="ab-about-contact-inner">
+                            <div>
+                                <h2>Stay in touch</h2>
+                                <p>Contact the Abdin Pharmacies team.</p>
+                            </div>
+                            <a href="/contactus" class="btn btn-outline-primary">Contact us</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>

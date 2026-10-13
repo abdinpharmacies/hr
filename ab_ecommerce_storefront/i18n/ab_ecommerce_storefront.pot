@@ -832,9 +832,13 @@ msgid ""
 "                        <span>Choose your avatar</span>"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 msgid "Abdin Pharmacies"
 msgstr ""
 
@@ -1225,6 +1229,8 @@ msgstr ""
 msgid "Buy now"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
@@ -1334,6 +1340,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company_id
 msgid "Company"
 msgstr ""
 
@@ -1365,6 +1373,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_res_partner
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_form
 msgid "Contact"
 msgstr ""
 
@@ -1373,9 +1382,11 @@ msgstr ""
 msgid "Contact our team"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_us_abdin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Contact us"
 msgstr ""
 
@@ -2022,6 +2033,8 @@ msgid ""
 "Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
@@ -2128,10 +2141,14 @@ msgstr ""
 msgid "Hide password"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
 msgid "Home"
 msgstr ""
 
@@ -3322,6 +3339,8 @@ msgstr ""
 msgid "Skin brightening and tone correction"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
@@ -3853,6 +3872,7 @@ msgstr ""
 msgid "About Abdin"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Who We Are"
@@ -4418,6 +4438,7 @@ msgstr ""
 msgid "Full name"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.address_form_fields_abdin_checkout
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
@@ -8072,10 +8093,96 @@ msgid ""
 "                        <span>Today's Deals</span>"
 msgstr ""
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+msgid "Breadcrumb"
+msgstr ""
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse our products"
+msgstr ""
+
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 msgid "sun_protection"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Abdin Pharmacies Pharma Company"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "From Sohag, our journey began in 2014."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Our milestones"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Founded in Sohag"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Branches by 2022"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Our story"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "An Egyptian pharmacy chain"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid ""
+"Abdin Pharmacies is an Egyptian pharmacy chain founded in 2014 in Sohag "
+"Governorate in Upper Egypt. It expanded to more than sixty branches in 2022,"
+" covering most Upper Egypt governorates, as well as the Red Sea, Cairo, "
+"Giza, and some Nile Delta governorates."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid ""
+"Our services go beyond pharmaceuticals and cosmetics: we also offer the best"
+" services and products for beauty and fitness."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Stay in touch"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Contact the Abdin Pharmacies team."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "Abdin Pharmacies Pharma."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branches"
 msgstr ""
 
 #. module: ab_ecommerce_storefront

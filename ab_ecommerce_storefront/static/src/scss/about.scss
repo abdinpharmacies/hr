@@ -1,0 +1,108 @@
+body.ab-storefront .ab-about-page {
+    background: var(--ab-surface);
+    color: var(--ab-ink);
+
+    .container { max-width: 1160px; }
+    .container::before, .container::after { content: none !important; display: none !important; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.25; margin-block: 18px; }
+    h2 { font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.5; }
+    p { line-height: 1.9; }
+    .btn { min-height: 48px; padding: 12px 24px; white-space: normal; }
+    .btn-primary, .btn-outline-primary:hover { color: var(--ab-surface); }
+    .btn-outline-primary { color: var(--ab-primary-dark); }
+    a:focus-visible { outline: 3px solid var(--ab-primary-dark); outline-offset: 4px; }
+
+    .ab-about-hero {
+        padding-block: 20px 64px;
+        background: var(--ab-background);
+        border-bottom: 1px solid var(--ab-border);
+    }
+
+    .ab-about-breadcrumb {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        font-size: .875rem;
+        color: var(--ab-muted);
+
+        a { display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 4px; }
+        [aria-current] { color: var(--ab-ink); }
+    }
+
+    .ab-about-hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        align-items: center;
+        gap: 64px;
+        padding-top: 36px;
+    }
+
+    .ab-about-eyebrow { color: var(--ab-primary-dark); font-weight: 700; font-size: 1rem; }
+    .ab-about-company { font-size: clamp(1.25rem, 2.2vw, 1.65rem); font-weight: 600; }
+    .ab-about-origin { margin-block: 12px 28px; color: var(--ab-muted); }
+
+    .ab-about-milestones {
+        overflow: hidden;
+        background: var(--ab-surface);
+        border: 1px solid var(--ab-border);
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(25, 53, 43, .06);
+    }
+
+    .ab-about-brand {
+        display: flex;
+        justify-content: center;
+        padding: 36px 24px;
+
+        img { width: 220px; max-width: 100%; height: 100px; object-fit: contain; }
+    }
+
+    .ab-about-facts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 0;
+        padding: 28px 16px;
+        color: var(--ab-surface);
+        background: var(--ab-primary-dark);
+
+        div { display: flex; flex-direction: column; align-items: center; padding-inline: 8px; text-align: center; }
+        div + div { border-inline-start: 1px solid rgba(255, 255, 255, .25); }
+        dt { font-size: .875rem; font-weight: 500; line-height: 1.7; }
+        dd { order: -1; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.3; font-weight: 700; margin: 0 0 8px; }
+    }
+
+    .ab-about-story { padding-block: 72px; }
+    .ab-about-story-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 64px; }
+    .ab-about-rule { display: block; width: 48px; height: 4px; border-radius: 4px; background: var(--ab-accent); margin-bottom: 20px; }
+    .ab-about-story-heading p { color: var(--ab-muted); margin-top: 12px; }
+    .ab-about-story-copy { font-size: 1.125rem; }
+    .ab-about-story-copy p + p { margin-top: 24px; }
+    .ab-about-contact { padding-bottom: 64px; }
+
+    .ab-about-contact-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 32px;
+        border-radius: 20px;
+        background: var(--ab-background);
+        border: 1px solid var(--ab-border);
+
+        h2 { font-size: 1.5rem; }
+        p { color: var(--ab-muted); margin-top: 8px; }
+        .btn { flex-shrink: 0; }
+    }
+
+    @media (max-width: 767.98px) {
+        .ab-about-hero { padding-bottom: 36px; }
+        .ab-about-hero-grid, .ab-about-story-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+        .ab-about-hero-grid { padding-top: 20px; }
+        .ab-about-story { padding-block: 40px; }
+        .ab-about-contact { padding-bottom: 40px; }
+        .ab-about-contact-inner { align-items: stretch; flex-direction: column; padding: 24px; }
+        .ab-about-contact-inner .btn { text-align: center; }
+    }
+}
