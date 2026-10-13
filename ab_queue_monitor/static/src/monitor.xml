@@ -49,7 +49,17 @@
                             <button type="button" class="btn btn-sm btn-light" t-on-click="clear" title="Clear Filters" aria-label="Clear Filters"><i class="fa fa-filter"/> <i class="fa fa-times"/></button>
                         </form>
                         <div class="abqm-table-wrap" t-att-class="{ 'abqm-loading': state.loading }">
-                            <table class="abqm-table"><thead><tr><th>Job</th><th>Status</th><th>Channel</th><th t-if="state.tab === 'definitions'">Discovery Type</th><th t-if="state.tab === 'definitions'">Executions</th><th t-if="state.tab === 'executions'">Created</th><th t-if="state.tab === 'executions'">Duration</th><th/></tr></thead>
+                            <table class="abqm-table"><thead><tr>
+                                <t t-if="state.tab === 'definitions'">
+                                    <th scope="col" t-att-aria-sort="ariaSort('method_name')"><button type="button" class="abqm-sort" t-on-click="() => this.sort('method_name')"><span>Job</span><i t-att-class="sortIcon('method_name')" aria-hidden="true"/></button></th>
+                                    <th scope="col" t-att-aria-sort="ariaSort('status')"><button type="button" class="abqm-sort" t-on-click="() => this.sort('status')"><span>Status</span><i t-att-class="sortIcon('status')" aria-hidden="true"/></button></th>
+                                    <th scope="col" t-att-aria-sort="ariaSort('channel')"><button type="button" class="abqm-sort" t-on-click="() => this.sort('channel')"><span>Channel</span><i t-att-class="sortIcon('channel')" aria-hidden="true"/></button></th>
+                                    <th scope="col" t-att-aria-sort="ariaSort('discovery_type')"><button type="button" class="abqm-sort" t-on-click="() => this.sort('discovery_type')"><span>Discovery Type</span><i t-att-class="sortIcon('discovery_type')" aria-hidden="true"/></button></th>
+                                    <th scope="col" t-att-aria-sort="ariaSort('count')"><button type="button" class="abqm-sort" t-on-click="() => this.sort('count')"><span>Executions</span><i t-att-class="sortIcon('count')" aria-hidden="true"/></button></th>
+                                </t>
+                                <t t-else=""><th>Job</th><th>Status</th><th>Channel</th><th>Created</th><th>Duration</th></t>
+                                <th/>
+                            </tr></thead>
                                 <tbody><tr t-foreach="state.data.rows" t-as="row" t-key="(row.backend || '') + row.id"><td><button class="abqm-job-link" t-on-click="() => this.open(row)"><code t-esc="row.method_name || row.method"/></button><small><code t-esc="row.module_name"/></small><small t-if="row.uuid"><code t-esc="row.uuid"/></small></td><td><span t-att-class="'abqm-pill ' + row.status" t-esc="label(row.status)"/><small t-if="row.state" t-esc="row.state"/>
                                     <small t-if="row.latest"><span>Latest execution:</span> <t t-esc="label(row.latest.status)"/></small>
                                     <small class="abqm-state-counts" t-if="row.states"><span t-foreach="stateCounts(row)" t-as="item" t-key="item.status"><t t-esc="item.label"/>: <t t-esc="item.count"/></span></small>

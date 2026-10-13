@@ -179,6 +179,39 @@ class Work:
         self.assertEqual(len(found), 2)
         self.assertTrue(all(r['model_name'] == 'work' for r in found))
 
+    def test_definition_sorting_before_pagination(self):
+        for index in range(45):
+            self.definition(key=f'sort|{index}', module_name='sort_test', method_name=f'work_{44 - index:02d}')
+        monitor = self.monitor.with_user(self.reader)
+        for direction in ('asc', 'desc'):
+            pages = [monitor.dashboard({'module': 'sort_test'}, offset=offset,
+                                       sort_by='method_name', sort_direction=direction)
+                     for offset in (0, 40)]
+            names = [row['method_name'] for page in pages for row in page['rows']]
+            expected = [f'work_{index:02d}' for index in range(45)]
+            self.assertEqual(names, expected if direction == 'asc' else list(reversed(expected)))
+            self.assertEqual(pages[0]['total'], 45)
+        with self.assertRaises(AccessError):
+            self.monitor.with_user(self.outsider).dashboard(sort_by='count')
+
+    def test_definition_sort_columns(self):
+        rows = [
+            {'id': 1, 'module_name': 'test', 'method_name': 'z', 'count': 2,
+             'status': 'running', 'channel': 'z', 'discovery_type': 'static'},
+            {'id': 2, 'module_name': 'test', 'method_name': 'a', 'count': 11,
+             'status': 'completed', 'channel': '', 'discovery_type': 'both'},
+        ]
+        monitor = self.monitor.with_context(lang='en_US')
+        for column in ('method_name', 'status', 'channel', 'discovery_type', 'count'):
+            with self.subTest(column=column):
+                monitor._sort_definitions(rows, column, 'asc')
+                self.assertEqual(rows[0]['id'], 1 if column == 'count' else 2)
+                monitor._sort_definitions(rows, column, 'desc')
+                self.assertEqual(rows[0]['id'], 2 if column == 'count' else 1)
+        original = list(rows)
+        monitor._sort_definitions(rows, 'unsupported', 'desc')
+        self.assertEqual(rows, original)
+
     def test_empty_module(self):
         self.assertEqual(static_discovery.scan_text('class Empty: pass', 'empty', 'empty.py'), [])
 

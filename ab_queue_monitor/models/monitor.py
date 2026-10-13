@@ -19,7 +19,7 @@ class QueueMonitor(models.AbstractModel):
             raise AccessError(self.env._('Queue Monitor access is required.'))
 
     @api.model
-    def dashboard(self, filters=None, offset=0, tab='definitions'):
+    def dashboard(self, filters=None, offset=0, tab='definitions', sort_by=None, sort_direction='asc'):
         self._authorize()
         filters = filters if isinstance(filters, dict) else {}
         now = fields.Datetime.now()
@@ -85,6 +85,8 @@ class QueueMonitor(models.AbstractModel):
             if filters.get('error') and not row['failures']:
                 continue
             rows.append(row)
+        if tab == 'definitions':
+            self._sort_definitions(rows, sort_by, sort_direction)
         result_rows = rows[offset:offset + 40]
         total = len(rows)
         if tab == 'executions':
@@ -149,6 +151,21 @@ class QueueMonitor(models.AbstractModel):
         except (ValueError, TypeError, OverflowError):
             raise UserError(self.env._('Choose a valid review threshold in minutes.'))
 
+    def _sort_definitions(self, rows, sort_by, sort_direction):
+        if sort_by not in ('method_name', 'status', 'channel', 'discovery_type', 'count'):
+            return
+        labels = {}
+        if sort_by == 'status':
+            labels = {key: self.env._(label) for key, label in STATUS}
+        elif sort_by == 'discovery_type':
+            labels = dict(self.env['ab_queue_monitor_definition']._fields['discovery_type']._description_selection(self.env))
+
+        def sort_key(row):
+            value = row.get(sort_by)
+            value = (value or 0) if sort_by == 'count' else str(labels.get(value, value) or '').casefold()
+            return value, row['module_name'], row['method_name'], row['id']
+
+        rows.sort(key=sort_key, reverse=sort_direction == 'desc')
 
     def _execution_filter(self, adapter, domain, filters):
         if filters.get('runtime_state'):

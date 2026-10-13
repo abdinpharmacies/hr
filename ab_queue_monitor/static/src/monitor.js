@@ -40,7 +40,7 @@ export class QueueMonitor extends Component {
         this.orm = useService("orm"); this.action = useService("action");
         this.dialog = useService("dialog"); this.notification = useService("notification");
         const params = this.props.action.params || {};
-        this.state = useState({ data: null, loading: true, busy: false, error: "", scan: null, offset: 0,
+        this.state = useState({ data: null, loading: true, busy: false, error: "", scan: null, offset: 0, sortBy: "", sortDirection: "asc",
             tab: params.tab || "definitions", filters: { module: params.module || "", definition_id: params.definition_id || false,
                 search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true,
                 delayed: false, delay_minutes: 30 } });
@@ -70,7 +70,8 @@ export class QueueMonitor extends Component {
         this.state.loading = true;
         try {
             const data = await this.orm.call("ab_queue_monitor", "dashboard", [], {
-                filters: { ...this.state.filters }, offset: this.state.offset, tab: this.state.tab });
+                filters: { ...this.state.filters }, offset: this.state.offset, tab: this.state.tab,
+                sort_by: this.state.sortBy, sort_direction: this.state.sortDirection });
             for (const row of data.rows) if (row.created) row.created = displayTime(row.created);
             data.runner.last_activity = displayTime(data.runner.last_activity);
             if (data.session) data.session.started_at = displayTime(data.session.started_at);
@@ -78,6 +79,18 @@ export class QueueMonitor extends Component {
         } catch (error) {
             if (this.alive) this.state.error = error.data?.message || _t("The monitor could not be refreshed.");
         } finally { if (this.alive && sequence === this.sequence) this.state.loading = false; }
+    }
+    async sort(column) {
+        this.state.sortDirection = this.state.sortBy === column && this.state.sortDirection === "asc" ? "desc" : "asc";
+        this.state.sortBy = column;
+        this.state.offset = 0;
+        await this.refresh();
+    }
+    ariaSort(column) {
+        return this.state.sortBy === column ? (this.state.sortDirection === "asc" ? "ascending" : "descending") : "none";
+    }
+    sortIcon(column) {
+        return this.state.sortBy === column ? (this.state.sortDirection === "asc" ? "fa fa-sort-asc" : "fa fa-sort-desc") : "fa fa-sort";
     }
     async filter() { this.state.offset = 0; this.state.filters.definition_id = false; await this.refresh(); }
     async setTab(tab) { this.state.tab = tab; this.state.offset = 0; await this.refresh(); }

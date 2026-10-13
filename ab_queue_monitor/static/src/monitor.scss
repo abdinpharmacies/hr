@@ -47,6 +47,8 @@
     .abqm-loading { opacity: .6; }
     .abqm-table { width: 100%; border-collapse: collapse; th { background: #eef3f4; color: #596c73; font-size: 11px; font-weight: 600; padding: 11px 12px; white-space: nowrap; } td { padding: 14px 12px; border-bottom: 1px solid #edf1f2; font-size: 12px; } small { display: block; font-size: 10px; color: #75868c; margin-top: 4px; } small code { font-size: 10px; } tbody tr:hover { background: #f8fbfb; } }
     .abqm-job-link { border: 0; background: none; padding: 0; text-align: start; code { font-weight: 600; } &:hover { text-decoration: underline; } }
+    .abqm-sort { display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; color: inherit; font: inherit; padding: 3px 0; cursor: pointer; &:hover { color: #126e62; } }
+    th[aria-sort="ascending"], th[aria-sort="descending"] { color: #126e62; background: #e2f0ed; }
     .abqm-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 15px 0; color: var(--qm-muted); font-size: 12px; }
     .abqm-empty { text-align: center; padding: 50px 12px; color: #71858c; i { font-size: 30px; margin-bottom: 12px; } h3 { font-size: 15px; } }
     .abqm-progress { padding: 15px 0 20px; margin-bottom: 20px; border-block: 1px solid #c4ddd8; .abqm-section-title { justify-content: space-between; } progress { width: 100%; height: 9px; margin: 12px 0; accent-color: #168276; } .abqm-progress-meta { color: var(--qm-muted); font-size: 12px; } }
