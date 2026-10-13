@@ -17,13 +17,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid " Failed codes: %s."
-msgstr ""
+msgstr " الأكواد التي فشلت: %s."
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid " First missing codes: %s."
-msgstr ""
+msgstr " أول الأكواد المفقودة: %s."
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -219,7 +219,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "<span class=\"abdin_ecommerce_price_currency\">EGP</span>"
-msgstr ""
+msgstr "<span class=\"abdin_ecommerce_price_currency\">EGP</span>"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
@@ -238,39 +238,44 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__ab_product_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__ab_product_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order_line__ab_product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__ab_product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__product_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__ab_product_id
 msgid "Abdin Product"
-msgstr ""
+msgstr "منتج عبدين"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_product_group
 msgid "Abdin Product Group"
-msgstr ""
+msgstr "مجموعة منتجات عابدين"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_product_tag
 msgid "Abdin Product Tag"
-msgstr ""
+msgstr "وسم منتج عابدين"
 
 #. module: ab_website_sale_product
 #: model:ir.actions.act_window,name:ab_website_sale_product.action_ab_products_ecommerce_sync
 #: model:ir.ui.menu,name:ab_website_sale_product.menu_catalog_abdin_products
 msgid "Abdin Products"
-msgstr ""
+msgstr "منتجات عابدين"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
 msgid "Actions"
-msgstr ""
+msgstr "الإجراءات"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__active
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__active
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_website_sale_add_many_by_codes_wizard
 msgid "Add Many Abdin Products By Codes"
-msgstr ""
+msgstr "إضافة عدة منتجات عابدين بالأكواد"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -283,33 +288,39 @@ msgstr "إضافة عدة منتجات بالاكواد"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__extra_data
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__extra_data
 msgid "Additional Attributes"
-msgstr ""
+msgstr "خصائص إضافية"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_sale_available
 msgid "Available on Website"
-msgstr ""
+msgstr "متاح على الموقع الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Barcodes"
-msgstr ""
+msgstr "الباركودات"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_add_many_by_codes_wizard_form
 msgid "CODE001, CODE002, CODE003"
-msgstr ""
+msgstr "CODE001, CODE002, CODE003"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_add_many_by_codes_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_force_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Cancel"
 msgstr "إلغاء"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Capabilities"
-msgstr ""
+msgstr "الإمكانات"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_product_product__eplus_stock_shown_qty_type
@@ -324,7 +335,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__codes_text
 msgid "Codes"
-msgstr ""
+msgstr "الأكواد"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__create_uid
@@ -341,6 +352,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -359,25 +371,28 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__create_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__create_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Details & Pricing"
-msgstr ""
+msgstr "التفاصيل والأسعار"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Directory does not exist: %s"
-msgstr ""
+msgstr "المجلد غير موجود: %s"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Directory is not readable by the Odoo server: %s"
-msgstr ""
+msgstr "لا يستطيع خادم Odoo قراءة المجلد: %s"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__display_name
@@ -405,79 +420,87 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__display_name
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__display_name
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_tag__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
 #. module: ab_website_sale_product
 #: model:ir.model.constraint,message:ab_website_sale_product.constraint_product_template_ab_product_unique
 msgid "Each Abdin product can only be linked to one eCommerce product."
-msgstr ""
+msgstr "يمكن ربط كل منتج عابدين بمنتج واحد فقط في المتجر الإلكتروني."
 
 #. module: ab_website_sale_product
 #: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_eplus_stock_snapshot_itm_id_unique
 msgid "Each Eplus item can only appear once in the eCommerce stock snapshot."
 msgstr ""
+"يمكن أن يظهر كل صنف Eplus مرة واحدة فقط في لقطة مخزون المتجر الإلكتروني."
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Edit Main Data"
-msgstr ""
+msgstr "تعديل البيانات الأساسية"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "Edit eCommerce product"
-msgstr ""
+msgstr "تعديل منتج المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Enter an images directory."
-msgstr ""
+msgstr "أدخل مجلد الصور."
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid "Enter at least one product code."
-msgstr ""
+msgstr "أدخل كود منتج واحد على الأقل."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__codes_text
 msgid "Enter product codes separated by commas."
-msgstr ""
+msgstr "أدخل أكواد المنتجات مفصولة بفواصل."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot__matched_by__eplus_serial
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot_store__matched_by__eplus_serial
 msgid "Eplus ID"
-msgstr ""
+msgstr "معرّف Eplus"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_stock_item_count
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__eplus_stock_item_count
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__eplus_stock_item_count
 msgid "Eplus Item Count"
-msgstr ""
+msgstr "عدد أصناف Eplus"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__itm_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__itm_id
 msgid "Eplus Item ID"
-msgstr ""
+msgstr "معرّف صنف Eplus"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_stock_snapshot_ids
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Eplus Items"
-msgstr ""
+msgstr "أصناف Eplus"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "Eplus Items - %s"
-msgstr ""
+msgstr "أصناف Eplus - %s"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__itm_qty
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__target_qty
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__itm_qty
 msgid "Eplus Quantity"
-msgstr ""
+msgstr "كمية Eplus"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -491,43 +514,43 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_search
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
 msgid "Eplus Stock"
-msgstr ""
+msgstr "مخزون Eplus"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__eplus_stock_shown_qty_value
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__eplus_stock_shown_qty_value
 msgid "Eplus Stock Shown Qty"
-msgstr ""
+msgstr "كمية مخزون Eplus المعروضة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__eplus_stock_shown_qty_type
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__eplus_stock_shown_qty_type
 msgid "Eplus Stock Shown Qty Type"
-msgstr ""
+msgstr "نوع كمية مخزون Eplus المعروضة"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_template.py:0
 msgid "Eplus Stock Shown Qty cannot be negative."
-msgstr ""
+msgstr "لا يمكن أن تكون كمية مخزون Eplus المعروضة سالبة."
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_template.py:0
 msgid "Eplus Stock Shown Qty percentage cannot exceed 100."
-msgstr ""
+msgstr "لا يمكن أن تتجاوز نسبة كمية مخزون Eplus المعروضة 100."
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_eplus_stock_snapshot
 msgid "Eplus Stock Snapshot"
-msgstr ""
+msgstr "لقطة مخزون Eplus"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__eplus_stock_total_qty
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__eplus_stock_total_qty
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__eplus_stock_total_qty
 msgid "Eplus Total Quantity"
-msgstr ""
+msgstr "إجمالي كمية Eplus"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -565,18 +588,20 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_public_category__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_tag__id
 msgid "ID"
 msgstr "المعرف"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_image_file_path
 msgid "Image File"
-msgstr ""
+msgstr "ملف الصورة"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_image_file_found
 msgid "Image File Found"
-msgstr ""
+msgstr "تم العثور على ملف الصورة"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -594,18 +619,21 @@ msgstr "تم العثور على ملف الصورة: %s"
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__directory_path
 msgid "Images Directory"
-msgstr ""
+msgstr "مجلد الصور"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__itm_code
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot__matched_by__code
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__itm_code
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot_store__matched_by__code
 msgid "Item Code"
-msgstr ""
+msgstr "كود الصنف"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__last_sync_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__last_sync_date
 msgid "Last Refresh"
-msgstr ""
+msgstr "آخر تحديث"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__write_uid
@@ -622,6 +650,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_uid
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_uid
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -640,44 +669,48 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__write_date
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__write_date
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Linked Product"
-msgstr ""
+msgstr "المنتج المرتبط"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_search
 msgid "Match Type"
-msgstr ""
+msgstr "نوع المطابقة"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_search
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__matched
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
 msgid "Matched"
-msgstr ""
+msgstr "مطابق"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__matched_by
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot_store__matched_by
 msgid "Matched By"
-msgstr ""
+msgstr "طريقة المطابقة"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.actions.act_window,help:ab_website_sale_product.action_ab_products_ecommerce_sync
 msgid "No Abdin products to sync"
-msgstr ""
+msgstr "لا توجد منتجات عابدين للمزامنة"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.actions.act_window,help:ab_website_sale_product.action_ab_eplus_stock_snapshot
 msgid "No Eplus stock snapshot yet"
-msgstr ""
+msgstr "لا توجد لقطة لمخزون Eplus بعد"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "No eCommerce product could be found or created."
-msgstr ""
+msgstr "تعذّر العثور على منتج للمتجر الإلكتروني أو إنشاؤه."
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -689,37 +722,39 @@ msgstr "لم يتم العثور على ملف صورة للكود %s في %s."
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid "None"
-msgstr ""
+msgstr "لا شيء"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot__matched_by__none
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_stock_snapshot_store__matched_by__none
 msgid "Not Matched"
-msgstr ""
+msgstr "غير مطابق"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 msgid "Not Synced"
-msgstr ""
+msgstr "غير متزامن"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Open Eplus Items"
-msgstr ""
+msgstr "فتح أصناف Eplus"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
 msgid "Open Eplus Stock"
-msgstr ""
+msgstr "فتح مخزون Eplus"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Open Linked Product"
-msgstr ""
+msgstr "فتح المنتج المرتبط"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Open eCommerce Product"
-msgstr ""
+msgstr "فتح منتج المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
@@ -738,7 +773,7 @@ msgstr "النسبة المئوية"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Pricing"
-msgstr ""
+msgstr "الأسعار"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_product_template
@@ -767,7 +802,7 @@ msgstr "كود المنتج"
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "Product Image Check"
-msgstr ""
+msgstr "فحص صورة المنتج"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_stock_snapshot__product_name
@@ -780,28 +815,28 @@ msgstr "اسم المنتج"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Product Tags"
-msgstr ""
+msgstr "علامات تصنيف المنتج"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_product_product
 msgid "Product Variant"
-msgstr ""
+msgstr "متغير المنتج"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "Published"
-msgstr ""
+msgstr "منشور"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_product_is_published
 msgid "Published on Website"
-msgstr ""
+msgstr "منشور على الموقع"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__product_template__eplus_stock_shown_qty_type__quantity
 msgid "Quantity"
-msgstr ""
+msgstr "الكمية"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_product_product__eplus_stock_shown_qty_value
@@ -813,7 +848,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Quick Actions"
-msgstr ""
+msgstr "إجراءات سريعة"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
@@ -824,33 +859,34 @@ msgstr "جاهز"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Refresh Eplus Items"
-msgstr ""
+msgstr "تحديث أصناف Eplus"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
 msgid "Refresh Eplus Stock"
-msgstr ""
+msgstr "تحديث مخزون Eplus"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
 msgid "Refresh from Eplus"
-msgstr ""
+msgstr "تحديث من Eplus"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
 #: model:ir.model,name:ab_website_sale_product.model_sale_order
 msgid "Sales Order"
-msgstr ""
+msgstr "أمر البيع"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_sale_order_line
 msgid "Sales Order Line"
-msgstr ""
+msgstr "بند أمر المبيعات"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.actions.act_window,help:ab_website_sale_product.action_ab_products_ecommerce_sync
 msgid "Select products here, then use Action &gt; Sync to eCommerce."
-msgstr ""
+msgstr "حدّد المنتجات هنا، ثم استخدم إجراء &gt; مزامنة إلى المتجر الإلكتروني."
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__directory_path
@@ -863,7 +899,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
 msgid "Snapshot Summary"
-msgstr ""
+msgstr "ملخص اللقطة"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -877,8 +913,11 @@ msgstr "بعض المنتجات أصبحت غير متاحة وتم تحديث �
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_tree_view_sync_images
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_sync_images
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Sync Images"
-msgstr ""
+msgstr "مزامنة الصور"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
@@ -890,20 +929,20 @@ msgstr "مزامنة الآن"
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/add_many_by_codes_wizard.py:0
 msgid "Sync Product Images"
-msgstr ""
+msgstr "مزامنة صور المنتجات"
 
 #. module: ab_website_sale_product
 #: model:ir.actions.server,name:ab_website_sale_product.action_server_sync_ab_products_to_website
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "Sync to eCommerce"
-msgstr ""
+msgstr "مزامنة إلى المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "Synced"
-msgstr ""
+msgstr "تمت المزامنة"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -924,12 +963,12 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_product_synced
 msgid "Synced to eCommerce"
-msgstr ""
+msgstr "تمت المزامنة مع المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Tags & Barcodes"
-msgstr ""
+msgstr "الوسوم والباركودات"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -945,62 +984,64 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_list
 msgid "Total Quantity"
-msgstr ""
+msgstr "إجمالي الكمية"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Units & UoM"
-msgstr ""
+msgstr "الوحدات ووحدات القياس"
 
 #. module: ab_website_sale_product
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/stock_availability.xml:0
 msgid "Units in Stock:"
-msgstr ""
+msgstr "الوحدات في المخزون:"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
 msgid "Unmatched"
-msgstr ""
+msgstr "غير مطابق"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "Unnamed Category"
-msgstr ""
+msgstr "فئة بلا اسم"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "Unnamed Product"
-msgstr ""
+msgstr "منتج غير مسمى"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "Unnamed Tag"
-msgstr ""
+msgstr "وسم بلا اسم"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.actions.act_window,help:ab_website_sale_product.action_ab_eplus_stock_snapshot
 msgid "Use Refresh from Eplus to load the latest stock query results."
-msgstr ""
+msgstr "استخدم تحديث من Eplus لتحميل أحدث نتائج استعلام المخزون."
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "View Published Page"
-msgstr ""
+msgstr "عرض الصفحة المنشورة"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "View on Website"
-msgstr ""
+msgstr "عرض على الموقع"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_ab_product_kanban_abdin_ecommerce
 msgid "View on website"
-msgstr ""
+msgstr "عرض على الموقع"
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_website
@@ -1012,7 +1053,7 @@ msgstr "الموقع الإلكتروني"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_search_view_inherit_website_sale
 msgid "Website Available"
-msgstr ""
+msgstr "متاح على الموقع"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_group__website_public_category_id
@@ -1023,17 +1064,17 @@ msgstr "فئة الموقع الإلكتروني"
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_tag__website_product_tag_id
 msgid "Website Product Tag"
-msgstr ""
+msgstr "وسم منتج الموقع"
 
 #. module: ab_website_sale_product
 #: model:ir.actions.server,name:ab_website_sale_product.ir_cron_sync_ab_products_to_website_ir_actions_server
 msgid "Website Sale: Sync Abdin Products"
-msgstr ""
+msgstr "مبيعات الموقع: مزامنة منتجات عابدين"
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "Website Settings"
-msgstr ""
+msgstr "إعدادات الموقع الإلكتروني"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,help:ab_website_sale_product.field_ab_product__website_sale_available
@@ -1071,20 +1112,20 @@ msgstr ""
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 msgid "eCommerce"
-msgstr ""
+msgstr "المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product__website_product_tmpl_id
 msgid "eCommerce Product"
-msgstr ""
+msgstr "منتج المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/ab_product.py:0
 msgid "eCommerce Sync"
-msgstr ""
+msgstr "مزامنة المتجر الإلكتروني"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -1096,7 +1137,7 @@ msgstr "فارغ"
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/stock_availability.xml:0
 msgid "in your cart)"
-msgstr ""
+msgstr "في سلتك)"
 
 #. module: ab_website_sale_product
 #. odoo-python
@@ -1114,6 +1155,9 @@ msgstr "اختر صفوف مخزون إي بلس النشطة لعرض كميا�
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_search
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__eplus_stock_snapshot_store_ids
+#: model:ir.ui.menu,name:ab_website_sale_product.menu_catalog_eplus_branch_stock
 msgid "Eplus Branch Stock"
 msgstr "مخزون إي بلس حسب الفرع"
 
@@ -1168,6 +1212,8 @@ msgstr "فتح مخزون الفروع"
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_store_view_list
 msgid "Refresh Branch Stock"
 msgstr "تحديث مخزون الفروع"
 
@@ -1184,14 +1230,18 @@ msgid "Prepared %(total)s product(s). %(unchanged)s already matched, %(pending)s
 msgstr "تم تجهيز %(total)s منتج: %(unchanged)s مطابق بالفعل، %(pending)s قيد التنفيذ، %(skipped)s متخطى."
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Scan / Preview"
 msgstr "فحص / معاينة"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Synchronize Images"
 msgstr "مزامنة الصور"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_line_ids
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Image Synchronization Report"
 msgstr "تقرير مزامنة الصور"
 
@@ -1200,26 +1250,32 @@ msgid "Image Synchronization Report Line"
 msgstr "سطر تقرير مزامنة الصور"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Configuration"
 msgstr "الإعدادات"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
 msgid "Results"
 msgstr "النتائج"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__matched_identifier
 msgid "Matched Identifier"
 msgstr "المعرف المطابق"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__image_path
 msgid "Image Path"
 msgstr "مسار الصورة"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__relative_path
 msgid "Relative Path"
 msgstr "المسار النسبي"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__match_method
 msgid "Match Method"
 msgstr "طريقة المطابقة"
 
@@ -1231,10 +1287,12 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__reason
 msgid "Reason"
 msgstr "السبب"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__checksum
 msgid "Checksum"
 msgstr "بصمة الملف"
 
@@ -1254,10 +1312,12 @@ msgid "Unchanged"
 msgstr "بدون تغيير"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__missing
 msgid "Missing"
 msgstr "مفقود"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__ambiguous
 msgid "Ambiguous"
 msgstr "غير حاسم"
 
@@ -1267,90 +1327,116 @@ msgid "Invalid"
 msgstr "غير صالح"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__error
 msgid "Error"
 msgstr "خطأ"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Products scanned"
 msgstr "المنتجات التي تم فحصها"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Images found"
 msgstr "الصور التي تم العثور عليها"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Matched products"
 msgstr "المنتجات المطابقة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Missing images"
 msgstr "الصور المفقودة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Ambiguous matches"
 msgstr "المطابقات غير الحاسمة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Invalid image files"
 msgstr "ملفات الصور غير الصالحة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Already synchronized"
 msgstr "تمت مزامنتها بالفعل"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Images requiring update"
 msgstr "الصور التي تحتاج إلى تحديث"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Updated images"
 msgstr "الصور المحدثة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Errors"
 msgstr "الأخطاء"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Empty image file."
 msgstr "ملف الصورة فارغ."
 
 #. module: ab_website_sale_product
-msgid "No matching image was found. Existing Odoo image, if any, will be kept."
-msgstr "لم يتم العثور على صورة مطابقة. سيتم الاحتفاظ بصورة أودو الحالية إن وجدت."
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"No matching image was found. Existing Odoo image, if any, will be kept."
+msgstr ""
+"لم يتم العثور على صورة مطابقة. سيتم الاحتفاظ بصورة أودو الحالية إن وجدت."
 
 #. module: ab_website_sale_product
-msgid "Multiple matching images were found without a deterministic primary image."
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid ""
+"Multiple matching images were found without a deterministic primary image."
 msgstr "تم العثور على أكثر من صورة مطابقة بدون صورة رئيسية محددة بشكل حاسم."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Image file does not exist."
 msgstr "ملف الصورة غير موجود."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Image file is not readable."
 msgstr "ملف الصورة غير قابل للقراءة."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Image file is empty."
 msgstr "ملف الصورة فارغ."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Invalid image file: %s"
 msgstr "ملف صورة غير صالح: %s"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "The current Odoo image already matches the source file checksum."
 msgstr "صورة أودو الحالية تطابق بالفعل بصمة ملف المصدر."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Image is ready to synchronize."
 msgstr "الصورة جاهزة للمزامنة."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Image synchronized."
 msgstr "تمت مزامنة الصورة."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
 msgid "Only administrators can synchronize product images."
 msgstr "يمكن للمسؤولين فقط مزامنة صور المنتجات."
 
@@ -1450,22 +1536,29 @@ msgid "Website Product Sync"
 msgstr "مزامنة منتجات الموقع"
 
 #. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_ab_website_product_sync_job
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
 msgid "Website Product Sync Jobs"
 msgstr "مهام مزامنة منتجات الموقع"
 
 #. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_website_product_sync_job
 msgid "Website Product Sync Job"
 msgstr "مهمة مزامنة منتجات الموقع"
 
 #. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_website_product_sync_job_line
 msgid "Website Product Sync Job Line"
 msgstr "بند مهمة مزامنة منتجات الموقع"
 
 #. module: ab_website_sale_product
+#: model:ir.actions.server,name:ab_website_sale_product.action_open_website_product_sync_console
 msgid "Open Product Sync Console"
 msgstr "فتح شاشة مزامنة المنتجات"
 
 #. module: ab_website_sale_product
+#: model:ir.actions.server,name:ab_website_sale_product.ir_cron_process_website_product_sync_jobs_ir_actions_server
 msgid "Website Products: Process Sync Jobs"
 msgstr "منتجات الموقع: معالجة مهام المزامنة"
 
@@ -1484,22 +1577,30 @@ msgid "Products Per Batch"
 msgstr "عدد المنتجات في الدفعة"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
 msgid "Start Full Sync"
 msgstr "بدء مزامنة كاملة"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Process Next Batch"
 msgstr "معالجة الدفعة التالية"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Process All Remaining"
 msgstr "معالجة كل المتبقي"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Open Abdin Products"
 msgstr "فتح منتجات عبدين"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Cancel this sync job?"
 msgstr "هل تريد إلغاء مهمة المزامنة؟"
 
@@ -1508,62 +1609,82 @@ msgid "Synced products:"
 msgstr "المنتجات المتزامنة:"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Sync Lines"
 msgstr "بنود المزامنة"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Products Fully Synchronized"
 msgstr "تمت مزامنة المنتجات بالكامل"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "All selected Abdin products are synchronized with the website shop."
 msgstr "تمت مزامنة كل منتجات عبدين المحددة مع متجر الموقع."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Product Sync Failed"
 msgstr "فشلت مزامنة المنتجات"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "The sync stopped before completion."
 msgstr "توقفت المزامنة قبل الاكتمال."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Product Sync Cancelled"
 msgstr "تم إلغاء مزامنة المنتجات"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "The sync was cancelled."
 msgstr "تم إلغاء المزامنة."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Ready to Sync Products"
 msgstr "جاهز لمزامنة المنتجات"
 
 #. module: ab_website_sale_product
-msgid "Start a full sync to create or update website products from Abdin products."
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+msgid ""
+"Start a full sync to create or update website products from Abdin products."
 msgstr "ابدأ مزامنة كاملة لإنشاء أو تحديث منتجات الموقع من منتجات عبدين."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Product Sync In Progress"
 msgstr "مزامنة المنتجات قيد التنفيذ"
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Odoo is processing Abdin products in background batches."
 msgstr "يقوم أودو بمعالجة منتجات عبدين على دفعات في الخلفية."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Ready to start full website product sync."
 msgstr "جاهز لبدء مزامنة كاملة لمنتجات الموقع."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_website_product_sync_job_one_running_job
 msgid "Another website product sync is already running."
 msgstr "توجد مزامنة منتجات للموقع قيد التشغيل بالفعل."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "No website-available Abdin products were found."
 msgstr "لم يتم العثور على منتجات عبدين متاحة للموقع."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Website Product Sync - %s"
 msgstr "مزامنة منتجات الموقع - %s"
 
@@ -1576,10 +1697,14 @@ msgid "Queued %(total)s product(s) for background website synchronization."
 msgstr "تم وضع %(total)s منتج/منتجات في قائمة مزامنة الموقع بالخلفية."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Sync cancelled."
 msgstr "تم إلغاء المزامنة."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Processed %(processed)s of %(total)s product(s)."
 msgstr "تمت معالجة %(processed)s من %(total)s منتج/منتجات."
 
@@ -1588,10 +1713,12 @@ msgid "Product sync failed for %(failed)s product(s)."
 msgstr "فشلت مزامنة %(failed)s منتج/منتجات."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Product sync completed with %(failed)s failed product(s)."
 msgstr "اكتملت مزامنة المنتجات مع فشل %(failed)s منتج/منتجات."
 
 #. module: ab_website_sale_product
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
 msgid "Website products fully synchronized."
 msgstr "تمت مزامنة منتجات الموقع بالكامل."
 
@@ -1601,6 +1728,7 @@ msgid "Website Product"
 msgstr "منتج الموقع"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__operation__create
 msgid "Create"
 msgstr "إنشاء"
 
@@ -1676,7 +1804,6 @@ msgstr "بصمة صورة الموقع المطبقة"
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_product__website_image_source_checksum
 msgid "Website Image Source Checksum"
 msgstr "بصمة مصدر صورة الموقع"
-
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__background_company_id
@@ -1795,6 +1922,7 @@ msgstr "%(ready)s منتجًا متزامن بالفعل؛ و%(remaining)s من�
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
 msgid "A batch is being committed. Try again shortly."
 msgstr "يجري حفظ دفعة الآن. يرجى المحاولة بعد قليل."
 
@@ -2040,7 +2168,9 @@ msgid "Company"
 msgstr "الشركة"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__completed
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__done
 msgid "Completed"
 msgstr "مكتمل"
 
@@ -2611,6 +2741,7 @@ msgstr "إعداد شجرة التصنيف"
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
 msgid "Prepare and resolve all approved taxonomy bindings before starting."
 msgstr "أعد ربط جميع فئات التصنيف المعتمد وصححها قبل البدء."
 
@@ -2745,6 +2876,7 @@ msgstr "معرف مهمة الطابور"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__queued
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__queued
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
@@ -2846,6 +2978,7 @@ msgstr "الفئة الجذرية"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_product_classification_result__run_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_classification_force_wizard__run_id
 msgid "Run"
 msgstr "العملية"
 
@@ -2856,11 +2989,13 @@ msgid "Run History"
 msgstr "سجل العمليات"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__running
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__state__running
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__running
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__running
 msgid "Running"
 msgstr "قيد التشغيل"
 
@@ -3033,6 +3168,7 @@ msgstr "يجب الاحتفاظ بشجرة التصنيف المعتمدة."
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
 msgid "The chosen category is not correctly bound to the approved taxonomy."
 msgstr "الفئة المختارة غير مرتبطة بشكل صحيح بشجرة التصنيف المعتمدة."
 
@@ -3057,6 +3193,7 @@ msgstr "أُضيف الطلب إلى قائمة الانتظار وسيُطبق 
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/models/classification_force.py:0
 msgid "The requester no longer has access to this company."
 msgstr "لم يعد صاحب الطلب يملك صلاحية الوصول إلى هذه الشركة."
 
@@ -3214,6 +3351,7 @@ msgstr "مقاومة علامات التقدم في السن والعناية ب
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_mother_and_baby
 msgid ""
 "Products for mothers and children, including feeding, baby care, diapers, "
 "and accessories."
@@ -3223,6 +3361,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_medical_devices_and_supplies
 msgid ""
 "Medical devices and supplies for monitoring, patient care, mobility, wound "
 "care, and first aid."
@@ -3233,6 +3372,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_hygiene_and_household
 msgid ""
 "Hygiene and household essentials for cleaning, disinfection, paper products,"
 " and home care."
@@ -3249,6 +3389,7 @@ msgstr "يمكن للمسؤولين فقط إعداد احتياجات التس�
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_skin_care_and_beauty
 msgid ""
 "Skin care and beauty products organized by skin concern, product function, "
 "and area of use."
@@ -3264,6 +3405,7 @@ msgstr "ترطيب البشرة الجافة"
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_medicines
 msgid ""
 "Medicines organized by their intended therapeutic category, dosage form, and"
 " pharmaceutical information."
@@ -3285,6 +3427,7 @@ msgstr "يجب الاحتفاظ باحتياجات التسوق."
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_vitamins_and_supplements
 msgid ""
 "Vitamins, minerals, and nutritional supplements organized by their stated "
 "nutritional purpose and intended users."
@@ -3295,6 +3438,7 @@ msgstr ""
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_hair_care
 msgid ""
 "Hair and scalp products organized by cleansing, conditioning, styling, and "
 "specific hair concerns."
@@ -3317,6 +3461,7 @@ msgstr "أوصاف الفئات"
 #. module: ab_website_sale_product
 #. odoo-python
 #: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: model:ab_product_classification_taxonomy,description:ab_website_sale_product.taxonomy_personal_care
 msgid ""
 "Daily personal care products for oral hygiene, bathing, deodorants, shaving,"
 " and feminine care."
@@ -3848,6 +3993,7 @@ msgid ""
 msgstr ""
 "لا توجد منتجات جديدة لتصنيفها. تظل المنتجات السابقة غير المحسومة في قائمة "
 "المراجعة."
+
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
 msgid "<span class=\"ab_sync_metric_label\">Catalog Products</span>"
@@ -3926,3 +4072,482 @@ msgstr "الإجماليات"
 msgid "Gift Products"
 msgstr "منتجات الهدايا"
 
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.view_sync_images_wizard_form
+msgid "/opt/odoo19/product_images"
+msgstr "/opt/odoo19/product_images"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_professional
+msgid ""
+"<i class=\"fa fa-building-o\" title=\"Branches\"/>\n"
+"                                            Open Eplus Branch Stock"
+msgstr ""
+"<i class=\"fa fa-building-o\" title=\"الفروع\"/>\n"
+"                                            فتح مخزون فروع Eplus"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_sync_images
+msgid ""
+"<i class=\"fa fa-image\" title=\"Image\"/>\n"
+"                        Check Image File"
+msgstr ""
+"<i class=\"fa fa-image\" title=\"الصورة\"/>\n"
+"                        فحص ملف الصورة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "<span> / </span>"
+msgstr "<span> / </span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "<span>Synced products: </span>"
+msgstr "<span>المنتجات المتزامنة: </span>"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_website_product_image_sync_service
+msgid "Abdin Website Product Image Sync Service"
+msgstr "خدمة مزامنة صور منتجات موقع عابدين"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "All required products are synchronized with Odoo Inventory."
+msgstr "تمت مزامنة جميع المنتجات المطلوبة مع مخزون Odoo."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Another Eplus inventory sync is already running."
+msgstr "توجد مزامنة أخرى لمخزون Eplus قيد التشغيل بالفعل."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__cancelled
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__cancelled
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_product_form_view_sync_images
+msgid "Check Image File"
+msgstr "فحص ملف الصورة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__created_count
+msgid "Created Count"
+msgstr "عدد السجلات المنشأة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Dashboard fully synchronized."
+msgstr "تمت مزامنة لوحة المعلومات بالكامل."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__date_done
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__date_done
+msgid "Date Done"
+msgstr "تاريخ الإتمام"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__date_start
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__date_start
+msgid "Date Start"
+msgstr "تاريخ البدء"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job__state__done
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job__state__done
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_website_sale_product
+#: model:ir.model.constraint,message:ab_website_sale_product.constraint_ab_eplus_stock_snapshot_store_itm_store_unique
+msgid ""
+"Each Eplus item can only appear once per branch in the eCommerce branch "
+"stock snapshot."
+msgstr ""
+"يمكن أن يظهر كل صنف Eplus مرة واحدة فقط لكل فرع في لقطة مخزون فروع المتجر "
+"الإلكتروني."
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_eplus_stock_snapshot_store
+msgid "Eplus Branch Stock Snapshot"
+msgstr "لقطة مخزون فروع Eplus"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Eplus Inventory Sync - %s"
+msgstr "مزامنة مخزون Eplus - %s"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_eplus_inventory_sync_job
+msgid "Eplus Inventory Sync Job"
+msgstr "مهمة مزامنة مخزون Eplus"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_eplus_inventory_sync_job_line
+msgid "Eplus Inventory Sync Job Line"
+msgstr "بند مهمة مزامنة مخزون Eplus"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.act_window,name:ab_website_sale_product.action_ab_eplus_inventory_sync_job
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
+msgid "Eplus Inventory Sync Jobs"
+msgstr "مهام مزامنة مخزون Eplus"
+
+#. module: ab_website_sale_product
+#: model:ir.actions.server,name:ab_website_sale_product.ir_cron_process_eplus_inventory_sync_jobs_ir_actions_server
+msgid "Eplus Inventory: Process Sync Jobs"
+msgstr "مخزون Eplus: معالجة مهام المزامنة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_add_many_by_codes_wizard__image_sync_summary
+msgid "Image Sync Summary"
+msgstr "ملخص مزامنة الصور"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "Invalid image file."
+msgstr "ملف صورة غير صالح."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Inventory Fully Synchronized"
+msgstr "تمت مزامنة المخزون بالكامل"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Inventory Sync Cancelled"
+msgstr "تم إلغاء مزامنة المخزون"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Inventory Sync Failed"
+msgstr "فشلت مزامنة المخزون"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Inventory Sync In Progress"
+msgstr "مزامنة المخزون جارية"
+
+#. module: ab_website_sale_product
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__job_id
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__job_id
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__last_message
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__last_message
+msgid "Last Message"
+msgstr "آخر رسالة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__line_ids
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__line_ids
+msgid "Line"
+msgstr "البند"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__location_id
+msgid "Location"
+msgstr "منطقة التوصيل"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__message
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__message
+msgid "Message"
+msgstr "رسالة"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "No matched Eplus stock rows are available to sync."
+msgstr "لا توجد صفوف مخزون Eplus مطابقة متاحة للمزامنة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "No syncable products were found."
+msgstr "لم يتم العثور على منتجات قابلة للمزامنة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "No warehouse is configured for this company."
+msgstr "لم يتم إعداد مستودع لهذه الشركة."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job_line__product_product_id
+msgid "Odoo Product"
+msgstr "منتج Odoo"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid ""
+"Odoo inventory synced from Eplus: %(updated)s updated, %(unchanged)s "
+"unchanged, %(skipped)s skipped."
+msgstr ""
+"تمت مزامنة مخزون Odoo من Eplus: تم تحديث %(updated)s، ودون تغيير "
+"%(unchanged)s، وتخطي %(skipped)s."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Odoo is processing Eplus stock in background batches."
+msgstr "يعالج Odoo مخزون Eplus على دفعات في الخلفية."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__processed_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__processed_count
+msgid "Processed Count"
+msgstr "عدد المعالج"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_ab_website_sale_image_sync_report_line
+msgid "Product Image Synchronization Report Line"
+msgstr "بند تقرير مزامنة صور المنتجات"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_product_tag
+msgid "Product Tag"
+msgstr "علامة تصنيف المنتج"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__progress
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__progress
+msgid "Progress"
+msgstr "مدى التقدم"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__progress_percent_label
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__progress_percent_label
+msgid "Progress Label"
+msgstr "عنوان التقدم"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__progress_style
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__progress_style
+msgid "Progress Style"
+msgstr "نمط التقدم"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Ready to Sync Inventory"
+msgstr "جاهز لمزامنة المخزون"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Ready to start full inventory sync from Eplus snapshot."
+msgstr "جاهز لبدء مزامنة المخزون بالكامل من لقطة Eplus."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Select matched active Eplus stock rows to sync."
+msgstr "حدّد صفوف مخزون Eplus النشطة والمطابقة للمزامنة."
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "Select one or more Eplus stock rows to sync to Odoo Inventory."
+msgstr "حدّد صفًا أو أكثر من مخزون Eplus للمزامنة مع مخزون Odoo."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__skipped_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__skipped_count
+msgid "Skipped Count"
+msgstr "عدد المتخطى"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid ""
+"Start a full sync to update Odoo Inventory from the current Eplus snapshot."
+msgstr "ابدأ مزامنة كاملة لتحديث مخزون Odoo من لقطة Eplus الحالية."
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__status_text
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__status_text
+msgid "Status Text"
+msgstr "نص الحالة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__status_title
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__status_title
+msgid "Status Title"
+msgstr "عنوان الحالة"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+msgid "Sync Selected to Odoo Inventory"
+msgstr "مزامنة المحدد مع مخزون Odoo"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+msgid "Sync failed: %s"
+msgstr "فشلت المزامنة: %s"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+msgid "Sync to Odoo Inventory"
+msgstr "مزامنة مع مخزون Odoo"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: code:addons/ab_website_sale_product/models/eplus_stock_snapshot.py:0
+msgid "The selected warehouse has no stock location."
+msgstr "المستودع المحدد ليس له موقع مخزون."
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_list
+msgid ""
+"This will update Odoo inventory quantities for the selected Eplus stock "
+"rows. Continue?"
+msgstr ""
+"سيؤدي هذا إلى تحديث كميات مخزون Odoo لصفوف مخزون Eplus المحددة. هل تريد "
+"المتابعة؟"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_stock_snapshot_view_form
+msgid ""
+"This will update Odoo inventory quantity for this Eplus stock row. Continue?"
+msgstr ""
+"سيؤدي هذا إلى تحديث كمية مخزون Odoo لصف مخزون Eplus هذا. هل تريد المتابعة؟"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__total_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__total_count
+msgid "Total Count"
+msgstr "العدد الإجمالي"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__unchanged_count
+msgid "Unchanged Count"
+msgstr "عدد السجلات دون تغيير"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__operation__update
+msgid "Update"
+msgstr "تحديث"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__updated_count
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__updated_count
+msgid "Updated Count"
+msgstr "عدد السجلات المحدّثة"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_eplus_inventory_sync_job__warehouse_id
+msgid "Warehouse"
+msgstr "المستودع"
+
+#. module: ab_website_sale_product
+#: model:ir.model,name:ab_website_sale_product.model_product_public_category
+msgid "Website Product Category"
+msgstr "فئة منتج الموقع الإلكتروني"
+
+#. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_sale_image_sync_report_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "ambiguous"
+msgstr "ملتبس"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "error"
+msgstr "خطأ"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "images_found"
+msgstr "images_found"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "invalid"
+msgstr "غير صالح"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "kept_existing"
+msgstr "kept_existing"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "matched"
+msgstr "مطابق"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "missing"
+msgstr "مفقود"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "new_images"
+msgstr "new_images"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "replacements"
+msgstr "replacements"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "to_update"
+msgstr "to_update"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "unchanged"
+msgstr "دون تغيير"
+
+#. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_image_sync.py:0
+msgid "updated"
+msgstr "تم التحديث"
