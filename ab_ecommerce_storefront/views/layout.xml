@@ -88,8 +88,8 @@
                 <t t-set="ab_header_need_menu" t-value="website._ab_storefront_header_need_menu()"/>
                 <t t-set="ab_header_nav_labels" t-value="website._ab_storefront_header_nav_labels()"/>
                 <t t-set="ab_current_path" t-value="request.httprequest.path.rstrip('/') or '/'"/>
-                <t t-set="ab_offers_href" t-value="'/shop/offers'"/>
-                <t t-set="ab_offers_active" t-value="ab_current_path.endswith('/shop/offers') or '/shop/offers/page/' in ab_current_path"/>
+                <t t-set="ab_offers_href" t-value="'/shop/category?deal=discount'"/>
+                <t t-set="ab_offers_active" t-value="(ab_current_path.endswith('/shop/category') or '/shop/category/page/' in ab_current_path) and 'discount' in (request.httprequest.args.get('deal') or '').split(',')"/>
                 <t t-set="ab_prescription_href" t-value="'/prescription-order'"/>
                 <t t-set="ab_offers_badge" t-value="False"/>
                 <t t-set="ab_location_partner" t-value="False if request.env.user._is_public() else request.env.user.partner_id"/>

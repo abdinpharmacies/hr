@@ -67,6 +67,70 @@
         </nav>
     </template>
 
+    <template id="shop_extra_filters" name="Abdin Shop Extra Filters">
+        <div class="ab-storefront-extra-filters">
+            <section class="ab-storefront-extra-filter-section" aria-label="Brands">
+                <h2>Brands</h2>
+                <div t-if="ab_storefront_brands" class="ab-storefront-brand-list">
+                    <a t-att-href="keep(brand=None)"
+                       data-ab-brand=""
+                       t-attf-class="ab-storefront-filter-choice #{'active' if not ab_storefront_brand_id else ''}"
+                       t-att-aria-current="'true' if not ab_storefront_brand_id else None">All brands</a>
+                    <a t-foreach="ab_storefront_brands" t-as="ab_brand"
+                       t-att-href="keep(brand=ab_brand['id'])"
+                       t-att-data-ab-brand="ab_brand['id']"
+                       t-attf-class="ab-storefront-filter-choice #{'active' if ab_storefront_brand_id == ab_brand['id'] else ''}"
+                       t-att-aria-current="'true' if ab_storefront_brand_id == ab_brand['id'] else None">
+                        <span t-out="ab_brand['name']"/>
+                    </a>
+                </div>
+                <p t-else="" class="ab-storefront-filter-empty">No brands available</p>
+            </section>
+            <section class="ab-storefront-extra-filter-section" aria-label="Deals and discounts">
+                <h2>Deals &amp; Discounts</h2>
+                <a t-att-href="keep(deal=None)"
+                   data-ab-deal-clear=""
+                   t-attf-class="ab-storefront-deal-clear #{'' if ab_storefront_deals else 'd-none'}">Clear</a>
+                <div t-attf-class="ab-storefront-filter-choice-list #{'d-none' if ab_storefront_deals else ''}">
+                    <a t-att-href="keep(deal=ab_storefront_deal_toggles['discount'])"
+                       data-ab-deal="discount"
+                       t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if 'discount' in ab_storefront_deals else ''}"
+                       role="checkbox" t-att-aria-checked="'true' if 'discount' in ab_storefront_deals else 'false'">
+                        <span class="ab-storefront-filter-checkbox" aria-hidden="true"/>
+                        <span>All Discounts</span>
+                    </a>
+                    <a t-att-href="keep(deal=ab_storefront_deal_toggles['coupon'])"
+                       data-ab-deal="coupon"
+                       t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if 'coupon' in ab_storefront_deals else ''}"
+                       role="checkbox" t-att-aria-checked="'true' if 'coupon' in ab_storefront_deals else 'false'">
+                        <span class="ab-storefront-filter-checkbox" aria-hidden="true"/>
+                        <span>Coupons</span>
+                    </a>
+                    <a t-att-href="keep(deal=ab_storefront_deal_toggles['today'])"
+                       data-ab-deal="today"
+                       t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if 'today' in ab_storefront_deals else ''}"
+                       role="checkbox" t-att-aria-checked="'true' if 'today' in ab_storefront_deals else 'false'">
+                        <span class="ab-storefront-filter-checkbox" aria-hidden="true"/>
+                        <span>Today's Deals</span>
+                    </a>
+                </div>
+            </section>
+            <section class="ab-storefront-extra-filter-section" aria-label="Availability">
+                <h2>Availability</h2>
+                <a t-att-href="keep(include_oos=None if ab_storefront_include_oos else '1')"
+                   data-ab-include-oos=""
+                   t-attf-class="ab-storefront-filter-choice ab-storefront-filter-toggle #{'active' if ab_storefront_include_oos else ''}"
+                   t-att-aria-pressed="'true' if ab_storefront_include_oos else 'false'">
+                    <span class="ab-storefront-filter-checkbox" aria-hidden="true"/>
+                    <span>Include Out of Stock</span>
+                </a>
+            </section>
+            <a t-if="ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos"
+               t-att-href="keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)"
+               class="ab-storefront-filter-clear">Clear all filters</a>
+        </div>
+    </template>
+
     <template id="shop" name="Abdin eCommerce Shop" inherit_id="website_sale.products" priority="90">
         <xpath expr="//t[@t-set='hasLeftColumn']" position="attributes">
             <attribute name="t-value">categories or opt_wsale_categories or opt_wsale_attributes</attribute>
@@ -128,6 +192,13 @@
                 <t t-set="ab_category_tree_id_prefix" t-value="'desktop'"/>
                 <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
             </t>
+            <t t-call="ab_ecommerce_storefront.shop_extra_filters"/>
+        </xpath>
+        <xpath expr="//aside[@id='products_grid_before']//div[contains(@t-if, 'attrib_values or tags')]" position="attributes">
+            <attribute name="t-if">attrib_values or tags or (show_price_filter and isFilteringByPrice) or ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos</attribute>
+        </xpath>
+        <xpath expr="//aside[@id='products_grid_before']//a[contains(@t-att-href, 'attribute_values=0')]" position="attributes">
+            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)</attribute>
         </xpath>
         <xpath expr="//div[@id='o_wsale_container']" position="after">
             <t t-set="ab_history_limit" t-value="10"/>
@@ -182,6 +253,11 @@
                     </div>
                 </div>
             </div>
+            <div class="accordion-item d-lg-none ab-storefront-extra-filters-mobile">
+                <div class="accordion-body py-3">
+                    <t t-call="ab_ecommerce_storefront.shop_extra_filters"/>
+                </div>
+            </div>
         </xpath>
         <xpath expr="//div[hasclass('offcanvas-body') and hasclass('border-top')]" position="attributes">
             <attribute name="class" add="ab-storefront-filter-dialog-actions" separator=" "/>
@@ -192,6 +268,11 @@
                     data-bs-dismiss="offcanvas">
                 Save
             </button>
+        </xpath>
+        <xpath expr="//div[hasclass('offcanvas-body') and hasclass('border-top')]/a[contains(@t-att-href, 'attribute_values=0')]" position="attributes">
+            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)</attribute>
+            <attribute name="t-attf-class">btn btn-{{navClass}} d-flex py-1 mb-2 {{(not attrib_values and not isFilteringByPrice and not tags and not ab_storefront_brand_id and not ab_storefront_deals and not ab_storefront_include_oos and not ab_shop_need) and 'disabled' }}</attribute>
+            <attribute name="t-att-aria-disabled">(not attrib_values and not isFilteringByPrice and not tags and not ab_storefront_brand_id and not ab_storefront_deals and not ab_storefront_include_oos and not ab_shop_need) and 'true' or 'false'</attribute>
         </xpath>
     </template>
 

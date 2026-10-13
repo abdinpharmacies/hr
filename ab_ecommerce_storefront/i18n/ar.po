@@ -4131,6 +4131,7 @@ msgstr "مصرح به"
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
 msgid "Availability"
 msgstr "التوفر"
 
@@ -6551,3 +6552,99 @@ msgstr "عرض الطلب"
 #. module: ab_ecommerce_storefront
 msgid "View prescription details"
 msgstr "عرض تفاصيل الروشتة"
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Brands"
+msgstr "العلامات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_storefront_brand_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__ab_storefront_brand_id
+msgid "Brand"
+msgstr "العلامة التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "All brands"
+msgstr "كل العلامات التجارية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "No brands available"
+msgstr "لا توجد علامات تجارية متاحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Deals &amp; Discounts"
+msgstr "العروض والخصومات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Deals and discounts"
+msgstr "العروض والخصومات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "All Discounts"
+msgstr "كل الخصومات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Coupons"
+msgstr "الكوبونات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Today's Deals"
+msgstr "عروض اليوم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Clear"
+msgstr "مسح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Clear all filters"
+msgstr "مسح جميع الفلاتر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                    <span>Include Out of Stock</span>"
+msgstr ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                    <span>عرض المنتجات غير المتوفرة</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>All Discounts</span>"
+msgstr ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>كل الخصومات</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>Coupons</span>"
+msgstr ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>الكوبونات</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>Today's Deals</span>"
+msgstr ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>عروض اليوم</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop offers"
+msgstr "عرض العروض"

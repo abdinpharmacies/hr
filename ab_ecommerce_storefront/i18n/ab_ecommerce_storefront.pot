@@ -5824,6 +5824,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
 msgid "Availability"
 msgstr ""
 
@@ -7984,4 +7985,87 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/controllers/auth_security.py:0
 msgid "Phone verification completed successfully. Confirm your Telegram connection."
+msgstr ""
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                    <span>Include Out of Stock</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "All Discounts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "All brands"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_storefront_brand_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__ab_storefront_brand_id
+msgid "Brand"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Brands"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Clear"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Clear all filters"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Coupons"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Deals &amp; Discounts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Deals and discounts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "No brands available"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "Today's Deals"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>All Discounts</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>Coupons</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid ""
+"<span class=\"ab-storefront-filter-checkbox\" aria-hidden=\"true\"/>\n"
+"                        <span>Today's Deals</span>"
 msgstr ""

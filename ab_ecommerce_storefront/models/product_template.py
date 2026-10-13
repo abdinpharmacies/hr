@@ -1,6 +1,6 @@
 import re
 
-from odoo import _, models
+from odoo import _, fields, models
 
 
 _UNIT_LABELS = {
@@ -43,6 +43,25 @@ _AB_PRODUCT_VARIANT_IMAGE_FIELDS = (
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
+
+    ab_storefront_brand_id = fields.Many2one(
+        "ab_product_company",
+        string="Brand",
+        related="ab_product_id.company_id",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+
+    def _search_get_detail(self, website, order, options):
+        result = super()._search_get_detail(website, order, options)
+        brand_id = options.get("ab_storefront_brand_id")
+        deals = options.get("ab_storefront_deals")
+        if brand_id:
+            result["base_domain"].append([("ab_storefront_brand_id", "=", brand_id)])
+        if deals:
+            result["base_domain"].append(list(website._ab_storefront_deal_candidate_domain(deals)))
+        return result
 
     def _get_sales_prices(self, website):
         prices = super()._get_sales_prices(website)

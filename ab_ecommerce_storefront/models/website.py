@@ -427,6 +427,63 @@ class Website(models.Model):
             ])
         return domain
 
+    def _ab_storefront_coupon_candidate_domain(self):
+        self.ensure_one()
+        today = fields.Date.context_today(self)
+        program_domain = [
+            ("active", "=", True),
+            ("ecommerce_ok", "=", True),
+            ("program_type", "in", ["coupons", "promo_code"]),
+            ("trigger", "=", "with_code"),
+            ("applies_on", "=", "current"),
+            *self.env["loyalty.program"]._check_company_domain(
+                [self.company_id.id, self.company_id.parent_id.id]
+            ),
+            "|", ("website_id", "=", False), ("website_id", "=", self.id),
+            "|", ("date_from", "=", False), ("date_from", "<=", today),
+            "|", ("date_to", "=", False), ("date_to", ">=", today),
+        ]
+        try:
+            pricelist = getattr(request, "pricelist", False)
+        except RuntimeError:
+            pricelist = False
+        if pricelist:
+            program_domain = Domain.AND([
+                program_domain,
+                ["|", ("pricelist_ids", "=", False), ("pricelist_ids", "in", [pricelist.id])],
+            ])
+        programs = self.env["loyalty.program"].sudo().search(program_domain)
+        domains = []
+        for program in programs:
+            if program.limit_usage and program.total_order_count >= program.max_usage:
+                continue
+            for reward in program.reward_ids.filtered(
+                lambda item: item.active and item.reward_type == "discount"
+                and item.discount_applicability == "specific"
+            ):
+                if not (
+                    reward.discount_product_ids
+                    or reward.discount_product_category_id
+                    or reward.discount_product_tag_id
+                    or (
+                        reward.discount_product_domain
+                        and reward.discount_product_domain != "[]"
+                    )
+                ):
+                    continue
+                domains.append(Domain(
+                    "product_variant_ids", "any", reward._get_discount_product_domain()
+                ))
+        return Domain.OR(domains) if domains else Domain.FALSE
+
+    def _ab_storefront_deal_candidate_domain(self, deals):
+        domains = []
+        if 'coupon' in deals:
+            domains.append(self._ab_storefront_coupon_candidate_domain())
+        if 'discount' in deals or 'today' in deals:
+            domains.append(self._ab_storefront_offer_candidate_domain())
+        return Domain.OR(domains) if domains else Domain.FALSE
+
     def _ab_storefront_carousel_slides(self):
         self.ensure_one()
         domain = fields.Domain("active", "=", True)
