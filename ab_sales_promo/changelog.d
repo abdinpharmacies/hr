@@ -72,18 +72,44 @@ Files changed:
 - ab_sales_promo/tests/test_ab_sales_specific_promo.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
 
-Current changes before commit:
+## a53e7fe - hager yasser - 2026-08-23
 
-- Remove the compensation metadata model extension from `ab_sales_promo` after moving ownership to `ab_promo_program`.
-- Remove the inherited compensation form view registration and file from `ab_sales_promo`.
-- Remove stale Arabic compensation translations from `ab_sales_promo` so the base module owns those labels.
+Original commit subject: ab_sales_promo/FIX(#2168): remove promo compensation model
+
+- Remove compensation configuration from this addon after moving ownership to Promotion Programs.
+- Remove obsolete compensation view registration and translations.
 
 Files changed:
 
-- ab_sales_promo/changelog.d
 - ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
 - ab_sales_promo/i18n/ar.po
 - ab_sales_promo/i18n/ar_001.po
 - ab_sales_promo/models/__init__.py
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
+
+Current changes before commit:
+
+- Support normal promotion selection and pricing for eligible contracts while preserving contract priority when the option is disabled.
+- Allocate promotion savings once, preserve zero totals, and validate promotion availability again before submission.
+- Resolve Odoo virtual-record promotion references correctly and share authoritative contract-aware API totals with the POS.
+- Reuse remaining-basket promotion return pricing for contract-promotion invoices, preserving zero customer liability.
+- Add Arabic validation translations and translated POS error messages for both language codes.
+
+Files changed:
+
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/models/ab_sales_return_promo.py
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+
+Verification:
+
+- Isolated Odoo install and targeted upgrade; 13 rollback-only feature checks with external connections blocked and posting cursors mocked.
+- POS checks in both asset orders cover payers, selection/removal, cache reload, stale responses, and promotion-only invoices.
+- Both Arabic PO files pass msgfmt --check-format; runtime Arabic contract action and Allow Promotions label checked.
+- No migrations, lifecycle hooks, historical repricing, or live E-Plus writes. Development checks are kept outside the addon packages.

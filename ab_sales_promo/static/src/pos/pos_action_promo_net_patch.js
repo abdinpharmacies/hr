@@ -2,6 +2,7 @@
 
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
+import {_t} from "@web/core/l10n/translation";
 
 const PosAction = registry.category("actions").get("ab_sales.pos");
 
@@ -38,7 +39,7 @@ if (PosAction) {
                 || bill.promo.selected_id
                 || (parseFloat(bill.promo.discount_amount || 0) || 0) > 0
             );
-            if (hasPromoContext && Number.isFinite(net)) {
+            if (!bill.header?.contract_id && hasPromoContext && Number.isFinite(net)) {
                 bill.total_net_amount = net;
                 if (persist) {
                     this.persistCache();
@@ -58,6 +59,9 @@ if (PosAction) {
             const target = bill || this.currentBill;
             if (!target) {
                 return;
+            }
+            if (target.header?.contract_id && this._refreshContractTotals) {
+                return this._refreshContractTotals(target);
             }
             if (!target.promo) {
                 target.promo = this._defaultPromo();
@@ -79,7 +83,7 @@ if (PosAction) {
                     applied_program_id: target.promo.selected_id || false,
                     manual_clear: !!target.promo.manual_clear,
                 });
-                if (requestId !== this._promoRequestId) {
+                if (requestId !== this._promoRequestId || !this.billEditable(target) || target.header?.contract_id) {
                     return;
                 }
                 target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
@@ -108,7 +112,7 @@ if (PosAction) {
                     this._promoDisabled = true;
                     this._resetPromotions(target);
                 } else {
-                    this.notification.add(message || "Failed to load promotions.", {type: "warning"});
+                    this.notification.add(message || _t("Failed to load promotions."), {type: "warning"});
                 }
             } finally {
                 if (requestId === this._promoRequestId) {
