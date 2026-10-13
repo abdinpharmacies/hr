@@ -5,6 +5,9 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 
+const DASHBOARD_CHANNEL = "ab_website_sale_product.classification";
+const DASHBOARD_EVENT = "ab_website_sale_product/classification_updated";
+
 export class ProductClassification extends Component {
     static template = "ab_website_sale_product.ProductClassification";
     static props = ["*"];
@@ -13,19 +16,32 @@ export class ProductClassification extends Component {
         this.orm = useService("orm");
         this.action = useService("action");
         this.notification = useService("notification");
+        this.busService = useService("bus_service");
         this.runId = this.props.action.params?.run_id || false;
         this.state = useState({ loading: true, busy: false, error: "", scope: this.props.action.params?.scope || "website", batchSize: 250, websiteId: this.props.action.params?.website_id || false, data: null });
         this.alive = true;
         this.refreshSequence = 0;
+        this.onDashboardChanged = () => this.scheduleRefresh();
+        this.busService.subscribe(DASHBOARD_EVENT, this.onDashboardChanged);
+        this.busService.addChannel(DASHBOARD_CHANNEL);
         onWillStart(() => this.refresh());
-        onWillUnmount(() => { this.alive = false; clearTimeout(this.timer); });
+        onWillUnmount(() => {
+            this.alive = false;
+            clearTimeout(this.refreshTimer);
+            this.busService.unsubscribe(DASHBOARD_EVENT, this.onDashboardChanged);
+            this.busService.deleteChannel(DASHBOARD_CHANNEL);
+        });
+    }
+
+    scheduleRefresh() {
+        clearTimeout(this.refreshTimer);
+        this.refreshTimer = setTimeout(() => this.refresh(), 100);
     }
 
     async refresh() {
-        clearTimeout(this.timer);
         const sequence = ++this.refreshSequence;
         try {
-            const data = await this.orm.call("ab_product_classification_run", "dashboard", [], {
+            const data = await this.orm.silent.call("ab_product_classification_run", "dashboard", [], {
                 run_id: this.runId, scope: this.state.scope, website_id: this.state.websiteId,
             });
             if (!this.alive || sequence !== this.refreshSequence) return;
@@ -38,7 +54,6 @@ export class ProductClassification extends Component {
         } finally {
             if (this.alive && sequence === this.refreshSequence) {
                 this.state.loading = false;
-                this.timer = setTimeout(() => this.refresh(), 3000);
             }
         }
     }

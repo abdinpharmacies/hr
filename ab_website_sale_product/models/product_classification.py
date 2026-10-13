@@ -20,6 +20,8 @@ _logger = logging.getLogger(__name__)
 _INTERNAL = object()
 METHODS = [("forced", "Force Categorized"), ("manual", "Manual"), ("historical_mapping", "Historical Mapping"), ("local_rule", "Local Rule"), ("web_research", "Web Research"), ("needs_review", "Needs Review"), ("failed", "Failed")]
 STATUSES = [("pending", "Pending"), ("processing", "Processing"), ("classified", "Classified"), ("needs_review", "Needs Review"), ("failed", "Failed")]
+DASHBOARD_CHANNEL = "ab_website_sale_product.classification"
+DASHBOARD_EVENT = "ab_website_sale_product/classification_updated"
 
 ROOT_DESCRIPTIONS = {
     'medicines': _lt('Medicines organized by their intended therapeutic category, dosage form, and pharmaceutical information.'),
@@ -36,6 +38,10 @@ ROOT_DESCRIPTIONS = {
 def check_manager(env):
     if not env.user.has_group("base.group_system"):
         raise AccessError(env._("Only administrators can manage product classification."))
+
+
+def notify_dashboard_changed(env):
+    env["bus.bus"]._sendone(DASHBOARD_CHANNEL, DASHBOARD_EVENT, {})
 
 
 def product_facts(product, template):
@@ -78,6 +84,12 @@ class AbProductClassification(models.Model):
     ab_classification_assignment_ids = fields.One2many("ab_product_classification_assignment", "ab_product_id", groups="base.group_system")
     ab_classification_result_ids = fields.One2many("ab_product_classification_result", "ab_product_id", groups="base.group_system")
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        products = super().create(vals_list)
+        notify_dashboard_changed(self.env)
+        return products
+
     def _classification_facts(self):
         self.ensure_one()
         return product_facts(self, self.website_product_tmpl_id)
@@ -88,6 +100,18 @@ class ProductTemplateClassification(models.Model):
 
     ab_classification_assignment_ids = fields.One2many("ab_product_classification_assignment", "product_id", groups="base.group_system")
     ab_classification_result_ids = fields.One2many("ab_product_classification_result", "product_id", groups="base.group_system")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        templates = super().create(vals_list)
+        notify_dashboard_changed(self.env)
+        return templates
+
+    def write(self, vals):
+        result = super().write(vals)
+        if set(vals) & {"active", "sale_ok", "website_id", "public_categ_ids", "ab_product_id"} and self.env.context.get("classification_internal") is not _INTERNAL:
+            notify_dashboard_changed(self.env)
+        return result
 
 
 class ClassificationAudit(models.AbstractModel):
@@ -286,6 +310,11 @@ class ClassificationRun(models.Model):
     def _compute_progress(self):
         for run in self:
             run.progress_percent = min(100, 100 * run.processed_products / run.total_products) if run.total_products else (100 if run.state == "completed" else 0)
+
+    def write(self, vals):
+        result = super().write(vals)
+        notify_dashboard_changed(self.env)
+        return result
 
     @api.model
     def _scope_model_domain(self, scope, website_id):

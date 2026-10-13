@@ -19,7 +19,7 @@ async function checkStaleResponse(rejectOlder) {
     Object.assign(page, {
         alive: true, refreshSequence: 0, runId: 1,
         state: { scope: "website", websiteId: 1, error: "", loading: true },
-        orm: { call: () => new Promise((resolve, reject) => pending.push({ resolve, reject })) },
+        orm: { silent: { call: () => new Promise((resolve, reject) => pending.push({ resolve, reject })) } },
     });
     const older = page.refresh();
     const newer = page.refresh();
@@ -35,5 +35,5 @@ async function checkStaleResponse(rejectOlder) {
 }
 
 Promise.all([checkStaleResponse(false), checkStaleResponse(true)])
-    .then(() => console.log("2 polling race checks passed"))
+    .then(() => console.log("2 event refresh race checks passed"))
     .catch(error => { console.error(error); process.exitCode = 1; });

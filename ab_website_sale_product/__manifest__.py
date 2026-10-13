@@ -5,7 +5,7 @@
     "license": "LGPL-3",
     "author": "Abdin Pharmacies",
     "category": "Website",
-    "depends": ["website_sale_stock", "ab_product", "ab_eplus_connect", "ab_core_ui", "integration_queue_job"],
+    "depends": ["website_sale_stock", "bus", "ab_product", "ab_eplus_connect", "ab_core_ui", "integration_queue_job"],
     "data": [
         "security/ir.model.access.csv",
         "security/classification_rules.xml",
