@@ -8800,6 +8800,10 @@ html[dir="rtl"] {
 .ab-storefront-history-card {
     position: relative;
 
+    .ab-storefront-product-purchase-history {
+        margin-top: auto !important;
+    }
+
     .ab-storefront-product-card,
     .ab-storefront-product-media {
         position: relative;
