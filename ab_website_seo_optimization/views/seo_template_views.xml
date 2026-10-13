@@ -38,6 +38,14 @@
                 <field name="product_selection_ids" widget="many2many_tags" readonly="state != 'draft'"/><field name="category_filter_id" readonly="state != 'draft'"/>
                 <field name="template_filter_id" readonly="state != 'draft'"/><field name="dry_run"/><field name="pilot_job_id"/>
             </xpath>
+            <xpath expr="//field[@name='assistant_id']" position="attributes">
+                <attribute name="readonly">state != 'draft' or not enrichment_enabled or generation_mode != 'ai'</attribute>
+                <attribute name="domain">[('provider_type', 'in', ['AI_GENERATOR', 'LOCAL_MODEL']), ('active', '=', True)]</attribute>
+                <attribute name="help">For AI Wording, use only this assistant when selected. Leave empty to use the pipeline order. The pipeline must allow AI generation.</attribute>
+            </xpath>
+            <xpath expr="//field[@name='assistant_id']" position="after">
+                <div colspan="2" class="text-muted small" invisible="not enrichment_enabled or generation_mode != 'deterministic'">Deterministic mode uses product facts and the template without an AI assistant.</div>
+            </xpath>
             <xpath expr="//sheet" position="inside">
                 <group string="Pilot Review"><field name="pilot_review_notes"/><field name="pilot_validated_by"/><field name="pilot_validated_at"/></group>
                 <group string="Dry Run Report"><field name="dry_run_report" nolabel="1"/></group>
@@ -63,6 +71,17 @@
         <field name="name">SEO record template status</field><field name="model">ab.product.seo</field><field name="inherit_id" ref="view_enrichment_seo_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='lang_mode']" position="after"><field name="template_generation_mode"/></xpath>
+            <xpath expr="//field[@name='template_generation_mode']" position="after">
+                <xpath expr="//field[@name='website_id']" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='assistant_id']" position="attributes">
+                <attribute name="readonly">state not in ('draft', 'generated', 'rejected') or template_generation_mode != 'ai'</attribute>
+                <attribute name="domain">[('provider_type', 'in', ['AI_GENERATOR', 'LOCAL_MODEL']), ('active', '=', True)]</attribute>
+                <attribute name="help">For AI Wording, use only this assistant when selected. Leave empty to use the pipeline order. The pipeline must allow AI generation.</attribute>
+            </xpath>
+            <xpath expr="//field[@name='assistant_id']" position="after">
+                <div colspan="2" class="text-muted small" invisible="template_generation_mode != 'deterministic'">Deterministic mode uses product facts and the template without an AI assistant.</div>
+            </xpath>
             <xpath expr="//sheet" position="inside"><group string="Template Status"><field name="template_outdated"/><field name="translation_ids" readonly="1"><list><field name="lang_code"/><field name="seo_template_id"/><field name="template_version"/><field name="data_confidence"/><field name="validation_status"/><field name="review_required"/><field name="generation_provider_id"/><field name="generation_model"/></list></field></group></xpath>
         </field>
     </record>

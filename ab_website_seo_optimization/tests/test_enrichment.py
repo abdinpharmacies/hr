@@ -14,6 +14,7 @@ from odoo import fields
 from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
+from odoo.tools.safe_eval import safe_eval
 
 from ..services.catalog import CATALOG
 from ..services.seo_templates import deterministic
@@ -71,11 +72,108 @@ class TestEnrichment(TransactionCase):
         return self.env["ab_seo_pipeline"].create(dict({"name": "Test Pipeline", "domain": "general", "ai_mode": "always",
             "line_ids": [(0, 0, {"provider_id": p.id, "sequence": index * 10}) for index, p in enumerate(providers)]}, **values))
 
-    def job(self, pipeline):
-        job = self.env["ab.product.seo.bulk.optimization"].create({"name": "Enrichment acceptance", "pipeline_id": pipeline.id, "lang_mode": "en_US", "batch_limit": 100, "enrichment_enabled": True, "generation_mode": "ai", "regeneration_mode": "selected"})
+    def job(self, pipeline, **values):
+        job = self.env["ab.product.seo.bulk.optimization"].create(dict({"name": "Enrichment acceptance", "pipeline_id": pipeline.id, "lang_mode": "en_US", "batch_limit": 100, "enrichment_enabled": True, "generation_mode": "ai", "regeneration_mode": "selected"}, **values))
         job.write({"state": "queued", "discovery_done": True, "total_count": 1})
         self.env["ab_seo_work_item"].create({"job_id": job.id, "product_id": self.template.id})
         return job
+
+    def test_single_generation_carries_only_ai_assistant(self):
+        assistant = self.provider()
+        seo = self.env['ab.product.seo'].create({
+            'product_template_id': self.template.id, 'ab_product_id': self.product.id,
+            'assistant_id': assistant.id, 'template_generation_mode': 'deterministic',
+            'only_missing_seo': False,
+        })
+        deterministic_job = seo._optimize_single_published_product()
+        self.assertFalse(deterministic_job.assistant_id)
+        self.assertEqual(seo.assistant_id, assistant)
+        seo.template_generation_mode = 'ai'
+        ai_job = seo._optimize_single_published_product()
+        self.assertEqual(ai_job.assistant_id, assistant)
+
+    def test_selected_assistant_does_not_use_pipeline_fallback(self):
+        selected = self.provider(base_url='http://localhost:8001/v1', retry_count=0)
+        fallback = self.provider(base_url='http://localhost:8002/v1')
+        pipeline = self.pipeline([fallback, selected])
+        job = self.job(pipeline, assistant_id=selected.id)
+        self.assertEqual(job.work_item_ids._generation_providers(pipeline), selected)
+        with patch('requests.request', return_value=self.response(503)) as http:
+            job._run_bulk_optimization_chunk()
+        self.assertEqual(http.call_count, 1)
+        self.assertIn('localhost:8001', http.call_args_list[0].args[1])
+        self.assertNotEqual(job.work_item_ids.state, 'review_required')
+
+    def test_selected_assistant_outside_pipeline_generates(self):
+        selected = self.provider()
+        job = self.job(self.pipeline([]), assistant_id=selected.id)
+        with patch('requests.request', return_value=self.response(payload=self.completion())) as http:
+            job._run_bulk_optimization_chunk()
+        self.assertEqual(http.call_count, 1)
+        self.assertEqual(job.work_item_ids.seo_id.translation_ids.generation_provider_id, selected)
+
+    def test_deterministic_ignores_saved_assistant(self):
+        selected = self.provider()
+        job = self.job(self.pipeline([selected]), assistant_id=selected.id, generation_mode='deterministic')
+        with patch('requests.request') as http, patch.object(type(selected), '_generate_grounded') as generate:
+            job._run_bulk_optimization_chunk()
+        http.assert_not_called()
+        generate.assert_not_called()
+        self.assertEqual(job.work_item_ids.state, 'review_required')
+        self.assertEqual(job.work_item_ids.result['en_US']['model'], 'deterministic')
+
+    def test_selected_assistant_respects_sources_only_pipeline(self):
+        selected = self.provider()
+        job = self.job(self.pipeline([selected], ai_mode='off'), assistant_id=selected.id)
+        with patch('requests.request') as http:
+            job._run_bulk_optimization_chunk()
+        http.assert_not_called()
+        self.assertEqual(job.work_item_ids.result['en_US']['model'], 'deterministic')
+
+    def test_invalid_selected_assistant_rejected_before_network(self):
+        for selected in (self.provider(active=False), self.provider('openfda')):
+            with self.subTest(provider=selected.provider):
+                job = self.job(self.pipeline([]), assistant_id=selected.id)
+                with patch('requests.request') as http, self.assertRaises(UserError):
+                    job.work_item_ids._process()
+                http.assert_not_called()
+
+    def test_started_job_assistant_cannot_change(self):
+        job = self.job(self.pipeline([]))
+        with self.assertRaises(UserError):
+            job.assistant_id = self.provider()
+
+    def test_reader_cannot_queue_selected_assistant(self):
+        group = self.env.ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user')
+        user = self.env['res.users'].create({'name': 'SEO selection reader', 'login': 'seo_selection_reader', 'group_ids': [(6, 0, group.ids)]})
+        seo = self.env['ab.product.seo'].create({
+            'product_template_id': self.template.id, 'ab_product_id': self.product.id,
+            'assistant_id': self.provider().id, 'template_generation_mode': 'ai',
+        })
+        with self.assertRaisesRegex(UserError, 'permission'):
+            seo.with_user(user).action_fill_with_ai()
+
+    def test_assistant_form_modes_and_website_order(self):
+        forms = (
+            ('ab.product.seo', 'template_generation_mode'),
+            ('ab.product.seo.bulk.optimization', 'generation_mode'),
+        )
+        for model, mode_field in forms:
+            view = self.env[model].with_context(read_arch_from_file=True).get_view(view_type='form')
+            arch = etree.fromstring(view['arch'])
+            assistant = arch.xpath('//field[@name="assistant_id"]')[0]
+            note = assistant.getnext()
+            self.assertEqual(note.tag, 'div')
+            self.assertEqual(note.get('colspan'), '2')
+            for mode in ('deterministic', 'ai'):
+                with self.subTest(model=model, mode=mode):
+                    values = {'state': 'draft', mode_field: mode, 'enrichment_enabled': True}
+                    self.assertEqual(bool(safe_eval(assistant.get('readonly'), values)), mode == 'deterministic')
+                    values['state'] = 'approved' if model == 'ab.product.seo' else 'queued'
+                    self.assertTrue(safe_eval(assistant.get('readonly'), values))
+            if model == 'ab.product.seo':
+                website = arch.xpath('//field[@name="website_id"]')[0]
+                self.assertEqual(website.getparent().xpath('./field')[-1], website)
 
     def test_registry_and_ordering(self):
         self.assertGreaterEqual(len(CATALOG), 28)

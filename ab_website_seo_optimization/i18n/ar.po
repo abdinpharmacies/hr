@@ -4452,6 +4452,7 @@ msgstr "فئات المنتجات"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__generation_mode__ai
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__template_generation_mode__ai
 msgid "AI Wording"
 msgstr "صياغة بالذكاء الاصطناعي"
 
@@ -4566,6 +4567,7 @@ msgstr "الثقة في البيانات"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__generation_mode__deterministic
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__template_generation_mode__deterministic
 msgid "Deterministic"
 msgstr "توليد بالقواعد الثابتة"
 
@@ -5293,3 +5295,32 @@ msgid "Use template regeneration proposals for reviewed product SEO."
 msgstr ""
 "استخدم مقترحات إعادة التوليد بالقوالب لمحتوى تحسين محركات البحث الذي تمت "
 "مراجعته."
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_bulk_form
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form
+msgid ""
+"Deterministic mode uses product facts and the template without an AI "
+"assistant."
+msgstr "يستخدم نمط التوليد بالقالب بيانات المنتج دون مساعد ذكاء اصطناعي."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/enrichment_pipeline.py:0
+msgid "Select an active AI assistant for AI Wording."
+msgstr "اختر مساعد ذكاء اصطناعي نشطًا للصياغة بالذكاء الاصطناعي."
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_bulk_form
+msgid ""
+"For AI Wording, use only this assistant when selected. Leave empty to use "
+"the pipeline order. The pipeline must allow AI generation."
+msgstr ""
+"عند اختيار مساعد للصياغة بالذكاء الاصطناعي، يُستخدم وحده. اترك الحقل فارغًا "
+"لاستخدام ترتيب مسار الإثراء. يجب أن يسمح المسار بالتوليد بالذكاء الاصطناعي."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "id"
+msgstr "المعرّف"

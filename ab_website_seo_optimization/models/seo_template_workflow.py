@@ -431,7 +431,7 @@ class TemplateBulk(models.Model):
     def write(self, vals):
         if not self.env.su and {'pilot_validated_by', 'pilot_validated_at', 'pilot_configuration_hash'}.intersection(vals):
             raise AccessError(_('Use the pilot validation action.'))
-        settings = {'product_selection_ids', 'category_filter_id', 'template_filter_id', 'regeneration_mode', 'generation_mode', 'batch_limit', 'pipeline_id', 'lang_mode', 'company_id', 'website_id'}
+        settings = {'product_selection_ids', 'category_filter_id', 'template_filter_id', 'regeneration_mode', 'generation_mode', 'assistant_id', 'batch_limit', 'pipeline_id', 'lang_mode', 'company_id', 'website_id'}
         if settings.intersection(vals) and self.filtered(lambda j: j.state != 'draft'):
             raise UserError(_('Create a new run to change the scope or generation settings of a started job.'))
         return super().write(vals)

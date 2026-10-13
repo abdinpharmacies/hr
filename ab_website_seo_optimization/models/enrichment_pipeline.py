@@ -222,6 +222,19 @@ class EnrichmentWorkItem(models.Model):
                 "seo_name": name, "search_phrases": [name], "bullets": [], "content_source": "internal",
                 "content_kind": "SOURCE_FACT", "review_required": True, "prompt_version": "conservative_v1"}
 
+    def _generation_providers(self, pipeline):
+        self.ensure_one()
+        if self.job_id.generation_mode != "ai":
+            return self.env["ab.seo.assistant"]
+        providers = pipeline._providers(generation=True)
+        assistant = self.job_id.assistant_id
+        if assistant:
+            assistant.check_access("read")
+            if not assistant.active or assistant.source_scope != "generation":
+                raise UserError(_("Select an active AI assistant for AI Wording."))
+            providers = assistant
+        return providers
+
     def _process(self):
         self.ensure_one()
         template = self.product_id
@@ -235,6 +248,7 @@ class EnrichmentWorkItem(models.Model):
         if not pipeline:
             raise ValidationError(_("Configure an active enrichment pipeline for this product type."))
         self.pipeline_id = pipeline
+        generators = self._generation_providers(pipeline)
         self.state = "processing"
         identity = self._identity()
         facts, provenance = self._collect_facts(identity, pipeline)
@@ -252,7 +266,7 @@ class EnrichmentWorkItem(models.Model):
             if generate and self.job_id.generation_mode == "ai" and len(facts) > 2:
                 success = False
                 failures = []
-                for provider in pipeline._providers(generation=True):
+                for provider in generators:
                     provider = provider.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=template.id)
                     if not provider._allowed_for_commercial():
                         provider._call_log("skip", time.monotonic(), error="license_review_required")
@@ -267,7 +281,7 @@ class EnrichmentWorkItem(models.Model):
                     except ProviderFailure as error:
                         failures.append((error.code, provider.disabled_until))
                         provider._call_log("fallback", time.monotonic(), error=error.code)
-                if not success and pipeline._providers(generation=True):
+                if not success and generators:
                     recoverable = {"quota_exhausted", "rate_limit", "cooldown", "provider_busy", "timeout", "network_error", "temporary_failure"}
                     retry_times = [until for code, until in failures if code in recoverable and until]
                     waiting = self.attempts < 8 and (bool(retry_times) or any(code in recoverable for code, until in failures))
@@ -477,6 +491,7 @@ class EnrichmentSeo(models.Model):
             job = self.env["ab.product.seo.bulk.optimization"].create({"name": self.name, "website_id": self.website_id.id,
                   "company_id": self.company_id.id or self.env.company.id, "lang_mode": self.lang_mode, "batch_limit": 1,
                   "enrichment_enabled": True, "generation_mode": self.template_generation_mode,
+                  "assistant_id": self.assistant_id.id if self.template_generation_mode == "ai" else False,
                   "regeneration_mode": "selected" if self.env.context.get("force_seo_optimization") or not self.only_missing_seo else "missing",
                   "only_missing_seo": self.only_missing_seo and not self.env.context.get("force_seo_optimization"),
                   "discovery_done": True, "total_count": 1, "state": "queued", "started_at": fields.Datetime.now()})
