@@ -56,6 +56,9 @@ class GuardedSales(models.AbstractModel):
         if not isinstance(payload, dict) or not isinstance(payload.get('header'), dict) or not isinstance(payload.get('lines'), list):
             raise UserError(_('Invalid sale payload.'))
         digest = hashlib.sha256(json.dumps({'payload': payload, 'push': True}, sort_keys=True, allow_nan=False).encode()).hexdigest()
+        customer_serial = self._customer_reference_serial(payload['header'].get('customer_id'))
+        if customer_serial:
+            self._lock_customer_reference(customer_serial)
         operation = self._operation(store, token, 'sale')
         header = self._operation_header(operation, access='read') if operation.record_id else False
         changed = bool(operation.payload_hash and operation.payload_hash != digest)

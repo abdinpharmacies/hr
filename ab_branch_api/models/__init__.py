@@ -9,3 +9,7 @@ from . import callcenter_origin
 from . import reconciliation
 
 from . import guarded_sales
+
+from . import sale_validation
+
+from . import customer_sync
