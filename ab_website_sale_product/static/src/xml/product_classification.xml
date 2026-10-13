@@ -5,7 +5,6 @@
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
                 <div><h1>Product Classification</h1><p class="text-muted mb-0">Classify the e-commerce catalog using the approved taxonomy.</p></div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-secondary" t-on-click="openDescriptions">Category Descriptions</button>
                     <button class="btn btn-secondary" t-on-click="openRuns">Run History</button>
                     <button class="btn btn-secondary" t-on-click="openTaxonomy">Taxonomy Bindings</button>
                 </div>
