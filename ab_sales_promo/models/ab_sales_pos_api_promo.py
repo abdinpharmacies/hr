@@ -11,7 +11,8 @@ class AbSalesPosApi(models.TransientModel):
     _inherit = "ab_sales_pos_api"
 
     @api.model
-    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False):
+    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
+                       contract_id=None, total_invoice_discount=0.0):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_promo_program", "ab_product_uom")
         replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if isinstance(manual_clear, str):
@@ -131,6 +132,14 @@ class AbSalesPosApi(models.TransientModel):
         if not store_id:
             return self._empty_promo_payload()
 
+        store = self.env['ab_store'].browse(store_id).exists()
+        if not store:
+            raise UserError(_("Store is required."))
+        store.check_access('read')
+        allowed = self.env['ab_sales_header']._get_allowed_store_ids()
+        if allowed and store.id not in allowed:
+            raise UserError(_("Store %s is not allowed for sales.") % store.display_name)
+
         lines = lines or []
         if not isinstance(lines, list):
             raise UserError(_("Invalid lines payload."))
@@ -165,10 +174,21 @@ class AbSalesPosApi(models.TransientModel):
         if not line_commands:
             return self._empty_promo_payload()
 
-        header = self.env["ab_sales_header"].new({
+        header_values = {
             "store_id": store_id,
             "line_ids": line_commands,
-        })
+        }
+        if contract_id:
+            if 'contract_id' not in self.env['ab_sales_header']._fields:
+                raise UserError(_("Invalid contract."))
+            contract = self.env['ab_contract'].browse(int(contract_id)).exists()
+            if not contract:
+                raise UserError(_("Invalid contract."))
+            contract.check_access('read')
+            self.env['ab_sales_header']._ab_contract_validate_store_pair(contract, store)
+            contract._check_allow_promotions()
+            header_values.update(contract_id=contract.id, total_invoice_discount=float(total_invoice_discount or 0.0))
+        header = self.env["ab_sales_header"].new(header_values)
 
         header.line_ids._compute_qty()
         header.line_ids._compute_amount()
@@ -209,6 +229,17 @@ class AbSalesPosApi(models.TransientModel):
         amount_total_after_promo = amount_total - promo_discount
         header.promo_discount_amount = promo_discount
         header.amount_total_after_promo = amount_total_after_promo
+        contract_totals = {}
+        if contract_id:
+            header._ab_contract_recompute_lines()
+            header._compute_contract_totals()
+            contract_totals = {
+                'allow_promotions': header._ab_contract_uses_promotions(),
+                'discount': header.discount,
+                'total_after_discount': header.total_after_discount,
+                'cust_pay': header.cust_pay,
+                'company_pay': header.company_pay,
+            }
 
         if not selected_program and len(available_programs) == 1:
             selected_program = available_programs[:1]
@@ -248,7 +279,8 @@ class AbSalesPosApi(models.TransientModel):
             "promo_message": promo_message or "",
             "promo_discount_amount": float(promo_discount or 0.0),
             "amount_total_after_promo": float(amount_total_after_promo or 0.0),
-            "total_net_amount": total_net_amount,
+            "total_net_amount": header.cust_pay if contract_id else total_net_amount,
+            **contract_totals,
         }
 
     @api.model

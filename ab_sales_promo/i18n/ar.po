@@ -15,3 +15,33 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Invalid contract."
+msgstr "العقد غير صالح."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Store is required."
+msgstr "الفرع مطلوب."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Store %s is not allowed for sales."
+msgstr "الفرع %s غير مسموح له بالمبيعات."
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js:0
+msgid "Failed to load promotions."
+msgstr "تعذر تحميل العروض."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "The selected promotion is no longer available for this invoice."
+msgstr "العرض المحدد لم يعد متاحًا لهذه الفاتورة."
