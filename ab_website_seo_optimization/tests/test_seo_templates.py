@@ -109,6 +109,20 @@ class TestSeoTemplates(TransactionCase):
         self.assertEqual(content['search_phrases'], [name, '10 CM*10 CM شاش فازلين'])
         self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
 
+    def test_supplier_description_is_used_only_when_descriptive(self):
+        job = self.job()
+        item = self.env['ab_seo_work_item'].create({'job_id': job.id, 'product_id': self.product.id})
+        self.product.ab_product_id.description = 'Before dispensing, verify this medicine against a similarly named item in the catalog.'
+        self.assertNotIn('supplier_description', item._identity())
+        description = 'Catalog tablet supplied as twenty tablets per package with the listed ingredient shown on the product label.'
+        self.product.ab_seo_supplier_description = description
+        identity = item._identity()
+        self.assertEqual(identity['supplier_description'], description)
+        facts = {key: value for key, value in identity.items() if key in ('name', 'supplier_description')}
+        content = deterministic(self.medicine._contract(), facts, 'en_US', lambda value: value)
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        self.assertEqual(about['content'], description)
+        self.assertIn('supplier_description', about['fact_keys'])
 
     def test_forbidden_section_and_invented_fact_rejected(self):
         content, contract, facts = self.content()

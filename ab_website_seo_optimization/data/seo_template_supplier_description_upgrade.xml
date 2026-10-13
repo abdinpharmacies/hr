@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_medicine_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_medicine_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_supplement_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_supplement_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_skincare_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_skincare_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_haircare_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_haircare_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_beauty_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_beauty_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_baby_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_baby_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_device_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_device_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_personal_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_personal_about_product').fact_keys == ['name', 'dosage_form', 'package'] else []"/>
+        <value eval="{'fact_keys': ['name', 'dosage_form', 'package', 'supplier_description']}"/>
+    </function>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_general_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_general_about_product').fact_keys == ['name', 'specifications', 'package'] else []"/>
+        <value eval="{'fact_keys': ['name', 'specifications', 'package', 'supplier_description']}"/>
+    </function>
+</odoo>

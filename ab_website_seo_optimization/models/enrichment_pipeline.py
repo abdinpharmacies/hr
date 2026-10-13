@@ -160,7 +160,7 @@ class EnrichmentWorkItem(models.Model):
                              "input_sources": generation.get("input_sources")})
 
     def _collect_facts(self, identity, pipeline):
-        facts = {k: v for k, v in identity.items() if k in ("name", "name_ar", "manufacturer", "brand", "active_ingredients", "strength", "dosage_form", "package", "product_code", "specifications") and v}
+        facts = {k: v for k, v in identity.items() if k in ("name", "name_ar", "manufacturer", "brand", "active_ingredients", "strength", "dosage_form", "package", "product_code", "specifications", "supplier_description") and v}
         provenance = []
         for key, value in facts.items():
             provenance.append(self._evidence(key, value, accepted=True).id)
@@ -466,6 +466,7 @@ class EnrichmentProduct(models.Model):
 
     ab_enrichment_domain = fields.Selection(DOMAINS, default="auto", groups=MANAGER)
     ab_enrichment_identity = fields.Json(groups=MANAGER)
+    ab_seo_supplier_description = fields.Text(string="Supplier Description", groups=MANAGER)
 
 
 class EnrichmentSeo(models.Model):

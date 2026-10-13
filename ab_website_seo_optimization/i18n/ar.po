@@ -5178,6 +5178,13 @@ msgid "Source Domain"
 msgstr "مجال المصدر"
 
 #. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__supplier_description_source
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__ab_seo_supplier_description
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_product__ab_seo_supplier_description
+msgid "Supplier Description"
+msgstr "وصف المورد"
+
+#. module: ab_website_seo_optimization
 #: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_device_specifications
 #: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_general_specifications
 msgid "Specifications"

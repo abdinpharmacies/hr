@@ -53,6 +53,7 @@ class AbProductSeo(models.Model):
     company_id = fields.Many2one("res.company", default=lambda self: self.env.company, index=True)
     website_id = fields.Many2one("website", string="Website", index=True)
     assistant_id = fields.Many2one("ab.seo.assistant", string="SEO Assistant")
+    supplier_description_source = fields.Text(string="Supplier Description", related="product_template_id.ab_seo_supplier_description", readonly=False, groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager")
     target = fields.Selection(
         [("products", "Published Products")],
         default="products",

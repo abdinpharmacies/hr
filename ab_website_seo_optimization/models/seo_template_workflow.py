@@ -4,7 +4,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 from ..services.providers import digest, normalized
-from ..services.seo_templates import deterministic, fingerprints, literal_identity, render_sections, similarity, validate
+from ..services.seo_templates import deterministic, fingerprints, literal_identity, plain, render_sections, similarity, validate
 from .enrichment_provider import MANAGER
 
 
@@ -54,6 +54,9 @@ class TemplateWorkItem(models.Model):
         for key in ('strength', 'dosage_form', 'package', 'brand'):
             if isinstance(explicit.get(key), str) and explicit[key].strip():
                 identity[key] = explicit[key].strip()
+        description = plain(product.ab_seo_supplier_description or explicit.get('supplier_description'))
+        if description and len(description) >= 15 and len(normalized(description).split()) >= 2:
+            identity['supplier_description'] = description[:2000]
         return identity
 
     def _evidence(self, field, value, provider=None, record=None, matching=None, accepted=False, kind="SOURCE_FACT", lang=None, generation=None):
@@ -65,6 +68,9 @@ class TemplateWorkItem(models.Model):
                     matching = {'matched_by': 'catalog_name_literal', 'matched_identifier': self.product_id.with_context(lang='en_US').name, 'match_score': 1.0}
             elif field in ('active_ingredients', 'manufacturer'):
                 record = {'source_id': 'ab_product_card:%s' % product.product_card_id.id, 'source_version': str(product.product_card_id.write_date)}
+            elif field == 'supplier_description':
+                source_field = 'ab_seo_supplier_description' if self.product_id.ab_seo_supplier_description else 'ab_enrichment_identity'
+                record = {'source_id': 'product.template:%s:%s' % (self.product_id.id, source_field), 'source_version': str(self.product_id.write_date)}
         return super()._evidence(field, value, provider=provider, record=record, matching=matching, accepted=accepted, kind=kind, lang=lang, generation=generation)
 
     def _select_pipeline(self):

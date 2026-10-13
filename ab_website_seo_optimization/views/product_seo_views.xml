@@ -62,6 +62,8 @@
                                        domain="[('id', 'in', available_product_template_ids)]"/>
                                 <field name="assistant_id" readonly="state not in ('draft', 'generated', 'rejected')"
                                        domain="[('assistant_type', '=', 'ai'), ('active', '=', True)]"/>
+                                <field name="supplier_description_source" widget="text" readonly="state not in ('draft', 'generated', 'rejected')"
+                                       groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
                                 <field name="lang_mode" readonly="state not in ('draft', 'generated', 'rejected')"/>
                             </group>
                             <group>

@@ -27,6 +27,7 @@
         "data/seo_template_personal_about_upgrade.xml",
         "data/seo_template_general_about_upgrade.xml",
         "data/seo_template_general_specifications.xml",
+        "data/seo_template_supplier_description_upgrade.xml",
         "views/product_seo_optimize_confirm_wizard_views.xml",
         "views/product_seo_views.xml",
         "views/product_seo_translation_views.xml",
