@@ -41,12 +41,30 @@ export class QueueMonitor extends Component {
         this.dialog = useService("dialog"); this.notification = useService("notification");
         const params = this.props.action.params || {};
         this.state = useState({ data: null, loading: true, busy: false, error: "", scan: null, offset: 0, sortBy: "", sortDirection: "asc",
+            autoRefresh: true, lastSuccess: 0, now: Date.now(),
             tab: params.tab || "definitions", filters: { module: params.module || "", definition_id: params.definition_id || false,
                 search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true,
                 delayed: false, delay_minutes: 30 } });
         this.alive = true; this.sequence = 0;
+        this.lastAttempt = 0;
+        this.timer = setInterval(() => this.tick(), 10000);
+        this.visibilityChanged = () => this.tick();
+        document.addEventListener("visibilitychange", this.visibilityChanged);
         onWillStart(() => this.refresh());
-        onWillUnmount(() => { this.alive = false; });
+        onWillUnmount(() => {
+            this.alive = false;
+            clearInterval(this.timer);
+            document.removeEventListener("visibilitychange", this.visibilityChanged);
+        });
+    }
+    get stale() { return Boolean(this.state.lastSuccess && this.state.now - this.state.lastSuccess >= 90000); }
+    tick() {
+        if (!this.alive) return;
+        this.state.now = Date.now();
+        if (this.state.autoRefresh && !document.hidden && !this.state.loading && !this.state.busy
+            && this.state.now - this.lastAttempt >= 30000) {
+            this.refresh();
+        }
     }
     stateCounts(row) {
         return ["running", "pending", "retrying", "failed"].filter(status => row.states?.[status])
@@ -67,6 +85,8 @@ export class QueueMonitor extends Component {
     get runtimeStates() { return [...new Map(Object.values(this.state.data?.runtime_states || {}).flat()).entries()]; }
     async refresh() {
         const sequence = ++this.sequence;
+        const requestedAt = Date.now();
+        this.lastAttempt = requestedAt;
         this.state.loading = true;
         try {
             const data = await this.orm.call("ab_queue_monitor", "dashboard", [], {
@@ -74,10 +94,14 @@ export class QueueMonitor extends Component {
                 sort_by: this.state.sortBy, sort_direction: this.state.sortDirection });
             for (const row of data.rows) if (row.created) row.created = displayTime(row.created);
             data.runner.last_activity = displayTime(data.runner.last_activity);
+            data.refreshed_at = displayTime(data.refreshed_at);
             if (data.session) data.session.started_at = displayTime(data.session.started_at);
-            if (this.alive && sequence === this.sequence) { this.state.data = data; this.state.error = ""; }
+            if (this.alive && sequence === this.sequence) {
+                this.state.data = data; this.state.error = "";
+                this.state.lastSuccess = requestedAt; this.state.now = Date.now();
+            }
         } catch (error) {
-            if (this.alive) this.state.error = error.data?.message || _t("The monitor could not be refreshed.");
+            if (this.alive && sequence === this.sequence) this.state.error = error.data?.message || _t("The monitor could not be refreshed.");
         } finally { if (this.alive && sequence === this.sequence) this.state.loading = false; }
     }
     async sort(column) {

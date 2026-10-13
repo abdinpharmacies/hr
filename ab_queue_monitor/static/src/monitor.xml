@@ -12,6 +12,11 @@
                     <button t-if="state.data?.can_discover" class="btn abqm-primary" t-on-click="discover" t-att-disabled="state.busy"><i class="fa fa-search"/> <span t-if="state.data?.session?.state === 'scanning'">Resume Discovery</span><span t-else="">Discover Jobs</span></button>
                 </div>
             </header>
+            <div class="abqm-freshness" role="status">
+                <span t-if="state.data">Last updated: <b t-esc="state.data.refreshed_at"/></span>
+                <label><input type="checkbox" class="abqm-auto-refresh" t-model="state.autoRefresh" t-on-change="tick"/> Auto-refresh every 30 seconds</label>
+                <span t-if="stale" class="abqm-stale">Data is over 90 seconds old. Refresh to check the current state.</span>
+            </div>
             <div t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
             <section class="abqm-progress" t-if="state.scan || state.data?.session?.state === 'scanning'" aria-live="polite">
                 <t t-set="scan" t-value="state.scan || state.data.session"/>

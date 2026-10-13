@@ -138,7 +138,7 @@ class QueueMonitor(models.AbstractModel):
             if 'channel' in adapter.jobs._fields:
                 channels.update(c for c, in adapter.jobs._read_group(adapter.domain(), ['channel'], []) if c)
         session = self.env['ab_queue_monitor_session'].search([], limit=1)
-        return {'rows': result_rows, 'total': total, 'kpis': kpis,
+        return {'rows': result_rows, 'total': total, 'kpis': kpis, 'refreshed_at': fields.Datetime.to_string(now),
                 'modules': [{'name': m, 'label': label, 'count': n, **module_counts.get(m, {'running': 0, 'pending': 0, 'failed': 0})} for m, label, n in modules],
                 'channels': sorted(channels), 'statuses': [{'value': s, 'label': self.env._(label)} for s, label in STATUS],
                 'runtime_states': {key: adapter.states() for key, adapter in adapters.items()},

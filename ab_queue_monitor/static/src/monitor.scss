@@ -14,6 +14,7 @@
     .abqm-muted { color: var(--qm-muted); font-size: 12px; }
     .abqm-divider { padding: 0 8px; }
     .abqm-primary { background: #127567; color: white; border-color: #127567; &:hover { background: #0c6055; } }
+    .abqm-freshness { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 24px; margin-bottom: 18px; font-size: 12px; color: var(--qm-muted); label { display: inline-flex; align-items: center; gap: 6px; } }
     .abqm-stale, .abqm-table .abqm-review { color: #996b19; }
     .abqm-table .abqm-state-counts { display: flex; flex-wrap: wrap; gap: 4px 10px; }
     .abqm-review-minutes { width: 70px; padding: 7px; border: 1px solid var(--qm-border); border-radius: 4px; }

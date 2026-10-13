@@ -983,10 +983,23 @@ msgid "unknown"
 msgstr "غير معروف"
 
 #. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Auto-refresh every 30 seconds"
+msgstr "تحديث تلقائي كل 30 ثانية"
+
+#. module: ab_queue_monitor
 #. odoo-python
 #: code:addons/ab_queue_monitor/models/monitor.py:0
 msgid "Choose a valid review threshold in minutes."
 msgstr "اختر مدة صحيحة بالدقائق للتنبيه إلى المراجعة."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Data is over 90 seconds old. Refresh to check the current state."
+msgstr ""
+"مر أكثر من 90 ثانية على تحديث البيانات. حدّثها للتحقق من الحالة الحالية."
 
 #. module: ab_queue_monitor
 #. odoo-javascript
@@ -999,6 +1012,12 @@ msgstr "تقدم التنفيذ"
 #: code:addons/ab_queue_monitor/static/src/monitor.xml:0
 msgid "Last Completion"
 msgstr "آخر اكتمال"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Last updated:"
+msgstr "آخر تحديث:"
 
 #. module: ab_queue_monitor
 #. odoo-javascript
