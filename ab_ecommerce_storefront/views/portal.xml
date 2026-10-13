@@ -6,7 +6,7 @@
             <div class="ab-order-track-head">
                 <div>
                     <span>Order status</span>
-                    <h2 id="abOrderTrackTitle">Your order journey</h2>
+                    <h2 id="abOrderTrackTitle">Order progress</h2>
                 </div>
                 <strong t-if="sale_order" t-out="sale_order._ab_storefront_payment_label()"/>
             </div>
@@ -811,8 +811,8 @@
                                     <i class="fa fa-clock-o"/>
                                 </div>
                                 <span class="ab-payment-status-kicker">Payment status</span>
-                                <h1>Your payment is on its way</h1>
-                                <p>We are still checking the latest payment update. You should receive confirmation shortly.</p>
+                                <h1>Waiting for payment confirmation</h1>
+                                <p>We are waiting for payment confirmation. Check your order for updates.</p>
                                 <div class="ab-payment-status-actions">
                                     <a href="/shop" class="btn btn-primary">
                                         <i class="fa fa-shopping-bag" aria-hidden="true"/>
@@ -844,7 +844,7 @@
                                 <t t-if="is_cod">Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered.</t>
                                 <t t-elif="is_success">Your payment was processed successfully, and your order is now being prepared.</t>
                                 <t t-elif="is_failed">We could not complete the payment. You can try again or choose another payment method.</t>
-                                <t t-else="">We received the payment attempt, but it is still waiting for final confirmation. We will update your order status as soon as the review is complete.</t>
+                                <t t-else="">Your payment is awaiting confirmation. Your order status will update once it is confirmed.</t>
                             </t>
                             <t t-set="primary_href" t-value="order.get_portal_url() if order and not is_failed else order.get_portal_url(query_string='&amp;payment=True') if order and is_failed and order._has_to_be_paid() else tx.landing_route or '/shop/payment'"/>
                             <t t-set="primary_label">
@@ -916,15 +916,13 @@
                                         </div>
                                         <div t-if="tx.payment_method_code != 'unknown'">
                                             <dt>
-                                                <t t-if="request.lang.code in ('ar', 'ar_001')">طريقة الدفع</t>
-                                                <t t-else="">Payment method</t>
+                                                Payment method
                                             </dt>
                                             <dd t-out="tx.payment_method_id.name"/>
                                         </div>
                                         <div>
                                             <dt>
-                                                <t t-if="request.lang.code in ('ar', 'ar_001')">الحالة</t>
-                                                <t t-else="">Status</t>
+                                                Status
                                             </dt>
                                             <dd>
                                                 <t t-if="is_cod">Pay on delivery</t>
@@ -979,10 +977,10 @@
                                     <i class="fa fa-shield" aria-hidden="true"/>
                                 </div>
                                 <div>
-                                    <h2>We are following your order until it reaches you safely.</h2>
+                                    <h2>Check the status of your order here.</h2>
                                     <p t-if="is_cod">Our customer support team will follow up on your order until delivery.</p>
                                     <p t-elif="is_failed or is_pending">Need help with this payment? Our customer support team is ready to help.</p>
-                                    <p t-else="">Your order is secured with Abdin Pharmacy and will move through the normal order tracking flow.</p>
+                                    <p t-else="">Track your order for updates.</p>
                                 </div>
                                 <a href="tel:19036" class="ab-payment-support-link">
                                     <i class="fa fa-phone" aria-hidden="true"/>

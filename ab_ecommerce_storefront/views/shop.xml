@@ -177,7 +177,7 @@
                         <span t-else="">Healthcare products for every day</span>
                     </h1>
                     <p class="mb-0">
-                        <t t-if="category">Explore trusted products selected for your health and wellbeing.</t>
+                        <t t-if="category">Browse products in this category.</t>
                         <t t-else="">Search medicines, personal care, wellness, and pharmacy essentials.</t>
                     </p>
                 </div>

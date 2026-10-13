@@ -12,7 +12,7 @@
                             </div>
                         </div>
                         <div t-else="" class="ab-storefront-offers-empty">
-                            <h2>New offers are coming soon</h2>
+                            <h2>No offers available right now</h2>
                             <a href="/shop" class="btn btn-primary">Browse products</a>
                         </div>
                         <nav t-if="ab_offers_page &gt; 1 or ab_catalog['has_more_offers']" class="d-flex justify-content-center gap-3 mt-4">
@@ -334,7 +334,6 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Promotions</span>
                                 <h2 class="mb-0">Current offers</h2>
                             </div>
                             <a href="/shop/category?deal=discount" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">Shop offers</a>
@@ -346,8 +345,8 @@
                         </div>
                         <div t-else="" class="ab-storefront-offers-empty d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
                             <div>
-                                <h3>New offers are coming soon</h3>
-                                <p class="mb-0">Browse pharmacy essentials while we prepare the latest discounts.</p>
+                                <h3>No offers available right now</h3>
+                                <p class="mb-0">Browse all products.</p>
                             </div>
                             <a href="/shop" class="btn btn-primary text-nowrap">Browse products</a>
                         </div>
@@ -360,19 +359,19 @@
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5.5 5.4v5.3c0 4.1 2.6 7.8 6.5 9.3 3.9-1.5 6.5-5.2 6.5-9.3V5.4L12 3Zm0 2.2 4.5 1.7v3.8c0 3-1.7 5.7-4.5 7.1-2.8-1.4-4.5-4.1-4.5-7.1V6.9L12 5.2Z"/><path d="m10.9 13.7-2.2-2.2 1.2-1.2 1 1 3.3-3.3 1.2 1.2-4.5 4.5Z"/></svg>
-                                    <span><strong>Trusted pharmacy care</strong><small>From Abdin Pharmacies</small></span>
+                                    <span><strong>Pharmacy essentials</strong><small>From Abdin Pharmacies</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12v9h1.3l1.1-3H21v3h1v2h-2.1a3 3 0 0 1-5.8 0H9.9a3 3 0 0 1-5.8 0H3V5Zm2 2v7h9V7H5Zm12.7 6.9H19v-.9h-.2l-.7 1.9h-.4v-1ZM7 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>
-                                    <span><strong>Fast delivery</strong><small>Comfortable ordering to your door</small></span>
+                                    <span><strong>Home delivery</strong><small>Order to your door</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V8a6 6 0 1 1 12 0v2h1.5v10h-15V10H6Zm2 0h8V8a4 4 0 0 0-8 0v2Zm-1.5 2v6h11v-6h-11Zm6.5 2v2h-2v-2h2Z"/></svg>
-                                    <span><strong>Secure payment</strong><small>Protected shopping experience</small></span>
+                                    <span><strong>Secure payment</strong><small>Choose your payment method</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
@@ -389,10 +388,9 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Categories</span>
                                 <h2 class="mb-0">Shop by category</h2>
                             </div>
-                            <a href="/shop" class="ab-storefront-view-all text-decoration-none">All categories</a>
+                            <a href="/shop" class="ab-storefront-view-all text-decoration-none">View all products</a>
                         </div>
                         <div class="ab-storefront-category-grid">
                             <a t-foreach="ab_catalog['categories']"
@@ -420,7 +418,7 @@
                                 <div class="ab-storefront-category-overlay"/>
                                 <div class="ab-storefront-category-content">
                                     <strong t-out="website._ab_storefront_category_label(ab_category)"/>
-                                    <div class="ab-storefront-category-action">Explore</div>
+                                    <div class="ab-storefront-category-action">View products</div>
                                 </div>
                             </a>
                         </div>
@@ -431,8 +429,7 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Best Sellers</span>
-                                <h2 class="mb-0">Best sellers</h2>
+                                <h2 class="mb-0">Browse our products</h2>
                             </div>
                             <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">All products</a>
                         </div>
@@ -452,9 +449,8 @@
                     <div class="container">
                         <div class="ab-storefront-feedback-panel">
                             <div>
-                                <span class="ab-storefront-kicker">Feedback</span>
-                                <h2>Everyday pharmacy shopping, made easier</h2>
-                                <p>Customers use Abdin Pharmacies for quick access to medicine, wellness, beauty, baby care, and health devices with support when they need guidance.</p>
+                                <h2>Your pharmacy essentials in one place</h2>
+                                <p>Shop medicines, personal care, baby products, and health devices. Contact us if you need help.</p>
                             </div>
                             <div class="ab-storefront-feedback-metrics">
                                 <div><strong>19036</strong><span>Support hotline</span></div>
@@ -469,8 +465,7 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Why Abdin?</span>
-                                <h2 class="mb-0">Pharmacy-first eCommerce you can trust</h2>
+                                <h2 class="mb-0">Why choose Abdin Pharmacies?</h2>
                             </div>
                         </div>
                         <div class="row g-3 g-lg-4">
@@ -478,21 +473,21 @@
                                 <div class="ab-storefront-why-card">
                                     <span><i class="fa fa-medkit" aria-hidden="true"/></span>
                                     <strong>Pharmacy expertise</strong>
-                                    <p>Products are presented with a healthcare mindset, not as a generic marketplace catalog.</p>
+                                    <p>Contact our pharmacy team with questions about a product.</p>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="ab-storefront-why-card">
                                     <span><i class="fa fa-truck" aria-hidden="true"/></span>
                                     <strong>Convenient delivery</strong>
-                                    <p>Designed for daily pharmacy needs, from repeat essentials to urgent support.</p>
+                                    <p>Order your pharmacy essentials for delivery to your address.</p>
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <div class="ab-storefront-why-card">
                                     <span><i class="fa fa-shield" aria-hidden="true"/></span>
-                                    <strong>Protected shopping</strong>
-                                    <p>Clear product browsing, secure payment, and accessible customer support.</p>
+                                    <strong>Review your order</strong>
+                                    <p>Review your products and total before placing your order.</p>
                                 </div>
                             </div>
                         </div>
@@ -504,7 +499,6 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">CUSTOMER FEEDBACK</span>
                                 <h2 class="mb-0">Our customers' reviews</h2>
                                 <p class="mb-0">Real feedback shared by our customers on social platforms</p>
                             </div>
@@ -555,7 +549,7 @@
                                     </span>
                                     <span>
                                         <small>Pharmacy Care</small>
-                                        <strong>Trusted pharmacy care, delivered to your door</strong>
+                                        <strong>Your pharmacy essentials, delivered</strong>
                                         <span>Shop now</span>
                                     </span>
                                 </a>
@@ -567,7 +561,7 @@
                                     </span>
                                     <span>
                                         <small>Hotline 19036</small>
-                                        <strong>Need help? Our team is close to you</strong>
+                                        <strong>Questions about your order?</strong>
                                         <span>Contact us</span>
                                     </span>
                                 </a>
@@ -575,9 +569,9 @@
                         </div>
                         <div class="ab-storefront-closing-panel d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
                             <div>
-                                <span class="ab-storefront-kicker">CTA / Hotline</span>
-                                <h2 class="mb-2">Need pharmacy help?</h2>
-                                <p class="mb-0">Our team is ready to support your product choices and daily orders.</p>
+                                <span class="ab-storefront-kicker">Contact us</span>
+                                <h2 class="mb-2">Need help?</h2>
+                                <p class="mb-0">Contact us for help with a product or an order.</p>
                             </div>
                             <div class="ab-storefront-support-actions d-flex flex-wrap gap-3">
                                 <a href="/contactus" class="btn btn-light btn-lg">

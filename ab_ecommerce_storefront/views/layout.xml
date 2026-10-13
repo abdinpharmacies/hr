@@ -102,7 +102,7 @@
                     <div class="container d-flex align-items-center justify-content-between gap-3 py-2">
                         <span class="ab-storefront-trust-line d-flex align-items-center gap-2">
                             <i class="fa fa-shield" aria-hidden="true"/>
-                            <span>Trusted pharmacy care, delivered to your door</span>
+                            <span>Your pharmacy essentials, delivered</span>
                         </span>
                         <div class="ab-storefront-utility-actions d-none d-md-flex align-items-center gap-4">
                             <a href="tel:19036" class="text-reset text-decoration-none">
@@ -276,8 +276,8 @@
                             <div class="ab-storefront-location-search">
                                 <i class="fa fa-search" aria-hidden="true"/>
                                 <input type="search"
-                                       placeholder="Search for an area, city, or governorate"
-                                       aria-label="Search for an area, city, or governorate"
+                                       placeholder="Search for a governorate"
+                                       aria-label="Search for a governorate"
                                        data-ab-location-search=""/>
                             </div>
 
@@ -297,7 +297,7 @@
                             <button class="ab-storefront-location-add"
                                     type="button"
                                     data-ab-location-add="">
-                                <span>Add new address</span>
+                                <span>Enter address details</span>
                                 <i class="fa fa-plus" aria-hidden="true"/>
                             </button>
 
@@ -339,8 +339,8 @@
                                 <span class="ab-storefront-location-empty-icon">
                                     <i class="fa fa-map-marker" aria-hidden="true"/>
                                 </span>
-                                <strong>No saved addresses</strong>
-                                <p>Add your address to complete orders easily or use your current location.</p>
+                                <strong>Delivery address details</strong>
+                                <p>Choose your area and enter your address details.</p>
                             </div>
                         </div>
 
@@ -556,7 +556,7 @@
                                      loading="lazy"/>
                             </a>
                             <p class="mt-3 mb-4">
-                                Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt.
+                                Order medicines, personal care, and health essentials from Abdin Pharmacies.
                             </p>
                             <div class="d-flex flex-wrap gap-2">
                                 <a href="https://www.facebook.com/AbdinPharmaciesOfficial" class="ab-storefront-social" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -609,7 +609,7 @@
                 <div class="ab-storefront-copyright">
                     <div class="container d-flex flex-column flex-md-row justify-content-between gap-2 py-3">
                         <span>Copyright © Abdin Pharmacies</span>
-                        <span>Healthcare with care, every day.</span>
+                        <span>Your everyday pharmacy needs.</span>
                     </div>
                 </div>
             </footer>

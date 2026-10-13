@@ -7,7 +7,7 @@
         <xpath expr="//section[@id='product_detail']" position="before">
             <section class="ab-storefront-product-assurance-top">
                 <div class="container d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between gap-2 py-2">
-                    <span><i class="fa fa-shield me-2" aria-hidden="true"/>Trusted Abdin product</span>
+                    <span><i class="fa fa-shield me-2" aria-hidden="true"/>From Abdin Pharmacies</span>
                     <span><i class="fa fa-lock me-2" aria-hidden="true"/>Secure checkout</span>
                     <span><i class="fa fa-phone me-2" aria-hidden="true"/>Pharmacy help: <span class="o_force_ltr">19036</span></span>
                 </div>
@@ -24,11 +24,11 @@
             <div class="ab-storefront-product-promises mb-4">
                 <div>
                     <i class="fa fa-check-circle" aria-hidden="true"/>
-                    <span><strong>Genuine products</strong><small>Carefully sourced</small></span>
+                    <span><strong>Genuine products</strong><small>From Abdin Pharmacies</small></span>
                 </div>
                 <div>
                     <i class="fa fa-truck" aria-hidden="true"/>
-                    <span><strong>Easy delivery</strong><small>Order with confidence</small></span>
+                    <span><strong>Easy delivery</strong><small>Order online</small></span>
                 </div>
                 <div>
                     <i class="fa fa-headphones" aria-hidden="true"/>
@@ -61,9 +61,9 @@
                          class="ab-storefront-product-recommendations ab-storefront-related-products">
                     <div class="container">
                         <div class="ab-storefront-recommendation-heading">
-                            <span class="ab-storefront-kicker">Carefully matched</span>
+                            <span class="ab-storefront-kicker">More products</span>
                             <h2>Related products</h2>
-                            <p>Explore nearby healthcare choices from the same shopping journey.</p>
+                            <p>Browse more products.</p>
                         </div>
                         <div class="ab-storefront-recommendation-grid">
                             <t t-foreach="ab_related_products" t-as="ab_recommendation_product">
@@ -77,9 +77,9 @@
                          class="ab-storefront-product-recommendations ab-storefront-bought-with-products">
                     <div class="container">
                         <div class="ab-storefront-recommendation-heading">
-                            <span class="ab-storefront-kicker">Complete the routine</span>
-                            <h2>Often bought with this product</h2>
-                            <p>Useful add-ons customers commonly pair with this item.</p>
+                            <span class="ab-storefront-kicker">Add to your order</span>
+                            <h2>You may also need</h2>
+                            <p>Browse products you can add to your order.</p>
                         </div>
                         <div class="ab-storefront-recommendation-grid">
                             <t t-foreach="ab_bought_with_products" t-as="ab_recommendation_product">

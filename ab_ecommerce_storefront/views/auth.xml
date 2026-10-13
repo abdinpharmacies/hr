@@ -54,8 +54,8 @@
                 <main class="ab-auth-main">
                     <section class="ab-auth-visual" aria-label="Abdin Pharmacies">
                         <span class="ab-auth-kicker">Abdin Pharmacies</span>
-                        <h1>Trusted pharmacy care, delivered to your door</h1>
-                        <p>Sign in to track your orders, save favorite products, and continue shopping easily.</p>
+                        <h1>Your pharmacy essentials, delivered</h1>
+                        <p>Sign in to track orders and save your favorite products.</p>
                         <div class="ab-auth-trust-grid" aria-hidden="true">
                             <span>Genuine products</span>
                             <span>Secure payment</span>
@@ -68,7 +68,7 @@
                 </main>
                 <footer class="ab-auth-footer">
                     <strong>Abdin Pharmacies</strong>
-                    <span>Thoughtful healthcare, every day.</span>
+                    <span>Your pharmacy, online.</span>
                     <a href="tel:19036">Hotline 19036</a>
                 </footer>
             </div>
@@ -241,9 +241,9 @@
             <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup" t-att-data-ab-phone-signup-label="ab_phone_signup_label" t-att-data-ab-email-signup-label="ab_email_signup_label" t-att-data-ab-signup-loading-label="ab_signup_loading_label" t-att-data-ab-signup-continuing-label="ab_signup_continuing_label">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="ab-auth-form-head">
-                    <span class="ab-auth-form-mark">Start an easier experience</span>
+                    <span class="ab-auth-form-mark">New account</span>
                     <h2>Create account</h2>
-                    <p>Create your account for an easier and faster shopping experience</p>
+                    <p>Create an account to save your details and track your orders.</p>
                 </div>
                 <div class="ab-auth-field field-name">
                     <label for="name">Name</label>

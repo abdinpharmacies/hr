@@ -106,7 +106,7 @@
         <section class="ab-contact-success container">
             <span class="ab-contact-success-icon"><i class="fa fa-check" aria-hidden="true"/></span>
             <h1 t-out="success_title"/>
-            <p>We have received your request. Our team will review it and contact you soon.</p>
+            <p>We received your request. Our team will review it and contact you.</p>
             <div class="ab-contact-success-actions"><a href="/" class="btn btn-primary">Back to homepage</a><a href="/contactus" class="btn btn-outline-primary">Back to Contact Us</a></div>
         </section>
     </template>

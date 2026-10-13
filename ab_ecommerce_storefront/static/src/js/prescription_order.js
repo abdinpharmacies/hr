@@ -88,7 +88,7 @@ export class AbPrescriptionOrderForm extends Interaction {
         const cameraOpen = ev.target.closest("[data-ab-prescription-camera-open]");
         if (cameraOpen) {
             if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia || !window.DataTransfer) {
-                this.showCameraMessage(_t("Live camera access needs HTTPS or a loopback address (127.0.0.x) in a supported browser. You can use the camera picker or upload an image."), false);
+                this.showCameraMessage(_t("The camera cannot open on this page. Use Take photo or upload an image instead."), false);
                 return;
             }
             ev.preventDefault();

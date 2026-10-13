@@ -3495,6 +3495,7 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Status"
 msgstr ""
 
@@ -3807,6 +3808,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "View all"
 msgstr ""
 
@@ -5620,6 +5622,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Open"
 msgstr ""
 
@@ -8309,7 +8312,19 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Genuine products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid "Secure checkout"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Pharmacy essentials"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -8330,12 +8345,33 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "From Abdin Pharmacies"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Easy delivery"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Convenient ordering"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Secure payment"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Protected checkout"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Need help?"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -8347,6 +8383,11 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Find what you need"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View all products"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -8860,7 +8901,19 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View products"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
 msgid "<span aria-hidden=\"true\"><i class=\"fa fa-search\" title=\"Search\"/></span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "No offers available right now"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -8872,9 +8925,66 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse all products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Pharmacy essentials</strong><small>From Abdin "
+"Pharmacies</small></span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Home delivery</strong><small>Order to your door</small></span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Secure payment</strong><small>Choose your payment "
+"method</small></span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Your pharmacy essentials in one place"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"Shop medicines, personal care, baby products, and health devices. Contact us"
+" if you need help."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Why choose Abdin Pharmacies?"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact our pharmacy team with questions about a product."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Order your pharmacy essentials for delivery to your address."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid ""
 "<span><i class=\"fa fa-shield\" aria-hidden=\"true\"/></span>\n"
 "                                    <strong>Review your order</strong>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Review your products and total before placing your order."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -8903,10 +9013,40 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Contact us</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact us for help with a product or an order."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Your pharmacy essentials, delivered"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Sign in to track orders and save your favorite products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
 msgid ""
 "<strong>Abdin Pharmacies</strong>\n"
 "                    <span>Your pharmacy, online.</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "<span class=\"ab-auth-form-mark\">New account</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Create an account to save your details and track your orders."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -9083,6 +9223,23 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Waiting for payment confirmation"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We are waiting for payment confirmation. Check your order for updates."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"Your payment is awaiting confirmation. Your order status will update once it"
+" is confirmed."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Retry payment"
 msgstr ""
 
@@ -9142,12 +9299,42 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Check the status of your order here."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Track your order for updates."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Payment support"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">More products</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid "Browse more products in this category."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">Add to your order</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "You may also need"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Browse products you can add to your order."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -9170,6 +9357,16 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_success_content
+msgid "We received your request. Our team will review it and contact you."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Browse products in this category."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation_offcanvas
 msgid "<b>Categories</b>"
 msgstr ""
@@ -9181,6 +9378,12 @@ msgid ""
 "                            <i class=\"fa fa-shield\" aria-hidden=\"true\"/>\n"
 "                            <span>Your pharmacy essentials, delivered</span>\n"
 "                        </span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"Order medicines, personal care, and health essentials from Abdin Pharmacies."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -9228,6 +9431,21 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid ""
+"The camera cannot open on this page. Use Take photo or upload an image "
+"instead."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Open the secure website link to continue."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/business_partnership.js:0
 msgid "Sending request..."
 msgstr ""
@@ -9240,6 +9458,11 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
 msgid "Signing in..."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Order progress"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -9262,6 +9485,11 @@ msgstr ""
 msgid ""
 "<i class=\"fa fa-truck\" aria-hidden=\"true\"/>\n"
 "                    <span><strong>Easy delivery</strong><small>Order online</small></span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Browse more products."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -9296,6 +9524,11 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Search for a governorate"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid ""
 "<span>Enter address details</span>\n"
 "                                <i class=\"fa fa-plus\" aria-hidden=\"true\"/>"
@@ -9308,6 +9541,11 @@ msgid ""
 "                                    <i class=\"fa fa-map-marker\" aria-hidden=\"true\"/>\n"
 "                                </span>\n"
 "                                <strong>Delivery address details</strong>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Choose your area and enter your address details."
 msgstr ""
 
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page

@@ -101,7 +101,7 @@
                             <span aria-hidden="true"><i class="fa fa-history" title="Browsing history"/></span>
                             <h2>Nothing here yet</h2>
                             <p>Products you view will appear here so you can easily find them again.</p>
-                            <a href="/shop" class="btn btn-primary" role="button">Explore Products</a>
+                            <a href="/shop" class="btn btn-primary" role="button">View products</a>
                         </div>
 
                         <div class="ab-storefront-history-empty ab-storefront-history-no-results d-none" data-ab-history-no-results="">

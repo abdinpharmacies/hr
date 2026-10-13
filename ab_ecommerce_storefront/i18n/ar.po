@@ -468,7 +468,7 @@ msgstr "دفع آمن"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Pharmacy essentials"
-msgstr "أساسيات الصيدلية"
+msgstr "احتياجاتك من الصيدلية"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -495,7 +495,7 @@ msgstr "من صيدليات عابدين"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid "Easy delivery"
-msgstr "توصيل سهل"
+msgstr "توصيل لعنوانك"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -515,7 +515,7 @@ msgstr "إتمام الطلب"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Need help?"
-msgstr "تحتاج مساعدة؟"
+msgstr "محتاج مساعدة؟"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -624,6 +624,7 @@ msgstr "الأكثر مبيعًا"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 msgid "View all"
 msgstr "عرض الكل"
 
@@ -2543,6 +2544,7 @@ msgstr "بدء المراجعة"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Status"
 msgstr "الحالة"
 
@@ -3865,6 +3867,7 @@ msgstr "عدد الرسائل الحادث بها خطأ في التسليم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_message_search
 msgid "Open"
 msgstr "مفتوح"
 
@@ -7015,6 +7018,12 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View products"
+msgstr "عرض المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
 msgid "<span aria-hidden=\"true\"><i class=\"fa fa-search\" title=\"Search\"/></span>"
 msgstr "<span aria-hidden=\"true\"><i class=\"fa fa-search\" title=\"بحث\"/></span>"
 
@@ -7061,6 +7070,12 @@ msgstr "بدون صورة شخصية"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.avatar_picker
 msgid "Choose account image"
 msgstr "اختيار صورة الحساب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_page
+msgid "No offers available right now"
+msgstr "لا توجد عروض حاليًا"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
@@ -7180,10 +7195,50 @@ msgstr "عرض العروض"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse all products."
+msgstr "تصفح كل المنتجات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Pharmacy essentials</strong><small>From Abdin "
+"Pharmacies</small></span>"
+msgstr ""
+"<span><strong>احتياجاتك من الصيدلية</strong><small>من صيدليات "
+"عابدين</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Home delivery</strong><small>Order to your door</small></span>"
+msgstr ""
+"<span><strong>توصيل للبيت</strong><small>اطلب لحد باب البيت</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Secure payment</strong><small>Choose your payment "
+"method</small></span>"
+msgstr "<span><strong>دفع آمن</strong><small>اختر طريقة الدفع</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid ""
 "<span><strong>Customer support</strong><small>Hotline 19036</small></span>"
 msgstr ""
 "<span><strong>خدمة العملاء</strong><small>الخط الساخن 19036</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Your pharmacy essentials in one place"
+msgstr "كل اللي تحتاجه من صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"Shop medicines, personal care, baby products, and health devices. Contact us"
+" if you need help."
+msgstr "أدوية، وعناية شخصية، ومنتجات أطفال، وأجهزة طبية. محتاج مساعدة؟ كلمنا."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -7202,12 +7257,22 @@ msgstr "<strong>آمن</strong><span>الدفع</span>"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Why choose Abdin Pharmacies?"
+msgstr "ليه تختار صيدليات عابدين؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid ""
 "<span><i class=\"fa fa-medkit\" aria-hidden=\"true\"/></span>\n"
 "                                    <strong>Pharmacy expertise</strong>"
 msgstr ""
 "<span><i class=\"fa fa-medkit\" aria-hidden=\"true\"/></span>\n"
 "                                    <strong>فريق الصيدلية</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact our pharmacy team with questions about a product."
+msgstr "اسأل فريق الصيدلية عن المنتج اللي محتاجه."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -7220,12 +7285,22 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Order your pharmacy essentials for delivery to your address."
+msgstr "اطلب احتياجاتك من الصيدلية لحد باب البيت."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid ""
 "<span><i class=\"fa fa-shield\" aria-hidden=\"true\"/></span>\n"
 "                                    <strong>Review your order</strong>"
 msgstr ""
 "<span><i class=\"fa fa-shield\" aria-hidden=\"true\"/></span>\n"
 "                                    <strong>راجع طلبك</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Review your products and total before placing your order."
+msgstr "راجع المنتجات والإجمالي قبل تأكيد طلبك."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -7263,9 +7338,29 @@ msgstr ""
 "                                    </span>"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span class=\"ab-storefront-kicker\">Contact us</span>"
+msgstr "<span class=\"ab-storefront-kicker\">تواصل معنا</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact us for help with a product or an order."
+msgstr "كلمنا لو محتاج مساعدة في منتج أو طلب."
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
 msgid "<span class=\"ab-auth-kicker\">Abdin Pharmacies</span>"
 msgstr "<span class=\"ab-auth-kicker\">صيدليات عابدين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Your pharmacy essentials, delivered"
+msgstr "طلبك من صيدليات عابدين لحد باب البيت"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
+msgid "Sign in to track orders and save your favorite products."
+msgstr "سجّل الدخول لمتابعة طلباتك وحفظ منتجاتك المفضلة."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_layout
@@ -7415,6 +7510,16 @@ msgstr "قوة كلمة المرور"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
 msgid "Confirm password"
 msgstr "تأكيد كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "<span class=\"ab-auth-form-mark\">New account</span>"
+msgstr "<span class=\"ab-auth-form-mark\">حساب جديد</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
+msgid "Create an account to save your details and track your orders."
+msgstr "أنشئ حسابًا لحفظ بياناتك ومتابعة طلباتك."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
@@ -7808,6 +7913,23 @@ msgstr "خطوات إتمام الطلب"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Waiting for payment confirmation"
+msgstr "في انتظار تأكيد الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We are waiting for payment confirmation. Check your order for updates."
+msgstr "ننتظر تأكيد الدفع. تابع طلبك لمعرفة آخر التحديثات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid ""
+"Your payment is awaiting confirmation. Your order status will update once it"
+" is confirmed."
+msgstr "عملية الدفع بانتظار التأكيد. ستتحدث حالة طلبك بعد تأكيدها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Retry payment"
 msgstr "إعادة محاولة الدفع"
 
@@ -7881,8 +8003,23 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Check the status of your order here."
+msgstr "تابع حالة طلبك هنا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Track your order for updates."
+msgstr "تابع حالة طلبك لمعرفة آخر التحديثات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
 msgid "Payment support"
 msgstr "المساعدة في الدفع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">More products</span>"
+msgstr "<span class=\"ab-storefront-kicker\">منتجات أخرى</span>"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
@@ -7893,6 +8030,21 @@ msgstr "منتجات أخرى"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid "Browse more products in this category."
 msgstr "شاهد منتجات أخرى في نفس القسم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<span class=\"ab-storefront-kicker\">Add to your order</span>"
+msgstr "<span class=\"ab-storefront-kicker\">أضف إلى طلبك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "You may also need"
+msgstr "قد تحتاج أيضًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Browse products you can add to your order."
+msgstr "شاهد منتجات يمكنك إضافتها إلى طلبك."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_price
@@ -7919,6 +8071,11 @@ msgid ""
 msgstr "<i class=\"fa fa-paper-plane-o\" aria-hidden=\"true\"/> إرسال طلب التعاقد"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_success_content
+msgid "We received your request. Our team will review it and contact you."
+msgstr "استلمنا طلبك. سيراجعه فريقنا ويتواصل معك."
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_first_empty_message
 msgid "Add your first product to the cart"
 msgstr "أضف المنتجات التي تحتاجها إلى السلة"
@@ -7937,6 +8094,11 @@ msgstr "احفظ المنتجات التي تعجبك في المفضلة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.wishlist_first_empty_message
 msgid "Your wishlist is empty!"
 msgstr "المفضلة فارغة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Browse products in this category."
+msgstr "تصفح منتجات هذا القسم."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation_offcanvas
@@ -8232,6 +8394,13 @@ msgstr "اختيار مصر"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid ""
+"Order medicines, personal care, and health essentials from Abdin Pharmacies."
+msgstr ""
+"اطلب الأدوية ومنتجات العناية الشخصية والمستلزمات الصحية من صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
 "<span>Copyright © Abdin Pharmacies</span>\n"
 "                        <span>Your everyday pharmacy needs.</span>"
 msgstr ""
@@ -8326,6 +8495,15 @@ msgstr "زيادة الكمية"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/prescription_order.js:0
+msgid ""
+"The camera cannot open on this page. Use Take photo or upload an image "
+"instead."
+msgstr ""
+"تعذر فتح الكاميرا في هذه الصفحة. استخدم «التقاط صورة» أو ارفع صورة من جهازك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
 msgid "Very weak"
 msgstr "ضعيفة جدًا"
@@ -8353,6 +8531,13 @@ msgstr "قوية"
 #: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
 msgid "Hide password"
 msgstr "إخفاء كلمة المرور"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
+#: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
+msgid "Open the secure website link to continue."
+msgstr "افتح رابط الموقع الآمن للمتابعة."
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
@@ -8552,6 +8737,11 @@ msgid "Signing in..."
 msgstr "جارٍ تسجيل الدخول..."
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Order progress"
+msgstr "مراحل الطلب"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
 msgid ""
 "<span><i class=\"fa fa-shield me-2\" aria-hidden=\"true\"/>From Abdin Pharmacies</span>\n"
@@ -8579,6 +8769,11 @@ msgid ""
 msgstr ""
 "<i class=\"fa fa-truck\" aria-hidden=\"true\"/>\n"
 "                    <span><strong>توصيل لعنوانك</strong><small>اطلب أونلاين</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Browse more products."
+msgstr "شاهد المزيد من المنتجات."
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
@@ -9026,6 +9221,11 @@ msgstr "لا يمكن تسجيل الطلبات المرتجعة كمُسلّم�
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Search for a governorate"
+msgstr "ابحث عن محافظة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid ""
 "<span>Enter address details</span>\n"
 "                                <i class=\"fa fa-plus\" aria-hidden=\"true\"/>"
@@ -9045,6 +9245,11 @@ msgstr ""
 "                                    <i class=\"fa fa-map-marker\" aria-hidden=\"true\"/>\n"
 "                                </span>\n"
 "                                <strong>تفاصيل عنوان التوصيل</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Choose your area and enter your address details."
+msgstr "اختر منطقتك وأدخل تفاصيل عنوانك."
 
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront

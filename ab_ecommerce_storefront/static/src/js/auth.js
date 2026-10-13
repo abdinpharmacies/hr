@@ -442,7 +442,7 @@ export class AbStorefrontAuth extends Interaction {
             const hasAuthForm = Boolean(nextCard?.querySelector("[data-ab-auth-form]"));
 
             if (response.headers.get("X-Ab-Auth-Error") === "https-required") {
-                this.showInlineFailure(form, _t("Open the HTTPS website to continue. Local HTTP testing requires development mode."));
+                this.showInlineFailure(form, _t("Open the secure website link to continue."));
                 return;
             }
             if (response.ok && !hasBackendError && nextCard?.querySelector("[data-ab-telegram-link]")) {

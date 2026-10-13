@@ -219,7 +219,7 @@ class AbStorefrontAuth(OAuthLogin):
             except werkzeug.exceptions.Forbidden as error:
                 if error.response is None or error.response.headers.get("X-Ab-Auth-Error") != "https-required":
                     raise
-                qcontext["error"] = _("Open the HTTPS website to continue. Local HTTP testing requires development mode.")
+                qcontext["error"] = _("Open the secure website link to continue.")
                 response = request.render("auth_signup.signup", qcontext, status=403)
                 response.headers.update({"X-Ab-Auth-Error": "https-required", "Cache-Control": "no-store", "X-Frame-Options": "SAMEORIGIN", "Content-Security-Policy": "frame-ancestors 'self'"})
                 return response
