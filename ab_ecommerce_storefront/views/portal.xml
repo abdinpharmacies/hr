@@ -470,7 +470,7 @@
                                     </span>
                                     <t t-set="avatar_value" t-value="account_avatar"/>
                                     <t t-set="avatar_size" t-value="'xl'"/>
-                                    <t t-set="avatar_alt" t-value="'Your account avatar'"/>
+                                    <t t-set="avatar_alt" t-valuef.translate="Your account avatar"/>
                                     <t t-set="avatar_partner" t-value="partner"/>
                                     <t t-call="ab_ecommerce_storefront.avatar_image"/>
                                 </button>
@@ -545,7 +545,7 @@
                                                     <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                                                 </a>
                                             </div>
-                                            <strong t-out="partner.city or partner.country_id.name or 'Account address'"/>
+                                            <strong t-out="partner.city or partner.country_id.name">Account address</strong>
                                             <p>
                                                 <t t-if="partner.street" t-out="partner.street"/>
                                                 <t t-if="partner.street2">، <t t-out="partner.street2"/></t>
@@ -554,13 +554,13 @@
                                         </article>
                                         <article t-foreach="saved_addresses[:2]" t-as="address" class="ab-account-address-card">
                                             <div class="ab-account-address-card-head">
-                                                <span t-out="address.name or 'Saved address'"/>
+                                                <span t-out="address.name">Saved address</span>
                                                 <a t-attf-href="/my/address?partner_id=#{address.id}&amp;address_type=delivery&amp;callback=/my/home"
                                                    class="ab-account-address-edit" aria-label="Edit address" title="Edit address">
                                                     <i class="fa fa-fw fa-pencil" aria-hidden="true"></i>
                                                 </a>
                                             </div>
-                                            <strong t-out="address.city or address.country_id.name or 'Delivery address'"/>
+                                            <strong t-out="address.city or address.country_id.name">Delivery address</strong>
                                             <p>
                                                 <t t-if="address.street" t-out="address.street"/>
                                                 <t t-if="address.street2">، <t t-out="address.street2"/></t>
@@ -1006,7 +1006,7 @@
                 <div class="ab-account-avatar-visual">
                     <t t-set="avatar_value" t-value="user_id.partner_id.ab_storefront_avatar"/>
                     <t t-set="avatar_size" t-value="'xl'"/>
-                    <t t-set="avatar_alt" t-value="'Your account avatar'"/>
+                    <t t-set="avatar_alt" t-valuef.translate="Your account avatar"/>
                     <t t-call="ab_ecommerce_storefront.avatar_image"/>
                 </div>
                 <div class="ab-account-avatar-copy">
@@ -1030,7 +1030,7 @@
         <xpath expr="//img[contains(@class, 'rounded')][1]" position="replace">
             <t t-set="avatar_value" t-value="user_id.partner_id.ab_storefront_avatar"/>
             <t t-set="avatar_size" t-value="'md'"/>
-            <t t-set="avatar_alt" t-value="'Your account avatar'"/>
+            <t t-set="avatar_alt" t-valuef.translate="Your account avatar"/>
             <t t-call="ab_ecommerce_storefront.avatar_image"/>
         </xpath>
     </template>

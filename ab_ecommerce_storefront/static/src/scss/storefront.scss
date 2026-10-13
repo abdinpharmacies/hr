@@ -4333,7 +4333,7 @@ html[dir="rtl"] {
     background: #fff;
     font-size: var(--ab-font-size-070);
     font-weight: var(--ab-font-weight-bold);
-    content: "✓ محدد";
+    content: attr(data-ab-selected-label);
 }
 
 .ab-storefront-address-edit-action {

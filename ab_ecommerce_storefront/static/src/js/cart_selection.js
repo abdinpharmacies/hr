@@ -169,18 +169,13 @@ function setQuantityMinusState(minus, value) {
     minus.setAttribute("title", removesLine ? _t("Remove from cart") : _t("Remove one"));
 }
 
-function isArabicPage() {
-    const lang = document.documentElement.lang || "";
-    return lang.startsWith("ar");
-}
-
 function getMaxQuantity(input) {
     const max = Number.parseFloat(input?.dataset?.max || input?.getAttribute("max") || "");
     return Number.isFinite(max) ? max : Infinity;
 }
 
 function getQuantityMaxLabel() {
-    return isArabicPage() ? "وصلت للحد الأقصى المتاح" : _t("Maximum available quantity selected");
+    return _t("Maximum available quantity selected");
 }
 
 function getCartLineProductName(input) {
@@ -193,11 +188,6 @@ function getCartLineProductName(input) {
 function getQuantityMaxMessage(input) {
     const value = input?.value || "";
     const productName = getCartLineProductName(input);
-    if (isArabicPage()) {
-        return productName
-            ? `وصلت للحد المتاح لهذا المنتج: ${productName}. الكمية المتوفرة: ${value}`
-            : `وصلت للحد المتاح لهذا المنتج. الكمية المتوفرة: ${value}`;
-    }
     return productName
         ? _t("You reached the available limit for %s. Available quantity: %s", productName, value)
         : _t("You reached the available limit. Available quantity: %s", value);

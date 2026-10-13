@@ -36,6 +36,8 @@
     </template>
 
     <template id="product_card" name="Abdin Storefront Product Card">
+        <t t-set="ab_add_wishlist_label">Add to wishlist</t>
+        <t t-set="ab_remove_wishlist_label">Remove from wishlist</t>
         <t t-set="ab_card_variant" t-value="ab_card_variants.get(product.id)"/>
         <t t-set="ab_card_price" t-value="ab_card_prices.get(product.id, {})"/>
         <t t-set="ab_card_is_wishlisted" t-value="ab_card_is_wishlisted_override"/>
@@ -83,8 +85,8 @@
                         t-att-data-product-template-id="product.id"
                         t-att-data-product-product-id="ab_card_variant.id"
                         data-action="o_wishlist"
-                        t-att-title="ab_card_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
-                        t-att-aria-label="ab_card_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
+                        t-att-title="ab_card_is_wishlisted and ab_remove_wishlist_label or ab_add_wishlist_label"
+                        t-att-aria-label="ab_card_is_wishlisted and ab_remove_wishlist_label or ab_add_wishlist_label"
                         t-att-aria-pressed="ab_card_is_wishlisted and 'true' or 'false'">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M20.8 4.7a5.5 5.5 0 0 0-7.8 0L12 5.8l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.4 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"/>
@@ -228,6 +230,7 @@
 
     <template id="homepage" name="Abdin eCommerce Homepage" inherit_id="website.homepage" priority="100">
         <xpath expr="//div[@id='wrap']" position="replace">
+            <t t-set="ab_slide_label">Slide</t>
             <t t-set="ab_catalog" t-value="website._ab_storefront_home_catalog(product_limit=4, category_limit=8)"/>
             <t t-set="ab_carousel_slides" t-value="website._ab_storefront_carousel_slides()"/>
             <div id="wrap" class="oe_structure ab-storefront-home">
@@ -249,7 +252,7 @@
                                     t-attf-data-bs-slide-to="#{ab_slide_index}"
                                     t-att-class="ab_slide_index == 0 and 'active' or None"
                                     t-att-aria-current="ab_slide_index == 0 and 'true' or None"
-                                    t-att-aria-label="'Slide %s' % (ab_slide_index + 1)"/>
+                                    t-att-aria-label="'%s %s' % (ab_slide_label, ab_slide_index + 1)"/>
                         </div>
 
                         <div class="carousel-inner">

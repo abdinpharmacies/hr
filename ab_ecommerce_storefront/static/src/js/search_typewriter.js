@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { Interaction } from "@web/public/interaction";
 
 const SEARCH_INPUT_SELECTOR = [
@@ -16,8 +17,6 @@ const DELETE_DELAY = 38;
 const HOLD_DELAY = 2100;
 const NEXT_PHRASE_DELAY = 260;
 const VISIBILITY_RETRY_DELAY = 750;
-
-const FALLBACK_PLACEHOLDER = "What are you looking for?";
 
 export class AbStorefrontSearchTypewriter extends Interaction {
     static selector = "body";
@@ -191,7 +190,7 @@ export class AbStorefrontSearchTypewriter extends Interaction {
     }
 
     getFallbackPlaceholder() {
-        return FALLBACK_PLACEHOLDER;
+        return _t("What are you looking for?");
     }
 
     getSearchLabel() {

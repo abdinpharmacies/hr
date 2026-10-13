@@ -1,24 +1,14 @@
 /** @odoo-module **/
 
 import wSaleUtils from "@website_sale/js/website_sale_utils";
+import { _t } from "@web/core/l10n/translation";
 
 const originalShowWarning = wSaleUtils.showWarning;
 
-function isArabicPage() {
-    const lang = document.documentElement.lang || "";
-    return lang.startsWith("ar");
-}
-
 function stockWarningCopy() {
-    if (isArabicPage()) {
-        return {
-            title: "تم تعديل الكمية",
-            close: "إغلاق تنبيه الكمية",
-        };
-    }
     return {
-        title: "Quantity adjusted",
-        close: "Close quantity warning",
+        title: _t("Quantity adjusted"),
+        close: _t("Close quantity warning"),
     };
 }
 

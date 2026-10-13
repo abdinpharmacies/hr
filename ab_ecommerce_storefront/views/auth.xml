@@ -117,7 +117,8 @@
                     <t t-esc="message"/>
                 </p>
                 <div class="oe_login_buttons ab-auth-actions">
-                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="Signing in...">Sign in</button>
+                    <t t-set="ab_signin_loading">Signing in...</t>
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" t-att-data-loading-text="ab_signin_loading">Sign in</button>
                     <t t-call="web.login_oauth"/>
                     <div class="ab-auth-divider"><span>or</span></div>
                     <p>Do not have an account?</p>
@@ -277,7 +278,7 @@
                     <div class="ab-auth-avatar-preview">
                         <t t-set="avatar_value" t-value="'avatar_none'"/>
                         <t t-set="avatar_size" t-value="'xl'"/>
-                        <t t-set="avatar_alt" t-value="'Selected account avatar'"/>
+                        <t t-set="avatar_alt" t-valuef.translate="Selected account avatar"/>
                         <t t-call="ab_ecommerce_storefront.avatar_image"/>
                     </div>
                     <div class="ab-auth-avatar-copy">
@@ -304,7 +305,8 @@
                 <input type="hidden" name="redirect" t-att-value="redirect"/>
                 <input type="hidden" name="token" t-att-value="token"/>
                 <div class="oe_login_buttons ab-auth-actions">
-                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="Creating account...">Create account</button>
+                    <t t-set="ab_create_loading">Creating account...</t>
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" t-att-data-loading-text="ab_create_loading">Create account</button>
                     <t t-call="web.login_oauth"/>
                     <p>Already have an account?</p>
                     <a t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" role="button" data-ab-auth-nav="login">Sign in</a>
@@ -356,7 +358,8 @@
                 <input type="hidden" name="redirect" t-att-value="redirect"/>
                 <input type="hidden" name="token" t-att-value="token"/>
                 <div class="oe_login_buttons ab-auth-actions">
-                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="Continuing...">Continue</button>
+                    <t t-set="ab_continue_loading">Continuing...</t>
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" t-att-data-loading-text="ab_continue_loading">Continue</button>
                     <a t-if="not token" t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" data-ab-auth-nav="login">Back to sign in</a>
                     <a t-if="invalid_token" href="/web/login" class="btn ab-auth-secondary" data-ab-auth-nav="login">Back to sign in</a>
                     <t t-call="web.login_oauth"/>

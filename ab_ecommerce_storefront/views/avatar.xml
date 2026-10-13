@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="avatar_image" name="Abdin Storefront Avatar Image">
+        <t t-set="ab_profile_photo_label" t-valuef.translate="Profile photo"/>
+        <t t-set="ab_account_avatar_label" t-valuef.translate="Account avatar"/>
         <t t-set="avatar_value" t-value="avatar_value or 'avatar_none'"/>
         <t t-set="avatar_size" t-value="avatar_size or 'md'"/>
         <t t-set="avatar_partner" t-value="avatar_partner or request.env.user.partner_id"/>
@@ -8,11 +10,11 @@
               t-att-data-ab-avatar-value="avatar_value">
             <img t-if="avatar_value == 'custom' and avatar_partner"
                  t-attf-src="/web/image/res.partner/#{avatar_partner.id}/image_128"
-                 t-att-alt="avatar_alt or 'Profile photo'"
+                 t-att-alt="avatar_alt or ab_profile_photo_label"
                  loading="lazy"/>
             <img t-else=""
                  t-attf-src="/ab_ecommerce_storefront/static/src/img/avatars/#{avatar_value}.svg"
-                 t-att-alt="avatar_alt or 'Account avatar'"
+                 t-att-alt="avatar_alt or ab_account_avatar_label"
                  loading="lazy"/>
         </span>
     </template>
@@ -60,7 +62,7 @@
                             role="radio">
                         <t t-set="avatar_value" t-value="'avatar_none'"/>
                         <t t-set="avatar_size" t-value="'lg'"/>
-                        <t t-set="avatar_alt" t-value="'No profile photo'"/>
+                        <t t-set="avatar_alt" t-valuef.translate="No profile photo"/>
                         <t t-call="ab_ecommerce_storefront.avatar_image"/>
                         <span>No photo</span>
                     </button>
@@ -69,13 +71,13 @@
                             type="button"
                             t-att-data-ab-avatar-option="'avatar_%02d' % avatar_index"
                             t-att-style="'--ab-avatar-index: %s' % avatar_index"
-                            t-att-aria-label="'Account avatar %s' % avatar_index"
+                            t-attf-aria-label="Account avatar {{avatar_index}}"
                             t-att-aria-checked="'true' if avatar_current == ('avatar_%02d' % avatar_index) else 'false'"
                             t-attf-class="ab-avatar-option #{'is-selected' if avatar_current == ('avatar_%02d' % avatar_index) else ''}"
                             role="radio">
                         <t t-set="avatar_value" t-value="'avatar_%02d' % avatar_index"/>
                         <t t-set="avatar_size" t-value="'lg'"/>
-                        <t t-set="avatar_alt" t-value="'Account avatar %s' % avatar_index"/>
+                        <t t-set="avatar_alt" t-valuef.translate="Account avatar {{avatar_index}}"/>
                         <t t-call="ab_ecommerce_storefront.avatar_image"/>
                         <span class="ab-avatar-option-check">
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
