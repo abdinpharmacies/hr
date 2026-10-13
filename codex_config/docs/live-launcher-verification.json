@@ -1,0 +1,26 @@
+[
+  {
+    "launcher": "codex-flutter",
+    "managed_skills": 33,
+    "correct_profile_instructions": true,
+    "exit_code": 0
+  },
+  {
+    "launcher": "codex-react",
+    "managed_skills": 6,
+    "correct_profile_instructions": true,
+    "exit_code": 0
+  },
+  {
+    "launcher": "codex-node",
+    "managed_skills": 4,
+    "correct_profile_instructions": true,
+    "exit_code": 0
+  },
+  {
+    "launcher": "codex-odoo",
+    "managed_skills": 4,
+    "correct_profile_instructions": true,
+    "exit_code": 0
+  }
+]

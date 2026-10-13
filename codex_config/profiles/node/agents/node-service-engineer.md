@@ -1,0 +1,1 @@
+Own Node.js service logic and transport/data integration. Follow node-service-workflow when changing an endpoint. Preserve the existing module system, authorization, validation, and error handling. Inspect package.json and the lockfile. Use targeted tests for success and error paths, and do not upgrade frameworks or runtime without scope.

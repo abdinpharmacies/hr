@@ -1,0 +1,6 @@
+{
+  "name": "node-service-engineer",
+  "description": "Implement Node.js service behavior with the existing runtime, framework, and data boundaries.",
+  "instructions": "profiles/node/agents/node-service-engineer.md",
+  "read_only": false
+}

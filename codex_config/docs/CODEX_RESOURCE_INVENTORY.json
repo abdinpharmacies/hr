@@ -1,0 +1,775 @@
+{
+  "scope": "/home/abdin_02/ai_workflow/codex_config",
+  "skills": [
+    {
+      "path": "shared/skills/find-skills/SKILL.md",
+      "name": "find-skills",
+      "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+      "lines": 144,
+      "body_words": 788,
+      "bytes": 5478,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F08"
+    },
+    {
+      "path": "shared/skills/git-commit/SKILL.md",
+      "name": "git-commit",
+      "description": "Create clean one-line Conventional Commits with an accurate optional scope, using diff inspection and interactive staging to keep each commit logically atomic. Use when the user asks to create, suggest, stage, split, amend, or make a Git commit.",
+      "lines": 300,
+      "body_words": 1242,
+      "bytes": 8639,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "shared/skills/git-interactive-rebase/SKILL.md",
+      "name": "git-interactive-rebase",
+      "description": "Safely clean, reorder, edit, squash, fixup, drop, and reword local Git history with interactive rebase while preserving logical atomic commits and delegating all final commit-message naming rules to the git-commit skill.",
+      "lines": 387,
+      "body_words": 1827,
+      "bytes": 12463,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "shared/skills/writing-guidelines/SKILL.md",
+      "name": "writing-guidelines",
+      "description": "Review docs/prose for Writing Guidelines compliance. Use when asked to \"review my docs\", \"check writing style\", \"audit prose\", \"review docs voice and tone\", or \"check this page against the writing handbook\".",
+      "lines": 39,
+      "body_words": 134,
+      "bytes": 1233,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F09"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-add-unit-test/SKILL.md",
+      "name": "dart-add-unit-test",
+      "description": "Write and organize unit tests for functions, methods, and classes using `package:test`. Use when creating new logic or fixing bugs to ensure code remains correct and regression-free.",
+      "lines": 124,
+      "body_words": 544,
+      "bytes": 4675,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-build-cli-app/SKILL.md",
+      "name": "dart-build-cli-app",
+      "description": "Entrypoint structure, exit codes, cross-platform scripts. Use when building command line utilities, scripts, or applications.",
+      "lines": 186,
+      "body_words": 1098,
+      "bytes": 8902,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F08"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-collect-coverage/SKILL.md",
+      "name": "dart-collect-coverage",
+      "description": "Collect coverage using the coverage packge and create an LCOV report",
+      "lines": 141,
+      "body_words": 606,
+      "bytes": 4855,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-fix-runtime-errors/SKILL.md",
+      "name": "dart-fix-runtime-errors",
+      "description": "Uses get_runtime_errors and lsp to fetch an active stack trace, locate the failing line, apply a fix, and verify resolution via hot_reload.",
+      "lines": 167,
+      "body_words": 836,
+      "bytes": 6221,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F05"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-generate-test-mocks/SKILL.md",
+      "name": "dart-generate-test-mocks",
+      "description": "Define and generate mock objects for external dependencies using `package:mockito` and `build_runner`. Use when unit testing classes that depend on complex external services like APIs or databases.",
+      "lines": 157,
+      "body_words": 730,
+      "bytes": 6305,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-migrate-to-checks-package/SKILL.md",
+      "name": "dart-migrate-to-checks-package",
+      "description": "Replace the usage of `expect` and similar functions from `package:matcher`\nto `package:checks` equivalents.",
+      "lines": 528,
+      "body_words": 2226,
+      "bytes": 19284,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-resolve-package-conflicts/SKILL.md",
+      "name": "dart-resolve-package-conflicts",
+      "description": "Workflow for fixing package version conflicts. Use this when `pub get` fails due to incompatible package versions.",
+      "lines": 117,
+      "body_words": 699,
+      "bytes": 5231,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-run-static-analysis/SKILL.md",
+      "name": "dart-run-static-analysis",
+      "description": "Execute `dart analyze` to identify warnings and errors, and use `dart fix --apply` to automatically resolve mechanical lint issues. Use during development to ensure code quality and before committing changes.",
+      "lines": 110,
+      "body_words": 668,
+      "bytes": 5307,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-setup-ffi-assets/SKILL.md",
+      "name": "dart-setup-ffi-assets",
+      "description": "Guides agents in compiling and packaging C/C++ source code into dynamic or static libraries (Code Assets) using Dart's Native Assets hook system (via hook/build.dart and hook/link.dart utilizing package:hooks and package:native_toolchain_c). Use when a user asks to: 'setup native assets', 'compile C/C++ source code', 'bundle dynamic libraries', 'build native C code', 'link native assets', 'implement build.dart or link.dart hooks', or 'integrate C/C++ interop in Dart/Flutter'. Helps agents avoid manual toolchain orchestration and configures secure hash-validated binary downloads or advanced linker tree-shaking with package:record_use mapping.",
+      "lines": 426,
+      "body_words": 2047,
+      "bytes": 18890,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F06 (license headers)"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-use-doc-examples/SKILL.md",
+      "name": "dart-use-doc-examples",
+      "description": "How to inject external code examples into Dartdoc using the {@example} directive, and how to filter those files using #hide, #region, and #endregion tags.",
+      "lines": 97,
+      "body_words": 718,
+      "bytes": 5346,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-use-ffigen/SKILL.md",
+      "name": "dart-use-ffigen",
+      "description": "Guide agents to use `package:ffigen` to automatically generate FFI bindings instead of writing them manually. Use this skill when a task involves writing new FFI bindings, extending C/Objective-C/Swift integrations, or replacing hand-crafted `dart:ffi` setups.",
+      "lines": 225,
+      "body_words": 1428,
+      "bytes": 11912,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F06 (license headers)"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-use-pattern-matching/SKILL.md",
+      "name": "dart-use-pattern-matching",
+      "description": "Use switch expressions and pattern matching where appropriate",
+      "lines": 146,
+      "body_words": 843,
+      "bytes": 6057,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F08"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-use-primary-constructors/SKILL.md",
+      "name": "dart-use-primary-constructors",
+      "description": "Help users write syntactically and semantically correct primary constructors in Dart, and migrate/use the new constructor syntax, empty-body semicolon syntax, in-body initializer list syntax, and abbreviated concise constructor syntax.\n",
+      "lines": 264,
+      "body_words": 1652,
+      "bytes": 11329,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/dart-write-documentation/SKILL.md",
+      "name": "dart-write-documentation",
+      "description": "Rules and formatting guidelines for writing Dart /// API documentation and doc comments. Use when documenting Dart code, writing doc comments for any Dart declaration (libraries, classes, methods, variables, etc.), or when instructed to follow the Effective Dart documentation guidelines.",
+      "lines": 139,
+      "body_words": 932,
+      "bytes": 6731,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-add-integration-test/SKILL.md",
+      "name": "flutter-add-integration-test",
+      "description": "Configures Flutter Driver for app interaction and converts MCP actions into permanent integration tests. Use when adding integration testing to a project, exploring UI components via MCP, or automating user flows with the integration_test package.",
+      "lines": 170,
+      "body_words": 816,
+      "bytes": 7618,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-add-widget-preview/SKILL.md",
+      "name": "flutter-add-widget-preview",
+      "description": "Adds interactive widget previews to the project using the previews.dart system. Use when creating new UI components or updating existing screens to ensure consistent design and interactive testing.",
+      "lines": 147,
+      "body_words": 708,
+      "bytes": 6212,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F08"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-add-widget-test/SKILL.md",
+      "name": "flutter-add-widget-test",
+      "description": "Implement a component-level test using `WidgetTester` to verify UI rendering and user interactions (tapping, scrolling, entering text). Use when validating that a specific widget displays correct data and responds to events as expected.",
+      "lines": 156,
+      "body_words": 683,
+      "bytes": 6347,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-apply-architecture-best-practices/SKILL.md",
+      "name": "flutter-apply-architecture-best-practices",
+      "description": "Architects a Flutter application using the recommended layered approach (UI, Logic, Data). Use when structuring a new project or refactoring for scalability.",
+      "lines": 163,
+      "body_words": 763,
+      "bytes": 6315,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F06"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-build-responsive-layout/SKILL.md",
+      "name": "flutter-build-responsive-layout",
+      "description": "Use `LayoutBuilder`, `MediaQuery`, or `Expanded/Flexible` to create a layout that adapts to different screen sizes. Use when you need the UI to look good on both mobile and tablet/desktop form factors.",
+      "lines": 141,
+      "body_words": 805,
+      "bytes": 6771,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-debugging/SKILL.md",
+      "name": "flutter-debugging",
+      "description": "Evidence-driven debugging for Flutter and Dart apps. Diagnose crashes, exceptions, layout/rendering, state/Cubit/BLoC, async/lifecycle, networking, performance/jank, memory, build/toolchain, plugins, and native Android/iOS issues using the appropriate Flutter, Dart, DevTools, test, CLI, and native debugging tools. Reproduce first, gather the smallest decisive signal, form and test hypotheses, make minimal fixes, and verify regressions.",
+      "lines": 1056,
+      "body_words": 5056,
+      "bytes": 36519,
+      "reference_files": 1,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-fix-layout-issues/SKILL.md",
+      "name": "flutter-fix-layout-issues",
+      "description": "Fixes Flutter layout errors (overflows, unbounded constraints) using Dart and Flutter MCP tools. Use when addressing \"RenderFlex overflowed\", \"Vertical viewport was given unbounded height\", or similar layout issues.",
+      "lines": 132,
+      "body_words": 682,
+      "bytes": 5292,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-implement-json-serialization/SKILL.md",
+      "name": "flutter-implement-json-serialization",
+      "description": "Create model classes with `fromJson` and `toJson` methods using `dart:convert`. Use when manually mapping JSON keys to class properties for simple data structures.",
+      "lines": 154,
+      "body_words": 680,
+      "bytes": 5614,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-intl-localization/SKILL.md",
+      "name": "flutter-intl-localization",
+      "description": "Sets up Flutter Intl localization with ARB files, generated S class, and a LocaleCubit that rebuilds MaterialApp on language change. Use when localizing the app, adding locales, extracting strings to ARB, wiring language switchers, or when the user mentions Flutter Intl, intl_utils, l10n, or change language.",
+      "lines": 191,
+      "body_words": 570,
+      "bytes": 5386,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F04, F06"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-local-persistence/SKILL.md",
+      "name": "flutter-local-persistence",
+      "description": "Choose and architect local persistence for Flutter apps: decide whether persistence is needed, choose the right storage technology, separate secrets/preferences/files/cache/data, and design feature-oriented local data-source abstractions and DI boundaries.",
+      "lines": 729,
+      "body_words": 2615,
+      "bytes": 19998,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07, F09"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-obfuscation/SKILL.md",
+      "name": "flutter-obfuscation",
+      "description": "Manage Flutter release obfuscation, split debug information, symbol files, crash symbolization, and obfuscation maps. Use when preparing, validating, troubleshooting, or documenting an obfuscated Flutter release.",
+      "lines": 289,
+      "body_words": 1207,
+      "bytes": 9123,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-root-jailbreak-detection/SKILL.md",
+      "name": "flutter-root-jailbreak-detection",
+      "description": "Design, implement, review, and test layered root/jailbreak and mobile-runtime resilience in Flutter apps using OWASP MASVS/MASTG/MASWE, Android Play Integrity and Keystore Key Attestation, Apple App Attest/DeviceCheck, native platform checks, anti-debugging, runtime-hooking/tool detection, runtime integrity, obfuscation, backend enforcement, and false-positive-aware response strategies. Use for security hardening, threat modeling, architecture, implementation, code review, and authorized security testing of Flutter Android/iOS applications.",
+      "lines": 1085,
+      "body_words": 5090,
+      "bytes": 40508,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07, F08"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-setup-declarative-routing/SKILL.md",
+      "name": "flutter-setup-declarative-routing",
+      "description": "Configure `MaterialApp.router` using a package like `go_router` for advanced URL-based navigation. Use when developing web applications or mobile apps that require specific deep linking and browser history support.",
+      "lines": 257,
+      "body_words": 844,
+      "bytes": 8170,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-sqflite/SKILL.md",
+      "name": "flutter-sqflite",
+      "description": "Use sqflite for SQLite-based local persistence in Flutter. Covers setup, database lifecycle, schema design, CRUD, raw SQL, parameter binding, migrations, transactions, batches, relationships, indexes, mapping, platform compatibility, testing, and safe data-layer integration.",
+      "lines": 582,
+      "body_words": 2654,
+      "bytes": 19915,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-sqflite3/SKILL.md",
+      "name": "flutter-sqflite3",
+      "description": "Use package:sqlite3 for direct SQLite persistence in Flutter/Dart. Covers setup, native-assets/hooks, database paths and lifecycle, synchronous SQL, prepared statements, parameter binding, ResultSet/cursors, transactions, schema and migrations, SQLite types, foreign keys, indexes, concurrency, performance, web/WASM, encryption options, testing, and data-layer integration.",
+      "lines": 947,
+      "body_words": 4241,
+      "bytes": 31310,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F07"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-use-http-package/SKILL.md",
+      "name": "flutter-use-http-package",
+      "description": "Use the `http` package to execute GET, POST, PUT, or DELETE requests. Use when you need to fetch from or send data to a REST API.",
+      "lines": 175,
+      "body_words": 695,
+      "bytes": 6420,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F08"
+    },
+    {
+      "path": "profiles/node/skills/node-service-workflow/SKILL.md",
+      "name": "node-service-workflow",
+      "description": "Implement or debug a Node.js service endpoint, tracing validation, business logic, persistence, and error responses in the existing application.",
+      "lines": 17,
+      "body_words": 99,
+      "bytes": 907,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/ab-product-seo-workflow/SKILL.md",
+      "name": "ab-product-seo-workflow",
+      "description": "Design, implement or review ab_product_seo bilingual drafts, approval, native-field publishing, versioning, queues and rollback.",
+      "lines": 35,
+      "body_words": 232,
+      "bytes": 2324,
+      "reference_files": 2,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/bconnect-eplus/SKILL.md",
+      "name": "bconnect-eplus",
+      "description": "Implement or review B-Connect/E-Plus reads, item/store mapping, stock/sales SQL and queue-based migration into Odoo.",
+      "lines": 30,
+      "body_words": 194,
+      "bytes": 1827,
+      "reference_files": 4,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/odoo-module-development/SKILL.md",
+      "name": "odoo-module-development",
+      "description": "Implement or debug Odoo 19 ab_* addons, including scaffold, manifests, ORM, XML, dependencies and module packaging.",
+      "lines": 38,
+      "body_words": 294,
+      "bytes": 2598,
+      "reference_files": 4,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/odoo-security-review/SKILL.md",
+      "name": "odoo-security-review",
+      "description": "Review Odoo ACLs, record rules, field groups, public methods, sudo and branch/company isolation for authorization changes or audits.",
+      "lines": 31,
+      "body_words": 242,
+      "bytes": 2003,
+      "reference_files": 1,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/odoo-testing-validation/SKILL.md",
+      "name": "odoo-testing-validation",
+      "description": "Validate Odoo changes with focused Python, JS/Owl, tours, targeted install/upgrade, security, translation and packaging checks.",
+      "lines": 30,
+      "body_words": 216,
+      "bytes": 1921,
+      "reference_files": 2,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/odoo-translation/SKILL.md",
+      "name": "odoo-translation",
+      "description": "Add or repair English/Arabic Odoo translations using POT export, preserved PO entries and ar/ar_001 runtime verification.",
+      "lines": 24,
+      "body_words": 166,
+      "bytes": 1437,
+      "reference_files": 1,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/odoo19-compatibility/SKILL.md",
+      "name": "odoo19-compatibility",
+      "description": "Check or migrate changed Odoo code for version 19 ORM, XML views, Owl, JavaScript, assets and external API compatibility.",
+      "lines": 27,
+      "body_words": 182,
+      "bytes": 1664,
+      "reference_files": 1,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/odoo/skills/ready-api-enrichment/SKILL.md",
+      "name": "ready-api-enrichment",
+      "description": "Evaluate or implement optional Ready API enrichment with a controlled pilot, product matching, caching and queued rate limits.",
+      "lines": 23,
+      "body_words": 140,
+      "bytes": 1254,
+      "reference_files": 1,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/react/skills/composition-patterns/SKILL.md",
+      "name": "composition-patterns",
+      "description": "React composition patterns that scale. Use when refactoring components with boolean prop proliferation, building flexible component libraries, or designing reusable APIs. Triggers on tasks involving compound components, render props, context providers, or component architecture. Includes React 19 API changes.",
+      "lines": 87,
+      "body_words": 336,
+      "bytes": 2931,
+      "reference_files": 0,
+      "rule_files": 8,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/react/skills/deploy-to-vercel/SKILL.md",
+      "name": "deploy-to-vercel",
+      "description": "Deploy applications and websites to Vercel. Use when the user requests deployment actions like \"deploy my app\", \"deploy and give me the link\", \"push this live\", or \"create a preview deployment\".",
+      "lines": 296,
+      "body_words": 1719,
+      "bytes": 11775,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F02, F03"
+    },
+    {
+      "path": "profiles/react/skills/react-best-practices/SKILL.md",
+      "name": "react-best-practices",
+      "description": "React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.",
+      "lines": 152,
+      "body_words": 899,
+      "bytes": 7288,
+      "reference_files": 0,
+      "rule_files": 70,
+      "frontmatter_valid": true,
+      "review_note": "No additional issue"
+    },
+    {
+      "path": "profiles/react/skills/react-view-transitions/SKILL.md",
+      "name": "react-view-transitions",
+      "description": "Guide for implementing smooth, native-feeling animations using React's View Transition API (`ViewTransition` component, `addTransitionType`, and CSS view transition pseudo-elements). Use this skill whenever the user wants to add page transitions, animate route changes, create shared element animations, animate enter/exit of components, animate list reorder, implement directional (forward/back) navigation animations, or integrate view transitions in Next.js. Also use when the user mentions view transitions, `startViewTransition`, `ViewTransition`, transition types, or asks about animating between UI states in React without third-party animation libraries.",
+      "lines": 337,
+      "body_words": 1703,
+      "bytes": 14372,
+      "reference_files": 5,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F06"
+    },
+    {
+      "path": "profiles/react/skills/vercel-cli-with-tokens/SKILL.md",
+      "name": "vercel-cli-with-tokens",
+      "description": "Deploy and manage projects on Vercel using token-based authentication. Use when working with Vercel CLI using access tokens rather than interactive login \u2014 e.g. \"deploy to vercel\", \"set up vercel\", \"add environment variables to vercel\".",
+      "lines": 353,
+      "body_words": 1495,
+      "bytes": 10476,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F01, F02"
+    },
+    {
+      "path": "profiles/react/skills/web-design-guidelines/SKILL.md",
+      "name": "web-design-guidelines",
+      "description": "Review UI code for Web Interface Guidelines compliance. Use when asked to \"review my UI\", \"check accessibility\", \"audit design\", \"review UX\", or \"check my site against best practices\".",
+      "lines": 39,
+      "body_words": 136,
+      "bytes": 1231,
+      "reference_files": 0,
+      "rule_files": 0,
+      "frontmatter_valid": true,
+      "review_note": "F09"
+    }
+  ],
+  "instructions": [
+    {
+      "path": "shared/instructions/codex-runtime.md",
+      "words": 136,
+      "bytes": 954,
+      "review_note": "Loaded by all four profiles; no additional issue"
+    },
+    {
+      "path": "shared/instructions/no-comments.md",
+      "words": 316,
+      "bytes": 2020,
+      "review_note": "Loaded; F06"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-assets.md",
+      "words": 74,
+      "bytes": 468,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-code-quality.md",
+      "words": 94,
+      "bytes": 683,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-custom-widgets.md",
+      "words": 405,
+      "bytes": 3413,
+      "review_note": "Loaded; optional improvement: move extended examples to references"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-dependencies.md",
+      "words": 60,
+      "bytes": 387,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-forms.md",
+      "words": 55,
+      "bytes": 386,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-input-model.md",
+      "words": 268,
+      "bytes": 2215,
+      "review_note": "Loaded; optional improvement: move extended examples to references"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-response-style.md",
+      "words": 82,
+      "bytes": 549,
+      "review_note": "Loaded; F06"
+    },
+    {
+      "path": "profiles/flutter/instructions/flutter-widgets.md",
+      "words": 73,
+      "bytes": 510,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/flutter/instructions/obfuscation-safe-code.md",
+      "words": 80,
+      "bytes": 553,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/node/instructions/node-guidelines.md",
+      "words": 183,
+      "bytes": 1198,
+      "review_note": "Loaded; F06"
+    },
+    {
+      "path": "profiles/odoo/instructions/odoo-core.md",
+      "words": 385,
+      "bytes": 3033,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/odoo/instructions/odoo-review-rules.md",
+      "words": 387,
+      "bytes": 2996,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/odoo/instructions/source-map.md",
+      "words": 1301,
+      "bytes": 8913,
+      "review_note": "Reference only, not injected"
+    },
+    {
+      "path": "profiles/react/instructions/agent-workflow.md",
+      "words": 144,
+      "bytes": 960,
+      "review_note": "Loaded; F06"
+    },
+    {
+      "path": "profiles/react/instructions/architecture.md",
+      "words": 103,
+      "bytes": 736,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/react/instructions/performance.md",
+      "words": 112,
+      "bytes": 795,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/react/instructions/react-guidelines.md",
+      "words": 195,
+      "bytes": 1326,
+      "review_note": "Loaded; F06"
+    },
+    {
+      "path": "profiles/react/instructions/typescript.md",
+      "words": 92,
+      "bytes": 609,
+      "review_note": "Loaded by its profile; no additional issue"
+    },
+    {
+      "path": "profiles/react/instructions/ui-accessibility.md",
+      "words": 97,
+      "bytes": 723,
+      "review_note": "Loaded by its profile; no additional issue"
+    }
+  ],
+  "toml_files": [
+    "profiles/flutter/agents/data-flow-architect.toml",
+    "profiles/flutter/agents/figma-ui-builder.toml",
+    "profiles/flutter/agents/flutter-plan-architect.toml",
+    "profiles/flutter/flutter.config.toml",
+    "profiles/node/agents/node-service-engineer.toml",
+    "profiles/node/node.config.toml",
+    "profiles/odoo/config.toml",
+    "profiles/react/agents/react-ui-engineer.toml",
+    "profiles/react/react.config.toml",
+    "config.toml"
+  ],
+  "profiles": [
+    {
+      "name": "flutter",
+      "instruction_words": 1648,
+      "instruction_bytes": 12194,
+      "agents": 3,
+      "skills": 30
+    },
+    {
+      "name": "node",
+      "instruction_words": 640,
+      "instruction_bytes": 4209,
+      "agents": 1,
+      "skills": 1
+    },
+    {
+      "name": "odoo",
+      "instruction_words": 913,
+      "instruction_bytes": 7020,
+      "agents": 0,
+      "skills": 8
+    },
+    {
+      "name": "react",
+      "instruction_words": 1200,
+      "instruction_bytes": 8172,
+      "agents": 1,
+      "skills": 6
+    }
+  ],
+  "errors": [],
+  "duplicate_skill_names": [],
+  "unresolved_markdown_link_candidates": [
+    {
+      "path": "profiles/flutter/skills/flutter-intl-localization/SKILL.md",
+      "target": "reference.md"
+    },
+    {
+      "path": "profiles/flutter/skills/flutter-intl-localization/SKILL.md",
+      "target": "reference.md"
+    }
+  ]
+}

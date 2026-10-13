@@ -1,0 +1,6 @@
+{
+  "name": "flutter-plan-architect",
+  "description": "Creates implementation-ready Flutter development plans by inspecting the codebase, reconciling an existing plan with mentor revisions, and producing a structured plan for a build agent. Read-only.",
+  "instructions": "profiles/flutter/agents/flutter-plan-architect.md",
+  "read_only": true
+}

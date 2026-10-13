@@ -1,0 +1,305 @@
+{
+  "source": "AGENTS.md",
+  "source_sha256": "2f630668146d94cdeab3b4c9ebb415b9ff01075de551142bf442dfc620d6d66a",
+  "source_line_count": 1595,
+  "reviewed_on": "2026-09-24",
+  "meaning": "Every source line has a disposition; reviewed/corrected ranges preserve meaning rather than exact wording. Historical data is reference-only. This inventory is not injected into model instructions.",
+  "source_syntax": {
+    "1549": "<<<<<<< Updated upstream",
+    "1550": "=======",
+    "1595": ">>>>>>> Stashed changes"
+  },
+  "segments": [
+    {
+      "start": 1,
+      "end": 41,
+      "classification": "CORE INSTRUCTION",
+      "destinations": [
+        "profiles/odoo/instructions/odoo-core.md",
+        "profiles/odoo/skills/odoo-module-development/SKILL.md",
+        "profiles/odoo/skills/odoo-module-development/references/change-records.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 42,
+      "end": 62,
+      "classification": "SKILL",
+      "destinations": [
+        "shared/skills/trello-workflow/SKILL.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 63,
+      "end": 142,
+      "classification": "CORE INSTRUCTION",
+      "destinations": [
+        "profiles/odoo/instructions/odoo-core.md",
+        "profiles/odoo/skills/odoo-module-development/references/data-protection.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 143,
+      "end": 185,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/bconnect-eplus/references/schema.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 186,
+      "end": 390,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/bconnect-eplus/references/query-patterns.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 391,
+      "end": 433,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/bconnect-eplus/references/synchronization.md",
+        "profiles/odoo/skills/bconnect-eplus/references/migration.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 434,
+      "end": 466,
+      "classification": "CORE INSTRUCTION",
+      "destinations": [
+        "profiles/odoo/instructions/odoo-core.md",
+        "profiles/odoo/skills/odoo-module-development/references/data-protection.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 467,
+      "end": 496,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-testing-validation/references/backups.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 497,
+      "end": 513,
+      "classification": "SKILL",
+      "destinations": [
+        "profiles/odoo/skills/odoo-testing-validation/SKILL.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 514,
+      "end": 529,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/change-records.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 530,
+      "end": 590,
+      "classification": "SKILL",
+      "destinations": [
+        "profiles/odoo/instructions/odoo-core.md",
+        "profiles/odoo/skills/odoo-translation/SKILL.md",
+        "profiles/odoo/skills/odoo-translation/references/workflow.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 591,
+      "end": 648,
+      "classification": "SKILL",
+      "destinations": [
+        "profiles/odoo/skills/odoo19-compatibility/SKILL.md",
+        "profiles/odoo/skills/odoo19-compatibility/references/compatibility.md"
+      ],
+      "preservation": "corrected"
+    },
+    {
+      "start": 649,
+      "end": 711,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/ownership.md",
+        "profiles/odoo/skills/odoo-security-review/SKILL.md"
+      ],
+      "preservation": "corrected"
+    },
+    {
+      "start": 712,
+      "end": 834,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/module-conventions.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 835,
+      "end": 962,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-security-review/references/permissions.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 963,
+      "end": 975,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/module-conventions.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 976,
+      "end": 980,
+      "classification": "SKILL",
+      "destinations": [
+        "profiles/odoo/skills/odoo19-compatibility/references/compatibility.md"
+      ],
+      "preservation": "corrected"
+    },
+    {
+      "start": 981,
+      "end": 1027,
+      "classification": "SKILL",
+      "destinations": [
+        "profiles/odoo/skills/odoo-testing-validation/SKILL.md",
+        "profiles/odoo/skills/odoo-testing-validation/references/commands.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 1028,
+      "end": 1045,
+      "classification": "CORE INSTRUCTION",
+      "destinations": [
+        "profiles/odoo/instructions/odoo-core.md",
+        "profiles/odoo/skills/odoo-module-development/references/ownership.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 1046,
+      "end": 1159,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/skills/odoo19-compatibility/references/repository-history.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1160,
+      "end": 1164,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/odoo19-compatibility/references/compatibility.md",
+        "profiles/odoo/skills/odoo19-compatibility/references/repository-history.md"
+      ],
+      "preservation": "corrected"
+    },
+    {
+      "start": 1165,
+      "end": 1178,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/ab-product-seo-workflow/references/architecture.md"
+      ],
+      "preservation": "reviewed"
+    },
+    {
+      "start": 1179,
+      "end": 1280,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/ab-product-seo-workflow/references/phase-0.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1281,
+      "end": 1436,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/ab-product-seo-workflow/references/architecture.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1437,
+      "end": 1467,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/ready-api-enrichment/references/api-and-pilot.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1468,
+      "end": 1484,
+      "classification": "SKILL REFERENCE",
+      "destinations": [
+        "profiles/odoo/skills/ab-product-seo-workflow/references/architecture.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1485,
+      "end": 1505,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/skills/ab-product-seo-workflow/references/architecture-request.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1506,
+      "end": 1548,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/self-inventory-history.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1549,
+      "end": 1550,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/instructions/content-coverage.json"
+      ],
+      "preservation": "syntax"
+    },
+    {
+      "start": 1551,
+      "end": 1594,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/skills/odoo-module-development/references/core-ui-history.md"
+      ],
+      "preservation": "verbatim"
+    },
+    {
+      "start": 1595,
+      "end": 1595,
+      "classification": "HISTORICAL/SESSION NOTE",
+      "destinations": [
+        "profiles/odoo/instructions/content-coverage.json"
+      ],
+      "preservation": "syntax"
+    }
+  ]
+}

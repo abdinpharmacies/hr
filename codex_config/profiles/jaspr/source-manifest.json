@@ -1,0 +1,170 @@
+{
+  "source_root": "/home/abdin_02/Mohamed_tips/work/flutter test/collected",
+  "sources": [
+    {
+      "source": "BlocSignal_main/.agents/skills/increase-coverage/SKILL.md",
+      "sha256": "55941b40f06a50a3235fcebed5cb345ba0b5d42d02022eff3c99b179c2a46f95",
+      "decision": "Excluded: upstream repository maintenance/coverage workflow assumes that repository and scripts."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/jaspr-convert-html/SKILL.md",
+      "sha256": "7bca1217dfc882bb88e0ef854bbe6060164e41b4468a9b09744b647e2134795c",
+      "decision": "Duplicate excluded in favor of jaspr_main source."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/jaspr-fundamentals/SKILL.md",
+      "sha256": "5703641b52331a8ece74af812a6e470f998aa3070a1a9b75f088fe376f6e7f10",
+      "decision": "Duplicate excluded in favor of jaspr_main source."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/jaspr-js-interop/SKILL.md",
+      "sha256": "6b6ec89124caea68c48d3331b5ce99686ca50c7fa662d6ef30d0525e6f352b44",
+      "decision": "Duplicate excluded in favor of jaspr_main source."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/jaspr-pre-rendering-and-hydration/SKILL.md",
+      "sha256": "202c9e248df6ab1fcba1e2fa945c508871b10c91a12a2811796c32d8654bf492",
+      "decision": "Duplicate excluded in favor of jaspr_main source."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/jaspr-styling/SKILL.md",
+      "sha256": "3a59a45ac6cb9e2cccacd6d32e364ff3e0770c111efeacf12aa8fe9045601f47",
+      "decision": "Duplicate excluded in favor of jaspr_main source."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/kaisel/SKILL.md",
+      "sha256": "62df7313c310c3222394583927fda5c616a92a782738f5d552ece32eb38dbb77",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-dart/SKILL.md",
+      "sha256": "b5e86c0db98be6c530fe75aeb0b7ca1990eed5533c3237b1a4a255f7882ca3d7",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-flutter/SKILL.md",
+      "sha256": "f7b87798a0e1d1cb5132d19d51b5c9e0da76936c025a77405ee8183d5f6e730a",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-hooks/SKILL.md",
+      "sha256": "7a945b3c5dbeb66bd6e6a72c9b0274f851c41959d69b865da73d18a447e2ce53",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-lint/SKILL.md",
+      "sha256": "762a98206009ebfdd3a8bb096819cf897821e795adfc06c791d8bf60ec645000",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-migration-6-to-7/SKILL.md",
+      "sha256": "23a0e6396364777a5198d5e3f6e629fe54952fead188f9d953ae0036f50504f5",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals-preact-dart/SKILL.md",
+      "sha256": "130ee1868fbe0eec27f9bba7ecd9260ec0164f4a318085ace34fd6d536b4348d",
+      "decision": "Imported to Flutter with package/version scope. Jaspr reuses only signals-dart and signals-preact-dart."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/signals_hooks/SKILL.md",
+      "sha256": "1af53c83a5b008a4fa2f2feca4cbdf7e55758f7fa9a52368551c099e94560463",
+      "decision": "Duplicate excluded in favor of the hyphenated signals-hooks skill and its bundled references."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/update-docs-workflow/SKILL.md",
+      "sha256": "53a1f5d17ab5edc3d0aed4b9a9337d9d0fb6367cb0634e8e7ab07943c0e4a42f",
+      "decision": "Excluded: upstream repository maintenance/coverage workflow assumes that repository and scripts."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/update-examples-dependencies/SKILL.md",
+      "sha256": "9bd2277eb1916ad3b9c5a3ff74f861b1a641a3b15c57217255c9eb30720e6624",
+      "decision": "Excluded: upstream repository maintenance/coverage workflow assumes that repository and scripts."
+    },
+    {
+      "source": "BlocSignal_main/.agents/skills/update-preact/SKILL.md",
+      "sha256": "46e5010202a7963e5866266b475146a7b0d6f81b4dc99bb5601e6a8b9e10343b",
+      "decision": "Excluded: upstream repository maintenance/coverage workflow assumes that repository and scripts."
+    },
+    {
+      "source": "BlocSignal_main/plugins/bloc-signals/skills/bloc-signals/SKILL.md",
+      "sha256": "2575244eaa104dc5d12a71b6ca3bbf70b06e3c10679d96734603c067dcd4f89d",
+      "decision": "Imported to Flutter with references and license; explicitly reused in Jaspr. Corrected Jaspr provider context example."
+    },
+    {
+      "source": "Poorgramer-Zack\n_dart-expert-skills/jaspr/SKILL.md",
+      "sha256": "9051ad2b50e2e0b0385ae68792844cd951bad610fcf6cc117a1844b5f1b74e23",
+      "decision": "Used as topic checklist for Jaspr rules, routing and testing; excluded stale pins and unverified examples."
+    },
+    {
+      "source": "jaspr_main/skills/jaspr-convert-html/SKILL.md",
+      "sha256": "9c0982a630debef5ac91bda9b62d15be88982708b06927da1d126eb1164a0e9c",
+      "decision": "Adapted entrypoint in Jaspr; retained focused HTML/CSS references."
+    },
+    {
+      "source": "jaspr_main/skills/jaspr-fundamentals/SKILL.md",
+      "sha256": "639f80cc9adbecab389c5cfed923de88459461dac54416d0692ae1537a46a3d3",
+      "decision": "Adapted entrypoint in Jaspr; retained focused HTML/CSS references."
+    },
+    {
+      "source": "jaspr_main/skills/jaspr-js-interop/SKILL.md",
+      "sha256": "798cfe10b2a41112ed892bbfba1f84226bf274bc602ca3966e6226f0d77430ee",
+      "decision": "Adapted entrypoint in Jaspr; retained focused HTML/CSS references."
+    },
+    {
+      "source": "jaspr_main/skills/jaspr-pre-rendering-and-hydration/SKILL.md",
+      "sha256": "58822cc5c987157de8f6f63e1e129b30d3d03b5c6f4c927d3e9101acae59e8d3",
+      "decision": "Adapted entrypoint in Jaspr; retained focused HTML/CSS references."
+    },
+    {
+      "source": "jaspr_main/skills/jaspr-styling/SKILL.md",
+      "sha256": "d9a101139c1726da24ebfbd62b6e11f2a7f4890e776ee145c4d27af256a47fb0",
+      "decision": "Adapted entrypoint in Jaspr; retained focused HTML/CSS references."
+    },
+    {
+      "source": "official_flutter_repo/jaspr/skills/data-model/SKILL.md",
+      "sha256": "1715ce230050ba59727fbab0b4ba3bed34e8f1d6c91c8959e6638591c0cfbf25",
+      "decision": "Adapted as jaspr-content-models without flutter.dev paths or mandatory doc comments."
+    },
+    {
+      "source": "official_flutter_repo/jaspr/skills/extract-to-jaspr/SKILL.md",
+      "sha256": "48cc3566b274e7c21d00047f2309e1836b56b955e60afdced1533602d810e4a3",
+      "decision": "Merged into jaspr-convert-html without site-specific assets or structure-only restrictions."
+    },
+    {
+      "source": "official_flutter_repo/jaspr/skills/generate-showcase-from-video/SKILL.md",
+      "sha256": "f8061b972679ed41dd1c1019f12c6d6a36b5a321cace3e08291972dbaf48d920",
+      "decision": "Excluded: flutter.dev editorial workflow depends on missing transcript tooling and site schema."
+    },
+    {
+      "source": "shadcn_jaspr-main/CLAUDE.md",
+      "sha256": "f921ee42b2303389dbb634894eca82656c36c6266e075c3c885feeff7b78aba2",
+      "decision": "Distilled into jaspr-shadcn-ui; package internals, historical versions, deployment workflow and full API catalog are not always-loaded rules."
+    },
+    {
+      "source": "shadcn_jaspr-main/copilot-instructions.md",
+      "sha256": "4c240c49e130d921727a1225c853e6f12eef0d2499809f6b32381d42b6b7c8f7",
+      "decision": "Distilled into jaspr-shadcn-ui; package internals, historical versions, deployment workflow and full API catalog are not always-loaded rules."
+    },
+    {
+      "source": "shadcn_jaspr-main/llms.txt",
+      "sha256": "8ff24913749f9284b7c28e16c8af6152df98b32a5497641633d7ae3463ba650e",
+      "decision": "Distilled into jaspr-shadcn-ui; package internals, historical versions, deployment workflow and full API catalog are not always-loaded rules."
+    },
+    {
+      "source": "shadcn_jaspr-main/llms-full.txt",
+      "sha256": "aa96e42dd761c3f1689aab76156c95a97eb1f60d59c2f2bdb6c50985446f1a54",
+      "decision": "Distilled into jaspr-shadcn-ui; package internals, historical versions, deployment workflow and full API catalog are not always-loaded rules."
+    },
+    {
+      "source": "shadcn_jaspr-main/workflows/deploy.yml",
+      "sha256": "f88ef3afe7c08108cd79c17de6713f03fca76a27a7a65316cc5dd89f55e96151",
+      "decision": "Distilled into jaspr-shadcn-ui; package internals, historical versions, deployment workflow and full API catalog are not always-loaded rules."
+    },
+    {
+      "source": "official_flutter_repo/jaspr/rules/jaspr.md",
+      "sha256": "3f5bd3709af2ac8de4c4ad47884e68a41f6e6b773ee85a0fd3522f6b13b37b12",
+      "decision": "General DOM/component guidance adapted into Jaspr rules; installed SDK determines syntax."
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "flutter",
+  "source_profile": "flutter",
+  "instructions": [
+    "shared/instructions/no-comments.md",
+    "profiles/flutter/instructions/flutter-code-quality.md",
+    "profiles/flutter/instructions/flutter-widgets.md",
+    "profiles/flutter/instructions/flutter-custom-widgets.md",
+    "profiles/flutter/instructions/flutter-forms.md",
+    "profiles/flutter/instructions/flutter-input-model.md",
+    "profiles/flutter/instructions/flutter-dependencies.md",
+    "profiles/flutter/instructions/flutter-assets.md",
+    "profiles/flutter/instructions/flutter-response-style.md",
+    "profiles/flutter/instructions/obfuscation-safe-code.md"
+  ],
+  "agents": [
+    "profiles/flutter/agents/data-flow-architect.json",
+    "profiles/flutter/agents/figma-ui-builder.json",
+    "profiles/flutter/agents/flutter-plan-architect.json"
+  ],
+  "config_overrides": "profiles/flutter/config-overrides.toml"
+}

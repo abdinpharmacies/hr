@@ -1,0 +1,6 @@
+{
+  "name": "react-ui-engineer",
+  "description": "Implement React web UI using the active profile conventions and existing component architecture.",
+  "instructions": "profiles/react/agents/react-ui-engineer.md",
+  "read_only": false
+}

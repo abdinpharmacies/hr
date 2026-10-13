@@ -1,0 +1,157 @@
+{
+  "repository": "https://github.com/Mo7amed-fawzy/my_ai_workflow.git",
+  "commit": "2293a38c2cd1275c812c9af5793ba2a32f67f407",
+  "skills": [
+    {
+      "source": "profiles/flutter/skills/dart-add-unit-test",
+      "target": "profiles/flutter/skills/dart-add-unit-test"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-build-cli-app",
+      "target": "profiles/flutter/skills/dart-build-cli-app"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-collect-coverage",
+      "target": "profiles/flutter/skills/dart-collect-coverage"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-fix-runtime-errors",
+      "target": "profiles/flutter/skills/dart-fix-runtime-errors"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-generate-test-mocks",
+      "target": "profiles/flutter/skills/dart-generate-test-mocks"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-migrate-to-checks-package",
+      "target": "profiles/flutter/skills/dart-migrate-to-checks-package"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-resolve-package-conflicts",
+      "target": "profiles/flutter/skills/dart-resolve-package-conflicts"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-run-static-analysis",
+      "target": "profiles/flutter/skills/dart-run-static-analysis"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-setup-ffi-assets",
+      "target": "profiles/flutter/skills/dart-setup-ffi-assets"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-use-doc-examples",
+      "target": "profiles/flutter/skills/dart-use-doc-examples"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-use-ffigen",
+      "target": "profiles/flutter/skills/dart-use-ffigen"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-use-pattern-matching",
+      "target": "profiles/flutter/skills/dart-use-pattern-matching"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-use-primary-constructors",
+      "target": "profiles/flutter/skills/dart-use-primary-constructors"
+    },
+    {
+      "source": "profiles/flutter/skills/dart-write-documentation",
+      "target": "profiles/flutter/skills/dart-write-documentation"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-add-integration-test",
+      "target": "profiles/flutter/skills/flutter-add-integration-test"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-add-widget-preview",
+      "target": "profiles/flutter/skills/flutter-add-widget-preview"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-add-widget-test",
+      "target": "profiles/flutter/skills/flutter-add-widget-test"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-apply-architecture-best-practices",
+      "target": "profiles/flutter/skills/flutter-apply-architecture-best-practices"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-build-responsive-layout",
+      "target": "profiles/flutter/skills/flutter-build-responsive-layout"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-debugging-skill",
+      "target": "profiles/flutter/skills/flutter-debugging"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-fix-layout-issues",
+      "target": "profiles/flutter/skills/flutter-fix-layout-issues"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-implement-json-serialization",
+      "target": "profiles/flutter/skills/flutter-implement-json-serialization"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-local-persistence",
+      "target": "profiles/flutter/skills/flutter-local-persistence"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-obfuscation",
+      "target": "profiles/flutter/skills/flutter-obfuscation"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-root-jailbreak-detection",
+      "target": "profiles/flutter/skills/flutter-root-jailbreak-detection"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-setup-declarative-routing",
+      "target": "profiles/flutter/skills/flutter-setup-declarative-routing"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-setup-localization",
+      "target": "profiles/flutter/skills/flutter-intl-localization"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-sqflite",
+      "target": "profiles/flutter/skills/flutter-sqflite"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-sqflite3",
+      "target": "profiles/flutter/skills/flutter-sqflite3"
+    },
+    {
+      "source": "profiles/flutter/skills/flutter-use-http-package",
+      "target": "profiles/flutter/skills/flutter-use-http-package"
+    },
+    {
+      "source": "profiles/react/skills/composition-patterns",
+      "target": "profiles/react/skills/composition-patterns"
+    },
+    {
+      "source": "profiles/react/skills/react-best-practices",
+      "target": "profiles/react/skills/react-best-practices"
+    },
+    {
+      "source": "profiles/react/skills/react-view-transitions",
+      "target": "profiles/react/skills/react-view-transitions"
+    },
+    {
+      "source": "skills/find-skills",
+      "target": "shared/skills/find-skills"
+    },
+    {
+      "source": "skills/git-commit",
+      "target": "shared/skills/git-commit"
+    },
+    {
+      "source": "skills/git-interactive-rebase",
+      "target": "shared/skills/git-interactive-rebase"
+    }
+  ],
+  "changes": [
+    "Merged two malformed overlapping localization skills into flutter-intl-localization using flutter-setup-localization as the canonical source.",
+    "Normalized skill frontmatter and folder/name matches.",
+    "Removed non-Codex model hints from skill metadata.",
+    "Adapted OpenCode paths and tool assumptions.",
+    "Converted Flutter agent behavior and removed universal assumptions about the original onboarding project."
+  ]
+}

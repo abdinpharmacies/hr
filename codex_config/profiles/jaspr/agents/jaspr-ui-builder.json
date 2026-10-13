@@ -1,0 +1,6 @@
+{
+  "name": "jaspr-ui-builder",
+  "description": "Implement Jaspr DOM components, responsive styling, forms, and accessible interactions using the active project conventions.",
+  "instructions": "profiles/jaspr/agents/jaspr-ui-builder.md",
+  "read_only": false
+}

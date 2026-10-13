@@ -1,0 +1,6 @@
+{
+  "name": "figma-ui-builder",
+  "description": "Implement Flutter presentation widgets from Figma using available design tools; keep domain/data work separate.",
+  "instructions": "profiles/flutter/agents/figma-ui-builder.md",
+  "read_only": false
+}

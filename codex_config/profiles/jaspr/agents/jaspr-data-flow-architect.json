@@ -1,0 +1,6 @@
+{
+  "name": "jaspr-data-flow-architect",
+  "description": "Implement Jaspr data loading, typed models, state ownership, and server/client data boundaries using the existing project architecture.",
+  "instructions": "profiles/jaspr/agents/jaspr-data-flow-architect.md",
+  "read_only": false
+}

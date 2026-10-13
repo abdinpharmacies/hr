@@ -1,0 +1,19 @@
+{
+  "name": "react",
+  "source_profile": "react",
+  "instructions": [
+    "shared/instructions/no-comments.md",
+    "profiles/react/instructions/react-guidelines.md",
+    "profiles/react/instructions/architecture.md",
+    "profiles/react/instructions/typescript.md",
+    "profiles/react/instructions/performance.md",
+    "profiles/react/instructions/ui-accessibility.md",
+    "profiles/react/instructions/agent-workflow.md"
+  ],
+  "agents": [
+    "profiles/react/agents/react-ui-engineer.json"
+  ],
+  "include_skills": [
+    "profiles/flutter/skills/ui-ux-pro-max"
+  ]
+}

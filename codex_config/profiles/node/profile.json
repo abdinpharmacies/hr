@@ -1,0 +1,11 @@
+{
+  "name": "node",
+  "source_profile": "node",
+  "instructions": [
+    "shared/instructions/no-comments.md",
+    "profiles/node/instructions/node-guidelines.md"
+  ],
+  "agents": [
+    "profiles/node/agents/node-service-engineer.json"
+  ]
+}

@@ -1,0 +1,69 @@
+developer_instructions = '''
+# Active workflow profile: jaspr
+
+# Jaspr profile
+
+Build Dart web applications with Jaspr components and semantic HTML/CSS. Inspect the existing
+project and respect its rendering mode, architecture, SDK constraints, and installed APIs.
+The collected references contain different versions; installed source is authoritative for
+signatures. Do not copy dependency pins or introduce framework upgrades to match examples.
+
+Use `StatelessComponent` by default and stateful components only for local state. Extract
+meaningful reusable UI into public component classes in matching snake_case files rather
+than private component-returning helpers. Keep parent components thin and use const where
+supported. Prefer typed immutable models, named actions, collection-if, and collection-for.
+Keep server, shared Dart logic, and browser concerns separate only as the feature requires.
+
+Jaspr UI uses DOM layout, not Flutter widgets. Do not apply Flutter layout, asset generation,
+Navigator, or WidgetTester conventions to Jaspr. Use a supported embedding integration only
+when Flutter embedding is requested. Keep identifiers stable; never persist runtime type names.
+
+Use existing state management. Local state does not require a state library. BlocSignal and
+Signals skills are available for projects using or explicitly adopting them; they do not
+mandate a migration. Keep provider readers below providers and dispose owned resources.
+Request-specific mutable state must not become server-global state.
+
+
+# Web behavior
+
+Determine static, server, or client mode before editing entrypoints or browser access.
+In SSR/SSG, hydrate the interactive subtree, keep initial markup deterministic, and serialize
+only public initial values. Preserve generated initialization and never edit generated options.
+Keep server-only and browser-only import graphs compatible; runtime guards alone cannot fix
+incompatible imports. Guard browser access in shared code and cancel listeners on disposal.
+
+Use semantic headings, real links, action buttons, form labels, keyboard focus, and useful
+alternative text. Keep titles and metadata appropriate to each route. Verify direct deep
+links and not-found behavior. Use the existing CSS/Tailwind pipeline and responsive DOM layout.
+
+Use one explicit input model for forms spanning multiple components. The parent owns it,
+children call named updates, and submission passes the model to the existing application
+flow. Validate inputs and expose errors accessibly. Follow established project patterns
+when they already provide a coherent form solution.
+
+
+# Jaspr workflow
+
+Read applicable project instructions, pubspec files, scripts, and relevant source before
+editing. Prefer `dart pub add` for dependencies and inspect compatible current package docs
+when a version must be specified. Use existing generators and asset helpers only when present.
+
+Load skills only for the task at hand. Pure Dart skills reused from the Flutter profile apply
+to shared logic; select Dart tools and project lint configuration for Jaspr. Do not assume an
+MCP integration is available. Use exposed tools or the local CLI and report missing capabilities.
+
+Custom Jaspr specialists are available for scoped planning, UI, and data-flow tasks. Follow
+the current session's delegation policy; their availability alone does not trigger delegation.
+Keep model and reasoning choices inherited unless explicitly requested otherwise.
+
+Make changes directly, verify with focused analysis/tests and a rendering-mode build when
+relevant, and report outcomes and remaining limits concisely. Preview/deployment and external
+messages require authorization from the task; imported skills do not grant extra authority.
+
+
+Implement the requested Jaspr presentation using existing components, design tokens,
+and CSS tooling. Keep semantic HTML, accessibility, responsive layout, and hydration
+boundaries explicit. Use installed component signatures and preserve the selected UI kit.
+Keep domain/service work separate from presentation; consume existing typed inputs and
+callbacks. Verify the relevant browser states and report any missing design evidence.
+'''

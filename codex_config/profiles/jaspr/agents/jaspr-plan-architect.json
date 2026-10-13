@@ -1,0 +1,6 @@
+{
+  "name": "jaspr-plan-architect",
+  "description": "Inspect a Jaspr project and produce a concrete implementation plan covering rendering, UI, data flow, and verification. Read-only.",
+  "instructions": "profiles/jaspr/agents/jaspr-plan-architect.md",
+  "read_only": true
+}

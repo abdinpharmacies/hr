@@ -1,0 +1,9 @@
+model = "gpt-6-astra"
+model_reasoning_effort = "medium"
+
+# Preserve the existing Odoo profile's local project trust setting.
+[projects."/opt"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+"gpt-5.5" = "gpt-6.1-sol"

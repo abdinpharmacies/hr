@@ -1,0 +1,31 @@
+{
+  "name": "jaspr",
+  "source_profile": "jaspr",
+  "instructions": [
+    "shared/instructions/no-comments.md",
+    "profiles/jaspr/instructions/jaspr-core.md",
+    "profiles/jaspr/instructions/jaspr-web.md",
+    "profiles/jaspr/instructions/jaspr-workflow.md"
+  ],
+  "agents": [
+    "profiles/jaspr/agents/jaspr-plan-architect.json",
+    "profiles/jaspr/agents/jaspr-ui-builder.json",
+    "profiles/jaspr/agents/jaspr-data-flow-architect.json"
+  ],
+  "include_skills": [
+    "profiles/flutter/skills/dart-add-unit-test",
+    "profiles/flutter/skills/dart-build-cli-app",
+    "profiles/flutter/skills/dart-collect-coverage",
+    "profiles/flutter/skills/dart-generate-test-mocks",
+    "profiles/flutter/skills/dart-migrate-to-checks-package",
+    "profiles/flutter/skills/dart-resolve-package-conflicts",
+    "profiles/flutter/skills/dart-use-pattern-matching",
+    "profiles/flutter/skills/dart-use-primary-constructors",
+    "profiles/flutter/skills/dart-write-documentation",
+    "profiles/flutter/skills/bloc-signals",
+    "profiles/flutter/skills/signals-dart",
+    "profiles/flutter/skills/signals-preact-dart",
+    "profiles/flutter/skills/ui-ux-pro-max"
+  ],
+  "config_overrides": "profiles/jaspr/config-overrides.toml"
+}
