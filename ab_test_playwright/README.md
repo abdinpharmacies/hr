@@ -78,14 +78,19 @@ environment. Config/database defaults match the preparation script; `--url`
 defaults to `http://127.0.0.1:4050`. Use `--suite` for a compatible JSON file and
 repeat `--case` to select several scenarios. Unknown actions fail explicitly.
 
-The runner logs in through the UI, starts an employee session, turns off stock
+The runner logs into Odoo once and enters the employee PIN once per run, keeping
+one browser page and employee session for all selected cases. Each case uses an
+empty bill slot; existing user bills are preserved. It turns off stock
 filters, searches/adds the selected products, changes quantities, chooses
 contracts/promotions, and compares UI totals with independent JSON expectations
 and real Odoo backend pricing responses. On shortage lines it selects **Other**
 and enters **Development UI test**. It opens and fills the pre-submit dialog,
-then goes Back. It tracks draft IDs created by its own browser, discards those
-through Odoo's draft API, and closes its employee session. A temporary cache-lock
-conflict is retried only for this idempotent cleanup operation.
+then goes Back. After each case it removes only its own unsubmitted draft through
+the UI and waits for the slot to become available, allowing all eleven cases to
+run without filling the ten slots. Ordinary assertion failures still allow the
+next case to run. Cleanup failure or session expiry blocks remaining cases; the
+runner never automatically logs in or enters the PIN again. It closes the employee
+session and browser once at the end. Reports include login counts and draft IDs.
 
 **This runner is preview-only: it never clicks the final Submit (F10).** A
 `PASS_PREVIEW` verifies UI, backend quote and dialog behavior, not saved invoices
@@ -120,8 +125,8 @@ the running application and will fail explicitly if that capability is missing.
 The old reference
 invoice totals and its 10% promotion are not applicable to this fixed-price suite.
 
-Latest validation: **9 passed, 2 failed**. `PROMO_THEN_CONTRACT` displays net
-281.00 instead of 126.00, and `CONTRACT_THEN_PROMO` cannot find the promotion
-control after selecting contract 4. These are retained as failing regression
-cases; the suite does not silently accept the incorrect combination behavior.
+Latest validation: **11 passed**, with exactly one Odoo login and one employee
+PIN login across all cases. All eleven distinct test drafts were cleaned up and
+the employee session closed. The two previously failing combined promotion cases
+now pass against the current development application with unchanged expectations.
 See `validation_results.json` for case coverage and the full report location.

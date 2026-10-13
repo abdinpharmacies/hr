@@ -1,19 +1,12 @@
-# Test data preparation
+# Test data preparation and sales UI runner
 
-No previous commits exist for this standalone tooling folder.
+## a4c813f4b — emadco88 — 2026-10-13
 
-## Current changes before commit:
+Original commit subject: `ab_test_playwright/ NEW test automation script`
 
-- Add a read-only preview and transactional SQL preparation command for the agreed development records.
-- Mark 13 names as test data while preserving record identifiers and business settings.
-- Reset the selected Odoo login using a compatible password hash supplied at runtime.
-- Back up original field values with restricted permissions and exclude backups from Git.
-- Add a local Playwright login verification command without persisted credentials.
-- Document setup, repeatability, and the boundary between data preparation and future sales recording.
-- Add eleven JSON sales cases for the selected products, customer, branch, employee, contracts and promotion.
-- Configure contracts 1–3 from the old JSON percentages and origin discounts; configure contract 4 for eligible promotion use and reactivate the fixed-price test promotion.
-- Add an interactive/headless Playwright preview runner with real Odoo pricing checks, shortage reasons, screenshots and run-owned draft cleanup.
-- Record nine passing preview cases and two combined contract/promotion UI regression failures; final posting remains unexecuted.
+- Add standalone preparation tools, restricted backups and login verification for the selected development records.
+- Add eleven reusable JSON scenarios and a visible/headless preview runner with UI and backend pricing checks.
+- Document preview-only submission and preserve the initial nine passing and two failing case results.
 
 Files changed:
 
@@ -28,13 +21,25 @@ Files changed:
 - `ab_test_playwright/sales_ui_cases.json`
 - `ab_test_playwright/validation_results.json`
 
-Validation: Python syntax and read-only preview passed; SQL updates committed and
-were independently read back; backup permissions verified as 0700/0600; fresh
-Chromium login passed for the selected user/database following the controlled
-Odoo reload. No sales were submitted.
+## Current changes before commit:
 
-Sales suite validation: all eleven cases ran against the selected dev database;
-nine passed UI, backend pricing and pre-submit checks. Both eligible combined
-contract/promotion cases failed because the UI clears/hides the promotion. Every
-final-run draft was removed through the scoped Odoo draft API. See
-`validation_results.json` for the preserved report path and coverage limits.
+- Authenticate Odoo and the employee once per suite, retaining the same browser page and session for every case.
+- Start each case with an empty run-owned bill and remove only its preview draft through the UI, freeing slots for reuse.
+- Preserve separate case results, attribute RPC errors to their initiating case, and report login counts and draft cleanup.
+- Continue after assertion failures; block remaining cases if cleanup fails or the session expires instead of reauthenticating.
+- Close the employee session once at suite completion and document the shared-session workflow.
+- Refresh validation: all eleven cases pass in the current application with unchanged JSON expectations; the two earlier combined promotion failures no longer reproduce.
+
+Files changed:
+
+- `ab_test_playwright/README.md`
+- `ab_test_playwright/sales_ui_runner.mjs`
+- `ab_test_playwright/validation_results.json`
+- `ab_test_playwright/changelog.d/2026-10-13-test-data-preparation.md`
+
+Validation: Node syntax and Git whitespace checks passed. The full headless suite
+passed eleven cases with one Odoo login, one employee login and eleven distinct
+cleaned drafts. A temporary two-case suite deliberately failed the first total
+assertion and passed the next case in the same session; both drafts were cleaned.
+A read-only PostgreSQL check confirmed no drafts remained for the test employee.
+No invoices were submitted. Report paths are retained in `validation_results.json`.
