@@ -149,6 +149,9 @@ class AbSalesPosDraftSlots(models.TransientModel):
                     raise AccessError(_("You cannot access another employee's draft bill."))
                 if header.store_id.id != store_id:
                     raise AccessError(_("The draft bill branch does not match its invoice."))
+                if not header.active:
+                    completed.add(self._draft_id(bill))
+                    continue
                 if header.status in ("pending", "saved"):
                     completed.add(self._draft_id(bill))
                     replacements.append((bill, header.store_id))
@@ -161,9 +164,8 @@ class AbSalesPosDraftSlots(models.TransientModel):
                     message=payload["message"], unresolved=False, in_progress=busy)
                 bill["slot_locked"] = busy or not payload["can_edit"]
                 bill["slot_protected"] = True
-                bill["slot_removable"] = (not bill["slot_locked"] and header.status in ("prepending", "rejected")
-                    and not header.sudo().with_context(active_test=False).line_ids and not bill.get("lines")
-                    and not (header.sudo().branch_submission_payload or {}).get("lines"))
+                bill["slot_removable"] = (not bill["slot_locked"] and
+                    (header.status == "rejected" or (header.status == "prepending" and not header.branch_submission_started)))
             else:
                 # Absence alone cannot prove that a request never reached the branch.
                 unresolved = bool(submission.get("unresolved") or submission.get("attempted")
@@ -341,6 +343,15 @@ class AbSalesPosDraftSlots(models.TransientModel):
         cached, completed = self._draft_authoritative_states(cached, pos_hr_session_token)
         deleted = {self._draft_id(bill) for bill in cached
                    if self._draft_id(bill) in bill_ids and bill.get("slot_removable")}
+        tokens = [bill['header'].get('pos_client_token') for bill in cached if self._draft_id(bill) in deleted]
+        headers = self.env['ab_sales_header'].search(fields.Domain('pos_client_token', 'in', tokens))
+        for header in headers:
+            with header._branch_attempt():
+                if header.status != 'rejected' and (header.status != 'prepending' or header.branch_submission_started):
+                    deleted -= {self._draft_id(bill) for bill in cached
+                                if bill['header'].get('pos_client_token') == header.pos_client_token}
+                    continue
+                header._write_branch_state({'active': False})
         # Mark absent requested ids too: another stale tab must not restore them.
         known_ids = {self._draft_id(bill) for bill in cached}
         deleted |= set(bill_ids) - known_ids

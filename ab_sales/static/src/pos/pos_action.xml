@@ -274,11 +274,6 @@
                                                             </button>
                                                         </div>
                             -->
-                            <div t-if="currentBill?.submission?.attempted" class="alert alert-warning py-1 mb-1" role="status">
-                                <t t-if="currentBill.submission.status === 'unknown'">Unknown</t>
-                                <t t-elif="currentBill.submission.status === 'rejected'">Rejected</t>
-                                <t t-esc="currentBill.submission.message"/>
-                            </div>
                             <button class="btn btn-success ab_pos_btn_submit_bill"
                                     type="button"
                                     t-on-click="submitCurrentBill"
@@ -297,6 +292,14 @@
                                     t-on-click="openBillWizard">
                                 <i class="fa fa-list ab_pos_btn_open_invoices_icon" aria-hidden="true"/>
                                 <span class="ab_pos_btn_open_invoices_text">Invoices</span>
+                            </button>
+                            <button t-if="currentBill?.submission?.attempted"
+                                    class="btn btn-outline-warning btn-sm" type="button"
+                                    title="View submission message"
+                                    t-att-disabled="state.submitting || currentBill.submission.in_progress"
+                                    t-on-click="() => showSubmissionFeedback(currentBill)">
+                                <i class="fa fa-info-circle me-1" aria-hidden="true"/>
+                                <t t-esc="submissionStatusLabel(currentBill)"/>
                             </button>
                         </div>
                     </div>
@@ -890,7 +893,11 @@
             <div class="o_ab_sales_pos_validation_dialog">
                 <div class="alert alert-danger d-flex flex-column gap-1 mb-0">
                     <strong t-esc="props.title || 'Validation Error'"/>
-                    <span t-esc="props.message || ''"/>
+                    <span class="ab_pos_submission_message" dir="auto" t-esc="props.message || ''"/>
+                    <details t-if="props.branchResponse" class="mt-2">
+                        <summary>Branch response</summary>
+                        <div class="ab_pos_submission_message" dir="auto" t-esc="props.branchResponse"/>
+                    </details>
                     <span class="small">Please correct the data and try again.</span>
                 </div>
                 <div class="o_ab_sales_pos_submit_footer">

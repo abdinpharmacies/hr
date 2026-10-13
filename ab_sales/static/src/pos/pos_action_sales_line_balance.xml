@@ -22,11 +22,12 @@
                     <span t-esc="line.product_code || '-'"/>
                 </span>
                 <button type="button"
-                        class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 text-muted ab_pos_line_btn_refresh_pos_balance"
+                        class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 ab_pos_line_btn_refresh_pos_balance"
+                        t-att-class="line.pos_balance_stale ? 'text-danger' : 'text-muted'"
                         t-on-click.stop="() => refreshLinePosBalance(line)"
                         title="Balance">
                     <span class="ab_pos_line_btn_refresh_pos_balance_text" t-esc="formatQty(((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : 0) || 0)"/>
-                    <small t-if="line.pos_balance_stale" class="text-warning" title="Balance refresh failed; cached value shown">Stale</small>
+                    <small t-if="line.pos_balance_stale" class="text-danger" title="Balance refresh failed; cached value shown">Stale</small>
                     <small t-if="line.pos_balance_refreshed_at" class="text-muted" t-att-title="line.pos_balance_refreshed_at">↻</small>
                     <i class="fa fa-shopping-cart ab_pos_line_btn_refresh_pos_balance_icon" aria-hidden="true" title="Balance"/>
                 </button>

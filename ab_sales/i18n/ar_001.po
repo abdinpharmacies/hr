@@ -2525,8 +2525,10 @@ msgid "Products Not Exist"
 msgstr "منتجات غير موجودة"
 
 #. module: ab_sales
+#. odoo-javascript
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_unavailable_reason_required.py:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason_patch.js:0
 msgid ""
 "Products where requested qty exceeds available balance require a reason before submit.\n"
 "If reason is 'Other', details are required.\n"
@@ -4984,7 +4986,7 @@ msgstr "بعض الأصناف غير متاحة في الفرع."
 #: code:addons/ab_sales/static/src/add_products/product_card.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
 msgid "Stale"
-msgstr "غير محدث"
+msgstr "غير معروف"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_bill_search__state
@@ -5697,3 +5699,82 @@ msgstr "لم تعد هذه الخانة فارغة. اختر خانة أخرى."
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "Create or restore"
 msgstr "إنشاء أو استعادة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid ""
+"The customer is archived in callcenter. Review the customer before using it."
+msgstr "العميل مؤرشف في مركز الاتصال. راجع بيانات العميل قبل استخدامه."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid ""
+"This invoice is archived. Create a new draft instead of resubmitting it."
+msgstr "هذه الفاتورة مؤرشفة. أنشئ مسودة جديدة بدلاً من إعادة إرسالها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch response"
+msgstr "رد الفرع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Stock shortage reason required"
+msgstr "يجب تحديد سبب نقص المخزون"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason_patch.js:0
+msgid ""
+"The branch requires a stock shortage reason. Select a reason below each "
+"affected product, then retry this invoice. If you select Other, enter "
+"details. The displayed balance may differ from the balance used by the "
+"branch."
+msgstr ""
+"يطلب الفرع تحديد سبب نقص المخزون. اختر السبب أسفل كل صنف متأثر، ثم أعد إرسال"
+" الفاتورة نفسها. عند اختيار «أخرى»، أدخل التفاصيل. قد يختلف الرصيد المعروض "
+"عن الرصيد الذي يستخدمه الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason_patch.js:0
+msgid ""
+"Current branch stock is insufficient. Select a reason for every affected line; Other requires details.\n"
+"%s"
+msgstr ""
+"رصيد الفرع الحالي غير كافٍ. اختر سبباً لكل سطر متأثر؛ ويتطلب اختيار «أخرى» إدخال التفاصيل.\n"
+"%s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "View submission message"
+msgstr "عرض رسالة الإرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Validation Error"
+msgstr "خطأ في التحقق"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submit failed"
+msgstr "فشل الإرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submit failed."
+msgstr "فشل الإرسال."

@@ -23,13 +23,14 @@
                             <i class="fa fa-barcode" aria-hidden="true"/>
                             <small class="text-truncate" t-esc="p.code || ''"/>
                         </div>
-                        <div class="d-inline-flex align-items-center gap-1 text-muted ab_pos_product_card_pos_balance">
+                        <div class="d-inline-flex align-items-center gap-1 ab_pos_product_card_pos_balance"
+                             t-att-class="p.pos_balance_stale ? 'text-danger' : 'text-muted'">
                             <t t-if="p.pos_balance !== undefined and p.pos_balance !== null">
                                 <small class="ab_pos_product_card_pos_balance_text" t-esc="formatQty(p.pos_balance)"/>
                             </t>
                             <i class="fa fa-shopping-cart ab_pos_product_card_pos_balance_icon" aria-hidden="true"
                                title="Balance"/>
-                            <small t-if="p.pos_balance_stale" class="text-warning" title="Balance refresh failed; cached value shown">Stale</small>
+                            <small t-if="p.pos_balance_stale" class="text-danger" title="Balance refresh failed; cached value shown">Stale</small>
                             <small t-if="p.pos_balance_refreshed_at" class="text-muted" t-att-title="p.pos_balance_refreshed_at">↻</small>
                         </div>
                     </div>

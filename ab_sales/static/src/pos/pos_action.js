@@ -604,6 +604,8 @@ class AbSalesPosCustomerLookupDialog extends Component {
     }
 
     onBranchUpdate(value) {
+        this.state.customer = null;
+        this.state.mode = "search";
         if (value && value.id) {
             this.state.branch = value;
         } else {
@@ -627,6 +629,8 @@ class AbSalesPosCustomerLookupDialog extends Component {
 
     onPhoneInput(ev) {
         this.state.phone = ev.target.value || "";
+        this.state.customer = null;
+        this.state.mode = "search";
     }
 
     onPhoneKeydown(ev) {
@@ -675,6 +679,8 @@ class AbSalesPosCustomerLookupDialog extends Component {
         }
         const branchId = this._branchId();
         this.state.loading = true;
+        this.state.customer = null;
+        this.state.mode = "search";
         this.state.errors = {};
         this.state.message = "";
         this.state.pendingBconnect = false;
@@ -683,6 +689,7 @@ class AbSalesPosCustomerLookupDialog extends Component {
                 phone,
                 store_id: branchId,
             });
+            if (branchId !== this._branchId() || phone !== (this.state.phone || "").trim()) return;
             if (result?.status === "found" && result.customer) {
                 this.state.customer = result.customer;
                 this.state.mode = "found";
@@ -745,12 +752,14 @@ class AbSalesPosCustomerLookupDialog extends Component {
                 name,
                 address,
             });
+            if (branchId !== this._branchId() || phone !== (this.state.phone || "").trim()) return;
             const result = await this.orm.call("ab_sales_pos_api", "pos_customer_create", [], {
                 phone,
                 name,
                 address,
                 store_id: branchId,
             });
+            if (branchId !== this._branchId() || phone !== (this.state.phone || "").trim()) return;
             if (result?.customer) {
                 this.state.customer = result.customer;
                 this.state.mode = "found";
@@ -862,6 +871,7 @@ class AbSalesPosValidationDialog extends Component {
     static props = {
         title: {type: String, optional: true},
         message: {type: String, optional: true},
+        branchResponse: {type: String, optional: true},
         close: Function,
     };
 
@@ -1516,10 +1526,14 @@ class AbSalesPosAction extends Component {
         // Safety metadata can invalidate an open draft, but cannot import others.
         for (const bill of this.state.bills) {
             const remote = server.get(bill.id);
-            if (remote && this._slotBillLocked(remote)) {
+            if (remote) {
                 const live = bill.submission || {};
-                if (!live.in_progress && (remote.submission?.version || 0) >= (live.version || 0)) {
-                    bill.submission = {...live, ...remote.submission};
+                if (!live.in_progress && (remote.submission?.revision || 0) >= (live.revision || 0)) {
+                    bill.submission = {...live, ...remote.submission,
+                        version: Math.max(live.version || 0, remote.submission?.version || 0)};
+                    bill.slot_locked = remote.slot_locked;
+                    bill.slot_protected = remote.slot_protected;
+                    bill.slot_removable = remote.slot_removable;
                 }
             }
         }
@@ -2641,10 +2655,11 @@ class AbSalesPosAction extends Component {
         });
     }
 
-    _openSubmitErrorDialog(message, title) {
+    _openSubmitErrorDialog(message, title, branchResponse = "") {
         this.dialog.add(AbSalesPosValidationDialog, {
-            title: title || "Submit failed",
-            message: message || "Submit failed.",
+            title: title || _t("Submit failed"),
+            message: message || _t("Submit failed."),
+            branchResponse,
         });
     }
 
@@ -4530,7 +4545,7 @@ class AbSalesPosAction extends Component {
     billRemovable(bill) {
         return !!bill && !this.state.submitting && !this.state.draftDeleting &&
             !this.state.draftCreating && !this._slotBillLocked(bill) &&
-            (bill.slot_removable !== false) && (!bill.slot_protected || !bill.lines?.length);
+            (bill.slot_removable !== false);
     }
 
     submissionStatusLabel(bill) {
@@ -4539,6 +4554,20 @@ class AbSalesPosAction extends Component {
         const labels = {prepending: _t("PrePending"), unknown: _t("Unknown"),
             rejected: _t("Rejected"), pending: _t("Pending"), saved: _t("Saved")};
         return labels[bill.submission?.status] || _t("Draft");
+    }
+
+    submissionMessage(bill) {
+        return this.branchShortageFeedback?.(bill)?.message || bill?.submission?.message || "";
+    }
+
+    showSubmissionFeedback(bill) {
+        if (!bill) return;
+        const shortage = this.branchShortageFeedback?.(bill);
+        const message = this.submissionMessage(bill) || _t("Submission needs attention. Retry the original bill.");
+        const title = shortage ? _t("Stock shortage reason required")
+            : bill.submission?.status === "rejected" ? _t("Rejected") : _t("Warning");
+        const original = bill.submission?.message || "";
+        this._openSubmitErrorDialog(message, title, original !== message ? original : "");
     }
 
     async _syncDraftsFromServer() {
@@ -4674,7 +4703,8 @@ class AbSalesPosAction extends Component {
                     throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
                 }
                 if (!["pending", "saved"].includes(result.status)) {
-                    this.notification.add(result.message || _t("Submission needs attention. Retry the original bill."), {type: "warning"});
+                    if (result.status === "rejected") this.scheduleLinePosBalanceRefresh(bill);
+                    this.showSubmissionFeedback(bill);
                     return;
                 }
                 this.notification.add(_t("Submitted to branch invoice ID %(id)s", {id: result.branch_header_id}), {type: "success"});
@@ -4697,10 +4727,10 @@ class AbSalesPosAction extends Component {
             const data = err?.data || err?.response?.data || {};
             const errorName = data?.name || "";
             const title = errorName.includes("ValidationError")
-                ? "Validation Error"
+                    ? _t("Validation Error")
                 : errorName.includes("UserError")
-                    ? "Warning"
-                    : "Submit failed";
+                    ? _t("Warning")
+                    : _t("Submit failed");
             this._openSubmitErrorDialog(message, title);
         } finally {
             bill.submission = {...bill.submission, in_progress: false};

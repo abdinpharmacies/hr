@@ -907,8 +907,10 @@ class AbSalesPosApi(models.TransientModel):
         token = (header_vals.get("pos_client_token") or "").strip()
         on_existing_token = (payload.get("on_existing_token") or "").strip().lower()
         if token:
-            existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
+            existing = self.env["ab_sales_header"].with_context(active_test=False).search([("pos_client_token", "=", token)], limit=1)
             if existing:
+                if not existing.active:
+                    raise UserError(_("This invoice is archived. Create a new draft instead of resubmitting it."))
                 return existing, True, on_existing_token
             header_vals["pos_client_token"] = token
         else:
@@ -929,8 +931,10 @@ class AbSalesPosApi(models.TransientModel):
             raise
         except Exception:
             if token:
-                existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
+                existing = self.env["ab_sales_header"].with_context(active_test=False).search([("pos_client_token", "=", token)], limit=1)
                 if existing:
+                    if not existing.active:
+                        raise UserError(_("This invoice is archived. Create a new draft instead of resubmitting it."))
                     return existing, True, on_existing_token
             raise
 

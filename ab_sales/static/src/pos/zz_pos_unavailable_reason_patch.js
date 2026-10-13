@@ -2,6 +2,7 @@
 
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
+import {_t} from "@web/core/l10n/translation";
 
 const PosAction = registry.category("actions").get("ab_sales.pos");
 const UNAVAILABLE_REASON_DIFF = 0.025;
@@ -64,12 +65,45 @@ if (PosAction) {
             return qty * normalizedSelectedFactor / normalizedBaseFactor;
         },
 
+        branchShortageFeedback(bill) {
+            if (bill?.submission?.status !== "rejected") return null;
+            const normalize = (text) => String(text || "").replace(/\s+/g, " ").trim();
+            const message = String(bill.submission.message || "").trim();
+            const legacy = "Products where requested qty exceeds available balance require a reason before submit.\nIf reason is 'Other', details are required.\n\nMissing lines:\n%s";
+            const current = "Current branch stock is insufficient. Select a reason for every affected line; Other requires details.\n%s";
+            const formats = [legacy, current,
+                _t("Products where requested qty exceeds available balance require a reason before submit.\nIf reason is 'Other', details are required.\n\nMissing lines:\n%s"),
+                _t("Current branch stock is insufficient. Select a reason for every affected line; Other requires details.\n%s")];
+            const prefix = formats.map((format) => format.split("%s")[0].trim()
+                .replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"))
+                .map((pattern) => message.match(new RegExp(`^${pattern}\\s*`)))
+                .find(Boolean);
+            if (!prefix) return null;
+            const details = message.slice(prefix[0].length).trim();
+            const productName = (text) => normalize(text).replace(/^-\s+/, "").replace(/^\[[^\]]+\]\s*/, "");
+            const entries = details.split(/\n|(?:^|\s)-\s+/).filter(Boolean).map(productName);
+            const lines = (bill.lines || []).filter((line) => {
+                const name = productName(line.product_name);
+                return name && entries.some((entry) => entry === name || entry.startsWith(`${name}: `));
+            });
+            const affected = lines.length ? lines : (bill.lines || []);
+            const names = [...new Set(affected.map((line) => line.product_name).filter(Boolean))];
+            return {
+                lines: affected,
+                message: _t("The branch requires a stock shortage reason. Select a reason below each affected product, then retry this invoice. If you select Other, enter details. The displayed balance may differ from the balance used by the branch.") +
+                    (names.length ? `\n${names.join("\n")}` : ""),
+            };
+        },
+
         isUnavailableLine(line) {
+            const bill = (this.state?.bills || []).find((bill) => (bill.lines || []).includes(line));
+            if (this.branchShortageFeedback(bill)?.lines.includes(line)) return true;
             const posBalance = Number.isFinite(line?.pos_balance) ? line.pos_balance : parseFloat(line?.pos_balance || NaN);
             const sourceBalance = Number.isFinite(posBalance)
                 ? posBalance
                 : (Number.isFinite(line?.balance) ? line.balance : parseFloat(line?.balance || 0) || 0);
-            const qtyInBalanceUom = this._lineQtyInBalanceUom(line);
+            const productLines = bill ? bill.lines.filter((item) => item.product_id === line.product_id) : [line];
+            const qtyInBalanceUom = productLines.reduce((total, item) => total + this._lineQtyInBalanceUom(item), 0);
             return qtyInBalanceUom > 0 && (qtyInBalanceUom - sourceBalance) > UNAVAILABLE_REASON_DIFF;
         },
 
@@ -104,11 +138,10 @@ if (PosAction) {
             const baseLines = Array.isArray(kwargs?.lines) ? kwargs.lines : [];
             payload.lines = baseLines.map((line, idx) => {
                 const source = sourceLines[idx] || line || {};
-                const requireReason = this.isUnavailableLine(source);
                 return {
                     ...line,
-                    unavailable_reason: requireReason ? (source.unavailable_reason || false) : false,
-                    unavailable_reason_other: requireReason ? (source.unavailable_reason_other || "").trim() : "",
+                    unavailable_reason: source.unavailable_reason || false,
+                    unavailable_reason_other: (source.unavailable_reason_other || "").trim(),
                 };
             });
             return payload;

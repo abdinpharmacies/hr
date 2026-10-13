@@ -193,26 +193,33 @@ class ApiPosServices(models.TransientModel):
         return result
 
     def _api_customer(self, store, result):
+        self.env['ab_sales_branch_client']._config(store)._validate_identity(result)
         customer = result.get('customer')
         if not customer:
             return result
         if not int(customer.get('eplus_serial') or 0):
             raise UserError(_('The branch returned an invalid customer.'))
         values = {k: customer[k] for k in ('name', 'code', 'mobile_phone', 'work_phone', 'address', 'eplus_serial') if k in customer}
-        values['default_store_id'] = store.id
         self.env['ab_customer'].check_access('read')
         Customer = self.env['ab_customer'].sudo().with_context(active_test=False)
         record = Customer.search([('eplus_serial', '=', values['eplus_serial'])], limit=2)
         if len(record) > 1:
             raise UserError(_('The customer reference is ambiguous.'))
         if record:
+            self.env['ab_customer'].browse(record.id).check_access('read')
+            if not record.active:
+                raise UserError(_('The customer is archived in callcenter. Review the customer before using it.'))
             record.write(values)
         else:
-            record = Customer.create(values)
+            record = Customer.create(dict(values, default_store_id=store.id))
+        record = self.env['ab_customer'].browse(record.id)
+        record.check_access('read')
         return dict(result, customer=self._customer_payload(record))
 
     @api.model
     def pos_customer_lookup(self, phone=None, store_id=None):
+        if not store_id:
+            return {'status': 'need_store', 'message': _('Select a branch to search BConnect.')}
         client = self.env['ab_sales_branch_client']
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         client._config(store)

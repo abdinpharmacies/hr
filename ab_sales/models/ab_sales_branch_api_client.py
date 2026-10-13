@@ -53,6 +53,9 @@ class BranchClient(models.AbstractModel):
         record = record.exists()
         if len(record) != 1:
             raise UserError(_('A valid record is required for branch submission.'))
+        record.check_access('read')
+        if 'active' in record._fields and not record.active:
+            raise UserError(_('A valid record is required for branch submission.'))
         if record._name == 'ab_hr_employee' and record.costcenter_id.code:
             return {'costcenter_code': record.costcenter_id.code}
         for key in ('eplus_serial', 'code'):
@@ -65,6 +68,11 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _sale_payload(self, payload):
+        values = payload.get('header') or {}
+        draft = self.env['ab_sales_header'].new(self.env['ab_sales_pos_api']._filter_vals('ab_sales_header', values))
+        if values.get('contract_id') and hasattr(draft, '_ab_contract_validate_store_allowed'):
+            draft._ab_contract_validate()
+            draft._ab_contract_validate_store_allowed(check_status=False)
         ignored = {'branch_submission_payload', 'branch_submission_started', 'branch_request_revision',
                    'branch_header_id', 'push_state', 'push_message', 'eplus_serial', 'store_id', 'pos_client_token', 'status', 'pos_hr_profile_id', 'pos_hr_role_id',
                    'pos_hr_shift_id', 'pos_hr_session_id', 'pos_hr_service_user_id',
@@ -88,7 +96,9 @@ class BranchClient(models.AbstractModel):
             line = encode(self.env['ab_sales_line'], source, {'uom_id', 'header_id', 'inventory_json', 'balance', 'cost'})
             product = self.env['ab_product'].browse(int(source.get('product_id') or 0)).exists()
             uom = self.env['ab_product_uom'].browse(int(source.get('uom_id') or product.uom_id.id)).exists()
-            if not product or not uom or uom.category_id != product.uom_category_id:
+            if (not product or not uom or uom.category_id != product.uom_category_id
+                    or not math.isfinite(uom.factor) or uom.factor <= 0
+                    or (product.only_default_sales_uom and uom != product.uom_id)):
                 raise UserError(_('Invalid product unit.'))
             line['uom_factor'] = float(uom.factor)
             result['lines'].append(line)

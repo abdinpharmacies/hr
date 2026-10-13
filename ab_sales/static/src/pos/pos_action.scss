@@ -724,6 +724,12 @@
   flex-wrap: wrap;
 }
 
+.ab_pos_submission_message {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  unicode-bidi: plaintext;
+}
+
 .o_ab_sales_pos_action_stack {
   display: inline-flex;
   flex-direction: column;
