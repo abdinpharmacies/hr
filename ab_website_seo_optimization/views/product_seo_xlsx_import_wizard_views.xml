@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_ab_product_seo_xlsx_import_wizard_form" model="ir.ui.view">
+        <field name="name">ab_product_seo_xlsx_import_wizard.form</field>
+        <field name="model">ab_product_seo_xlsx_import_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import SEO from Excel">
+                <sheet>
+                    <field name="import_outcome" invisible="1"/>
+                    <group string="Configuration">
+                        <field name="template_file" filename="template_filename" widget="binary" readonly="1"/>
+                        <field name="template_filename" invisible="1"/>
+                        <field name="file" filename="filename" widget="binary" readonly="import_outcome == 'success'"/>
+                        <field name="filename" invisible="1"/>
+                        <field name="lang_code" readonly="import_outcome == 'success'"/>
+                        <field name="website_id" readonly="import_outcome == 'success'"/>
+                    </group>
+                    <div class="text-muted">Download the template and fill one row per product. Empty optional cells keep their existing values. Imported content stays in draft for review.</div>
+                    <group string="Results" invisible="not import_summary">
+                        <field name="import_summary" nolabel="1"/>
+                    </group>
+                    <div class="alert alert-danger" role="alert" invisible="not import_error">
+                        <field name="import_error" nolabel="1"/>
+                    </div>
+                    <field name="report_line_ids" nolabel="1" invisible="not report_line_ids">
+                        <list string="SEO Import Report" create="0" edit="0" delete="0"
+                              decoration-success="status == 'imported'"
+                              decoration-warning="status == 'not_imported'"
+                              decoration-danger="status == 'error'">
+                            <field name="row_number"/>
+                            <field name="product_code"/>
+                            <field name="product_name"/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'imported'"
+                                   decoration-warning="status == 'not_imported'"
+                                   decoration-danger="status == 'error'"/>
+                            <field name="reason"/>
+                            <field name="seo_id" optional="hide"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_import_report" type="object" string="Import Drafts" class="btn-primary" invisible="import_outcome == 'success'"/>
+                    <button name="action_open_imported_drafts" type="object" string="Review Imported Products" class="btn-primary" invisible="import_outcome != 'success'"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

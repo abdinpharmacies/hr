@@ -46,6 +46,13 @@
             <field name="context">{'search_default_filter_active': 1}</field>
         </record>
 
+        <record id="action_ab_product_seo_xlsx_import" model="ir.actions.act_window">
+            <field name="name">Import SEO from Excel</field>
+            <field name="res_model">ab_product_seo_xlsx_import_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
         <record id="action_ab_product_drug_data" model="ir.actions.act_window">
             <field name="name">Drug-EG API Data</field>
             <field name="res_model">ab.product.drug.data</field>
@@ -91,6 +98,13 @@
                   parent="ab_website_seo_optimization_menu_root"
                   action="action_ab_website_seo_optimization_bulk_optimization"
                   sequence="15"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+
+        <menuitem id="ab_product_seo_xlsx_import_menu"
+                  name="Import SEO from Excel"
+                  parent="ab_website_seo_optimization_menu_root"
+                  action="action_ab_product_seo_xlsx_import"
+                  sequence="16"
                   groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
 
         <menuitem id="ab_website_seo_optimization_menu_settings"

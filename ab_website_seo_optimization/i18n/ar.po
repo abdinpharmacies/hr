@@ -695,7 +695,20 @@ msgstr "تعذر الاتصال بـ %s: %s"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__create_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__create_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__create_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__create_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -711,7 +724,20 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__create_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__create_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__create_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__create_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__create_date
 msgid "Created on"
 msgstr "أنشئ في"
 
@@ -796,7 +822,21 @@ msgstr "تجاهل"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__display_name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__display_name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__display_name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__display_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -1191,7 +1231,21 @@ msgstr "Hugging Face"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -1375,7 +1429,20 @@ msgstr "آخر إجمالي رموز"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__write_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__write_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__write_uid
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__write_uid
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -1391,7 +1458,20 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__write_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__write_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__write_date
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__write_date
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -1417,6 +1497,7 @@ msgstr "إجمالي الرموز طوال العمر"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__line_ids
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__line_ids
 msgid "Line"
 msgstr "البند"
 
@@ -1551,11 +1632,16 @@ msgid "My Activity Deadline"
 msgstr "موعد نشاطي النهائي"
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_drug_eg_import_dashboard__name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__name
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -1917,12 +2003,14 @@ msgstr "المنتج"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__product_code
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__product_code
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_match__match_method__code
 msgid "Product Code"
 msgstr "كود المنتج"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__product_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__product_name
 msgid "Product Name"
 msgstr "اسم المنتج"
 
@@ -2161,6 +2249,7 @@ msgstr ""
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_bulk_optimization.py:0
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__record_id
 msgid "Record"
 msgstr "السجل"
 
@@ -2241,6 +2330,7 @@ msgid "Result Status"
 msgstr "حالة النتيجة"
 
 #. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_bulk_optimization_form
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_form
 msgid "Results"
@@ -2340,6 +2430,7 @@ msgstr "تحسين SEO: تشغيل التحسينات الدُفعية المن�
 
 #. module: ab_website_seo_optimization
 #: model:ir.model,name:ab_website_seo_optimization.model_ab_product_seo
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__seo_id
 msgid "SEO Record"
 msgstr "سجل SEO"
 
@@ -2897,6 +2988,7 @@ msgstr "ضعيف"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__website_id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__website_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__website_id
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_search
 msgid "Website"
 msgstr "الموقع الإلكتروني"
@@ -3533,6 +3625,7 @@ msgid "Fallback Triggered"
 msgstr "تم الانتقال إلى المزود التالي"
 
 #. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__filename
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__filename
 msgid "Filename"
 msgstr "اسم الملف"
@@ -5594,7 +5687,305 @@ msgstr ""
 "لاستخدام ترتيب مسار الإثراء. يجب أن يسمح المسار بالتوليد بالذكاء الاصطناعي."
 
 #. module: ab_website_seo_optimization
+#: model:ir.model,name:ab_website_seo_optimization.model_ab_product_seo_xlsx_import_wizard
+msgid "Import Product SEO from Excel"
+msgstr "استيراد SEO المنتجات من Excel"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+#: model:ir.actions.act_window,name:ab_website_seo_optimization.action_ab_product_seo_xlsx_import
+#: model:ir.ui.menu,name:ab_website_seo_optimization.ab_product_seo_xlsx_import_menu
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Import SEO from Excel"
+msgstr "استيراد SEO من Excel"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__file
+msgid "Excel File"
+msgstr "ملف Excel"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__template_file
+msgid "Excel Template"
+msgstr "قالب Excel"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__lang_code
+msgid "Content Language"
+msgstr "لغة المحتوى"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Import Drafts"
+msgstr "استيراد المسودات"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Imported SEO Drafts"
+msgstr "مسودات SEO المستوردة"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid ""
+"Download the template and fill one row per product. Empty optional cells "
+"keep their existing values. Imported content stays in draft for review."
+msgstr ""
+"نزّل القالب واملأ صفًا لكل منتج. الخلايا الاختيارية الفارغة تُبقي القيم "
+"الحالية. يبقى المحتوى المستورد مسودة للمراجعة."
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Upload an .xlsx Excel file."
+msgstr "ارفع ملف Excel بصيغة ‎.xlsx."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file could not be decoded."
+msgstr "تعذّر فك ترميز ملف Excel."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file must be 10 MB or smaller."
+msgstr "يجب ألا يتجاوز حجم ملف Excel ‏10 ميجابايت."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file has duplicate column headings."
+msgstr "يحتوي ملف Excel على عناوين أعمدة مكررة."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Missing Excel columns: %s"
+msgstr "أعمدة Excel مفقودة: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file can contain at most %s product rows."
+msgstr "يمكن أن يحتوي ملف Excel على %s صف منتج كحد أقصى."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Row %(row)s needs a text product code."
+msgstr "الصف %(row)s يحتاج إلى كود منتج نصي."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Product code %(code)s appears more than once in the Excel file."
+msgstr "كود المنتج %(code)s مكرر في ملف Excel."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Row %(row)s has a non-text value in %(column)s."
+msgstr "الصف %(row)s يحتوي على قيمة غير نصية في %(column)s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Row %(row)s needs both Meta Title and Meta Description."
+msgstr "الصف %(row)s يحتاج إلى عنوان Meta ووصف Meta."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file has no product rows."
+msgstr "لا يحتوي ملف Excel على صفوف منتجات."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The Excel file is invalid: %s"
+msgstr "ملف Excel غير صالح: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Only SEO Managers can import product SEO."
+msgstr "يمكن لمديري SEO فقط استيراد SEO المنتجات."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The selected website is outside your allowed companies."
+msgstr "الموقع المحدد خارج الشركات المسموح لك بها."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Row %(row)s: product code %(code)s must match exactly one product."
+msgstr "الصف %(row)s: يجب أن يطابق كود المنتج %(code)s منتجًا واحدًا فقط."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid ""
+"Row %(row)s: product code %(code)s must have exactly one published website "
+"product."
+msgstr ""
+"الصف %(row)s: يجب أن يرتبط كود المنتج %(code)s بمنتج منشور واحد فقط على "
+"الموقع."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid ""
+"Row %(row)s: SEO record for %(code)s needs manual review before import."
+msgstr ""
+"الصف %(row)s: يحتاج سجل SEO للمنتج %(code)s إلى مراجعة يدوية قبل الاستيراد."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The SEO record company does not match the product company."
+msgstr "شركة سجل SEO لا تطابق شركة المنتج."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Imported from Excel file: %s"
+msgstr "تم الاستيراد من ملف Excel: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "The selected website and product belong to different companies."
+msgstr "الموقع والمنتج المحددان يتبعان شركتين مختلفتين."
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__template_filename
+msgid "Template Filename"
+msgstr "اسم ملف القالب"
+
+#. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
 msgid "id"
 msgstr "المعرّف"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "No rows were saved because the file contains an error."
+msgstr "لم يتم حفظ أي صفوف لوجود خطأ في الملف."
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "SEO Import Report"
+msgstr "تقرير استيراد SEO"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_xlsx_import_line__status__not_imported
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_xlsx_import_wizard__import_outcome__failed
+msgid "Not Imported"
+msgstr "لم يتم الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Open Imported Drafts"
+msgstr "فتح المسودات المستوردة"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Import failed. No products were imported."
+msgstr "فشل الاستيراد. لم يتم استيراد أي منتجات."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "SEO draft saved for review."
+msgstr "تم حفظ مسودة SEO للمراجعة."
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__import_summary
+msgid "Import Summary"
+msgstr "ملخص الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__import_error
+msgid "Import Error"
+msgstr "خطأ الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__wizard_id
+msgid "Wizard"
+msgstr "معالج الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model,name:ab_website_seo_optimization.model_ab_product_seo_xlsx_import_line
+msgid "SEO Excel Import Report Line"
+msgstr "سطر تقرير استيراد SEO من Excel"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__reason
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__import_outcome
+msgid "Import Outcome"
+msgstr "نتيجة الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_wizard__report_line_ids
+msgid "Import Report"
+msgstr "تقرير الاستيراد"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_xlsx_import_line__status__imported
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_xlsx_import_wizard__import_outcome__success
+msgid "Imported"
+msgstr "تم الاستيراد"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Imported: %(count)s. Failed: 0."
+msgstr "تم الاستيراد: %(count)s. فشل: 0."
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__row_number
+msgid "Excel Row"
+msgstr "صف Excel"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
+msgid "Review Imported Products"
+msgstr "مراجعة المنتجات المستوردة"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Imported: 0. Not imported: %(count)s."
+msgstr "تم الاستيراد: 0. لم يتم الاستيراد: %(count)s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
+msgid "Imported: %(count)s. Not imported: 0."
+msgstr "تم الاستيراد: %(count)s. لم يتم الاستيراد: 0."

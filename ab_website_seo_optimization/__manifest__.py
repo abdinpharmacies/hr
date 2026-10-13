@@ -29,6 +29,7 @@
         "data/seo_template_general_specifications.xml",
         "data/seo_template_supplier_description_upgrade.xml",
         "views/product_seo_optimize_confirm_wizard_views.xml",
+        "views/product_seo_xlsx_import_wizard_views.xml",
         "views/product_seo_views.xml",
         "views/product_seo_translation_views.xml",
         "views/product_seo_version_views.xml",
@@ -50,6 +51,6 @@
             "ab_website_seo_optimization/static/src/js/seo_dialog_ai_patch.js",
         ],
     },
-    "external_dependencies": {"python": ["requests", "ijson"]},
+    "external_dependencies": {"python": ["requests", "ijson", "openpyxl"]},
     "installable": True,
 }

@@ -6,6 +6,7 @@ from . import product_seo_match
 from . import product_seo_source_snapshot
 from . import product_seo_bulk_optimization
 from . import product_seo_optimize_confirm_wizard
+from . import product_seo_xlsx_import_wizard
 from . import product_drug_data
 from . import drug_eg_import_dashboard
 from . import seo_assistant
