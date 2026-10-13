@@ -1257,6 +1257,7 @@ msgid "Ambiguous"
 msgstr "غير حاسم"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__invalid
 msgid "Invalid"
 msgstr "غير صالح"
 
@@ -3831,3 +3832,11 @@ msgid ""
 msgstr ""
 "لا توجد منتجات جديدة لتصنيفها. تظل المنتجات السابقة غير المحسومة في قائمة "
 "المراجعة."
+#. module: ab_website_sale_product
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+#: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+msgid "Gift Products"
+msgstr "منتجات الهدايا"
+

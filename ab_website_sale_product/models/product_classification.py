@@ -351,6 +351,17 @@ class ClassificationRun(models.Model):
         return categorized, eligible
 
     @api.model
+    def _gift_product_domain(self, scope):
+        if scope != "website":
+            return fields.Domain.FALSE
+        variants = self.env["product.product"]
+        for xml_id in ("loyalty.gift_card_product_50", "loyalty.ewallet_product_50"):
+            variant = self.env.ref(xml_id, raise_if_not_found=False)
+            if variant:
+                variants |= variant
+        return fields.Domain("id", "in", variants.product_tmpl_id.ids) if variants else fields.Domain.FALSE
+
+    @api.model
     def dashboard(self, run_id=False, scope="website", website_id=False):
         check_manager(self.env)
         if scope not in ("website", "all"):
@@ -366,19 +377,45 @@ class ClassificationRun(models.Model):
         run.check_access("read")
         Model, domain = self._scope_model_domain(scope, website_id)
         categorized, eligible = self._catalog_domains(scope)
+        gift_domain = self._gift_product_domain(scope)
         population = Model.search_count(domain)
-        classified = Model.search_count(domain & categorized)
+        gift_products = Model.search_count(domain & gift_domain)
+        classification_population = population - gift_products
+        classified = Model.search_count(domain & categorized & ~gift_domain)
         nodes = self.env["ab_product_classification_taxonomy"].search([])
         return {
             "population": population, "website_id": website_id,
             "coverage": {
-                "classified": classified, "unclassified": population - classified,
-                "percent": 100 * classified / population if population else 0,
-                "pending": Model.search_count(domain & eligible),
+                "classified": classified, "gift_products": gift_products,
+                "unclassified": classification_population - classified,
+                "percent": 100 * classified / classification_population if classification_population else 0,
+                "pending": Model.search_count(domain & eligible & ~gift_domain),
             },
             "websites": [{"id": w.id, "name": w.name} for w in websites],
             "taxonomy_ready": bool(nodes) and all(nodes.mapped("ready")),
             "run": run.get_status() if run else False,
+        }
+
+    @api.model
+    def action_open_gift_products(self, scope="website", website_id=False):
+        check_manager(self.env)
+        if scope not in ("website", "all"):
+            raise ValidationError(_("Invalid product scope."))
+        websites = self.env["website"].search([("company_id", "in", self.env.companies.ids)])
+        website_id = website_id or websites[:1].id
+        if website_id not in websites.ids:
+            raise AccessError(_("Website is outside your allowed companies."))
+        Model, domain = self._scope_model_domain(scope, website_id)
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Gift Products"),
+            "res_model": Model._name,
+            "view_mode": "list,form",
+            "views": [(self.env.ref("website_sale.product_template_view_tree_website_sale").id, "list"), (False, "form")]
+            if scope == "website" else [(False, "list"), (False, "form")],
+            "domain": list(domain & self._gift_product_domain(scope)),
+            "context": {"active_test": False} if scope == "all" else {},
+            "target": "current",
         }
 
     @api.model
@@ -394,7 +431,7 @@ class ClassificationRun(models.Model):
         if self.sudo().search_count(fields.Domain("state", "in", ["queued", "running", "paused", "stopping"]) | fields.Domain("force_state", "in", ["queued", "running"])):
             raise UserError(_("A classification run is already active. Resume or stop it first."))
         Model, domain = self._scope_model_domain(scope, dashboard["website_id"])
-        domain &= self._catalog_domains(scope)[1]
+        domain &= self._catalog_domains(scope)[1] & ~self._gift_product_domain(scope)
         upper = Model.search(domain, order="id desc", limit=1).id
         if not upper:
             raise UserError(_("There are no new products to classify. Existing unresolved products remain in the review queue."))
@@ -502,7 +539,7 @@ class ClassificationRun(models.Model):
 
     def _prepare_membership(self):
         Model, domain = self._scope_model_domain(self.scope, self.website_id.id)
-        domain &= self._catalog_domains(self.scope)[1]
+        domain &= self._catalog_domains(self.scope)[1] & ~self._gift_product_domain(self.scope)
         records = Model.search(domain & fields.Domain("id", ">", self.last_snapshot_id) & fields.Domain("id", "<=", self.upper_id), order="id", limit=1000)
         values = []
         for record in records:

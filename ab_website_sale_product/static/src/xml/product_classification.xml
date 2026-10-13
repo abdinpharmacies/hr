@@ -40,6 +40,7 @@
                     <h2 class="h5">Current catalog classification</h2>
                     <div class="ab_classification_metrics my-3">
                         <div><span>With a category</span><strong t-esc="state.data.coverage.classified.toLocaleString()"/></div>
+                        <button class="btn text-start p-0" t-on-click="openGiftProducts"><span>Gift Products</span><strong t-esc="state.data.coverage.gift_products.toLocaleString()"/></button>
                         <div><span>Without a category</span><strong t-esc="state.data.coverage.unclassified.toLocaleString()"/></div>
                         <div><span>Ready for classification</span><strong t-esc="state.data.coverage.pending.toLocaleString()"/></div>
                     </div>
