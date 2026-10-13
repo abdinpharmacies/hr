@@ -62,7 +62,9 @@ Files changed:
 - ab_sales_contract/models/ab_sales_header_inherit.py
 - ab_sales_contract/changelog.d/2026-08-30-total-after-discount-list-column.md
 
-## Current changes before commit:
+## f2695dab - hager yasser - 2026-09-09
+
+Original commit subject: ab_sales_contract/FEAT(#19591): Add Bills Contract Column
 
 User-facing changes:
 - Show the existing Contract field as an optional, visible Bills column.

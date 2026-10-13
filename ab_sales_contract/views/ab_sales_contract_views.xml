@@ -60,6 +60,7 @@
                     <field name="paid_amount"/>
                     <field name="discount_percentage_rule"/>
                     <field name="allow_total_invoice_discount"/>
+                    <field name="allow_promotions"/>
                     <field name="allowed_store_ids" widget="many2many_tags"/>
                     <field name="total_invoice_discount_source"/>
                     <field name="max_bill_value"/>
@@ -87,6 +88,7 @@
                                 <field name="paid_amount"/>
                                 <field name="discount_percentage_rule"/>
                                 <field name="allow_total_invoice_discount"/>
+                                <field name="allow_promotions"/>
                                 <field name="total_invoice_discount_source"
                                        invisible="not allow_total_invoice_discount"/>
                                 <field name="max_bill_value"/>
