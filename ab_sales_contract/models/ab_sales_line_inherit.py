@@ -13,6 +13,7 @@ class AbSalesLineContract(models.Model):
             ("rule", "Contract Rule"),
             ("origin", "Contract Origin Default"),
             ("none", "No Discount"),
+            ("promotion", "Promotion"),
         ],
         string="Discount Source",
         readonly=True,
@@ -116,7 +117,8 @@ class AbSalesLineContract(models.Model):
         for rec in self:
             gross = float(rec.qty or 0.0) * float(rec.sell_price or 0.0)
             if rec.header_id.contract_id:
-                rec.net_amount = float(rec.ab_contract_net_amount or gross)
+                rec.net_amount = float(rec.ab_contract_net_amount if rec.header_id._ab_contract_uses_promotions()
+                                       else (rec.ab_contract_net_amount or gross))
             else:
                 rec.net_amount = gross
 

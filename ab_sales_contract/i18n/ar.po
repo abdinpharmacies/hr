@@ -16,6 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_inherit.xml:0
 #. module: ab_sales_contract
 #: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__total_after_discount
 msgid "Total After Discount"
@@ -27,3 +28,75 @@ msgstr "الإجمالي بعد الخصم"
 #: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_sales_header_view_tree_inherit_contract_total_after_discount
 msgid "Contract"
 msgstr "العقد"
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_pos_api_contract.py:0
+msgid "Invalid contract."
+msgstr "العقد غير صالح."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_pos_api_contract.py:0
+msgid "Store is required."
+msgstr "الفرع مطلوب."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_pos_api_contract.py:0
+msgid "Store %s is not allowed for sales."
+msgstr "الفرع %s غير مسموح له بالمبيعات."
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__allow_promotions
+msgid "Allow Promotions"
+msgstr "السماح بالعروض"
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_contract.py:0
+msgid ""
+"Allow Promotions requires zero default discounts, zero fixed copay, zero "
+"bill cap, and a customer copay of 0% or 100%. Disable Allow Promotions "
+"before changing these terms."
+msgstr ""
+"يتطلب السماح بالعروض أن تكون الخصومات الافتراضية ومبلغ مساهمة العميل الثابت "
+"والحد الأقصى للفاتورة صفرًا، وأن تكون نسبة مساهمة العميل 0% أو 100%. عطّل "
+"السماح بالعروض قبل تغيير هذه الشروط."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_contract.py:0
+msgid ""
+"Allow Promotions requires all product-specific contract discounts to be "
+"zero. Disable Allow Promotions before changing product rules."
+msgstr ""
+"يتطلب السماح بالعروض أن تكون جميع خصومات أصناف العقد صفرًا. عطّل السماح "
+"بالعروض قبل تغيير قواعد الأصناف."
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_promotion_pricing
+msgid "Contract Promotion Pricing"
+msgstr "تسعير عروض العقد"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_promotion_customer_pays
+msgid "Contract Promotion Customer Pays"
+msgstr "العميل يدفع قيمة عرض العقد"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_discount_source__promotion
+msgid "Promotion"
+msgstr "عرض"
+
+#. module: ab_sales_contract
+#. odoo-javascript
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_patch.js:0
+msgid "Failed to load contract."
+msgstr "تعذر تحميل العقد."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_return_header_inherit.py:0
+msgid "Source invoice was not found in the selected branch."
+msgstr "لم يتم العثور على الفاتورة الأصلية في الفرع المحدد."

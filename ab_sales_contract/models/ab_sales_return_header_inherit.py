@@ -1,8 +1,45 @@
-from odoo import models
+from odoo import models, _
+from odoo.exceptions import UserError
 
 
 class AbSalesReturnHeaderContract(models.Model):
     _inherit = "ab_sales_return_header"
+
+    def _get_return_adjustments(self, cur, sth_id, total_value, net_return):
+        adjustments = super()._get_return_adjustments(cur, sth_id, total_value, net_return)
+        source = self._contract_return_get_source_header()
+        if not source or not source.contract_promotion_pricing:
+            return adjustments
+        if int(sth_id) != source.eplus_serial:
+            raise UserError(_('Source invoice was not found in the selected branch.'))
+        # This runs inside the existing approved return transaction. Keep the
+        # company's balance aligned as well as the customer's cash refund.
+        cur.execute(
+            'SELECT ISNULL(total_bill_after_disc, 0), ISNULL(total_bill_net, 0), '
+            'ISNULL(fh_company_part, 0) FROM sales_trans_h WHERE sth_id = ? AND sto_id = ?',
+            (int(sth_id), int(self.sto_eplus_serial)),
+        )
+        row = cur.fetchone()
+        if not row:
+            raise UserError(_('Source invoice was not found in the selected branch.'))
+        if self._is_total_return_invoice():
+            after_disc, customer = float(row[0] or 0.0), float(row[1] or 0.0)
+            adjustments.update({
+                'total_bill_after_disc_delta': after_disc,
+                'total_bill_net_delta': customer,
+                'fcs_current_balance_delta': customer,
+                'fh_value_delta': customer,
+                'sales_return_payment_value': -customer,
+                'returned_items_value': customer,
+            })
+            company = float(row[2] or 0.0)
+        else:
+            company = max(0.0, adjustments['total_bill_after_disc_delta'] - adjustments['total_bill_net_delta'])
+        cur.execute(
+            'UPDATE sales_trans_h SET fh_company_part = ? WHERE sth_id = ? AND sto_id = ?',
+            (max(0.0, float(row[2] or 0.0) - company), int(sth_id), int(self.sto_eplus_serial)),
+        )
+        return adjustments
 
     def _contract_return_is_contract_source(self, source_header):
         self.ensure_one()
@@ -120,6 +157,19 @@ class AbSalesReturnHeaderContract(models.Model):
                 "after_disc": 0.0,
                 "net": 0.0,
             }
+
+        if source_header.contract_promotion_pricing:
+            if hasattr(self, '_promo_return_virtual_total'):
+                total = self._promo_return_virtual_total(source_header, mode=mode)
+            else:
+                total = sum(
+                    self._contract_return_qty_in_default_uom(
+                        line, self._contract_return_line_qty_source(line, mode=mode),
+                    ) * self._contract_return_price_ref(source_header, line)
+                    for line in self.line_ids
+                )
+            return {'after_disc': total,
+                    'net': total if source_header.contract_promotion_customer_pays else 0.0}
 
         virtual_header = self._contract_return_build_virtual_header(source_header, mode=mode)
         amount_total = 0.0
