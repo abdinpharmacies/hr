@@ -20,6 +20,7 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="attributes">
                 <attribute name="delete">0</attribute>
+                <attribute name="edit">0</attribute>
             </xpath>
             <xpath expr="//header" position="inside">
                 <field name="local_bill_storage" invisible="1"/>
@@ -35,7 +36,7 @@
                 <attribute name="invisible" add="local_bill_storage" separator=" or "/>
             </xpath>
             <xpath expr="//button[@name='action_open_add_products']" position="attributes">
-                <attribute name="invisible" add="branch_submission_started and status != 'rejected'" separator=" or "/>
+                <attribute name="invisible" add="local_bill_storage" separator=" or "/>
             </xpath>
             <xpath expr="//field[@name='bill_customer_address'][@readonly]" position="attributes">
                 <attribute name="readonly" add="status == 'unknown'" separator=" or "/>

@@ -1640,8 +1640,9 @@ class AbSalesPosAction extends Component {
     }
 
     _slotBillLocked(bill) {
-        return !!bill && (bill.submission?.unresolved || bill.submission?.in_progress ||
-            ["unknown", "pending", "saved"].includes(bill.submission?.status));
+        return !!bill && (bill.submission?.attempted || bill.submission?.local_header_id ||
+            bill.submission?.unresolved || bill.submission?.in_progress ||
+            ["unknown", "rejected", "pending", "saved"].includes(bill.submission?.status));
     }
 
     _assignLocalDraftSlots() {
@@ -4664,7 +4665,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
-        if (bill.submission?.status === "unknown" || bill.submission?.unresolved) {
+        if (this._slotBillLocked(bill)) {
             await this._submitBillInternal(bill);
             return;
         }

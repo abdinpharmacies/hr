@@ -109,7 +109,7 @@ class LocalSales(models.Model):
                     for name in ('store_id', 'pos_client_token', 'active'):
                         if name in vals and vals[name] != (record[name].id if name == 'store_id' else record[name]):
                             raise UserError(_('The submitted bill identity cannot be changed.'))
-                    if record.status != 'rejected' and any(
+                    if any(
                             (record[name].id if record._fields[name].type == 'many2one' else record[name]) != value
                             for name, value in vals.items()):
                         raise UserError(_('This bill is locked until its branch submission is resolved. Use Retry.'))
@@ -144,7 +144,7 @@ class LocalSales(models.Model):
                 'branch_header_id': self.branch_header_id, 'remote_header_id': self.branch_header_id,
                 'token': self.pos_client_token, 'request_revision': self.branch_request_revision,
                 'status': self.status, 'eplus_serial': self.eplus_serial,
-                'message': self.push_message or '', 'submission_attempted': self.branch_submission_started, 'can_edit': self.status in ('prepending', 'rejected'),
+                'message': self.push_message or '', 'submission_attempted': self.branch_submission_started, 'can_edit': not self.branch_submission_started and self.status == 'prepending',
                 'can_retry': self.status in ('unknown', 'rejected'), 'duplicate_token': False}
 
     def _apply_branch_response(self, response, config):
@@ -177,7 +177,7 @@ class LocalSales(models.Model):
         self.check_access('write')
         if not self.sudo().branch_submission_payload:
             raise UserError(_('This bill has no stored branch submission request.'))
-        payload = self.env['ab_sales_pos_api']._branch_current_payload(self) if self.status == 'rejected' else self.sudo().branch_submission_payload
+        payload = deepcopy(self.sudo().branch_submission_payload)
         self.env['ab_sales_pos_api']._pos_submit_to_branch_rpc(dict(payload, submission_guard_version=1))
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
@@ -249,13 +249,13 @@ class LocalSaleLines(models.Model):
 
     @api.depends('product_id', 'product_id.default_price')
     def _compute_sell_price(self):
-        editable = self.filtered(lambda line: not line.header_id.branch_submission_started or line.header_id.status == 'rejected')
+        editable = self.filtered(lambda line: not line.header_id.branch_submission_started)
         return super(LocalSaleLines, editable)._compute_sell_price()
 
     @api.constrains('sell_price', 'product_id', 'inventory_json', 'uom_id')
     def _check_sell_price_in_available_prices(self):
         # Frozen prices were validated at creation; catalog changes cannot reprice history.
-        editable = self.filtered(lambda line: not line.header_id.branch_submission_started or line.header_id.status == 'rejected')
+        editable = self.filtered(lambda line: not line.header_id.branch_submission_started)
         return super(LocalSaleLines, editable)._check_sell_price_in_available_prices()
 
     def _branch_records(self):
@@ -265,7 +265,7 @@ class LocalSaleLines(models.Model):
         if self.env.context.get('_ab_callcenter_workflow') is _CC_WORKFLOW:
             return
         targets._lock_branch_bill()
-        if any(h.branch_submission_started and h.status != 'rejected' for h in targets):
+        if any(h.branch_submission_started for h in targets):
             raise UserError(_('This bill is locked until its branch submission is resolved. Use Retry.'))
         if targets:
             # A parent version detects line edits committed after an attempt's
@@ -291,22 +291,6 @@ class LocalSaleLines(models.Model):
 
 class LocalSubmission(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
-
-    def _branch_current_payload(self, header):
-        payload = deepcopy(header.sudo().branch_submission_payload or {})
-        values = payload.setdefault('header', {})
-        for name in list(values):
-            if name in header._fields and header._fields[name].type not in ('one2many', 'many2many'):
-                field = header._fields[name]
-                values[name] = header[name].id if field.type == 'many2one' else header[name]
-        values.update(store_id=header.store_id.id, pos_client_token=header.pos_client_token)
-        if 'applied_program_ids' in header._fields:
-            payload['applied_program_id'] = header.applied_program_ids[:1].id or False
-        payload['lines'] = [{name: line[name].id if line._fields[name].type == 'many2one' else line[name]
-                            for name in ('product_id', 'uom_id', 'qty_str', 'sell_price', 'target_sell_price',
-                                         'unavailable_reason', 'unavailable_reason_other')}
-                           for line in header.line_ids]
-        return {key: value for key, value in payload.items() if not key.startswith('_branch_')}
 
     def _replace_branch_bill(self, header, payload):
         values = self._filter_vals('ab_sales_header', payload.get('header') or {})
@@ -355,8 +339,10 @@ class LocalSubmission(models.TransientModel):
                       '_branch_rpc_db': config.rpc_db, '_branch_store_serial': int(config.store_id.eplus_serial)}
             if stored and any(stored.get(name) != value for name, value in target.items()):
                 raise UserError(_('The branch database changed. Reconcile the original request before retrying.'))
-            if header.status == 'unknown':
-                payload = stored
+            if stored:
+                # Every retry replays the original request, including rejected bills.
+                # Never rebuild identifiers/prices or advance its revision from UI data.
+                payload = deepcopy(stored)
                 wire = payload['_branch_wire_payload']
             else:
                 capabilities = client._call(header.store_id, 'get_capabilities')
@@ -364,14 +350,12 @@ class LocalSubmission(models.TransientModel):
                 if capabilities.get('sales_submission_guard') != 1:
                     raise UserError(_('Upgrade the branch API before submitting this bill.'))
                 wire = client._sale_payload(payload)
-                if header.status == 'rejected' or (duplicate and not stored):
+                if duplicate:
                     with self.env.cr.savepoint():
                         self._replace_branch_bill(header, payload)
-                changed = bool(stored and stored.get('_branch_wire_payload') != wire)
-                revision = header.branch_request_revision + (1 if changed else 0)
                 payload = dict(payload, _branch_wire_payload=wire, **target)
                 header.sudo()._write_branch_state({'branch_submission_payload': payload,
-                    'branch_request_revision': revision, 'branch_submission_started': True})
+                    'branch_submission_started': True})
             log = self.env['ab_sales_callcenter_rpc_log'].sudo().create({'rpc_config_id': config.id,
                 'store_id': header.store_id.id, 'payload_token': token, 'request_revision': header.branch_request_revision,
                 'push_to_eplus_requested': True, 'state': 'started', 'submitted_by_id': self.env.uid,
