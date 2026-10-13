@@ -1,0 +1,154 @@
+{
+  "suite": "sales_ui_cases.json",
+  "mode": "preview",
+  "database": "abdin_replica19",
+  "passed": 9,
+  "failed": 2,
+  "submission": "NOT_EXECUTED",
+  "report_path": "/opt/playwright/artifacts/replica_addons/sales_suite/20261013T162701990305Z/results.json",
+  "cases": [
+    {
+      "id": "CASH",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "CONTRACT_25",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "CONTRACT_0",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "CONTRACT_100",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "PROMO_ONLY",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "PROMO_MIXED",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "PROMO_THEN_CONTRACT",
+      "status": "FAIL",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "CONTRACT_THEN_PROMO",
+      "status": "FAIL",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "CONTRACT_CLEAR_RESTORES_PROMO",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "PROMO_QTY_UPDATE",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    },
+    {
+      "id": "PROMO_THEN_DISCOUNTED_CONTRACT",
+      "status": "PASS_PREVIEW",
+      "checkpoints": [
+        "odoo_and_employee_login",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
+      ],
+      "cleaned_draft_count": 1
+    }
+  ],
+  "findings": [
+    {
+      "cases": [
+        "PROMO_THEN_CONTRACT",
+        "CONTRACT_THEN_PROMO"
+      ],
+      "description": "With contract 4 configured to allow promotions, the UI clears/hides promotion 2. Promo-then-contract displays net 281.00 instead of 126.00. Contract-then-promo cannot find the promotion control.",
+      "expected_net": 126.0,
+      "observed_net": 281.0
+    }
+  ],
+  "limitations": [
+    "No final invoice submission or E-Plus writes were performed.",
+    "Backend quote checks passed for the nine successful preview cases; combined cases stop at the UI failure.",
+    "Runtime backend exposes allow_promotions, unlike the local source initially inspected.",
+    "Original backup values are retained in the ignored owner-only backups directory."
+  ]
+}
