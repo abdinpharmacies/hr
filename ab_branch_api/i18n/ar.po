@@ -1006,3 +1006,132 @@ msgstr "يجب أن يكون رقم مراجعة الطلب الأول واحد�
 #: code:addons/ab_branch_api/models/credentials.py:0
 msgid "Use an active internal user."
 msgstr "استخدم مستخدمًا داخليًا نشطًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"%(product)s: requested %(requested).3f, available %(available).3f %(unit)s"
+msgstr "%(product)s: المطلوب %(requested).3f، المتاح %(available).3f %(unit)s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Current branch stock is insufficient. Select a reason for every affected line; Other requires details.\n"
+"%s"
+msgstr ""
+"رصيد الفرع الحالي غير كافٍ. اختر سبباً لكل سطر متأثر؛ ويتطلب اختيار «أخرى» إدخال التفاصيل.\n"
+"%s"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "Invalid quantity in a line (<= 0)."
+msgstr "كمية غير صالحة في أحد السطور (أقل من أو تساوي صفر)."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "Line with missing product E-Plus serial."
+msgstr "يوجد سطر لصنف بدون رقم مرجعي في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/callcenter_services.py:0
+msgid "Phone is required."
+msgstr "رقم الهاتف مطلوب."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Some invoice products are inactive or missing from branch stock data. Review"
+" the products before submitting."
+msgstr ""
+"بعض أصناف الفاتورة غير نشطة أو غير موجودة في بيانات رصيد الفرع. راجع الأصناف"
+" قبل الإرسال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid "The branch returned invalid stock data."
+msgstr "أعاد الفرع بيانات رصيد غير صالحة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected contract is missing, inactive or duplicated on this branch. "
+"Synchronize contracts or select another contract."
+msgstr ""
+"التعاقد المحدد غير موجود أو غير نشط أو مكرر في هذا الفرع. زامن التعاقدات أو "
+"اختر تعاقداً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected customer has no E-Plus reference. Synchronize customers before "
+"submitting."
+msgstr "العميل المحدد ليس لديه مرجع في إي بلس. زامن العملاء قبل الإرسال."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"The selected customer is missing, inactive or duplicated on this branch. "
+"Synchronize customers or select another customer."
+msgstr ""
+"العميل المحدد غير موجود أو غير نشط أو مكرر في هذا الفرع. زامن العملاء أو "
+"اختر عميلاً آخر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_validation.py:0
+msgid ""
+"Unable to verify current branch stock. Retry before submitting this invoice."
+msgstr ""
+"تعذر التحقق من رصيد الفرع الحالي. أعد المحاولة قبل إرسال هذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid "A valid customer E-Plus reference is required."
+msgstr "يجب تحديد مرجع صالح للعميل في إي بلس."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The branch customer is inactive or incomplete. Review the customer before "
+"using it."
+msgstr ""
+"بيانات العميل في الفرع غير مكتملة أو العميل غير نشط. راجع بياناته قبل "
+"استخدامه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer does not exist in this branch. Search by phone in the customer "
+"dialog and create the customer if not found."
+msgstr ""
+"العميل غير موجود في هذا الفرع. ابحث برقم الهاتف في نافذة العميل، ثم أنشئ "
+"العميل إذا لم يتم العثور عليه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer is archived on this branch. Review the customer before using "
+"it."
+msgstr "العميل مؤرشف في هذا الفرع. راجع بياناته قبل استخدامه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/customer_sync.py:0
+msgid ""
+"The customer reference is duplicated on this branch. Review the customer "
+"records before retrying."
+msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلات العميل قبل إعادة المحاولة."

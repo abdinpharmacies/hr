@@ -150,7 +150,12 @@ class BranchApi(models.AbstractModel):
         else:
             raise UserError(_('Unsupported record reference.'))
         if len(records) != 1:
+            if model == 'ab_customer':
+                raise UserError(_('The selected customer is missing, inactive or duplicated on this branch. Synchronize customers or select another customer.'))
+            if model == 'ab_contract':
+                raise UserError(_('The selected contract is missing, inactive or duplicated on this branch. Synchronize contracts or select another contract.'))
             raise UserError(_('Branch reference is missing or ambiguous: %s') % model)
+        records.check_access('read')
         return records
 
     @api.model
@@ -423,7 +428,15 @@ class BranchApi(models.AbstractModel):
                    'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
         values = self._sale_values(header_model, payload.get('header', {}), allowed)
         values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
-        header_model.new(values)._validate_new_customer()
+        draft = header_model.new(values)
+        draft._validate_new_customer()
+        if values.get('contract_id'):
+            draft._ab_contract_validate()
+            draft._ab_contract_validate_store_allowed(check_status=False)
+        if values.get('customer_id'):
+            customer = self.env['ab_customer'].browse(values['customer_id'])
+            if not customer.eplus_serial:
+                raise UserError(_('The selected customer has no E-Plus reference. Synchronize customers before submitting.'))
         if header:
             header.check_access('write')
             header.line_ids.check_access('write')
@@ -445,10 +458,15 @@ class BranchApi(models.AbstractModel):
             product = self.env['ab_product'].browse(vals.get('product_id')).exists()
             if not product:
                 raise UserError(_('Product is required.'))
-            factor = float(source.get('uom_factor') or product.uom_id.factor)
+            try:
+                factor = float(source.get('uom_factor', product.uom_id.factor))
+            except (TypeError, ValueError):
+                raise UserError(_('Branch product unit is missing or ambiguous.')) from None
+            if not math.isfinite(factor) or factor <= 0:
+                raise UserError(_('Branch product unit is missing or ambiguous.'))
             uom = self.env['ab_product_uom'].search(fields.Domain('category_id', '=', product.uom_category_id.id)
                                                    & fields.Domain('factor', '=', factor), limit=2)
-            if len(uom) != 1:
+            if len(uom) != 1 or (product.only_default_sales_uom and uom != product.uom_id):
                 raise UserError(_('Branch product unit is missing or ambiguous.'))
             vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
             Pos._pos_fill_inventory_json_for_price_validation(header, vals)

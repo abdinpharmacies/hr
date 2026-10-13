@@ -215,8 +215,19 @@ class CallcenterServices(models.AbstractModel):
         store = request_store(self)
         self._business_permissions('sale')
         self.env['ab_customer'].check_access('read')
-        result = self.env['ab_sales_pos_api'].pos_customer_lookup(phone=phone, store_id=store.id)
-        return self._customer_result(result, store, db_serial)
+        pos = self.env['ab_sales_pos_api']
+        phone = pos._normalize_phone(phone)
+        if not phone:
+            raise UserError(_('Phone is required.'))
+        with pos.connect_eplus(server=selected_server(self, store), param_str='?', charset='CP1256', autocommit=False) as connection:
+            with connection.cursor() as cursor:
+                row = pos._bconnect_customer_by_phone(cursor, phone)
+        if not row:
+            return self._customer_result({'status': 'not_found'}, store, db_serial)
+        customer = pos._upsert_customer_from_bconnect(pos._customer_vals_from_bconnect(row, store))
+        result = self._customer_result({'status': 'found', 'customer': pos._customer_payload(customer)}, store, db_serial)
+        self.env.cr.commit()
+        return result
 
     @api.model
     @api_request
@@ -224,6 +235,7 @@ class CallcenterServices(models.AbstractModel):
         store = request_store(self)
         self._business_permissions('sale', post=True)
         self.env['ab_customer'].check_access('create')
+        self._lock_operation('customer-registration:%s' % store.eplus_serial)
         operation = self._operation(store, token, 'customer')
         payload = {'phone': phone, 'name': name, 'address': address}
         return self._run_post(operation, payload, lambda: self._customer_result(
