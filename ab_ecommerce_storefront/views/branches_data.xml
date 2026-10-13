@@ -1,0 +1,635 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <template id="branches_directory" name="Abdin Public Branch Directory">
+    <article class="ab-branch-card" data-branch-id="hurghada-el-kawthar-1" data-region="hurghada" data-lat="27.1998554" data-lng="33.8274969" data-search="El Kawthar 1 Red Sea · Hurghada Airport Road extension, El Kawthar banking complex, next to El Mashrabeya Cafeteria">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Red Sea · Hurghada</span>
+          <strong data-branch-name="">El Kawthar 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Airport Road extension, El Kawthar banking complex, next to El Mashrabeya Cafeteria</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=27.1998554,33.8274969" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="hurghada-el-nasr" data-region="hurghada" data-lat="27.2415491" data-lng="33.7842973" data-search="El Nasr Red Sea · Hurghada 289 El Nasr Street, next to Zahran Mall, El Dahar">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Red Sea · Hurghada</span>
+          <strong data-branch-name="">El Nasr</strong>
+          <span class="ab-branch-card-address" data-branch-address="">289 El Nasr Street, next to Zahran Mall, El Dahar</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=27.2415491,33.7842973" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="hurghada-el-kawthar-2" data-region="hurghada" data-lat="27.2001843" data-lng="33.8232592" data-search="El Kawthar 2 Red Sea · Hurghada New El Kawthar, next to Awlad Ragab and Best Way">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Red Sea · Hurghada</span>
+          <strong data-branch-name="">El Kawthar 2</strong>
+          <span class="ab-branch-card-address" data-branch-address="">New El Kawthar, next to Awlad Ragab and Best Way</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=27.2001843,33.8232592" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="hurghada-sheraton" data-region="hurghada" data-lat="27.2260278" data-lng="33.8378611000001" data-search="Sheraton Red Sea · Hurghada Sheraton Street, next to Star Fish Restaurant">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Red Sea · Hurghada</span>
+          <strong data-branch-name="">Sheraton</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Sheraton Street, next to Star Fish Restaurant</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=27.2260278,33.8378611000001" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-el-labini" data-region="giza" data-lat="29.9984715" data-lng="31.1433836" data-search="El Labini Giza 38 El Labini Street, next to Faisal Tunnel">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">El Labini</strong>
+          <span class="ab-branch-card-address" data-branch-address="">38 El Labini Street, next to Faisal Tunnel</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=29.9984715,31.1433836" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-tersa-1" data-region="giza" data-lat="29.9813796" data-lng="31.1618319" data-search="Tersa 1 Giza 8 Tersa Street, El Mariouteya">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">Tersa 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">8 Tersa Street, El Mariouteya</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=29.9813796,31.1618319" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-hadayek-el-ahram" data-region="giza" data-lat="29.9539954" data-lng="31.0960865" data-search="Hadayek El Ahram Giza 220 A, Fourth Gate entrance, opposite Al Madina Al Monawara Mosque">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">Hadayek El Ahram</strong>
+          <span class="ab-branch-card-address" data-branch-address="">220 A, Fourth Gate entrance, opposite Al Madina Al Monawara Mosque</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=29.9539954,31.0960865" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-el-mesaha" data-region="giza" data-lat="30.0134257" data-lng="31.1983611" data-search="El Mesaha Giza 438 King Faisal Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">El Mesaha</strong>
+          <span class="ab-branch-card-address" data-branch-address="">438 King Faisal Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.0134257,31.1983611" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-el-mahatta" data-region="giza" data-lat="30.0087783" data-lng="31.2085521" data-search="El Mahatta Giza 51 Rabie El Gizi Street, opposite Giza Railway Station">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">El Mahatta</strong>
+          <span class="ab-branch-card-address" data-branch-address="">51 Rabie El Gizi Street, opposite Giza Railway Station</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.0087783,31.2085521" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="giza-khatam-el-morsaleen" data-region="giza" data-lat="30.0044355" data-lng="31.2043557" data-search="Khatam El Morsaleen Giza 5 Khatam El Morsaleen Street, opposite Khatam El Morsaleen Mosque">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Giza</span>
+          <strong data-branch-name="">Khatam El Morsaleen</strong>
+          <span class="ab-branch-card-address" data-branch-address="">5 Khatam El Morsaleen Street, opposite Khatam El Morsaleen Mosque</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.0044355,31.2043557" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="cairo-genena-mall" data-region="cairo" data-lat="30.0697027" data-lng="31.3218018" data-search="Genena Mall Cairo Nasr City, El Batrawy Square, Ibrahim Shawky Street, Ahmed Hosny Street, Ismail El Qabbany Street, Abbas El Akkad Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Cairo</span>
+          <strong data-branch-name="">Genena Mall</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Nasr City, El Batrawy Square, Ibrahim Shawky Street, Ahmed Hosny Street, Ismail El Qabbany Street, Abbas El Akkad Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.0697027,31.3218018" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="cairo-maadi-2" data-region="cairo" data-lat="29.9612222" data-lng="31.2638056000001" data-search="Maadi 2 Cairo 63 Street 15, next to Maadi Police Station, Sarayat El Maadi">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Cairo</span>
+          <strong data-branch-name="">Maadi 2</strong>
+          <span class="ab-branch-card-address" data-branch-address="">63 Street 15, next to Maadi Police Station, Sarayat El Maadi</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=29.9612222,31.2638056000001" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="cairo-el-ataba" data-region="cairo" data-lat="30.053982" data-lng="31.2464506" data-search="El Ataba Cairo 2 Sherif Pasha Street, El Ataba">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Cairo</span>
+          <strong data-branch-name="">El Ataba</strong>
+          <span class="ab-branch-card-address" data-branch-address="">2 Sherif Pasha Street, El Ataba</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.053982,31.2464506" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="cairo-heliopolis" data-region="cairo" data-lat="30.1082222" data-lng="31.3372222" data-search="Heliopolis Cairo 76 El Hegaz Street, Heliopolis">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Cairo</span>
+          <strong data-branch-name="">Heliopolis</strong>
+          <span class="ab-branch-card-address" data-branch-address="">76 El Hegaz Street, Heliopolis</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.1082222,31.3372222" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-orouba-1" data-region="sohag" data-lat="26.5538317" data-lng="31.6947709" data-search="El Orouba 1 Sohag El Orouba Square">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Orouba 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Orouba Square</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5538317,31.6947709" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-shaheed-1" data-region="sohag" data-lat="26.5545277777778" data-lng="31.6891111111111" data-search="El Shaheed 1 Sohag El Shaheed Street extension, opposite Dar El Teb Hospital">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Shaheed 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Shaheed Street extension, opposite Dar El Teb Hospital</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5545277777778,31.6891111111111" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-tahta-1" data-region="sohag" data-lat="26.7658495" data-lng="31.5064107" data-search="Tahta 1 Sohag El Geish Street extension, opposite El Shefaa Hospital">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">Tahta 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Geish Street extension, opposite El Shefaa Hospital</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.7658495,31.5064107" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-taminat" data-region="sohag" data-lat="26.5615" data-lng="31.6888333333333" data-search="El Taminat Sohag Sohag–Assiut Road">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Taminat</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Sohag–Assiut Road</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5615,31.6888333333333" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-shaheed-2" data-region="sohag" data-lat="26.549758" data-lng="31.6937308" data-search="El Shaheed 2 Sohag Behind El Shaheed Mosque">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Shaheed 2</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Behind El Shaheed Mosque</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.549758,31.6937308" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-sharq" data-region="sohag" data-lat="26.5597635" data-lng="31.7148855" data-search="El Sharq Sohag Sohag–Akhmim Road, next to Casanova, east of Arab El Atawla School">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Sharq</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Sohag–Akhmim Road, next to Casanova, east of Arab El Atawla School</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5597635,31.7148855" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-dar-el-salam-1" data-region="sohag" data-lat="26.2766829" data-lng="32.0481012" data-search="Dar El Salam 1 Sohag Dar El Salam, El Souq Street extension">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">Dar El Salam 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Dar El Salam, El Souq Street extension</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.2766829,32.0481012" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-gomhouria" data-region="sohag" data-lat="26.5626258" data-lng="31.6979805" data-search="El Gomhouria Sohag El Gomhouria Street, opposite El Gomhouria Mall">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Gomhouria</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Gomhouria Street, opposite El Gomhouria Mall</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5626258,31.6979805" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-west-corniche" data-region="sohag" data-lat="26.5540764" data-lng="31.6998981" data-search="West Corniche Sohag El Khodeiry Tower, opposite Bank of Alexandria, next to the Education Directorate">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">West Corniche</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Khodeiry Tower, opposite Bank of Alexandria, next to the Education Directorate</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5540764,31.6998981" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-zahraa-sohag" data-region="sohag" data-lat="26.574145" data-lng="31.6916695" data-search="El Zahraa, Sohag Sohag El Zahraa Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Zahraa, Sohag</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Zahraa Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.574145,31.6916695" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-tahta-2" data-region="sohag" data-lat="26.7654159" data-lng="31.4994453" data-search="Tahta 2 Sohag El Gehad Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">Tahta 2</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Gehad Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.7654159,31.4994453" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-dar-el-salam-2" data-region="sohag" data-lat="26.2789599" data-lng="32.0592262" data-search="Dar El Salam 2 Sohag Dar El Salam, Agricultural Administration Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">Dar El Salam 2</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Dar El Salam, Agricultural Administration Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.2789599,32.0592262" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-balyana-el-helal" data-region="sohag" data-lat="26.2356111" data-lng="32.0033889" data-search="El Balyana El Helal Sohag El Gomhouria Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Balyana El Helal</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Gomhouria Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.2356111,32.0033889" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-el-balyana-el-hussein" data-region="sohag" data-lat="26.2277334" data-lng="32.0015887" data-search="El Balyana El Hussein Sohag El Hussein, 7 Khor El Sahel Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">El Balyana El Hussein</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Hussein, 7 Khor El Sahel Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.2277334,32.0015887" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="sohag-judges-tower" data-region="sohag" data-lat="26.5632222" data-lng="31.7069722" data-search="Judges Tower Sohag Next to Sohag University and the Police Club">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Sohag</span>
+          <strong data-branch-name="">Judges Tower</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Next to Sohag University and the Police Club</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.5632222,31.7069722" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-el-sebaei" data-region="qena" data-lat="26.1579999" data-lng="32.7079107" data-search="El Sebaei Qena 26 July, Administrative Control Street">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">El Sebaei</strong>
+          <span class="ab-branch-card-address" data-branch-address="">26 July, Administrative Control Street</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1579999,32.7079107" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-el-teb-el-nabawi" data-region="qena" data-lat="26.1608304" data-lng="32.7159748" data-search="El Teb El Nabawi Qena Sidi Omar Square, next to El Faisal School">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">El Teb El Nabawi</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Sidi Omar Square, next to El Faisal School</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1608304,32.7159748" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-abu-tesht" data-region="qena" data-lat="26.1233926" data-lng="32.0938717" data-search="Abu Tesht Qena Agrarian Reform Street, next to the Girls' Secondary School">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">Abu Tesht</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Agrarian Reform Street, next to the Girls' Secondary School</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1233926,32.0938717" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-nag-hammadi" data-region="qena" data-lat="26.040475" data-lng="32.2390606" data-search="Nag Hammadi Qena Egypt–Aswan Highway, next to the railway station">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">Nag Hammadi</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Egypt–Aswan Highway, next to the railway station</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.040475,32.2390606" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-el-dolphin" data-region="qena" data-lat="26.1585181" data-lng="32.6991794" data-search="El Dolphin Qena El Dolphin Square, beginning of El Mawqaf Road">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">El Dolphin</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Dolphin Square, beginning of El Mawqaf Road</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1585181,32.6991794" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-el-gamaa" data-region="qena" data-lat="26.1638147" data-lng="32.7272285" data-search="El Gamaa Qena Opposite Sidi Abdel Rahim, next to Koshary El Sadiqan">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">El Gamaa</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Opposite Sidi Abdel Rahim, next to Koshary El Sadiqan</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1638147,32.7272285" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qena-el-hegaz" data-region="qena" data-lat="26.1577374" data-lng="32.7241111" data-search="El Hegaz Qena Abu Bakr El Siddiq Street, behind El Helal Hospital">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qena</span>
+          <strong data-branch-name="">El Hegaz</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Abu Bakr El Siddiq Street, behind El Helal Hospital</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=26.1577374,32.7241111" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="qalyubia-el-moassasa" data-region="qalyubia" data-lat="30.1144776" data-lng="31.2433767" data-search="El Moassasa Qalyubia City Council Street, next to Raneen, El Moassasa, Shubra">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Qalyubia</span>
+          <strong data-branch-name="">El Moassasa</strong>
+          <span class="ab-branch-card-address" data-branch-address="">City Council Street, next to Raneen, El Moassasa, Shubra</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.1144776,31.2433767" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="aswan-el-corniche" data-region="aswan" data-lat="24.1115821" data-lng="32.8996973" data-search="El Corniche Aswan Nile Corniche">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Aswan</span>
+          <strong data-branch-name="">El Corniche</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Nile Corniche</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=24.1115821,32.8996973" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="aswan-el-zahraa-aswan" data-region="aswan" data-lat="24.0927149" data-lng="32.912564" data-search="El Zahraa, Aswan Aswan Opposite Aswan University Hospital">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Aswan</span>
+          <strong data-branch-name="">El Zahraa, Aswan</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Opposite Aswan University Hospital</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=24.0927149,32.912564" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="aswan-el-akkad" data-region="aswan" data-lat="24.0731549" data-lng="32.8899718" data-search="El Akkad Aswan El Sadat Road, next to the Agricultural Development and Credit Bank">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Aswan</span>
+          <strong data-branch-name="">El Akkad</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Sadat Road, next to the Agricultural Development and Credit Bank</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=24.0731549,32.8899718" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="monufia-el-sadat-1" data-region="monufia" data-lat="30.363249" data-lng="30.5097105" data-search="El Sadat 1 Monufia Mehwar Services, plot 30, Second District, next to Etisalat and Bavaria">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Monufia</span>
+          <strong data-branch-name="">El Sadat 1</strong>
+          <span class="ab-branch-card-address" data-branch-address="">Mehwar Services, plot 30, Second District, next to Etisalat and Bavaria</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=30.363249,30.5097105" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+    <article class="ab-branch-card" data-branch-id="assiut-el-hilaly" data-region="assiut" data-lat="27.190998" data-lng="31.1879179" data-search="El Hilaly Assiut El Gomhouria Street, opposite Vodafone">
+      <button type="button" class="ab-branch-select" data-branch-select="" aria-haspopup="dialog" aria-controls="ab-branch-dialog">
+        <span class="ab-branch-card-icon" aria-hidden="true">
+          <i class="fa fa-map-marker"/>
+        </span>
+        <span class="ab-branch-card-copy">
+          <span class="ab-branch-card-region" data-branch-region="">Assiut</span>
+          <strong data-branch-name="">El Hilaly</strong>
+          <span class="ab-branch-card-address" data-branch-address="">El Gomhouria Street, opposite Vodafone</span>
+          <span class="ab-branch-distance" data-branch-distance="" hidden="hidden"/>
+        </span>
+        <i class="fa fa-angle-left ab-branch-card-arrow" aria-hidden="true"/>
+      </button>
+      <a href="https://www.google.com/maps?q=27.190998,31.1879179" class="ab-branch-card-directions" target="_blank" rel="noopener noreferrer">Get directions</a>
+    </article>
+  </template>
+</odoo>

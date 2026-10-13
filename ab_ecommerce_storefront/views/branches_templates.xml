@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="branches_page" name="Abdin Branch Locator">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Our Branches</t>
+            <div id="wrap" class="ab-branches-page" data-ab-branches="">
+                <section class="ab-branches-intro container">
+                    <nav aria-label="Breadcrumb" class="ab-branches-breadcrumb">
+                        <a href="/">Home</a><span aria-hidden="true">/</span><span aria-current="page">Our Branches</span>
+                    </nav>
+                    <div class="ab-branches-heading">
+                        <div><span class="ab-branches-eyebrow">ALWAYS CLOSE TO YOU</span><h1>Find your Abdin branch</h1><p>Choose a pin on the map. We'll help you get there.</p></div>
+                        <div class="ab-branches-facts"><span><strong>42</strong> <span>listed branches</span></span><span><strong>9</strong> <span>governorates</span></span></div>
+                    </div>
+                </section>
+                <section class="ab-branches-locator container" aria-label="Branch finder">
+                    <div class="ab-branches-toolbar">
+                        <div class="ab-branches-search"><label for="ab-branch-search">Search branches</label><div><i class="fa fa-search" aria-hidden="true"/><input id="ab-branch-search" type="search" placeholder="Branch name, area or street" autocomplete="off"/><button type="button" data-branch-clear="" aria-label="Clear search" hidden="hidden"><i class="fa fa-times" aria-hidden="true"/></button></div></div>
+                        <div class="ab-branches-region"><label for="ab-branch-region">Governorate</label><select id="ab-branch-region"><option value="">All governorates</option><option value="cairo">Cairo</option><option value="giza">Giza</option><option value="qalyubia">Qalyubia</option><option value="monufia">Monufia</option><option value="hurghada">Red Sea · Hurghada</option><option value="assiut">Assiut</option><option value="sohag">Sohag</option><option value="qena">Qena</option><option value="aswan">Aswan</option></select></div>
+                        <button type="button" class="ab-branches-near" data-branch-near=""><i class="fa fa-location-arrow" aria-hidden="true"/><span>Nearest to me</span></button>
+                    </div>
+                    <div class="ab-branches-subbar"><p data-branch-count="" role="status" aria-live="polite">42 listed branches</p><div class="ab-branches-view" role="group" aria-label="Branch display"><button type="button" data-branch-view="map" aria-pressed="true"><i class="fa fa-map-o" aria-hidden="true"/> Map</button><button type="button" data-branch-view="list" aria-pressed="false"><i class="fa fa-list-ul" aria-hidden="true"/> List</button></div><button type="button" class="ab-branches-reset" data-branch-reset="">Show all branches</button></div>
+                    <p class="ab-branches-status" data-branch-status="" role="status" hidden="hidden"/>
+                    <div class="ab-branches-workspace" data-branch-workspace="" data-view="map">
+                        <div class="ab-branches-map-wrap">
+                            <div class="ab-branches-map" data-branch-map="" role="region" aria-label="Map of Abdin branches"/>
+                            <div class="ab-branches-map-hint"><img t-att-src="website.image_url(website, 'logo')" alt="" width="42" height="24"/><span>Select a branch to explore</span></div>
+                            <div class="ab-branches-loading" data-branch-loading=""><span class="ab-branches-spinner"/><span>Loading the map...</span></div>
+                        </div>
+                        <aside class="ab-branches-results" aria-label="Branches">
+                            <div class="ab-branches-results-heading"><h2>Explore our branches</h2><span>Find us across Egypt</span></div>
+                            <div class="ab-branches-list" data-branch-list=""><t t-call="ab_ecommerce_storefront.branches_directory"/></div>
+                            <div class="ab-branches-empty" data-branch-empty="" hidden="hidden"><i class="fa fa-search" aria-hidden="true"/><h3>No branches found</h3><p>Try another area or choose a different governorate.</p><button type="button" data-branch-reset="">Clear filters</button></div>
+                        </aside>
+                        <dialog id="ab-branch-dialog" class="ab-branch-profile" data-branch-profile="" aria-labelledby="ab-branch-profile-name">
+                            <div class="ab-branch-profile-cover"><span class="ab-branch-sheet-handle" aria-hidden="true"/><button type="button" class="ab-branch-close" data-branch-close="" aria-label="Close branch details"><i class="fa fa-times" aria-hidden="true"/></button><img t-att-src="website.image_url(website, 'logo')" alt="Abdin Pharmacies" width="180" height="90"/><span>YOUR NEIGHBOURHOOD PHARMACY</span></div>
+                            <div class="ab-branch-profile-body"><span class="ab-branch-region-tag" data-profile-region=""/><h2 id="ab-branch-profile-name" tabindex="-1"/><p class="ab-branch-distance" data-profile-distance="" hidden="hidden"/><div class="ab-branch-info"><i class="fa fa-map-marker" aria-hidden="true"/><div><h3>Branch address</h3><p data-profile-address=""/></div></div><div class="ab-branch-info"><i class="fa fa-clock-o" aria-hidden="true"/><div><h3>Before your visit</h3><p>Call our hotline to confirm opening hours and available services.</p></div></div><div class="ab-branch-actions"><a class="btn btn-primary" data-profile-directions="" target="_blank" rel="noopener noreferrer"><i class="fa fa-location-arrow" aria-hidden="true"/> Get directions</a><a href="tel:19036" class="btn ab-branch-call"><i class="fa fa-phone" aria-hidden="true"/><span>Call hotline</span><bdi>19036</bdi></a></div><button type="button" class="ab-branch-back" data-branch-close=""><i class="fa fa-list-ul" aria-hidden="true"/> Back to branches</button></div>
+                        </dialog>
+                    </div>
+                    <noscript><p>Browse the branch list and use the directions links. Enable JavaScript to explore the map.</p></noscript>
+                    <div class="ab-branches-help"><span><i class="fa fa-headphones" aria-hidden="true"/> Need help finding a branch?</span><a href="tel:19036"><span>Call us</span> <bdi>19036</bdi><i class="fa fa-phone" aria-hidden="true"/></a></div>
+                </section>
+            </div>
+        </t>
+    </template>
+    <record id="branches_website_page" model="website.page">
+        <field name="name">Our Branches</field>
+        <field name="url">/branches</field>
+        <field name="view_id" ref="branches_page"/>
+        <field name="is_published" eval="True"/>
+        <field name="website_indexed" eval="True"/>
+    </record>
+</odoo>

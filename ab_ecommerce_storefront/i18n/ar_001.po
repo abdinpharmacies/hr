@@ -337,6 +337,7 @@ msgstr "الأقسام"
 msgid "Explore"
 msgstr "استكشف"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Call hotline"
@@ -977,6 +978,7 @@ msgstr "عن عابدين"
 msgid "Who We Are"
 msgstr "من نحن"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Our Branches"
@@ -1744,9 +1746,13 @@ msgstr "رقم الموبايل"
 
 #. module: ab_ecommerce_storefront
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_prescription_order__state__new
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__new
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_contact_message__state__new
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_prescription_stage__new
 msgid "New"
 msgstr "جديد"
 
@@ -3245,6 +3251,7 @@ msgstr "المعرّف"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__activity_exception_icon
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__activity_exception_icon
 msgid "Icon"
 msgstr "الأيقونة"
 
@@ -6357,6 +6364,16 @@ msgid "Shop offers"
 msgstr "عرض العروض"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_shell_abdin
+msgid "close"
+msgstr "إغلاق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Location"
+msgstr "منطقة التوصيل"
+
+#. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
@@ -6381,6 +6398,22 @@ msgstr "القاهرة"
 msgid "Giza"
 msgstr "الجيزة"
 
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Alexandria"
+msgstr "الإسكندرية"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Qalyubia"
+msgstr "القليوبية"
+
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #. module: ab_ecommerce_storefront
@@ -6389,6 +6422,15 @@ msgstr "الجيزة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 msgid "Sohag"
 msgstr "سوهاج"
+
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Assiut"
+msgstr "أسيوط"
 
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
@@ -6481,9 +6523,1355 @@ msgid "Abdin Pharmacies Pharma."
 msgstr "صيدليات عابدين فارما."
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "%s branches found"
+msgstr "%s فرع مطابق للبحث"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "%s km away · straight-line distance"
+msgstr "على بُعد %s كم · مسافة مباشرة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "42 listed branches"
+msgstr "42 فرع في الدليل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<i class=\"fa fa-list-ul\" aria-hidden=\"true\"/> Back to branches"
+msgstr "<i class=\"fa fa-list-ul\" aria-hidden=\"true\"/> رجوع للفروع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<i class=\"fa fa-list-ul\" aria-hidden=\"true\"/> List"
+msgstr "<i class=\"fa fa-list-ul\" aria-hidden=\"true\"/> القائمة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/> Get directions"
+msgstr "<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/> الاتجاهات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/><span>Nearest to "
+"me</span>"
+msgstr ""
+"<i class=\"fa fa-location-arrow\" aria-hidden=\"true\"/><span>الأقرب "
+"لي</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<i class=\"fa fa-map-o\" aria-hidden=\"true\"/> Map"
+msgstr "<i class=\"fa fa-map-o\" aria-hidden=\"true\"/> الخريطة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/><span>Call "
+"hotline</span><bdi>19036</bdi>"
+msgstr ""
+"<i class=\"fa fa-phone\" aria-hidden=\"true\"/><span>الخط "
+"الساخن</span><bdi>19036</bdi>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<select id=\"ab-branch-region\"><option value=\"\">All "
+"governorates</option><option value=\"cairo\">Cairo</option><option "
+"value=\"giza\">Giza</option><option "
+"value=\"qalyubia\">Qalyubia</option><option "
+"value=\"monufia\">Monufia</option><option value=\"hurghada\">Red Sea · "
+"Hurghada</option><option value=\"assiut\">Assiut</option><option "
+"value=\"sohag\">Sohag</option><option value=\"qena\">Qena</option><option "
+"value=\"aswan\">Aswan</option></select>"
+msgstr ""
+"<select id=\"ab-branch-region\"><option value=\"\">كل "
+"المحافظات</option><option value=\"cairo\">القاهرة</option><option "
+"value=\"giza\">الجيزة</option><option "
+"value=\"qalyubia\">القليوبية</option><option "
+"value=\"monufia\">المنوفية</option><option value=\"hurghada\">البحر الأحمر ·"
+" الغردقة</option><option value=\"assiut\">أسيوط</option><option "
+"value=\"sohag\">سوهاج</option><option value=\"qena\">قنا</option><option "
+"value=\"aswan\">أسوان</option></select>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<span aria-hidden=\"true\">/</span><span aria-current=\"page\">Our "
+"Branches</span>"
+msgstr "<span aria-hidden=\"true\">/</span><span aria-current=\"page\">فروعنا</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Assiut</span>\n"
+"          <strong data-branch-name=\"\">El Hilaly</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Gomhouria Street, opposite Vodafone</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">أسيوط</span>\n"
+"          <strong data-branch-name=\"\">الهلالي اسيوط</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الجمهورية أمام فرع فودافون</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Aswan</span>\n"
+"          <strong data-branch-name=\"\">El Akkad</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Sadat Road, next to the Agricultural Development and Credit Bank</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">أسوان</span>\n"
+"          <strong data-branch-name=\"\">العقاد اسوان</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">طريق السادات بجوار بنك ت / التنمية والائتمان الزراعي</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Aswan</span>\n"
+"          <strong data-branch-name=\"\">El Corniche</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Nile Corniche</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">أسوان</span>\n"
+"          <strong data-branch-name=\"\">الكورنيش اسوان</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">كورنيش النيل</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Aswan</span>\n"
+"          <strong data-branch-name=\"\">El Zahraa, Aswan</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Opposite Aswan University Hospital</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">أسوان</span>\n"
+"          <strong data-branch-name=\"\">الزهراء اسوان</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">أمام مستشفى أسوان الجامعي</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Cairo</span>\n"
+"          <strong data-branch-name=\"\">El Ataba</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">2 Sherif Pasha Street, El Ataba</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">القاهرة</span>\n"
+"          <strong data-branch-name=\"\">العتبة القاهرة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">2 شارع شريف باشا - العتبة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Cairo</span>\n"
+"          <strong data-branch-name=\"\">Genena Mall</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Nasr City, El Batrawy Square, Ibrahim Shawky Street, Ahmed Hosny Street, Ismail El Qabbany Street, Abbas El Akkad Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">القاهرة</span>\n"
+"          <strong data-branch-name=\"\">جنينة مول القاهرة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">مدينة نصر - ميدان البطراوي - شارع إبراهيم شوقي - شارع أحمد حسني – شارع إساعيل القباني – شارع عباس العقاد</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Cairo</span>\n"
+"          <strong data-branch-name=\"\">Heliopolis</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">76 El Hegaz Street, Heliopolis</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">القاهرة</span>\n"
+"          <strong data-branch-name=\"\">هليوبوليس القاهرة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">76 شارع الحجاز - هليوبليس - مصر الجديدة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Cairo</span>\n"
+"          <strong data-branch-name=\"\">Maadi 2</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">63 Street 15, next to Maadi Police Station, Sarayat El Maadi</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">القاهرة</span>\n"
+"          <strong data-branch-name=\"\">المعادي 2 القاهرة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">63 شارع 15 ، بجوار قسم المعادى سرايات المعادي</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">El Labini</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">38 El Labini Street, next to Faisal Tunnel</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">اللبيني الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">38 شارع اللبينى بجوار نفق فيصل</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">El Mahatta</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">51 Rabie El Gizi Street, opposite Giza Railway Station</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">المحطة الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">51 شارع ربيع الجيزي - أمام محطة قطار الجيزة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">El Mesaha</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">438 King Faisal Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">المساحة الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">438شارع الملك فيصل</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">Hadayek El Ahram</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">220 A, Fourth Gate entrance, opposite Al Madina Al Monawara Mosque</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">حدائق الاهرام الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">220ع مدخل البوابة الرابعة امام مسجد المدينة المنورة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">Khatam El Morsaleen</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">5 Khatam El Morsaleen Street, opposite Khatam El Morsaleen Mosque</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">خاتم المرسلين الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">5 شارع حاتم المرسلين امام مسجد خاتم المرسلين</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Giza</span>\n"
+"          <strong data-branch-name=\"\">Tersa 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">8 Tersa Street, El Mariouteya</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">الجيزة</span>\n"
+"          <strong data-branch-name=\"\">ترسا 1 الجيزة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">8 شارع ترسا المريوطية</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Monufia</span>\n"
+"          <strong data-branch-name=\"\">El Sadat 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Mehwar Services, plot 30, Second District, next to Etisalat and Bavaria</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">المنوفية</span>\n"
+"          <strong data-branch-name=\"\">السادات 1 المنوفية</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">خدمات محور - 30 قطعة الحي الثاني بجوار اتصالات وبافاريا</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qalyubia</span>\n"
+"          <strong data-branch-name=\"\">El Moassasa</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">City Council Street, next to Raneen, El Moassasa, Shubra</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">القليوبية</span>\n"
+"          <strong data-branch-name=\"\">المؤسسة القليوبية</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع مجلس المدينة ، بجوار فرع رنين ، المؤسسة - شبرا</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">Abu Tesht</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Agrarian Reform Street, next to the Girls' Secondary School</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">ابو تشت قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الإصلاح الزراعي بجوار مدرسة الثانوية بنات</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">El Dolphin</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Dolphin Square, beginning of El Mawqaf Road</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">الدولفين قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">ميدان الدولفين - أول طريق الموقف</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">El Gamaa</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Opposite Sidi Abdel Rahim, next to Koshary El Sadiqan</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">الجامعة قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">أمام سيدي عبد الرحيم - بجوار كشري الصديقان</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">El Hegaz</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Abu Bakr El Siddiq Street, behind El Helal Hospital</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">الحجاز قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع أبو بكر الصديق - خلف مستشفى الهلال</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">El Sebaei</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">26 July, Administrative Control Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">السباعي قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">26 يوليو - شارع الرقابة الإدارية</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">El Teb El Nabawi</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Sidi Omar Square, next to El Faisal School</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">الطب النبوي قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">ميدان سيدي عمر - بجوار مدرسة الفيصل</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Qena</span>\n"
+"          <strong data-branch-name=\"\">Nag Hammadi</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Egypt–Aswan Highway, next to the railway station</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">قنا</span>\n"
+"          <strong data-branch-name=\"\">نجع حمادي قنا</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">طريق مصر أسوان السريع - بجوار محطة السكة الحديد</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Red Sea · Hurghada</span>\n"
+"          <strong data-branch-name=\"\">El Kawthar 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Airport Road extension, El Kawthar banking complex, next to El Mashrabeya Cafeteria</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">البحر الأحمر · الغردقة</span>\n"
+"          <strong data-branch-name=\"\">الكوثر 1 الغردقة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">امتداد المطار - حي الكوثر بمجمع البنوك بجوار كافتيريا المشربية</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Red Sea · Hurghada</span>\n"
+"          <strong data-branch-name=\"\">El Kawthar 2</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">New El Kawthar, next to Awlad Ragab and Best Way</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">البحر الأحمر · الغردقة</span>\n"
+"          <strong data-branch-name=\"\">الكوثر 2 الغردقة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">الكوثر الجديد بجوار أولاد رجب وبيست واي</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Red Sea · Hurghada</span>\n"
+"          <strong data-branch-name=\"\">El Nasr</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">289 El Nasr Street, next to Zahran Mall, El Dahar</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">البحر الأحمر · الغردقة</span>\n"
+"          <strong data-branch-name=\"\">النصر الغردقة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">289 شارع النصر - بجوار زهران مول - الدهار</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Red Sea · Hurghada</span>\n"
+"          <strong data-branch-name=\"\">Sheraton</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Sheraton Street, next to Star Fish Restaurant</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">البحر الأحمر · الغردقة</span>\n"
+"          <strong data-branch-name=\"\">شيراتون الغردقة</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع شيراتون بجوار مطعم ستار فيش</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">Dar El Salam 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Dar El Salam, El Souq Street extension</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">دار السلام 1 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">دار السلام - امتداد شارع السوق</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">Dar El Salam 2</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Dar El Salam, Agricultural Administration Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">دار السلام 2 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">دار السلام - شارع الإدارة الزراعية</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Balyana El Helal</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Gomhouria Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">البلينا الهلال سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الجمهورية</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Balyana El Hussein</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Hussein, 7 Khor El Sahel Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">البلينا الحسين سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">الحسين - 7 شارع خور الساحل</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Gomhouria</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Gomhouria Street, opposite El Gomhouria Mall</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الجمهورية سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الجمهورية – أمام الجمهورية مول</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Orouba 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Orouba Square</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">العروبة 1 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">ميدان العروبة </span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Shaheed 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Shaheed Street extension, opposite Dar El Teb Hospital</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الشهيد 1 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">امتداد شارع الشهيد أمام مستشفى دار الطب</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Shaheed 2</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Behind El Shaheed Mosque</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الشهيد 2 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">خلف مسجد الشهيد</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Sharq</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Sohag–Akhmim Road, next to Casanova, east of Arab El Atawla School</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الشرق سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">طريق سوهاج أخميم بجوار كازانوفا شرق مدرسة عرب الأطاولة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Taminat</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Sohag–Assiut Road</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">التامينات سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">طريق سوهاج اسيوط </span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">El Zahraa, Sohag</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Zahraa Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الزهراء سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الزهراء</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">Judges Tower</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">Next to Sohag University and the Police Club</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">برج القضاة سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">بجوار جامعة سوهاج بجوار نادي الشرطة</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">Tahta 1</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Geish Street extension, opposite El Shefaa Hospital</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">طهطا 1 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع امتداد الجيش امام مستشفى الشفاء</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">Tahta 2</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Gehad Street</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">طهطا 2 سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">شارع الجهاد</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">Sohag</span>\n"
+"          <strong data-branch-name=\"\">West Corniche</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">El Khodeiry Tower, opposite Bank of Alexandria, next to the Education Directorate</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+msgstr ""
+"<span class=\"ab-branch-card-icon\" aria-hidden=\"true\">\n"
+"          <i class=\"fa fa-map-marker\"/>\n"
+"        </span>\n"
+"        <span class=\"ab-branch-card-copy\">\n"
+"          <span class=\"ab-branch-card-region\" data-branch-region=\"\">سوهاج</span>\n"
+"          <strong data-branch-name=\"\">الكورنيش الغربي سوهاج</strong>\n"
+"          <span class=\"ab-branch-card-address\" data-branch-address=\"\">برج الخضيري امام بنك االسنكدرية بجوار مدرية التربية والتعليم</span>\n"
+"          <span class=\"ab-branch-distance\" data-branch-distance=\"\" hidden=\"hidden\"/>\n"
+"        </span>\n"
+"        <i class=\"fa fa-angle-left ab-branch-card-arrow\" aria-hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<span class=\"ab-branches-eyebrow\">ALWAYS CLOSE TO YOU</span>"
+msgstr "<span class=\"ab-branches-eyebrow\">دايمًا قريبين منك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<span class=\"ab-branches-spinner\"/><span>Loading the map...</span>"
+msgstr "<span class=\"ab-branches-spinner\"/><span>بنحمّل الخريطة...</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<span><i class=\"fa fa-headphones\" aria-hidden=\"true\"/> Need help finding"
+" a branch?</span>"
+msgstr ""
+"<span><i class=\"fa fa-headphones\" aria-hidden=\"true\"/> محتاج مساعدة "
+"تلاقي أقرب فرع؟</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<span><strong>42</strong> <span>listed "
+"branches</span></span><span><strong>9</strong> "
+"<span>governorates</span></span>"
+msgstr ""
+"<span><strong>42</strong> <span>فرع في "
+"الدليل</span></span><span><strong>9</strong> <span>محافظات</span></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"<span>Call us</span> <bdi>19036</bdi><i class=\"fa fa-phone\" aria-"
+"hidden=\"true\"/>"
+msgstr ""
+"<span>اتصل بنا</span> <bdi>19036</bdi><i class=\"fa fa-phone\" aria-"
+"hidden=\"true\"/>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<span>Find us across Egypt</span>"
+msgstr "<span>تلاقينا في محافظات مصر</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<span>Select a branch to explore</span>"
+msgstr "<span>اختار علامة عابدين لتفاصيل الفرع</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "<span>YOUR NEIGHBOURHOOD PHARMACY</span>"
+msgstr "<span>صيدليتك القريبة منك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Before your visit"
+msgstr "قبل ما تزورنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branch address"
+msgstr "عنوان الفرع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branch display"
+msgstr "طريقة عرض الفروع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branch finder"
+msgstr "دليل الفروع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Branch name, area or street"
+msgstr "اسم الفرع، المنطقة أو الشارع"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 msgid "Branches"
 msgstr "الفروع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid ""
+"Branches are sorted by distance from your location. Distances are "
+"approximate."
+msgstr "رتبنا الفروع حسب قربها من موقعك. المسافات تقريبية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid ""
+"Browse the branch list and use the directions links. Enable JavaScript to "
+"explore the map."
+msgstr ""
+"تقدر تتصفح قائمة الفروع وتفتح الاتجاهات. فعّل JavaScript لاستكشاف الخريطة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Call our hotline to confirm opening hours and available services."
+msgstr "اتصل بالخط الساخن للتأكد من مواعيد العمل والخدمات المتاحة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Choose a pin on the map. We'll help you get there."
+msgstr "اختار الفرع على الخريطة، وهنساعدك توصل له."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Clear filters"
+msgstr "مسح الفلاتر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Clear search"
+msgstr "مسح البحث"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Close branch details"
+msgstr "إغلاق تفاصيل الفرع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Explore our branches"
+msgstr "اكتشف فروعنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Find your Abdin branch"
+msgstr "اعرف أقرب فرع لعابدين"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "Finding the closest branches..."
+msgstr "بنحدد أقرب الفروع ليك..."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_directory
+msgid "Get directions"
+msgstr "الاتجاهات"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid ""
+"Location access was declined. You can still search by area or governorate."
+msgstr "لم يتم السماح بتحديد موقعك. تقدر تبحث باسم المنطقة أو المحافظة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Map of Abdin branches"
+msgstr "خريطة فروع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "Map tiles could not load. You can still choose a branch from the list."
+msgstr "تعذّر تحميل تفاصيل الخريطة. تقدر تختار الفرع من القائمة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "No branches found"
+msgstr "مفيش فروع مطابقة للبحث"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Search branches"
+msgstr "ابحث عن فرع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Show all branches"
+msgstr "عرض كل الفروع"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid ""
+"The map is unavailable right now. Browse the branches below or open "
+"directions."
+msgstr "الخريطة مش متاحة دلوقتي. تقدر تتصفح الفروع أو تفتح الاتجاهات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+msgid "Try another area or choose a different governorate."
+msgstr "جرّب اسم منطقة تانية أو اختار محافظة مختلفة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "We couldn't find your location. Try again or search for your area."
+msgstr "مقدرناش نحدد موقعك. جرّب تاني أو ابحث باسم منطقتك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid ""
+"Your browser needs a secure HTTPS connection to use your location. Search by"
+" area or governorate instead."
+msgstr ""
+"تحديد موقعك محتاج اتصال آمن HTTPS. تقدر تبحث باسم المنطقة أو المحافظة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "Zoom in"
+msgstr "تكبير الخريطة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/branches.js:0
+msgid "Zoom out"
+msgstr "تصغير الخريطة"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
