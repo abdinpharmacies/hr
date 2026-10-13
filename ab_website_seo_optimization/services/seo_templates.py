@@ -8,7 +8,7 @@ from .providers import digest, normalized
 
 FACT_KEYS = {'name', 'name_ar', 'manufacturer', 'brand', 'active_ingredients', 'ingredients',
              'strength', 'dosage_form', 'package', 'product_code', 'nutrition', 'directions',
-             'warnings', 'storage', 'indications', 'specifications', 'suitable_for', 'supplier_description'}
+             'warnings', 'storage', 'indications', 'specifications', 'suitable_for', 'supplier_description', 'image_text'}
 SAFE_WORDS = set('product information for reference details listed catalog brand manufacturer package form strength ingredients and with from the a an of in view discover explore available details see about specifications is as pack packed packaged packaging presented comes item single unit this includes code size measures معلومات المنتج عن مرجع رمز تفاصيل بيانات العلامة التجارية الشركة المصنعة العبوة الشكل التركيز المكونات و من في على هذا تعرف استعرض الكتالوج بعبوة عبوة يأتي تأتي ويأتي معبأ يضم تضم قطعة واحدة مقاس بمقاس ومقاس'.split())
 GENERATED_CONNECTORS = set('a an the is as in of with from and comes that pack package form item single unit product information for code brand manufacturer size measures sized packaging packaged و من في على هذا بعبوة عبوة يأتي تأتي ويأتي معبأ ومعبأ الشكل شكل معلومات المنتج عن رمز العبوة العلامة التجارية الشركة المصنعة مقاس بمقاس ومقاس بقياس واحدة مقدار'.split())
 SENSITIVE_FACTS = {'indications', 'directions', 'warnings', 'storage', 'nutrition', 'suitable_for'}
@@ -112,8 +112,8 @@ def deterministic(contract, facts, language, translate):
     for section in available_sections(contract, facts):
         keys = [k for k in section['fact_keys'] if facts.get(k)]
         values = [name if k == 'name' else fact_text(facts[k]) for k in keys]
-        if section['key'] == 'about_product' and any(key in keys for key in ('supplier_description',)):
-            section_content = '\n'.join(fact_text(facts[key]) for key in ('supplier_description',) if key in keys)
+        if section['key'] == 'about_product' and any(key in keys for key in ('supplier_description', 'image_text')):
+            section_content = '\n'.join(fact_text(facts[key]) for key in ('supplier_description', 'image_text') if key in keys)
         elif section['key'] == 'about_product' and package and 'name' in keys and 'package' in keys:
             section_content = about
         elif section['key'] == 'product_information':
@@ -296,6 +296,8 @@ def validate(content, contract, facts, language):
         add(errors, 'non_descriptive:keywords')
     if content.get('content_kind') == 'GENERATED_TEXT':
         add(warnings, 'wording_requires_evidence_review')
+    if facts.get('image_text'):
+        add(warnings, 'image_text_requires_review')
     if len([k for k in facts if k not in ('name', 'name_ar', 'product_code')]) < 2:
         add(warnings, 'insufficient_product_facts')
     return {'status': 'rejected' if errors else 'review' if warnings else 'passed', 'errors': errors, 'warnings': warnings,

@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 
 import requests
 from lxml import etree
+from PIL import Image
 
 from odoo import fields
 from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
@@ -47,6 +48,42 @@ class TestEnrichment(TransactionCase):
         for language in ("en_US", "ar_001"):
             result = self.env["ab.product.seo"].with_context(read_arch_from_file=True, lang=language).get_view(view_type="form")
             self.assertEqual(etree.fromstring(result["arch"]).tag, "form")
+
+    def test_groq_reads_text_only_from_real_product_image(self):
+        image = io.BytesIO()
+        Image.new('RGB', (8, 8), (255, 255, 255)).save(image, format='PNG')
+        self.template.image_1920 = base64.b64encode(image.getvalue())
+        provider = self.provider(key='groq')
+        service = self.env['ab.website.product.image.sync.service']
+        response = {'choices': [{'message': {'content': 'Enrichment Example 20 TAB'}}], 'usage': {'total_tokens': 50}}
+        with patch.object(type(service), '_placeholder_image_sha256', return_value='placeholder'), patch.object(type(provider), '_request', return_value=response) as request:
+            visible, checksum = provider._read_product_image_text(self.template)
+        self.assertEqual(visible, 'Enrichment Example 20 TAB')
+        self.assertTrue(checksum)
+        self.assertEqual(request.call_args.kwargs['model'], 'qwen/qwen3.8-27b')
+        self.assertEqual(request.call_args.kwargs['payload']['messages'][0]['content'][1]['type'], 'image_url')
+        with patch.object(type(service), '_placeholder_image_sha256', return_value=checksum), patch.object(type(provider), '_request') as request:
+            self.assertEqual(provider._read_product_image_text(self.template), ('', ''))
+        request.assert_not_called()
+
+    def test_image_text_is_used_only_with_selected_groq_ai(self):
+        assistant = self.provider(key='groq')
+        pipeline = self.pipeline([])
+        job = self.job(pipeline, assistant_id=assistant.id)
+        item = job.work_item_ids
+        with patch.object(type(assistant), '_read_product_image_text', return_value=('Enrichment Example 20 TAB', 'image-checksum')) as read:
+            facts, provenance = item._collect_facts(item._identity(), pipeline)
+        self.assertEqual(facts['image_text'], 'Enrichment Example 20 TAB')
+        self.assertEqual(read.call_count, 1)
+        evidence = self.env['ab_seo_enrichment_fact'].browse(provenance).filtered(lambda row: row.field_name == 'image_text')
+        self.assertEqual(evidence.content_kind, 'UNVERIFIED_TEXT')
+        self.assertEqual(evidence.source_version, 'image-checksum')
+        deterministic_job = self.job(pipeline, generation_mode='deterministic')
+        deterministic_item = deterministic_job.work_item_ids
+        with patch.object(type(assistant), '_read_product_image_text') as read:
+            facts, _provenance = deterministic_item._collect_facts(deterministic_item._identity(), pipeline)
+        self.assertNotIn('image_text', facts)
+        read.assert_not_called()
 
     def response(self, status=200, payload=None, headers=None):
         response = Mock()
@@ -561,6 +598,14 @@ class TestEnrichment(TransactionCase):
         with TestCase.assertRaises(self, ProviderFailure):
             provider._reserve(11)
         self.assertEqual(provider.used_today, 0)
+
+    def test_generation_quota_estimates_tokens_instead_of_counting_bytes(self):
+        provider = self.provider(tpm_limit=8000, max_output_tokens=3000)
+        prompt = "x" * 12000
+        with patch("requests.request", return_value=self.response(payload=self.completion())) as http:
+            provider._request("POST", payload={"prompt": prompt}, generation=True)
+        self.assertEqual(http.call_count, 1)
+        self.assertEqual(provider.minute_tokens, 30)
 
     def test_shared_quota(self):
         root = self.provider(daily_limit=1)

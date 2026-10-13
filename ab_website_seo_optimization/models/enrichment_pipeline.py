@@ -164,6 +164,20 @@ class EnrichmentWorkItem(models.Model):
         provenance = []
         for key, value in facts.items():
             provenance.append(self._evidence(key, value, accepted=True).id)
+        assistant = self.job_id.assistant_id
+        if assistant and assistant.provider == 'groq' and self.job_id.generation_mode == 'ai' and pipeline.ai_mode != 'off':
+            try:
+                image_text, image_checksum = assistant.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=self.product_id.id)._read_product_image_text(self.product_id)
+            except ProviderFailure as error:
+                assistant._call_log('image_ocr_fallback', time.monotonic(), error=error.code)
+            else:
+                if image_text:
+                    facts['image_text'] = image_text
+                    evidence = self._evidence('image_text', image_text, provider=assistant,
+                                              record={'source_id': 'product.template:%s:image_1920' % self.product_id.id, 'source_version': image_checksum},
+                                              matching={'matched_by': 'product_image', 'matched_identifier': self.product_id.ab_product_id.code, 'match_score': 1.0},
+                                              accepted=True, kind='UNVERIFIED_TEXT')
+                    provenance.append(evidence.id)
         for provider in pipeline._providers():
             provider = provider.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=self.product_id.id)
             spec = CATALOG[provider.provider]

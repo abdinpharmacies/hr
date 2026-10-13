@@ -1,3 +1,5 @@
+import base64
+import binascii
 import json
 import io
 import os
@@ -273,7 +275,7 @@ class EnrichmentProvider(models.Model):
             raise ProviderFailure("https_required")
         return url
 
-    def _request(self, method, path="", payload=None, params=None, model=None, generation=False, operation="lookup", response_format="json"):
+    def _request(self, method, path="", payload=None, params=None, model=None, generation=False, operation="lookup", response_format="json", input_token_estimate=None):
         self.ensure_one()
         key = self._credential()
         if (self.source_scope == "generation" and self.provider != "local_ai" or self.provider in ("ready_api", "usda_fdc") or self.authentication_required) and not key:
@@ -289,7 +291,9 @@ class EnrichmentProvider(models.Model):
                 params["api_key"] = key
             else:
                 headers["x-goog-api-key" if self.provider == "google_gemini" else "Authorization"] = key if self.provider == "google_gemini" else "Bearer " + key
-        reserved = len(json.dumps(payload or {}, ensure_ascii=False).encode()) + self.max_output_tokens if generation else 0
+        payload_size = len(json.dumps(payload or {}, ensure_ascii=False).encode())
+        estimated_input_tokens = input_token_estimate if input_token_estimate is not None else (payload_size + 3) // 4
+        reserved = estimated_input_tokens + self.max_output_tokens if generation else 0
         for attempt in range(self.retry_count + 1):
             start = time.monotonic()
             status = 0
@@ -404,6 +408,47 @@ class EnrichmentProvider(models.Model):
             raise
         self.env["ab_seo_cache"]._put(self, "lookup", cache_key, found)
         return found
+
+    def _read_product_image_text(self, product):
+        self.ensure_one()
+        if self.provider != 'groq' or not self.active or not self.allow_remote or not product.image_1920:
+            return '', ''
+        images = self.env['ab.website.product.image.sync.service']
+        checksum = images._template_image_sha256(product)
+        placeholder = images._placeholder_image_sha256()
+        if not checksum or checksum == placeholder or (not placeholder and not product.website_image_source_checksum):
+            return '', ''
+        try:
+            raw = base64.b64decode(product.image_1920, validate=True)
+        except (TypeError, ValueError, binascii.Error):
+            return '', ''
+        if not raw or len(raw) > 15 * 1024 * 1024:
+            return '', ''
+        mime = 'image/jpeg' if raw.startswith(b'\xff\xd8') else 'image/png' if raw.startswith(b'\x89PNG') else 'image/webp' if raw.startswith(b'RIFF') and raw[8:12] == b'WEBP' else ''
+        if not mime:
+            return '', ''
+        model = 'qwen/qwen3.8-27b'
+        prompt = 'Transcribe only text visibly printed on this product package. Return the text alone. Do not infer ingredients, benefits, usage, warnings or translations. Return NONE if no text is readable.'
+        key = digest([product.id, checksum, model, prompt])
+        cache = self.env['ab_seo_cache']._get(self, 'image_ocr', key)
+        if cache and not cache.error_type:
+            return str((cache.payload or {}).get('text') or ''), checksum
+        payload = {'model': model, 'messages': [{'role': 'user', 'content': [
+            {'type': 'text', 'text': prompt},
+            {'type': 'image_url', 'image_url': {'url': 'data:%s;base64,%s' % (mime, product.image_1920.decode() if isinstance(product.image_1920, bytes) else product.image_1920)}},
+        ]}], 'temperature': 0, 'max_tokens': 500}
+        response = self._request('POST', payload=payload, model=model, generation=True, operation='image_ocr', input_token_estimate=2048 + len(prompt) // 4)
+        visible, _usage = ai_response(self.provider, response)
+        visible = visible.strip()[:1200]
+        identity_words = set(normalized(product.name).split())
+        visible_words = set(normalized(visible).split())
+        code = normalized(product.ab_product_id.code)
+        if not visible or normalized(visible) == 'none' or len(identity_words & visible_words) < 2 and code not in visible_words:
+            visible = ''
+        if visible and visible_words <= identity_words:
+            visible = ''
+        self.env['ab_seo_cache']._put(self, 'image_ocr', key, {'text': visible})
+        return visible, checksum
 
     def _generate_grounded(self, name, language, facts, provenance, prompt_version, contract=None, category_context=None):
         self.ensure_one()

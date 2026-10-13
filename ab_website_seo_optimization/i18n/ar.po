@@ -989,6 +989,7 @@ msgstr "مسلسل Eplus"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__result_status__error
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization_line__status__error
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_xlsx_import_line__status__error
 msgid "Error"
 msgstr "خطأ"
 
