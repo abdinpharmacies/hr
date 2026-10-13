@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ContractProductOrigin(models.Model):
@@ -8,6 +8,17 @@ class ContractProductOrigin(models.Model):
     contract_id = fields.Many2one('ab_contract')
     product_card_id = fields.Many2one('ab_product_card')
     discount = fields.Float(string='Discount %')
+
+    @api.constrains('contract_id', 'discount', 'product_card_id')
+    def _check_contract_promotions(self):
+        self.mapped('contract_id')._check_allow_promotions()
+
+    def write(self, vals):
+        previous_contracts = self.mapped('contract_id')
+        result = super().write(vals)
+        if {'contract_id', 'discount', 'product_card_id'} & vals.keys():
+            (previous_contracts | self.mapped('contract_id'))._check_allow_promotions()
+        return result
 
     _sql_constraints = [
         (
