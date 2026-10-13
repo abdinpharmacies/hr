@@ -1,0 +1,36 @@
+	Concept                             	أنت بتعمل إيه فعليًا؟
+1	AGENTS.md / Rules                     	تحدد قواعد العمل في المشروع
+2	AGENTS.override.md                    	تعمل override لقواعد موروثة
+3	User-wide Instructions               	قواعد عامة لكل مشاريعك
+4	Skills                              	تعلم الـ agent workflow متخصص
+5	Skill Resources                        	تزود الـ skill بالمراجع والقوالب
+6	Skill Scripts                         	تخلي الـ skill ينفذ automation
+7	Subagents                            	تفوض جزء من المهمة لـ agent متخصص
+8	Subagent Instructions               	تحدد شخصية/دور/حدود الـ subagent
+9	Handoffs                              	تنقل المهمة بين agents
+10	MCP Servers                         	تضيف external capabilities
+11	MCP Tools                            	العمليات التي يستطيع تنفيذها عبر MCP
+12	MCP Resources                       	البيانات التي يستطيع قراءتها
+13	MCP Prompts             	            prompts reusable يوفرها MCP
+14	Hooks                               	تشغل commands تلقائيًا عند lifecycle events
+15	Plugins                 	            تجمع skills + MCP + hooks وغيرها
+16	Plugin Configuration                	تتحكم في مكونات وسلوك plugin
+17	Configuration                       	تتحكم في model/sandbox/approval/MCP/etc.
+18	Profiles                            	setups مختلفة مثل odoo, flutter, react
+19	Modes                               	تحدد طريقة التشغيل مثل Plan/Default
+20	Tools                               	القدرات التي يستطيع agent استخدامها
+21	Tool Permissions                    	تحدد أي tools مسموحة
+22	Approvals                   	        تحدد متى يحتاج موافقة
+23	Sandbox / Workspace Boundaries	        تحدد حدود filesystem/network/execution
+24	Guardrails / Policies               	تمنع سلوكيات أو actions معينة
+25	Task / Spec Files                   	تعطي agent specification لمهمة كبيرة
+26	Reference Files                     	knowledge/context ثابت للمشروع
+27	Prompt Templates                    	prompts قابلة لإعادة الاستخدام
+28	Plans / Checklists                  	توجيه خطوات التنفيذ ومعايير الإكمال
+29	Automations                         	تجعل workflow يعمل تلقائيًا
+30	Automation Triggers / Schedules     	تحدد متى يبدأ الـ automation
+31	Evals                               	تختبر هل agent/skill نفذ المطلوب
+32	Project Conventions                 	coding/architecture/testing/Git rules
+33	Decision Logs                       	تمنع agent من إعادة اتخاذ قرارات معمارية محسومة
+34	Environment Variables               	تتحكم في runtime/configuration
+35	Secrets / Credentials               	تمكن integrations من الوصول للخدمات بشكل آمن
