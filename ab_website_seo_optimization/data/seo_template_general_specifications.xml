@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seo_template_general_specifications" model="ab_seo_template_section">
+        <field name="template_id" ref="seo_template_general"/>
+        <field name="sequence" eval="15"/>
+        <field name="key">specifications</field>
+        <field name="title">Specifications</field>
+        <field name="policy">optional</field>
+        <field name="fact_keys" eval="['specifications']"/>
+    </record>
+</odoo>

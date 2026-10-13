@@ -59,6 +59,7 @@ msgstr ""
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/seo_assistant.py:0
+#: code:addons/ab_website_seo_optimization/models/enrichment_provider.py:0
 msgid "%s has no base URL."
 msgstr "لا يحتوي %s على رابط أساس."
 
@@ -71,18 +72,21 @@ msgstr "لا يحتوي %s على مسار نقطة نهاية."
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/seo_assistant.py:0
+#: code:addons/ab_website_seo_optimization/models/enrichment_provider.py:0
 msgid "%s has no model name."
 msgstr "لا يحتوي %s على اسم نموذج."
 
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/seo_assistant.py:0
+#: code:addons/ab_website_seo_optimization/models/enrichment_provider.py:0
 msgid "%s is archived."
 msgstr "%s مؤرشف."
 
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/seo_assistant.py:0
+#: code:addons/ab_website_seo_optimization/models/enrichment_provider.py:0
 msgid "%s is configured but no API key is stored."
 msgstr "تم إعداد %s ولكن لا يوجد مفتاح API محفوظ."
 
@@ -191,6 +195,7 @@ msgstr "منتج عابدين"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_match__status__accepted
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__accepted
 msgid "Accepted"
 msgstr "مقبول"
 
@@ -202,6 +207,7 @@ msgid "Action Needed"
 msgstr "يتطلب إجراء"
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__active
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__active
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__active
@@ -212,6 +218,10 @@ msgstr "يتطلب إجراء"
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_seo_assistant_search
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_bulk_optimization_search
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_search
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__active
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__active
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__active
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__active
 msgid "Active"
 msgstr "نشط"
 
@@ -441,6 +451,7 @@ msgstr "حد الدفعة"
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_bulk_optimization.py:0
+#: code:addons/ab_website_seo_optimization/models/enrichment_pipeline.py:0
 msgid "Batch limit must be greater than zero."
 msgstr "يجب أن يكون حد الدفعة أكبر من صفر."
 
@@ -590,6 +601,8 @@ msgstr "اختصار سياق المساعد"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__company_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__company_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -605,8 +618,8 @@ msgid ""
 "Configure the Ready API key under SEO Optimization > Settings > Data Sources"
 " before importing."
 msgstr ""
-"قم بتهيئة مفتاح Ready API ضمن تحسين محركات البحث > الإعدادات > مصادر "
-"البيانات قبل الاستيراد."
+"قم بتهيئة مفتاح Ready API ضمن SEO > الإعدادات > مصادر البيانات قبل "
+"الاستيراد."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model,name:ab_website_seo_optimization.model_ab_product_seo_optimize_confirm_wizard
@@ -724,6 +737,7 @@ msgstr "حد الرموز اليومي"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__assistant_type__data_source
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__provider_type__data_source
 msgid "Data Source"
 msgstr "مصدر بيانات"
 
@@ -789,11 +803,13 @@ msgstr "اسم العرض"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_drug_eg_import_dashboard__done
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__state__done
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_bulk_optimization_search
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_dataset__state__done
 msgid "Done"
 msgstr "تم"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__dosage_form
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__dosage_form
 msgid "Dosage Form"
 msgstr "شكل الجرعة"
 
@@ -976,6 +992,7 @@ msgstr "خطأ"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__error_count
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__error_count
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__error_count
 msgid "Error Count"
 msgstr "عدد الأخطاء"
 
@@ -1000,8 +1017,11 @@ msgstr ""
 "التفاعلات المبلغ عنها: %(reactions)s."
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__state__failed
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_bulk_optimization_search
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_dataset__state__failed
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__state__failed
 msgid "Failed"
 msgstr "فشل"
 
@@ -1022,6 +1042,7 @@ msgstr ""
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_publish_log__field_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__field_name
 msgid "Field Name"
 msgstr "اسم الحقل"
 
@@ -1208,6 +1229,7 @@ msgstr "لوحة الاستيراد"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_drug_eg_import_dashboard__imported_count
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__imported_count
 msgid "Imported Count"
 msgstr "عدد المستورد"
 
@@ -1262,6 +1284,7 @@ msgstr "الكلمات المفتاحية"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_publish_log__lang_code
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__lang_code
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__lang_code
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__lang_code
 msgid "Lang Code"
 msgstr "كود اللغة"
 
@@ -1412,12 +1435,14 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__manufacturer
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__manufacturer
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_drug_data_search
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__manufacturer
 msgid "Manufacturer"
 msgstr "الشركة المصنعة"
 
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_source_snapshot.py:0
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "Manufacturer: %s"
 msgstr "الشركة المصنعة: %s"
 
@@ -1435,6 +1460,7 @@ msgstr "طريقة المطابقة"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_match__match_score
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__match_score
 msgid "Match Score"
 msgstr "درجة المطابقة"
 
@@ -1508,6 +1534,8 @@ msgstr "SEO ناقص"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__model_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__model_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__model_name
 msgid "Model Name"
 msgstr "اسم النموذج"
 
@@ -1637,6 +1665,7 @@ msgstr "لم يتم توفير اسم منتج للبحث في أحداث مست
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_match__match_method__normalized_name
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__normalized_name
 msgid "Normalized Name"
 msgstr "الاسم الموحد"
 
@@ -1647,6 +1676,7 @@ msgstr "لم يتم التشغيل"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__test_status__not_tested
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__health__untested
 msgid "Not Tested"
 msgstr "لم يتم الاختبار"
 
@@ -1752,6 +1782,8 @@ msgstr "OpenRouter"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_publish_log__operation
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__operation
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__operation
 msgid "Operation"
 msgstr "العملية"
 
@@ -1872,6 +1904,10 @@ msgstr "عدد المعالج"
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_bulk_optimization.py:0
+#: model:ir.model,name:ab_website_seo_optimization.model_product_template
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__product_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__product_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__product_id
 msgid "Product"
 msgstr "المنتج"
 
@@ -1912,6 +1948,13 @@ msgstr "رموز المطالبات اليوم"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__provider
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_cache__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_identifier__provider_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__provider_id
 msgid "Provider"
 msgstr "المزود"
 
@@ -2002,6 +2045,8 @@ msgstr "المنتج المنشور غير مرتبط بمنتج عابدين."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__state__queued
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_dataset__state__queued
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__state__queued
 msgid "Queued"
 msgstr "في قائمة الانتظار"
 
@@ -2132,6 +2177,8 @@ msgstr "الحالة التنظيمية"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__state__rejected
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_match__status__rejected
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_translation__validation_status__rejected
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__validation_status__rejected
 msgid "Rejected"
 msgstr "مرفوض"
 
@@ -2395,6 +2442,7 @@ msgstr "يجب أن تكون أرقام إصدارات SEO فريدة لكل م�
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/product_seo_version.py:0
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "SEO versions are immutable. Create a new version instead."
 msgstr "إصدارات SEO غير قابلة للتعديل. أنشئ إصدارًا جديدًا بدل ذلك."
 
@@ -2452,6 +2500,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_source_snapshot__seo_id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__seo_id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__seo_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__seo_id
 msgid "Seo"
 msgstr "SEO"
 
@@ -2462,6 +2511,9 @@ msgstr "درجة SEO"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_assistant__sequence
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__sequence
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline_step__sequence
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__sequence
 msgid "Sequence"
 msgstr "التسلسل"
 
@@ -2511,6 +2563,7 @@ msgstr ""
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__result_status__skipped
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization_line__status__skipped
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__state__skipped
 msgid "Skipped"
 msgstr "تم التخطي"
 
@@ -2532,7 +2585,9 @@ msgid "Snapshot Date"
 msgstr "تاريخ اللقطة"
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_match__source
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__source_id
 msgid "Source"
 msgstr "المصدر"
 
@@ -2560,6 +2615,7 @@ msgstr "ملخص المصدر"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__source_url
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__source_url
 msgid "Source Url"
 msgstr "رابط المصدر"
 
@@ -2571,13 +2627,17 @@ msgstr "بدء الاستيراد"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__started_at
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__started_at
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_provider_call__started_at
 msgid "Started At"
 msgstr "بدأ في"
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__state
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__state
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_search
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_dataset__state
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_work_item__state
 msgid "State"
 msgstr "الحالة"
 
@@ -2612,6 +2672,15 @@ msgstr "توقف عند حد الطلبات لكل تشغيل. تابع لاحق
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__storage
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_baby_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_beauty_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_device_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_general_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_haircare_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_medicine_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_personal_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_skincare_storage
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_supplement_storage
 msgid "Storage"
 msgstr "التخزين"
 
@@ -2623,6 +2692,7 @@ msgstr "التخزين: %s"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_drug_data__strength
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_source_record__strength
 msgid "Strength"
 msgstr "التركيز"
 
@@ -2779,6 +2849,7 @@ msgstr ""
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_publish_log__version_id
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__version
 msgid "Version"
 msgstr "الإصدار"
 
@@ -2795,6 +2866,15 @@ msgstr "الإصدارات"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__warnings
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_version__warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_baby_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_beauty_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_device_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_general_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_haircare_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_medicine_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_personal_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_skincare_warnings
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_supplement_warnings
 msgid "Warnings"
 msgstr "التحذيرات"
 
@@ -3138,6 +3218,7 @@ msgstr "CosIng"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_pipeline__domain__cosmetic
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_enrichment_domain__cosmetic
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_template__source_domain__cosmetic
 msgid "Cosmetic"
 msgstr "مستحضر تجميل"
 
@@ -3261,6 +3342,7 @@ msgstr "تاريخ التنزيل"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_pipeline__domain__drug
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_enrichment_domain__drug
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_template__source_domain__drug
 msgid "Drug"
 msgstr "دواء"
 
@@ -3453,6 +3535,7 @@ msgstr "اسم الملف"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_pipeline__domain__food
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_enrichment_domain__food
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_template__source_domain__food
 msgid "Food"
 msgstr "غذاء"
 
@@ -3464,6 +3547,7 @@ msgstr "GS1 Verified by GS1"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_pipeline__domain__general
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_enrichment_domain__general
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_template__source_domain__general
 msgid "General"
 msgstr "عام"
 
@@ -3874,13 +3958,28 @@ msgstr "مسار إثراء المنتجات"
 #. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/enrichment_pipeline.py:0
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "Product information for %s."
 msgstr "معلومات المنتج %s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/services/seo_templates.py:0
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s — package: %s."
+msgstr "%s — العبوة: %s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s comes in %s."
+msgstr "%s يأتي بعبوة %s."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__prompt_version
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_enrichment_fact__prompt_version
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_pipeline__prompt_version
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__prompt_version
 msgid "Prompt Version"
 msgstr "إصدار تعليمات التوليد"
 
@@ -4087,9 +4186,13 @@ msgid "Retry Failures"
 msgstr "إعادة محاولة العناصر الفاشلة"
 
 #. module: ab_website_seo_optimization
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_translation__review_required
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__redistribution_allowed__unknown
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__state__review_required
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_translation__validation_status__review
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__data_confidence__review_required
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_work_item__validation_status__review
 msgid "Review Required"
 msgstr "تلزم المراجعة"
 
@@ -4248,6 +4351,7 @@ msgstr "ناجح"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_pipeline__domain__supplement
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_enrichment_domain__supplement
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_template__source_domain__supplement
 msgid "Supplement"
 msgstr "مكمل غذائي"
 
@@ -4477,7 +4581,7 @@ msgstr "المكونات الفعالة"
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template.py:0
 msgid "An active General Product SEO template is required."
-msgstr "يلزم وجود قالب نشط لتحسين محتوى المنتجات العامة."
+msgstr "يلزم وجود قالب SEO نشط للمنتجات العامة."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template__category_ids
@@ -4492,7 +4596,7 @@ msgstr "تطبيق مقترح إعادة التوليد"
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template.py:0
 msgid "Archive SEO templates instead of deleting them."
-msgstr "أرشف قوالب تحسين محركات البحث بدلاً من حذفها."
+msgstr "أرشف قوالب SEO بدلاً من حذفها."
 
 #. module: ab_website_seo_optimization
 #: model:ab_seo_template,rationale:ab_website_seo_optimization.seo_template_baby
@@ -4545,12 +4649,12 @@ msgstr ""
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template.py:0
 msgid "Complete all numeric SEO validation rules."
-msgstr "أكمل جميع قواعد التحقق الرقمية لتحسين محركات البحث."
+msgstr "أكمل جميع قواعد التحقق الرقمية لSEO."
 
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template.py:0
 msgid "Configure an active SEO template before generation."
-msgstr "أعد قالباً نشطاً لتحسين محركات البحث قبل التوليد."
+msgstr "أعد قالباً نشطاً لSEO قبل التوليد."
 
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
@@ -4614,7 +4718,7 @@ msgstr "تقرير التجربة دون توليد"
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_product__ab_seo_template_id
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__ab_seo_template_id
 msgid "Explicit SEO Template"
-msgstr "قالب تحسين محركات البحث المحدد"
+msgstr "قالب SEO المحدد"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__fact_keys
@@ -4922,8 +5026,8 @@ msgid ""
 "Rejected content cannot replace an SEO draft. Correct the facts or template "
 "and regenerate."
 msgstr ""
-"لا يمكن للمحتوى المرفوض أن يحل محل مسودة تحسين محركات البحث. صحح الحقائق أو "
-"القالب ثم أعد التوليد."
+"لا يمكن للمحتوى المرفوض أن يحل محل مسودة SEO. صحح الحقائق أو القالب ثم أعد "
+"التوليد."
 
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
@@ -4962,23 +5066,23 @@ msgstr "راجع جميع ترجمات التجربة قبل اعتمادها."
 #. module: ab_website_seo_optimization
 #: model:ir.model,name:ab_website_seo_optimization.model_ab_seo_template
 msgid "SEO Template"
-msgstr "قالب تحسين محركات البحث"
+msgstr "قالب SEO"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model,name:ab_website_seo_optimization.model_ab_seo_template_section
 msgid "SEO Template Section"
-msgstr "قسم قالب تحسين محركات البحث"
+msgstr "قسم قالب SEO"
 
 #. module: ab_website_seo_optimization
 #: model:ir.actions.act_window,name:ab_website_seo_optimization.action_seo_templates
 #: model:ir.ui.menu,name:ab_website_seo_optimization.menu_seo_templates
 msgid "SEO Templates"
-msgstr "قوالب تحسين محركات البحث"
+msgstr "قوالب SEO"
 
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template.py:0
 msgid "SEO validation rule limits are invalid."
-msgstr "حدود قواعد التحقق لتحسين محركات البحث غير صالحة."
+msgstr "حدود قواعد التحقق لSEO غير صالحة."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.constraint,message:ab_website_seo_optimization.constraint_ab_seo_template_section_unique_key
@@ -5071,6 +5175,7 @@ msgstr "مجال المصدر"
 
 #. module: ab_website_seo_optimization
 #: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_device_specifications
+#: model:ab_seo_template_section,title:ab_website_seo_optimization.seo_template_general_specifications
 msgid "Specifications"
 msgstr "المواصفات"
 
@@ -5170,7 +5275,7 @@ msgstr "لا يوجد مقترح قالب غير مطبق."
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "This SEO proposal is being processed. Try again shortly."
-msgstr "تجري معالجة مقترح تحسين محركات البحث هذا. حاول مرة أخرى بعد قليل."
+msgstr "تجري معالجة مقترح SEO هذا. حاول مرة أخرى بعد قليل."
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_seo_template_section__title
@@ -5292,9 +5397,8 @@ msgstr "نمط توليد القالب"
 #. module: ab_website_seo_optimization
 #: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "Use template regeneration proposals for reviewed product SEO."
-msgstr ""
-"استخدم مقترحات إعادة التوليد بالقوالب لمحتوى تحسين محركات البحث الذي تمت "
-"مراجعته."
+msgstr "استخدم مقترحات إعادة التوليد بالقوالب لمحتوى SEO الذي تمت مراجعته."
+
 #. module: ab_website_seo_optimization
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_bulk_form
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form
@@ -5304,10 +5408,70 @@ msgid ""
 msgstr "يستخدم نمط التوليد بالقالب بيانات المنتج دون مساعد ذكاء اصطناعي."
 
 #. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_bulk_form
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form
+msgid ""
+"For AI Wording, try this assistant first, then the pipeline alternatives. "
+"Leave empty to use the pipeline order. The pipeline must allow AI "
+"generation."
+msgstr ""
+"عند الصياغة بالذكاء الاصطناعي، يُجرَّب هذا المساعد أولًا ثم بدائل مسار "
+"الإثراء. اتركه فارغًا لاستخدام ترتيب المسار. يجب أن يسمح المسار بالتوليد "
+"بالذكاء الاصطناعي."
+
+#. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/enrichment_pipeline.py:0
 msgid "Select an active AI assistant for AI Wording."
 msgstr "اختر مساعد ذكاء اصطناعي نشطًا للصياغة بالذكاء الاصطناعي."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Product code: %s"
+msgstr "رمز المنتج: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Brand: %s"
+msgstr "العلامة التجارية: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Package: %s"
+msgstr "العبوة: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Form: %s"
+msgstr "الشكل: %s"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s — size %s."
+msgstr "%s بمقاس %s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s — size %s, package %s."
+msgstr "%s بمقاس %s، عبوة %s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s measures %s and comes in %s."
+msgstr "%s بمقاس %s ويأتي بعبوة %s."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "%s is packaged in %s."
+msgstr "%s معبأ في %s."
 
 #. module: ab_website_seo_optimization
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form

@@ -17,7 +17,7 @@ from odoo.tests.common import TransactionCase, tagged
 from odoo.tools.safe_eval import safe_eval
 
 from ..services.catalog import CATALOG
-from ..services.seo_templates import deterministic
+from ..services.seo_templates import contract_prompt, deterministic, validate
 from ..services.datasets import records, spl_records
 from ..services.providers import ProviderFailure, adapter, ai_response, gtin, match, validate_draft
 
@@ -65,7 +65,7 @@ class TestEnrichment(TransactionCase):
         facts = {'name': product.name, 'product_code': product.ab_product_id.code, 'active_ingredients': product.ab_product_id.effective_material}
         content = deterministic(template._contract(), facts, 'en_US', lambda text: text)
         content = {k: v for k, v in content.items() if k in ('meta_title', 'meta_description', 'short_description', 'sections')}
-        content['keywords'] = [product.name]
+        content['keywords'] = [product.name, product.ab_product_id.effective_material]
         return {"choices": [{"message": {"content": json.dumps(content)}}], "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30}}
 
     def pipeline(self, providers, **values):
@@ -111,6 +111,79 @@ class TestEnrichment(TransactionCase):
             job._run_bulk_optimization_chunk()
         self.assertEqual(http.call_count, 1)
         self.assertEqual(job.work_item_ids.seo_id.translation_ids.generation_provider_id, selected)
+
+    def test_rejects_product_name_copied_into_all_seo_fields(self):
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'product_code': '64212', 'package': '55 GM | 1 BOX', 'dosage_form': 'CREAM'}
+        content = deterministic(template._contract('en_US'), facts, 'en_US', lambda text: text)
+        content.update({
+            'meta_description': facts['name'],
+            'short_description': facts['name'],
+            'keywords': [facts['name']],
+        })
+        report = validate(content, template._contract('en_US'), facts, 'en_US')
+        self.assertIn('non_descriptive:meta_description', report['errors'])
+        self.assertIn('non_descriptive:short_description', report['errors'])
+        self.assertIn('non_descriptive:keywords', report['errors'])
+
+    def test_rejects_generic_copy_when_package_is_known(self):
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'package': '55 GM | 1 BOX'}
+        content = deterministic(template._contract('en_US'), facts, 'en_US', lambda value: value)
+        content['meta_description'] = 'Product information for ' + facts['name'] + '.'
+        content['short_description'] = 'Product information for ' + facts['name'] + '.'
+        report = validate(content, template._contract('en_US'), facts, 'en_US')
+        self.assertIn('boilerplate:meta_description', report['errors'])
+        self.assertIn('boilerplate:short_description', report['errors'])
+
+    def test_rejects_repeated_copy_and_package_only_keyword(self):
+        template = self.env.ref('ab_website_seo_optimization.seo_template_general')
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'package': '1 BOX', 'specifications': '10 CM*10 CM'}
+        content = deterministic(template._contract('en_US'), facts, 'en_US', lambda value: value)
+        content['content_kind'] = 'GENERATED_TEXT'
+        content['meta_description'] = content['short_description']
+        next(section for section in content['sections'] if section['key'] == 'about_product')['content'] = content['short_description']
+        content['keywords'] = [facts['name'], facts['package']]
+        report = validate(content, template._contract('en_US'), facts, 'en_US')
+        self.assertIn('duplicate_copy:meta_short', report['errors'])
+        self.assertIn('duplicate_copy:about_product', report['errors'])
+        self.assertIn('package_only_keyword', report['errors'])
+
+    def test_generated_copy_rejects_stock_and_unsourced_benefits(self):
+        personal = self.env.ref('ab_website_seo_optimization.seo_template_personal')
+        facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'package': '55 GM | 1 BOX'}
+        contract = personal._contract('en_US')
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        content['content_kind'] = 'GENERATED_TEXT'
+        content['meta_description'] = facts['name'] + ' is available.'
+        content['short_description'] = facts['name'] + ' offers a smooth experience.'
+        content['sections'][0]['content'] = facts['name'] + ' comes in a smooth package.'
+        report = validate(content, contract, facts, 'en_US')
+        self.assertIn('ungrounded_wording:meta_description', report['errors'])
+        self.assertIn('ungrounded_wording:short_description', report['errors'])
+        self.assertIn('unsupported_section_text:about_product', report['errors'])
+        self.assertIn('available', report['unsupported_terms']['meta_description'])
+        self.assertIn('smooth', report['unsupported_terms']['section:about_product'])
+
+    def test_generated_copy_rejects_repeated_words(self):
+        personal = self.env.ref('ab_website_seo_optimization.seo_template_personal')
+        facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'package': '55 GM | 1 BOX'}
+        contract = personal._contract('ar_001')
+        content = deterministic(contract, facts, 'ar_001', lambda value: '%s يأتي بعبوة %s.' if value == '%s comes in %s.' else value)
+        content['content_kind'] = 'GENERATED_TEXT'
+        content['sections'][0]['content'] = '555 SHAVING CREAM CREAM يأتي بعبوة 55 GM | 1 BOX.'
+        self.assertIn('repeated_word', validate(content, contract, facts, 'ar_001')['errors'])
+
+    def test_generated_copy_rejects_repeated_phrases_and_catalog_codes(self):
+        general = self.env.ref('ab_website_seo_optimization.seo_template_general')
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'package': '1 BOX', 'specifications': '10 CM*10 CM'}
+        contract = general._contract('ar_001')
+        content = deterministic(contract, facts, 'ar_001', lambda value: value)
+        content['content_kind'] = 'GENERATED_TEXT'
+        content['meta_description'] = 'شاش فازلين 10 CM*10 CM، عبوة 1 BOX، رمز المنتج 72249، مقاس 10 CM*10 CM، مقاس 10 CM*10 CM.'
+        report = validate(content, contract, facts, 'ar_001')
+        self.assertIn('repeated_phrase:meta_description', report['errors'])
+        self.assertIn('catalog_code_in_copy:meta_description', report['errors'])
 
     def test_deterministic_ignores_saved_assistant(self):
         selected = self.provider()

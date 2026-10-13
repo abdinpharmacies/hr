@@ -59,7 +59,7 @@ class TemplateWorkItem(models.Model):
     def _evidence(self, field, value, provider=None, record=None, matching=None, accepted=False, kind="SOURCE_FACT", lang=None, generation=None):
         if not provider:
             product = self.product_id.ab_product_id
-            if field in ('name', 'name_ar', 'strength', 'dosage_form', 'package'):
+            if field in ('name', 'name_ar', 'strength', 'dosage_form', 'package', 'specifications'):
                 record = {'source_id': 'product.template:%s' % self.product_id.id, 'source_version': str(self.product_id.write_date)}
                 if field in literal_identity(self.product_id.with_context(lang='en_US').name or ''):
                     matching = {'matched_by': 'catalog_name_literal', 'matched_identifier': self.product_id.with_context(lang='en_US').name, 'match_score': 1.0}
@@ -98,8 +98,19 @@ class TemplateWorkItem(models.Model):
 
     def _template_content(self, facts, language):
         localized = self.with_context(lang=language)
-        labels = {'Product information for %s.': localized.env._('Product information for %s.'),
-                  'Product reference: %s.': localized.env._('Product reference: %s.')}
+        labels = {'%s comes in %s.': localized.env._('%s comes in %s.'),
+                  '%s — size %s.': localized.env._('%s — size %s.'),
+                  '%s — size %s, package %s.': localized.env._('%s — size %s, package %s.'),
+                  '%s measures %s and comes in %s.': localized.env._('%s measures %s and comes in %s.'),
+                  '%s — package: %s.': localized.env._('%s — package: %s.'),
+                  '%s is packaged in %s.': localized.env._('%s is packaged in %s.'),
+                  'Product information for %s.': localized.env._('Product information for %s.'),
+                  'Product reference: %s.': localized.env._('Product reference: %s.'),
+                  'Product code: %s': localized.env._('Product code: %s'),
+                  'Brand: %s': localized.env._('Brand: %s'),
+                  'Manufacturer: %s': localized.env._('Manufacturer: %s'),
+                  'Package: %s': localized.env._('Package: %s'),
+                  'Form: %s': localized.env._('Form: %s')}
         return deterministic(self.template_snapshot[language], facts, language, lambda text: labels[text])
 
     def _validate_template_output(self, content, language):
@@ -349,7 +360,10 @@ class TemplateBulk(models.Model):
         if self._has_complete_native_seo(product, language):
             return False
         translation = self.env['ab.product.seo.translation'].search(fields.Domain('seo_id.product_template_id', '=', product.id) & fields.Domain('lang_code', '=', language), limit=1)
-        return not (translation.meta_title and translation.meta_description and translation.keyword_text and (not self.publish_description or translation.public_description))
+        if not (translation.meta_title and translation.meta_description and translation.keyword_text and (not self.publish_description or translation.public_description)):
+            return True
+        product_name = normalized(product.with_context(lang=language).name)
+        return normalized(translation.meta_description) == product_name or normalized(translation.keyword_text) == product_name
 
     def _template_should_skip(self, product):
         seo = self.env['ab.product.seo'].search(fields.Domain('product_template_id', '=', product.id), limit=1)

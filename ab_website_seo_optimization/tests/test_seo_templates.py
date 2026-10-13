@@ -7,7 +7,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
 from ..services.providers import ProviderFailure
-from ..services.seo_templates import deterministic, fingerprints, validate
+from ..services.seo_templates import deterministic, fingerprints, literal_identity, validate
 
 
 @tagged('post_install', '-at_install')
@@ -70,6 +70,45 @@ class TestSeoTemplates(TransactionCase):
         report = validate(content, contract, facts, 'en_US')
         self.assertIn('missing_fact:active_ingredients', report['warnings'])
         self.assertFalse(report['errors'])
+
+    def test_personal_about_includes_grounded_form_and_package(self):
+        personal = self.env.ref('ab_website_seo_optimization.seo_template_personal')
+        facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'product_code': '64212',
+                 'dosage_form': 'CREAM', 'package': '55 GM | 1 BOX'}
+        contract = personal._contract()
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        self.assertEqual(about['fact_keys'], ['name', 'dosage_form', 'package'])
+        self.assertEqual(about['content'], '555 SHAVING CREAM is packaged in 55 GM, 1 BOX.')
+        self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
+
+    def test_general_about_includes_package_without_generic_copy(self):
+        facts = {'name': '0 خيط حرير بأبرة GMS 1 ONE UNIT', 'product_code': '78234', 'package': '1 ONE UNIT'}
+        contract = self.general._contract()
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        self.assertEqual(about['fact_keys'], ['name', 'package'])
+        self.assertEqual(about['content'], '0 خيط حرير بأبرة GMS is packaged in 1 ONE UNIT.')
+        self.assertEqual(content['meta_description'], '0 خيط حرير بأبرة GMS — package: 1 ONE UNIT.')
+        details = next(section for section in content['sections'] if section['key'] == 'product_information')
+        self.assertEqual(details['content'], 'Product code: 78234\nPackage: 1 ONE UNIT')
+        self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
+
+    def test_gauze_dimensions_create_distinct_grounded_sections(self):
+        name = '10 CM*10 CM شاش فازلين 1 BOX'
+        facts = {'name': name, 'product_code': '72249', **literal_identity(name)}
+        self.assertEqual(facts['specifications'], '10 CM*10 CM')
+        contract = self.general._contract()
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        self.assertEqual([section['key'] for section in content['sections']], ['about_product', 'specifications', 'product_information'])
+        self.assertEqual(content['short_description'], 'شاش فازلين — size 10 CM*10 CM.')
+        self.assertEqual(content['meta_description'], 'شاش فازلين — size 10 CM*10 CM, package 1 BOX.')
+        self.assertEqual(content['sections'][0]['content'], 'شاش فازلين measures 10 CM*10 CM and comes in 1 BOX.')
+        self.assertEqual(content['sections'][1]['content'], '10 CM*10 CM')
+        self.assertEqual(content['seo_name'], '10 CM*10 CM شاش فازلين')
+        self.assertEqual(content['search_phrases'], [name, '10 CM*10 CM شاش فازلين'])
+        self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
+
 
     def test_forbidden_section_and_invented_fact_rejected(self):
         content, contract, facts = self.content()
@@ -204,7 +243,7 @@ class TestSeoTemplates(TransactionCase):
         self.pipeline.write({'ai_mode': 'always', 'line_ids': [(0, 0, {'provider_id': missing.id, 'sequence': 1}), (0, 0, {'provider_id': local.id, 'sequence': 2})]})
         content, contract, facts = self.content()
         content = {k: v for k, v in content.items() if k in ('meta_title', 'meta_description', 'short_description', 'sections')}
-        content['keywords'] = [facts['name']]
+        content['keywords'] = [facts['name'], facts['active_ingredients']]
         response = Mock(status_code=200, headers={})
         payload = {'choices': [{'message': {'content': json.dumps(content)}}]}
         response.json.return_value = payload

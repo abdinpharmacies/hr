@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ab_seo_template_section" name="write">
+        <value model="ab_seo_template_section" eval="obj().env.ref('ab_website_seo_optimization.seo_template_personal_about_product').ids if obj().env.ref('ab_website_seo_optimization.seo_template_personal_about_product').fact_keys == ['name'] else []"/>
+        <value eval="{'fact_keys': ['name', 'dosage_form', 'package']}"/>
+    </function>
+</odoo>

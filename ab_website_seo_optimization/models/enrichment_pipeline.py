@@ -162,7 +162,7 @@ class EnrichmentWorkItem(models.Model):
                              "input_sources": generation.get("input_sources")})
 
     def _collect_facts(self, identity, pipeline):
-        facts = {k: v for k, v in identity.items() if k in ("name", "name_ar", "manufacturer", "brand", "active_ingredients", "strength", "dosage_form", "package", "product_code") and v}
+        facts = {k: v for k, v in identity.items() if k in ("name", "name_ar", "manufacturer", "brand", "active_ingredients", "strength", "dosage_form", "package", "product_code", "specifications") and v}
         provenance = []
         for key, value in facts.items():
             provenance.append(self._evidence(key, value, accepted=True).id)
