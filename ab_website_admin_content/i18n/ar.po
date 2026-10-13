@@ -33,58 +33,86 @@ msgid "Products"
 msgstr "المنتجات"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_search_view_modern_content
 msgid "Technical Pages"
 msgstr "الصفحات التقنية"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "URL"
 msgstr "الرابط"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Indexed"
 msgstr "مفهرسة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "Menu"
 msgstr "القائمة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "SEO"
-msgstr "تحسين محركات البحث"
+msgstr "SEO"
 
 #. module: ab_website_admin_content
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "Updated"
 msgstr "آخر تحديث"
 
 #. module: ab_website_admin_content
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__website_id
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_template_search_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Website"
 msgstr "الموقع"
 
 #. module: ab_website_admin_content
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_list_view_modern_content
 msgid "Preview"
 msgstr "معاينة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Page title"
 msgstr "عنوان الصفحة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "In Main Menu"
 msgstr "ضمن القائمة الرئيسية"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Hidden From Menu"
 msgstr "مخفية من القائمة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Not Indexed"
 msgstr "غير مفهرسة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_pages_search_view_modern_content
 msgid "Last Updated"
 msgstr "آخر تحديث"
 
@@ -97,26 +125,33 @@ msgid "Create a page to start building searchable, publishable content for the s
 msgstr "أنشئ صفحة لبدء بناء محتوى قابل للبحث والنشر في واجهة المتجر."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
 msgid "Image"
 msgstr "الصورة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
 msgid "Website Categories"
 msgstr "تصنيفات الموقع"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_pages_list_view_modern_content
 msgid "Price"
 msgstr "السعر"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_template_search_view_modern_content
 msgid "Unpublished"
 msgstr "غير منشور"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_template_search_view_modern_content
 msgid "Website Sale"
 msgstr "بيع على الموقع"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.product_template_search_view_modern_content
 msgid "Not Website Sale"
 msgstr "غير مخصص للبيع على الموقع"
 
@@ -129,14 +164,18 @@ msgid "Create products that are ready to publish, categorize, and present on the
 msgstr "أنشئ منتجات جاهزة للنشر والتصنيف والعرض في واجهة المتجر."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_list_view_modern_content
 msgid "Technical Page"
 msgstr "صفحة تقنية"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_list_view_modern_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_search_view_modern_content
 msgid "Route"
 msgstr "المسار"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.technical_pages_search_view_modern_content
 msgid "Technical page"
 msgstr "صفحة تقنية"
 
@@ -149,26 +188,41 @@ msgid "Technical pages are generated from website routes that Odoo exposes as ed
 msgstr "يتم إنشاء الصفحات التقنية من مسارات الموقع التي يعرضها أودو كمحتوى قابل للتحرير."
 
 #. module: ab_website_admin_content
+#: model:ir.actions.act_window,name:ab_website_admin_content.action_website_carousel_slides
+#: model:ir.ui.menu,name:ab_website_admin_content.menu_website_homepage_carousel
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "Homepage Carousel"
 msgstr "كاروسيل الصفحة الرئيسية"
 
 #. module: ab_website_admin_content
+#: model:ir.model,name:ab_website_admin_content.model_ab_website_carousel_slide
 msgid "Homepage Carousel Slide"
 msgstr "شريحة كاروسيل الصفحة الرئيسية"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Carousel Slide"
 msgstr "شريحة الكاروسيل"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "Slide"
 msgstr "الشريحة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "Destination"
 msgstr "الوجهة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "Inactive"
 msgstr "غير نشطة"
 
@@ -177,18 +231,24 @@ msgid "Basic Information"
 msgstr "المعلومات الأساسية"
 
 #. module: ab_website_admin_content
+#: code:addons/ab_website_admin_content/models/website_carousel_slide.py:0
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_list
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "CTA"
 msgstr "زر الدعوة لاتخاذ إجراء"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__show_cta
 msgid "Show CTA"
 msgstr "إظهار زر الدعوة لاتخاذ إجراء"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_text
 msgid "CTA Text"
 msgstr "نص زر الدعوة لاتخاذ إجراء"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_url
 msgid "CTA URL"
 msgstr "رابط زر الدعوة لاتخاذ إجراء"
 
@@ -197,6 +257,7 @@ msgid "Content"
 msgstr "المحتوى"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.actions.act_window,help:ab_website_admin_content.action_website_carousel_slides
 msgid "No carousel slides yet"
 msgstr "لا توجد شرائح كاروسيل بعد"
 
@@ -205,18 +266,22 @@ msgid "Create homepage slides with an image, sequence, and per-slide CTA destina
 msgstr "أنشئ شرائح للصفحة الرئيسية بصورة وترتيب ووجهة زر مستقلة لكل شريحة."
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__image_1920
 msgid "Desktop Image"
 msgstr "صورة سطح المكتب"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,help:ab_website_admin_content.field_ab_website_carousel_slide__website_id
 msgid "Leave empty to show this slide on every website."
 msgstr "اتركه فارغًا لعرض هذه الشريحة على كل المواقع."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Summer Offers"
 msgstr "عروض الصيف"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
 msgid "With CTA"
 msgstr "بزر دعوة لاتخاذ إجراء"
 
@@ -228,11 +293,13 @@ msgstr "نمط زر الدعوة لاتخاذ إجراء"
 
 #. module: ab_website_admin_content
 #: model:ir.model.fields.selection,name:ab_website_admin_content.selection__ab_website_carousel_slide__cta_style__text
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
 msgid "Text Button"
 msgstr "زر نصي"
 
 #. module: ab_website_admin_content
 #: model:ir.model.fields.selection,name:ab_website_admin_content.selection__ab_website_carousel_slide__cta_style__image
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
 msgid "Image Button"
 msgstr "زر بصورة"
 
@@ -242,22 +309,28 @@ msgid "Link"
 msgstr "رابط"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_image_512
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "CTA Image"
 msgstr "صورة زر الدعوة لاتخاذ إجراء"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,help:ab_website_admin_content.field_ab_website_carousel_slide__cta_image_512
 msgid "Optional clickable image rendered above the slide image."
 msgstr "صورة اختيارية قابلة للنقر تظهر فوق صورة الشريحة."
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_position_x
 msgid "CTA X Position"
 msgstr "موضع زر الدعوة أفقيًا"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_position_y
 msgid "CTA Y Position"
 msgstr "موضع زر الدعوة رأسيًا"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_width
 msgid "CTA Width"
 msgstr "عرض زر الدعوة"
 
@@ -266,30 +339,38 @@ msgid "CTA Position"
 msgstr "موضع زر الدعوة"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__cta_preview_html
 msgid "CTA Position Preview"
 msgstr "معاينة موضع زر الدعوة"
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,help:ab_website_admin_content.field_ab_website_carousel_slide__cta_position_x
 msgid "Horizontal CTA position as a percentage of the slide width."
 msgstr "موضع زر الدعوة أفقيًا كنسبة من عرض الشريحة."
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,help:ab_website_admin_content.field_ab_website_carousel_slide__cta_position_y
 msgid "Vertical CTA position as a percentage of the slide height."
 msgstr "موضع زر الدعوة رأسيًا كنسبة من ارتفاع الشريحة."
 
 #. module: ab_website_admin_content
+#: model:ir.model.fields,help:ab_website_admin_content.field_ab_website_carousel_slide__cta_width
 msgid "CTA width in pixels. Text buttons use this as a minimum width."
-msgstr "عرض زر الدعوة بالبكسل. تستخدم الأزرار النصية هذه القيمة كحد أدنى للعرض."
+msgstr ""
+"عرض زر الدعوة بالبكسل. تستخدم الأزرار النصية هذه القيمة كحد أدنى للعرض."
 
 #. module: ab_website_admin_content
+#: code:addons/ab_website_admin_content/models/website_carousel_slide.py:0
 msgid "Save the slide to preview CTA placement."
 msgstr "احفظ الشريحة لمعاينة موضع زر الدعوة."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
 msgid "CTA ready"
 msgstr "زر الدعوة جاهز"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
 msgid "No CTA"
 msgstr "بدون زر دعوة"
 
@@ -318,6 +399,7 @@ msgid "Hero artwork"
 msgstr "تصميم البانر الرئيسي"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Use the customer-facing homepage banner artwork."
 msgstr "استخدم تصميم البانر الذي يظهر للعملاء في الصفحة الرئيسية."
 
@@ -342,18 +424,25 @@ msgid "Mobile"
 msgstr "الجوال"
 
 #. module: ab_website_admin_content
-msgid "Click or drag the selected CTA to place it. Use the corner handles to resize."
-msgstr "انقر أو اسحب زر الدعوة المحدد لوضعه. استخدم مقابض الزوايا لتغيير الحجم."
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"Click or drag the selected CTA to place it. Use the corner handles to "
+"resize."
+msgstr ""
+"انقر أو اسحب زر الدعوة المحدد لوضعه. استخدم مقابض الزوايا لتغيير الحجم."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Entire banner is clickable; no position controls are needed."
 msgstr "البانر بالكامل قابل للنقر؛ لا توجد حاجة لعناصر التحكم في الموضع."
 
 #. module: ab_website_admin_content
+#: code:addons/ab_website_admin_content/models/website_carousel_slide.py:0
 msgid "Entire banner is clickable"
 msgstr "البانر بالكامل قابل للنقر"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
 msgid "Entire Banner"
 msgstr "البانر بالكامل"
 
@@ -362,18 +451,22 @@ msgid "Customer message"
 msgstr "رسالة العميل"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Headline"
 msgstr "العنوان الرئيسي"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Supporting text"
 msgstr "النص الداعم"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Summer Health Offers"
 msgstr "عروض الصحة الصيفية"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Discover the latest pharmacy offers and wellness picks."
 msgstr "اكتشف أحدث عروض الصيدلية واختيارات العناية الصحية."
 
@@ -390,14 +483,17 @@ msgid "Turn on Show CTA when this banner should lead customers somewhere."
 msgstr "فعّل إظهار زر الدعوة عندما يجب أن يقود هذا البانر العملاء إلى وجهة محددة."
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Type"
 msgstr "النوع"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Button Text"
 msgstr "نص الزر"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Shop now"
 msgstr "تسوق الآن"
 
@@ -410,17 +506,197 @@ msgid "Precision controls"
 msgstr "عناصر التحكم الدقيقة"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "X Position"
 msgstr "الموضع الأفقي"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Y Position"
 msgstr "الموضع الرأسي"
 
 #. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
 msgid "Width"
 msgstr "العرض"
 
 #. module: ab_website_admin_content
-msgid "Create engaging homepage banners for offers, seasonal campaigns, new products, and pharmacy services."
-msgstr "أنشئ بانرات جذابة للصفحة الرئيسية للعروض والحملات الموسمية والمنتجات الجديدة وخدمات الصيدلية."
+#: model_terms:ir.actions.act_window,help:ab_website_admin_content.action_website_carousel_slides
+msgid ""
+"Create engaging homepage banners for offers, seasonal campaigns, new "
+"products, and pharmacy services."
+msgstr ""
+"أنشئ بانرات جذابة للصفحة الرئيسية للعروض والحملات الموسمية والمنتجات الجديدة"
+" وخدمات الصيدلية."
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid "/shop?category=offers"
+msgstr "/shop?category=offers"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<i class=\"fa fa-external-link\" aria-hidden=\"true\"/>\n"
+"                                    Preview storefront"
+msgstr ""
+"<i class=\"fa fa-external-link\" aria-hidden=\"true\"/>\n"
+"                                    معاينة المتجر"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<i class=\"fa fa-link\" aria-hidden=\"true\"/>\n"
+"                                        <strong>No CTA configured</strong>\n"
+"                                        <span>Turn on Show CTA when this banner should lead customers somewhere.</span>"
+msgstr ""
+"<i class=\"fa fa-link\" aria-hidden=\"true\"/>\n"
+"                                        <strong>لم يتم إعداد CTA</strong>\n"
+"                                        <span>فعّل إظهار CTA عندما تريد توجيه العملاء من هذا البانر إلى صفحة أخرى.</span>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<i class=\"fa fa-mouse-pointer\" aria-hidden=\"true\"/>\n"
+"                                            Entire banner is clickable."
+msgstr ""
+"<i class=\"fa fa-mouse-pointer\" aria-hidden=\"true\"/>\n"
+"                                            يمكن الضغط على البانر بالكامل."
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span class=\"ab_carousel_builder_kicker\">Homepage Carousel Builder</span>"
+msgstr ""
+"<span class=\"ab_carousel_builder_kicker\">محرر شرائح الصفحة الرئيسية</span>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span class=\"ab_carousel_save_hint\">\n"
+"                                    <i class=\"fa fa-circle\" aria-hidden=\"true\"/>\n"
+"                                    Uses Odoo Save\n"
+"                                </span>"
+msgstr ""
+"<span class=\"ab_carousel_save_hint\">\n"
+"                                    <i class=\"fa fa-circle\" aria-hidden=\"true\"/>\n"
+"                                    يستخدم حفظ Odoo\n"
+"                                </span>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>Advanced Settings</span>\n"
+"                                            <small>Precision controls</small>"
+msgstr ""
+"<span>إعدادات متقدمة</span>\n"
+"                                            <small>عناصر ضبط دقيقة</small>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>Banner Image</span>\n"
+"                                        <strong>Hero artwork</strong>"
+msgstr ""
+"<span>صورة البانر</span>\n"
+"                                        <strong>الصورة الرئيسية</strong>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>CTA</span>\n"
+"                                        <strong>Customer action</strong>"
+msgstr ""
+"<span>زر الدعوة لاتخاذ إجراء</span>\n"
+"                                        <strong>إجراء العميل</strong>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>Content</span>\n"
+"                                        <strong>Customer message</strong>"
+msgstr ""
+"<span>المحتوى</span>\n"
+"                                        <strong>رسالة العميل</strong>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
+msgid "<span>Customer action</span>"
+msgstr "<span>إجراء العميل</span>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>Live Preview</span>\n"
+"                                        <strong>Drag the CTA directly on the banner</strong>"
+msgstr ""
+"<span>معاينة مباشرة</span>\n"
+"                                        <strong>اسحب CTA مباشرة على البانر</strong>"
+
+#. module: ab_website_admin_content
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_form
+msgid ""
+"<span>Slide</span>\n"
+"                                        <strong>Publishing</strong>"
+msgstr ""
+"<span>شريحة</span>\n"
+"                                        <strong>النشر</strong>"
+
+#. module: ab_website_admin_content
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__active
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_website_admin_content.website_carousel_slide_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_website_admin_content
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__subtitle
+msgid "Subtitle"
+msgstr "العنوان الفرعي"
+
+#. module: ab_website_admin_content
+#: model:ir.model.fields,field_description:ab_website_admin_content.field_ab_website_carousel_slide__title
+msgid "Title"
+msgstr "العنوان"
