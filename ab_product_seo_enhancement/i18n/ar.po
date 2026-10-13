@@ -130,7 +130,44 @@ msgstr "معلومات منتج %s متوفرة لدى صيدليات عابدي
 #: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
 msgid "%s is available from Abdin Pharmacies with clear and updated product information."
 msgstr "%s متوفر في صيدليات عابدين مع معلومات واضحة ومحدثة عن المنتج."
+
 #. module: ab_product_seo_enhancement
 #: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
 msgid "%s returned incomplete or repeated SEO content. Try again or select another assistant."
 msgstr "أعاد %s محتوى SEO ناقصًا أو مكررًا. أعد المحاولة أو اختر مساعدًا آخر."
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s returned an empty AI response."
+msgstr "أرجع %s استجابة ذكاء اصطناعي فارغة."
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "barcodes"
+msgstr "الباركودات"
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "category_path"
+msgstr "category_path"
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "manufacturer"
+msgstr "الشركة المصنّعة"
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "scientific_name"
+msgstr "scientific_name"
+
+#. module: ab_product_seo_enhancement
+#. odoo-python
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "this product"
+msgstr "هذا المنتج"
