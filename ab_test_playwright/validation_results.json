@@ -2,153 +2,175 @@
   "suite": "sales_ui_cases.json",
   "mode": "preview",
   "database": "abdin_replica19",
-  "passed": 9,
-  "failed": 2,
+  "passed": 11,
+  "failed": 0,
   "submission": "NOT_EXECUTED",
-  "report_path": "/opt/playwright/artifacts/replica_addons/sales_suite/20261013T162701990305Z/results.json",
+  "report_path": "/opt/playwright/artifacts/replica_addons/sales_suite/20261013T225339903347Z/results.json",
   "cases": [
     {
       "id": "CASH",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932025717_9u1ccc",
       "cleaned_draft_count": 1
     },
     {
       "id": "CONTRACT_25",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932032209_on1fwk",
       "cleaned_draft_count": 1
     },
     {
       "id": "CONTRACT_0",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932037642_i6f3d7",
       "cleaned_draft_count": 1
     },
     {
       "id": "CONTRACT_100",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932042028_u6n6lr",
       "cleaned_draft_count": 1
     },
     {
       "id": "PROMO_ONLY",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932047432_uxykea",
       "cleaned_draft_count": 1
     },
     {
       "id": "PROMO_MIXED",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932052172_9zz21j",
       "cleaned_draft_count": 1
     },
     {
       "id": "PROMO_THEN_CONTRACT",
-      "status": "FAIL",
+      "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
-        "shortage_reason:94123"
+        "shared_session_empty_bill",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932057137_20yfsw",
       "cleaned_draft_count": 1
     },
     {
       "id": "CONTRACT_THEN_PROMO",
-      "status": "FAIL",
+      "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
-        "shortage_reason:94123"
+        "shared_session_empty_bill",
+        "shortage_reason:94123",
+        "ui_totals",
+        "backend_quote",
+        "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932062647_p7w2ph",
       "cleaned_draft_count": 1
     },
     {
       "id": "CONTRACT_CLEAR_RESTORES_PROMO",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932066887_ik1g94",
       "cleaned_draft_count": 1
     },
     {
       "id": "PROMO_QTY_UPDATE",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932071260_hpmm09",
       "cleaned_draft_count": 1
     },
     {
       "id": "PROMO_THEN_DISCOUNTED_CONTRACT",
       "status": "PASS_PREVIEW",
       "checkpoints": [
-        "odoo_and_employee_login",
+        "shared_session_empty_bill",
         "shortage_reason:94123",
         "ui_totals",
         "backend_quote",
         "pre_submit_dialog"
       ],
+      "draft_id": "bill_1791932076359_0dcesg",
       "cleaned_draft_count": 1
     }
   ],
-  "findings": [
-    {
-      "cases": [
-        "PROMO_THEN_CONTRACT",
-        "CONTRACT_THEN_PROMO"
-      ],
-      "description": "With contract 4 configured to allow promotions, the UI clears/hides promotion 2. Promo-then-contract displays net 281.00 instead of 126.00. Contract-then-promo cannot find the promotion control.",
-      "expected_net": 126.0,
-      "observed_net": 281.0
-    }
-  ],
+  "findings": [],
   "limitations": [
     "No final invoice submission or E-Plus writes were performed.",
-    "Backend quote checks passed for the nine successful preview cases; combined cases stop at the UI failure.",
-    "Runtime backend exposes allow_promotions, unlike the local source initially inspected.",
+    "Verification used headless Chromium against the current development application.",
     "Original backup values are retained in the ignored owner-only backups directory."
-  ]
+  ],
+  "authentication": {
+    "odoo_login_count": 1,
+    "employee_login_count": 1
+  },
+  "employee_session_closed": true,
+  "remaining_owned_draft_ids": [],
+  "failure_recovery": {
+    "report_path": "/opt/playwright/artifacts/replica_addons/sales_suite/20261013T225457060489Z/results.json",
+    "intentional_failure": "CASH gross_total expectation increased by 1 in a temporary suite copy",
+    "following_case": "CONTRACT_25: PASS_PREVIEW",
+    "authentication": {
+      "odoo_login_count": 1,
+      "employee_login_count": 1
+    },
+    "cleaned_drafts": 2
+  }
 }
