@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_eplus_inventory_sync_job_view_progress" model="ir.ui.view">
+        <field name="name">ab.eplus.inventory.sync.job.progress</field>
+        <field name="model">ab_eplus_inventory_sync_job</field>
+        <field name="inherit_id" ref="ab_eplus_inventory_sync_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="ab_product_sync_dashboard" separator=" "/>
+            </xpath>
+            <xpath expr="//div[hasclass('core_ui_sync_panel')]" position="before">
+                <h1 class="mb-4">Eplus Inventory Sync</h1>
+                <xpath expr="//sheet/group[group/field[@name='warehouse_id']]" position="move"/>
+            </xpath>
+            <xpath expr="//sheet/group[group/field[@name='warehouse_id']]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4">$0</div>
+            </xpath>
+            <xpath expr="//div[hasclass('core_ui_sync_panel')]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4" aria-live="polite">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <h2 class="h5 mb-0"><field name="name" nolabel="1"/></h2>
+                        <field name="state" widget="badge" class="text-bg-primary" nolabel="1"/>
+                    </div>
+                    <div class="ab_sync_metrics mb-4">
+                        <div><span class="ab_sync_metric_label">Products</span><field name="total_count" readonly="1" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Processed</span><field name="processed_count" readonly="1" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Failed</span><field name="failed_count" readonly="1" nolabel="1"/></div>
+                    </div>
+                    <div class="ab_sync_progress d-flex gap-3 align-items-center">
+                        <field name="progress" widget="progressbar" readonly="1" nolabel="1"/>
+                        <field name="progress_percent_label" class="ab_sync_percent" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="ab_sync_status text-muted small mt-3">
+                        <field name="status_title" readonly="1" nolabel="1"/>
+                        <field name="status_text" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/group[field[@name='updated_count']]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4">
+                    <h2 class="h5 mb-3">Totals</h2>
+                    <div class="ab_sync_metrics">
+                        <div><span class="ab_sync_metric_label">Updated</span><field name="updated_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Unchanged</span><field name="unchanged_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Skipped</span><field name="skipped_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Failed</span><field name="failed_count" nolabel="1"/></div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="replace">
+                <div class="card ab_sync_card p-4">$0</div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_website_product_sync_job_view_progress" model="ir.ui.view">
+        <field name="name">ab.website.product.sync.job.progress</field>
+        <field name="model">ab_website_product_sync_job</field>
+        <field name="inherit_id" ref="ab_website_product_sync_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="ab_product_sync_dashboard" separator=" "/>
+            </xpath>
+            <xpath expr="//div[hasclass('core_ui_sync_panel')]" position="before">
+                <h1 class="mb-4">Website Product Sync</h1>
+                <xpath expr="//sheet/group[group/field[@name='batch_size_option']]" position="move"/>
+            </xpath>
+            <xpath expr="//sheet/group[group/field[@name='batch_size_option']]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4">$0</div>
+            </xpath>
+            <xpath expr="//div[hasclass('core_ui_sync_panel')]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4" aria-live="polite" invisible="state == 'draft' and background_requested">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <h2 class="h5 mb-0"><field name="name" nolabel="1"/></h2>
+                        <field name="state" widget="badge" class="text-bg-primary" nolabel="1"/>
+                    </div>
+                    <div class="ab_sync_metrics mb-4">
+                        <div><span class="ab_sync_metric_label">Catalog Products</span><field name="catalog_count" readonly="1" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Synchronized Products</span><field name="completed_count" readonly="1" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Remaining Products</span><field name="remaining_count" readonly="1" nolabel="1"/></div>
+                    </div>
+                    <div class="ab_sync_progress d-flex gap-3 align-items-center">
+                        <field name="progress" widget="progressbar" readonly="1" nolabel="1"/>
+                        <field name="progress_percent_label" class="ab_sync_percent" readonly="1" nolabel="1"/>
+                    </div>
+                    <div class="ab_sync_status text-muted small mt-3">
+                        <field name="status_title" readonly="1" nolabel="1"/>
+                        <field name="status_text" readonly="1" nolabel="1"/>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/group[field[@name='missing_count']]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4">$0</div>
+            </xpath>
+            <xpath expr="//sheet/group[field[@name='created_count']]" position="replace">
+                <div class="card ab_sync_card p-4 mb-4">
+                    <h2 class="h5 mb-3">Totals</h2>
+                    <div class="ab_sync_metrics">
+                        <div><span class="ab_sync_metric_label">Created</span><field name="created_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Updated</span><field name="updated_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Unchanged</span><field name="unchanged_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Skipped</span><field name="skipped_count" nolabel="1"/></div>
+                        <div><span class="ab_sync_metric_label">Failed</span><field name="failed_count" nolabel="1"/></div>
+                    </div>
+                </div>
+            </xpath>
+            <xpath expr="//sheet/notebook" position="replace">
+                <div class="card ab_sync_card p-4">$0</div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

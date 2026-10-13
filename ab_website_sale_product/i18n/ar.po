@@ -1239,12 +1239,17 @@ msgid "Checksum"
 msgstr "بصمة الملف"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job_line__state__updated
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__updated
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__updated
 msgid "Updated"
 msgstr "تم التحديث"
 
 #. module: ab_website_sale_product
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job__unchanged_count
 #: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__unchanged
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job_line__state__unchanged
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_sale_image_sync_report_line__status__unchanged
 msgid "Unchanged"
 msgstr "بدون تغيير"
 
@@ -1437,6 +1442,10 @@ msgid "Replaces Existing"
 msgstr "يستبدل صورة حالية"
 
 #. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+#: code:addons/ab_website_sale_product/models/website_product_sync_job.py:0
+#: model:ir.ui.menu,name:ab_website_sale_product.menu_catalog_website_product_sync_jobs
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
 msgid "Website Product Sync"
 msgstr "مزامنة منتجات الموقع"
 
@@ -1587,6 +1596,7 @@ msgid "Website products fully synchronized."
 msgstr "تمت مزامنة منتجات الموقع بالكامل."
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields,field_description:ab_website_sale_product.field_ab_website_product_sync_job_line__product_template_id
 msgid "Website Product"
 msgstr "منتج الموقع"
 
@@ -1595,10 +1605,14 @@ msgid "Create"
 msgstr "إنشاء"
 
 #. module: ab_website_sale_product
+#. odoo-javascript
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__created
 msgid "Created"
 msgstr "تم الإنشاء"
 
 #. module: ab_website_sale_product
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_eplus_inventory_sync_job_line__state__skipped
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_website_product_sync_job_line__state__skipped
 msgid "Skipped"
 msgstr "تم التخطي"
 
@@ -2186,6 +2200,7 @@ msgstr "تنظيف الوجه"
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_search
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_search
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.classification_result_search
+#: model:ir.model.fields.selection,name:ab_website_sale_product.selection__ab_product_classification_run__force_state__failed
 msgid "Failed"
 msgstr "فشل"
 
@@ -3833,6 +3848,76 @@ msgid ""
 msgstr ""
 "لا توجد منتجات جديدة لتصنيفها. تظل المنتجات السابقة غير المحسومة في قائمة "
 "المراجعة."
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Catalog Products</span>"
+msgstr "<span class=\"ab_sync_metric_label\">منتجات الكتالوج</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Created</span>"
+msgstr "<span class=\"ab_sync_metric_label\">تم الإنشاء</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Failed</span>"
+msgstr "<span class=\"ab_sync_metric_label\">فشل</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Processed</span>"
+msgstr "<span class=\"ab_sync_metric_label\">تمت المعالجة</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Products</span>"
+msgstr "<span class=\"ab_sync_metric_label\">المنتجات</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Remaining Products</span>"
+msgstr "<span class=\"ab_sync_metric_label\">المنتجات المتبقية</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Skipped</span>"
+msgstr "<span class=\"ab_sync_metric_label\">تم التخطي</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Synchronized Products</span>"
+msgstr "<span class=\"ab_sync_metric_label\">المنتجات المتزامنة</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Unchanged</span>"
+msgstr "<span class=\"ab_sync_metric_label\">بدون تغيير</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+msgid "<span class=\"ab_sync_metric_label\">Updated</span>"
+msgstr "<span class=\"ab_sync_metric_label\">تم التحديث</span>"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: code:addons/ab_website_sale_product/models/eplus_inventory_sync_job.py:0
+#: model:ir.ui.menu,name:ab_website_sale_product.menu_catalog_eplus_inventory_sync_jobs
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+msgid "Eplus Inventory Sync"
+msgstr "مزامنة مخزون إي بلس"
+
+#. module: ab_website_sale_product
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_progress
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_eplus_inventory_sync_job_view_form
+#: model_terms:ir.ui.view,arch_db:ab_website_sale_product.ab_website_product_sync_job_view_form
+msgid "Totals"
+msgstr "الإجماليات"
+
 #. module: ab_website_sale_product
 #. odoo-javascript
 #. odoo-python

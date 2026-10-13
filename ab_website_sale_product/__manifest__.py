@@ -19,6 +19,7 @@
         "views/add_many_by_codes_views.xml",
         "views/website_product_sync_job_views.xml",
         "views/eplus_inventory_sync_job_views.xml",
+        "views/sync_progress_views.xml",
         "views/eplus_stock_snapshot_store_views.xml",
         "views/eplus_stock_snapshot_views.xml",
         "views/ab_product_views.xml",
@@ -34,6 +35,7 @@
             "ab_website_sale_product/static/src/js/product_classification.js",
             "ab_website_sale_product/static/src/xml/product_classification.xml",
             "ab_website_sale_product/static/src/scss/product_classification.scss",
+            "ab_website_sale_product/static/src/scss/sync_progress.scss",
         ],
         "web.assets_frontend": [
             "ab_website_sale_product/static/src/xml/stock_availability.xml",
