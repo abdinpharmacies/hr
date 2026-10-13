@@ -2115,8 +2115,9 @@ msgstr "المنتجات والصفحات المنشورة"
 
 #. module: ab_website_seo_optimization
 #: model:ir.actions.act_window,name:ab_website_seo_optimization.action_ab_website_seo_optimization_published
+#: model:ir.ui.menu,name:ab_website_seo_optimization.ab_website_seo_optimization_menu_published
 msgid "Published SEO"
-msgstr "SEO منشور"
+msgstr "SEO المنشور"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__published_version_id
@@ -2194,6 +2195,7 @@ msgstr "البيانات الخام"
 
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__test_status__ready
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_assistant__health__ready
 msgid "Ready"
 msgstr "جاهز"
 
@@ -5974,6 +5976,18 @@ msgid "Excel Row"
 msgstr "صف Excel"
 
 #. module: ab_website_seo_optimization
+#: model:ir.actions.act_window,name:ab_website_seo_optimization.action_ab_website_seo_optimization_pending_review
+#: model:ir.ui.menu,name:ab_website_seo_optimization.ab_website_seo_optimization_menu_pending_review
+msgid "Pending Review"
+msgstr "بانتظار المراجعة"
+
+#. module: ab_website_seo_optimization
+#: model:ir.actions.act_window,name:ab_website_seo_optimization.action_ab_website_seo_optimization_ready_to_publish
+#: model:ir.ui.menu,name:ab_website_seo_optimization.ab_website_seo_optimization_menu_ready_to_publish
+msgid "Ready to Publish"
+msgstr "جاهز للنشر"
+
+#. module: ab_website_seo_optimization
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_product_seo_xlsx_import_wizard_form
 msgid "Review Imported Products"
 msgstr "مراجعة المنتجات المستوردة"
@@ -5989,3 +6003,8 @@ msgstr "تم الاستيراد: 0. لم يتم الاستيراد: %(count)s."
 #: code:addons/ab_website_seo_optimization/models/product_seo_xlsx_import_wizard.py:0
 msgid "Imported: %(count)s. Not imported: 0."
 msgstr "تم الاستيراد: %(count)s. لم يتم الاستيراد: 0."
+
+#. module: ab_website_seo_optimization
+#: model:ir.ui.menu,name:ab_website_seo_optimization.ab_website_seo_optimization_menu_all_records
+msgid "All Records"
+msgstr "كل السجلات"

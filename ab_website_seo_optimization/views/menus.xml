@@ -8,6 +8,21 @@
             <field name="context">{'search_default_filter_active': 1}</field>
         </record>
 
+        <record id="action_ab_website_seo_optimization_pending_review" model="ir.actions.act_window">
+            <field name="name">Pending Review</field>
+            <field name="res_model">ab.product.seo</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', 'in', ['draft', 'generated', 'under_review'])]</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_ready_to_publish" model="ir.actions.act_window">
+            <field name="name">Ready to Publish</field>
+            <field name="res_model">ab.product.seo</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'approved')]</field>
+        </record>
+
         <record id="action_ab_website_seo_optimization_published" model="ir.actions.act_window">
             <field name="name">Published SEO</field>
             <field name="res_model">ab.product.seo</field>
@@ -90,8 +105,35 @@
         <menuitem id="ab_website_seo_optimization_menu_all"
                   name="All SEO Records"
                   parent="ab_website_seo_optimization_menu_root"
+                  sequence="10"/>
+
+        <record id="ab_website_seo_optimization_menu_all" model="ir.ui.menu">
+            <field name="action" eval="False"/>
+        </record>
+
+        <menuitem id="ab_website_seo_optimization_menu_all_records"
+                  name="All Records"
+                  parent="ab_website_seo_optimization_menu_all"
                   action="action_ab_website_seo_optimization_all"
                   sequence="10"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_pending_review"
+                  name="Pending Review"
+                  parent="ab_website_seo_optimization_menu_all"
+                  action="action_ab_website_seo_optimization_pending_review"
+                  sequence="12"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_ready_to_publish"
+                  name="Ready to Publish"
+                  parent="ab_website_seo_optimization_menu_all"
+                  action="action_ab_website_seo_optimization_ready_to_publish"
+                  sequence="13"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_published"
+                  name="Published SEO"
+                  parent="ab_website_seo_optimization_menu_all"
+                  action="action_ab_website_seo_optimization_published"
+                  sequence="14"/>
 
         <menuitem id="ab_website_seo_optimization_menu_bulk_optimization"
                   name="Bulk Optimization"
