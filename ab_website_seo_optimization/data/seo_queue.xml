@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="seo_queue_channel" model="queue.job.channel">
+        <field name="name">seo</field>
+        <field name="parent_id" ref="integration_queue_job.channel_root"/>
+    </record>
+    <record id="seo_queue_checkpoint_function" model="queue.job.function">
+        <field name="model_id" ref="model_ab_product_seo_bulk_optimization"/>
+        <field name="method">_process_queue_checkpoint</field>
+        <field name="channel_id" ref="seo_queue_channel"/>
+        <field name="retry_pattern" eval="{1: 10, 3: 60, 5: 300}"/>
+    </record>
+</odoo>

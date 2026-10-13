@@ -43,6 +43,9 @@
                 <attribute name="domain">[('provider_type', 'in', ['AI_GENERATOR', 'LOCAL_MODEL']), ('active', '=', True)]</attribute>
                 <attribute name="help">For AI Wording, use only this assistant when selected. Leave empty to use the pipeline order. The pipeline must allow AI generation.</attribute>
             </xpath>
+            <xpath expr="//field[@name='items_per_tick']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//field[@name='assistant_id']" position="after">
                 <div colspan="2" class="text-muted small" invisible="not enrichment_enabled or generation_mode != 'deterministic'">Deterministic mode uses product facts and the template without an AI assistant.</div>
             </xpath>

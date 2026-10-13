@@ -15,3 +15,4 @@ from . import enrichment_pipeline
 
 from . import seo_template
 from . import seo_template_workflow
+from . import seo_queue

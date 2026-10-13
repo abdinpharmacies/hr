@@ -1,6 +1,6 @@
 {
     "name": "SEO Optimization",
-    "version": "19.0.3.0.0",
+    "version": "19.0.3.1.0",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "author": "Alhassan Hossny",
@@ -11,6 +11,7 @@
         "website_sale",
         "ab_product",
         "ab_website_sale_product",
+        "integration_queue_job",
     ],
     "data": [
         "security/security_groups.xml",
@@ -19,6 +20,7 @@
         "views/menus.xml",
         "data/seo_assistant_data.xml",
         "data/seo_bulk_cron.xml",
+        "data/seo_queue.xml",
         "data/enrichment_providers.xml",
         "data/enrichment_cron.xml",
         "data/seo_templates.xml",

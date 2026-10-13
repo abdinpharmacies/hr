@@ -5428,6 +5428,40 @@ msgid "Select an active AI assistant for AI Wording."
 msgstr "اختر مساعد ذكاء اصطناعي نشطًا للصياغة بالذكاء الاصطناعي."
 
 #. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__queue_checkpoint
+msgid "Queue Checkpoint"
+msgstr "نقطة استكمال المهمة"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization__queue_uuid
+msgid "Queue Job UUID"
+msgstr "المعرّف الفريد للمهمة الخلفية"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_queue.py:0
+msgid "Queue progress is maintained by the SEO worker."
+msgstr "يتولى عامل SEO تحديث تقدم المهمة."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_queue.py:0
+msgid "You cannot run SEO jobs for this company."
+msgstr "لا يمكنك تشغيل مهام SEO لهذه الشركة."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_queue.py:0
+msgid "SEO processing is busy. Try again shortly."
+msgstr "معالجة SEO مشغولة. حاول مرة أخرى بعد قليل."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_queue.py:0
+msgid "SEO generation: %s"
+msgstr "توليد محتوى SEO: %s"
+
+#. module: ab_website_seo_optimization
 #. odoo-python
 #: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
 msgid "Product code: %s"

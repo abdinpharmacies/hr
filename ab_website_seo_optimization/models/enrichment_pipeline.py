@@ -1,5 +1,4 @@
 import json
-import logging
 import re
 import time
 from datetime import timedelta
@@ -14,7 +13,6 @@ from ..services.providers import MEDICAL, SEO_FIELDS, ProviderFailure, digest, m
 from .enrichment_provider import MANAGER
 
 
-_logger = logging.getLogger(__name__)
 DOMAINS = [(key, label) for key, label in (("auto", "Automatic"), ("drug", "Drug"), ("cosmetic", "Cosmetic"), ("supplement", "Supplement"), ("food", "Food"), ("general", "General"))]
 
 
@@ -456,22 +454,10 @@ class EnrichmentBulk(models.Model):
 
     @api.model
     def _cron_run_queued_bulk_optimizations(self, limit=1):
+        self._require_manager()
         jobs = self.search(fields.Domain("state", "in", ("queued", "running")), order="id", limit=limit)
         for job in jobs:
-            deadline = time.monotonic() + 45
-            for _index in range(job.items_per_tick if job.enrichment_enabled else 1):
-                before = job.processed_count
-                try:
-                    with self.env.cr.savepoint():
-                        job._run_bulk_optimization_chunk()
-                except Exception as error:
-                    _logger.exception("SEO job architecture failure job_id=%s type=%s", job.id, type(error).__name__)
-                    job.write({"state": "failed", "finished_at": fields.Datetime.now()})
-                    job._create_line("error", _("Job stopped because of a server error: %s") % type(error).__name__)
-                if self.env.context.get("cron_id") and not self.env["ir.cron"]._commit_progress(1):
-                    break
-                if job.state not in ("queued", "running") or job.processed_count == before or time.monotonic() >= deadline:
-                    break
+            job._enqueue_queue_checkpoint(eta=job._next_queue_eta())
         return True
 
 
