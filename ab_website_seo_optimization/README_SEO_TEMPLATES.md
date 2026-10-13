@@ -49,7 +49,7 @@ Clinical directions, warnings, indications, suitability and storage from remote 
 
 **Deterministic** is the default on bulk jobs and individual SEO records. It renders available facts in the template order, preserves identity, and uses translated connecting text. Missing facts remain missing. This is a factual baseline, not a substitute for richer source information.
 
-**AI Wording** uses the existing pipeline's sequential generators when the pipeline permits generation and sufficient facts exist. The request contains product identity, category context, normalized facts, source provenance, the full template contract, validation rules and language. The response must contain only:
+**AI Wording** uses the selected assistant when one is set; otherwise it uses the pipeline's sequential generators when generation is permitted and sufficient facts exist. The request contains product identity, category context, normalized facts, source provenance, the template contract, validation rules and language. The response must contain only:
 
 ```json
 {
@@ -75,6 +75,8 @@ Indexed normalized hashes detect exact title, meta and description duplicates am
 
 Translations display template/version, confidence, provider/model, generation date, structured sections, facts and validation details. Editing SEO text invalidates evidence review. The review action revalidates the current text; rejected content cannot be confirmed, approved or published, including force publication. Review notes must describe the evidence checked and any accepted warnings. Every generated translation requires human review, even when structural validation passes.
 
+AI prompts include a product-specific grounded JSON example and the validator's wording and quotation requirements. A rejected template response receives one correction attempt per configured model, using the validation error codes; quotas and request accounting still apply. Repeated rejection remains a failure, with provider/language/error details retained in the work item's validation report and negative cache. Changing the prompt invalidates the previous generation cache key. The product form shows the latest enrichment state and failure details under **Generation Status**; refresh after background execution. The legacy result badge is hidden for these runs so a queued or failed enrichment run is not presented as **Not Run**.
+
 ## Versioning and regeneration
 
 Template/section edits increment the template version. Each work item stores bilingual contract snapshots and facts; each translation stores its own contract, version, structured output and provider/model. Approved versions retain an immutable template/fact/validation snapshot alongside existing source provenance and reviewer details. Stored outdated flags identify drafts generated from older template versions.
@@ -96,10 +98,10 @@ Approved, published and under-review content stays intact. New output is retaine
 3. If evaluating AI, run a separate small AI pilot with configured providers. An AI pilot is required to unlock larger AI jobs; a deterministic pilot does not prove AI output quality.
 4. Review every pilot translation. Apply and review any protected-content proposal if it is included. Record Pilot Review Notes, then use **Validate Pilot**.
 5. Runs above 100 require a validated pilot with the same company, languages, generation mode and current template configuration. A template-filtered run requires coverage of that template; an unfiltered run requires all active templates. A changed template requires a new pilot.
-6. Select category/products/template as needed, set the batch limit, select the validated pilot, and enqueue. The normal cron discovers at most 500 IDs at a time and processes persistent work items, committing progress through the existing cron transaction boundary. It does not materialize all products when enqueueing.
-7. Use Resume Job after an interruption and Retry Failures for failed/provider-waiting items. Completed work is not repeated. Partial language results and evidence remain available. Job scope/settings cannot be changed after starting.
+6. Select category/products/template as needed, set the batch limit, select the validated pilot, and enqueue. The `integration_queue_job` runner discovers at most 500 IDs at a time and processes one enrichment product per task on `root.seo`. Progress and the next task commit together. Generation does not require the global cron and does not materialize all products when enqueueing.
+7. Use Resume Job after an interruption or to start an old queued run after upgrading, and Retry Failures for failed/provider-waiting items. Completed work is not repeated. Partial language results and evidence remain available. Job scope/settings cannot be changed after starting. Queue execution errors are visible in Background Task Monitor; provider waits schedule a future task automatically.
 
-Provider quotas, model fallback, shared quotas and existing source/license controls are retained. Missing keys are marked as authentication unavailable and fallback continues. Temporary failures have bounded provider retries and persistent exponential-backoff scheduling; item retry waiting is bounded to eight attempts. Permanent failures do not receive endless retries. No new cron or external database write is introduced by the template layer.
+Provider quotas, model fallback within a provider, shared quotas and existing source/license controls are retained. Pipeline provider fallback applies when no assistant is selected. Temporary failures have bounded provider retries and persistent exponential-backoff scheduling; item retry waiting is bounded to eight attempts. Permanent failures do not receive endless retries. No new cron or external database write is introduced by the template layer.
 
 The real pilot in the implementation report has intentionally **not** been approved by a human reviewer. The large-run gate remains closed for that pilot.
 

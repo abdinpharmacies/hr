@@ -41,11 +41,13 @@ The full [provider matrix and research references](PROVIDERS.md) describe actual
    /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin -c /path/to/config -d database -u ab_website_seo_optimization --stop-after-init
    ```
 
-3. Restart the Odoo service using that environment. The upgrade creates additive models/fields/indexes, provider configurations, five editable pipelines, and a dataset cron. It reuses the existing bulk SEO cron. No hook, destructive cleanup, base upgrade, or production data migration is included.
+3. Reload the Odoo service using that environment. SEO generation uses the installed `integration_queue_job` runner and the `root.seo` channel. Include `integration_queue_job` in `server_wide_modules`, keep the root channel capacity above zero, and configure its HTTP host/port for this Odoo instance. Generation works with `max_cron_threads = 0`; dataset imports still use their existing cron. No hook, destructive cleanup, base upgrade, or production data migration is included.
 4. In SEO Settings, review source licenses and commercial permissions, then import datasets. Dataset B requires separate commercial permission; its public availability does not grant that permission.
 5. Configure provider endpoints, models, limits and keys. Enable **Allow Remote** only for providers whose API should be used. Local inference also requires a running compatible server and an installed model.
 6. Assign website product categories to the Drug, Cosmetic, Supplement, Food or General pipeline. Explicit product type wins; otherwise category ancestry selects a pipeline, then the existing medicine flag, then General. An explicitly selected job pipeline overrides product routing.
-7. Choose pipeline steps and sequence, AI mode, languages, batch limit and items per tick. Start the existing published-products bulk action.
+7. Choose pipeline steps and sequence, AI mode, languages and batch limit. Start the existing published-products bulk action. Individual product generation uses the same runner automatically. For a run queued before this upgrade, use **Resume Job** once to enqueue it in the runner.
+
+Each enrichment queue task processes at most one product and schedules the next task in the same transaction. The `root.seo` channel shares the configured root capacity; an explicit `root.seo:1` channel setting is optional. Queue tasks retain the initiating user and company, and recheck permissions before execution. **Background Task Monitor** can discover the registered queue function and display its execution state. The old bulk cron XML ID is preserved for existing installations, but its callback only enqueues missing work; it is disabled on fresh installs and is not required for generation.
 
 Existing `noupdate` provider records retain their saved values. Fresh-install defaults use current endpoints and configurable models. Use **Apply Provider Defaults** explicitly when updating an old saved configuration. Runtime model discovery prevents unavailable Gemini/Groq/OpenRouter models from silently continuing. Old Hugging Face inference URLs are routed through its current compatible endpoint. Qwen regional/workspace endpoints remain configurable.
 
@@ -96,21 +98,21 @@ Generated fields record provider/model, prompt version, stable input hash and in
 
 ## Sequential fallback and quotas
 
-Data providers run in configured pipeline order and can fill still-missing accepted facts. AI providers run separately in order until one returns a usable draft. The next product starts at the beginning of the chain, skipping persisted exhausted/cooling providers without network calls. OpenRouter can additionally try newline-separated configured models.
+Data providers run in configured pipeline order and can fill still-missing accepted facts. AI providers run separately in order until one returns a usable draft when no assistant is selected. A selected assistant is the only generator for that job. The next product starts at the beginning of the configured chain, skipping exhausted or cooling providers without network calls. OpenRouter can additionally try newline-separated configured models.
 
 Request counters cover every HTTP attempt, including retries and model discovery. UTC daily/monthly/minute windows, token reservations, lifetime token caps and optional model-unit budgets are enforced under provider row locks. Shared API accounts should use **Quota Group** pointing to one root provider. Configure a separate provider record per model where quotas differ. Zero configured limits mean no *local* cap, not unlimited vendor allowance. Unknown token usage retains a conservative reservation.
 
-Timeouts, connection errors, 429 and temporary HTTP failures receive bounded exponential retries. Only delays up to two seconds occur inside a work-item call; longer waits become persisted cooldowns and immediate fallback. Authentication/permanent schema/model failures are not retried. Negative caching prevents repeated failures for the same input. If every generator is exhausted, the work item waits until the earliest available reset; it is not discarded after three daily-limit failures. Permanent all-provider failure is bounded and can be retried through the admin action.
+Timeouts, connection errors, 429 and temporary HTTP failures receive bounded exponential retries. Only delays up to two seconds occur inside a work-item call; longer waits become persisted cooldowns. Authentication and permanent schema/model failures are not retried. Negative caching applies to persistent failures; temporary quota, rate-limit and connection failures are retried after the wait. If every generator is exhausted, the work item waits until the earliest available reset; it is not discarded after three daily-limit failures. Permanent all-provider failure is bounded and can be retried through the admin action.
 
-Provider errors do not stop the catalog job. Architectural/programmer/database failures stop it with an error line and server trace. Logs store error categories/status codes, never request bodies or credentials. **Reset Usage** is manager-only and audited; use it only after checking the provider account. It does not erase lifetime token accounting.
+Provider errors do not stop the catalog job. Architectural/programmer/database failures roll back the current task and appear as failed queue executions with a server trace. The bulk job can remain queued after that rollback; fix the cause, then use **Resume Job**. Provider audit logs store error categories/status codes, never request bodies or credentials. **Reset Usage** is manager-only and audited; use it only after checking the provider account. It does not erase lifetime token accounting.
 
 ## How a 100K-product enrichment job works
 
 1. Starting a job records the domain, maximum product ID and count. The UI returns immediately; no remote request or 100K work-item creation happens in that HTTP request.
-2. The existing cron discovers at most 500 product IDs at a time using an ID cursor. The snapshot upper bound excludes newly created products from that run.
+2. The queue runner discovers at most 500 product IDs at a time using an ID cursor. The snapshot upper bound excludes newly created products from that run.
 3. Each `(job, product)` has one persistent work item. The worker uses local indexed data before any permitted API fallback.
-4. It attempts the source and generator chains, saves per-field evidence, partial language results and a draft, then commits that item through Odoo's cron progress API.
-5. A tick processes a configurable maximum (default 50) and stops after approximately 45 seconds between items. One in-flight bounded provider call may exceed that soft budget; configure timeouts to fit the server cron limit.
+4. It attempts the source and generator chains, then saves per-field evidence, partial language results, a draft and the next queue task atomically through the queue runner transaction.
+5. Each enrichment task processes at most one product. Provider cooldowns schedule a future task using its ETA, without occupying a worker while waiting. Configure provider timeouts to fit the Odoo request execution limit.
 6. After a restart, the discovery cursor and committed items survive. Uncommitted work rolls back and is retried. Completed products are skipped. Unique source IDs, work-item keys, evidence hashes and cache keys prevent duplicate persisted results.
 7. Review-required results count as processed drafts, not published content. Queue, processing, success, failure, skipped, review and per-provider quota/call counters remain visible.
 
@@ -134,6 +136,8 @@ Company record rules cover jobs, work items, evidence, calls and SEO history. So
 | Waiting for providers | Inspect cooldown/reset times, key status and per-provider call errors |
 | Unusable/malformed data | Check native format, JSON prefix and release schema; failed rows and original file are retained |
 | Dataset remains queued | Ensure cron workers are enabled and service filestore permissions/disk are sufficient |
+| SEO generation remains queued | Check the queue runner, root channel capacity and runner HTTP host/port; use Resume Job for runs created before the queue integration |
+| Queue execution failed but SEO remains queued | Inspect the failed execution in Background Task Monitor, fix its cause, then use Resume Job |
 | All results need review | Expected: automated enrichment is draft-only; review source evidence and record corrections |
 | Job failed on server error | Fix the architectural error before Resume; do not repeatedly retry an integrity failure |
 | Missing dataset file after restore | Restore `seo_datasets` with the matching database filestore |
