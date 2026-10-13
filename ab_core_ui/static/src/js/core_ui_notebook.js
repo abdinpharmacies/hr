@@ -1,14 +1,15 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
 import { Component, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 const COPY_TYPE_LABELS = {
     xml: "XML",
-    component_id: "Component ID",
-    ai_prompt: "AI Prompt",
-    owl_usage: "OWL Usage",
-    props: "Props",
-    import: "Import",
+    component_id: _t("Component ID"),
+    ai_prompt: _t("AI Prompt"),
+    owl_usage: _t("OWL Usage"),
+    props: _t("Props"),
+    import: _t("Import"),
 };
 
 const COPY_TYPE_ICONS = {
@@ -149,45 +150,45 @@ export class CoreUINotebook extends Component {
         const text = parts.join("\n\n");
         try {
             await navigator.clipboard.writeText(text);
-            this.notification.add(`Re-copied ${item.name}`, { type: "success" });
+            this.notification.add(_t("Re-copied %s", item.name), { type: "success" });
         } catch {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         }
     }
 
     async copyEverything() {
         try {
             await navigator.clipboard.writeText(this.flattenedForExport);
-            this.notification.add("All notebook items copied", { type: "success" });
+            this.notification.add(_t("All notebook items copied"), { type: "success" });
         } catch {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         }
     }
 
     async exportAiPrompts() {
         try {
             await navigator.clipboard.writeText(this.aiPromptsForExport);
-            this.notification.add("AI Prompts copied", { type: "success" });
+            this.notification.add(_t("AI Prompts copied"), { type: "success" });
         } catch {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         }
     }
 
     async exportXml() {
         try {
             await navigator.clipboard.writeText(this.xmlForExport);
-            this.notification.add("XML snippets copied", { type: "success" });
+            this.notification.add(_t("XML snippets copied"), { type: "success" });
         } catch {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         }
     }
 
     async exportMarkdown() {
         try {
             await navigator.clipboard.writeText(this.markdownForExport);
-            this.notification.add("Markdown export copied", { type: "success" });
+            this.notification.add(_t("Markdown export copied"), { type: "success" });
         } catch {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         }
     }
 }

@@ -1,4 +1,5 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
 import { Component } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { CoreUIPreviewCard } from "../core_ui/preview_card";
@@ -60,9 +61,9 @@ export class CoreUIGallery extends Component {
     copyComponentId(comp, ev) {
         if (ev) ev.stopPropagation();
         navigator.clipboard.writeText(comp.component_id).then(() => {
-            this.notification.add("Copied: " + comp.component_id, { type: "info" });
+            this.notification.add(_t("Copied: %s", comp.component_id), { type: "info" });
         }).catch(() => {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         });
         if (this.props.onNotebookCopy) {
             this.props.onNotebookCopy(comp.component_id, "component_id");
@@ -74,9 +75,9 @@ export class CoreUIGallery extends Component {
         const ref = comp.template_ref || comp.component_id;
         const xml = `<t t-call="${ref}"/>`;
         navigator.clipboard.writeText(xml).then(() => {
-            this.notification.add("XML copied to clipboard", { type: "success" });
+            this.notification.add(_t("XML copied to clipboard"), { type: "success" });
         }).catch(() => {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         });
         if (this.props.onNotebookCopy) {
             this.props.onNotebookCopy(comp.component_id, "xml");

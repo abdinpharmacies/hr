@@ -1,4 +1,5 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
 import { Component } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { CoreUIPreviewCard } from "../core_ui/preview_card";
@@ -32,7 +33,7 @@ export class CoreUIInspector extends Component {
         if (!comp) return;
         const ref = comp.template_ref || comp.component_id;
         const xml = `<t t-call="${ref}"/>`;
-        this.copyText(xml, "XML copied to clipboard");
+        this.copyText(xml, _t("XML copied to clipboard"));
         if (this.props.onNotebookCopy) {
             this.props.onNotebookCopy(comp.component_id, "xml");
         }
@@ -41,7 +42,7 @@ export class CoreUIInspector extends Component {
     copyComponentId() {
         const comp = this.props.component;
         if (!comp) return;
-        this.copyText(comp.component_id, "Component ID copied");
+        this.copyText(comp.component_id, _t("Component ID copied"));
         if (this.props.onNotebookCopy) {
             this.props.onNotebookCopy(comp.component_id, "component_id");
         }
@@ -59,7 +60,7 @@ export class CoreUIInspector extends Component {
 
     copyAiPrompt() {
         if (!this.props.component) return;
-        this.copyText(this.aiPrompt, "AI Prompt copied");
+        this.copyText(this.aiPrompt, _t("AI Prompt copied"));
         if (this.props.onCopyAiPrompt) {
             this.props.onCopyAiPrompt(this.props.component.component_id);
         }
@@ -70,9 +71,9 @@ export class CoreUIInspector extends Component {
 
     copyText(text, label) {
         navigator.clipboard.writeText(text).then(() => {
-            this.notification.add(label || "Copied to clipboard", { type: "success" });
+            this.notification.add(label || _t("Copied to clipboard"), { type: "success" });
         }).catch(() => {
-            this.notification.add("Failed to copy", { type: "danger" });
+            this.notification.add(_t("Failed to copy"), { type: "danger" });
         });
     }
 

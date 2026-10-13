@@ -1,0 +1,2416 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "\". Try different keywords."
+msgstr "\". جرّب كلمات بحث أخرى."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "\"></t>"
+msgstr "\"></t>"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "$12.4k"
+msgstr "$12.4k"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_card
+msgid "1,284 products supplied"
+msgstr "تم توريد 1,284 منتجًا"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,steps:ab_core_ui.pattern_approval_flow
+msgid ""
+"1. User clicks Approve. 2. Confirm dialog with optional comment. 3. Record "
+"status changes to approved. 4. Success toast shown."
+msgstr ""
+"1. يضغط المستخدم على موافقة. 2. يظهر مربع تأكيد مع تعليق اختياري. 3. تتغير "
+"حالة السجل إلى معتمد. 4. يظهر إشعار بالنجاح."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,steps:ab_core_ui.pattern_delete_confirm
+msgid ""
+"1. User clicks Delete. 2. Confirm dialog appears with item name. 3. User "
+"confirms. 4. Record is archived (not deleted). 5. Success toast with undo "
+"option appears."
+msgstr ""
+"1. يضغط المستخدم على حذف. 2. يظهر مربع تأكيد باسم العنصر. 3. يؤكد المستخدم. "
+"4. يُؤرشف السجل دون حذفه. 5. يظهر إشعار بالنجاح مع خيار التراجع."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,steps:ab_core_ui.pattern_reject_flow
+msgid ""
+"1. User clicks Reject. 2. Reject dialog opens with reason textarea. 3. User "
+"enters reason. 4. Record status changes to rejected. 5. Notification sent to"
+" requester."
+msgstr ""
+"1. يضغط المستخدم على رفض. 2. يظهر مربع لإدخال السبب. 3. يُدخل المستخدم "
+"السبب. 4. تتغير حالة السجل إلى مرفوض. 5. يُرسل إشعار إلى مقدم الطلب."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "2 pending orders"
+msgstr "طلبان معلقان"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.empty_permission
+msgid "<i class=\"fa fa-envelope\"/> Contact Administrator"
+msgstr "<i class=\"fa fa-envelope\"/> التواصل مع المسؤول"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_header_page
+msgid "<i class=\"fa fa-filter\"/> Filter"
+msgstr "<i class=\"fa fa-filter\"/> تصفية"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_header_page
+msgid "<i class=\"fa fa-plus\"/> New Order"
+msgstr "<i class=\"fa fa-plus\"/> طلب جديد"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid ""
+"<select class=\"core_ui_input core_ui_select\">\n"
+"                                <option>Analgesics</option>\n"
+"                                <option>Antibiotics</option>\n"
+"                                <option>Vitamins</option>\n"
+"                            </select>"
+msgstr ""
+"<select class=\"core_ui_input core_ui_select\">\n"
+"                                <option>مسكنات</option>\n"
+"                                <option>مضادات حيوية</option>\n"
+"                                <option>فيتامينات</option>\n"
+"                            </select>"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.res_config_settings_view_form
+msgid ""
+"<span class=\"core_ui_btn_content\">\n"
+"                                <i class=\"fa fa-rocket core_ui_btn_icon\"/>\n"
+"                                <span>Launch Workspace</span>\n"
+"                            </span>\n"
+"                            <span class=\"core_ui_btn_ripple\"/>"
+msgstr ""
+"<span class=\"core_ui_btn_content\">\n"
+"                                <i class=\"fa fa-rocket core_ui_btn_icon\"/>\n"
+"                                <span>فتح مساحة العمل</span>\n"
+"                            </span>\n"
+"                            <span class=\"core_ui_btn_ripple\"/>"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.timeline
+msgid "<span class=\"cu-detail-field-label\">Notes</span>"
+msgstr "<span class=\"cu-detail-field-label\">ملاحظات</span>"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.timeline
+msgid "<span class=\"cu-overdue-badge\">⚠ Overdue</span>"
+msgstr "<span class=\"cu-overdue-badge\">⚠ متأخر</span>"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.timeline
+msgid "<span class=\"cu-stage-field-label\">Date</span>"
+msgstr "<span class=\"cu-stage-field-label\">التاريخ</span>"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.timeline
+msgid "<span class=\"cu-stage-field-label\">User</span>"
+msgstr "<span class=\"cu-stage-field-label\">المستخدم</span>"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "<t t-call=\""
+msgstr "<t t-call=\""
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "AI Prompt"
+msgstr "تعليمات AI"
+
+#. module: ab_core_ui
+#: model:res.groups.privilege,name:ab_core_ui.privilege_core_ui_access
+msgid "Access"
+msgstr "الوصول"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Accessibility"
+msgstr "إمكانية الوصول"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__accessibility_notes
+msgid "Accessibility Notes"
+msgstr "ملاحظات إمكانية الوصول"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__active
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__active
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_card
+msgid "Active since 2018"
+msgstr "نشط منذ 2018"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Add to Notebook"
+msgstr "إضافة إلى دفتر الملاحظات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Admin"
+msgstr "مدير"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_dialog_alert
+msgid "Alert Dialog"
+msgstr "مربع تنبيه"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_alerts
+msgid "Alert banners and notification bars for system messages."
+msgstr "لافتات تنبيه وأشرطة إشعارات لرسائل النظام."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_dialog_alert
+msgid ""
+"Alert dialog for important notifications requiring user acknowledgment."
+msgstr "مربع تنبيه للإشعارات المهمة التي تتطلب إقرار المستخدم."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_alerts
+msgid "Alerts"
+msgstr "التنبيهات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "All"
+msgstr "الكل"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Amoxicillin 250mg is below minimum threshold."
+msgstr "مخزون Amoxicillin 250mg أقل من الحد الأدنى."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_loading_spinner
+msgid "Animated loading spinner for async operations."
+msgstr "مؤشر تحميل متحرك للعمليات غير المتزامنة."
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__animation
+msgid "Animation"
+msgstr "التحريك"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_res_config_settings__core_ui_animation_speed
+msgid "Animation Speed"
+msgstr "سرعة الحركة"
+
+#. module: ab_core_ui
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_animation
+msgid "Animations"
+msgstr "الحركات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Application"
+msgstr "طلب التوظيف"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Application Preview"
+msgstr "معاينة التطبيق"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_approval_flow
+msgid "Approval Flow"
+msgstr "مسار الموافقة"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_approval_flow
+msgid "Approval workflow with confirm dialog and optional comment."
+msgstr "مسار موافقة مع مربع تأكيد وتعليق اختياري."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__author
+msgid "Author"
+msgstr "الكاتب"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__slots
+msgid "Available slots for this component"
+msgstr "المواضع المتاحة لهذا المكوّن"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_avatar
+msgid "Avatar"
+msgstr "الصورة الرمزية"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_badges
+msgid "Badges"
+msgstr "الشارات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_component__status__beta
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_search_view
+msgid "Beta"
+msgstr "تجريبي"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_alert_info
+msgid "Blue info alert banner for informational messages."
+msgstr "لافتة معلومات زرقاء للرسائل الإرشادية."
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_border
+msgid "Border"
+msgstr "الحدود"
+
+#. module: ab_core_ui
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_radius
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__radius
+msgid "Border Radius"
+msgstr "محيط الحدود"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Borders"
+msgstr "الحدود"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_nav_breadcrumb
+msgid "Breadcrumb"
+msgstr "مسار الصفحة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_nav_breadcrumb
+msgid "Breadcrumb navigation path with chevron separators."
+msgstr "مسار تنقل بفواصل على شكل أسهم."
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__breakpoint
+msgid "Breakpoint"
+msgstr "نقطة التحول"
+
+#. module: ab_core_ui
+#: model_terms:ir.actions.act_window,help:ab_core_ui.core_ui_component_action
+msgid "Browse and manage Core UI components."
+msgstr "تصفح مكوّنات Core UI وإدارتها."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.res_config_settings_view_form
+msgid "Build interfaces using the centralized Design System."
+msgstr "إنشاء واجهات باستخدام نظام التصميم المركزي."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_buttons
+msgid "Button components with various styles, sizes, and states."
+msgstr "مكوّنات أزرار بأنماط وأحجام وحالات متنوعة."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_buttons
+msgid "Buttons"
+msgstr "الأزرار "
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_design_token__token_name
+msgid "CSS variable name e.g. --core-ui-color-primary"
+msgstr "اسم متغير CSS مثل --core-ui-color-primary"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+#: code:addons/ab_core_ui/static/src/xml/core_ui_components.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_table_card
+msgid "Card Table"
+msgstr "جدول بطاقات"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_cards
+msgid "Card containers for grouping related content."
+msgstr "حاويات بطاقات لتجميع المحتوى المرتبط."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_cards
+msgid "Cards"
+msgstr "البطاقات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.actions.act_window,name:ab_core_ui.core_ui_category_action
+msgid "Categories"
+msgstr "الأقسام"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__category_id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__category_id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__category_id
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_search_view
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_core_ui
+#: model:ir.model.constraint,message:ab_core_ui.constraint_core_ui_category_name_uniq
+msgid "Category name must be unique."
+msgstr "يجب أن يكون اسم الفئة فريدًا."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_charts
+msgid "Chart components: bar, line, pie, donut, and metric displays."
+msgstr "مكوّنات رسوم بيانية: أعمدة وخطوط ودوائر وحلقات وعرض مؤشرات."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_charts
+msgid "Charts"
+msgstr "الرسوم البيانية"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_progress_circle
+msgid "Circular SVG progress indicator."
+msgstr "مؤشر تقدم دائري بصيغة SVG."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_btn_icon
+msgid "Circular icon-only button for compact toolbars."
+msgstr "زر دائري بأيقونة فقط لأشرطة الأدوات الصغيرة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_avatar
+msgid "Circular user avatar with initials fallback and status dot."
+msgstr "صورة رمزية دائرية للمستخدم مع أحرف الاسم كبديل ونقطة للحالة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_form_modern
+msgid "Clean form layout with floating labels and modern spacing."
+msgstr "تخطيط نموذج واضح بعناوين عائمة ومسافات حديثة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_table_modern
+msgid "Clean modern table with subtle row hover and rounded corners."
+msgstr "جدول حديث وواضح مع تمييز الصف عند المرور وزوايا مستديرة."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Clear All"
+msgstr "مسح الكل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Close Inspector"
+msgstr "إغلاق لوحة الفحص"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_form_view
+msgid "Code Examples"
+msgstr "أمثلة برمجية"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Collapse"
+msgstr "طيّ"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__color
+msgid "Color"
+msgstr "اللون"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_badge_state
+msgid "Colored state badge with gradient and glow effect for workflow states."
+msgstr "شارة حالة ملونة بتدرج وتأثير توهج لحالات سير العمل."
+
+#. module: ab_core_ui
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_colors
+msgid "Colors"
+msgstr "الألوان"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__dependencies
+msgid "Comma-separated module dependencies"
+msgstr "اعتماديات الموديول مفصولة بفواصل"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__keywords
+msgid "Comma-separated search keywords"
+msgstr "كلمات بحث مفصولة بفواصل"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__tags
+msgid "Comma-separated tags"
+msgstr "وسوم مفصولة بفواصل"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_table_compact
+msgid "Compact Table"
+msgstr "جدول مضغوط"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__component_id
+msgid "Component"
+msgstr "المكون"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__component_count
+msgid "Component Count"
+msgstr "عدد المكوّنات"
+
+#. module: ab_core_ui
+#: model:ir.model.constraint,message:ab_core_ui.constraint_core_ui_component_component_id_uniq
+msgid "Component ID must be unique."
+msgstr "يجب أن يكون معرّف المكوّن فريدًا."
+
+#. module: ab_core_ui
+#: model:ir.actions.act_window,name:ab_core_ui.core_ui_component_action
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__component_ids
+msgid "Components"
+msgstr "المكونات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_components.xml:0
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_dialog_confirm
+msgid "Confirm Dialog"
+msgstr "مربع تأكيد"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Contact Email"
+msgstr "البريد الإلكتروني"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy"
+msgstr "نسخ"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy Again"
+msgstr "نسخ مرة أخرى"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy Component ID"
+msgstr "نسخ معرّف المكوّن"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy Everything"
+msgstr "نسخ الكل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy XML"
+msgstr "نسخ XML"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Copy XML, AI Prompts, or Component IDs while browsing."
+msgstr "انسخ XML أو تعليمات AI أو معرّفات المكوّنات أثناء التصفح."
+
+#. module: ab_core_ui
+#: model:ir.module.category,name:ab_core_ui.module_category_core_ui
+msgid "Core UI"
+msgstr "Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model,name:ab_core_ui.model_core_ui_component
+msgid "Core UI Component"
+msgstr "مكوّن Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model,name:ab_core_ui.model_core_ui_category
+msgid "Core UI Component Category"
+msgstr "فئة مكوّنات Core UI"
+
+#. module: ab_core_ui
+#: model:ir.module.category,description:ab_core_ui.module_category_core_ui
+msgid "Core UI Design System"
+msgstr "نظام تصميم Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model,name:ab_core_ui.model_core_ui_design_token
+msgid "Core UI Design Token"
+msgstr "متغير تصميم Core UI"
+
+#. module: ab_core_ui
+#: model:ir.actions.client,name:ab_core_ui.action_core_ui_gallery
+msgid "Core UI Gallery"
+msgstr "معرض Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model,name:ab_core_ui.model_core_ui_token_category
+msgid "Core UI Token Category"
+msgstr "فئة متغيرات Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model,name:ab_core_ui.model_core_ui_pattern
+msgid "Core UI UX Pattern"
+msgstr "نمط UX في Core UI"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.actions.client,name:ab_core_ui.action_core_ui_workspace
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.res_config_settings_view_form
+msgid "Core UI Workspace"
+msgstr "مساحة عمل Core UI"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__create_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__create_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__create_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__create_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__create_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__create_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__create_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__create_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__css_example
+msgid "Css Example"
+msgstr "مثال CSS"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_danger
+msgid "Danger"
+msgstr "خطر"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_alert_danger
+msgid "Danger Alert"
+msgstr "تنبيه خطر"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_btn_danger
+msgid "Danger Button"
+msgstr "زر خطر"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_theme__dark
+msgid "Dark"
+msgstr "غامق"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Dashboard"
+msgstr "لوحة البيانات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_progress_sync_panel
+msgid ""
+"Dashboard-style synchronization progress panel with completion badge and "
+"status message."
+msgstr "لوحة تقدم مزامنة بأسلوب لوحة المعلومات مع شارة اكتمال ورسالة حالة."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_tables
+msgid "Data tables with sorting, filtering, and responsive variants."
+msgstr "جداول بيانات مع الفرز والتصفية وتصميمات متجاوبة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_badge_default
+msgid "Default Badge"
+msgstr "شارة افتراضية"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_card_default
+msgid "Default Card"
+msgstr "بطاقة افتراضية"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_delete_confirm
+msgid "Delete Confirmation Flow"
+msgstr "مسار تأكيد الحذف"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_table_compact
+msgid "Dense table variant with reduced padding for data-heavy views."
+msgstr "جدول مكثف بمسافات داخلية أقل للشاشات كثيرة البيانات."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__dependencies
+msgid "Dependencies"
+msgstr "الاعتماديات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_component__status__deprecated
+msgid "Deprecated"
+msgstr "مهمَل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__description
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__description
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__description
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__description
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__description
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_form_view
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_core_ui
+#: model:ir.actions.act_window,name:ab_core_ui.core_ui_design_token_action
+msgid "Design Tokens"
+msgstr "متغيرات التصميم"
+
+#. module: ab_core_ui
+#: model:res.groups,name:ab_core_ui.group_core_ui_developer
+msgid "Developer"
+msgstr "المطوِّر"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_res_config_settings__core_ui_dev_mode
+msgid "Developer Mode"
+msgstr "وضع المطور"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_dialog_form
+msgid ""
+"Dialog containing a form for inline data entry without leaving the page."
+msgstr "مربع يحتوي على نموذج لإدخال البيانات دون مغادرة الصفحة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_dialog_reject
+msgid "Dialog for rejecting a request or item with a required reason."
+msgstr "مربع لرفض طلب أو عنصر مع إلزامية إدخال السبب."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_dialogs
+msgid "Dialogs"
+msgstr "مربعات الحوار"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__display_name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__display_name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__display_name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__display_name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_core_ui
+#: model:core_ui.component,when_not_to_use:ab_core_ui.comp_dialog_confirm
+msgid ""
+"Do not use for simple, reversible actions. A toast notification may be more "
+"appropriate."
+msgstr ""
+"لا تستخدمه للإجراءات البسيطة القابلة للتراجع. قد يكون الإشعار المؤقت أنسب."
+
+#. module: ab_core_ui
+#. odoo-python
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_component__status__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_upload
+msgid "Drag-and-drop file upload zone with preview and progress."
+msgstr "منطقة رفع ملفات بالسحب والإفلات مع المعاينة والتقدم."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_empty_state
+msgid "Empty State Pattern"
+msgstr "نمط الحالة الفارغة"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_empty_states
+msgid "Empty States"
+msgstr "الحالات الفارغة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_empty_no_results
+msgid "Empty state displayed when search yields no results."
+msgstr "حالة فارغة تظهر عند عدم وجود نتائج بحث."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_empty_no_data
+msgid "Empty state for when no data exists yet, with illustration and CTA."
+msgstr "حالة فارغة عند عدم وجود بيانات بعد، مع رسم توضيحي وCTA."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_empty_states
+msgid "Empty state illustrations and messages for no-data scenarios."
+msgstr "رسوم توضيحية ورسائل للحالات التي لا تحتوي على بيانات."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_empty_permission
+msgid "Empty state shown when user lacks access permissions."
+msgstr "حالة فارغة تظهر عندما لا يملك المستخدم صلاحية الوصول."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_empty_state
+msgid "Empty state with illustration, message, and call-to-action button."
+msgstr "حالة فارغة مع رسم توضيحي ورسالة وزر إجراء."
+
+#. module: ab_core_ui
+#: model:core_ui.component,accessibility_notes:ab_core_ui.comp_dialog_confirm
+msgid ""
+"Ensure focus is trapped within the dialog. Support Escape key to dismiss."
+msgstr "تأكد من بقاء التركيز داخل مربع الحوار. ادعم زر Escape للإغلاق."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Enter email..."
+msgstr "أدخل البريد الإلكتروني..."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Enter phone number..."
+msgstr "أدخل رقم الهاتف..."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Enter product code..."
+msgstr "أدخل كود المنتج..."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Enter product name..."
+msgstr "أدخل اسم المنتج..."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Enter supplier name..."
+msgstr "أدخل اسم المورد..."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_toast_error
+msgid "Error Toast"
+msgstr "إشعار خطأ مؤقت"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_errors
+msgid "Error pages, permission denied, 404, 500, and warning states."
+msgstr "صفحات الأخطاء ورفض الصلاحيات وحالات 404 و500 والتحذير."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_errors
+msgid "Errors & Permissions"
+msgstr "الأخطاء والصلاحيات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Everything will be collected here."
+msgstr "سيتم تجميع كل شيء هنا."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Exit"
+msgstr "خروج"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Export AI Prompts"
+msgstr "تصدير تعليمات AI"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Export Markdown"
+msgstr "تصدير Markdown"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Export XML"
+msgstr "Export XML"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_animation_speed__fast
+msgid "Fast"
+msgstr "سريع"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__favorite_ids
+msgid "Favorited By"
+msgstr "تم وضغه في المفضلة من قِبَل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_search_view
+msgid "Favorites"
+msgstr "المفضلات"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_upload
+msgid "File upload areas, drag-and-drop zones, and attachment previews."
+msgstr "مناطق رفع الملفات والسحب والإفلات ومعاينات المرفقات."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_upload
+msgid "File upload with drag-drop zone, progress indicator, and preview."
+msgstr "رفع ملفات بمنطقة سحب وإفلات ومؤشر تقدم ومعاينة."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Filtered by \""
+msgstr "تمت التصفية حسب \""
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_category__icon
+msgid "Font Awesome icon class"
+msgstr "فئة أيقونة Font Awesome"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_family
+msgid "Font Family"
+msgstr "عائلة الخط"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_mono
+msgid "Font Monospace"
+msgstr "خط ثابت العرض"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_2xl
+msgid "Font Size 2XL"
+msgstr "حجم الخط 2XL"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_3xl
+msgid "Font Size 3XL"
+msgstr "حجم الخط 3XL"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_base
+msgid "Font Size Base"
+msgstr "حجم الخط الأساسي"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_lg
+msgid "Font Size LG"
+msgstr "حجم الخط LG"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_sm
+msgid "Font Size SM"
+msgstr "حجم الخط SM"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_xl
+msgid "Font Size XL"
+msgstr "حجم الخط XL"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_font_size_xs
+msgid "Font Size XS"
+msgstr "حجم الخط XS"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_dialog_form
+msgid "Form Dialog"
+msgstr "مربع نموذج"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_forms
+msgid "Form layouts, inputs, and validation patterns."
+msgstr "تخطيطات النماذج والمدخلات وأنماط التحقق."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_form_tabbed
+msgid "Form organized into tabbed sections."
+msgstr "نموذج منظم في أقسام بعلامات تبويب."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_forms
+msgid "Forms"
+msgstr "النماذج"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_btn_ghost
+msgid "Ghost Button"
+msgstr "زر شفاف"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Gradients"
+msgstr "التدرجات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_alert_success
+msgid "Green success alert banner for positive outcomes and confirmations."
+msgstr "لافتة نجاح خضراء للنتائج الإيجابية والتأكيدات."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_toast_success
+msgid "Green success toast notification that auto-dismisses."
+msgstr "إشعار نجاح أخضر يُغلق تلقائيًا."
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__grid
+msgid "Grid"
+msgstr "الشبكة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_stat_grid
+msgid "Grid of KPI statistic cards in a responsive layout."
+msgstr "شبكة بطاقات إحصائية لمؤشرات KPI بتخطيط متجاوب."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_design_token__preview_html
+msgid "HTML for live preview of this token"
+msgstr "HTML للمعاينة المباشرة لهذا المتغير"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__has_children
+msgid "Has Children"
+msgstr "له عناصر فرعية"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__has_dark_mode
+msgid "Has Dark Mode"
+msgstr "يدعم الوضع الداكن"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__has_light_mode
+msgid "Has Light Mode"
+msgstr "يدعم الوضع الفاتح"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_headers
+msgid "Headers"
+msgstr "الترويسات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_card_hero
+msgid "Hero Card"
+msgstr "بطاقة بارزة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "High Contrast"
+msgstr "تباين عالٍ"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_progress_bar
+msgid "Horizontal progress bar with percentage label."
+msgstr "شريط تقدم أفقي مع نسبة مئوية."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_nav_tabs
+msgid "Horizontal tab navigation with active indicator."
+msgstr "تنقل أفقي بعلامات تبويب ومؤشر للعلامة النشطة."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__id
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__icon
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__icon
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_btn_icon
+msgid "Icon Button"
+msgstr "زر أيقونة"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_info
+msgid "Info"
+msgstr "معلومات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_alert_info
+msgid "Info Alert"
+msgstr "تنبيه معلومات"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_inputs
+msgid "Input fields, selects, checkboxes, radio buttons, and switches."
+msgstr "حقول إدخال وقوائم اختيار ومربعات تحديد وأزرار اختيار ومفاتيح تبديل."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_inputs
+msgid "Inputs"
+msgstr "المدخلات"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Insufficient quantity in source warehouse."
+msgstr "الكمية في المستودع المصدر غير كافية."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Inventory Updated"
+msgstr "تم تحديث المخزون"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__is_favorite
+msgid "Is Favorite"
+msgstr "مفضل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "John Doe"
+msgstr "جون دو"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__js_example
+msgid "Js Example"
+msgstr "مثال JS"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Jump to Component"
+msgstr "الانتقال إلى المكوّن"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_card_statistics
+msgid "KPI statistics card with icon, value, label, and trend indicator."
+msgstr "بطاقة إحصائية لمؤشر KPI مع أيقونة وقيمة وعنوان ومؤشر اتجاه."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_kanban
+msgid "Kanban"
+msgstr "Kanban"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_kanban
+msgid "Kanban Card"
+msgstr "بطاقة Kanban"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_kanban
+msgid "Kanban board components and card templates."
+msgstr "مكوّنات لوحة Kanban وقوالب البطاقات."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_kanban
+msgid "Kanban card template with title, subtitle, badges, and footer."
+msgstr "قالب بطاقة Kanban بعنوان وعنوان فرعي وشارات وتذييل."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__keywords
+msgid "Keywords"
+msgstr "الكلمات المفتاحية"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Large Font"
+msgstr "خط كبير"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_card_hero
+msgid ""
+"Large hero card with gradient accent, suitable for detail page headers."
+msgstr "بطاقة بارزة كبيرة بتدرج لوني، مناسبة لعناوين صفحات التفاصيل."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__write_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__write_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__write_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__write_uid
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__write_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__write_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__write_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__write_date
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_theme__light
+msgid "Light"
+msgstr "فاتح"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_loading
+msgid "Loading & Skeleton"
+msgstr "التحميل والهيكل المؤقت"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_loading_spinner
+msgid "Loading Spinner"
+msgstr "مؤشر التحميل"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_loading
+msgid "Loading states, skeleton screens, and shimmer effects."
+msgstr "حالات التحميل والشاشات الهيكلية وتأثيرات اللمعان."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Low Stock Alert"
+msgstr "تنبيه انخفاض المخزون"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "MD"
+msgstr "MD"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_btn_ghost
+msgid "Minimal ghost button with no border or background until hover."
+msgstr "زر شفاف بسيط دون حدود أو خلفية حتى مرور المؤشر."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_dialogs
+msgid ""
+"Modal dialogs and popup windows for confirmations, alerts, and workflows."
+msgstr "مربعات حوار ونوافذ منبثقة للتأكيدات والتنبيهات ومسارات العمل."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_form_modern
+msgid "Modern Form"
+msgstr "نموذج حديث"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_table_modern
+msgid "Modern Table"
+msgstr "جدول حديث"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_input_toggle
+msgid "Modern toggle switch for boolean settings."
+msgstr "مفتاح تبديل حديث للإعدادات المنطقية."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Motion"
+msgstr "الحركة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_wizard_stepper
+msgid "Multi-step wizard stepper with step indicators and navigation."
+msgstr "معالج متعدد الخطوات مع مؤشرات للخطوات والتنقل."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_wizard
+msgid "Multi-step wizard with stepper navigation and progress tracking."
+msgstr "معالج متعدد الخطوات مع التنقل وتتبع التقدم."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_wizard
+msgid "Multi-step wizards, steppers, and guided workflows."
+msgstr "معالجات متعددة الخطوات ومؤشرات خطوات ومسارات عمل إرشادية."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__name
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_navigation
+msgid "Navigation"
+msgstr "التنقل"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_nav_tabs
+msgid "Navigation Tabs"
+msgstr "علامات تبويب التنقل"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_navigation
+msgid "Navigation components including sidebar, topbar, and breadcrumbs."
+msgstr "مكوّنات تنقل تشمل الشريط الجانبي والعلوي ومسار التنقل."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "No Components Found"
+msgstr "لم يتم العثور على مكوّنات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_empty_no_data
+msgid "No Data Empty State"
+msgstr "حالة عدم وجود بيانات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_empty_no_results
+msgid "No Search Results"
+msgstr "لا توجد نتائج بحث"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.timeline
+msgid "No active stage"
+msgstr "لا توجد مرحلة نشطة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "No components match \""
+msgstr "لا توجد مكوّنات تطابق \""
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "No copied components yet."
+msgstr "لم يتم نسخ أي مكوّنات بعد."
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_animation_speed__normal
+msgid "Normal"
+msgstr "عادي"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Not registered"
+msgstr "غير مسجل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Notebook"
+msgstr "دفتر الملاحظات"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__usage_count
+msgid "Number of times referenced"
+msgstr "عدد مرات الإشارة إليه"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_components.xml:0
+msgid "OK"
+msgstr "موافق"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Open Notebook"
+msgstr "فتح دفتر الملاحظات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_alert_warning
+msgid "Orange warning alert banner for cautionary messages."
+msgstr "لافتة تحذير برتقالية للرسائل التنبيهية."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_toast_warning
+msgid "Orange warning toast notification."
+msgstr "إشعار تحذير برتقالي مؤقت."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Order #1234"
+msgstr "طلب #1234"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__owl_example
+msgid "Owl Example"
+msgstr "مثال Owl"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "PAR-001"
+msgstr "PAR-001"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_header_page
+msgid "Page Header"
+msgstr "عنوان الصفحة"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_headers
+msgid "Page headers, section headers, and hero sections."
+msgstr "عناوين الصفحات والأقسام والأجزاء البارزة."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Palette"
+msgstr "لوحة الألوان"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Paracetamol 500mg"
+msgstr "Paracetamol 500mg"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__parent_id
+msgid "Parent Category"
+msgstr "الفئة الرئيسية"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__pattern_id
+msgid "Pattern"
+msgstr "النمط"
+
+#. module: ab_core_ui
+#: model:ir.actions.act_window,name:ab_core_ui.core_ui_pattern_action
+msgid "Patterns"
+msgstr "الأنماط"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_empty_permission
+msgid "Permission Denied"
+msgstr "الوصول مرفوض"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_permission_denied
+msgid "Permission Denied Flow"
+msgstr "مسار رفض الوصول"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_permission_denied
+msgid "Permission denied state with explanation and contact admin option."
+msgstr "حالة رفض الوصول مع توضيح وخيار التواصل مع المسؤول."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_card
+msgid "PharmaMed Supplies"
+msgstr "PharmaMed Supplies"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Pin"
+msgstr "تثبيت"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__preview_html
+msgid "Preview Html"
+msgstr "معاينة HTML"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__preview_image
+msgid "Preview Image"
+msgstr "معاينة الصورة"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_primary
+msgid "Primary"
+msgstr "الرئيسي"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_btn_primary
+msgid "Primary Button"
+msgstr "الزر الأساسي"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_primary_hover
+msgid "Primary Hover"
+msgstr "اللون الأساسي عند المرور"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_primary_light
+msgid "Primary Light"
+msgstr "اللون الأساسي الفاتح"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_btn_primary
+msgid "Primary action button with filled background style."
+msgstr "زر إجراء أساسي بخلفية ممتلئة."
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Product Code"
+msgstr "كود المنتج"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_form_modern
+msgid "Product Name"
+msgstr "اسم المنتج"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Profiles"
+msgstr "الملفات التعريفية"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_progress
+msgid "Progress"
+msgstr "مدى التقدم"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_progress_bar
+msgid "Progress Bar"
+msgstr "شريط التقدم"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_progress_circle
+msgid "Progress Circle"
+msgstr "دائرة التقدم"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_progress
+msgid "Progress bars, spinners, and loading indicators."
+msgstr "أشرطة التقدم ومؤشرات التحميل والدوران."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Prompts"
+msgstr "التعليمات"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__props_doc
+msgid "Props Documentation"
+msgstr "توثيق الخصائص"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_pattern__template_ref
+msgid "QWeb template reference"
+msgstr "مرجع قالب QWeb"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__template_ref
+msgid "QWeb template reference e.g. core_ui.dialog.reject"
+msgstr "مرجع قالب QWeb مثل core_ui.dialog.reject"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Radius"
+msgstr "نصف قطر الزوايا"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_radius_full
+msgid "Radius Full"
+msgstr "استدارة كاملة"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_radius_lg
+msgid "Radius LG"
+msgstr "نصف قطر LG"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_radius_md
+msgid "Radius MD"
+msgstr "نصف قطر MD"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_radius_sm
+msgid "Radius SM"
+msgstr "نصف قطر SM"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_radius_xl
+msgid "Radius XL"
+msgstr "نصف قطر XL"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.dialog_reject
+msgid "Reason <span class=\"text-danger\">*</span>"
+msgstr "السبب <span class=\"text-danger\">*</span>"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Recently Used"
+msgstr "المستخدم مؤخرًا"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Recently Viewed"
+msgstr "منتجات شاهدتها مؤخرًا"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_alert_danger
+msgid "Red danger alert banner for errors and critical issues."
+msgstr "لافتة خطر حمراء للأخطاء والمشكلات الحرجة."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_btn_danger
+msgid "Red danger button for destructive actions."
+msgstr "زر خطر أحمر للإجراءات التي يتعذر التراجع عنها."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_toast_error
+msgid "Red error toast notification for failure messages."
+msgstr "إشعار خطأ أحمر لرسائل الفشل."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Reduced Motion"
+msgstr "تقليل الحركة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_dialog_reject
+msgid "Reject Dialog"
+msgstr "مربع الرفض"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_reject_flow
+msgid "Reject Flow"
+msgstr "مسار الرفض"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Revenue"
+msgstr "الإيرادات"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_delete_confirm
+msgid "Safe delete pattern with confirmation dialog and undo option."
+msgstr "نمط حذف آمن مع مربع تأكيد وخيار تراجع."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Sales Overview"
+msgstr "نظرة عامة على المبيعات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Save current configuration as profile"
+msgstr "حفظ الإعدادات الحالية كملف تعريفي"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__scss_example
+msgid "Scss Example"
+msgstr "مثال SCSS"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_search
+msgid "Search & Filters"
+msgstr "البحث والتصفية"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_search
+msgid "Search Bar"
+msgstr "شريط البحث"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_search
+msgid "Search input with icon, clear button, and keyboard shortcut hint."
+msgstr "حقل بحث بأيقونة وزر مسح وتلميح لاختصار لوحة المفاتيح."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_search
+msgid "Search inputs, filter bars, and advanced filtering components."
+msgstr "حقول بحث وأشرطة تصفية ومكوّنات تصفية متقدمة."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "Search..."
+msgstr "بحث..."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_btn_secondary
+msgid "Secondary Button"
+msgstr "زر ثانوي"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_btn_secondary
+msgid "Secondary outlined button for less prominent actions."
+msgstr "زر ثانوي بإطار للإجراءات الأقل بروزًا."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_input_select
+msgid "Select Input"
+msgstr "حقل اختيار"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Select a category from the sidebar to browse components."
+msgstr "اختر فئة من الشريط الجانبي لتصفح المكوّنات."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid ""
+"Select a component to inspect its details, code examples, and usage "
+"guidelines."
+msgstr "اختر مكوّنًا لفحص تفاصيله وأمثلته البرمجية وإرشادات استخدامه."
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Select a component to preview"
+msgstr "اختر مكوّنًا للمعاينة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Select a component to preview it in application context."
+msgstr "اختر مكوّنًا لمعاينته داخل التطبيق."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__sequence
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__sequence
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__sequence
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__sequence
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__shadow
+msgid "Shadow"
+msgstr "الظل"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_shadow_glow
+msgid "Shadow Glow"
+msgstr "ظل متوهج"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_shadow_lg
+msgid "Shadow LG"
+msgstr "ظل LG"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_shadow_md
+msgid "Shadow MD"
+msgstr "ظل MD"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_shadow_sm
+msgid "Shadow SM"
+msgstr "ظل SM"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_shadow_xl
+msgid "Shadow XL"
+msgstr "ظل XL"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_shadow
+msgid "Shadows"
+msgstr "الظلال"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_res_config_settings__core_ui_show_preview
+msgid "Show Live Previews"
+msgstr "إظهار المعاينات المباشرة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_loading_skeleton
+msgid "Skeleton Screen"
+msgstr "شاشة هيكلية مؤقتة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_loading_skeleton
+msgid "Skeleton placeholder with shimmer animation while content loads."
+msgstr "عنصر هيكلي مؤقت بتأثير لمعان أثناء تحميل المحتوى."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__slots
+msgid "Slots"
+msgstr "الفترات الزمنية"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_animation_speed__slow
+msgid "Slow"
+msgstr "بطيء"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_status_dot
+msgid "Small colored dot indicator for status fields."
+msgstr "مؤشر نقطة صغيرة ملونة لحقول الحالة."
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_2xl
+msgid "Space 2XL"
+msgstr "مسافة 2XL"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_lg
+msgid "Space LG"
+msgstr "مسافة LG"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_md
+msgid "Space MD"
+msgstr "مسافة MD"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_sm
+msgid "Space SM"
+msgstr "مسافة SM"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_xl
+msgid "Space XL"
+msgstr "مسافة XL"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_space_xs
+msgid "Space XS"
+msgstr "مسافة XS"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_spacing
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__spacing
+msgid "Spacing"
+msgstr "المسافات"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_component__status__stable
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_search_view
+msgid "Stable"
+msgstr "مستقر"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_badge_default
+msgid "Standard badge/pill component for statuses and labels."
+msgstr "مكوّن شارة قياسي للحالات والعناوين."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_card_default
+msgid "Standard card container with rounded corners, shadow, and padding."
+msgstr "حاوية بطاقة قياسية بزوايا مستديرة وظل ومسافات داخلية."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_dialog_confirm
+msgid "Standard confirmation dialog with cancel and confirm actions."
+msgstr "مربع تأكيد قياسي مع إجراءي الإلغاء والتأكيد."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_header_page
+msgid "Standard page header with title, subtitle, and optional actions."
+msgstr "عنوان صفحة قياسي مع عنوان فرعي وإجراءات اختيارية."
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,description:ab_core_ui.pattern_reject_flow
+msgid "Standard rejection flow with required reason input."
+msgstr "مسار رفض قياسي مع إلزامية إدخال السبب."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_badge_state
+msgid "State Badge"
+msgstr "شارة الحالة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__states_doc
+msgid "States Documentation"
+msgstr "توثيق الحالات"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_statistics
+msgid "Statistic cards, KPIs, and data display components."
+msgstr "بطاقات إحصائية ومؤشرات KPI ومكوّنات عرض البيانات."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_statistics
+msgid "Statistics"
+msgstr "الإحصائيات"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_card_statistics
+msgid "Statistics Card"
+msgstr "بطاقة إحصائية"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_stat_grid
+msgid "Statistics Grid"
+msgstr "شبكة إحصائيات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: model:core_ui.category,name:ab_core_ui.cat_status
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__status
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_search_view
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_status_dot
+msgid "Status Dot"
+msgstr "نقطة الحالة"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_badges
+msgid "Status badges, tags, and labels."
+msgstr "شارات الحالة والوسوم والعناوين."
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_status
+msgid "Status indicators, state dots, and availability badges."
+msgstr "مؤشرات الحالة ونقاط الحالة وشارات التوفر."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_pattern__steps
+msgid "Step-by-step flow description"
+msgstr "وصف المسار خطوة بخطوة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__steps
+msgid "Steps"
+msgstr "الخطوات"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Stock levels updated successfully."
+msgstr "تم تحديث مستويات المخزون بنجاح."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_input_select
+msgid "Styled select dropdown with placeholder and options."
+msgstr "قائمة اختيار منسقة مع نص إرشادي وخيارات."
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_input_text
+msgid "Styled text input field with label, helper text, and error state."
+msgstr "حقل نص منسق بعنوان ونص مساعد وحالة خطأ."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_category__child_ids
+msgid "Subcategories"
+msgstr "الفئات الفرعية"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_success
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_alert_success
+msgid "Success Alert"
+msgstr "تنبيه نجاح"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_toast_success
+msgid "Success Toast"
+msgstr "إشعار نجاح مؤقت"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_dialog_form
+msgid "Supplier Name"
+msgstr "اسم المورد"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_surface
+msgid "Surface"
+msgstr "السطح"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_surface_alt
+msgid "Surface Alt"
+msgstr "سطح بديل"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_progress_sync_panel
+msgid "Sync Progress Panel"
+msgstr "لوحة تقدم المزامنة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__res_config_settings__core_ui_theme__system
+msgid "System Default"
+msgstr "الإعداد الافتراضي للنظام"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_form_tabbed
+msgid "Tabbed Form"
+msgstr "نموذج بعلامات تبويب"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_table_card
+msgid "Table where each row appears as a card with borders and shadows."
+msgstr "جدول يظهر فيه كل صف كبطاقة بحدود وظلال."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_tables
+msgid "Tables"
+msgstr "الجداول"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__tags
+msgid "Tags"
+msgstr "علامات التصنيف"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.core_ui_component_form_view
+msgid "Technical"
+msgstr "تقني"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__template_ref
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__template_ref
+msgid "Template Ref"
+msgstr "مرجع القالب"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Temporary Session"
+msgstr "جلسة مؤقتة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_input_text
+msgid "Text Input"
+msgstr "مدخلات النص"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_text
+msgid "Text Primary"
+msgstr "النص الأساسي"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_text_secondary
+msgid "Text Secondary"
+msgstr "النص الثانوي"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+#: model:ir.model.fields,field_description:ab_core_ui.field_res_config_settings__core_ui_theme
+msgid "Theme"
+msgstr "السمة"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_timeline
+#: model:core_ui.component,name:ab_core_ui.comp_timeline
+msgid "Timeline"
+msgstr "المخطط الزمني"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_timeline
+msgid "Timeline views for processes, history, and workflows."
+msgstr "عروض مخطط زمني للعمليات والسجل ومسارات العمل."
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_toast
+msgid "Toast & Notifications"
+msgstr "الإشعارات المؤقتة والتنبيهات"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_toast
+msgid "Toast notifications and snackbar messages."
+msgstr "إشعارات مؤقتة ورسائل شريط التنبيه."
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_input_toggle
+msgid "Toggle Switch"
+msgstr "مفتاح تبديل"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "Toggle Theme"
+msgstr "تبديل المظهر"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__token_name
+msgid "Token Name"
+msgstr "اسم المتغير"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_design_token__value
+msgid "Token value e.g. #2563eb"
+msgstr "قيمة المتغير مثل #2563eb"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_token_category__token_ids
+msgid "Tokens"
+msgstr "المتغيرات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+msgid "Touch Mode"
+msgstr "وضع اللمس"
+
+#. module: ab_core_ui
+#: model_terms:ir.ui.view,arch_db:ab_core_ui.preview_toasts_all
+msgid "Transfer Failed"
+msgstr "فشل التحويل"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_transition_fast
+msgid "Transition Fast"
+msgstr "انتقال سريع"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_transition_normal
+msgid "Transition Normal"
+msgstr "انتقال عادي"
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_transition_slow
+msgid "Transition Slow"
+msgstr "انتقال بطيء"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__type
+msgid "Type"
+msgstr "النوع"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/design_lab.xml:0
+#: model:core_ui.token_category,name:ab_core_ui.tok_cat_typography
+#: model:ir.model.fields.selection,name:ab_core_ui.selection__core_ui_design_token__type__typography
+msgid "Typography"
+msgstr "تنسيق الخطوط"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_component__component_id
+msgid "Unique identifier e.g. core_ui.dialog.reject"
+msgstr "معرّف فريد مثل core_ui.dialog.reject"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,help:ab_core_ui.field_core_ui_pattern__pattern_id
+msgid "Unique pattern identifier"
+msgstr "معرّف نمط فريد"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_upload
+msgid "Upload"
+msgstr "رفع الملف"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_upload
+msgid "Upload Flow"
+msgstr "مسار الرفع"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_upload
+msgid "Upload Zone"
+msgstr "منطقة الرفع"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__usage_count
+msgid "Usage Count"
+msgstr "عدد مرات الاستخدام"
+
+#. module: ab_core_ui
+#: model:core_ui.component,when_to_use:ab_core_ui.comp_dialog_confirm
+msgid "Use when asking users to confirm a critical action before proceeding."
+msgstr "يُستخدم عند طلب تأكيد إجراء مهم من المستخدم قبل المتابعة."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_pattern__component_ids
+msgid "Used Components"
+msgstr "المكوّنات المستخدمة"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_avatar
+msgid "User Avatar"
+msgstr "الصورة الرمزية للمستخدم"
+
+#. module: ab_core_ui
+#: model:core_ui.category,description:ab_core_ui.cat_avatar
+msgid "User avatars, initials, and profile pictures."
+msgstr "الصور الرمزية للمستخدمين وأحرف الأسماء والصور الشخصية."
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_design_token__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__version
+msgid "Version"
+msgstr "الإصدار"
+
+#. module: ab_core_ui
+#: model:core_ui.component,description:ab_core_ui.comp_timeline
+msgid ""
+"Vertical timeline with dates, titles, descriptions, and status indicators."
+msgstr "مخطط زمني رأسي بالتواريخ والعناوين والأوصاف ومؤشرات الحالة."
+
+#. module: ab_core_ui
+#: model:core_ui.design_token,name:ab_core_ui.token_warning
+msgid "Warning"
+msgstr "تحذير"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_alert_warning
+msgid "Warning Alert"
+msgstr "تنبيه تحذيري"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_toast_warning
+msgid "Warning Toast"
+msgstr "إشعار تحذيري مؤقت"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "When NOT to use"
+msgstr "متى لا يُستخدم"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__when_not_to_use
+msgid "When Not To Use"
+msgstr "متى لا يُستخدم"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__when_to_use
+msgid "When To Use"
+msgstr "متى يُستخدم"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "When to use"
+msgstr "متى يُستخدم"
+
+#. module: ab_core_ui
+#: model:core_ui.category,name:ab_core_ui.cat_wizard
+msgid "Wizard & Stepper"
+msgstr "المعالج ومؤشر الخطوات"
+
+#. module: ab_core_ui
+#: model:core_ui.pattern,name:ab_core_ui.pattern_wizard
+msgid "Wizard Flow"
+msgstr "مسار المعالج"
+
+#. module: ab_core_ui
+#: model:core_ui.component,name:ab_core_ui.comp_wizard_stepper
+msgid "Wizard Stepper"
+msgstr "مؤشر خطوات المعالج"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "XML"
+msgstr "XML"
+
+#. module: ab_core_ui
+#: model:ir.model.fields,field_description:ab_core_ui.field_core_ui_component__xml_example
+msgid "Xml Example"
+msgstr "مثال XML"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/xml/core_ui_workspace.xml:0
+msgid "v"
+msgstr "v"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/core_ui/design_lab/profile_preview_card.xml:0
+msgid "v2.0"
+msgstr "v2.0"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_inspector.js:0
+msgid "AI Prompt copied"
+msgstr "تم نسخ تعليمات AI"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "AI Prompts copied"
+msgstr "تم نسخ تعليمات AI"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "All notebook items copied"
+msgstr "تم نسخ جميع عناصر دفتر الملاحظات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Component ID"
+msgstr "معرّف المكوّن"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_inspector.js:0
+msgid "Component ID copied"
+msgstr "تم نسخ معرّف المكوّن"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_inspector.js:0
+msgid "Copied to clipboard"
+msgstr "تم النسخ إلى الحافظة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_gallery.js:0
+msgid "Copied: %s"
+msgstr "تم النسخ: %s"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_gallery.js:0
+#: code:addons/ab_core_ui/static/src/js/core_ui_inspector.js:0
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Failed to copy"
+msgstr "تعذّر النسخ"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Import"
+msgstr "استيراد"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Markdown export copied"
+msgstr "تم نسخ التصدير بصيغة Markdown"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_workspace.js:0
+msgid "Notebook cleared"
+msgstr "تم مسح دفتر الملاحظات"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "OWL Usage"
+msgstr "استخدام OWL"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_workspace.js:0
+msgid "Profile saved: %s"
+msgstr "تم حفظ الملف التعريفي: %s"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Props"
+msgstr "الخصائص"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "Re-copied %s"
+msgstr "تم نسخ %s مرة أخرى"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_gallery.js:0
+#: code:addons/ab_core_ui/static/src/js/core_ui_inspector.js:0
+msgid "XML copied to clipboard"
+msgstr "تم نسخ XML إلى الحافظة"
+
+#. module: ab_core_ui
+#. odoo-javascript
+#: code:addons/ab_core_ui/static/src/js/core_ui_notebook.js:0
+msgid "XML snippets copied"
+msgstr "تم نسخ مقاطع XML"

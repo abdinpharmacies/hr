@@ -1,5 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { Component, useState, useRef, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { getAllComponents, validateRegistry } from "../core_ui/registry";
@@ -114,7 +115,7 @@ class CoreUIWorkspace extends Component {
             config: getActiveProfileConfig(this.state.designLab),
         });
         localStorage.setItem("core_ui_saved_profiles", JSON.stringify(saved));
-        this.notification.add("Profile saved: " + name, { type: "success" });
+        this.notification.add(_t("Profile saved: %s", name), { type: "success" });
     }
 
     applyDesignLab() {
@@ -386,7 +387,7 @@ class CoreUIWorkspace extends Component {
 
     clearNotebook() {
         this.state.notebookItems.splice(0, this.state.notebookItems.length);
-        this.notification.add("Notebook cleared", { type: "info" });
+        this.notification.add(_t("Notebook cleared"), { type: "info" });
     }
 
     togglePinNotebook(componentId) {
@@ -708,7 +709,7 @@ class CoreUIGalleryOnly extends Component {
             config: getActiveProfileConfig(this.state.designLab),
         });
         localStorage.setItem("core_ui_saved_profiles", JSON.stringify(saved));
-        this.notification.add("Profile saved: " + name, { type: "success" });
+        this.notification.add(_t("Profile saved: %s", name), { type: "success" });
     }
 
     applyDesignLab() {
@@ -769,7 +770,7 @@ class CoreUIGalleryOnly extends Component {
 
     clearNotebook() {
         this.state.notebookItems.splice(0, this.state.notebookItems.length);
-        this.notification.add("Notebook cleared", { type: "info" });
+        this.notification.add(_t("Notebook cleared"), { type: "info" });
     }
 
     togglePinNotebook(componentId) {
