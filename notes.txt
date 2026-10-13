@@ -1,0 +1,5 @@
+codex
+shared/instructions = rules, shared/skills = skills 
+/home/abdin_02/.codex as the live Codex runtime directory, and keep /home/abdin_02/ai_workflow/codex_config as the maintained config source.
+
+
