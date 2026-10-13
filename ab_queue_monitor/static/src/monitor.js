@@ -42,10 +42,15 @@ export class QueueMonitor extends Component {
         const params = this.props.action.params || {};
         this.state = useState({ data: null, loading: true, busy: false, error: "", scan: null, offset: 0,
             tab: params.tab || "definitions", filters: { module: params.module || "", definition_id: params.definition_id || false,
-                search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true } });
+                search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true,
+                delayed: false, delay_minutes: 30 } });
         this.alive = true; this.sequence = 0;
         onWillStart(() => this.refresh());
         onWillUnmount(() => { this.alive = false; });
+    }
+    stateCounts(row) {
+        return ["running", "pending", "retrying", "failed"].filter(status => row.states?.[status])
+            .map(status => ({ status, label: this.label(status), count: row.states[status] }));
     }
     get kpis() {
         const counts = this.state.data?.kpis || {};
@@ -54,7 +59,8 @@ export class QueueMonitor extends Component {
             { key: "running", label: _t("Running"), icon: "fa-play-circle", tone: "info" },
             { key: "pending", label: _t("Pending"), icon: "fa-clock-o", tone: "warning" },
             { key: "failed", label: _t("Failed"), icon: "fa-exclamation-circle", tone: "danger" },
-            { key: "completed", label: _t("Completed Today"), icon: "fa-check-circle", tone: "success" }
+            { key: "completed", label: _t("Completed Today"), icon: "fa-check-circle", tone: "success" },
+            { key: "delayed", label: _t("Review Required"), icon: "fa-hourglass-half", tone: "warning" }
         ].map(item => ({ ...item, value: counts[item.key] || 0 }));
     }
     label(status) { return this.state.data?.statuses.find(s => s.value === status)?.label || status; }
@@ -77,7 +83,7 @@ export class QueueMonitor extends Component {
     async setTab(tab) { this.state.tab = tab; this.state.offset = 0; await this.refresh(); }
     async module(name) { this.state.filters.module = name; await this.filter(); }
     async page(delta) { this.state.offset = Math.max(0, this.state.offset + delta * 40); await this.refresh(); }
-    async clear() { Object.assign(this.state.filters, { module: "", definition_id: false, search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true }); await this.filter(); }
+    async clear() { Object.assign(this.state.filters, { module: "", definition_id: false, search: "", status: "", runtime_state: "", channel: "", discovery: "", date: "", error: false, active: true, delayed: false, delay_minutes: 30 }); await this.filter(); }
     async discover() {
         if (this.state.busy) return;
         this.state.busy = true;
@@ -105,7 +111,7 @@ export class QueueMonitor extends Component {
             return this.action.doAction({ type: "ir.actions.act_window", res_model: "ab_queue_monitor_definition", res_id: row.id, views: [[false, "form"]] });
         }
         try {
-            const data = await this.orm.call("ab_queue_monitor", "execution_details", [row.backend, row.id]);
+            const data = await this.orm.call("ab_queue_monitor", "execution_details", [row.backend, row.id], { delay_minutes: this.state.filters.delay_minutes });
             for (const field of ["created", "started", "finished"]) data[field] = displayTime(data[field]);
             this.dialog.add(ExecutionDetails, { data });
         } catch (error) { this.notification.add(error.data?.message || _t("Execution details are unavailable."), { type: "warning" }); }

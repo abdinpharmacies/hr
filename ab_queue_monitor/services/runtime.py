@@ -1,7 +1,7 @@
 """Adapters for inspected queue implementations; never invoke job methods."""
 import inspect
 import re
-from datetime import datetime
+from datetime import timedelta
 from pathlib import Path
 
 from odoo import fields
@@ -67,9 +67,11 @@ class QueueAdapter:
     started = 'date_started'
     finished = 'date_done'
 
-    def __init__(self, env):
+    def __init__(self, env, now=None, delay_minutes=30):
         self.env = env
         self.jobs = env[self.model].sudo()
+        self.now = now or fields.Datetime.now()
+        self.delay_minutes = delay_minutes
 
     def states(self):
         return self.jobs._fields['state']._description_selection(self.env)
@@ -85,19 +87,61 @@ class QueueAdapter:
     def pair_domain(self, definition):
         return fields.Domain('model_name', '=', definition.model_name) & fields.Domain('method_name', '=', definition.method_name)
 
+    def status_domain(self, status):
+        states = [state for state, _ in self.states() if state_category(state) == status]
+        domain = fields.Domain('state', 'in', states)
+        if 'retry' in self.jobs._fields:
+            if status == 'retrying':
+                states = [state for state, _ in self.states() if state_category(state, 1) == status]
+                domain = fields.Domain('state', 'in', states) & fields.Domain('retry', '>', 0)
+            elif status == 'pending':
+                domain &= fields.Domain('retry', '=', 0) | fields.Domain('state', '=', 'wait_dependencies')
+        return domain
+
+    def delayed_domain(self):
+        cutoff = self.now - timedelta(minutes=self.delay_minutes)
+        running_date = fields.Domain(self.started, '<=', cutoff) | (
+            fields.Domain(self.started, '=', False) & fields.Domain(self.created, '<=', cutoff))
+        waiting_fields = [name for name in (self.created, 'date_enqueued', 'eta') if name in self.jobs._fields]
+        waiting_date = fields.Domain.AND([
+            fields.Domain(name, '=', False) | fields.Domain(name, '<=', cutoff) for name in waiting_fields
+        ]) & fields.Domain.OR([fields.Domain(name, '!=', False) for name in waiting_fields])
+        return (self.status_domain('running') & running_date) | (
+            (self.status_domain('pending') | self.status_domain('retrying')) & waiting_date)
+
+    def grouped_states(self, domain):
+        names = ['model_name', 'method_name'] if self.backend == 'queue' else []
+        names += ['state']
+        has_retry = 'retry' in self.jobs._fields
+        if has_retry:
+            names.append('retry')
+        for values in self.jobs._read_group(domain, names, ['__count', 'id:max']):
+            model, method, *values = values if self.backend == 'queue' else (self.model, '_process_background_checkpoint', *values)
+            state, *values = values
+            retry = values.pop(0) if has_retry else 0
+            yield model, method, state_category(state, retry), *values
+
     def summary(self, job):
         def get(name, default=False):
             return job[name] if name in job._fields else default
         started, finished = get(self.started), get(self.finished) or get('date_cancelled')
-        duration = max(0, ((finished or datetime.utcnow()) - started).total_seconds()) if started else 0
+        status = state_category(get('state'), get('retry', 0))
+        end = finished or (self.now if status == 'running' else False)
+        duration = max(0, (end - started).total_seconds()) if started and end else None
+        if not started and status in ('pending', 'retrying'):
+            duration = 0
+        waiting_dates = [get(name) for name in (self.created, 'date_enqueued', 'eta') if get(name)]
+        reference = (started or get(self.created)) if status == 'running' else max(waiting_dates, default=False)
+        delayed = bool(status in ('running', 'pending', 'retrying') and reference
+                       and reference <= self.now - timedelta(minutes=self.delay_minutes))
         return {
             'id': job.id, 'backend': self.backend, 'uuid': get('uuid') or '',
             'model': get('model_name'), 'method': get('method_name'),
-            'state': get('state'), 'status': state_category(get('state'), get('retry', 0)),
+            'state': get('state'), 'status': status, 'delayed': delayed,
             'channel': get('channel') or '', 'priority': get('priority', 0),
             'retry': get('retry', 0), 'created': fields.Datetime.to_string(get(self.created)),
             'started': fields.Datetime.to_string(started), 'finished': fields.Datetime.to_string(finished),
-            'duration': round(duration, 1), 'worker': get('worker_pid') or '',
+            'duration': round(duration, 1) if duration is not None else None, 'worker': get('worker_pid') or '',
             'database': self.env.cr.dbname,
         }
 
@@ -165,10 +209,10 @@ class WebsiteSyncAdapter(QueueAdapter):
         return data
 
 
-def adapters(env):
-    result = {'queue': QueueAdapter(env)}
+def adapters(env, now=None, delay_minutes=30):
+    result = {'queue': QueueAdapter(env, now, delay_minutes)}
     if SYNC_MODEL in env and 'background_requested' in env[SYNC_MODEL]._fields:
-        result['website'] = WebsiteSyncAdapter(env)
+        result['website'] = WebsiteSyncAdapter(env, now, delay_minutes)
     return result
 
 
@@ -183,6 +227,6 @@ def runner_health(env):
     lease = env.cr.fetchone()
     jobs = env['queue.job'].sudo()
     last = jobs.search(fields.Domain('date_done', '!=', False), order='date_done desc', limit=1) if 'date_done' in jobs._fields else jobs.browse()
-    return {'status': 'online' if lease else 'unknown', 'database': env.cr.dbname,
+    return {'status': 'lease_held' if lease else 'unknown', 'progress': 'unverified', 'database': env.cr.dbname,
             'pid': lease[0] if lease else False, 'last_activity': fields.Datetime.to_string(last.date_done) if last else False,
             'evidence': env._('Runner database lease is held; dispatch responsiveness is not measured.') if lease else env._('No runner lease observed. Configuration alone does not establish health.')}

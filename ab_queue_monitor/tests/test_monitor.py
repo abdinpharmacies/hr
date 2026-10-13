@@ -1,13 +1,15 @@
 import tempfile
+from datetime import timedelta
 from pathlib import Path
 from unittest.mock import patch
 
 from lxml import etree
 
 from odoo import fields
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests import TransactionCase, tagged
 from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
+from odoo.addons.integration_queue_job.job import Job
 
 from ..services import runtime, static_discovery
 
@@ -35,6 +37,106 @@ class TestQueueMonitor(TransactionCase):
                   'backend': 'queue', 'static_found': True, 'runtime_support': True, 'discovery_type': 'static'}
         values.update(kwargs)
         return self.definitions.create(values)
+
+    def queue_execution(self, **values):
+        job = Job(self.env['res.partner'].search_count, args=([],))
+        for name, value in values.items():
+            setattr(job, name, value)
+        job.store()
+        return job.db_record()
+
+    def test_failed_duration_is_unknown_without_end_time(self):
+        now = fields.Datetime.now()
+        job = self.queue_execution(state='failed', date_started=now - timedelta(days=1))
+        for instant in (now, now + timedelta(hours=1)):
+            summary = runtime.QueueAdapter(self.env, instant).summary(job)
+            self.assertIsNone(summary['duration'])
+            self.assertFalse(summary['delayed'])
+
+    def test_running_and_completed_duration(self):
+        now = fields.Datetime.now()
+        running = self.queue_execution(state='started', date_started=now - timedelta(minutes=5))
+        completed = self.queue_execution(state='done', date_started=now - timedelta(minutes=5),
+                                         date_done=now - timedelta(minutes=2))
+        cancelled = self.queue_execution(state='cancelled', date_started=now - timedelta(minutes=5),
+                                         date_cancelled=now - timedelta(minutes=1))
+        later = runtime.QueueAdapter(self.env, now + timedelta(minutes=1))
+        self.assertEqual(later.summary(running)['duration'], 360)
+        self.assertEqual(later.summary(completed)['duration'], 180)
+        self.assertEqual(later.summary(cancelled)['duration'], 240)
+
+    def test_delayed_domain_matches_display_and_respects_eta(self):
+        now = fields.Datetime.now()
+        old = now - timedelta(hours=2)
+        jobs = self.env['queue.job']
+        cases = [
+            ({'state': 'started', 'date_started': old}, True),
+            ({'state': 'started', 'date_started': now - timedelta(minutes=2)}, False),
+            ({'state': 'pending'}, True),
+            ({'state': 'pending', 'eta': now + timedelta(hours=1)}, False),
+            ({'state': 'pending', 'eta': now - timedelta(minutes=5), 'retry': 2}, False),
+            ({'state': 'pending', 'eta': now - timedelta(minutes=45), 'retry': 2}, True),
+            ({'state': 'enqueued', 'date_enqueued': now - timedelta(minutes=5)}, False),
+            ({'state': 'wait_dependencies'}, True),
+            ({'state': 'done', 'date_started': old, 'date_done': now}, False),
+        ]
+        adapter = runtime.QueueAdapter(self.env, now, 30)
+        expected = set()
+        for values, delayed in cases:
+            job = self.queue_execution(date_created=old, **values)
+            jobs |= job
+            if delayed:
+                expected.add(job.id)
+            self.assertEqual(adapter.summary(job)['delayed'], delayed, values)
+        found = adapter.jobs.search(adapter.delayed_domain() & fields.Domain('id', 'in', jobs.ids))
+        self.assertEqual(set(found.ids), expected)
+
+    def test_old_running_execution_remains_visible(self):
+        now = fields.Datetime.now()
+        definition = self.definition(model_name='res.partner', method_name='search_count')
+        running = self.queue_execution(state='started', date_created=now - timedelta(hours=2),
+                                       date_started=now - timedelta(hours=1))
+        failed = self.queue_execution(state='failed', date_started=now - timedelta(minutes=10))
+        pending = self.queue_execution(state='pending', retry=2, eta=now + timedelta(hours=1))
+        completed = self.queue_execution(state='done', date_started=now - timedelta(minutes=2), date_done=now)
+        jobs = running | failed | pending | completed
+        before = jobs.read(['state', 'date_started', 'date_done', 'retry', 'eta'])
+        reader = self.monitor.with_user(self.reader)
+        for status in ('running', 'retrying', 'failed', 'completed'):
+            result = reader.dashboard({'definition_id': definition.id, 'status': status})
+            self.assertEqual(result['total'], 1)
+            row = result['rows'][0]
+            self.assertEqual(row['status'], 'running')
+            self.assertEqual(row['latest']['id'], completed.id)
+            self.assertEqual(row['states'], {'running': 1, 'failed': 1, 'retrying': 1, 'completed': 1})
+            self.assertEqual(row['delayed'], 1)
+        result = reader.dashboard({'definition_id': definition.id, 'delayed': True}, tab='executions')
+        self.assertEqual([row['id'] for row in result['rows']], [running.id])
+        self.assertEqual(definition.with_user(self.reader).running_count, 1)
+        self.assertEqual(definition.with_user(self.reader).retrying_count, 1)
+        self.assertEqual(definition.with_user(self.reader).failure_count, 1)
+        self.assertIsNone(reader.execution_details('queue', failed.id)['duration'])
+        self.assertEqual(jobs.read(['state', 'date_started', 'date_done', 'retry', 'eta']), before)
+        with self.assertRaises(AccessError):
+            self.monitor.with_user(self.outsider).execution_details('queue', running.id)
+
+    def test_review_threshold_validation(self):
+        with self.assertRaises(UserError):
+            self.monitor.dashboard({'delay_minutes': 'invalid'})
+        self.assertEqual(self.monitor._delay_minutes(0), 1)
+        self.assertEqual(self.monitor._delay_minutes(999999), 1440)
+
+    def test_monitor_field_translation(self):
+        english = self.definitions.with_context(lang='en_US').fields_get(['running_count'])
+        arabic = self.definitions.with_context(lang='ar_001').fields_get(['running_count'])
+        self.assertEqual(english['running_count']['string'], 'Running Executions')
+        self.assertNotEqual(english['running_count']['string'], arabic['running_count']['string'])
+
+    def test_lease_is_not_progress_evidence(self):
+        with patch.object(self.env.cr, 'execute'), patch.object(self.env.cr, 'fetchone', return_value=(123,)), patch.object(type(self.env['queue.job']), 'search', return_value=self.env['queue.job']):
+            data = runtime.runner_health(self.env)
+            self.assertEqual(data['status'], 'lease_held')
+            self.assertEqual(data['progress'], 'unverified')
 
     def test_views_load_from_source(self):
         source = Path(__file__).resolve().parents[1] / 'views' / 'monitor_views.xml'

@@ -35,6 +35,9 @@ class JobDefinition(models.Model):
     latest_at = fields.Datetime(compute='_compute_runtime', string='Latest Execution')
     execution_count = fields.Integer(compute='_compute_runtime', string='Executions')
     failure_count = fields.Integer(compute='_compute_runtime', string='Failures')
+    running_count = fields.Integer(compute='_compute_runtime', string='Running Executions')
+    pending_count = fields.Integer(compute='_compute_runtime', string='Pending Executions')
+    retrying_count = fields.Integer(compute='_compute_runtime', string='Retrying Executions')
     channel = fields.Char(compute='_compute_runtime')
 
     def _compute_runtime(self):
@@ -45,13 +48,21 @@ class JobDefinition(models.Model):
             definition.latest_at = False
             definition.execution_count = 0
             definition.failure_count = 0
+            definition.running_count = 0
+            definition.pending_count = 0
+            definition.retrying_count = 0
             definition.channel = False
             adapter = adapters.get(definition.backend)
             if adapter:
                 domain = adapter.domain() & adapter.pair_domain(definition)
-                groups = adapter.jobs._read_group(domain, ['state'], ['__count'])
-                definition.execution_count = sum(n for _, n in groups)
-                definition.failure_count = sum(n for state, n in groups if state == 'failed')
+                counts = {}
+                for model, method, status, count, latest_id in adapter.grouped_states(domain):
+                    counts[status] = counts.get(status, 0) + count
+                definition.execution_count = sum(counts.values())
+                definition.failure_count = counts.get('failed', 0)
+                definition.running_count = counts.get('running', 0)
+                definition.pending_count = counts.get('pending', 0)
+                definition.retrying_count = counts.get('retrying', 0)
                 job = adapter.jobs.search(domain, order=adapter.created + ' desc, id desc', limit=1)
                 if job:
                     values = adapter.summary(job)

@@ -899,8 +899,10 @@ msgstr "دون تغيير"
 
 #. module: ab_queue_monitor
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_queue_monitor/models/definition.py:0
 #: code:addons/ab_queue_monitor/models/monitor.py:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
 msgid "Unknown"
 msgstr "غير معروف"
 
@@ -979,3 +981,105 @@ msgstr "ث"
 #: code:addons/ab_queue_monitor/models/monitor.py:0
 msgid "unknown"
 msgstr "غير معروف"
+
+#. module: ab_queue_monitor
+#. odoo-python
+#: code:addons/ab_queue_monitor/models/monitor.py:0
+msgid "Choose a valid review threshold in minutes."
+msgstr "اختر مدة صحيحة بالدقائق للتنبيه إلى المراجعة."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Execution progress"
+msgstr "تقدم التنفيذ"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Last Completion"
+msgstr "آخر اكتمال"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Latest execution:"
+msgstr "آخر تنفيذ:"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Lease detected"
+msgstr "تم رصد قفل المُنفّذ"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "No lease detected"
+msgstr "لم يُرصد قفل المُنفّذ"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__pending_count
+msgid "Pending Executions"
+msgstr "تنفيذات في الانتظار"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Queue Runner"
+msgstr "مُنفّذ قائمة الانتظار"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid ""
+"Recorded states do not prove that a worker is still active. Review alerts "
+"indicate age, not a confirmed failure."
+msgstr ""
+"الحالات المسجلة لا تثبت أن عامل التنفيذ ما زال يعمل. تنبيهات المراجعة تشير "
+"إلى طول المدة، ولا تؤكد حدوث عطل."
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__retrying_count
+msgid "Retrying Executions"
+msgstr "تنفيذات قيد إعادة المحاولة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.js:0
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Review Required"
+msgstr "تحتاج إلى مراجعة"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Review Required Only"
+msgstr "التي تحتاج إلى مراجعة فقط"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Review after (minutes)"
+msgstr "تنبيه للمراجعة بعد (دقيقة)"
+
+#. module: ab_queue_monitor
+#: model:ir.model.fields,field_description:ab_queue_monitor.field_ab_queue_monitor_definition__running_count
+msgid "Running Executions"
+msgstr "تنفيذات جارية"
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid ""
+"This execution exceeds the review threshold. Check its worker and "
+"dependencies; it may still be progressing."
+msgstr ""
+"تجاوز هذا التنفيذ مدة التنبيه للمراجعة. تحقق من عامل التنفيذ والمهام التي "
+"يعتمد عليها؛ فقد يكون ما زال يتقدم."
+
+#. module: ab_queue_monitor
+#. odoo-javascript
+#: code:addons/ab_queue_monitor/static/src/monitor.xml:0
+msgid "Unverified"
+msgstr "غير متحقق منه"

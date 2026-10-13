@@ -14,7 +14,10 @@
     .abqm-muted { color: var(--qm-muted); font-size: 12px; }
     .abqm-divider { padding: 0 8px; }
     .abqm-primary { background: #127567; color: white; border-color: #127567; &:hover { background: #0c6055; } }
-    .abqm-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .abqm-stale, .abqm-table .abqm-review { color: #996b19; }
+    .abqm-table .abqm-state-counts { display: flex; flex-wrap: wrap; gap: 4px 10px; }
+    .abqm-review-minutes { width: 70px; padding: 7px; border: 1px solid var(--qm-border); border-radius: 4px; }
+    .abqm-kpis { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 14px; margin-bottom: 22px; }
     .abqm-kpi { border: 1px solid var(--qm-border); border-radius: 6px; background: white; padding: 18px; display: grid; grid-template-columns: 1fr 26px; gap: 9px; box-shadow: 0 2px 4px #20363d05;
         > i { grid-column: 2; grid-row: 1; font-size: 21px; color: #819096; }
         > span { grid-column: 1; grid-row: 1; color: var(--qm-muted); font-size: 12px; }

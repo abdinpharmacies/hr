@@ -22,6 +22,8 @@ class QueueMonitor(models.AbstractModel):
     def dashboard(self, filters=None, offset=0, tab='definitions'):
         self._authorize()
         filters = filters if isinstance(filters, dict) else {}
+        now = fields.Datetime.now()
+        delay_minutes = self._delay_minutes(filters.get('delay_minutes', 30))
         offset = max(0, min(int(offset), 100000))
         Definition = self.env['ab_queue_monitor_definition'].with_context(active_test=False)
         domain = fields.Domain.TRUE
@@ -36,23 +38,23 @@ class QueueMonitor(models.AbstractModel):
         if filters.get('definition_id'):
             domain &= fields.Domain('id', '=', int(filters['definition_id']))
         definitions = Definition.search(domain)
-        adapters = runtime.adapters(self.env)
+        adapters = runtime.adapters(self.env, now, delay_minutes)
         summaries = {}
         for backend, adapter in adapters.items():
             base_domain = self._execution_filter(adapter, adapter.domain(), filters)
-            group_fields = ['model_name', 'method_name', 'state'] if backend == 'queue' else ['state']
-            grouped = adapter.jobs._read_group(base_domain, group_fields, ['__count', 'id:max'])
             bucket = {}
-            for values in grouped:
-                model, method, state, count, latest_id = values if backend == 'queue' else (adapter.model, '_process_background_checkpoint', *values)
-                entry = bucket.setdefault((model, method), {'count': 0, 'failures': 0, 'latest_id': 0})
+            for model, method, status, count, latest_id in adapter.grouped_states(base_domain):
+                entry = bucket.setdefault((model, method), {'count': 0, 'failures': 0, 'latest_id': 0, 'states': {}, 'delayed': 0})
                 entry['count'] += count
-                entry['failures'] += count if runtime.state_category(state) == 'failed' else 0
+                entry['failures'] += count if status == 'failed' else 0
+                entry['states'][status] = entry['states'].get(status, 0) + count
                 entry['latest_id'] = max(entry['latest_id'], latest_id)
+            for model, method, status, count, latest_id in adapter.grouped_states(base_domain & adapter.delayed_domain()):
+                bucket[(model, method)]['delayed'] += count
             latest_jobs = adapter.jobs.browse([v['latest_id'] for v in bucket.values()])
             # Prefetch only the small, non-payload fields used by summary().
             latest_jobs.fetch([f for f in ('state', 'uuid', 'model_name', 'method_name', 'channel', 'priority',
-                'retry', adapter.created, adapter.started, adapter.finished, 'date_cancelled', 'worker_pid') if f in adapter.jobs._fields])
+                'retry', adapter.created, adapter.started, adapter.finished, 'date_cancelled', 'worker_pid', 'eta', 'date_enqueued') if f in adapter.jobs._fields])
             latest_by_id = {job.id: adapter.summary(job) for job in latest_jobs}
             for pair, entry in bucket.items():
                 entry['latest'] = latest_by_id[entry['latest_id']]
@@ -61,18 +63,24 @@ class QueueMonitor(models.AbstractModel):
         for definition in definitions:
             adapter = adapters.get(definition.backend)
             row = {name: definition[name] for name in ('id', 'name', 'module_name', 'module_label', 'model_name', 'method_name', 'backend', 'discovery_type', 'source_file', 'source_line', 'active')}
-            row.update(status='idle' if definition.runtime_support else 'unknown', count=0, failures=0, latest=False, channel='')
+            row.update(status='idle' if definition.runtime_support else 'unknown', count=0, failures=0, latest=False, channel='', states={}, delayed=0)
             if adapter:
                 job_domain = adapter.domain() & adapter.pair_domain(definition)
                 job_domain = self._execution_filter(adapter, job_domain, filters)
                 execution_domains[definition.id] = job_domain
                 summary = summaries.get((definition.backend, definition.model_name, definition.method_name))
                 if summary:
-                    row.update(count=summary['count'], failures=summary['failures'], latest=summary['latest'])
-                    row['status'], row['channel'] = row['latest']['status'], row['latest']['channel']
+                    row.update(count=summary['count'], failures=summary['failures'], latest=summary['latest'],
+                               states=summary['states'], delayed=summary['delayed'])
+                    row['status'] = next((status for status in ('running', 'retrying', 'pending', 'failed')
+                                          if row['states'].get(status)), row['latest']['status'])
+                    row['channel'] = row['latest']['channel']
             if (filters.get('channel') or filters.get('date')) and not row['count']:
                 continue
-            if filters.get('status') and row['status'] != filters['status'] and tab == 'definitions':
+            if filters.get('status') and tab == 'definitions' and not (
+                    row['states'].get(filters['status']) or (not row['count'] and row['status'] == filters['status'])):
+                continue
+            if filters.get('delayed') and not row['delayed']:
                 continue
             if filters.get('error') and not row['failures']:
                 continue
@@ -97,14 +105,9 @@ class QueueMonitor(models.AbstractModel):
                         elif str(filters['search']).lower() not in (adapter.model + '._process_background_checkpoint').lower():
                             job_domain &= fields.Domain.FALSE
                 if filters.get('status'):
-                    matching = [s for s, _ in adapter.states() if runtime.state_category(s) == filters['status']]
-                    if filters['status'] == 'retrying' and 'retry' in adapter.jobs._fields:
-                        retry_states = [s for s, _ in adapter.states() if runtime.state_category(s, 1) == 'retrying']
-                        job_domain &= fields.Domain('state', 'in', retry_states) & fields.Domain('retry', '>', 0)
-                    else:
-                        job_domain &= fields.Domain('state', 'in', matching)
-                        if filters['status'] == 'pending' and 'retry' in adapter.jobs._fields:
-                            job_domain &= fields.Domain('retry', '=', 0) | fields.Domain('state', '=', 'wait_dependencies')
+                    job_domain &= adapter.status_domain(filters['status'])
+                if filters.get('delayed'):
+                    job_domain &= adapter.delayed_domain()
                 total += adapter.jobs.search_count(job_domain)
                 for job in adapter.jobs.search(job_domain, order=adapter.created + ' desc, id desc', limit=offset + 40):
                     row = adapter.summary(job)
@@ -112,7 +115,7 @@ class QueueMonitor(models.AbstractModel):
                     merged.append(row)
             result_rows = sorted(merged, key=lambda r: (r['created'] or '', r['id']), reverse=True)[offset:offset + 40]
         modules = Definition._read_group(fields.Domain('active', '=', True), ['module_name', 'module_label'], ['__count'])
-        kpis = {'modules': len(modules), 'definitions': Definition.search_count(fields.Domain('active', '=', True)), 'running': 0, 'pending': 0, 'failed': 0, 'completed': 0}
+        kpis = {'modules': len(modules), 'definitions': Definition.search_count(fields.Domain('active', '=', True)), 'running': 0, 'pending': 0, 'failed': 0, 'completed': 0, 'delayed': 0}
         channels = set()
         module_counts = {}
         day_start = self._utc_day_start(fields.Date.context_today(self))
@@ -129,6 +132,7 @@ class QueueMonitor(models.AbstractModel):
             done_states = [state for state, _ in adapter.states() if runtime.state_category(state) == 'completed']
             if adapter.finished in adapter.jobs._fields:
                 kpis['completed'] += adapter.jobs.search_count(adapter.domain() & fields.Domain('state', 'in', done_states) & fields.Domain(adapter.finished, '>=', day_start))
+            kpis['delayed'] += adapter.jobs.search_count(adapter.domain() & adapter.delayed_domain())
             if 'channel' in adapter.jobs._fields:
                 channels.update(c for c, in adapter.jobs._read_group(adapter.domain(), ['channel'], []) if c)
         session = self.env['ab_queue_monitor_session'].search([], limit=1)
@@ -138,6 +142,13 @@ class QueueMonitor(models.AbstractModel):
                 'runtime_states': {key: adapter.states() for key, adapter in adapters.items()},
                 'runner': runtime.runner_health(self.env), 'can_discover': self.env.user.has_group(runtime.ADMIN),
                 'session': dict(session._progress(), started_at=fields.Datetime.to_string(session.started_at)) if session else False}
+
+    def _delay_minutes(self, value):
+        try:
+            return max(1, min(int(value), 1440))
+        except (ValueError, TypeError, OverflowError):
+            raise UserError(self.env._('Choose a valid review threshold in minutes.'))
+
 
     def _execution_filter(self, adapter, domain, filters):
         if filters.get('runtime_state'):
@@ -159,9 +170,9 @@ class QueueMonitor(models.AbstractModel):
             datetime.combine(day, time.min)).astimezone(UTC).replace(tzinfo=None)
 
     @api.model
-    def execution_details(self, backend, execution_id):
+    def execution_details(self, backend, execution_id, delay_minutes=30):
         self._authorize()
-        adapter = runtime.adapters(self.env).get(backend)
+        adapter = runtime.adapters(self.env, delay_minutes=self._delay_minutes(delay_minutes)).get(backend)
         if not adapter:
             raise UserError(self.env._('Runtime details are unavailable for this job.'))
         job = adapter.jobs.search(adapter.domain() & fields.Domain('id', '=', int(execution_id)), limit=1)

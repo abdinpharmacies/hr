@@ -15,7 +15,7 @@
             <sheet><div class="oe_title"><h1><field name="method_name"/></h1></div>
                 <group string="Overview"><group><field name="module_name"/><field name="module_label"/><field name="model_name"/><field name="backend"/></group><group><field name="discovery_type" widget="badge"/><field name="runtime_support"/><field name="active"/></group></group>
                 <group string="Source"><group><field name="source_file"/><field name="source_class"/><field name="source_line"/></group><group><field name="signature"/><field name="discovered_at"/><field name="last_seen_at"/><field name="session_id" options="{'no_open': False}"/></group></group>
-                <group string="Runtime"><group><field name="latest_state"/><field name="channel"/><field name="execution_count"/><field name="failure_count"/></group><group><field name="latest_uuid"/><field name="latest_at"/></group></group>
+                <group string="Runtime"><group><field name="latest_state"/><field name="channel"/><field name="execution_count"/><field name="running_count"/><field name="pending_count"/><field name="retrying_count"/><field name="failure_count"/></group><group><field name="latest_uuid"/><field name="latest_at"/></group></group>
                 <group string="Documentation" groups="ab_queue_monitor.group_admin"><field name="documentation" nolabel="1"/></group>
             </sheet>
         </form></field>
