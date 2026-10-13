@@ -24,10 +24,11 @@ enqueuing, and `dependencies` carries parent/child UUIDs.
 The runner holds database advisory lock `2293787760715711918`, listens for queue
 notifications, and dispatches HTTP requests to `/queue_job/runjob`. That route
 executes work and is never used as a health probe. Queue Monitor reads
-`pg_locks` in the current database without acquiring a runner lock. ONLINE means
-the runner lease is held, not that HTTP dispatch has been proven responsive.
-Absence of the lease means UNKNOWN. The displayed last activity is the most
-recent retained completion, not a fabricated heartbeat.
+`pg_locks` in the current database without acquiring a runner lock. The UI says
+Lease detected or No lease detected, and separately marks execution progress as
+Unverified. A lease never produces a healthy/ONLINE badge. Last Completion is
+the most recent retained queue completion, not a heartbeat or website-worker
+health signal.
 
 Classification lives in `ab_website_sale_product`, model
 `ab_product_classification_run`. Its `_process_checkpoint` and `_apply_control`
@@ -56,7 +57,9 @@ imports addon source or evaluates it. It detects delay calls and aliases,
 legacy job decorators, automatic delay patches, and thread targets. Registered
 queue function declarations, existing scheduled-action model calls, and the
 inspected website worker add evidence for idle definitions. It does not create
-or execute any scheduled action.
+or execute any scheduled action. Aliases are scoped to individual functions
+and nested functions, processed in statement order, and invalidated on unknown
+reassignment. Conflicting aliases after conditional branches are not guessed.
 
 The scan processes at most 30 files or approximately 1.5 seconds per request.
 Python files over 2 MiB and addon trees exceeding 20,000 Python files produce
@@ -73,11 +76,31 @@ installation or startup. Discovery writes only monitor metadata.
 
 ## Runtime And Security
 
-Execution rows are not copied into another model. The dashboard uses indexed
-domains, aggregate counts, field prefetching and paginated queries against the
-two inspected stores. There is no product, order, or catalog scan. Definition
-status describes its latest retained execution; KPI counts describe all current
-executions. Execution history follows the underlying framework's retention.
+Execution rows are not copied into another model. The dashboard uses aggregate
+counts, field prefetching and paginated queries against the two inspected stores.
+There is no product, order, or catalog scan. Definition status prioritizes running,
+retrying, pending and failed executions, then falls back to the latest retained
+execution. Current state counts and the latest execution are shown separately.
+State filters match any retained execution of a definition, so a newer completed
+execution cannot hide an older running or failed one. KPI counts are global.
+Execution history follows the underlying framework's retention.
+
+Review Required is an age warning, never a declaration that a worker is dead.
+The viewer selects a threshold of 1–1440 minutes (default 30). Running age starts
+at the recorded start, falling back to creation if no start is retained. Waiting
+age starts at the latest available creation/enqueue/ETA timestamp. Future ETA
+and recently enqueued jobs do not generate premature alerts. The definition,
+execution list, details and review filter use the same rule. Running durations
+advance; known finish/cancellation timestamps give fixed durations. A terminal
+execution without a reliable end timestamp has Unknown duration.
+
+Runtime refresh runs every 30 seconds while the dashboard is visible, unless the
+viewer disables it. Automatic requests pause during discovery and while a request
+is in flight; failures do not trigger a tight retry loop. Navigation removes the
+timer and visibility listener. Last updated is the successful server snapshot;
+after 90 seconds without a fresh snapshot the UI warns that the data is old.
+Older responses and errors cannot overwrite a newer filter/sort result. Discovery
+remains manual. Column sorting covers all matching definitions before pagination.
 
 The technical monitoring roles intentionally have installation-wide visibility
 of technical metadata. They do not confer business-record access. Ordinary
@@ -101,8 +124,8 @@ adapter. Unknown ownership is not guessed.
 
 No queue configuration, running service, product record or classification
 behavior is changed. Existing jobs may continue to progress while monitoring.
-The module includes no cron, lifecycle hook, recurring scan, polling timer,
-new runner, demo data or migration.
+The module includes no cron, lifecycle hook, recurring source scan, new runner,
+demo data or migration. Dashboard refresh reads runtime metadata only.
 
 ## Verification
 
@@ -110,7 +133,10 @@ Use targeted Odoo tests (`--test-tags /ab_queue_monitor`) on an unused HTTP
 port, with `--workers=0 --max-cron-threads=0 --load=base,web,rpc`, to avoid
 starting another runner. Transaction tests cover isolation, permissions,
 deduplication, malformed/large sources, state mapping, differential discovery,
-health evidence, and classification context. HttpCase tests click Discover,
+health evidence, duration boundaries, ETA-aware review warnings, scoped aliases,
+active executions alongside newer completed ones, and classification context.
+Run `node ab_queue_monitor/tests/check_monitor_refresh.cjs` for timer lifecycle,
+request overlap, hidden tabs, stale snapshots and response ordering. HttpCase tests click Discover,
 inspect idle/executed jobs and business context, and render Arabic mobile RTL.
 All test-created records are rolled back. Test code is retained in the source
 repository as explicitly requested; exclude `tests/` and bytecode when building
