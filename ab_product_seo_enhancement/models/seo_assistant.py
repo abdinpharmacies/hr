@@ -200,6 +200,9 @@ class AbSeoAssistant(models.Model):
             content = self._extract_ai_text(response)
             if not content:
                 raise UserError(_("%s returned an empty AI response.") % self.display_name)
+            raw_data = self._unwrap_json_field_payload(self._extract_first_ai_dict(content))
+            if not self._has_usable_ai_product_copy(raw_data, product_name):
+                raise UserError(_("%s returned incomplete or repeated SEO content. Try again or select another assistant.") % self.display_name)
             parsed = self._parse_ai_content(content, product_name=product_name, lang_code=lang_code)
             sanitized = self._sanitize_generated_product_content(parsed, source_bundle)
             return sanitized, self._extract_token_usage(response)
@@ -216,6 +219,29 @@ class AbSeoAssistant(models.Model):
                 ", ".join(source_bundle.get("missing_information") or []),
                 duration,
             )
+
+    def _has_usable_ai_product_copy(self, data, product_name):
+        if not isinstance(data, dict):
+            return False
+        name = self._normalize_ai_copy_for_comparison(product_name)
+        description = self._normalize_ai_copy_for_comparison(data.get("meta_description"))
+        public_description = self._normalize_ai_copy_for_comparison(data.get("public_description"))
+        keywords = data.get("keywords") or data.get("keyword_text") or ""
+        if isinstance(keywords, (list, tuple)):
+            keywords = ", ".join(str(value) for value in keywords if value)
+        keyword_phrases = [
+            self._normalize_ai_copy_for_comparison(value)
+            for value in str(keywords).split(",")
+        ]
+        return bool(
+            description and public_description and name
+            and description != name and public_description != name
+            and any(value and value != name for value in keyword_phrases)
+        )
+
+    def _normalize_ai_copy_for_comparison(self, value):
+        text = re.sub(r"<[^>]+>", " ", str(value or ""))
+        return " ".join(re.findall(r"\w+", text.casefold()))
 
     def _parse_ai_content(self, content, product_name=False, lang_code=False):
         parsed = super()._parse_ai_content(
@@ -259,34 +285,24 @@ class AbSeoAssistant(models.Model):
             "Language=%(language)s. Product=%(product_name)s. Product classification=%(product_type)s. "
             "Structured source bundle=%(context)s. "
             "%(variant)s "
-            "Return this existing backward-compatible schema exactly, with the metadata keys included: "
+            "Return this schema exactly: "
             "{"
             "\"meta_title\":\"\","
             "\"meta_description\":\"\","
             "\"keywords\":\"\","
             "\"slug\":\"\","
             "\"short_description\":\"\","
-            "\"public_description\":\"\","
-            "\"active_ingredient\":\"\","
-            "\"warnings\":\"\","
-            "\"contraindications\":\"\","
-            "\"storage\":\"\","
-            "\"drug_data\":{},"
-            "\"review_required\":true,"
-            "\"missing_information\":[],"
-            "\"confidence_score\":0.0,"
-            "\"classification\":\"%(product_type)s\","
-            "\"classification_confidence\":%(classification_confidence)s"
+            "\"public_description\":\"\""
             "}. "
-            "Keep active_ingredient, warnings, contraindications, and storage empty unless those exact facts are present in trusted_facts. "
-            "Never include dosage, side effects, clinical claims, regulatory claims, pregnancy advice, breastfeeding advice, or interactions unless present in trusted_facts."
+            "Never include dosage, side effects, clinical claims, regulatory claims, pregnancy advice, breastfeeding advice, or interactions unless present in trusted_facts. "
+            "Write a descriptive meta_description and public_description, plus keyword phrases beyond the product name. "
+            "Do not repeat only the product name in those fields; use supported product type and category details."
         ) % {
             "system": self._seo_enhancement_system_prompt(),
             "variant": self._seo_enhancement_variant_prompt(product_type),
             "language": language,
             "product_name": product_name or "",
             "product_type": product_type,
-            "classification_confidence": classification.get("classification_confidence") or 0.0,
             "context": context_text,
         }
 

@@ -1,3 +1,7 @@
+import json
+from unittest.mock import patch
+
+from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase, tagged
 
 
@@ -34,6 +38,49 @@ class TestProductSeoEnhancement(TransactionCase):
             "existing_seo": values.get("existing_seo", {}),
         }
         return self.assistant._build_product_source_bundle(name, product_context=context)
+
+    def test_repeated_product_name_response_is_rejected(self):
+        product_name = "555 SHAVING CREAM 55 GM 1 BOX"
+        repeated = {
+            "meta_title": product_name,
+            "meta_description": product_name,
+            "keywords": product_name,
+            "slug": product_name,
+            "short_description": product_name,
+            "public_description": product_name,
+        }
+        response = {"choices": [{"message": {"content": json.dumps(repeated)}}]}
+
+        with patch.object(type(self.assistant), "_http_json", return_value=response):
+            with self.assertRaisesRegex(UserError, "incomplete or repeated SEO content"):
+                self.assistant._request_ai_product(product_name, "en_US", {"category_path": "Shaving"})
+
+    def test_non_json_product_response_is_rejected(self):
+        product_name = "555 SHAVING CREAM 55 GM 1 BOX"
+        response = {"choices": [{"message": {"content": product_name}}]}
+
+        with patch.object(type(self.assistant), "_http_json", return_value=response):
+            with self.assertRaisesRegex(UserError, "incomplete or repeated SEO content"):
+                self.assistant._request_ai_product(product_name, "en_US", {"category_path": "Shaving"})
+
+    def test_descriptive_product_response_is_kept(self):
+        product_name = "555 SHAVING CREAM 55 GM 1 BOX"
+        generated = {
+            "meta_title": product_name,
+            "meta_description": "Shaving cream for a comfortable daily grooming routine.",
+            "keywords": "shaving cream, daily grooming",
+            "slug": "555-shaving-cream-55-gm",
+            "short_description": "Shaving cream for daily use.",
+            "public_description": "<p>A shaving cream for a daily grooming routine.</p>",
+        }
+        response = {"choices": [{"message": {"content": json.dumps(generated)}}]}
+
+        with patch.object(type(self.assistant), "_http_json", return_value=response):
+            content, _usage = self.assistant._request_ai_product(product_name, "en_US", {"category_path": "Shaving"})
+
+        self.assertEqual(content["meta_description"], generated["meta_description"])
+        self.assertEqual(content["keyword_text"], generated["keywords"])
+        self.assertIn("daily grooming routine", content["public_description"])
 
     def test_panadol_classifies_as_medicine(self):
         bundle = self._bundle(
@@ -266,6 +313,8 @@ class TestProductSeoEnhancement(TransactionCase):
 
         self.assertIn("Cosmetic rules", cosmetic_prompt)
         self.assertIn("Medicine rules", medicine_prompt)
+        self.assertIn('"public_description":""', cosmetic_prompt)
+        self.assertNotIn('"drug_data":', cosmetic_prompt)
 
     def test_sanitization_strips_unsupported_medical_facts_and_preserves_metadata(self):
         bundle = self._bundle(
