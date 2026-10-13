@@ -4,7 +4,7 @@
 
     const FILTER_PARAMS = [
         "attribute_values", "tags", "min_price", "max_price",
-        "brand", "deal", "include_oos",
+        "brand", "deal", "include_oos", "need",
     ];
     const DEAL_ORDER = ["discount", "coupon", "today"];
     const MOBILE_QUERY = "(max-width: 991.98px)";
@@ -33,6 +33,7 @@
             const selectedDeals = new Set((url.searchParams.get("deal") || "").split(","));
             const hasDeals = DEAL_ORDER.some((deal) => selectedDeals.has(deal));
             const selectedBrand = url.searchParams.get("brand") || "";
+            const selectedNeed = url.searchParams.get("need") || "";
             const includeOutOfStock = url.searchParams.get("include_oos") === "1";
             const hasFilters = FILTER_PARAMS.some((name) => url.searchParams.has(name));
 
@@ -49,6 +50,15 @@
             }
             for (const link of dialog.querySelectorAll("[data-ab-brand]")) {
                 const active = link.dataset.abBrand === selectedBrand;
+                link.classList.toggle("active", active);
+                if (active) {
+                    link.setAttribute("aria-current", "true");
+                } else {
+                    link.removeAttribute("aria-current");
+                }
+            }
+            for (const link of dialog.querySelectorAll("[data-ab-need]")) {
+                const active = link.dataset.abNeed === selectedNeed;
                 link.classList.toggle("active", active);
                 if (active) {
                     link.setAttribute("aria-current", "true");
@@ -179,6 +189,13 @@
                 } else {
                     params.delete("deal");
                 }
+            } else if (link.hasAttribute("data-ab-need")) {
+                if (link.dataset.abNeed) {
+                    params.set("need", link.dataset.abNeed);
+                } else {
+                    params.delete("need");
+                }
+                draft.pathname = draft.pathname.replace(/\/page\/\d+\/?$/, "");
             } else if (link.hasAttribute("data-ab-brand")) {
                 if (link.dataset.abBrand) {
                     params.set("brand", link.dataset.abBrand);

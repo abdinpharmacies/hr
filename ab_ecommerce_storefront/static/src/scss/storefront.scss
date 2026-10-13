@@ -6525,6 +6525,13 @@ html[dir="rtl"] {
         overflow-y: auto;
     }
 
+    .ab-storefront-need-list .ab-storefront-filter-choice {
+        min-height: 44px;
+        border-inline-start: 3px solid transparent;
+
+        &.active { border-inline-start-color: $ab-green; }
+    }
+
     .ab-storefront-filter-choice-list {
         display: grid;
         gap: .25rem;
@@ -18915,5 +18922,14 @@ html[dir="rtl"] .ab-storefront-actions .ab-storefront-login-action {
 
     .ab-customer-orders-tabs-track::before {
         transition: none;
+    }
+}
+
+body.ab-storefront {
+    .ab-storefront-category-dropdown--need .ab-storefront-category-menu-link.active,
+    .ab-storefront-mobile-category-link[aria-current="true"] {
+        background: $ab-green-soft;
+        color: $ab-green-dark;
+        font-weight: var(--ab-font-weight-bold);
     }
 }

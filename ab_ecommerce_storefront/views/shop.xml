@@ -69,6 +69,25 @@
 
     <template id="shop_extra_filters" name="Abdin Shop Extra Filters">
         <div class="ab-storefront-extra-filters">
+            <section class="ab-storefront-extra-filter-section" aria-label="Shop by Need">
+                <h2>Shop by Need</h2>
+                <div class="ab-storefront-need-list">
+                    <a t-att-href="keep(need=None)"
+                       data-ab-need=""
+                       t-attf-class="ab-storefront-filter-choice #{'active' if not request.params.get('need') else ''}"
+                       t-att-aria-current="'true' if not request.params.get('need') else None">All needs</a>
+                    <a t-foreach="website._ab_storefront_header_need_menu()" t-as="ab_need_item"
+                       t-att-href="keep(need=ab_need_item['key'])"
+                       t-att-data-ab-need="ab_need_item['key']"
+                       t-attf-class="ab-storefront-filter-choice #{'active' if request.params.get('need') == ab_need_item['key'] else ''}"
+                       t-att-aria-current="'true' if request.params.get('need') == ab_need_item['key'] else None">
+                        <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_need_item['tone']}" aria-hidden="true">
+                            <i t-attf-class="fa #{ab_need_item['icon']}"/>
+                        </span>
+                        <span t-out="ab_need_item['label']"/>
+                    </a>
+                </div>
+            </section>
             <section class="ab-storefront-extra-filter-section" aria-label="Brands">
                 <h2>Brands</h2>
                 <div t-if="ab_storefront_brands" class="ab-storefront-brand-list">
@@ -125,8 +144,8 @@
                     <span>Include Out of Stock</span>
                 </a>
             </section>
-            <a t-if="ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos"
-               t-att-href="keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)"
+            <a t-if="ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos or ab_shop_need"
+               t-att-href="keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None, need=None)"
                class="ab-storefront-filter-clear">Clear all filters</a>
         </div>
     </template>
@@ -195,10 +214,10 @@
             <t t-call="ab_ecommerce_storefront.shop_extra_filters"/>
         </xpath>
         <xpath expr="//aside[@id='products_grid_before']//div[contains(@t-if, 'attrib_values or tags')]" position="attributes">
-            <attribute name="t-if">attrib_values or tags or (show_price_filter and isFilteringByPrice) or ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos</attribute>
+            <attribute name="t-if">attrib_values or tags or (show_price_filter and isFilteringByPrice) or ab_storefront_brand_id or ab_storefront_deals or ab_storefront_include_oos or ab_shop_need</attribute>
         </xpath>
         <xpath expr="//aside[@id='products_grid_before']//a[contains(@t-att-href, 'attribute_values=0')]" position="attributes">
-            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)</attribute>
+            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None, need=None)</attribute>
         </xpath>
         <xpath expr="//div[@id='o_wsale_container']" position="after">
             <t t-set="ab_history_limit" t-value="10"/>
@@ -270,7 +289,7 @@
             </button>
         </xpath>
         <xpath expr="//div[hasclass('offcanvas-body') and hasclass('border-top')]/a[contains(@t-att-href, 'attribute_values=0')]" position="attributes">
-            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None)</attribute>
+            <attribute name="t-att-href">keep(attribute_values=0, tags=0, min_price=0, max_price=0, brand=None, deal=None, include_oos=None, need=None)</attribute>
             <attribute name="t-attf-class">btn btn-{{navClass}} d-flex py-1 mb-2 {{(not attrib_values and not isFilteringByPrice and not tags and not ab_storefront_brand_id and not ab_storefront_deals and not ab_storefront_include_oos and not ab_shop_need) and 'disabled' }}</attribute>
             <attribute name="t-att-aria-disabled">(not attrib_values and not isFilteringByPrice and not tags and not ab_storefront_brand_id and not ab_storefront_deals and not ab_storefront_include_oos and not ab_shop_need) and 'true' or 'false'</attribute>
         </xpath>

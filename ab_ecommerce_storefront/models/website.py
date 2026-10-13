@@ -193,6 +193,7 @@ class Website(models.Model):
         self.ensure_one()
         return [
             {
+                "key": key,
                 "label": self.env._(label),
                 "href": "/shop?%s" % url_encode({
                     "need": key,

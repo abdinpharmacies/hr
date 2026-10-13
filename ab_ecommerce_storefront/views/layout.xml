@@ -410,7 +410,8 @@
                                 <a t-foreach="ab_header_need_menu"
                                    t-as="ab_menu_item"
                                    t-att-href="ab_menu_item['href']"
-                                   class="dropdown-item ab-storefront-category-menu-link">
+                                   t-attf-class="dropdown-item ab-storefront-category-menu-link #{'active' if request.params.get('need') == ab_menu_item['key'] else ''}"
+                                   t-att-aria-current="'true' if request.params.get('need') == ab_menu_item['key'] else None">
                                     <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
                                           aria-hidden="true">
                                         <i t-attf-class="fa #{ab_menu_item['icon']}"/>
@@ -523,7 +524,8 @@
                             <a t-foreach="ab_header_need_menu"
                                t-as="ab_menu_item"
                                t-att-href="ab_menu_item['href']"
-                               class="nav-link ab-storefront-mobile-category-link">
+                               t-attf-class="nav-link ab-storefront-mobile-category-link #{'active' if request.params.get('need') == ab_menu_item['key'] else ''}"
+                               t-att-aria-current="'true' if request.params.get('need') == ab_menu_item['key'] else None">
                                 <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_menu_item['tone']}"
                                       aria-hidden="true">
                                     <i t-attf-class="fa #{ab_menu_item['icon']}"/>

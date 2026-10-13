@@ -2322,6 +2322,8 @@ msgstr "تسوق حسب الفئة"
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
 msgid "Shop by Need"
 msgstr "تسوق حسب احتياجك"
 
@@ -6330,3 +6332,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Shop offers"
 msgstr "عرض العروض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/website.py:0
+msgid "sun_protection"
+msgstr "sun_protection"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
+msgid "All needs"
+msgstr "كل الاحتياجات"
