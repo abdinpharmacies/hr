@@ -694,11 +694,6 @@ body.ab-storefront {
             background: $ab-green;
         }
 
-        .container:has(.ab-storefront-categories-toggle:hover) .nav-link.active:not(:hover),
-        .container:has(.nav-link.active:hover) .ab-storefront-categories-toggle:not(:hover) {
-            background: $ab-green-lift;
-        }
-
         .nav-link {
             position: relative;
             overflow: hidden;
