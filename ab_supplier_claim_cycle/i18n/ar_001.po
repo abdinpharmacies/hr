@@ -1279,6 +1279,7 @@ msgstr "المتابعة: "
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
 msgid "Supplier Cheque Attachment"
 msgstr "مرفق شيك حسابات الموردين"
 
@@ -1491,3 +1492,13 @@ msgstr "اسم مندوب الشركة"
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__delivery_representative_phone
 msgid "Company Representative Phone"
 msgstr "رقم هاتف مندوب الشركة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__claim_reference
+msgid "Claim ID"
+msgstr "رقم المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_ab_supplier_claim_cycle_claim_reference_unique
+msgid "Claim ID must be unique."
+msgstr "يجب أن يكون رقم المطالبة فريدًا."

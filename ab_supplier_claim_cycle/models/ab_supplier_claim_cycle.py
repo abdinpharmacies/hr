@@ -33,7 +33,14 @@ class SupplierClaimCycle(models.Model):
     _description = 'Supplier Claim'
     _inherit = ['mail.thread']
     _rec_name = 'supplier_id'
+    _rec_names_search = ['claim_reference', 'supplier_id']
     _order = 'id desc'
+
+    claim_reference = fields.Char(string='Claim ID', copy=False, tracking=True)
+    _claim_reference_unique = models.Constraint(
+        'UNIQUE(claim_reference)',
+        'Claim ID must be unique.',
+    )
 
     supplier_id = fields.Many2one(
         'ab_costcenter', required=True, ondelete='restrict', tracking=True,
@@ -85,6 +92,27 @@ class SupplierClaimCycle(models.Model):
 
     can_edit_correction_fields = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_payment_nature = fields.Boolean(compute='_compute_can_edit_claim_inputs')
+    can_upload_secretarial_cheque = fields.Boolean(compute='_compute_can_upload_secretarial_cheque')
+
+    @api.depends('state', 'active', 'cheque_attachment')
+    @api.depends_context('uid')
+    def _compute_can_upload_secretarial_cheque(self):
+        is_secretarial = self._is_admin() or self.env.user.has_group(GROUP_PREFIX + 'user')
+        for claim in self:
+            claim.can_upload_secretarial_cheque = bool(
+                is_secretarial and claim.active and claim.state in ('bank_accounts', 'ready_to_close')
+                and not claim.cheque_attachment)
+
+    @api.depends('claim_reference', 'supplier_id.display_name')
+    def _compute_display_name(self):
+        super()._compute_display_name()
+        for claim in self:
+            if claim.claim_reference:
+                claim.display_name = f'[{claim.claim_reference}] {claim.display_name}'
+
+    @api.model
+    def _normalize_claim_reference(self, value):
+        return (value or '').strip().upper() or False
 
     @api.depends('state', 'active', 'supplier_accounts_decision')
     @api.depends_context('uid')
@@ -261,7 +289,7 @@ class SupplierClaimCycle(models.Model):
         self._require_role('user')
         allowed = {'supplier_id', 'tax_classification', 'section', 'payment_nature', 'num_of_invoice',
                    'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
-                   'delivery_representative_name', 'delivery_representative_phone'}
+                   'delivery_representative_name', 'delivery_representative_phone', 'claim_reference'}
         defaults = dict(state='draft', user_id=self.env.uid, review_round=0,
                         resume_stage=False,
                         rejection_department=False, rejection_reason=False, active=True, attachment=False,
@@ -284,6 +312,8 @@ class SupplierClaimCycle(models.Model):
             )
             # Preserve an explicit draft upload, but ignore default_attachment context.
             clean.append({**previous_values, **vals, **defaults,
+                          'claim_reference': self._normalize_claim_reference(vals.get(
+                              'claim_reference', self.env.context.get('default_claim_reference'))),
                           'attachment': vals.get('attachment', False)})
         # Explicit defaults neutralize forged default_* context values.
         claims = super().create(clean)
@@ -306,6 +336,7 @@ class SupplierClaimCycle(models.Model):
             raise UserError(_('Closed or archived claims cannot be changed.'))
         correction_fields = {
             'num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice', 'secretarial_notes', 'attachment',
+            'claim_reference',
         }
         contact_fields = {'delivery_representative_name', 'delivery_representative_phone'}
         for claim in self:
@@ -324,10 +355,16 @@ class SupplierClaimCycle(models.Model):
                                 allowed |= {'cheque_attachment', 'cheque_filename', 'payment_nature'}
                             elif d == 'bank_accounts':
                                 allowed |= {'bank_cheque_attachment', 'bank_cheque_filename'}
+                # Evaluate only after locking and refreshing: a competing upload
+                # must never replace the first Supplier Accounts/Secretarial file.
+                if claim.can_upload_secretarial_cheque and vals.get('cheque_attachment'):
+                    allowed |= {'cheque_attachment', 'cheque_filename'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
             if claim.state == 'supplier_accounts' and 'payment_nature' in vals and not vals['payment_nature']:
                 raise ValidationError(_('Select a payment nature before submitting the claim.'))
+        if 'claim_reference' in vals:
+            vals = {**vals, 'claim_reference': self._normalize_claim_reference(vals['claim_reference'])}
         if 'supplier_id' in vals:
             values_by_supplier = self._last_claim_values_by_supplier(
                 [vals['supplier_id']],
@@ -411,8 +448,6 @@ class SupplierClaimCycle(models.Model):
                 if STAGES[d] == stage:
                     vals.update({f'{d}_decision': 'pending', f'{d}_notes': False,
                                  f'{d}_followup_date': fields.Date.context_today(claim)})
-            if stage == 'supplier_accounts':
-                vals.update(cheque_attachment=False, cheque_filename=False)
             claim._workflow_write(vals)
             if old_state != 'draft':
                 claim._log('resubmitted', old_state)

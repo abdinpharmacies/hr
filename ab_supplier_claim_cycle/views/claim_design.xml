@@ -35,7 +35,7 @@
         <field name="bank_cheque_attachment" filename="bank_cheque_filename" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_bank_accounts,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
         <field name="bank_cheque_filename" invisible="True"/>
       </xpath>
-      <xpath expr="//field[@name='cheque_filename']" position="attributes">
+      <xpath expr="//group[@name='department_reviews']//field[@name='cheque_filename']" position="attributes">
         <attribute name="invisible">True</attribute>
       </xpath>
       <xpath expr="//group[@name='claim_entry']" position="before">

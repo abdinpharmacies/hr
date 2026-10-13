@@ -13,6 +13,7 @@
           <field name="can_edit_correction_fields" invisible="True"/>
           <field name="can_edit_payment_nature" invisible="True"/>
           <group name="supplier_classification" string="Supplier &amp; Classification">
+            <field name="claim_reference" readonly="not can_edit_correction_fields"/>
             <field name="supplier_id" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/><field name="supplier_id" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/>
             <field name="tax_classification" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="tax_classification" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="section" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="section" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
@@ -32,6 +33,12 @@
         </group>
         <group name="claim_secretarial_review" class="o_scc_panel o_scc_secretarial_review">
           <group string="Secretarial">
+            <field name="can_upload_secretarial_cheque" invisible="True"/>
+            <field name="cheque_attachment" string="Supplier Cheque Attachment" filename="cheque_filename"
+                   force_save="1"
+                   readonly="not can_upload_secretarial_cheque"
+                   invisible="not can_upload_secretarial_cheque and not cheque_attachment"/>
+            <field name="cheque_filename" invisible="True"/>
             <field name="secretarial_notes" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
             <field name="secretarial_notes" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin"/>
             <field name="attachment" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
@@ -51,6 +58,7 @@
     <field name="inherit_id" ref="invoice_view_tree"/>
     <field name="arch" type="xml">
       <xpath expr="//field[@name='supplier_id']" position="after">
+        <field name="claim_reference" optional="hide" readonly="True"/>
         <field name="tax_classification" optional="hide"/>
         <field name="section" optional="hide"/>
         <field name="delivery_representative_name" optional="hide" readonly="True"/>
@@ -64,6 +72,7 @@
     <field name="inherit_id" ref="invoice_view_search"/>
     <field name="arch" type="xml">
       <xpath expr="//field[@name='supplier_id']" position="after">
+        <field name="claim_reference"/>
         <field name="tax_classification"/>
         <field name="section"/>
       </xpath>
