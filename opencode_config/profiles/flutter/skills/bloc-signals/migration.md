@@ -1,0 +1,1139 @@
+# Migration Guide: From classic `bloc` to `BlocSignal`
+
+This guide explains how to migrate your Flutter and Dart applications from Felix Angelov's classic `bloc` monorepo packages (`package:bloc`, `package:flutter_bloc`, `package:bloc_concurrency`, `package:hydrated_bloc`, `package:replay_bloc`, `package:bloc_test`) to the `BlocSignal` ecosystem.
+
+## 🏛️ Felix Angelov `bloc` Monorepo Transition Matrix
+
+| Felix Angelov `bloc` Package | `BlocSignal` Ecosystem Package | Migration Focus & Parity Guarantee |
+| :--- | :--- | :--- |
+| **`package:bloc`** | `package:bloc_signals` & `bloc_signals_bloc` | 0ms synchronous propagation, named `initialState:`, `stateValue` vs `state`, `BlocSignalObserver` lifecycle. Bidirectional interop via `toBlocSignal()` and `toClassicBloc()`. |
+| **`package:flutter_bloc`** | `package:bloc_signals_flutter` | `BlocSignalProvider`, `MultiBlocSignalProvider`, `BlocSignalBuilder` (`buildWhen`), `BlocSignalListener` (`listenWhen`), `BlocSignalConsumer`, `BlocSignalSelector`, `context.select<B, R>`. |
+| **`package:bloc_concurrency`** | `package:bloc_signals` (transformers) | Streamless higher-order functions (`droppable()`, `sequential()`, `restartable()`), async `Mutex` lock fairness guarantees. |
+| **`package:hydrated_bloc`** | `package:bloc_signals_hydrate` | Synchronous frame-1 constructor hydration, zero-override primitive hydration, built-in `SharedPreferences` and `SecureStorage` adapters. |
+| **`package:replay_bloc`** | `package:bloc_signals_replay` | `ReplayCubit` and `ReplayBloc`, `undo()` / `redo()`, history `limit`, `shouldReplay()`, synthetic observer events. |
+| **`package:bloc_test`** | `package:bloc_signals_test` | Declarative `blocSignalTest<B, S>`, constructor state seeding, observer scoping, deterministic completion. |
+
+## 🚀 Progressive Migration Strategy (Zero All-at-Once Rewrite)
+
+You don't need to rewrite your entire application at once! `bloc_signals` provides built-in stream interop extensions so you can adopt `BlocSignal` incrementally:
+
+### 1. Wrapping Legacy BLoCs into `BlocSignal` Containers
+Wrap any existing classic BLoC or Cubit stream into a `BlocSignal` container to use `BlocSignalBuilder` or reactive signals immediately without changing your existing BLoC code:
+
+```dart
+final legacyBloc = LegacyCounterBloc();
+
+// Convert legacy BLoC stream into a BlocSignal container
+final blocSignal = legacyBloc.stream.toBlocSignal(
+  initialState: legacyBloc.state,
+);
+
+// Consume in reactive BlocSignalBuilder or signals UI!
+BlocSignalBuilder<StreamBlocSignal<int>, int>(
+  bloc: blocSignal as StreamBlocSignal<int>,
+  builder: (context, count) => Text('Count: $count'),
+);
+```
+
+### 2. Consuming `BlocSignal` in Legacy Stream / `BlocBuilder` Widgets
+If you convert a state container to `BlocSignal` but want to keep existing UI widgets unchanged during early migration, use `.toStream()` or `.stream`:
+
+```dart
+final myBlocSignal = CounterBloc();
+
+// Consume in legacy StreamBuilder or Stream widgets
+// Note: Store stream reference in initState or a State field so StreamBuilder identity remains stable across builds.
+late final stream = myBlocSignal.toStream();
+
+StreamBuilder<int>(
+  stream: stream,
+  builder: (context, snapshot) => Text('${snapshot.data}'),
+);
+```
+
+---
+
+## Core Paradigm Shift: Streams vs. Signals
+
+
+`BlocSignal` offers a synchronous, glitch-free alternative to classic BLoC while maintaining its core architectural predictability (events in, states out).
+
+### Synchronous Propagation (No Microtask Delay)
+Classic BLoC is built on Dart `Stream`s, which are asynchronous and rely on the Dart microtask queue. When you emit a state in classic BLoC, the UI rebuild is scheduled for the next frame. This can lead to transient "UI glitches" or race conditions when multiple states depend on one another.
+
+In contrast, `BlocSignal` relies on reactive signals. State propagation is immediate and **synchronous**: calling `emit()` updates the state value instantly in the current execution block, recalculating the reactive dependency graph and triggering UI rebuilds in the exact same frame.
+
+### The Hidden Microtask Trap & Frame Budget Defense During Migration
+
+In classic BLoC, Dart's asynchronous `StreamController` acted as an **implicit shock absorber**. Because stream events were dispatched onto Dart's microtask queue:
+- Code could execute multiple `emit()` calls inside loops or helper methods, and intermediate states were buffered in the queue before listeners woke up.
+- Heavy synchronous operations inside event handlers deferred listener execution until the current event loop turn completed.
+
+When migrating to `BlocSignal`, **that hidden microtask shock absorber is completely removed**. Because `emit()` is 100% synchronous:
+1. **Rapid-Fire Loop Emits**: Calling `emit()` inside a loop in `BlocSignal` immediately triggers downstream subscribers and `computed` re-evaluations on every single iteration. Replace in-loop emits with atomic transitions: compute the final collection first, then call `emit()` once ($S_n \to S_{n+1}$) or use an explicit `_emitFinalState()` helper.
+2. **Defending the Frame Budget**: If a migrated BLoC handler processes heavy datasets or CPU-intensive domain math, it previously caused unnoticeable microtask queuing; in `BlocSignal`, it runs directly on the main isolate. Use the three canonical defenses:
+   - **The Isolate Moat (`Isolate.run`)**: Offload CPU-bound computations off the UI isolate completely.
+   - **The Batch Shield (`batch(() => ...)`)**: Collapse multiple independent signal or container mutations into a single UI frame.
+   - **The Cooperative Time-Slice (`Stopwatch` + `await Future.pause()` in Dart 3.13+ or `await Future<void>.delayed(Duration.zero)` in Dart 3.5)**: Yield control if processing large collections on the main isolate exceeds half the frame budget (8ms).
+   *(For full patterns and code comparisons, see [flutter.md](flutter.md#frame-budget-defense--preventing-ui-jank-60120-fps)).*
+
+### Event Concurrency & Transformers
+
+In classic BLoC, transformers manipulate `Stream<Event>` pipelines using `package:stream_transform` or Rx operators. In `BlocSignal`, event transformers are **streamless higher-order functions** that intercept each event and wrap its handler call directly without stream allocations:
+
+| Concept | Classic `package:bloc` (`bloc_concurrency`) | `BlocSignal` (`bloc_signals`) |
+| :--- | :--- | :--- |
+| **Model** | Reactive Stream Pipelines (`Stream<Event>`) | Streamless Higher-Order Function (`FutureOr<void>`) |
+| **Signature** | `Stream<void> Function(Stream<Event>, EventMapper<Event>)` | `FutureOr<void> Function(E event, EventHandler<E, S> handler, void Function(S) emit)` |
+| **Concurrency Tools** | `stream_transform` (`asyncExpand`, `switchMap`, `exhaustMap`) | Pure Dart primitives: `Mutex`, `Timer`, boolean flags, tokens |
+| **Dependencies** | Requires `package:bloc_concurrency` and `stream_transform` | Zero dependencies (built into core `package:bloc_signals`) |
+
+```dart
+on<FetchPage>(
+  (event, emit) async {
+    final page = await api.fetchPage();
+    emit(PageLoadSuccess(page));
+  },
+  transformer: droppable(), // or sequential(), restartable()
+);
+```
+
+Available built-in transformers & concurrency utilities:
+- **`droppable()`**: Drops incoming events while a handler for that event type is currently executing.
+- **`sequential()`**: Queues incoming events and executes them sequentially in FIFO order via `Mutex`.
+- **`restartable()`**: Allows new incoming events to supersede previous in-flight handler executions.
+- **`Mutex`**: A zero-dependency async lock (`protect(() => ...)`) for custom synchronization.
+
+#### Migrating Custom Stream Transformers (Debounce Example)
+
+**Classic BLoC (`package:bloc` + `package:stream_transform`):**
+```dart
+EventTransformer<Event> debounce<Event>(Duration duration) {
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
+}
+```
+
+**`BlocSignal` (Pure Dart `Timer`):**
+```dart
+EventTransformer<E, S> debounce<E, S>(Duration duration) {
+  Timer? timer;
+  return (event, handler, emit) {
+    timer?.cancel();
+    timer = Timer(duration, () {
+      final result = handler(event, emit);
+      if (result is Future) {
+        unawaited(result);
+      }
+    });
+  };
+}
+```
+
+In `BlocSignal`, track the active operation (for example using `CancelableOperation` from `package:async`) and cancel it synchronously when a new event is handled:
+```dart
+import 'package:async/async.dart';
+
+class DetailBloc extends BlocSignal<DetailEvent, DetailState> {
+  DetailBloc() : super(initialState: DetailInitial());
+  CancelableOperation<DetailData>? _activeOperation;
+
+  on<FetchDetails>((event, emit) async {
+    await _activeOperation?.cancel();
+    emit(DetailLoadInProgress());
+
+    final operation = CancelableOperation.fromFuture(api.fetch(event.id));
+    _activeOperation = operation;
+
+    try {
+      final data = await operation.value;
+      if (!operation.isCanceled) {
+        emit(DetailLoadSuccess(data));
+      }
+    } catch (e) {
+      if (!operation.isCanceled) {
+        emit(DetailLoadFailure(e));
+      }
+    }
+  });
+
+  @override
+  Future<void> close() {
+    _activeOperation?.cancel();
+    return super.close();
+  }
+}
+```
+
+### Automatic State De-duplication
+In classic BLoC, emitting the exact same state value multiple times will propagate downstream through the stream unless you filter it manually using `.distinct()`.
+
+With `BlocSignal`, reactive signals automatically **de-duplicate equal values** (using `==` equality) at the primitive layer. If you call `emit()` with a state that is equal to the current state, downstream effects and UI builders will not be notified or rebuilt. This reduces redundant widget builds by default without requiring manual configuration.
+
+### Custom Change-Definition Equality (`equals`)
+In classic BLoC, filtering identical states requires adding `.distinct()` to streams or overriding `==` operator on state classes.
+
+With `BlocSignal`, you can override `@protected bool equals(StateType previous, StateType current)` in your subclass (or pass an `equals:` callback to the constructor) to customize state de-duplication strategy (such as identity comparison `identical(previous, current)` or custom field matching) out-of-the-box:
+
+```dart
+class ReferenceCounterBloc extends BlocSignal<CounterEvent, CounterState> {
+  ReferenceCounterBloc(CounterState initial) : super(initialState: initial);
+
+  @override
+  bool equals(CounterState previous, CounterState current) {
+    return identical(previous, current); // Custom reference comparison
+  }
+}
+```
+
+To force classic BLoC stream behavior where **every single emit notifies observers** regardless of value equality, return `false`:
+
+```dart
+class AlwaysEmitBloc extends BlocSignal<CounterEvent, CounterState> {
+  AlwaysEmitBloc(CounterState initial) : super(initialState: initial);
+
+  @override
+  bool equals(CounterState previous, CounterState current) => false; // Every emit notifies!
+}
+```
+
+---
+
+## Key Conceptual Differences
+
+| Feature | Classic BLoC / Cubit | BlocSignal |
+| :--- | :--- | :--- |
+| **Foundation** | Asynchronous Dart Streams | Synchronous Reactive Signals |
+| **State Propagation** | Asynchronous (Microtask queue) | Immediate & Synchronous |
+| **Constructor Initial State** | Positional `: super(initialState)` | Named `: super(initialState: ...)` |
+| **Reading Current State Value** | `state` returns `StateType` | `stateValue` returns `StateType`, `state` returns `ReadonlySignal<StateType>` |
+| **Rebuilding** | Tree-based rebuild filter (`buildWhen`) | Fine-grained reactivity (Signal updates) |
+| **Lifecycle** | Manual close / Provider-driven | `SignalModel` lifecycle scope |
+
+> [!IMPORTANT]
+> ### Critical API Differences from Felix BLoC (`package:bloc`)
+>
+> 1. **Constructor Initial State (`initialState:` named argument)**:
+>    - **Felix BLoC**: Uses positional argument `: super(0)` or `: super(initialState)`.
+>    - **`BlocSignal` / `CubitSignal`**: Uses required named parameter `: super(initialState: 0)`. Passing a positional argument (for example `: super(0)`) is a compile-time syntax error.
+>
+> 2. **State Value Access (`stateValue` vs `state`)**:
+>    - **Felix BLoC**: `state` returns the raw `StateType` value directly (`emit(state + 1)`).
+>    - **`BlocSignal` / `CubitSignal`**: `state` returns `ReadonlySignal<StateType>` for reactive signal observers. To read the raw value in state methods or event handlers, use `stateValue` (or `state.value`), specifically `emit(stateValue + 1)`. Writing `emit(state + 1)` triggers a compilation error because arithmetic operators like `+` are not defined on `ReadonlySignal`.
+
+---
+
+## 1. Migrating the Core State Container
+
+### BLoC Migration (Events-in, States-out)
+
+#### Before (Classic BLoC)
+```dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+sealed class CounterEvent {}
+class Increment extends CounterEvent {}
+
+class CounterBloc extends Bloc<CounterEvent, int> {
+  CounterBloc() : super(0) {
+    on<Increment>((event, emit) => emit(state + 1));
+  }
+}
+```
+
+#### After (BlocSignal)
+```dart
+import 'package:bloc_signals/bloc_signals.dart';
+
+sealed class CounterEvent {}
+class Increment extends CounterEvent {}
+
+class CounterBloc extends BlocSignal<CounterEvent, int> {
+  CounterBloc() : super(initialState: 0) {
+    on<Increment>((event, emit) => emit(stateValue + 1));
+  }
+}
+```
+
+### Cubit Migration (Direct Method Calls)
+
+In classic BLoC, a `Cubit` removes the event-mapping boilerplate to let you invoke methods that call `emit` directly. 
+
+With `BlocSignal`, extend `CubitSignal<StateType>` and define direct methods on your class:
+
+> [!NOTE]
+> Pay close attention to the syntax differences when converting a `Cubit` to `CubitSignal`:
+> - Use `: super(initialState: 0)` with the named `initialState:` parameter (classic Cubit uses positional `: super(0)`).
+> - Use `stateValue` to read the raw state value in method logic, such as `emit(stateValue + 1)` (classic Cubit uses `state`, whereas `CubitSignal.state` returns a `ReadonlySignal<int>`).
+
+#### Before (Classic Cubit)
+```dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CounterCubit extends Cubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() => emit(state + 1);
+  void decrement() => emit(state - 1);
+}
+```
+
+#### After (CubitSignal)
+```dart
+import 'package:bloc_signals/bloc_signals.dart';
+
+class CounterCubit extends CubitSignal<int> {
+  CounterCubit() : super(initialState: 0);
+
+  void increment() => emit(stateValue + 1);
+  void decrement() => emit(stateValue - 1);
+}
+```
+
+---
+
+## 2. Migrating UI Providers
+
+Unlike classic `flutter_bloc` which internally depends on and re-exports `package:provider`, `bloc_signals_flutter` implements its own custom, hand-rolled `InheritedWidget` dependency injection nodes (`BlocSignalProvider` and `MultiBlocSignalProvider`). 
+
+This means **you do not need to import or depend on `package:provider`** for scoping your blocs.
+
+### Before (Classic `BlocProvider`)
+```dart
+BlocProvider(
+  create: (context) => CounterBloc(),
+  child: const CounterPage(),
+)
+```
+
+### After (BlocSignalProvider)
+```dart
+BlocSignalProvider(
+  create: (context) => CounterBloc(),
+  child: const CounterPage(),
+)
+```
+
+For injecting multiple blocs, replace `MultiBlocProvider` with `MultiBlocSignalProvider`:
+```dart
+MultiBlocSignalProvider(
+  providers: [
+    BlocSignalProvider<AuthBloc>(create: (context) => AuthBloc()),
+    BlocSignalProvider<ThemeBloc>(create: (context) => ThemeBloc()),
+  ],
+  child: const AppShell(),
+)
+```
+
+
+---
+
+## 3. Migrating UI Builders & Listeners
+
+### Before (Classic `BlocBuilder`)
+```dart
+BlocBuilder<CounterBloc, int>(
+  builder: (context, state) {
+    return Text('Count: $state');
+  },
+)
+```
+
+### After (BlocSignalBuilder with optional buildWhen)
+```dart
+BlocSignalBuilder<CounterBloc, int>(
+  buildWhen: (previous, current) => current.isEven,
+  builder: (context, state) {
+    return Text('Count: $state');
+  },
+)
+```
+
+### Before (Classic `BlocListener`)
+```dart
+BlocListener<AuthBloc, AuthState>(
+  listener: (context, state) {
+    if (state is Authenticated) {
+      Navigator.pushNamed(context, '/home');
+    }
+  },
+  child: const LoginForm(),
+)
+```
+
+### After (BlocSignalListener)
+```dart
+BlocSignalListener<AuthBloc, AuthState>(
+  listener: (context, state) {
+    if (state is Authenticated) {
+      Navigator.pushNamed(context, '/home');
+    }
+  },
+  child: const LoginForm(),
+)
+```
+
+### Before (Classic `BlocConsumer`)
+```dart
+BlocConsumer<CounterBloc, int>(
+  listenWhen: (previous, current) => current > 5,
+  buildWhen: (previous, current) => current.isEven,
+  listener: (context, state) {
+    if (state == 10) showSnackbar(context, 'Limit!');
+  },
+  builder: (context, state) {
+    return Text('Count: $state');
+  },
+)
+```
+
+### After (BlocSignalConsumer)
+```dart
+BlocSignalConsumer<CounterBloc, int>(
+  listenWhen: (previous, current) => current > 5,
+  buildWhen: (previous, current) => current.isEven,
+  listener: (context, state) {
+    if (state == 10) showSnackbar(context, 'Limit!');
+  },
+  builder: (context, state) {
+    return Text('Count: $state');
+  },
+)
+```
+
+### Before (Classic `BlocSelector`)
+```dart
+BlocSelector<CounterBloc, int, bool>(
+  selector: (state) => state >= 10,
+  builder: (context, isLimit) {
+    return Text('Limit reached: $isLimit');
+  },
+)
+```
+
+### After (BlocSignalSelector)
+```dart
+BlocSignalSelector<CounterBloc, int, bool>(
+  selector: (state) => state >= 10,
+  builder: (context, isLimit) {
+    return Text('Limit reached: $isLimit');
+  },
+)
+```
+
+---
+
+## 4. Reading, Selecting, and Watching Blocs
+
+### Before (Classic `context.read` / `context.watch`)
+```dart
+// Reading a bloc to trigger actions
+context.read<CounterBloc>().add(Increment());
+
+// Watching a state to rebuild the widget
+final count = context.watch<CounterBloc>().state;
+```
+
+### After (BlocSignal: `context.read`, `context.select`, and `BlocSignalBuilder`)
+
+> [!WARNING]
+> **Migration Trap: `context.watch` vs State Changes**
+> In classic `flutter_bloc`, `context.watch<B>().state` subscribed to state emissions via `InheritedWidget.setState()`.
+> In `bloc_signals_flutter`, `context.watch<B>()` **only listens to provider instance replacement**, avoiding coarse inherited widget rebuild cascades. It does **not** rebuild widgets when the bloc emits new states.
+>
+> To rebuild UI on state changes in BlocSignal, use:
+> 1. `context.select<B, R>` for fine-grained property-level rebuilds.
+> 2. `BlocSignalBuilder<B, S>` for declarative subtree rebuilds.
+> 3. `Watch` or `SignalBuilder` on `bloc.state`.
+
+```dart
+// 1. Reading a bloc to dispatch events (no rebuild dependency)
+context.read<CounterBloc>().add(Increment());
+
+// 2. Fine-grained rebuild on specific state value (rebuilds when isEven changes)
+final isEven = context.select<CounterBloc, bool>((bloc) => bloc.stateValue.isEven);
+
+// 3. Declarative subtree rebuild on state changes
+BlocSignalBuilder<CounterBloc, int>(
+  builder: (context, count) => Text('$count'),
+);
+
+// 4. Watching provider instance replacement ONLY (rebuilds if provider replaces instance)
+final bloc = context.watch<CounterBloc>();
+```
+
+### Context Select (Selecting sub-state slices)
+
+#### Before (Classic `context.select`)
+```dart
+final isEven = context.select<CounterBloc, bool>((bloc) => bloc.state.isEven);
+```
+
+#### After (BlocSignal `context.select`)
+```dart
+// Note: BlocSignal takes 2 type parameters <Bloc, ReturnType> and passes the bloc instance to the callback
+final isEven = context.select<CounterBloc, bool>((bloc) => bloc.stateValue.isEven);
+```
+
+---
+
+## 5. Global Logging / Observation
+
+### Before (Classic `BlocObserver`)
+```dart
+class MyObserver extends BlocObserver {
+  @override
+  void onCreate(BlocBase bloc) {
+    super.onCreate(bloc);
+    print('Created: $bloc');
+  }
+
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    super.onChange(bloc, change);
+    print('Change: $change');
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    print('Transition: $transition');
+  }
+
+  @override
+  void onClose(BlocBase bloc) {
+    super.onClose(bloc);
+    print('Closed: $bloc');
+  }
+}
+```
+
+### After (BlocSignalObserver)
+```dart
+class MyObserver extends BlocSignalObserver {
+  @override
+  void onCreate(BlocSignalBase bloc) {
+    super.onCreate(bloc);
+    print('Created: $bloc');
+  }
+
+  @override
+  void onChange(BlocSignalBase bloc, Change change) {
+    super.onChange(bloc, change);
+    print('Change: $change');
+  }
+
+  @override
+  void onTransition(BlocSignalBase bloc, Object? event, Object? state) {
+    super.onTransition(bloc, event, state);
+    // Legacy support
+  }
+
+  @override
+  void onClose(BlocSignalBase bloc) {
+    super.onClose(bloc);
+    print('Closed: $bloc');
+  }
+}
+```
+
+---
+
+## 6. Listening to State Conditionally (`listenWhen`)
+
+### Before (Classic `BlocListener` with `listenWhen`)
+```dart
+BlocListener<CounterBloc, int>(
+  listenWhen: (previous, current) => current.isEven,
+  listener: (context, state) {
+    print('Even count: $state');
+  },
+  child: const CounterView(),
+)
+```
+
+### After (BlocSignalListener with `listenWhen`)
+```dart
+BlocSignalListener<CounterBloc, int>(
+  listenWhen: (previous, current) => current.isEven,
+  listener: (context, state) {
+    print('Even count: $state');
+  },
+  child: const CounterView(),
+)
+```
+
+---
+
+## 7. Composing Multiple Listeners
+
+### Before (Classic `MultiBlocListener`)
+```dart
+MultiBlocListener(
+  listeners: [
+    BlocListener<AuthBloc, AuthState>(listener: (context, state) => ...),
+    BlocListener<ThemeBloc, ThemeState>(listener: (context, state) => ...),
+  ],
+  child: const HomeScreen(),
+)
+```
+
+### After (MultiBlocSignalListener)
+```dart
+MultiBlocSignalListener(
+  listeners: [
+    BlocSignalListener<AuthBloc, AuthState>(listener: (context, state) => ...),
+    BlocSignalListener<ThemeBloc, ThemeState>(listener: (context, state) => ...),
+  ],
+  child: const HomeScreen(),
+)
+```
+
+---
+
+## 8. Migrating Persistent State (`package:hydrated_bloc` ➔ `package:bloc_signals_hydrate`)
+
+In classic BLoC, state persistence is provided by `package:hydrated_bloc` via `HydratedBloc` and `HydratedCubit`.
+In `BlocSignal`, state persistence is provided by `package:bloc_signals_hydrate` via `HydratedBlocSignal`, `HydratedCubitSignal`, or the composable `HydratedMixin`.
+
+### Key Differences & Modern Conveniences
+
+1. **Zero-Override Primitive State Serialization**:
+   In classic `hydrated_bloc`, even simple primitive cubits (`HydratedCubit<int>`) require manually implementing `fromJson` and `toJson`:
+   ```dart
+   // Classic hydrated_bloc requires boilerplate even for int:
+   @override
+   int? fromJson(Map<String, dynamic> json) => json['value'] as int?;
+   @override
+   Map<String, dynamic>? toJson(int state) => {'value': state};
+   ```
+   In `bloc_signals_hydrate`, `HydratedMixin` automatically handles core primitive types (`int`, `double`, `String`, `bool`, `Map`, `List`). Primitive and collection state containers require **zero method overrides**!
+
+2. **Synchronous Frame-1 Hydration (Zero Flicker)**:
+   In classic `hydrated_bloc`, storage initialization requires asynchronous file I/O before `runApp()`. In `bloc_signals_hydrate`, state is restored **synchronously during constructor execution** (`initHydratedState()`). The very first widget build frame displays the restored state directly with zero loading shimmers or UI flicker.
+
+3. **Storage Engine Setup**:
+   `bloc_signals_hydrate` provides tree-shakable adapters for both `SharedPreferences` and `FlutterSecureStorage` without requiring custom path lookups:
+   ```dart
+   // Using SharedPreferences adapter:
+   import 'package:bloc_signals_hydrate/shared_preferences.dart';
+   HydratedStorage.storage = SharedPreferencesHydratedStorage(prefs);
+   ```
+
+### Side-by-Side: Primitive Hydrated Cubit
+
+#### Before (Classic `hydrated_bloc`)
+```dart
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+
+class CounterCubit extends HydratedCubit<int> {
+  CounterCubit() : super(0);
+
+  void increment() => emit(state + 1);
+
+  @override
+  int? fromJson(Map<String, dynamic> json) => json['value'] as int?;
+
+  @override
+  Map<String, dynamic>? toJson(int state) => {'value': state};
+}
+```
+
+#### After (BlocSignal `bloc_signals_hydrate`)
+```dart
+import 'package:bloc_signals_hydrate/bloc_signals_hydrate.dart';
+
+// Zero fromJson/toJson overrides needed for primitives!
+class CounterCubit extends HydratedCubitSignal<int> {
+  CounterCubit() : super(initialState: 0);
+
+  void increment() => emit(stateValue + 1);
+}
+```
+
+### Side-by-Side: Complex Domain Model Hydration
+
+#### Before (Classic `hydrated_bloc`)
+```dart
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+
+class UserCubit extends HydratedCubit<UserState> {
+  UserCubit() : super(const UserState.initial());
+
+  @override
+  UserState? fromJson(Map<String, dynamic> json) => UserState.fromJson(json);
+
+  @override
+  Map<String, dynamic>? toJson(UserState state) => state.toJson();
+}
+```
+
+#### After (BlocSignal `bloc_signals_hydrate`)
+```dart
+import 'package:bloc_signals_hydrate/bloc_signals_hydrate.dart';
+
+class UserCubit extends HydratedCubitSignal<UserState> {
+  UserCubit() : super(initialState: const UserState.initial());
+
+  @override
+  UserState? fromJson(dynamic json) {
+    if (json is Map<String, dynamic>) {
+      return UserState.fromJson(json);
+    }
+    return null;
+  }
+
+  @override
+  dynamic toJson(UserState state) => state.toJson();
+}
+```
+
+---
+
+## 9. Migrating Undo/Redo State History (`package:replay_bloc` ➔ `package:bloc_signals_replay`)
+
+In classic BLoC, state time-travel and undo/redo capabilities are provided by `package:replay_bloc`.
+In `BlocSignal`, undo/redo state history is provided by `package:bloc_signals_replay` via `ReplayCubit`, `ReplayBloc`, and their composable mixins (`ReplayCubitMixin`, `ReplayBlocMixin`).
+
+### Key Differences & Architectural Parity
+
+1. **Named Constructor Invariant**:
+   `ReplayCubit` and `ReplayBloc` follow the framework-wide named parameter invariant `: super(initialState: ...)` (while providing backward-compatible `@Deprecated` positional constructors for gradual migration).
+2. **Synthetic Observer Replay Events**:
+   When invoking `undo()` or `redo()` on a `ReplayBloc`, synthetic `_Undo` and `_Redo` events are dispatched into the observer pipeline (`onEvent` and `onTransition`). This guarantees that telemetry, DevTools, and OpenTelemetry accurately capture replay operations identically to regular events.
+3. **Mixin Composition for Custom Class Hierarchies**:
+   If a state container already inherits from another class (for example, a repository or Flutter controller), apply `ReplayCubitMixin<State>` or `ReplayBlocMixin<Event, State>` directly without fighting Dart's single-inheritance limitation.
+
+### Side-by-Side: Replay Cubit
+
+#### Before (Classic `replay_bloc`)
+```dart
+import 'package:replay_bloc/replay_bloc.dart';
+
+class TextEditorCubit extends ReplayCubit<String> {
+  TextEditorCubit({int? limit}) : super('', limit: limit);
+
+  void setText(String text) => emit(text);
+}
+
+void main() {
+  final cubit = TextEditorCubit(limit: 5);
+  cubit.setText('Hello');
+  cubit.setText('Hello World');
+
+  cubit.undo(); // State is 'Hello'
+  cubit.redo(); // State is 'Hello World'
+}
+```
+
+#### After (BlocSignal `bloc_signals_replay`)
+```dart
+import 'package:bloc_signals_replay/bloc_signals_replay.dart';
+
+class TextEditorCubit extends ReplayCubit<String> {
+  TextEditorCubit({int? limit}) : super(initialState: '', limit: limit);
+
+  void setText(String text) => emit(text);
+}
+
+void main() {
+  final cubit = TextEditorCubit(limit: 5);
+  cubit.setText('Hello');
+  cubit.setText('Hello World');
+
+  cubit.undo(); // Synchronously 'Hello'
+  cubit.redo(); // Synchronously 'Hello World'
+}
+```
+
+---
+
+## 10. Migrating Unit Tests (`package:bloc_test` ➔ `package:bloc_signals_test`)
+
+In classic BLoC, declarative unit tests use `blocTest<B, S>` from `package:bloc_test`.
+In `BlocSignal`, declarative unit tests use `blocSignalTest<B, S>` from `package:bloc_signals_test`.
+
+### Key Differences & Testing Ergonomics
+
+1. **Synchronous Execution & Frame Latency**:
+   In classic BLoC, state emissions route through Dart streams and microtask queues, often requiring microtask flushing or pump cycles. In `BlocSignal`, state changes propagate **synchronously in 0ms**. Test expectations evaluate immediately upon `act` completion unless testing an explicitly asynchronous operation (which uses `wait:`).
+2. **State Seeding via Constructor Injection**:
+   Classic `blocTest` provides a `seed: () => State` hook because classic BLoC constructors usually hardcode initial states with positional parameters (`: super(0)`).
+   Because `BlocSignal` enforces the named parameter standard (`initialState:`), you seed state directly in the `build:` closure:
+   ```dart
+   build: () => CounterBloc(initialState: 10),
+   ```
+3. **Automatic Observer Isolation**:
+   `blocSignalTest` automatically isolates `BlocSignalObserver.observer` during test execution. It sets up an isolated test observer before invoking `build()`, capturing `onCreate`, `onEvent`, `onTransition`, `onChange`, and `onError` without cross-test leakage.
+4. **Error Verification**:
+   Use `errors: () => [isA<MyException>()]` to assert exceptions routed to `onError`.
+
+### Side-by-Side: Declarative Test
+
+#### Before (Classic `bloc_test`)
+```dart
+import 'package:bloc_test/bloc_test.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('CounterBloc', () {
+    blocTest<CounterBloc, int>(
+      'emits [1] when Increment is added',
+      build: () => CounterBloc(),
+      act: (bloc) => bloc.add(Increment()),
+      expect: () => [1],
+    );
+
+    blocTest<CounterBloc, int>(
+      'emits [11] when Increment is added with seeded state',
+      build: () => CounterBloc(),
+      seed: () => 10,
+      act: (bloc) => bloc.add(Increment()),
+      expect: () => [11],
+    );
+  });
+}
+```
+
+#### After (BlocSignal `bloc_signals_test`)
+```dart
+import 'package:bloc_signals_test/bloc_signals_test.dart';
+import 'package:test/test.dart';
+
+void main() {
+  group('CounterBloc', () {
+    blocSignalTest<CounterBloc, int>(
+      'emits [1] when Increment is added',
+      build: () => CounterBloc(),
+      act: (bloc) => bloc.add(Increment()),
+      expect: () => [1],
+    );
+
+    blocSignalTest<CounterBloc, int>(
+      'emits [11] when Increment is added with seeded state',
+      build: () => CounterBloc(initialState: 10),
+      act: (bloc) => bloc.add(Increment()),
+      expect: () => [11],
+    );
+  });
+}
+```
+
+---
+
+## ⚠️ Common Migration Gotchas & Pitfalls
+
+### 1. Avoid Inline `.toStream()` Inside `build()`
+Calling `myBlocSignal.toStream()` or `myBlocSignal.stream` directly inside Flutter's `build()` method creates a **new `Stream` object instance** on every rebuild. When `StreamBuilder.didUpdateWidget` checks `oldWidget.stream != widget.stream`, it sees a new instance, unsubscribes from the old stream, and re-subscribes, causing state resets.
+
+```dart
+// ❌ BAD: Creates a new stream instance on every build pass!
+StreamBuilder<int>(
+  stream: myBlocSignal.toStream(), 
+  builder: (context, snapshot) => Text('${snapshot.data}'),
+);
+
+// ✅ GOOD: Cache the stream reference in initState() or a State field:
+class _MyWidgetState extends State<MyWidget> {
+  late final Stream<int> _stream = myBlocSignal.toStream();
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<int>(
+      stream: _stream,
+      builder: (context, snapshot) => Text('${snapshot.data}'),
+    );
+  }
+}
+```
+
+### 2. Avoid Inline `.toBlocSignal(...)` Inside `build()`
+Calling `legacyBloc.stream.toBlocSignal(initialState: legacyBloc.state)` creates an active `StreamSubscription` under the hood. Instantiating it inside `build()` will leak a new stream subscription on every widget rebuild.
+
+```dart
+// ❌ BAD: Leaks stream subscriptions on every build pass!
+Widget build(BuildContext context) {
+  final blocSignal = legacyBloc.stream.toBlocSignal(initialState: legacyBloc.state);
+  return BlocSignalBuilder(...);
+}
+
+// ✅ GOOD: Instantiate once in initState() and close on dispose():
+class _MyWidgetState extends State<MyWidget> {
+  late final BlocSignalBase<int> _blocSignal;
+
+  @override
+  void initState() {
+    super.initState();
+    _blocSignal = widget.legacyBloc.stream.toBlocSignal(
+      initialState: widget.legacyBloc.state,
+    );
+  }
+
+  @override
+  void dispose() {
+    _blocSignal.close(); // Cleanly cancels stream subscription
+    super.dispose();
+  }
+}
+```
+
+---
+
+## 🪝 Migrating from `flutter_hooks_bloc` to `BlocSignal` + `signals_hooks`
+
+In classic BLoC, using `flutter_hooks` required third-party glue packages like `flutter_hooks_bloc` for custom hooks like `useBloc`, `useBlocListener`, and `useBlocBuilder`.
+
+With `BlocSignal`, because `bloc.state` is natively a `ReadonlySignal<S>`, you get zero-cost `flutter_hooks` integration using standard **`signals_hooks`**. No dedicated `flutter_hooks_bloc` adapter package is needed!
+
+### Side-by-Side Comparison
+
+#### ❌ Before: Legacy `flutter_hooks_bloc`
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_hooks_bloc/flutter_hooks_bloc.dart';
+
+class LegacyCounterView extends HookWidget {
+  const LegacyCounterView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Requires specialized useBloc hook
+    final bloc = useBloc<CounterBloc, int>(onInit: (bloc) => bloc.add(InitCounter()));
+
+    // Requires specialized hook for state updates
+    final count = useBlocBuilder(bloc);
+
+    // Requires specialized hook for side-effects
+    useBlocListener<CounterBloc, int>(bloc, (context, state) {
+      if (state > 10) showSnackbar(context, 'Count is high!');
+    });
+
+    return Text('Count: $count');
+  }
+}
+```
+
+#### ✅ After: Modern `BlocSignal` + `signals_hooks`
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:signals_hooks/signals_hooks.dart';
+import 'package:bloc_signals/bloc_signals.dart';
+
+class ModernCounterView extends HookWidget {
+  const ModernCounterView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Standard Flutter hook for memoized instantiation
+    final bloc = useMemoized(() => CounterBloc());
+
+    // 1. Read & watch state directly via signals_hooks
+    final count = useSignalValue(bloc.state);
+
+    // 2. Inline side-effects via signals_hooks (no listener wrapper!)
+    useSignalEffect(() {
+      if (count > 10) showSnackbar(context, 'Count is high!');
+    });
+
+    // 3. Inline derived selectors via signals_hooks (no selector wrapper!)
+    final isEven = useComputed(() => count.isEven);
+
+    return Text('Count: $count (Even: ${isEven.value})');
+  }
+}
+```
+
+### Migration Summary Table
+
+| Legacy `flutter_hooks_bloc` | `BlocSignal` + `signals_hooks` | Advantage |
+| :--- | :--- | :--- |
+| `useBloc<B, S>()` | `useMemoized(() => MyBloc())` | Standard Flutter hook; no custom bloc lifecycle hook needed |
+| `useBlocBuilder(bloc)` | `useSignalValue(bloc.state)` | Reads any `ReadonlySignal<S>` directly |
+| `useBlocListener(bloc, fn)` | `useSignalEffect(() => ...)` | Inlined reactive effect; zero widget tree wrappers |
+| `useBlocSelector(bloc, fn)` | `useComputed(() => ...)` | Reactive signal derivation with fine-grained equality |
+
+---
+
+## 📣 Migrating from `bloc_presentation` to `BlocSignal` (One-Shot UI Side Effects)
+
+In classic BLoC, developers often face a dilemma when handling one-shot presentation events (such as showing a `SnackBar`, displaying an alert dialog, or triggering navigation):
+1. **Persistent State Dilemma**: If you put `ShowSnackbarState(message)` directly into domain state, subsequent widget rebuilds (like device rotations or keyboard popups) can re-trigger the snackbar.
+2. **Artificial Reset Hacks**: Emitting `ResetState` or adding boolean flags (`isHandled: true`) clutters state models and introduces redundant emissions and rebuild cycles.
+
+In the legacy BLoC ecosystem, [`bloc_presentation`](https://pub.dev/packages/bloc_presentation) solved this by adding a secondary broadcast stream to Blocs.
+
+In `BlocSignal`, you do not need a separate third-party package. You can handle one-shot side effects using either **Direct Async UI Handlers** or a **Lightweight Zero-Dependency Presentation Mixin**.
+
+### Pattern 1: Direct Async UI Handlers (Recommended for User-Triggered Actions)
+
+Because `BlocSignal` state updates propagate **synchronously** in 0ms (no microtask queue delays), asynchronous methods on `CubitSignal` or `BlocSignal` return only after the state has been updated. You can safely coordinate dialogs, snackbars, and navigation directly in the UI event handler:
+
+```dart
+ElevatedButton(
+  onPressed: () async {
+    final cubit = context.read<AuthCubit>();
+    await cubit.signIn(email, password);
+
+    if (!context.mounted) return;
+
+    if (cubit.stateValue case AuthSuccess(:final user)) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    } else if (cubit.stateValue case AuthFailure(:final error)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+    }
+  },
+  child: const Text('Sign In'),
+)
+```
+
+### Pattern 2: Zero-Dependency `PresentationMixin` (Drop-in `bloc_presentation` Parity)
+
+If you are migrating a large codebase that relies on `emitPresentation(event)` and `BlocPresentationListener`, you can achieve 100% API and architectural parity with zero external dependencies using this 25-line pattern:
+
+#### 1. Define the Presentation Mixin
+```dart
+import 'dart:async';
+import 'package:bloc_signals/bloc_signals.dart';
+
+/// Mixin that adds one-shot presentation event broadcasting to any [BlocSignalBase].
+mixin BlocSignalPresentationMixin<Event, State> on BlocSignalBase<State> {
+  final _presentationController = StreamController<Event>.broadcast();
+
+  /// Stream of one-shot presentation events.
+  Stream<Event> get presentationStream => _presentationController.stream;
+
+  /// Dispatches a one-shot presentation event to active listeners.
+  void emitPresentation(Event event) {
+    if (!isClosed) {
+      _presentationController.add(event);
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _presentationController.close();
+    return super.close();
+  }
+}
+```
+
+#### 2. Define the Presentation Listener Widget
+```dart
+import 'dart:async';
+import 'package:flutter/widgets.dart';
+import 'package:bloc_signals_flutter/bloc_signals_flutter.dart';
+
+/// Listens to one-shot presentation events from a [BlocSignalBase] with [BlocSignalPresentationMixin].
+class BlocSignalPresentationListener<B extends BlocSignalPresentationMixin<Event, dynamic>, Event>
+    extends StatefulWidget {
+  const BlocSignalPresentationListener({
+    required this.listener,
+    this.bloc,
+    this.child,
+    super.key,
+  });
+
+  final B? bloc;
+  final void Function(BuildContext context, Event event) listener;
+  final Widget? child;
+
+  @override
+  State<BlocSignalPresentationListener<B, Event>> createState() =>
+      _BlocSignalPresentationListenerState<B, Event>();
+}
+
+class _BlocSignalPresentationListenerState<
+        B extends BlocSignalPresentationMixin<Event, dynamic>, Event>
+    extends State<BlocSignalPresentationListener<B, Event>> {
+  StreamSubscription<Event>? _subscription;
+  B? _resolvedBloc;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final bloc = widget.bloc ?? context.read<B>();
+    if (_resolvedBloc != bloc) {
+      _unsubscribe();
+      _resolvedBloc = bloc;
+      _subscribe();
+    }
+  }
+
+  void _subscribe() {
+    _subscription = _resolvedBloc?.presentationStream.listen((event) {
+      if (mounted) widget.listener(context, event);
+    });
+  }
+
+  void _unsubscribe() {
+    _subscription?.cancel();
+    _subscription = null;
+  }
+
+  @override
+  void dispose() {
+    _unsubscribe();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child ?? const SizedBox.shrink();
+}
+```
+
+#### 3. Usage Example (Drop-in Replacement)
+```dart
+// 1. Cubit / Bloc definition
+sealed class AuthPresentationEvent {}
+class ShowErrorToast extends AuthPresentationEvent {
+  ShowErrorToast(this.message);
+  final String message;
+}
+class NavigateToDashboard extends AuthPresentationEvent {}
+
+class AuthCubit extends CubitSignal<AuthState>
+    with BlocSignalPresentationMixin<AuthPresentationEvent, AuthState> {
+  AuthCubit() : super(initialState: AuthInitial());
+
+  Future<void> submit() async {
+    emit(AuthLoading());
+    try {
+      await api.login();
+      emit(AuthSuccess());
+      emitPresentation(NavigateToDashboard());
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+      emitPresentation(ShowErrorToast(e.toString()));
+    }
+  }
+}
+
+// 2. Flutter UI Consumption
+BlocSignalPresentationListener<AuthCubit, AuthPresentationEvent>(
+  listener: (context, event) {
+    switch (event) {
+      case ShowErrorToast(:final message):
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      case NavigateToDashboard():
+        Navigator.of(context).pushReplacementNamed('/dashboard');
+    }
+  },
+  child: const LoginForm(),
+)
+```
+
+### Side-by-Side Migration Matrix
+
+| Feature | Legacy `bloc_presentation` | `BlocSignal` Zero-Dependency Recipe |
+| :--- | :--- | :--- |
+| **Package Dependency** | `package:bloc_presentation` | **None** (pure Dart stream controller + widget) |
+| **Mixin Contract** | `with BlocPresentationMixin` | `with BlocSignalPresentationMixin<E, S>` |
+| **Emission API** | `emitPresentation(event)` | `emitPresentation(event)` |
+| **Listener Widget** | `BlocPresentationListener` | `BlocSignalPresentationListener` |
+| **Lifecycle Safety** | Manual / Stream cleanup | Closed automatically in `super.close()` |
+

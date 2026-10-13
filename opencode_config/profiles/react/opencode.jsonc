@@ -1,0 +1,31 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "{env:OPENCODE_CONFIG_DIR}/skills"
+    ]
+  },
+  "instructions": [
+    "{env:OPENCODE_CONFIG_DIR}/../global/rules/no-comments.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/react-guidelines.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/architecture.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/typescript.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/performance.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/ui-accessibility.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/agent-workflow.md"
+  ],
+  "permission": {
+    "skill": {
+      "*": "deny",
+      "customize-opencode": "allow",
+      "find-skills": "allow",
+      "git-commit": "allow",
+      "git-interactive-rebase": "allow",
+      "trello-workflow": "allow",
+      "writing-guidelines": "allow",
+      "react-best-practices": "allow",
+      "react-view-transitions": "allow",
+      "composition-patterns": "allow"
+    }
+  }
+}

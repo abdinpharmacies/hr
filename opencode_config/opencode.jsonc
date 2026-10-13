@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [],
+  "permission": {
+    "skill": {
+      "*": "deny",
+      "customize-opencode": "allow",
+      "find-skills": "allow",
+      "git-commit": "allow",
+      "git-interactive-rebase": "allow",
+      "trello-workflow": "allow",
+      "writing-guidelines": "allow"
+    }
+  }
+}

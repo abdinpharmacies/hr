@@ -1,0 +1,102 @@
+---
+name: bloc-signals
+description: Implement, review, test, or migrate Dart, Flutter, or Jaspr state using bloc_signals and its platform bindings. Use when these packages are present or explicitly requested.
+---
+
+## Project compatibility
+
+Inspect the project SDK constraints, lockfile, imports, and installed package source first. These collected references describe upstream snapshots, not a required version or a migration request. Preserve the existing state-management and routing choices unless the task requests a change. Use only APIs supported by the installed packages; add dependencies with the project package manager instead of copying example version pins. Read only relevant references. In Jaspr, use Dart core or Jaspr bindings, never Flutter widgets, hooks, or routers. Use primary constructors only when the project SDK supports them.
+
+
+# BlocSignal
+
+## Start from installed source
+
+BlocSignal is young and its API may change between releases. Inspect the consumer project's
+`pubspec.yaml`, lockfile, imports, and installed package source before editing code. Use this
+repository only when the project follows its current branch or the task concerns the repository
+itself.
+
+Do not infer API parity from `package:bloc`, `package:flutter_bloc`, or Riverpod. BlocSignal uses
+signals, has no state stream or provider dependency graph, and does not implement every source
+package lifecycle, predicate, or widget API.
+
+## Related Signals skills
+
+This plugin is self-contained for BlocSignal work. When the agent already has skills from
+`rodydavis/signals.dart`, use these optional companions for lower-level Signals tasks:
+
+- `signals-dart` for `signals_core` primitives and utilities.
+- `signals-flutter` for Flutter bindings and signal-aware widgets.
+- `signals-hooks` for `flutter_hooks` integration.
+- `signals-lint` for analyzer rules and quick fixes.
+- `signals-migration-6-to-7` for Signals 6 to 7 migrations.
+
+Do not assume these skills are installed. If they are unavailable, inspect the consumer project's
+installed Signals source before changing code.
+
+## Route the task
+
+- Read [decision_matrix.md](decision_matrix.md) for the architectural decision rubric comparing raw Signals, CubitSignal, BlocSignal, Hydrate, and Replay.
+- Read [core.md](core.md) for event dispatch, equality, errors, closure, observers, and reactive
+  ownership.
+- Read [flutter.md](flutter.md) for providers, builders, listeners, multi-listeners, consumers,
+  selectors, context extensions, infinite scroll pagination recipes, `flutter_hooks` integration (`signals_hooks`), widget ownership, and derived UI state.
+- Read [testing.md](testing.md) for synchronous assertions, deterministic async tests, zones, and
+  widget tests.
+- Read [genui.md](genui.md) for Generative UI, A2UI protocol state machines, streaming SSE ingestion, surface views, and catalog widgets.
+- Read [migration.md](migration.md) before replacing `bloc`, `flutter_bloc`, `bloc_concurrency`, `hydrated_bloc`, `replay_bloc`, or `bloc_test`.
+- Read [migration_bridge.md](migration_bridge.md) for Stream and Listenable interop bridges.
+- Read [riverpod_migration.md](riverpod_migration.md) before replacing Riverpod providers,
+  consumers, families, scopes, or generated declarations.
+- Read [interoperability.md](interoperability.md) for the universal state bridge across BLoC, Riverpod, and Provider ecosystems.
+- Read [hydration.md](hydration.md) for persistent state storage (`bloc_signals_hydrate`).
+- Read [replay.md](replay.md) for undo and redo state tracking (`bloc_signals_replay`).
+- Read [jaspr.md](jaspr.md) for Jaspr web component integration (`bloc_signals_jaspr`).
+- Read [devtools.md](devtools.md) for VM Service RPC extensions & DevTools UI (`bloc_signals_devtools`).
+- Read [lint.md](lint.md) for analyzer rules and IDE diagnostics (`bloc_signals_lint`).
+- Read [otel.md](otel.md) for `OtelBlocSignalObserver`, span completion gaps, and telemetry data
+  choices.
+
+Load only the references needed for the task.
+
+## Workflow
+
+1. Identify the exact package versions and target platform.
+2. Trace the current event, state, ownership, and disposal path before changing it.
+3. Check the installed public API for every type or member you plan to use.
+4. Make the smallest coherent change that preserves existing user behavior.
+5. Format changed Dart files and run scoped analysis plus the nearest tests.
+6. Report the versions inspected, checks run, and any unsupported source behavior that remains.
+
+## Contracts to preserve
+
+- `BlocSignalBase<State>` owns state and lifecycle. Use `CubitSignal<State>` for public methods and
+  `BlocSignal<Event, State>` for event dispatch. Use `CubitSignalMixin<State>` or `BlocSignalMixin<Event, State>` when a class already extends an existing superclass (such as `ChangeNotifier`, `TextEditingController`, or `BaseRepository`) and invoke `initCubitSignal(initialState: ...)` in the constructor.
+- Constructors require named parameter `initialState:` (for example `: super(initialState: initial)`), NOT positional `super(initial)`.
+- Use `value` (the preferred modern getter) or `stateValue` (permanent alias for backward compatibility) to read raw `StateType` values inside methods/handlers (such as `emit(value + 1)`). `state` returns `ReadonlySignal<StateType>` for reactive signal subscriptions.
+- `emit` changes state synchronously and skips a value equal to the current state.
+- `BlocSignal.add` returns `void`. Synchronous handlers finish before it returns. Async handler
+  futures are observed for errors but are not returned or cancelled by `close`.
+- `on<E>` registration is runtime routing. Duplicate exact types throw `StateError`; registration
+  does not give sealed-class exhaustiveness. An `onEvent` override must call `super.onEvent`.
+- `close` returns `Future<void>`, disposes effects registered through `createEffect`, and disposes
+  the internal model. New events are dropped after closure. A post-close `emit` asserts in debug
+  mode and returns without updating state in release mode.
+- A non-equal event transition runs before state mutation. `onChange` runs after mutation. Both
+  local hooks require `super`; equal emits run neither hook.
+- `BlocSignalProvider(create:)` is lazy by default, owns its bloc, and closes it. Use `lazy: false`
+  for eager creation. `BlocSignalProvider.value` does not own its bloc. Both `BlocSignalProvider`
+  and `BlocSignalListener` support an optional `child` parameter (defaulting to `const SizedBox.shrink()` in Flutter and `const _NullComponent()` in Jaspr), eliminating placeholder `child` arguments inside `MultiBlocSignalProvider` or `MultiBlocSignalListener`.
+- `context.watch<T>()` tracks provider replacement, not state changes. Use `BlocSignalBuilder` or a
+  signals widget to rebuild for state.
+- `BlocSignalListener` suppresses its initial effect run and supports `listenWhen(previous,
+  current)`. It passes only the current state to the listener callback.
+- A global `BlocSignalObserver` is a single slot. Installing a telemetry observer can replace an
+  existing logger unless the application composes them.
+- `BlocSignalBase` overrides `toString()` to output `$runtimeType($stateValue)`, providing immediate diagnostic visibility across all `CubitSignal` and `BlocSignal` subclasses.
+- Prefer inline `late final` field declarations with type inference for computed properties (for example `late final itemCount = computed(() => stateValue.items.length);`) rather than uninitialized field declarations with constructor-body assignments.
+- Defend Flutter's 16.6ms/8.3ms frame budget during heavy workloads using `Isolate.run` for CPU compute, `batch()` for multi-signal mutations, and cooperative time-slicing via `Stopwatch` + `Future.pause()` (Dart 3.13+) or `Future<void>.delayed(Duration.zero)` (Dart 3.5). Never use event loop delays as a crutch to wait for state transitions to settle.
+
+Never create an `effect` or `computed` during a Flutter `build` method. Keep its owner and disposal
+path explicit.

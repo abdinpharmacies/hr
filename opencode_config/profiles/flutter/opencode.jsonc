@@ -1,0 +1,41 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "skills": {
+    "paths": [
+      "{env:OPENCODE_CONFIG_DIR}/skills"
+    ]
+  },
+  "instructions": [
+    "{env:OPENCODE_CONFIG_DIR}/../global/rules/no-comments.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-code-quality.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-widgets.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-custom-widgets.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-forms.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-input-model.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-dependencies.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-assets.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/flutter-response-style.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/obfuscation-safe-code.md"
+  ],
+  "permission": {
+    "skill": {
+      "*": "deny",
+      "customize-opencode": "allow",
+      "find-skills": "allow",
+      "git-commit": "allow",
+      "git-interactive-rebase": "allow",
+      "trello-workflow": "allow",
+      "writing-guidelines": "allow",
+      "flutter-*": "allow",
+      "dart-*": "allow",
+      "bloc-signals": "allow",
+      "signals-dart": "allow",
+      "signals-flutter": "allow",
+      "signals-hooks": "allow",
+      "signals-lint": "allow",
+      "signals-migration-6-to-7": "allow",
+      "signals-preact-dart": "allow",
+      "kaisel": "allow"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    "{env:OPENCODE_CONFIG_DIR}/../global/rules/no-comments.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/jaspr-core.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/jaspr-web.md",
+    "{env:OPENCODE_CONFIG_DIR}/rules/jaspr-workflow.md"
+  ],
+  "permission": {
+    "skill": {
+      "*": "deny",
+      "customize-opencode": "allow",
+      "find-skills": "allow",
+      "git-commit": "allow",
+      "git-interactive-rebase": "allow",
+      "trello-workflow": "allow",
+      "writing-guidelines": "allow",
+      "jaspr-content-models": "allow",
+      "jaspr-convert-html": "allow",
+      "jaspr-fundamentals": "allow",
+      "jaspr-js-interop": "allow",
+      "jaspr-pre-rendering-and-hydration": "allow",
+      "jaspr-routing": "allow",
+      "jaspr-shadcn-ui": "allow",
+      "jaspr-styling": "allow",
+      "jaspr-testing": "allow",
+      "dart-add-unit-test": "allow",
+      "dart-build-cli-app": "allow",
+      "dart-collect-coverage": "allow",
+      "dart-generate-test-mocks": "allow",
+      "dart-migrate-to-checks-package": "allow",
+      "dart-resolve-package-conflicts": "allow",
+      "dart-use-pattern-matching": "allow",
+      "dart-use-primary-constructors": "allow",
+      "dart-write-documentation": "allow",
+      "bloc-signals": "allow",
+      "signals-dart": "allow",
+      "signals-preact-dart": "allow"
+    }
+  },
+  "skills": {
+    "paths": [
+      "{env:OPENCODE_CONFIG_DIR}/skills",
+      "{env:OPENCODE_CONFIG_DIR}/../flutter/skills"
+    ]
+  }
+}
