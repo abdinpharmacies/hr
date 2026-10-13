@@ -9,11 +9,12 @@ from .catalog import CATALOG
 
 
 class ProviderFailure(Exception):
-    def __init__(self, code, status=0, retry_after=0):
+    def __init__(self, code, status=0, retry_after=0, validation_report=None):
         super().__init__(code)
         self.code = code
         self.status = status
         self.retry_after = retry_after
+        self.validation_report = validation_report or {}
 
 
 def digest(value):

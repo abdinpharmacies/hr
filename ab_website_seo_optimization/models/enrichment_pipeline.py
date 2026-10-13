@@ -266,6 +266,7 @@ class EnrichmentWorkItem(models.Model):
             if generate and self.job_id.generation_mode == "ai" and len(facts) > 2:
                 success = False
                 failures = []
+                failure_details = []
                 for provider in generators:
                     provider = provider.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=template.id)
                     if not provider._allowed_for_commercial():
@@ -275,11 +276,13 @@ class EnrichmentWorkItem(models.Model):
                         content = provider._generate_grounded(identity["name"], lang, facts, provenance, self.template_snapshot[lang]["prompt_version"], contract=self.template_snapshot[lang], category_context=self.category_context)
                         report = self._validate_template_output(content, lang)
                         if report["errors"]:
-                            raise ProviderFailure("template_validation_failed")
+                            raise ProviderFailure("template_validation_failed", validation_report=report)
                         success = True
                         break
                     except ProviderFailure as error:
                         failures.append((error.code, provider.disabled_until))
+                        failure_details.append({'provider': provider.display_name, 'code': error.code,
+                                                'validation': error.validation_report})
                         provider._call_log("fallback", time.monotonic(), error=error.code)
                 if not success and generators:
                     recoverable = {"quota_exhausted", "rate_limit", "cooldown", "provider_busy", "timeout", "network_error", "temporary_failure"}
@@ -288,6 +291,11 @@ class EnrichmentWorkItem(models.Model):
                     next_attempt = max(fields.Datetime.now() + timedelta(seconds=60), min(retry_times)) if retry_times else fields.Datetime.now() + timedelta(seconds=min(3600, 60 * 2 ** min(self.attempts, 6)))
                     self.sudo().write({"state": "waiting" if waiting else "failed", "attempts": self.attempts + 1,
                                 "last_error": "all_generators_unavailable", "next_attempt_at": next_attempt,
+                                "validation_status": "rejected" if any(detail['validation'].get('errors') for detail in failure_details) else "pending",
+                                "validation_report": dict(self.validation_report or {}, **{lang: {
+                                    'status': 'rejected', 'errors': [detail['provider'] + ': ' + detail['code'] +
+                                        (' (' + ', '.join(detail['validation']['errors']) + ')' if detail['validation'].get('errors') else '')
+                                        for detail in failure_details], 'warnings': [], 'providers': failure_details}}),
                                 "result": outputs, "normalized_input_hash": input_hash})
                     return
             self._validate_template_output(content, lang)

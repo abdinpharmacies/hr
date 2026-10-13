@@ -7,7 +7,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
 from ..services.providers import ProviderFailure
-from ..services.seo_templates import deterministic, fingerprints, literal_identity, validate
+from ..services.seo_templates import deterministic, fingerprints, literal_identity, polish_generated_copy, validate
 
 
 @tagged('post_install', '-at_install')

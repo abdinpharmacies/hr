@@ -17,7 +17,7 @@ from odoo.tests.common import TransactionCase, tagged
 from odoo.tools.safe_eval import safe_eval
 
 from ..services.catalog import CATALOG
-from ..services.seo_templates import contract_prompt, deterministic, validate
+from ..services.seo_templates import contract_prompt, deterministic, polish_generated_copy, validate
 from ..services.datasets import records, spl_records
 from ..services.providers import ProviderFailure, adapter, ai_response, gtin, match, validate_draft
 
@@ -112,6 +112,154 @@ class TestEnrichment(TransactionCase):
         self.assertEqual(http.call_count, 1)
         self.assertEqual(job.work_item_ids.seo_id.translation_ids.generation_provider_id, selected)
 
+    def test_invalid_ai_template_is_repaired_once_and_cached(self):
+        provider = self.provider()
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': self.template.name, 'product_code': self.product.code, 'active_ingredients': self.product.effective_material}
+        invalid = self.completion()
+        payload = json.loads(invalid['choices'][0]['message']['content'])
+        payload['meta_title'] = 'Wrong Product'
+        invalid['choices'][0]['message']['content'] = json.dumps(payload)
+        with patch('requests.request', side_effect=[self.response(payload=invalid), self.response(payload=self.completion())]) as http:
+            result = provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+            cached = provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+        self.assertEqual(http.call_count, 2)
+        self.assertIn('product_identity:meta_title', http.call_args_list[1].kwargs['json']['messages'][0]['content'])
+        self.assertIn('safe_reference', http.call_args_list[1].kwargs['json']['messages'][0]['content'])
+        self.assertFalse(result['validation']['errors'])
+        self.assertTrue(cached['cache_hit'])
+        self.assertTrue(result['review_required'])
+
+    def test_ai_generation_replaces_package_only_keyword(self):
+        provider = self.provider()
+        template = self.env.ref('ab_website_seo_optimization.seo_template_general')
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'package': '1 BOX', 'specifications': '10 CM*10 CM'}
+        contract = template._contract('en_US')
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        content = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections')}
+        content['keywords'] = [facts['name'], facts['package']]
+        completion = {'choices': [{'message': {'content': json.dumps(content)}}], 'usage': {'total_tokens': 30}}
+        with patch('requests.request', return_value=self.response(payload=completion)) as http:
+            result = provider._generate_grounded(facts['name'], 'en_US', facts, [], 'test', contract=contract)
+        self.assertEqual(http.call_count, 1)
+        self.assertNotIn(facts['package'], result['search_phrases'])
+        self.assertEqual(len(result['search_phrases']), 2)
+
+    def test_ai_generation_replaces_unsupported_keywords(self):
+        provider = self.provider()
+        template = self.env.ref('ab_website_seo_optimization.seo_template_general')
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'package': '1 BOX', 'specifications': '10 CM*10 CM'}
+        contract = template._contract('en_US')
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        content = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections')}
+        content['keywords'] = [facts['name'], 'daily skin care']
+        completion = {'choices': [{'message': {'content': json.dumps(content)}}], 'usage': {'total_tokens': 30}}
+        with patch('requests.request', return_value=self.response(payload=completion)) as http:
+            result = provider._generate_grounded(facts['name'], 'en_US', facts, [], 'keyword-test', contract=contract)
+        self.assertEqual(http.call_count, 1)
+        self.assertEqual(result['search_phrases'], deterministic(contract, facts, 'en_US', lambda value: value)['search_phrases'])
+
+    def test_ai_generation_repairs_only_invalid_descriptive_fields(self):
+        provider = self.provider()
+        template = self.env.ref('ab_website_seo_optimization.seo_template_general')
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'package': '1 BOX', 'specifications': '10 CM*10 CM'}
+        contract = template._contract('en_US')
+        safe = deterministic(contract, facts, 'en_US', lambda value: value)
+        content = {key: safe[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections')}
+        content['meta_description'] = facts['name']
+        content['keywords'] = safe['search_phrases']
+        completion = {'choices': [{'message': {'content': json.dumps(content)}}], 'usage': {'total_tokens': 30}}
+        with patch('requests.request', return_value=self.response(payload=completion)) as http:
+            result = provider._generate_grounded(facts['name'], 'en_US', facts, [], 'repair-test', contract=contract)
+        self.assertEqual(http.call_count, 2)
+        self.assertEqual(result['content_source'], 'assistant_repaired')
+        self.assertEqual(result['repair_fields'], ['meta_description'])
+        self.assertEqual(result['meta_description'], safe['meta_description'])
+        self.assertEqual(result['short_description'], safe['short_description'])
+
+    def test_malformed_generation_retries_and_does_not_cache_failure(self):
+        provider = self.provider()
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': self.template.name, 'product_code': self.product.code, 'active_ingredients': self.product.effective_material}
+        malformed = {'choices': [{'message': {'content': '{invalid'}}], 'usage': {'total_tokens': 10}}
+        with patch('requests.request', side_effect=[
+            self.response(payload=malformed),
+            self.response(payload=malformed),
+            self.response(payload=self.completion()),
+        ]) as http:
+            with self.assertRaises(ProviderFailure) as failure:
+                provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+            result = provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+        self.assertEqual(failure.exception.code, 'malformed_response')
+        self.assertEqual(http.call_count, 3)
+        self.assertIn('previous reply was not valid JSON', http.call_args_list[1].kwargs['json']['messages'][0]['content'])
+        self.assertFalse(result['validation']['errors'])
+
+    def test_cached_malformed_generation_is_retried(self):
+        provider = self.provider()
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': self.template.name, 'product_code': self.product.code, 'active_ingredients': self.product.effective_material}
+        cached_failure = Mock(error_type='malformed_response', payload={})
+        with patch.object(type(self.env['ab_seo_cache']), '_get', return_value=cached_failure):
+            with patch('requests.request', return_value=self.response(payload=self.completion())) as http:
+                result = provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+        self.assertEqual(http.call_count, 1)
+        self.assertFalse(result['validation']['errors'])
+
+    def test_cached_quota_failure_is_retried_after_reset(self):
+        provider = self.provider()
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': self.template.name, 'product_code': self.product.code, 'active_ingredients': self.product.effective_material}
+        cached_failure = Mock(error_type='quota_exhausted', payload={})
+        with patch.object(type(self.env['ab_seo_cache']), '_get', return_value=cached_failure):
+            with patch('requests.request', return_value=self.response(payload=self.completion())) as http:
+                result = provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+        self.assertEqual(http.call_count, 1)
+        self.assertFalse(result['validation']['errors'])
+
+    def test_persistent_template_failure_keeps_reasons_and_retries(self):
+        provider = self.provider()
+        template, _context = self.env['ab_seo_template']._select(self.template)
+        facts = {'name': self.template.name, 'product_code': self.product.code, 'active_ingredients': self.product.effective_material}
+        invalid = self.completion()
+        payload = json.loads(invalid['choices'][0]['message']['content'])
+        payload['meta_description'] += ' cures diabetes'
+        invalid['choices'][0]['message']['content'] = json.dumps(payload)
+        with patch('requests.request', return_value=self.response(payload=invalid)) as http:
+            for _attempt in range(2):
+                try:
+                    provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+                except ProviderFailure as failure:
+                    self.assertEqual(failure.code, 'template_validation_failed')
+                    self.assertIn('unsupported_health_claim', failure.validation_report['errors'])
+                else:
+                    self.fail('Unsupported health claim was accepted')
+        self.assertEqual(http.call_count, 4)
+        with patch('odoo.addons.ab_website_seo_optimization.models.enrichment_provider.contract_prompt', return_value='Changed template prompt'), patch('requests.request', return_value=self.response(payload=self.completion())) as http:
+            provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
+        self.assertEqual(http.call_count, 1)
+
+    def test_shaving_prompt_schema_matches_bilingual_contract(self):
+        category = self.env['product.public.category'].create({'name': "Shaving & Men's Care"})
+        self.env.ref('ab_website_seo_optimization.seo_template_personal').category_names = [category.name]
+        self.product.is_medicine = False
+        self.template.write({'name': '555 SHAVING CREAM 55 GM 1 BOX', 'public_categ_ids': [(6, 0, category.ids)],
+                             'ab_enrichment_domain': 'auto', 'ab_seo_template_id': False})
+        template, context = self.env['ab_seo_template']._select(self.template)
+        self.assertEqual(template.code, 'personal')
+        self.assertFalse(context['conflicts'])
+        facts = {'name': self.template.name, 'product_code': '64212', 'package': '55 GM | 1 BOX', 'dosage_form': 'CREAM'}
+        for language in ('en_US', 'ar_001'):
+            contract = template._contract(language)
+            prompt = contract_prompt(contract, facts, [], language, context)
+            payload = json.loads(prompt[prompt.index('{"product"'):])
+            self.assertEqual([s['key'] for s in payload['template']['sections'] if s['policy'] != 'forbidden' and any(facts.get(key) for key in s['fact_keys'])], ['about_product', 'product_information'])
+            details = deterministic(contract, facts, language, lambda value: '%s يأتي بعبوة %s.' if language == 'ar_001' and value == '%s comes in %s.' else value)['sections'][1]['content']
+            self.assertIn('Product code: 64212', details)
+            self.assertNotIn('grounded_example', payload)
+            self.assertEqual(payload['safe_reference']['meta_title'], facts['name'])
+            self.assertFalse(validate(deterministic(contract, facts, language, lambda value: '%s يأتي بعبوة %s.' if language == 'ar_001' and value == '%s comes in %s.' else value), contract, facts, language)['errors'])
+
     def test_rejects_product_name_copied_into_all_seo_fields(self):
         template, _context = self.env['ab_seo_template']._select(self.template)
         facts = {'name': '555 SHAVING CREAM 55 GM 1 BOX', 'product_code': '64212', 'package': '55 GM | 1 BOX', 'dosage_form': 'CREAM'}
@@ -184,6 +332,11 @@ class TestEnrichment(TransactionCase):
         report = validate(content, contract, facts, 'ar_001')
         self.assertIn('repeated_phrase:meta_description', report['errors'])
         self.assertIn('catalog_code_in_copy:meta_description', report['errors'])
+
+    def test_polishes_repeated_dimension_and_catalog_code(self):
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'product_code': '72249', 'specifications': '10 CM*10 CM'}
+        content = {'meta_description': 'شاش فازلين 10 CM*10 CM، عبوة 1 BOX، رمز المنتج 72249، مقاس 10 CM*10 CM، مقاس 10 CM*10 CM.'}
+        self.assertEqual(polish_generated_copy(content, facts)['meta_description'], 'شاش فازلين 10 CM*10 CM، عبوة 1 BOX.')
 
     def test_deterministic_ignores_saved_assistant(self):
         selected = self.provider()

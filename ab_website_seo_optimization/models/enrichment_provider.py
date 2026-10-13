@@ -12,9 +12,9 @@ from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 from ..services.catalog import CATALOG
-from ..services.seo_templates import contract_prompt, validate as validate_template
+from ..services.seo_templates import contract_prompt, core_product_name, deterministic, language_name, polish_generated_copy, validate as validate_template
 from ..services.datasets import spl_records
-from ..services.providers import ProviderFailure, adapter, ai_payload, ai_response, build_prompt, digest, validate_draft
+from ..services.providers import ProviderFailure, adapter, ai_payload, ai_response, build_prompt, digest, normalized, validate_draft
 
 
 MANAGER = "ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
@@ -426,40 +426,102 @@ class EnrichmentProvider(models.Model):
         evidence = self.env["ab_seo_enrichment_fact"].browse(provenance).exists()
         stable_sources = sorted([{"field": row.field_name, "source": row.provider_id.provider or "internal", "source_id": row.source_record_id,
                                   "version": row.source_version, "url": row.source_url, "value_hash": row.value_hash} for row in evidence], key=lambda row: digest(row))
-        prompt = contract_prompt(contract, facts, stable_sources, language, category_context) if contract else build_prompt(name, language, facts, prompt_version, stable_sources)
+        translate = lambda value: self.with_context(lang=language).env._(value)
+        prompt_facts = {key: value for key, value in facts.items() if not (language.startswith('ar') and key == 'name_en')}
+        prompt = contract_prompt(contract, prompt_facts, stable_sources, language, category_context, translate) if contract else build_prompt(name, language, prompt_facts, prompt_version, stable_sources)
+        safe = deterministic(contract, facts, language, translate) if contract else None
         last_error = ProviderFailure("empty_response")
+        retryable_cache_errors = {"malformed_response", "template_validation_failed", "quota_exhausted", "rate_limit", "cooldown", "provider_busy", "timeout", "network_error", "temporary_failure"}
         for model in names:
-            key = digest([name, language, facts, stable_sources, prompt_version, contract, category_context, model, self.base_url, self.endpoint_path, self.temperature, self.max_output_tokens])
+            key = digest([name, language, facts, stable_sources, prompt_version, contract, category_context, model, self.base_url, self.endpoint_path, self.temperature, self.max_output_tokens, prompt])
             cache = self.env["ab_seo_cache"]._get(self, "generation", key)
             if cache:
-                if cache.error_type:
-                    last_error = ProviderFailure(cache.error_type)
+                if cache.error_type and cache.error_type not in retryable_cache_errors:
+                    last_error = ProviderFailure(cache.error_type, validation_report=(cache.payload or {}).get('validation'))
                     continue
-                return dict(cache.payload, cache_hit=True, input_sources=provenance)
+                if not cache.error_type:
+                    return dict(cache.payload, cache_hit=True, input_sources=provenance)
             try:
-                response = self._request("POST", payload=ai_payload(self.provider, model, prompt, self.temperature, self.max_output_tokens), model=model, generation=True, operation="generation")
-                text, _usage = ai_response(self.provider, response)
-                try:
-                    payload = json.loads(text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip())
-                except (ValueError, TypeError) as error:
-                    raise ProviderFailure("malformed_response") from error
-                if contract:
-                    if not isinstance(payload, dict) or set(payload) - {'meta_title', 'meta_description', 'short_description', 'sections', 'keywords'}:
-                        raise ProviderFailure("malformed_response")
-                    result = dict(payload, content_kind="GENERATED_TEXT", content_source="assistant", review_required=True)
-                    report = validate_template(result, contract, facts, language)
-                    if report["errors"]:
-                        raise ProviderFailure("template_validation_failed")
-                    keywords = result.get("keywords", [])
-                    result.update(keyword_text=", ".join(keywords), search_phrases=keywords, seo_name=name, validation=report)
-                else:
-                    result = validate_draft(payload, facts)
+                attempt_prompt = prompt
+                validation_report = {}
+                for attempt in range(2 if contract else 1):
+                    response = self._request("POST", payload=ai_payload(self.provider, model, attempt_prompt, self.temperature, self.max_output_tokens), model=model, generation=True, operation="generation")
+                    text, _usage = ai_response(self.provider, response)
+                    try:
+                        payload = json.loads(text.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip())
+                    except (ValueError, TypeError) as error:
+                        if contract and attempt == 0:
+                            attempt_prompt = prompt + '\nThe previous reply was not valid JSON. Return one complete JSON object matching the requested schema, with no markdown or extra text.'
+                            continue
+                        raise ProviderFailure("malformed_response") from error
+                    if contract:
+                        if not isinstance(payload, dict) or set(payload) - {'meta_title', 'meta_description', 'short_description', 'sections', 'keywords'}:
+                            if attempt == 0:
+                                attempt_prompt = prompt + '\nThe previous reply had the wrong JSON schema. Return one complete object with only meta_title, meta_description, short_description, sections, and keywords.'
+                                continue
+                            raise ProviderFailure("malformed_response")
+                        result = polish_generated_copy(dict(payload, content_kind="GENERATED_TEXT", content_source="assistant", review_required=True), facts)
+                        if isinstance(result.get('keywords'), list):
+                            if facts.get('package'):
+                                result['keywords'] = [keyword for keyword in result['keywords'] if normalized(keyword) != normalized(facts['package'])]
+                            fact_corpus = normalized(' '.join(str(value) for value in prompt_facts.values()))
+                            if any(not isinstance(keyword, str) or normalized(keyword) not in fact_corpus for keyword in result['keywords']):
+                                result['keywords'] = list(safe['search_phrases'])
+                            if facts.get('package') and len(result['keywords']) < 2:
+                                for keyword in (language_name(facts, language), core_product_name(language_name(facts, language), facts['package'])):
+                                    if keyword and normalized(keyword) not in {normalized(value) for value in result['keywords']}:
+                                        result['keywords'].append(keyword)
+                                    if len(result['keywords']) >= 2:
+                                        break
+                        report = validate_template(result, contract, facts, language)
+                        if report["errors"]:
+                            validation_report = report
+                            if attempt == 0:
+                                reference = {key: safe[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections')}
+                                reference['keywords'] = safe['search_phrases']
+                                for section in reference['sections']:
+                                    section.pop('title')
+                                attempt_prompt = prompt + '\nThe previous response failed validation. Rewrite the invalid fields using only trusted fact values and allowed_connecting_words. Keep each fact once per field, place the code only in product_information, and use full product phrases for keywords. Do not claim availability or benefits. If you cannot improve the safe_reference without adding facts, return its exact wording. Validation details: ' + json.dumps({'errors': report['errors'], 'unsupported_terms': report.get('unsupported_terms', {}), 'safe_reference': reference}, ensure_ascii=False)
+                                continue
+                            repairable = {}
+                            for field in ('meta_description', 'short_description'):
+                                repairable[field] = {error for error in report['errors'] if error.endswith(':' + field)}
+                            repairable['about_product'] = {error for error in report['errors'] if error.endswith(':about_product')}
+                            invalid_fields = {field for field, errors in repairable.items() if errors}
+                            if invalid_fields and len(invalid_fields) <= 2 and set(report['errors']) == set().union(*repairable.values()):
+                                for field in invalid_fields:
+                                    if field == 'about_product':
+                                        section = next((row for row in result['sections'] if row.get('key') == field), None)
+                                        safe_section = next((row for row in safe['sections'] if row['key'] == field), None)
+                                        if section and safe_section:
+                                            section['content'] = safe_section['content']
+                                    else:
+                                        result[field] = safe[field]
+                                repaired_report = validate_template(result, contract, facts, language)
+                                if not repaired_report['errors']:
+                                    result['content_source'] = 'assistant_repaired'
+                                    result['repair_fields'] = sorted(invalid_fields)
+                                    repaired_report['warnings'].append('safe_copy_repair')
+                                    repaired_report['status'] = 'review'
+                                    report = repaired_report
+                                else:
+                                    raise ProviderFailure("template_validation_failed", validation_report=repaired_report)
+                            else:
+                                raise ProviderFailure("template_validation_failed", validation_report=report)
+                        keywords = result.get("keywords", [])
+                        result.update(keyword_text=", ".join(keywords), search_phrases=keywords,
+                                      seo_name=core_product_name(language_name(facts, language), facts.get('package')), validation=report)
+                    else:
+                        result = validate_draft(payload, facts)
+                    break
                 result.update(provider_id=self.id, model=model, prompt_version=prompt_version, normalized_input_hash=key, input_sources=provenance)
                 self.env["ab_seo_cache"]._put(self, "generation", key, result)
                 return result
             except ProviderFailure as error:
+                error.validation_report = error.validation_report or validation_report
                 last_error = error
-                self.env["ab_seo_cache"]._put(self, "generation", key, {}, error.code)
+                if error.code not in retryable_cache_errors:
+                    self.env["ab_seo_cache"]._put(self, "generation", key, {'validation': error.validation_report} if error.validation_report else {}, error.code)
                 if error.code not in ("unsupported_model", "malformed_response", "empty_response", "invalid_request", "provider_error", "template_validation_failed"):
                     break
                 self.disabled_until = False
