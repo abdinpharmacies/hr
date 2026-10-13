@@ -818,6 +818,7 @@ msgstr "شكل الجرعة"
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo__state__draft
 #: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_product_seo_bulk_optimization__state__draft
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_search
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__ab_seo_dataset__state__draft
 msgid "Draft"
 msgstr "مسودة"
 
@@ -2646,6 +2647,7 @@ msgstr "الحالة"
 #. module: ab_website_seo_optimization
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_bulk_optimization_line__status
 #: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_match__status
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo_xlsx_import_line__status
 msgid "Status"
 msgstr "الحالة"
 
@@ -5460,6 +5462,65 @@ msgstr "معالجة SEO مشغولة. حاول مرة أخرى بعد قليل.
 #: code:addons/ab_website_seo_optimization/models/seo_queue.py:0
 msgid "SEO generation: %s"
 msgstr "توليد محتوى SEO: %s"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_ab_product_seo__generation_feedback
+msgid "Generation Status"
+msgstr "حالة التوليد"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Generation was cancelled."
+msgstr "تم إلغاء التوليد."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid ""
+"Waiting to retry the providers. See the last optimization run for details."
+msgstr ""
+"في انتظار إعادة محاولة الاتصال بالمزودين. راجع آخر عملية تحسين للاطلاع على "
+"التفاصيل."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "The selected AI assistant has reached its quota. No new draft is ready; retry is scheduled automatically."
+msgstr "وصل مساعد الذكاء الاصطناعي المحدد إلى حد حصته. لا توجد مسودة جديدة جاهزة، وستُعاد المحاولة تلقائيًا."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid ""
+"Generation failed. Check the provider errors below, then use Retry Failures "
+"on the last optimization run."
+msgstr ""
+"فشل التوليد. راجع أخطاء المزودين أدناه، ثم استخدم إعادة محاولة العناصر "
+"الفاشلة في آخر عملية تحسين."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid ""
+"Draft generation is complete. Review the content before approval and "
+"publication."
+msgstr "اكتمل توليد المسودة. راجع المحتوى قبل الاعتماد والنشر."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid "Generation was skipped because this product does not need new content."
+msgstr "تم تخطي التوليد لأن هذا المنتج لا يحتاج إلى محتوى جديد."
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template_workflow.py:0
+msgid ""
+"Generation is queued or processing in the background. Refresh to see the "
+"result."
+msgstr ""
+"التوليد في الانتظار أو قيد المعالجة في الخلفية. حدّث الصفحة لعرض النتيجة."
 
 #. module: ab_website_seo_optimization
 #. odoo-python

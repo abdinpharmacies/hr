@@ -34,7 +34,10 @@ class TestProductSeo(TransactionCase):
             "product_template_id": self.template.id,
         })
 
-        seo.action_generate_draft()
+        action = seo.action_generate_draft()
+        self.assertEqual(action["res_model"], "ab.product.seo")
+        self.assertEqual(action["res_id"], seo.id)
+        self.assertEqual(action["target"], "current")
         self.assertEqual(seo.state, "published")
         self.assertEqual(seo.target, "products")
         self.assertEqual(seo.batch_limit, 1)
@@ -100,8 +103,10 @@ class TestProductSeo(TransactionCase):
         action = seo.action_generate_draft()
         wizard = self.env[action["res_model"]].browse(action["res_id"])
 
-        wizard.action_optimize_and_update()
+        reload_action = wizard.action_optimize_and_update()
 
+        self.assertEqual(reload_action["res_model"], "ab.product.seo")
+        self.assertEqual(reload_action["res_id"], seo.id)
         self.assertEqual(seo.result_status, "optimized")
         self.assertEqual(seo.optimized_count, 1)
         self.assertEqual(seo.state, "published")

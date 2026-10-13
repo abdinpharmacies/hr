@@ -239,6 +239,34 @@ class TestEnrichment(TransactionCase):
             provider._generate_grounded(self.template.name, 'en_US', facts, [], 'test', contract=template._contract())
         self.assertEqual(http.call_count, 1)
 
+    def test_template_failure_is_visible_on_product_without_publication(self):
+        provider = self.provider()
+        job = self.job(self.pipeline([provider]))
+        seo = self.env['ab.product.seo'].create({'product_template_id': self.template.id, 'ab_product_id': self.product.id, 'last_bulk_id': job.id})
+        self.assertIn('queued or processing', seo.generation_feedback)
+        failure = ProviderFailure('template_validation_failed', validation_report={'status': 'rejected', 'errors': ['unsupported_section_text:about_product'], 'warnings': []})
+        with patch.object(type(provider), '_generate_grounded', side_effect=failure):
+            job._run_bulk_optimization_chunk()
+        self.assertEqual(job.work_item_ids.state, 'failed')
+        self.assertEqual(job.work_item_ids.validation_status, 'rejected')
+        self.assertIn('unsupported_section_text:about_product', seo.generation_feedback)
+        self.assertIn('Generation failed.', seo.generation_feedback)
+        self.assertFalse(self.template.website_meta_title)
+        self.assertFalse(seo.published_version_id)
+        self.assertNotEqual(seo.with_context(lang='ar_001').generation_feedback, seo.with_context(lang='en_US').generation_feedback)
+
+    def test_quota_wait_is_explained_without_raw_provider_code(self):
+        provider = self.provider(key='groq')
+        job = self.job(self.pipeline([]), assistant_id=provider.id)
+        seo = self.env['ab.product.seo'].create({'product_template_id': self.template.id, 'ab_product_id': self.product.id,
+                                                 'last_bulk_id': job.id})
+        job.work_item_ids.sudo().write({'state': 'waiting', 'validation_report': {
+            'en_US': {'errors': ['Groq: quota_exhausted']}}})
+        self.assertIn('reached its quota', seo.with_context(lang='en_US').generation_feedback)
+        self.assertNotIn('quota_exhausted', seo.with_context(lang='en_US').generation_feedback)
+        self.assertNotIn('all_generators_unavailable', seo.with_context(lang='en_US').generation_feedback)
+        self.assertIn('حصته', seo.with_context(lang='ar_001').generation_feedback)
+
     def test_shaving_prompt_schema_matches_bilingual_contract(self):
         category = self.env['product.public.category'].create({'name': "Shaving & Men's Care"})
         self.env.ref('ab_website_seo_optimization.seo_template_personal').category_names = [category.name]

@@ -298,6 +298,43 @@ class TemplateSeo(models.Model):
 
     template_outdated = fields.Boolean(compute='_compute_template_outdated', store=True, index=True)
     template_generation_mode = fields.Selection([('deterministic', 'Deterministic'), ('ai', 'AI Wording')], default='deterministic', required=True)
+    generation_feedback = fields.Text(string='Generation Status', compute='_compute_generation_feedback')
+
+    @api.depends('last_bulk_id.state', 'last_bulk_id.enrichment_enabled', 'product_template_id',
+                 'last_bulk_id.work_item_ids.state', 'last_bulk_id.work_item_ids.last_error',
+                 'last_bulk_id.work_item_ids.validation_report')
+    @api.depends_context('lang')
+    def _compute_generation_feedback(self):
+        for seo in self:
+            seo.generation_feedback = False
+            if not seo.last_bulk_id.enrichment_enabled:
+                continue
+            item = seo.last_bulk_id.work_item_ids.filtered(lambda row: row.product_id == seo.product_template_id)[:1]
+            quota_wait = item.state == 'waiting' and any(
+                'quota_exhausted' in error
+                for report in (item.validation_report or {}).values()
+                for error in report.get('errors', []))
+            if seo.last_bulk_id.state == 'cancelled':
+                message = _('Generation was cancelled.')
+            elif item.state == 'waiting':
+                message = (_('The selected AI assistant has reached its quota. No new draft is ready; retry is scheduled automatically.')
+                           if quota_wait
+                           else _('Waiting to retry the providers. See the last optimization run for details.'))
+            elif item.state == 'failed':
+                message = _('Generation failed. Check the provider errors below, then use Retry Failures on the last optimization run.')
+            elif item.state in ('review_required', 'done'):
+                message = _('Draft generation is complete. Review the content before approval and publication.')
+            elif item.state == 'skipped':
+                message = _('Generation was skipped because this product does not need new content.')
+            else:
+                message = _('Generation is queued or processing in the background. Refresh to see the result.')
+            details = [language + ': ' + '; '.join(report.get('errors', []))
+                       for language, report in (item.validation_report or {}).items() if report.get('errors')]
+            if quota_wait:
+                details = []
+            if not details and not quota_wait and item.state in ('waiting', 'failed') and item.last_error:
+                details = [item.last_error]
+            seo.generation_feedback = '\n'.join([message] + details)
 
     @api.depends('translation_ids.template_outdated')
     def _compute_template_outdated(self):

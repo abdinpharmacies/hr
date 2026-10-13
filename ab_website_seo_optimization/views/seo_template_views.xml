@@ -74,6 +74,15 @@
         <field name="name">SEO record template status</field><field name="model">ab.product.seo</field><field name="inherit_id" ref="view_enrichment_seo_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='lang_mode']" position="after"><field name="template_generation_mode"/></xpath>
+            <xpath expr="//field[@name='result_message']" position="before">
+                <field name="generation_feedback" invisible="not generation_feedback"/>
+            </xpath>
+            <xpath expr="//field[@name='result_status']" position="attributes">
+                <attribute name="invisible">generation_feedback</attribute>
+            </xpath>
+            <xpath expr="//field[@name='result_message']" position="attributes">
+                <attribute name="invisible">generation_feedback</attribute>
+            </xpath>
             <xpath expr="//field[@name='template_generation_mode']" position="after">
                 <xpath expr="//field[@name='website_id']" position="move"/>
             </xpath>

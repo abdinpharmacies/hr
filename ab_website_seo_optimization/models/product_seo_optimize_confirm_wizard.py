@@ -18,7 +18,7 @@ class AbProductSeoOptimizeConfirmWizard(models.TransientModel):
     def action_optimize_and_update(self):
         self.ensure_one()
         self.seo_id.with_context(force_seo_optimization=True)._optimize_single_published_product()
-        return {"type": "ir.actions.act_window_close"}
+        return self.seo_id._get_form_reload_action()
 
     def action_discard(self):
         return {"type": "ir.actions.act_window_close"}

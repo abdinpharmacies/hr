@@ -368,10 +368,23 @@ class AbProductSeo(models.Model):
                 return action
         for rec in self:
             rec._optimize_single_published_product()
+        if len(self) == 1:
+            return self._get_form_reload_action()
         return True
 
     def action_fill_with_ai(self):
         return self.action_generate_draft()
+
+    def _get_form_reload_action(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": self.display_name,
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "target": "current",
+        }
 
     def _optimize_single_published_product(self):
         self.ensure_one()
