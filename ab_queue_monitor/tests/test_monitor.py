@@ -80,6 +80,48 @@ class Work:
     def test_empty_module(self):
         self.assertEqual(static_discovery.scan_text('class Empty: pass', 'empty', 'empty.py'), [])
 
+    def test_discovery_function_scope_and_reassignment(self):
+        source = '''
+class Work:
+    _name = 'work'
+    def first(self):
+        task = self.env['first.model'].with_delay()
+        task.run_first()
+        task = self.env['third.model'].with_delay()
+        task.run_third()
+        task = object()
+        task.unrelated()
+    def second(self):
+        task = self.env['second.model'].with_delay()
+        task.run_second()
+        def nested(task):
+            task.should_not_be_a_job()
+        task.after_nested()
+'''
+        found = static_discovery.scan_text(source, 'example', 'models/work.py')
+        self.assertEqual({(row['model_name'], row['method_name']) for row in found}, {
+            ('first.model', 'run_first'), ('third.model', 'run_third'),
+            ('second.model', 'run_second'), ('second.model', 'after_nested'),
+        })
+
+    def test_discovery_branch_aliases_are_not_guessed(self):
+        source = '''
+class Work:
+    _name = 'work'
+    def schedule(self, flag):
+        if flag:
+            task = self.env['first.model'].with_delay()
+            task.first()
+        else:
+            task = self.env['second.model'].with_delay()
+            task.second()
+        task.ambiguous()
+'''
+        found = static_discovery.scan_text(source, 'example', 'work.py')
+        self.assertEqual({(row['model_name'], row['method_name']) for row in found}, {
+            ('first.model', 'first'), ('second.model', 'second'),
+        })
+
     def test_malformed_file_is_bounded(self):
         with tempfile.TemporaryDirectory() as directory:
             Path(directory, 'broken.py').write_text('def broken(')
