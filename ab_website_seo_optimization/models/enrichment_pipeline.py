@@ -166,6 +166,19 @@ class EnrichmentWorkItem(models.Model):
             provenance.append(self._evidence(key, value, accepted=True).id)
         assistant = self.job_id.assistant_id
         if assistant and assistant.provider == 'groq' and self.job_id.generation_mode == 'ai' and pipeline.ai_mode != 'off':
+            if 'en_US' in self.job_id._get_selected_lang_codes():
+                try:
+                    suggested_name = assistant.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=self.product_id.id)._suggest_english_product_name(self.product_id)
+                except ProviderFailure as error:
+                    assistant._call_log('name_translation_fallback', time.monotonic(), error=error.code)
+                else:
+                    if suggested_name:
+                        facts['name_en'] = suggested_name
+                        evidence = self._evidence('name_en', suggested_name, provider=assistant,
+                                                  record={'source_id': 'product.template:%s:name' % self.product_id.id, 'source_version': str(self.product_id.write_date)},
+                                                  matching={'matched_by': 'ai_name_translation', 'matched_identifier': self.product_id.ab_product_id.code, 'match_score': 0.5},
+                                                  accepted=True, kind='UNVERIFIED_TEXT')
+                        provenance.append(evidence.id)
             try:
                 image_text, image_checksum = assistant.with_context(enrichment_job_id=self.job_id.id, enrichment_product_id=self.product_id.id)._read_product_image_text(self.product_id)
             except ProviderFailure as error:

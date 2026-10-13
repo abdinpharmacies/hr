@@ -109,6 +109,23 @@ class TestSeoTemplates(TransactionCase):
         self.assertEqual(content['search_phrases'], [name, '10 CM*10 CM شاش فازلين'])
         self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
 
+    def test_english_name_suggestion_is_drafted_and_flagged_for_review(self):
+        facts = {'name': '10 CM*10 CM شاش فازلين 1 BOX', 'name_en': '10 CM*10 CM Vaseline Gauze 1 BOX',
+                 'product_code': '72249', 'specifications': '10 CM*10 CM', 'package': '1 BOX'}
+        content = deterministic(self.general._contract(), facts, 'en_US', lambda value: value)
+        self.assertEqual(content['meta_title'], facts['name_en'])
+        self.assertIn('Vaseline Gauze', content['short_description'])
+        report = validate(content, self.general._contract(), facts, 'en_US')
+        self.assertFalse(report['errors'])
+        self.assertIn('name_translation_requires_review', report['warnings'])
+        content['content_kind'] = 'GENERATED_TEXT'
+        content['sections'][0]['fact_keys'] = ['name_en', 'package']
+        polished = polish_generated_copy(content, facts)
+        self.assertEqual(polished['sections'][0]['fact_keys'], ['name', 'package'])
+        self.assertFalse(validate(polished, self.general._contract(), facts, 'en_US')['errors'])
+        arabic = deterministic(self.general._contract(), facts, 'ar_001', lambda value: value)
+        self.assertNotIn('name_translation_requires_review', validate(arabic, self.general._contract(), facts, 'ar_001')['warnings'])
+
     def test_supplier_description_is_used_only_when_descriptive(self):
         job = self.job()
         item = self.env['ab_seo_work_item'].create({'job_id': job.id, 'product_id': self.product.id})

@@ -85,6 +85,32 @@ class TestEnrichment(TransactionCase):
         self.assertNotIn('image_text', facts)
         read.assert_not_called()
 
+    def test_groq_suggests_review_only_english_name_from_arabic_term(self):
+        self.template.with_context(lang='en_US').name = '10 CM*10 CM شاش فازلين 1 BOX'
+        assistant = self.provider(key='groq')
+        response = {'choices': [{'message': {'content': 'Vaseline Gauze'}}], 'usage': {'total_tokens': 20}}
+        assistant.model_name = 'openai/gpt-oss-20b'
+        with patch.object(type(assistant), '_request', return_value=response) as request:
+            suggested = assistant._suggest_english_product_name(self.template)
+        self.assertEqual(suggested, '10 CM*10 CM Vaseline Gauze 1 BOX')
+        self.assertEqual(request.call_args.kwargs['payload']['reasoning_effort'], 'low')
+        job = self.job(self.pipeline([]), assistant_id=assistant.id)
+        item = job.work_item_ids
+        with patch.object(type(assistant), '_suggest_english_product_name', return_value=suggested), patch.object(type(assistant), '_read_product_image_text', return_value=('', '')):
+            facts, provenance = item._collect_facts(item._identity(), job.pipeline_id)
+        self.assertEqual(facts['name_en'], suggested)
+        evidence = self.env['ab_seo_enrichment_fact'].browse(provenance).filtered(lambda row: row.field_name == 'name_en')
+        self.assertEqual(evidence.content_kind, 'UNVERIFIED_TEXT')
+        self.assertEqual(evidence.matched_by, 'ai_name_translation')
+        self.template.with_context(lang='en_US').name = '5 CM شاش فازلين 1 BOX'
+        wrong = {'choices': [{'message': {'content': 'Vaseline cotton pad'}}], 'usage': {'total_tokens': 20}}
+        with patch.object(type(assistant), '_request', return_value=wrong):
+            self.assertFalse(assistant._suggest_english_product_name(self.template))
+        self.template.with_context(lang='en_US').name = '7 CM شاش فازلين 1 BOX'
+        reversed_words = {'choices': [{'message': {'content': 'gauze Vaseline'}}], 'usage': {'total_tokens': 20}}
+        with patch.object(type(assistant), '_request', return_value=reversed_words):
+            self.assertEqual(assistant._suggest_english_product_name(self.template), '7 CM Vaseline Gauze 1 BOX')
+
     def response(self, status=200, payload=None, headers=None):
         response = Mock()
         response.status_code = status

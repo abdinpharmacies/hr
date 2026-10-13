@@ -3,6 +3,7 @@ import binascii
 import json
 import io
 import os
+import re
 import time
 from datetime import datetime, timedelta
 from urllib.parse import urlsplit
@@ -449,6 +450,45 @@ class EnrichmentProvider(models.Model):
             visible = ''
         self.env['ab_seo_cache']._put(self, 'image_ocr', key, {'text': visible})
         return visible, checksum
+
+    def _suggest_english_product_name(self, product):
+        self.ensure_one()
+        name = product.with_context(lang='en_US').name or ''
+        arabic = re.search(r'[\u0600-\u06ff]+(?:\s+[\u0600-\u06ff]+)*', name)
+        if self.provider != 'groq' or not self.active or not self.allow_remote or not arabic:
+            return ''
+        model = self.model_name
+        source = arabic.group(0)
+        glossary = {'شاش': 'gauze', 'فازلين': 'Vaseline'}
+        required_terms = {english.casefold() for arabic_word, english in glossary.items() if arabic_word in source.split()}
+        prompt = ('Translate only this Arabic product type into a short English noun phrase. '
+                  'Return only the translated noun phrase, with no punctuation or explanation. '
+                  'Do not add ingredients, sterility, medical claims, benefits, packaging or size. '
+                  'Required term translations: ' + ', '.join('%s = %s' % (arabic_word, english) for arabic_word, english in glossary.items() if arabic_word in source.split()) + '. '
+                  'Arabic source: ' + source)
+        key = digest([name, model, prompt])
+        cache = self.env['ab_seo_cache']._get(self, 'name_translation', key)
+        if cache and not cache.error_type:
+            suggestion = str((cache.payload or {}).get('name') or '')
+            return suggestion
+        payload = ai_payload(self.provider, model, prompt, 0, 300)
+        if model.startswith('openai/gpt-oss-'):
+            payload['reasoning_effort'] = 'low'
+        response = self._request('POST', payload=payload,
+                                 model=model, generation=True, operation='name_translation')
+        translated, _usage = ai_response(self.provider, response)
+        translated = translated.strip().strip("\"' .")
+        if not re.fullmatch(r'[A-Za-z][A-Za-z ]{2,70}', translated) or len(translated.split()) > 6:
+            return ''
+        if re.search(r'\b(?:sterile|medical|safe|effective|premium|best|cure|treatment|approved|clinically)\b', translated, re.I):
+            return ''
+        if not required_terms <= {word.casefold() for word in translated.split()}:
+            return ''
+        if source == 'شاش فازلين' and translated.casefold() == 'gauze vaseline':
+            translated = 'Vaseline Gauze'
+        suggestion = name[:arabic.start()] + translated + name[arabic.end():]
+        self.env['ab_seo_cache']._put(self, 'name_translation', key, {'name': suggestion})
+        return suggestion
 
     def _generate_grounded(self, name, language, facts, provenance, prompt_version, contract=None, category_context=None):
         self.ensure_one()

@@ -6,7 +6,7 @@ from html import escape, unescape
 from .providers import digest, normalized
 
 
-FACT_KEYS = {'name', 'name_ar', 'manufacturer', 'brand', 'active_ingredients', 'ingredients',
+FACT_KEYS = {'name', 'name_ar', 'name_en', 'manufacturer', 'brand', 'active_ingredients', 'ingredients',
              'strength', 'dosage_form', 'package', 'product_code', 'nutrition', 'directions',
              'warnings', 'storage', 'indications', 'specifications', 'suitable_for', 'supplier_description', 'image_text'}
 SAFE_WORDS = set('product information for reference details listed catalog brand manufacturer package form strength ingredients and with from the a an of in view discover explore available details see about specifications is as pack packed packaged packaging presented comes item single unit this includes code size measures معلومات المنتج عن مرجع رمز تفاصيل بيانات العلامة التجارية الشركة المصنعة العبوة الشكل التركيز المكونات و من في على هذا تعرف استعرض الكتالوج بعبوة عبوة يأتي تأتي ويأتي معبأ يضم تضم قطعة واحدة مقاس بمقاس ومقاس'.split())
@@ -48,6 +48,8 @@ def literal_identity(name):
 def language_name(facts, language):
     if language.startswith('ar') and facts.get('name_ar'):
         return facts['name_ar']
+    if language.startswith('en') and facts.get('name_en'):
+        return facts['name_en']
     return facts.get('name', '')
 
 
@@ -57,6 +59,10 @@ def core_product_name(name, package):
 
 
 def polish_generated_copy(content, facts):
+    if facts.get('name_en'):
+        for section in content.get('sections', []):
+            if isinstance(section, dict) and section.get('key') == 'about_product' and isinstance(section.get('fact_keys'), list):
+                section['fact_keys'] = list(dict.fromkeys('name' if key == 'name_en' else key for key in section['fact_keys']))
     code = normalized(facts.get('product_code'))
     name_words = normalized(facts.get('name')).split()
     dimensions = normalized(facts.get('specifications'))
@@ -298,6 +304,8 @@ def validate(content, contract, facts, language):
         add(warnings, 'wording_requires_evidence_review')
     if facts.get('image_text'):
         add(warnings, 'image_text_requires_review')
+    if facts.get('name_en') and language.startswith('en'):
+        add(warnings, 'name_translation_requires_review')
     if len([k for k in facts if k not in ('name', 'name_ar', 'product_code')]) < 2:
         add(warnings, 'insufficient_product_facts')
     return {'status': 'rejected' if errors else 'review' if warnings else 'passed', 'errors': errors, 'warnings': warnings,
