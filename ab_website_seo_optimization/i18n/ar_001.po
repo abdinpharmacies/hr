@@ -5579,6 +5579,11 @@ msgid "%s is packaged in %s."
 msgstr "%s معبأ في %s."
 
 #. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_ab_website_seo_optimization_translation_form
+msgid "Optional Product Details"
+msgstr "تفاصيل المنتج الاختيارية"
+
+#. module: ab_website_seo_optimization
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_seo_form
 #: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_template_bulk_form
 msgid ""

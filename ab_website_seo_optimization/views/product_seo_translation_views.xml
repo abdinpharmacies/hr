@@ -41,6 +41,10 @@
                                 <group>
                                     <field name="short_description"/>
                                     <field name="public_description" widget="html"/>
+                                </group>
+                            </page>
+                            <page string="Optional Product Details">
+                                <group>
                                     <field name="active_ingredient"/>
                                     <field name="warnings"/>
                                     <field name="contraindications"/>
