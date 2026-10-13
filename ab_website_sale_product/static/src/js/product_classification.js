@@ -125,6 +125,14 @@ export class ProductClassification extends Component {
         return this.action.doAction("ab_website_sale_product.classification_run_action");
     }
 
+    async openUncategorized() {
+        const action = await this.orm.silent.call("ab_product_classification_run", "action_open_uncategorized", [], {
+            scope: this.state.scope,
+            website_id: this.state.websiteId,
+        });
+        return this.action.doAction(action);
+    }
+
     async openGiftProducts() {
         const action = await this.orm.silent.call("ab_product_classification_run", "action_open_gift_products", [], {
             scope: this.state.scope,

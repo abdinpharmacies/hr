@@ -5,6 +5,27 @@
         <field name="tag">ab_product_classification</field>
         <field name="path">ecommerce-product-classification</field>
     </record>
+    <record id="classification_uncategorized_product_list" model="ir.ui.view">
+        <field name="name">product.template.classification.uncategorized.list</field>
+        <field name="model">product.template</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="website_sale.product_template_view_tree_website_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="delete">0</attribute>
+                <attribute name="editable">bottom</attribute>
+                <attribute name="open_form_view">1</attribute>
+            </xpath>
+            <xpath expr="//field[not(@name='public_categ_ids')]" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='public_categ_ids']" position="attributes">
+                <attribute name="optional">show</attribute>
+                <attribute name="options">{'no_create': True, 'no_open': True}</attribute>
+            </xpath>
+        </field>
+    </record>
     <record id="category_classification_button" model="ir.ui.view">
         <field name="name">product.public.category.classification.button</field>
         <field name="model">product.public.category</field>

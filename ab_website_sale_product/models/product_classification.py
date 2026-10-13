@@ -397,6 +397,35 @@ class ClassificationRun(models.Model):
         }
 
     @api.model
+    def action_open_uncategorized(self, scope="website", website_id=False):
+        check_manager(self.env)
+        if scope not in ("website", "all"):
+            raise ValidationError(_("Invalid product scope."))
+        websites = self.env["website"].search([("company_id", "in", self.env.companies.ids)])
+        website_id = website_id or websites[:1].id
+        if website_id not in websites.ids:
+            raise AccessError(_("Website is outside your allowed companies."))
+        Model, domain = self._scope_model_domain(scope, website_id)
+        categorized, _eligible = self._catalog_domains(scope)
+        gift_domain = self._gift_product_domain(scope)
+        action = {
+            "type": "ir.actions.act_window",
+            "name": _("Without a category"),
+            "res_model": Model._name,
+            "view_mode": "list,form",
+            "domain": list(domain & ~categorized & ~gift_domain),
+            "target": "current",
+        }
+        if scope == "website":
+            action["views"] = [
+                (self.env.ref("ab_website_sale_product.classification_uncategorized_product_list").id, "list"),
+                (False, "form"),
+            ]
+        else:
+            action["context"] = {"active_test": False}
+        return action
+
+    @api.model
     def action_open_gift_products(self, scope="website", website_id=False):
         check_manager(self.env)
         if scope not in ("website", "all"):

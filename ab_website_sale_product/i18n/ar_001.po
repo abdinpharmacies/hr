@@ -3786,6 +3786,7 @@ msgstr "منتجات لها تصنيف"
 #. module: ab_website_sale_product
 #. odoo-javascript
 #: code:addons/ab_website_sale_product/static/src/xml/product_classification.xml:0
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
 msgid "Without a category"
 msgstr "منتجات بدون تصنيف"
 
