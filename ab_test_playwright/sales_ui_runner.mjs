@@ -1,4 +1,5 @@
-// Runs real UI and backend quote checks. Final posting is deliberately not executed.
+// Runs UI, backend quote, and explicitly requested submission checks.
+import { submitOnce, assertSavedInvoice } from './submission.mjs';
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -8,7 +9,7 @@ const cfg = JSON.parse(readFileSync(0, 'utf8'));
 const base = new URL(cfg.url);
 if (!['localhost', '127.0.0.1', '[::1]'].includes(base.hostname)) throw new Error('Only local development URLs are supported');
 const suite = cfg.suite;
-const report = { suite_id: suite.suite_id, mode: 'preview', database: cfg.database,
+const report = { suite_id: suite.suite_id, mode: suite.cases.some(c => c.steps.some(s => s.action === 'submit')) ? 'submit' : 'preview', database: cfg.database,
     submitted_invoices: [], cases: [], errors: [], authentication: { odoo_login_count: 0, employee_login_count: 0 } };
 const browser = await chromium.launch({ headless: !cfg.headed, slowMo: cfg.headed ? 150 : 0 });
 const amount = text => Number(text.replace(/,/g, '').trim());
@@ -36,6 +37,8 @@ try {
     const tasks = new Set();
     const requestOwners = new WeakMap();
     let selectedDraftId = null;
+    const draftTokens = new Map();
+    const protectedDraftIds = new Set();
     page.on('request', request => {
         requestOwners.set(request, activeResult);
         if (new URL(request.url()).pathname === '/web/login' && request.method() === 'POST')
@@ -44,6 +47,7 @@ try {
     });
     const rpc = async (model, method, args = [], kwargs = {}) => {
         const response = await context.request.post(`${base.origin}/web/dataset/call_kw/${model}/${method}`, {
+            timeout: 10000,
             data: { jsonrpc: '2.0', method: 'call', params: { model, method, args, kwargs: { context: { lang: 'en_US' }, ...kwargs } }, id: 1 },
         });
         const body = await response.json();
@@ -72,8 +76,9 @@ try {
                 if (response.url().endsWith('/pos_save_draft_cache')) {
                     const payload = response.request().postDataJSON()?.params?.kwargs || {};
                     for (const draft of payload.bills || []) {
-                        if (draft.created_at >= startedAt && draft.header?.store_id === suite.records.store_id)
+                        if (!protectedDraftIds.has(draft.id) && draft.created_at >= startedAt && draft.header?.store_id === suite.records.store_id)
                             ownedDraftIds.add(draft.id);
+                        draftTokens.set(draft.id, draft.header?.pos_client_token);
                     }
                 }
                 if (body.result && response.url().endsWith('/pos_save_draft_cache')) selectedDraftId = body.result.selected_id;
@@ -116,6 +121,7 @@ try {
         const result = { id: test.id, status: 'RUNNING', last_action: 'new_empty_bill', checkpoints: [], errors: [], submission: 'NOT_EXECUTED' };
         activeResult = result;
         let caseDraftId = null;
+        const shortages = {};
         const sessionAvailable = async () => authenticated && !page.isClosed() &&
             !new URL(page.url()).pathname.startsWith('/web/login') &&
             !(await page.locator('.ab_pos_hr_overlay').isVisible());
@@ -132,7 +138,7 @@ try {
                         if (caseDraftId) throw new Error('Only one new bill is allowed per case');
                         await Promise.all([...tasks]);
                         // Login may create an empty draft. Reuse it only if this run owns it.
-                        if (!ownedDraftIds.has(selectedDraftId)) {
+                        if (!ownedDraftIds.has(selectedDraftId) || protectedDraftIds.has(selectedDraftId)) {
                             const slot = page.locator('.ab_pos_draft_slot_empty').first();
                             await expect(slot).toBeEnabled({ timeout: 15000 });
                             await slot.click();
@@ -142,7 +148,7 @@ try {
                             await manager.getByRole('button', { name: 'Create', exact: true }).click();
                             await manager.waitFor({ state: 'hidden' });
                         }
-                        await expect.poll(() => ownedDraftIds.has(selectedDraftId)).toBe(true);
+                        await expect.poll(() => ownedDraftIds.has(selectedDraftId) && !protectedDraftIds.has(selectedDraftId)).toBe(true);
                         caseDraftId = selectedDraftId;
                         result.draft_id = caseDraftId;
                         await expect(page.locator('.ab_pos_line_row')).toHaveCount(0);
@@ -178,6 +184,7 @@ try {
                         if (await selector.isVisible()) {
                             await selector.selectOption(suite.out_of_stock.value);
                             await row.locator('.ab_pos_line_unavailable_reason_other_input').fill(suite.out_of_stock.explanation);
+                            shortages[step.product_id] = true;
                             result.checkpoints.push(`shortage_reason:${step.product_id}`);
                         }
                         break;
@@ -251,26 +258,40 @@ try {
                         await dialog.locator('textarea').last().fill(`PLAYWRIGHT-TEST-${test.id}-${Date.now()}`);
                         result.checkpoints.push('pre_submit_dialog'); break;
                     }
+                    case 'submit':
+                        protectedDraftIds.add(caseDraftId);
+                        await submitOnce({ page, rpc, token: draftTokens.get(caseDraftId), result });
+                        report.submitted_invoices.push({ case_id: test.id, id: result.invoice_id, eplus_serial: result.eplus_serial });
+                        await page.locator('.o_ab_sales_pos_submit_dialog').waitFor({ state: 'hidden' });
+                        break;
                     case 'submit_or_preview':
                         await page.screenshot({ path: join(cfg.output, `${test.id}.png`) });
                         await page.locator('.o_ab_sales_pos_submit_dialog').getByRole('button', { name: 'Back', exact: true }).click();
                         await page.locator('.o_ab_sales_pos_submit_dialog').waitFor({ state: 'hidden' });
                         break;
-                    case 'assert_saved_invoice_if_submitted': break;
+                    case 'assert_saved_invoice_if_submitted':
+                        await assertSavedInvoice({ rpc, suite, test, result, shortages });
+                        break;
                     default: throw new Error(`Unsupported JSON action: ${step.action}`);
                 }
             }
             await Promise.all([...tasks]);
             if (result.errors.length) throw new Error('Browser/backend errors were recorded');
-            result.status = 'PASS_PREVIEW';
+            result.status = result.submission === 'SAVED' ? 'PASS_SUBMITTED' : 'PASS_PREVIEW';
         } catch (error) {
             if (result.status !== 'BLOCKED') result.status = 'FAIL';
             result.error = safeError(error);
             if (await sessionAvailable()) await page.screenshot({ path: join(cfg.output, `${test.id}-failure.png`) }).catch(() => {});
-            else blockedReason = 'Session expired or locked; no automatic reauthentication';
+            else blockedReason ||= 'Session expired or locked; no automatic reauthentication';
         } finally {
             await Promise.all([...tasks]);
-            if (caseDraftId && await sessionAvailable()) {
+            if (protectedDraftIds.has(caseDraftId)) {
+                result.draft_preserved = true;
+                ownedDraftIds.delete(caseDraftId);
+                selectedDraftId = null;
+                if (result.submission !== 'SAVED') blockedReason = 'Submission unresolved or rejected; invoice retained for review';
+            }
+            if (caseDraftId && !protectedDraftIds.has(caseDraftId) && await sessionAvailable()) {
                 try {
                     const dialog = page.locator('.o_ab_sales_pos_submit_dialog');
                     if (await dialog.isVisible()) {
@@ -307,8 +328,8 @@ try {
                 }
             }
             await Promise.all([...tasks]);
-            if (result.errors.length && result.status === 'PASS_PREVIEW') result.status = 'FAIL';
-            if (result.cleanup_warning && result.status === 'PASS_PREVIEW') result.status = 'FAIL_CLEANUP';
+            if (result.errors.length && ['PASS_PREVIEW', 'PASS_SUBMITTED'].includes(result.status)) result.status = 'FAIL';
+            if (result.cleanup_warning && ['PASS_PREVIEW', 'PASS_SUBMITTED'].includes(result.status)) result.status = 'FAIL_CLEANUP';
             report.cases.push(result);
             writeFileSync(join(cfg.output, 'results.json'), JSON.stringify(report, null, 2), { mode: 0o600 });
             console.log(`${test.id}: ${result.status}${result.error ? ` (${result.last_action}: ${result.error.split('\n')[0]})` : ''}`);
@@ -316,7 +337,8 @@ try {
         }
     }
     await Promise.all([...tasks]);
-    report.remaining_owned_draft_ids = [...ownedDraftIds];
+    report.remaining_owned_draft_ids = [...ownedDraftIds].filter(id => !protectedDraftIds.has(id));
+    report.protected_draft_ids = [...protectedDraftIds];
 } catch (error) {
     report.suite_error = safeError(error);
 } finally {
@@ -336,4 +358,4 @@ try {
     writeFileSync(join(cfg.output, 'results.json'), JSON.stringify(report, null, 2), { mode: 0o600 });
 }
 process.exitCode = report.suite_error || report.setup_error || report.cleanup_warning || report.errors.length ||
-    report.remaining_owned_draft_ids?.length || report.cases.some(c => c.status !== 'PASS_PREVIEW') ? 1 : 0;
+    report.remaining_owned_draft_ids?.length || report.cases.some(c => !['PASS_PREVIEW', 'PASS_SUBMITTED'].includes(c.status)) ? 1 : 0;

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run JSON sales cases through the POS, stopping before final submission."""
+"""Run JSON sales cases through the POS, with optional explicit submission."""
 import argparse
 from datetime import datetime, timezone
 import getpass
@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--list-actions', action='store_true', help='List registered JSON step actions and exit')
     p.add_argument('--suite', type=Path, default=ROOT / 'sales_ui_cases.json')
     p.add_argument('--config', default='/opt/odoo19/config/replica19.conf')
     p.add_argument('--db', default='abdin_replica19')
@@ -25,6 +26,10 @@ def main():
     mode.add_argument('--headed', action='store_true')
     mode.add_argument('--headless', action='store_true')
     args = p.parse_args()
+    actions = json.loads((ROOT / 'actions.json').read_text())['actions']
+    if args.list_actions:
+        print('\n'.join(actions))
+        return 0
     suite = json.loads(args.suite.read_text())
     if suite.get('schema_version') != 1 or suite['defaults']['execution_mode'] != 'preview':
         p.error('This runner supports schema version 1 in preview mode only')
@@ -33,6 +38,17 @@ def main():
         if unknown:
             p.error('Unknown case IDs: ' + ', '.join(sorted(unknown)))
         suite['cases'] = [c for c in suite['cases'] if c['id'] in args.cases]
+    for case in suite['cases']:
+        names = [step.get('action') for step in case['steps']]
+        unknown = [name for name in names if name not in actions]
+        if unknown:
+            p.error(f"{case['id']}: unregistered actions: {unknown}")
+        if 'submit' in names:
+            index = names.index('submit')
+            if names.count('submit') != 1 or index == 0 or names[index-1] != 'prepare_submission':
+                p.error(f"{case['id']}: submit must occur once immediately after prepare_submission")
+            if names[index+1:] != ['assert_saved_invoice_if_submitted']:
+                p.error(f"{case['id']}: submit must be followed by assert_saved_invoice_if_submitted as the final step")
     if not args.headed and not args.headless:
         if not sys.stdin.isatty():
             p.error('Specify --headed or --headless when running unattended')
