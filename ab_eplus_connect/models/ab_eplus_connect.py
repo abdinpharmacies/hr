@@ -95,16 +95,20 @@ class EPlusConnect(models.AbstractModel):
         start = time.monotonic()
         cursor = None
         prev_conn_timeout = None
+        # Proxy attribute assignment does not reach the ODBC connection. Set the
+        # query timeout on the driver before it creates the validation cursor.
+        raw_conn = conn._cn if isinstance(conn, ConnectionProxy) else conn
         try:
-            cursor = conn.cursor()
             if max_seconds and max_seconds > 0:
-                if hasattr(conn, "timeout"):
+                if hasattr(raw_conn, "timeout"):
                     try:
-                        prev_conn_timeout = conn.timeout
-                        conn.timeout = max_seconds
+                        prev_conn_timeout = raw_conn.timeout
+                        raw_conn.timeout = max_seconds
                     except Exception as ex:
                         _logger.info(repr(ex))
                         prev_conn_timeout = None
+            cursor = conn.cursor()
+            if max_seconds and max_seconds > 0:
                 if hasattr(cursor, "timeout"):
                     try:
                         cursor.timeout = max_seconds
@@ -132,9 +136,9 @@ class EPlusConnect(models.AbstractModel):
                 except Exception as ee:
                     _logger.info(repr(ee))
                     pass
-            if prev_conn_timeout is not None and hasattr(conn, "timeout"):
+            if prev_conn_timeout is not None and hasattr(raw_conn, "timeout"):
                 try:
-                    conn.timeout = prev_conn_timeout
+                    raw_conn.timeout = prev_conn_timeout
                 except Exception as ee:
                     _logger.info(repr(ee))
                     pass
@@ -168,7 +172,9 @@ class EPlusConnect(models.AbstractModel):
                     f'PWD={password};'
                     f'Connection Timeout={max_seconds or DEFAULT_VALIDATE_TIMEOUT}',
                     autocommit=True,
+                    timeout=max_seconds or DEFAULT_VALIDATE_TIMEOUT,
                 )
+                conn.timeout = max_seconds or DEFAULT_VALIDATE_TIMEOUT
             else:
                 if not pymssql:
                     return False
@@ -320,6 +326,34 @@ class EPlusConnect(models.AbstractModel):
         return False
 
     @contextmanager
+    def _connect_pos_balance_read(self, server, param_str="?", charset="CP1256"):
+        """Bound informational reads without adding arguments to connector overrides."""
+        reader = self.with_context(_eplus_pos_balance_read=True)
+        # Keep normal dispatch: installed overrides still enforce branch routing.
+        with reader.connect_eplus(
+                server=server, param_str=param_str, charset=charset,
+                validation_timeout=3, connect_timeout=3, propagate_error=True) as conn:
+            if not isinstance(conn, ConnectionProxy) or not vars(conn).get("_pos_balance_read", False):
+                # An override may return an already open sales transaction.
+                # Never change its timeout/retry settings or close that connection.
+                raise RuntimeError("POS refresh requires an isolated bounded connection")
+            try:
+                yield conn
+            except Exception:
+                # Some overrides exit the underlying context without exception
+                # details. Evict here too, while the actual SQL failure is visible.
+                for key, pooled in list(reader._connection_pool.items()):
+                    if pooled is conn:
+                        reader._connection_pool.pop(key, None)
+                        reader._connection_health_cache.pop(key, None)
+                        reader._connection_health_cache.pop(("probe",) + key, None)
+                try:
+                    conn.close()
+                except Exception:
+                    _logger.debug("Could not close failed POS read connection", exc_info=True)
+                raise
+
+    @contextmanager
     def connect_eplus(self, server=None,
                       db=DB, user=USER,
                       password=None,
@@ -331,6 +365,12 @@ class EPlusConnect(models.AbstractModel):
                       validation_timeout=None,
                       connect_timeout=None,
                       ):
+        bounded_read = self.env.context.get("_eplus_pos_balance_read") is True
+        query_timeout = 5 if bounded_read else None
+        retry_on_disconnect = not bounded_read
+        if bounded_read:
+            validation_timeout = connect_timeout = 3
+            propagate_error = True
         if server is None:
             server = _get_main_server()
         elif not server:  # server is given server even if None or ''
@@ -340,6 +380,9 @@ class EPlusConnect(models.AbstractModel):
             raise UserError(_("No MSSQL at ip %s port %s") % (server, port))
 
         user_id = (self.env.uid, server, param_str, charset, autocommit)
+        if query_timeout is not None or not retry_on_disconnect:
+            # Opt-in read policies must never reuse sales/return connections.
+            user_id += (db, user, port, query_timeout, retry_on_disconnect)
         if validation_timeout is None:
             validation_timeout = DEFAULT_VALIDATE_TIMEOUT
         if connect_timeout is None:
@@ -380,6 +423,11 @@ class EPlusConnect(models.AbstractModel):
             ):
                 _logger.info(f"Connection for user {user_id} is no longer valid. Creating a new connection.")
                 self._connection_pool.pop(user_id, None)
+                if query_timeout is not None or not retry_on_disconnect:
+                    try:
+                        conn.close()
+                    except Exception:
+                        _logger.debug("Could not close invalid E-Plus connection", exc_info=True)
             else:
                 _logger.info(f"Using Current Connection for user {user_id}.")
 
@@ -395,7 +443,7 @@ class EPlusConnect(models.AbstractModel):
                     sqldrivers = [sqldriver for sqldriver in pyodbc.drivers() if 'SQL Server' in sqldriver]
                     if not sqldrivers:
                         raise UserError(_("No ODBC Driver for SQL Server available, Please Contact dev team."))
-                    return pyodbc.connect(
+                    connection = pyodbc.connect(
                         f'Driver={sqldrivers[-1]};'
                         f'Server={server};'
                         f'Database={db};'
@@ -405,7 +453,11 @@ class EPlusConnect(models.AbstractModel):
                         f'UID={user};'
                         f'PWD={password};'
                         f'Connection Timeout={connect_timeout}',
-                        autocommit=autocommit)
+                        autocommit=autocommit,
+                        timeout=connect_timeout)
+                    if query_timeout is not None:
+                        connection.timeout = query_timeout
+                    return connection
 
                 raw_conn = _open_pyodbc_connection()
                 # conn.setencoding(encoding=charset)
@@ -414,7 +466,7 @@ class EPlusConnect(models.AbstractModel):
                 conn = ConnectionProxy(
                     raw_conn,
                     reconnect_cb=_open_pyodbc_connection,
-                    should_reconnect_cb=self._is_disconnect_error,
+                    should_reconnect_cb=self._is_disconnect_error if retry_on_disconnect else None,
                     wrap_dict_cursor=True,
                 )
             else:
@@ -426,7 +478,7 @@ class EPlusConnect(models.AbstractModel):
                         user=user,
                         password=password,
                         database=db,
-                        timeout=0,
+                        timeout=query_timeout or 0,
                         port=str(port),
                         appname=None,
                         login_timeout=connect_timeout,
@@ -436,10 +488,11 @@ class EPlusConnect(models.AbstractModel):
                 conn = ConnectionProxy(
                     _open_pymssql_connection(),
                     reconnect_cb=_open_pymssql_connection,
-                    should_reconnect_cb=self._is_disconnect_error,
+                    should_reconnect_cb=self._is_disconnect_error if retry_on_disconnect else None,
                     wrap_dict_cursor=False,
                 )
 
+            conn._pos_balance_read = bounded_read
             self._connection_pool[user_id] = conn
             self._attach_sql_message_logger(conn, backend)
             self._connection_pool[user_id] = conn
@@ -471,15 +524,23 @@ class EPlusConnect(models.AbstractModel):
 
         try:
             yield conn
-        except pymssqlProgrammingError as pymssql_er:
-            raise UserError(f"pymssqlProgrammingError: {repr(pymssql_er)}")
-        except pyodbcProgrammingError as pyodbc_er:
-            raise UserError(f"pyodbcProgrammingError: {repr(pyodbc_er)}")
         except Exception as ex:
+            if query_timeout is not None or not retry_on_disconnect:
+                self._connection_pool.pop(user_id, None)
+                self._connection_health_cache.pop(user_id, None)
+                self._connection_health_cache.pop(probe_key, None)
+                try:
+                    conn.close()
+                except Exception:
+                    _logger.debug("Could not close failed E-Plus connection", exc_info=True)
+            if isinstance(ex, pymssqlProgrammingError):
+                raise UserError(f"pymssqlProgrammingError: {repr(ex)}") from ex
+            if isinstance(ex, pyodbcProgrammingError):
+                raise UserError(f"pyodbcProgrammingError: {repr(ex)}") from ex
             err = self._format_db_error(ex)
             _logger.exception("Unhandled DB error: %s", err)
             if propagate_error:
-                raise Exception("Unhandled DB error: %s", err)
+                raise
         finally:
             # conn.close()
             # Optionally close the connection if needed (e.g., on logout)
