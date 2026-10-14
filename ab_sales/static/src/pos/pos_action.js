@@ -12,6 +12,7 @@ import {user} from "@web/core/user";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
 import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
+import {refreshPosBalances} from "./pos_balance_refresh";
 
 const CACHE_PREFIX = "ab_sales_pos_cache_v1";
 const DEFAULT_QTY = "1";
@@ -1090,6 +1091,7 @@ class AbSalesPosAction extends Component {
         this.scheduleLinePosBalanceRefresh = this.scheduleLinePosBalanceRefresh.bind(this);
         this._refreshPosBalancesForLines = this._refreshPosBalancesForLines.bind(this);
         this.refreshLinePosBalance = this.refreshLinePosBalance.bind(this);
+        this.refreshProductPosBalance = this.refreshProductPosBalance.bind(this);
         this.onAvailablePriceSelect = this.onAvailablePriceSelect.bind(this);
         this._openBarcodeLinkDialog = this._openBarcodeLinkDialog.bind(this);
         this._openBarcodeRegisterDialog = this._openBarcodeRegisterDialog.bind(this);
@@ -1250,6 +1252,7 @@ class AbSalesPosAction extends Component {
         });
 
         onWillUnmount(() => {
+            this._balanceRefreshUnmounted = true;
             if (this._viewportCheckTimer) {
                 clearInterval(this._viewportCheckTimer);
                 this._viewportCheckTimer = null;
@@ -2334,6 +2337,8 @@ class AbSalesPosAction extends Component {
             line.pos_balance = Number.isFinite(line.pos_balance)
                 ? line.pos_balance
                 : parseFloat(line.pos_balance || 0) || 0;
+            line.pos_balance_unavailable = !!line.pos_balance_unavailable;
+            line.pos_balance_refreshing = false;
             line.available_prices = Array.isArray(line.available_prices) ? line.available_prices : [];
             line.available_prices_base = Array.isArray(line.available_prices_base)
                 ? line.available_prices_base
@@ -2791,6 +2796,8 @@ class AbSalesPosAction extends Component {
     }
 
     async onStoreM2OUpdate(value) {
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
         if (this.currentBill?.submission_attempted) return;
         if (!this.billEditable(this.currentBill)) {
             return;
@@ -3186,40 +3193,20 @@ class AbSalesPosAction extends Component {
         }, 400);
     }
 
-    _refreshPosBalancesForResults(results, storeId, requestId) {
-        if (!storeId || !Array.isArray(results) || !results.length) {
-            return;
-        }
-        const productIds = results
-            .map((row) => row?.id)
-            .filter((id) => Number.isFinite(id) || parseInt(id || 0, 10));
-        if (!productIds.length) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: productIds,
-            })
-            .then((balances) => {
-                if (requestId !== this._posBalanceRequestId) {
-                    return;
-                }
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                const list = this.state.productResults || [];
-                for (const product of list) {
-                    const balance = balances[product.id];
-                    if (balance === undefined) {
-                        continue;
-                    }
-                    const val = parseFloat(balance || 0) || 0;
-                    product.pos_balance = val;
-                }
-            })
-            .catch(() => {
-            });
+    _refreshPosBalancesForResults(results, storeId, requestId, targets = results) {
+        const bill = this.currentBill;
+        const searchId = this._productSearchRequestId;
+        return refreshPosBalances(this.orm, targets || [], storeId, "id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
+            searchId === this._productSearchRequestId && this.currentBill === bill &&
+            bill?.header?.store_id === storeId && this.state.productResults === results);
+    }
+
+    refreshProductPosBalance(product) {
+        if (product.pos_balance_refreshing) return;
+        return this._refreshPosBalancesForResults(
+            this.state.productResults, this.currentBill?.header?.store_id, this._posBalanceRequestId,
+            [product]);
     }
 
     scheduleLinePosBalanceRefresh(bill) {
@@ -3236,64 +3223,19 @@ class AbSalesPosAction extends Component {
     _refreshPosBalancesForLines(bill, requestId) {
         const target = bill || this.currentBill;
         const storeId = target?.header?.store_id;
-        if (!storeId || !target || !Array.isArray(target.lines) || !target.lines.length) {
-            return;
-        }
-        const productIds = target.lines
-            .map((row) => row?.product_id)
-            .filter((id) => Number.isFinite(id) || parseInt(id || 0, 10));
-        if (!productIds.length) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: productIds,
-            })
-            .then((balances) => {
-                if (requestId !== this._linePosBalanceRequestId) {
-                    return;
-                }
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                for (const line of target.lines) {
-                    const balance = balances[line.product_id];
-                    if (balance === undefined) {
-                        continue;
-                    }
-                    const val = parseFloat(balance || 0) || 0;
-                    line.pos_balance = val;
-                }
-            })
-            .catch(() => {
-            });
+        return refreshPosBalances(this.orm, target?.lines || [], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === target && target?.header?.store_id === storeId);
     }
 
     refreshLinePosBalance(line) {
+        if (line.pos_balance_refreshing) return;
         const bill = this.currentBill;
         const storeId = bill?.header?.store_id;
-        const productId = line?.product_id;
-        if (!storeId || !productId) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: [productId],
-            })
-            .then((balances) => {
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                const balance = balances[productId];
-                if (balance === undefined) {
-                    return;
-                }
-                line.pos_balance = parseFloat(balance || 0) || 0;
-            })
-            .catch(() => {
-            });
+        const requestId = this._linePosBalanceRequestId;
+        return refreshPosBalances(this.orm, [line], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === bill && bill?.header?.store_id === storeId && bill.lines.includes(line));
     }
 
     refreshStoreStatus(storeId) {
@@ -3436,6 +3378,7 @@ class AbSalesPosAction extends Component {
                 balance: product.balance || 0,
                 balance_total: product.balance || 0,
                 pos_balance: product.pos_balance || 0,
+                pos_balance_unavailable: !!product.pos_balance_unavailable,
                 cost: 0,
                 target_sell_price: 0,
                 net_amount: defaultPrice * qty,

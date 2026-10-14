@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import math
+import logging
 from time import perf_counter
 
 from odoo import api, models, _
 from odoo.exceptions import UserError
 
 PARAM_STR = "?"
+_logger = logging.getLogger(__name__)
 
 
 class AbSalesPosBalanceRefresh(models.TransientModel):
@@ -18,6 +20,7 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
         store = self.env["ab_store"].browse(int(store_id)).exists()
         if not store:
             raise UserError(_("Invalid store."))
+        store.check_access("read")
         return store
 
     def _get_store_server(self, store):
@@ -76,10 +79,10 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
 
         balances_by_serial = {serial: 0.0 for serial in serials}
         prices_by_serial = {}
-        store_server = self._get_store_server(store)
-
+        started = perf_counter()
         try:
-            with self.connect_eplus(
+            store_server = self._get_store_server(store)
+            with self._connect_pos_balance_read(
                     server=store_server,
                     param_str=PARAM_STR,
                     charset="CP1256",
@@ -93,13 +96,17 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                     """
                     crx.execute(price_sql, tuple(serials))
                     for row in crx.fetchall():
-                        try:
-                            prod_serial = int(row[0])
-                            price = float(row[1] or 0.0)
-                        except Exception:
-                            continue
+                        prod_serial = int(row[0])
+                        price = float(row[1])
+                        if (prod_serial not in balances_by_serial or prod_serial in prices_by_serial
+                                or not math.isfinite(price) or price < 0):
+                            raise ValueError("Invalid E-Plus price result")
                         prices_by_serial[prod_serial] = price
+                    if set(prices_by_serial) != set(serials):
+                        raise ValueError("Incomplete E-Plus price result")
 
+                    # Informational POS snapshot only: preserve the existing
+                    # NOLOCK read policy, not a stock reservation or sale check.
                     sql = f"""
                         SELECT
                             main.itm_id AS product_eplus_serial,
@@ -115,15 +122,18 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                     params = [store_eplus_serial] + serials
                     crx.execute(sql, tuple(params))
                     rows = crx.fetchall()
+                    seen = set()
                     for row in rows:
-                        try:
-                            prod_serial = int(row[0])
-                            balance = float(row[1] or 0.0)
-                        except Exception:
-                            continue
-                        if prod_serial in balances_by_serial:
-                            balances_by_serial[prod_serial] = balance
+                        prod_serial = int(row[0])
+                        balance = float(row[1])
+                        if (prod_serial not in balances_by_serial or prod_serial in seen
+                                or not math.isfinite(balance) or balance < 0):
+                            raise ValueError("Invalid E-Plus stock result")
+                        seen.add(prod_serial)
+                        balances_by_serial[prod_serial] = balance
         except Exception:
+            _logger.warning("POS balance refresh unavailable for store %s (%s products, %.2fs)",
+                            store.id, len(prod_ids), perf_counter() - started)
             return {}
 
         Inventory = self.env["ab_sales_inventory"].sudo()

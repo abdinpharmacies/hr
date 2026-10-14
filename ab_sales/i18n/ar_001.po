@@ -4642,3 +4642,18 @@ msgstr "لم تعد هذه المسودة متاحة. حدّث قائمة الم
 #: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
 msgid "This draft has an unresolved submission and cannot be restored."
 msgstr "لم يتم التأكد من نتيجة إرسال هذه المسودة ولا يمكن استعادتها."
+
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Balance refresh failed. Showing the previous balance."
+msgstr "تعذر تحديث الرصيد. يتم عرض الرصيد السابق."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Refresh balance from branch"
+msgstr "تحديث الرصيد من الفرع"

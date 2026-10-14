@@ -3,7 +3,9 @@
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
-import { Component, onMounted, onWillStart, useExternalListener, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, onWillUnmount, useExternalListener, useRef, useState } from "@odoo/owl";
+
+import {refreshPosBalances} from "../pos/pos_balance_refresh";
 
 const ADD_PRODUCTS_FILTER_PREFS_KEY = "ab_sales_add_products_filters_v1";
 
@@ -63,9 +65,11 @@ class AbSalesAddProductsAction extends Component {
         this.onHasPosBalanceChange = this.onHasPosBalanceChange.bind(this);
         this.schedulePosBalanceRefresh = this.schedulePosBalanceRefresh.bind(this);
         this._refreshPosBalancesForResults = this._refreshPosBalancesForResults.bind(this);
+        this.refreshProductPosBalance = this.refreshProductPosBalance.bind(this);
         this._saveHasPosBalanceOnly = this._saveHasPosBalanceOnly.bind(this);
         this._posBalanceTimer = null;
         this._posBalanceRequestId = 0;
+        this._productLoadRequestId = 0;
 
         // Hotkey -> handler mapping (keep current behavior).
         this.shortcutHandlers = new Map([
@@ -76,6 +80,12 @@ class AbSalesAddProductsAction extends Component {
         ]);
 
         useExternalListener(window, "keydown", (ev) => this.onKeydown(ev));
+
+        onWillUnmount(() => {
+            this._balanceRefreshUnmounted = true;
+            clearTimeout(this._posBalanceTimer);
+            clearTimeout(this._productSearchTimer);
+        });
 
         onWillStart(async () => {
             await this.loadProducts("");
@@ -409,23 +419,32 @@ class AbSalesAddProductsAction extends Component {
     }
 
     async loadProducts(query) {
+        this._posBalanceRequestId += 1;
+        const requestId = ++this._productLoadRequestId;
+        const storeId = this.state.storeId;
+        const isCurrent = () => !this._balanceRefreshUnmounted &&
+            requestId === this._productLoadRequestId && this.state.storeId === storeId;
         this.state.loading = true;
         try {
-            this.state.products = await this.orm.call("ab_sales_ui_api", "search_products", [], {
+            const products = await this.orm.call("ab_sales_ui_api", "search_products", [], {
                 query: query || "",
                 limit: 60,
                 has_balance: this.state.hasBalanceOnly,
                 has_pos_balance: this.state.hasPosBalanceOnly,
                 header_id: this.state.headerId,
             });
-            this.schedulePosBalanceRefresh(this.state.products, this.state.storeId);
+            if (!isCurrent()) return;
+            this.state.products = products;
+            this.schedulePosBalanceRefresh(this.state.products, storeId);
             this.state.selectionIndex = -1;
             this.state.qtyBuffer = "";
             this.state.qtyBufferProductId = null;
         } catch (e) {
-            this.notification.add(e?.message || "Failed to load products.", { type: "danger" });
+            if (isCurrent()) {
+                this.notification.add(e?.message || "Failed to load products.", { type: "danger" });
+            }
         } finally {
-            this.state.loading = false;
+            if (isCurrent()) this.state.loading = false;
         }
     }
 
@@ -440,39 +459,16 @@ class AbSalesAddProductsAction extends Component {
         }, 300);
     }
 
-    _refreshPosBalancesForResults(results, storeId, requestId) {
-        if (!storeId || !Array.isArray(results) || !results.length) {
-            return;
-        }
-        const productIds = results
-            .map((row) => row?.id)
-            .filter((id) => Number.isFinite(id) || parseInt(id || 0, 10));
-        if (!productIds.length) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: productIds,
-            })
-            .then((balances) => {
-                if (requestId !== this._posBalanceRequestId) {
-                    return;
-                }
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                const list = this.state.products || [];
-                for (const product of list) {
-                    const balance = balances[product.id];
-                    if (balance === undefined) {
-                        continue;
-                    }
-                    const val = parseFloat(balance || 0) || 0;
-                    product.pos_balance = val;
-                }
-            })
-            .catch(() => {});
+    _refreshPosBalancesForResults(results, storeId, requestId, targets = results) {
+        return refreshPosBalances(this.orm, targets || [], storeId, "id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
+            this.state.storeId === storeId && this.state.products === results);
+    }
+
+    refreshProductPosBalance(product) {
+        if (product.pos_balance_refreshing) return;
+        return this._refreshPosBalancesForResults(
+            this.state.products, this.state.storeId, this._posBalanceRequestId, [product]);
     }
 
     onSearch(ev) {

@@ -386,6 +386,7 @@
                                             <t t-set="qtyBufferProductId" t-value="state.qtyBufferProductId"/>
                                             <t t-set="onAdd" t-value="addProductAndFocus"/>
                                             <t t-set="onOpenBalance" t-value="openStoresBalance"/>
+                                            <t t-set="onRefreshBalance" t-value="refreshProductPosBalance"/>
                                             <t t-set="formatPrice" t-value="formatPrice"/>
                                             <t t-set="formatQty" t-value="formatQty"/>
                                             <t t-set="productLabel" t-value="productLabel"/>

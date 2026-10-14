@@ -24,11 +24,23 @@
                             <small class="text-truncate" t-esc="p.code || ''"/>
                         </div>
                         <div class="d-inline-flex align-items-center gap-1 text-muted ab_pos_product_card_pos_balance">
-                            <t t-if="p.pos_balance !== undefined and p.pos_balance !== null">
+                            <small t-if="p.pos_balance_unavailable"
+                                   class="ab_pos_product_card_pos_balance_text text-danger fw-bold"
+                                   title="Balance refresh failed. Showing the previous balance."
+                                   t-esc="formatQty(p.pos_balance || 0)"/>
+                            <t t-elif="p.pos_balance !== undefined and p.pos_balance !== null">
                                 <small class="ab_pos_product_card_pos_balance_text" t-esc="formatQty(p.pos_balance)"/>
                             </t>
                             <i class="fa fa-shopping-cart ab_pos_product_card_pos_balance_icon" aria-hidden="true"
                                title="Balance"/>
+                            <button t-if="onRefreshBalance" type="button"
+                                    class="btn p-0 border-0 bg-transparent ab_pos_product_card_retry_balance"
+                                    t-att-class="p.pos_balance_unavailable ? 'text-danger' : 'text-muted'"
+                                    t-att-disabled="p.pos_balance_refreshing"
+                                    t-on-click.stop="() => onRefreshBalance(p)"
+                                    title="Refresh balance from branch" aria-label="Refresh balance from branch">
+                                <i class="fa fa-refresh" t-att-class="p.pos_balance_refreshing ? 'fa-spin' : ''" aria-hidden="true"/>
+                            </button>
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-1 flex-wrap">
