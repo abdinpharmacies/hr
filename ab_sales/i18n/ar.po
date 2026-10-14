@@ -1037,3 +1037,18 @@ msgstr "إنشاء"
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_per_day_view_search
 msgid "Store"
 msgstr "الفرع"
+
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Balance refresh failed. Showing the previous balance."
+msgstr "تعذر تحديث الرصيد. يتم عرض الرصيد السابق."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+msgid "Refresh balance from branch"
+msgstr "تحديث الرصيد من الفرع"
