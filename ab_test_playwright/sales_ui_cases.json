@@ -1,4 +1,4 @@
-{
+ho{
   "schema_version": 1,
   "suite_id": "ab_sales_ui_existing_records",
   "description": "UI regression scenarios using fixed development record IDs, with real Odoo backend checks. No ab_sales_test installation or imports.",
