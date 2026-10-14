@@ -1,0 +1,22 @@
+{
+  "actions": [
+    "new_empty_bill",
+    "select_customer",
+    "search_product",
+    "add_product",
+    "set_quantity",
+    "handle_shortage_if_present",
+    "select_contract",
+    "clear_contract",
+    "clear_promotion_if_selected",
+    "ensure_promotion_selected",
+    "assert_promotion_cleared",
+    "assert_promotion_unavailable",
+    "assert_ui_totals",
+    "assert_backend_quote",
+    "prepare_submission",
+    "submit",
+    "submit_or_preview",
+    "assert_saved_invoice_if_submitted"
+  ]
+}

@@ -172,5 +172,22 @@
       "employee_login_count": 1
     },
     "cleaned_drafts": 2
+  },
+  "submission_action_validation": {
+    "type": "simulated; no real posting",
+    "command": "PLAYWRIGHT_BROWSERS_PATH=/opt/playwright/browsers node ab_test_playwright/selftest_submission.mjs",
+    "passed": [
+      "saved",
+      "rejected",
+      "pending",
+      "lost_response",
+      "timeout",
+      "single click and no resubmit",
+      "saved-record mismatch detection",
+      "registry matches handlers",
+      "launcher rejects invalid actions/sequences"
+    ],
+    "live_preview_rerun": "BLOCKED: connection refused at 127.0.0.1:4050",
+    "live_preview_report": "/opt/playwright/artifacts/replica_addons/sales_suite/20261014T192428174919Z/results.json"
   }
 }

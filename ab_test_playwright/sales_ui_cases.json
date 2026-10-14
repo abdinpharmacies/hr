@@ -1334,6 +1334,7 @@
     "supported_execution_modes": [
       "preview"
     ],
-    "submission_note": "The bundled runner stops at the pre-submit dialog. Final posting and saved-invoice checks are specifications for a future submit-capable runner and are NOT_EXECUTED in its report."
+    "submission_note": "Existing cases preview only. Replace submit_or_preview with submit to click normal Submit once, followed by assert_saved_invoice_if_submitted. Explicit submit uses the configured Odoo/E-Plus flow regardless of the preview default; submitted or uncertain bills are retained.",
+    "action_registry": "actions.json"
   }
 }

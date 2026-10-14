@@ -21,25 +21,39 @@ Files changed:
 - `ab_test_playwright/sales_ui_cases.json`
 - `ab_test_playwright/validation_results.json`
 
-## Current changes before commit:
+## 939c058e0 — emadco88 — 2026-10-14
 
-- Authenticate Odoo and the employee once per suite, retaining the same browser page and session for every case.
-- Start each case with an empty run-owned bill and remove only its preview draft through the UI, freeing slots for reuse.
-- Preserve separate case results, attribute RPC errors to their initiating case, and report login counts and draft cleanup.
-- Continue after assertion failures; block remaining cases if cleanup fails or the session expires instead of reauthenticating.
-- Close the employee session once at suite completion and document the shared-session workflow.
-- Refresh validation: all eleven cases pass in the current application with unchanged JSON expectations; the two earlier combined promotion failures no longer reproduce.
+Original commit subject: `ab_test_playwright/sales_ui_cases.json FIX JSON file`
+
+- Restore valid JSON at the start of the scenario file.
 
 Files changed:
 
-- `ab_test_playwright/README.md`
+- `ab_test_playwright/sales_ui_cases.json`
+
+## Current changes before commit:
+
+- Register case-step actions centrally and expose `--list-actions`; reject unknown actions and invalid submit sequences before login.
+- Add explicit normal UI submission with one click, bounded status checks and no automatic retry.
+- Verify saved invoice identity, lines, prices, contract/promotion, shortage reasons and totals.
+- Preserve submitted/uncertain bills and block following cases on unresolved or rejected submissions; retain the existing single-login preview workflow.
+- Document action usage and add isolated browser simulations for submission and saved-record validation.
+- Keep all bundled cases preview-only and distinguish simulated verification from the earlier live preview results.
+
+Files changed:
+
+- `ab_test_playwright/actions.json`
+- `ab_test_playwright/submission.mjs`
+- `ab_test_playwright/selftest_submission.mjs`
+- `ab_test_playwright/run_sales_ui.py`
 - `ab_test_playwright/sales_ui_runner.mjs`
+- `ab_test_playwright/sales_ui_cases.json`
+- `ab_test_playwright/README.md`
 - `ab_test_playwright/validation_results.json`
 - `ab_test_playwright/changelog.d/2026-10-13-test-data-preparation.md`
 
-Validation: Node syntax and Git whitespace checks passed. The full headless suite
-passed eleven cases with one Odoo login, one employee login and eleven distinct
-cleaned drafts. A temporary two-case suite deliberately failed the first total
-assertion and passed the next case in the same session; both drafts were cleaned.
-A read-only PostgreSQL check confirmed no drafts remained for the test employee.
-No invoices were submitted. Report paths are retained in `validation_results.json`.
+Validation: isolated Chromium simulations passed saved, rejected, pending, lost-response
+and timeout cases, verified one submit click and rejected repeat attempts, and checked
+saved-record mismatch detection. Registry/handler matching and launcher validation passed.
+The live preview rerun was blocked by connection refusal at port 4050; no invoices were
+posted. The blocked report path and simulation command are in `validation_results.json`.

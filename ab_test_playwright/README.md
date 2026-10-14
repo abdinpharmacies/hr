@@ -50,7 +50,7 @@ browser. It does not save credentials, screenshots, or authenticated state.
 
 `sales_ui_cases.json` contains eleven reusable scenarios using your fixed record
 IDs. It includes setup requirements, UI steps, exact expected totals, backend
-checks, shortage handling, and a final-posting specification for a future runner.
+checks and shortage handling. The runner also supports explicit normal submission.
 
 Contracts 1, 2 and 3 reproduce the reference JSON's 25%, 0% and 100% customer
 contributions and origin discounts, with Allow Promotions disabled. Contract 4
@@ -92,11 +92,54 @@ next case to run. Cleanup failure or session expiry blocks remaining cases; the
 runner never automatically logs in or enters the PIN again. It closes the employee
 session and browser once at the end. Reports include login counts and draft IDs.
 
-**This runner is preview-only: it never clicks the final Submit (F10).** A
-`PASS_PREVIEW` verifies UI, backend quote and dialog behavior, not saved invoices
-or E-Plus posting. The JSON includes future saved-invoice checks, explicitly
-reported as `NOT_EXECUTED`. There is no fake E-Plus environment; stock reads use
-the configured backend. Do not interpret this as end-to-end posting validation.
+**The bundled cases remain preview-only.** `PASS_PREVIEW` verifies UI, backend
+quote and dialog behavior, not saved invoices or E-Plus posting. There is no fake
+E-Plus environment in normal runs; stock reads use the configured backend.
+
+### Registered actions and normal submission
+
+List all supported case-step actions without logging in:
+
+```bash
+/opt/odoo19/venv19/bin/python ab_test_playwright/run_sales_ui.py --list-actions
+```
+
+`actions.json` registers the supported names. Unknown actions and invalid submit
+sequences are rejected before credentials or browser startup. To submit a case,
+replace its final `submit_or_preview` step with `submit`:
+
+```json
+[
+  { "action": "prepare_submission" },
+  { "action": "submit" },
+  { "action": "assert_saved_invoice_if_submitted" }
+]
+```
+
+This is the end of the case's `steps` array, after product/pricing checks. An
+explicit `submit` clicks normal **Submit (F10)** once and follows the configured
+Odoo/E-Plus posting flow even though `defaults.execution_mode` remains `preview`.
+The default controls the existing preview workflow; `submit_or_preview` still
+screenshots the dialog and clicks Back. No extra confirmation is requested.
+
+The runner checks submission status for up to 60 seconds (an in-flight status
+request may take up to 10 additional seconds). It never automatically resubmits.
+`PASS_SUBMITTED` requires confirmed saved status and successful backend checks:
+invoice identity, branch/customer/employee, contract/promotion, quantities, unit
+prices/UoM, shortage reasons and totals. Pending is not a pass; pending, rejected,
+prepending or unknown outcomes retain the bill and block subsequent cases.
+Reports contain invoice IDs, client tokens, external references and protected
+draft IDs for review. Submitted and uncertain bills are never discarded by cleanup.
+
+Run the isolated simulation checks without Odoo or E-Plus:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/opt/playwright/browsers node ab_test_playwright/selftest_submission.mjs
+```
+
+These simulate submission responses in a local browser fixture; they do not prove
+real invoice posting. The implementation's real preview rerun was blocked because
+Odoo at port 4050 was offline. No real submit was performed during verification.
 
 Reports and screenshots are written beneath
 `/opt/playwright/artifacts/replica_addons/sales_suite/<run timestamp>/`.
@@ -125,7 +168,7 @@ the running application and will fail explicitly if that capability is missing.
 The old reference
 invoice totals and its 10% promotion are not applicable to this fixed-price suite.
 
-Latest validation: **11 passed**, with exactly one Odoo login and one employee
+Last successful live preview validation (before adding submit): **11 passed**, with exactly one Odoo login and one employee
 PIN login across all cases. All eleven distinct test drafts were cleaned up and
 the employee session closed. The two previously failing combined promotion cases
 now pass against the current development application with unchanged expectations.
