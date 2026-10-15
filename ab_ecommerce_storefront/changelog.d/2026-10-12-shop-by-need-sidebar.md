@@ -5,6 +5,7 @@ Current changes before commit:
 - Reuse the header's ten translated need labels, icons and stable keys. Mark the applied URL selection in the sidebar and desktop/mobile header menus.
 - Preserve other filters when switching needs and offer All needs to remove only the need selection. Include need in Clear all filters.
 - Keep mobile changes pending until Save, restore the applied selection on cancellation, and reset pagination when changing the need.
+- Shorten the Arabic All needs label to «الكل» in both Arabic catalogs, preserving the English label and filter behavior.
 
 Validation:
 - Six focused JavaScript scenarios passed: URL selection, mobile draft/save with pagination reset and other filters preserved, cancellation, All needs, Clear all filters and desktop navigation.

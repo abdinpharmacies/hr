@@ -11390,7 +11390,8 @@ msgstr "تصغير الخريطة"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
 msgid "All needs"
-msgstr "كل الاحتياجات"
+msgstr "الكل"
+
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_storefront_offer_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist_item__ab_storefront_offer_id
