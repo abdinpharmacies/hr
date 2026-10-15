@@ -20,7 +20,7 @@ import {
 
 const MIN_VIEWPORT_WIDTH = 992;
 const LENS_SIZE = 230;
-const ZOOM_SCALE = 3.8;
+const ZOOM_SCALE = 2;
 const MOVE_EASE = 0.12;
 const HERO_VIEWPORT_PADDING = 48;
 const HERO_PAN_EASE = 0.16;
@@ -91,6 +91,9 @@ export class AbStorefrontProductImageZoom extends Interaction {
         this.suppressHeroClick = false;
         this.currentZoom = null;
         this.targetZoom = null;
+        this.zoomImages = new Map();
+        this.zoomDimensions = null;
+        this.zoomPointer = null;
         this.onPointerEnter = this.onPointerEnter.bind(this);
         this.onPointerMove = this.onPointerMove.bind(this);
         this.onPointerLeave = this.onPointerLeave.bind(this);
@@ -198,6 +201,8 @@ export class AbStorefrontProductImageZoom extends Interaction {
 
     showZoom(image) {
         this.image = image;
+        this.zoomDimensions = null;
+        this.currentZoom = null;
         const wrapper = image.closest(".o_product_detail_img_wrapper") || image.parentElement;
         wrapper?.classList.add("ab-storefront-zoom-source");
 
@@ -209,8 +214,48 @@ export class AbStorefrontProductImageZoom extends Interaction {
             wrapper.appendChild(this.lens);
         }
 
-        this.lens.style.backgroundImage = `url("${this.getZoomSource(image)}")`;
+        this.lens.style.backgroundImage = `url("${image.currentSrc}")`;
         this.lens.classList.add("is-visible");
+        this.loadHoverImage(image);
+    }
+
+    async loadHoverImage(image) {
+        const source = image.currentSrc;
+        const zoomSource = this.getZoomSource(image);
+        if (!this.zoomImages.has(zoomSource)) {
+            this.zoomImages.set(zoomSource, new Promise((resolve) => {
+                const preload = new Image();
+                preload.onload = () => resolve({
+                    src: zoomSource,
+                    width: preload.naturalWidth,
+                    height: preload.naturalHeight,
+                });
+                preload.onerror = () => {
+                    this.zoomImages.delete(zoomSource);
+                    resolve(null);
+                };
+                preload.src = zoomSource;
+            }));
+        }
+        const dimensions = await this.zoomImages.get(zoomSource);
+        if (!dimensions || this.image !== image || image.currentSrc !== source) {
+            return;
+        }
+        this.zoomDimensions = dimensions;
+        this.currentZoom = null;
+        this.lens.style.backgroundImage = `url("${dimensions.src}")`;
+        if (this.zoomPointer) {
+            this.updateZoom(this.zoomPointer);
+        }
+    }
+
+    getHoverZoomScale(rect) {
+        const width = this.zoomDimensions?.width || this.image.naturalWidth;
+        const height = this.zoomDimensions?.height || this.image.naturalHeight;
+        if (!width || !height || !rect.width || !rect.height) {
+            return 1;
+        }
+        return Math.max(1, Math.min(ZOOM_SCALE, width / rect.width, height / rect.height));
     }
 
     hideZoom() {
@@ -218,6 +263,8 @@ export class AbStorefrontProductImageZoom extends Interaction {
             source.classList.remove("ab-storefront-zoom-source");
         });
         this.image = null;
+        this.zoomDimensions = null;
+        this.zoomPointer = null;
         this.targetZoom = null;
         this.currentZoom = null;
         if (this.frame) {
@@ -233,13 +280,15 @@ export class AbStorefrontProductImageZoom extends Interaction {
         }
 
         const rect = this.image.getBoundingClientRect();
+        this.zoomPointer = { clientX: ev.clientX, clientY: ev.clientY };
+        const scale = this.getHoverZoomScale(rect);
         const x = Math.min(Math.max(ev.clientX - rect.left, 0), rect.width);
         const y = Math.min(Math.max(ev.clientY - rect.top, 0), rect.height);
         const lensSize = Math.min(LENS_SIZE, Math.max(130, Math.min(rect.width, rect.height) * 0.48));
-        const bgWidth = rect.width * ZOOM_SCALE;
-        const bgHeight = rect.height * ZOOM_SCALE;
-        const bgX = Math.max(0, Math.min(bgWidth - lensSize, x * ZOOM_SCALE - lensSize / 2));
-        const bgY = Math.max(0, Math.min(bgHeight - lensSize, y * ZOOM_SCALE - lensSize / 2));
+        const bgWidth = rect.width * scale;
+        const bgHeight = rect.height * scale;
+        const bgX = Math.max(0, Math.min(bgWidth - lensSize, x * scale - lensSize / 2));
+        const bgY = Math.max(0, Math.min(bgHeight - lensSize, y * scale - lensSize / 2));
 
         this.targetZoom = {
             left: x - lensSize / 2,
