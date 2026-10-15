@@ -11011,6 +11011,82 @@ msgid ""
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_prescription_request_received
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Hello,\n"
+"        <br/><br/>\n"
+"        Your prescription request\n"
+"        <span style=\"font-weight: bold;\" t-out=\"object._ab_storefront_prescription_display_reference()\">RX-000000-ABC123</span>\n"
+"        has been reviewed.\n"
+"        <br/><br/>\n"
+"        Our Call Center team will contact you to confirm your request.\n"
+"        <br/><br/>\n"
+"        Please keep this reference for support.\n"
+"        <br/><br/>\n"
+"        Do not hesitate to contact us if you have any questions.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\" data-o-mail-quote-container=\"1\">\n"
+"            <div data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/><t t-out=\"object.user_id.signature or ''\" data-o-mail-quote=\"1\">Abdin Pharmacies</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_order_stage
+msgid ""
+"<div>\n"
+"    <p>Hello,</p>\n"
+"    <p>Order reference: <strong t-out=\"object._ab_storefront_display_reference()\"/></p>\n"
+"    <t t-set=\"stage\" t-value=\"object._ab_storefront_email_stage()\"/>\n"
+"    <p><strong t-out=\"stage['label']\"/></p>\n"
+"    <p t-out=\"stage['description']\"/>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid ""
+"<div>\n"
+"    <p>Hello,</p>\n"
+"    <t t-foreach=\"object._ab_storefront_message_orders()\" t-as=\"order\">\n"
+"        <p>Order reference: <strong t-out=\"order._ab_storefront_display_reference()\"/></p>\n"
+"        <t t-set=\"stage\" t-value=\"order._ab_storefront_email_stage()\"/>\n"
+"        <p><strong t-out=\"stage['label']\"/></p>\n"
+"        <p t-out=\"stage['description']\"/>\n"
+"    </t>\n"
+"</div>\n"
+"        "
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,name:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid "Abdin: Invoiced Order Stage Update"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,name:ab_ecommerce_storefront.mail_template_order_stage
+msgid "Abdin: Order Stage Update"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/account_move.py:0
+#: model:mail.template,subject:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid "Order status update"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,subject:ab_ecommerce_storefront.mail_template_order_stage
+msgid ""
+"{{ object._ab_storefront_email_stage()['label'] }} ({{ "
+"object._ab_storefront_display_reference() }})"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "<span class=\"ab-order-delivered__eyebrow\">Delivered with care</span>"
 msgstr ""

@@ -17,7 +17,7 @@
         <span style="font-weight: bold;" t-out="object._ab_storefront_prescription_display_reference()">RX-000000-ABC123</span>
         has been reviewed.
         <br/><br/>
-        Our Call Center team will contact you to confirm the required items, availability, delivery details, and the final total.
+        Our Call Center team will contact you to confirm your request.
         <br/><br/>
         Please keep this reference for support.
         <br/><br/>
@@ -26,6 +26,44 @@
             <div>--<br/><t t-out="object.user_id.signature or ''">Abdin Pharmacies</t></div>
         </t>
     </p>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+    <record id="mail_template_order_stage" model="mail.template">
+        <field name="name">Abdin: Order Stage Update</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="subject">{{ object._ab_storefront_email_stage()['label'] }} ({{ object._ab_storefront_display_reference() }})</field>
+        <field name="email_from">{{ object.user_id.email_formatted or object.company_id.email_formatted or user.email_formatted }}</field>
+        <field name="use_default_to" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="body_html" type="html">
+<div>
+    <p>Hello,</p>
+    <p>Order reference: <strong t-out="object._ab_storefront_display_reference()"/></p>
+    <t t-set="stage" t-value="object._ab_storefront_email_stage()"/>
+    <p><strong t-out="stage['label']"/></p>
+    <p t-out="stage['description']"/>
+</div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+    <record id="mail_template_invoice_order_stage" model="mail.template">
+        <field name="name">Abdin: Invoiced Order Stage Update</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="subject">Order status update</field>
+        <field name="email_from">{{ object.invoice_user_id.email_formatted or object.company_id.email_formatted or user.email_formatted }}</field>
+        <field name="use_default_to" eval="True"/>
+        <field name="lang">{{ object.partner_id.lang }}</field>
+        <field name="body_html" type="html">
+<div>
+    <p>Hello,</p>
+    <t t-foreach="object._ab_storefront_message_orders()" t-as="order">
+        <p>Order reference: <strong t-out="order._ab_storefront_display_reference()"/></p>
+        <t t-set="stage" t-value="order._ab_storefront_email_stage()"/>
+        <p><strong t-out="stage['label']"/></p>
+        <p t-out="stage['description']"/>
+    </t>
 </div>
         </field>
         <field name="auto_delete" eval="True"/>

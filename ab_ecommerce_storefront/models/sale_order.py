@@ -166,6 +166,7 @@ class SaleOrder(models.Model):
         )
 
     def _find_mail_template(self):
+        default_template = super()._find_mail_template()
         self.ensure_one()
         if self.website_id and self.state != "sale" and self.ab_prescription_order_ids:
             template = self.env.ref(
@@ -174,7 +175,40 @@ class SaleOrder(models.Model):
             )
             if template:
                 return template
-        return super()._find_mail_template()
+        if self.website_id:
+            return self.env.ref("ab_ecommerce_storefront.mail_template_order_stage")
+        return default_template
+
+    def _get_confirmation_template(self):
+        template = super()._get_confirmation_template()
+        if self.website_id:
+            return self.env.ref("ab_ecommerce_storefront.mail_template_order_stage")
+        return template
+
+    def _ab_storefront_email_stage(self):
+        self.ensure_one()
+        steps = self._ab_storefront_tracking_steps()
+        active_steps = [step for step in steps if step["state"] in ("current", "exception")]
+        completed_steps = [step for step in steps if step["state"] == "complete"]
+        return (active_steps or completed_steps or steps)[-1]
+
+    def _notify_by_email_prepare_rendering_context(
+        self, message, msg_vals=False, model_description=False,
+        force_email_company=False, force_email_lang=False, force_record_name=False,
+    ):
+        values = super()._notify_by_email_prepare_rendering_context(
+            message, msg_vals=msg_vals, model_description=model_description,
+            force_email_company=force_email_company, force_email_lang=force_email_lang,
+            force_record_name=force_record_name,
+        )
+        order = values["record"]
+        if order.website_id:
+            values["record_name"] = order._ab_storefront_display_reference()
+            values["subtitles"] = [
+                order._ab_storefront_display_reference(),
+                order._ab_storefront_email_stage()["label"],
+            ]
+        return values
 
     @api.depends("ab_prescription_order_ids")
     def _compute_ab_call_center_order_type(self):

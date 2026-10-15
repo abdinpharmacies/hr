@@ -11681,6 +11681,121 @@ msgid ""
 msgstr "ارفع صورة لهذا القسم لعرضها في قسم تسوق حسب القسم بالصفحة الرئيسية."
 
 #. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_prescription_request_received
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        Hello,\n"
+"        <br/><br/>\n"
+"        Your prescription request\n"
+"        <span style=\"font-weight: bold;\" t-out=\"object._ab_storefront_prescription_display_reference()\">RX-000000-ABC123</span>\n"
+"        has been reviewed.\n"
+"        <br/><br/>\n"
+"        Our Call Center team will contact you to confirm your request.\n"
+"        <br/><br/>\n"
+"        Please keep this reference for support.\n"
+"        <br/><br/>\n"
+"        Do not hesitate to contact us if you have any questions.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\" data-o-mail-quote-container=\"1\">\n"
+"            <div data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/><t t-out=\"object.user_id.signature or ''\" data-o-mail-quote=\"1\">Abdin Pharmacies</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>\n"
+"        "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px; direction: rtl; text-align: right;\">\n"
+"    <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"        مرحباً،\n"
+"        <br/><br/>\n"
+"        طلب الروشتة الخاص بك\n"
+"        <span style=\"font-weight: bold;\" t-out=\"object._ab_storefront_prescription_display_reference()\">RX-000000-ABC123</span>\n"
+"        تمت مراجعته.\n"
+"        <br/><br/>\n"
+"        سيتواصل معك فريق خدمة العملاء لتأكيد طلبك.\n"
+"        <br/><br/>\n"
+"        يرجى الاحتفاظ بهذا المرجع عند التواصل مع الدعم.\n"
+"        <br/><br/>\n"
+"        لا تتردد في التواصل معنا إذا كانت لديك أي أسئلة.\n"
+"        <t t-if=\"not is_html_empty(object.user_id.signature)\" data-o-mail-quote-container=\"1\">\n"
+"            <div data-o-mail-quote=\"1\">--<br data-o-mail-quote=\"1\"/><t t-out=\"object.user_id.signature or ''\" data-o-mail-quote=\"1\">صيدليات عابدين</t></div>\n"
+"        </t>\n"
+"    </p>\n"
+"</div>\n"
+"        "
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_order_stage
+msgid ""
+"<div>\n"
+"    <p>Hello,</p>\n"
+"    <p>Order reference: <strong t-out=\"object._ab_storefront_display_reference()\"/></p>\n"
+"    <t t-set=\"stage\" t-value=\"object._ab_storefront_email_stage()\"/>\n"
+"    <p><strong t-out=\"stage['label']\"/></p>\n"
+"    <p t-out=\"stage['description']\"/>\n"
+"</div>\n"
+"        "
+msgstr ""
+"<div dir=\"rtl\" style=\"text-align: right;\">\n"
+"    <p>مرحباً،</p>\n"
+"    <p>مرجع الطلب: <strong t-out=\"object._ab_storefront_display_reference()\"/></p>\n"
+"    <t t-set=\"stage\" t-value=\"object._ab_storefront_email_stage()\"/>\n"
+"    <p><strong t-out=\"stage['label']\"/></p>\n"
+"    <p t-out=\"stage['description']\"/>\n"
+"</div>\n"
+"        "
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,body_html:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid ""
+"<div>\n"
+"    <p>Hello,</p>\n"
+"    <t t-foreach=\"object._ab_storefront_message_orders()\" t-as=\"order\">\n"
+"        <p>Order reference: <strong t-out=\"order._ab_storefront_display_reference()\"/></p>\n"
+"        <t t-set=\"stage\" t-value=\"order._ab_storefront_email_stage()\"/>\n"
+"        <p><strong t-out=\"stage['label']\"/></p>\n"
+"        <p t-out=\"stage['description']\"/>\n"
+"    </t>\n"
+"</div>\n"
+"        "
+msgstr ""
+"<div dir=\"rtl\" style=\"text-align: right;\">\n"
+"    <p>مرحباً،</p>\n"
+"    <t t-foreach=\"object._ab_storefront_message_orders()\" t-as=\"order\">\n"
+"        <p>مرجع الطلب: <strong t-out=\"order._ab_storefront_display_reference()\"/></p>\n"
+"        <t t-set=\"stage\" t-value=\"order._ab_storefront_email_stage()\"/>\n"
+"        <p><strong t-out=\"stage['label']\"/></p>\n"
+"        <p t-out=\"stage['description']\"/>\n"
+"    </t>\n"
+"</div>\n"
+"        "
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,name:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid "Abdin: Invoiced Order Stage Update"
+msgstr "عابدين: تحديث مرحلة الطلب المرتبط بفاتورة"
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,name:ab_ecommerce_storefront.mail_template_order_stage
+msgid "Abdin: Order Stage Update"
+msgstr "عابدين: تحديث مرحلة الطلب"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/account_move.py:0
+#: model:mail.template,subject:ab_ecommerce_storefront.mail_template_invoice_order_stage
+msgid "Order status update"
+msgstr "تحديث حالة الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:mail.template,subject:ab_ecommerce_storefront.mail_template_order_stage
+msgid ""
+"{{ object._ab_storefront_email_stage()['label'] }} ({{ "
+"object._ab_storefront_display_reference() }})"
+msgstr ""
+"{{ object._ab_storefront_email_stage()['label'] }} ({{ "
+"object._ab_storefront_display_reference() }})"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
 msgid "<span class=\"ab-order-delivered__eyebrow\">Delivered with care</span>"
 msgstr "<span class=\"ab-order-delivered__eyebrow\">وصلك بكل عناية</span>"

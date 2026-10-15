@@ -11,6 +11,7 @@ from . import auth_settings
 from . import mail_template
 from . import mail_compose_message
 from . import account_move_send
+from . import account_move
 from . import sale_order
 from . import prescription_order
 from . import contact_message
