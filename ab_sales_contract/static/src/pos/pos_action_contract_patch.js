@@ -21,7 +21,18 @@ if (PosAction) {
 
     patch(PosAction.prototype, {
         setup() {
+            this._manualPromotionBillIds = new Set();
             originalSetup.call(this, ...arguments);
+            const refreshPromotions = this.refreshPromotions;
+            this.refreshPromotions = (bill) => {
+                const target = bill || this.currentBill;
+                if (this._contractManualPromotions(target)) {
+                    return target.header.contract_id
+                        ? this._refreshContractTotals(target)
+                        : this._refreshManualPromotions(target);
+                }
+                return refreshPromotions.call(this, bill);
+            };
             const buildPrintPayload = this._buildCurrentBillPrintPayload;
             if (buildPrintPayload) {
                 this._buildCurrentBillPrintPayload = () => {
@@ -120,47 +131,155 @@ if (PosAction) {
 
         async onContractM2OUpdate(value) {
             const bill = this.currentBill;
-            if (!bill) {
+            if (!bill || !this.billEditable(bill)) {
                 return;
             }
             const selectionRequest = ++this._contractSelectionRequestId;
-            ++this._contractTotalsRequestId;
-            ++this._promoRequestId;
-            clearTimeout(this._contractTotalsTimer);
-            bill.contract_totals = null;
-            if (!value || !value.id) {
-                bill.header.contract_id = null;
-                bill.header.contract_allow_promotions = false;
-                bill.header.contract_name = "";
-                bill.header.contract_allow_total_invoice_discount = false;
-                bill.header.contract_total_invoice_discount_source = "our_company";
-                bill.header.total_invoice_discount = 0;
-                bill.contract_totals = null;
-            } else {
+            this._invalidateContractPricing();
+            if (bill.promo) {
+                bill.promo.loading = false;
+            }
+            let contract;
+            if (value?.id) {
                 try {
-                    const [contract] = await this.orm.read("ab_contract", [value.id], ["name", "allow_promotions"]);
-                    if (selectionRequest !== this._contractSelectionRequestId) {
+                    [contract] = await this.orm.read("ab_contract", [value.id], ["name", "allow_promotions"]);
+                    if (selectionRequest !== this._contractSelectionRequestId || !this.billEditable(bill)
+                        || !this.state.bills.some((candidate) => candidate.id === bill.id)) {
                         return;
                     }
-                    bill.header.contract_id = value.id;
-                    bill.header.contract_allow_promotions = !!contract?.allow_promotions;
-                    bill.header.contract_name = contract?.name || value.display_name || "";
+                    if (!contract) {
+                        return;
+                    }
                 } catch (err) {
-                    this.notification.add(err?.message || _t("Failed to load contract."), {type: "danger"});
+                    if (selectionRequest === this._contractSelectionRequestId) {
+                        this.notification.add(err?.message || _t("Failed to load contract."), {type: "danger"});
+                    }
                     return;
                 }
-                bill.header.contract_allow_total_invoice_discount = false;
-                bill.header.contract_total_invoice_discount_source = "our_company";
-                bill.header.total_invoice_discount = 0;
+            }
+            this._invalidateContractPricing();
+            if (contract || bill.header.contract_id) {
+                this._manualPromotionBillIds.add(bill.id);
+            }
+            const selectedId = bill.promo?.selected_id;
+            const selectedName = bill.promo?.selected_name;
+            const manualClear = !!bill.promo?.manual_clear;
+            bill.header.contract_id = contract ? value.id : null;
+            bill.header.contract_allow_promotions = !!contract?.allow_promotions;
+            bill.header.contract_name = contract ? contract.name || value.display_name || "" : "";
+            bill.header.contract_allow_total_invoice_discount = false;
+            bill.header.contract_total_invoice_discount_source = "our_company";
+            bill.header.total_invoice_discount = 0;
+            bill.contract_totals = null;
+            this._resetPromotions(bill);
+            if (!contract) {
+                bill.promo.selected_id = selectedId || null;
+                bill.promo.selected_name = selectedName || "";
+                bill.promo.manual_clear = manualClear;
             }
             bill.updated_at = new Date().toISOString();
             this.persistCache();
-            if (bill.header.contract_id && !bill.header.contract_allow_promotions) {
-                this._resetPromotions(bill);
-            } else {
-                this.schedulePromoRefresh(bill);
+            return this.refreshPromotions(bill);
+        },
+
+        _contractManualPromotions(bill) {
+            if (bill?.header?.contract_id) {
+                this._manualPromotionBillIds.add(bill.id);
             }
-            this._scheduleContractTotals(bill, {immediate: true});
+            return !!bill && this._manualPromotionBillIds.has(bill.id);
+        },
+
+        _invalidateContractPricing() {
+            ++this._contractTotalsRequestId;
+            ++this._promoRequestId;
+            clearTimeout(this._contractTotalsTimer);
+            clearTimeout(this._promoTimer);
+            this._contractTotalsTimer = null;
+            this._promoTimer = null;
+        },
+
+        _contractPromotionInput(bill) {
+            return JSON.stringify([bill.header.contract_id || false, bill.header.store_id,
+                bill.header.customer_mode === "new" ? false : bill.header.customer_id || false,
+                this._contractPayloadLines(bill), bill.header.total_invoice_discount,
+                bill.promo?.selected_id, bill.promo?.manual_clear]);
+        },
+
+        _contractPromotionCurrent(bill, input) {
+            return this.billEditable(bill) && input === this._contractPromotionInput(bill)
+                && this.state.bills.some((candidate) => candidate.id === bill.id);
+        },
+
+        _clearContractPromotionAmounts(bill) {
+            bill.promo.discount_amount = 0;
+            bill.promo.total_after = bill.total_price || 0;
+            bill.promo.total_net_amount = bill.total_price || 0;
+            bill.total_net_amount = bill.total_price || 0;
+            bill.contract_totals = null;
+        },
+
+        _applyManualPromotionResult(bill, result) {
+            const requestedId = bill.promo.selected_id;
+            bill.promo.available = Array.isArray(result.available_programs) ? result.available_programs : [];
+            bill.promo.applied_id = requestedId && result.applied_program_id === requestedId ? requestedId : null;
+            bill.promo.applied_name = bill.promo.applied_id ? result.applied_program_name || "" : "";
+            bill.promo.selected_id = requestedId && result.selected_program_id === requestedId ? requestedId : null;
+            bill.promo.selected_name = bill.promo.selected_id ? result.selected_program_name || "" : "";
+            bill.promo.message = bill.promo.selected_id ? result.promo_message || "" : "";
+            bill.promo.discount_amount = Number(result.promo_discount_amount || 0);
+            bill.promo.total_after = Number(result.amount_total_after_promo || 0);
+            const net = Number(result.cust_pay ?? result.total_net_amount ?? bill.total_price ?? 0);
+            bill.promo.total_net_amount = net;
+            bill.total_net_amount = net;
+        },
+
+        async _refreshManualPromotions(bill) {
+            if (!this.billEditable(bill) || this._promoDisabled) {
+                return;
+            }
+            this._invalidateContractPricing();
+            if (!bill.promo) {
+                bill.promo = this._defaultPromo();
+            }
+            const lines = this._promoPayloadLines(bill);
+            if (!bill.header.store_id || !lines.length) {
+                this._resetPromotions(bill);
+                return;
+            }
+            if (!bill.promo.applied_id) {
+                this._clearContractPromotionAmounts(bill);
+            }
+            const input = this._contractPromotionInput(bill);
+            const requestId = ++this._promoRequestId;
+            const kwargs = {
+                store_id: bill.header.store_id,
+                lines,
+                applied_program_id: bill.promo.selected_id || false,
+                manual_clear: true,
+            };
+            if (PosAction.components?.AbSalesPosPromoPanel) {
+                kwargs.customer_id = bill.header.customer_mode === "new" ? false : bill.header.customer_id || false;
+            }
+            bill.promo.loading = true;
+            this.persistCache();
+            try {
+                const result = await this.orm.call("ab_sales_pos_api", "pos_promotions", [], kwargs);
+                if (requestId !== this._promoRequestId || !this._contractPromotionCurrent(bill, input)) {
+                    return;
+                }
+                this._applyManualPromotionResult(bill, result);
+            } catch (err) {
+                if (requestId === this._promoRequestId && this._contractPromotionCurrent(bill, input)) {
+                    if (err?.message) {
+                        this.notification.add(err.message, {type: "warning"});
+                    }
+                }
+            } finally {
+                if (requestId === this._promoRequestId) {
+                    bill.promo.loading = false;
+                    this.persistCache();
+                }
+            }
         },
 
         onTotalInvoiceDiscountInput(value) {
@@ -206,10 +325,8 @@ if (PosAction) {
                 }
                 return;
             }
-            if (this._contractTotalsTimer) {
-                clearTimeout(this._contractTotalsTimer);
-                this._contractTotalsTimer = null;
-            }
+            this._contractManualPromotions(bill);
+            this._invalidateContractPricing();
             if (immediate) {
                 this._refreshContractTotals(bill);
                 return;
@@ -232,10 +349,17 @@ if (PosAction) {
                 }
                 return;
             }
+            this._contractManualPromotions(bill);
+            this._invalidateContractPricing();
+            if (!bill.promo) {
+                bill.promo = this._defaultPromo();
+            }
+            if (!bill.promo.applied_id) {
+                this._clearContractPromotionAmounts(bill);
+            }
             const lines = this._contractPayloadLines(bill);
             const customerId = bill.header.customer_mode === "new" ? false : bill.header.customer_id || false;
-            const input = JSON.stringify([contractId, bill.header.store_id, customerId, lines,
-                bill.header.total_invoice_discount, bill.promo?.selected_id, bill.promo?.manual_clear]);
+            const input = this._contractPromotionInput(bill);
             const requestId = ++this._contractTotalsRequestId;
             if (bill.promo) {
                 bill.promo.loading = true;
@@ -248,32 +372,16 @@ if (PosAction) {
                     total_invoice_discount: bill.header.total_invoice_discount || 0,
                     store_id: bill.header.store_id || false,
                     applied_program_id: bill.promo?.selected_id || false,
-                    manual_clear: !!bill.promo?.manual_clear,
+                    manual_clear: true,
                 });
-                if (requestId !== this._contractTotalsRequestId || !this.billEditable(bill)
-                    || input !== JSON.stringify([bill.header.contract_id, bill.header.store_id,
-                        bill.header.customer_mode === "new" ? false : bill.header.customer_id || false,
-                        this._contractPayloadLines(bill), bill.header.total_invoice_discount,
-                        bill.promo?.selected_id, bill.promo?.manual_clear])) {
-                    return;
-                }
-                const stillExists = this.state?.bills?.some((b) => b.id === bill.id);
-                if (!stillExists) {
+                if (requestId !== this._contractTotalsRequestId || !this._contractPromotionCurrent(bill, input)) {
                     return;
                 }
                 bill.header.contract_allow_promotions = !!result?.allow_promotions;
                 if (!result?.allow_promotions) {
                     this._resetPromotions(bill);
                 } else if (bill.promo && result.available_programs) {
-                    bill.promo.available = result.available_programs;
-                    bill.promo.applied_id = result.applied_program_id || null;
-                    bill.promo.applied_name = result.applied_program_name || "";
-                    bill.promo.selected_id = result.selected_program_id || null;
-                    bill.promo.selected_name = result.selected_program_name || "";
-                    bill.promo.message = result.promo_message || "";
-                    bill.promo.discount_amount = Number(result.promo_discount_amount || 0);
-                    bill.promo.total_after = Number(result.amount_total_after_promo || 0);
-                    bill.promo.total_net_amount = Number(result.cust_pay || 0);
+                    this._applyManualPromotionResult(bill, result);
                 }
                 bill.header.contract_allow_total_invoice_discount = !!result?.allow_total_invoice_discount;
                 bill.header.contract_total_invoice_discount_source =
@@ -294,7 +402,7 @@ if (PosAction) {
                 bill.updated_at = new Date().toISOString();
                 this.persistCache();
             } catch (err) {
-                if (requestId !== this._contractTotalsRequestId || bill.header.contract_id !== contractId) {
+                if (requestId !== this._contractTotalsRequestId || !this._contractPromotionCurrent(bill, input)) {
                     return;
                 }
                 bill.total_net_amount = bill.total_price || 0;
@@ -346,6 +454,9 @@ if (PosAction) {
             const target = bill || this.currentBill;
             if (target?.header?.contract_id) {
                 return this._scheduleContractTotals(target);
+            }
+            if (this._contractManualPromotions(target) && this.billEditable(target)) {
+                this._invalidateContractPricing();
             }
             return originalSchedulePromoRefresh.call(this, bill);
         },

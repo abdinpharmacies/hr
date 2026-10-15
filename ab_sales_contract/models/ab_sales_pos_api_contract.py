@@ -85,9 +85,20 @@ class AbSalesPosApiContract(models.TransientModel):
         if contract.allow_promotions and 'applied_program_ids' in header._fields and store_id:
             promotion = self.pos_promotions(
                 store_id=store_id, lines=lines, applied_program_id=applied_program_id,
-                manual_clear=manual_clear, contract_id=contract.id,
+                manual_clear=True, contract_id=contract.id,
                 total_invoice_discount=total_invoice_discount, customer_id=customer_id,
             )
+            requested_id = applied_program_id
+            if isinstance(requested_id, (list, tuple)):
+                requested_id = requested_id[0] if requested_id else False
+            try:
+                requested_id = int(requested_id or 0)
+            except (TypeError, ValueError, OverflowError):
+                requested_id = 0
+            if not requested_id or promotion.get('selected_program_id') != requested_id:
+                promotion['selected_program_id'] = False
+                promotion['selected_program_name'] = ''
+                promotion['promo_message'] = ''
             program_id = promotion.get('applied_program_id')
             header.applied_program_ids = [(6, 0, [program_id] if program_id else [])]
         header._ab_contract_recompute_lines()
