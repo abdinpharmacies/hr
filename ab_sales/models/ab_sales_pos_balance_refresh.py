@@ -3,8 +3,10 @@ import math
 import logging
 from time import perf_counter
 
-from odoo import api, models, _
-from odoo.exceptions import UserError
+from odoo import api, fields, models, _
+from odoo.exceptions import AccessError, UserError
+from psycopg2 import errors
+from .ab_sales_inventory import InventorySyncBusy
 
 PARAM_STR = "?"
 _logger = logging.getLogger(__name__)
@@ -37,15 +39,13 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
         return target_ip
 
     @api.model
-    def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
+    def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         self._require_models("ab_product", "ab_sales_inventory", "ab_store")
         store = self._get_store_record(store_id)
         try:
             store_eplus_serial = int(store.eplus_serial or 0)
         except Exception:
             store_eplus_serial = 0
-        if not store_eplus_serial:
-            raise UserError(_("Store is missing E-Plus serial."))
 
         prod_ids = []
         for pid in product_ids or []:
@@ -77,6 +77,27 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
         if not serials:
             return {}
 
+        Inventory = self.env["ab_sales_inventory"].sudo()
+
+        def result(success):
+            if not include_sync_metadata and not success:
+                return {}
+            metadata = Inventory._branch_sync_metadata(store, serials)
+            output = {}
+            for serial, ids in prod_by_serial.items():
+                cached = metadata.get(serial)
+                for pid in ids:
+                    if include_sync_metadata:
+                        output[pid] = {**(cached or {'balance': None, 'last_sync_at': False}),
+                                       'refresh_success': success}
+                    elif cached:
+                        output[pid] = cached['balance']
+            return output
+
+        if store_eplus_serial <= 0:
+            return result(False)
+        sync_at = fields.Datetime.now()
+        completed = False
         committed_read = self.env.context.get('_ab_sales_backend_committed_read') is True
         balances_by_serial = {serial: 0.0 for serial in serials}
         prices_by_serial = {}
@@ -100,6 +121,8 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                             'WHERE itm_id IN', 'WHERE itm_active = 1 AND itm_unit1_unit3 > 0 AND itm_id IN')
                     crx.execute(price_sql, tuple(serials))
                     for row in crx.fetchall():
+                        if len(row) != 2 or isinstance(row[0], bool) or int(row[0]) != row[0]:
+                            raise ValueError("Invalid E-Plus row")
                         prod_serial = int(row[0])
                         price = float(row[1])
                         if (prod_serial not in balances_by_serial or prod_serial in prices_by_serial
@@ -130,6 +153,8 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                     rows = crx.fetchall()
                     seen = set()
                     for row in rows:
+                        if len(row) != 2 or isinstance(row[0], bool) or int(row[0]) != row[0]:
+                            raise ValueError("Invalid E-Plus row")
                         prod_serial = int(row[0])
                         balance = float(row[1])
                         if (prod_serial not in balances_by_serial or prod_serial in seen
@@ -137,50 +162,25 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                             raise ValueError("Invalid E-Plus stock result")
                         seen.add(prod_serial)
                         balances_by_serial[prod_serial] = balance
+                    completed = True
+            if not completed:
+                raise ValueError("Incomplete E-Plus snapshot")
+        except (AccessError, errors.SerializationFailure, errors.DeadlockDetected):
+            raise
         except Exception:
             _logger.warning("POS balance refresh unavailable for store %s (%s products, %.2fs)",
                             store.id, len(prod_ids), perf_counter() - started)
-            return {}
+            return result(False)
 
-        Inventory = self.env["ab_sales_inventory"].sudo()
-        existing = Inventory.search([
-            ("store_id", "=", store.id),
-            ("product_eplus_serial", "in", serials),
-        ])
-        existing_by_serial = {int(line.product_eplus_serial): line for line in existing}
-
-        to_create = []
-        for serial in serials:
-            balance = float(balances_by_serial.get(serial, 0.0) or 0.0)
-            new_price = prices_by_serial.get(serial)
-            line = existing_by_serial.get(serial)
-            if line:
-                vals = {}
-                if not math.isclose(balance, line.balance or 0.0, abs_tol=0.01):
-                    vals["balance"] = balance
-                if new_price is not None:
-                    try:
-                        curr_price = float(line.default_price or 0.0)
-                    except Exception:
-                        curr_price = 0.0
-                    if not math.isclose(new_price, curr_price, abs_tol=0.01):
-                        vals["default_price"] = new_price
-                if vals:
-                    line.write(vals)
-            else:
-                create_vals = {
-                    "product_eplus_serial": serial,
-                    "store_id": store.id,
-                    "balance": balance,
-                }
-                if new_price is not None:
-                    create_vals["default_price"] = new_price
-                to_create.append(create_vals)
-        if to_create:
-            Inventory.create(to_create)
-
-        result = {}
-        for serial, balance in balances_by_serial.items():
-            for prod_id in prod_by_serial.get(serial, []):
-                result[prod_id] = balance
-        return result
+        try:
+            Inventory._apply_store_balance_rows(
+                store, store_eplus_serial,
+                [(serial, store_eplus_serial, balance) for serial, balance in balances_by_serial.items()],
+                sync_at, requested_serials=serials, prices=prices_by_serial)
+        except (AccessError, errors.SerializationFailure, errors.DeadlockDetected):
+            # Odoo must retry the entire transaction with a fresh snapshot.
+            raise
+        except (InventorySyncBusy, errors.UniqueViolation, errors.LockNotAvailable):
+            _logger.info("POS inventory cache busy for store %s", store.id)
+            return result(False)
+        return result(True)

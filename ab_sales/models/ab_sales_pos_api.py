@@ -486,7 +486,7 @@ class AbSalesPosApi(models.TransientModel):
             serial = int(product.get("eplus_serial") or 0)
             product["balance"] = float(total_by_serial.get(serial, 0.0) or 0.0)
             product["pos_balance"] = float(pos_by_serial.get(serial, 0.0) or 0.0)
-        return products
+        return self.env["ab_sales_ui_api"]._attach_pos_sync_metadata(products, store_id)
 
     @api.model
     def pos_link_barcode_temp(self, barcode=None, product_ids=None):

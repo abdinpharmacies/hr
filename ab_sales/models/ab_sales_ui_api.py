@@ -1058,6 +1058,23 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         return out
 
     @api.model
+    def _attach_pos_sync_metadata(self, rows, store_id):
+        metadata = {}
+        if store_id and rows:
+            store = self.env['ab_store'].browse(int(store_id)).exists()
+            store.check_access('read')
+            if store:
+                serials = {int(row.get('eplus_serial') or 0) for row in rows}
+                metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
+        for row in rows:
+            cached = metadata.get(int(row.get('eplus_serial') or 0))
+            row['pos_balance_last_sync_at'] = cached['last_sync_at'] if cached else False
+            # The timestamp and balance must describe the same retained row.
+            if cached:
+                row['pos_balance'] = cached['balance']
+        return rows
+
+    @api.model
     def _inventory_total_and_pos_balances_by_serial(self, product_serials, store_id=None):
         """
         Return tuple:
@@ -1688,7 +1705,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             out.append(row)
             if len(out) >= limit:
                 break
-        return out[:limit]
+        return self._attach_pos_sync_metadata(out[:limit], store_id)
 
     @api.model
     def search_products(
@@ -1918,7 +1935,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 row["is_top_branch"] = False
                 row["is_pinned"] = pid in pinned_set
                 row["rank_source"] = source_map.get(pid, "")
-            return rows
+            return self._attach_pos_sync_metadata(rows, store_id)
 
         if raw_query:
             code_domain = [("code", "=ilike", query_code)] + base_domain

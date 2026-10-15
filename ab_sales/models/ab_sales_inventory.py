@@ -39,6 +39,10 @@ SQL_PER_POS = """
               """
 
 
+class InventorySyncBusy(Exception):
+    """A snapshot could not acquire all cache locks; apply nothing."""
+
+
 class InventoryEplus(models.Model):
     _name = 'ab_sales_inventory'
     _inherit = ['ab_eplus_connect']
@@ -50,6 +54,12 @@ class InventoryEplus(models.Model):
     store_id = fields.Many2one('ab_store', index=True)
     balance = fields.Float()
     default_price = fields.Float()
+    last_sync_at = fields.Datetime(readonly=True, copy=False)
+
+    _store_product_unique = models.Constraint(
+        'UNIQUE(store_id, product_eplus_serial)',
+        'A product can have only one inventory record per branch.',
+    )
 
     def init(self):
         super().init()
@@ -178,7 +188,8 @@ class InventoryEplus(models.Model):
     @api.model
     def _store_eplus_serial(self, store):
         try:
-            return int(store.eplus_serial or 0)
+            serial = int(store.eplus_serial or 0)
+            return serial if serial > 0 else 0
         except Exception:
             return 0
 
@@ -204,70 +215,92 @@ class InventoryEplus(models.Model):
         return DEFAULT_STORE_DIRECT_SERVER
 
     @api.model
-    def _apply_store_balance_rows(self, store, store_eplus_serial, rows):
-        eInv = self.sudo()
-        eInv.search([('store_id', '=', store.id)]).write({'balance': 0})
+    def _branch_sync_metadata(self, store, serials):
+        """Read the balance/timestamp pair from this branch, including zero rows."""
+        lines = self.sudo().search(
+            fields.Domain('store_id', '=', store.id)
+            & fields.Domain('product_eplus_serial', 'in', list(serials)))
+        return {line.product_eplus_serial: {
+            'balance': line.balance,
+            'last_sync_at': fields.Datetime.to_string(line.last_sync_at) if line.last_sync_at else False,
+        } for line in lines}
 
-        balances_by_product = {}
-        for prod_eplus_ser, row_store_eplus_ser, balance in rows or []:
-            try:
-                prod_eplus_ser = int(prod_eplus_ser)
-                row_store_eplus_ser = int(row_store_eplus_ser)
-                balance = float(balance or 0.0)
-            except Exception:
-                continue
+    @api.model
+    def _apply_store_balance_rows(self, store, store_eplus_serial, rows, sync_at,
+                                 requested_serials=None, prices=None):
+        """Apply one fully fetched informational snapshot, atomically.
 
-            if row_store_eplus_ser != store_eplus_serial:
-                continue
-            if balance <= 0.0:
-                continue
-            balances_by_product[prod_eplus_ser] = balance
+        NOLOCK source reads remain informational; this timestamp orders Odoo
+        reads, not replication freshness or stock reservations. All writers
+        take the branch lock after fetching, then recheck locked cache rows.
+        """
+        store.ensure_one()
+        if not store_eplus_serial or self._store_eplus_serial(store) != store_eplus_serial:
+            raise ValueError('Invalid inventory branch')
+        sync_at = fields.Datetime.to_datetime(sync_at)
+        if not sync_at or rows is None:
+            raise ValueError('Incomplete inventory snapshot')
+        scope = None if requested_serials is None else set(requested_serials)
+        balances = {}
+        for serial, row_store, quantity in rows:
+            if (isinstance(serial, bool) or int(serial) != serial or int(serial) <= 0
+                    or int(row_store) != row_store or int(row_store) != store_eplus_serial):
+                raise ValueError('Invalid inventory identifier or branch')
+            serial, quantity = int(serial), float(quantity)
+            if (serial in balances or not math.isfinite(quantity) or quantity < 0
+                    or (scope is not None and serial not in scope)):
+                raise ValueError('Invalid inventory result')
+            balances[serial] = quantity
+        prices = dict(prices or {})
+        if any(serial not in (scope if scope is not None else balances)
+               or not math.isfinite(float(price)) or float(price) < 0
+               for serial, price in prices.items()):
+            raise ValueError('Invalid inventory prices')
 
-        product_serials = sorted(balances_by_product.keys())
-        products_by_serial = eInv._product_lookup_by_eplus_serial(product_serials)
-        existing_by_product = {}
-        for prod_chunk in self._chunks(product_serials, 1000):
-            existing_lines = eInv.search([
-                ('store_id', '=', store.id),
-                ('product_eplus_serial', 'in', prod_chunk),
-            ])
-            for line in existing_lines:
-                existing_by_product[int(line.product_eplus_serial)] = line
-
-        created_vals = []
-        updated_count = 0
-        for prod_eplus_ser, balance in balances_by_product.items():
-            inv_line = existing_by_product.get(prod_eplus_ser)
-            product_vals = eInv._product_sync_vals(prod_eplus_ser, products_by_serial)
-            if not inv_line:
-                created_vals.append({
-                    'product_eplus_serial': prod_eplus_ser,
-                    'store_id': store.id,
-                    'balance': balance,
-                    **product_vals,
-                })
-                continue
-
-            write_vals = {}
-            if not math.isclose(balance, inv_line.balance, abs_tol=0.01):
-                write_vals['balance'] = balance
-            if eInv._needs_product_sync(inv_line, product_vals):
-                write_vals.update(product_vals)
-            if write_vals:
-                inv_line.write(write_vals)
-                updated_count += 1
-
-        if created_vals:
-            eInv.create(created_vals)
-        product_resynced_count = eInv._resync_empty_product_fields([
-            ('store_id', '=', store.id),
-        ])
-        return {
-            "product_count": len(product_serials),
-            "created_count": len(created_vals),
-            "updated_count": updated_count,
-            "product_resynced_count": product_resynced_count,
-        }
+        Inventory = self.sudo()
+        with self.env.cr.savepoint():
+            if not store.sudo().try_lock_for_update(allow_referencing=True):
+                raise InventorySyncBusy()
+            domain = fields.Domain('store_id', '=', store.id)
+            if scope is not None:
+                domain &= fields.Domain('product_eplus_serial', 'in', sorted(scope))
+            lines = Inventory.search(domain, order='id')
+            if len(lines.try_lock_for_update()) != len(lines):
+                raise InventorySyncBusy()
+            lines.invalidate_recordset()
+            existing = {line.product_eplus_serial: line for line in lines}
+            serials = set(balances) if scope is None else scope
+            products = Inventory._product_lookup_by_eplus_serial(serials)
+            created = []
+            updated = 0
+            for line in lines:
+                if line.last_sync_at and line.last_sync_at >= sync_at:
+                    continue
+                serial = line.product_eplus_serial
+                vals = {'balance': balances.get(serial, 0.0), 'last_sync_at': sync_at}
+                if serial in prices:
+                    vals['default_price'] = prices[serial]
+                if serial in products:
+                    vals.update(Inventory._product_sync_vals(serial, products))
+                line.write(vals)
+                updated += 1
+            for serial in sorted(serials - set(existing)):
+                vals = {'store_id': store.id, 'product_eplus_serial': serial,
+                        'balance': balances.get(serial, 0.0), 'last_sync_at': sync_at,
+                        **Inventory._product_sync_vals(serial, products)}
+                if serial in prices:
+                    vals['default_price'] = prices[serial]
+                created.append(vals)
+            if created:
+                # Bound unique-index waits against writers outside this helper.
+                self.env.cr.execute("SELECT current_setting('lock_timeout')")
+                previous_timeout = self.env.cr.fetchone()[0]
+                self.env.cr.execute("SELECT set_config('lock_timeout', '1s', true)")
+                Inventory.create(created)
+                Inventory.flush_model()
+                self.env.cr.execute("SELECT set_config('lock_timeout', %s, true)", (previous_timeout,))
+            return {'product_count': len(balances), 'created_count': len(created),
+                    'updated_count': updated, 'product_resynced_count': 0}
 
     def btn_update_balance_total(self):
         eInv = self.env['ab_sales_inventory'].sudo()
@@ -277,8 +310,7 @@ class InventoryEplus(models.Model):
         has_bal_list = []
         try:
             if not store_eplus_serials:
-                eInv.search([]).write({'balance': 0})
-                eInv._resync_empty_product_fields([])
+                # Missing configuration is not a successful empty snapshot.
                 return
 
             with self.connect_eplus(param_str=PARAM_STR, charset='CP1256') as conn:
@@ -351,14 +383,11 @@ class InventoryEplus(models.Model):
         store_pairs = self._get_working_balance_store_pairs(exclude_default=bool(default_store))
 
         if not store_pairs:
-            if not default_store:
-                eInv.search([('store_id', '!=', False)]).write({'balance': 0})
-                eInv._resync_empty_product_fields([('store_id', '!=', False)])
             _logger.info("Inventory remote per-store sync skipped: no remote working stores.")
             return
 
         try:
-            with self.connect_eplus(param_str=PARAM_STR, charset='CP1256') as conn:
+            with self.connect_eplus(param_str=PARAM_STR, charset='CP1256', propagate_error=True) as conn:
                 with conn.cursor() as crx:
                     for store, store_eplus_serial in store_pairs:
                         try:
@@ -367,11 +396,12 @@ class InventoryEplus(models.Model):
                                 store.display_name, store_eplus_serial
                             )
 
+                            sync_at = fields.Datetime.now()
                             sql = SQL_PER_POS.format(store_placeholders=PARAM_STR)
                             crx.execute(sql, (store_eplus_serial,))
                             rows = crx.fetchall()  # [(prod_eplus_ser, store_eplus_ser, balance)]
 
-                            stats = eInv._apply_store_balance_rows(store, store_eplus_serial, rows)
+                            stats = eInv._apply_store_balance_rows(store, store_eplus_serial, rows, sync_at)
 
                             _logger.info(
                                 "Inventory remote per-store sync finished: %s (eplus=%s) products=%s created=%s updated=%s product_resynced=%s",
@@ -424,17 +454,20 @@ class InventoryEplus(models.Model):
                 "Inventory default-store direct sync started: %s (eplus=%s, server=%s)",
                 store.display_name, store_eplus_serial, store_server,
             )
+            sync_at = fields.Datetime.now()
+            rows = None
             with self.connect_eplus(
                     server=store_server,
                     param_str=PARAM_STR,
                     charset='CP1256',
+                    propagate_error=True,
             ) as conn:
                 with conn.cursor() as crx:
                     sql = SQL_PER_POS.format(store_placeholders=PARAM_STR)
                     crx.execute(sql, (store_eplus_serial,))
                     rows = crx.fetchall()  # [(prod_eplus_ser, store_eplus_ser, balance)]
 
-            stats = eInv._apply_store_balance_rows(store, store_eplus_serial, rows)
+            stats = eInv._apply_store_balance_rows(store, store_eplus_serial, rows, sync_at)
             _logger.info(
                 "Inventory default-store direct sync finished: %s (eplus=%s) products=%s created=%s updated=%s product_resynced=%s",
                 store.display_name,
