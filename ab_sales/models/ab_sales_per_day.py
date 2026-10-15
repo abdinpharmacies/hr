@@ -268,10 +268,8 @@ class AbSalesPerDay(models.Model):
         with self.connect_eplus(param_str=PARAM_STR, charset="CP1256") as conn:
             with conn.cursor() as cursor:
                 for store_chunk in self._chunks(store_sql_ids, 1900):
-                    placeholders = ", ".join([PARAM_STR] * len(store_chunk))
-                    sql = SALES_PER_DAY_SQL.format(store_placeholders=placeholders)
-                    cursor.execute(sql, (day_start, day_end, *store_chunk))
-                    for store_sql_id, product_serial, sales_qty in cursor.fetchall() or []:
+                    rows = self._backend_daily_rows(cursor, day_start, day_end, store_chunk)
+                    for store_sql_id, product_serial, sales_qty in rows:
                         store_sql_id = self._safe_int(store_sql_id)
                         product_serial = self._safe_int(product_serial)
                         if not store_sql_id or not product_serial:
