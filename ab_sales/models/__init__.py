@@ -29,3 +29,9 @@ from . import ab_sales_return_uom_repair
 from . import ab_sales_return_line
 from . import ab_sales_return_router
 from . import ab_sales_pos_draft_slots
+
+from . import ab_sales_pos_backend
+from . import ab_sales_header_backend
+from . import ab_sales_return_backend
+from . import ab_sales_inventory_backend
+from . import ab_sales_per_day_backend

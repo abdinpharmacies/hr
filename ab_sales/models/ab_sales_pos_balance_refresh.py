@@ -77,6 +77,7 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
         if not serials:
             return {}
 
+        committed_read = self.env.context.get('_ab_sales_backend_committed_read') is True
         balances_by_serial = {serial: 0.0 for serial in serials}
         prices_by_serial = {}
         started = perf_counter()
@@ -94,6 +95,9 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                         FROM item_catalog WITH (NOLOCK)
                         WHERE itm_id IN ({placeholders})
                     """
+                    if committed_read:
+                        price_sql = price_sql.replace(' WITH (NOLOCK)', '').replace(
+                            'WHERE itm_id IN', 'WHERE itm_active = 1 AND itm_unit1_unit3 > 0 AND itm_id IN')
                     crx.execute(price_sql, tuple(serials))
                     for row in crx.fetchall():
                         prod_serial = int(row[0])
@@ -119,6 +123,8 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                         GROUP BY main.itm_id
                         HAVING SUM(CAST(main.itm_qty / ic.itm_unit1_unit3 AS decimal(18, 2))) > 0
                     """
+                    if committed_read:
+                        sql = sql.replace(' WITH (NOLOCK)', '')
                     params = [store_eplus_serial] + serials
                     crx.execute(sql, tuple(params))
                     rows = crx.fetchall()

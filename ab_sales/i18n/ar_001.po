@@ -4657,3 +4657,288 @@ msgstr "تعذر تحديث الرصيد. يتم عرض الرصيد الساب�
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
 msgid "Refresh balance from branch"
 msgstr "تحديث الرصيد من الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid "A valid customer E-Plus reference is required."
+msgstr "يجب تحديد مرجع صالح للعميل في إي بلس."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "An active sales store with an E-Plus serial is required."
+msgstr "يلزم اختيار مخزن مبيعات نشط له رقم تسلسلي في إي بلس."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid "An authorized API SQL request is required."
+msgstr "يلزم طلب معتمد لواجهة برمجة تطبيقات الفرع للاتصال بقاعدة البيانات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_inventory_backend.py:0
+msgid "At most 200 products may be requested."
+msgstr "يمكن طلب 200 صنف كحد أقصى."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_inventory_backend.py:0
+msgid "Branch inventory is unavailable. Retry the refresh."
+msgstr "بيانات مخزون الفرع غير متاحة. أعد محاولة التحديث."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Branch product unit is missing or ambiguous."
+msgstr "وحدة الصنف في الفرع غير موجودة أو غير محددة بشكل فريد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "Branch sale submitted."
+msgstr "تم إرسال فاتورة البيع إلى الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Branch submission could not be confirmed. Retry the original bill."
+msgstr ""
+"تعذر تأكيد إرسال الفاتورة إلى الفرع. أعد المحاولة باستخدام الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "E-Plus returned invalid stock values."
+msgstr "أعاد إي بلس قيم مخزون غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_inventory_backend.py:0
+msgid "Invalid product unit conversion in E-Plus."
+msgstr "تحويل وحدة الصنف في إي بلس غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"Invoice %(invoice)s has %(header)s declared lines but %(details)s stored "
+"detail rows."
+msgstr ""
+"الفاتورة %(invoice)s مسجل بها عدد بنود %(header)s، بينما عدد صفوف التفاصيل "
+"المحفوظة هو %(details)s."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Invoice does not belong to this branch."
+msgstr "الفاتورة لا تخص هذا الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "More than one invoice matches the stored request."
+msgstr "توجد أكثر من فاتورة تطابق الطلب المحفوظ."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_inventory_backend.py:0
+msgid "Requested products are not accessible."
+msgstr "لا تملك صلاحية الوصول إلى المنتجات المطلوبة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Return invoice does not match the request."
+msgstr "فاتورة المرتجع لا تطابق الطلب."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid ""
+"Return invoice lines changed. Review the source invoice before retrying."
+msgstr "تغيرت بنود فاتورة المرتجع. راجع الفاتورة الأصلية قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Return product does not match the original invoice line."
+msgstr "صنف المرتجع لا يطابق بند الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Return product is missing or ambiguous on this branch."
+msgstr "صنف المرتجع غير موجود أو توجد له سجلات متطابقة متعددة في هذا الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid "Select a store or configure a default sales store for this operation."
+msgstr "اختر مخزنًا أو اضبط مخزن مبيعات افتراضيًا لهذه العملية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Source invoice must be saved before posting a return."
+msgstr "يجب حفظ الفاتورة الأصلية قبل ترحيل المرتجع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "Stock rows do not belong to the selected store and products."
+msgstr "بيانات المخزون لا تخص المخزن والأصناف المحددة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid "The API SQL request belongs to another database or user."
+msgstr ""
+"طلب قاعدة البيانات لواجهة برمجة التطبيقات يخص قاعدة بيانات أو مستخدمًا آخر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "The SQL store does not match the authorized API store."
+msgstr ""
+"مخزن استعلام قاعدة البيانات لا يطابق المخزن المعتمد لطلب واجهة برمجة "
+"التطبيقات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "The branch E-Plus server is not configured."
+msgstr "لم يتم إعداد خادم إي بلس للفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid ""
+"The branch customer is inactive or incomplete. Review the customer before "
+"using it."
+msgstr ""
+"بيانات العميل في الفرع غير مكتملة أو العميل غير نشط. راجع بياناته قبل "
+"استخدامه."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid "The branch invoice is incomplete; the original bill remains Unknown."
+msgstr "فاتورة الفرع غير مكتملة؛ تظل الفاتورة الأصلية غير مؤكدة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid ""
+"The branch is still processing this request. Retry shortly using the same "
+"bill."
+msgstr ""
+"لا يزال الفرع يعالج هذا الطلب. أعد المحاولة بعد قليل باستخدام الفاتورة "
+"نفسها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_per_day_backend.py:0
+msgid "The branch returned invalid sales data."
+msgstr "أعاد الفرع بيانات مبيعات غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid ""
+"The customer is archived on this branch. Review the customer before using "
+"it."
+msgstr "العميل مؤرشف في هذا الفرع. راجع بياناته قبل استخدامه."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid ""
+"The customer reference is duplicated on this branch. Review the customer "
+"records before retrying."
+msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلات العميل قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"The invoice does not match the transaction identifier recorded before "
+"commit."
+msgstr "الفاتورة لا تطابق معرف العملية المسجل قبل تأكيد الحفظ."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"The invoice identifier or request marker does not match the stored bill."
+msgstr "معرف الفاتورة أو علامة الطلب لا يطابق الفاتورة المحفوظة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"The legacy bill has an invoice identifier, but no matching branch invoice "
+"was found."
+msgstr ""
+"الفاتورة القديمة لها معرف، ولكن لم يتم العثور على فاتورة مطابقة في الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid ""
+"The return, cash transaction and payment records do not form one complete "
+"transaction."
+msgstr "سجلات المرتجع والحركة النقدية والدفع لا تشكل عملية واحدة مكتملة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+msgid "The selected store E-Plus endpoint is unreachable."
+msgstr "تعذر الوصول إلى خادم إي بلس للمخزن المحدد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_backend.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "The selected store has no E-Plus server address."
+msgstr "لم يتم ضبط عنوان خادم إي بلس للمخزن المحدد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "The source invoice has no returnable lines."
+msgstr "لا تحتوي الفاتورة الأصلية على بنود قابلة للإرجاع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"This older request is still marked as processing and has no recovery "
+"journal."
+msgstr "هذا الطلب القديم لا يزال مسجلاً كقيد المعالجة وليس له سجل استعادة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header_backend.py:0
+msgid ""
+"This older return has no commit journal to establish whether it was posted."
+msgstr ""
+"هذا المرتجع القديم ليس له سجل لتأكيد الحفظ يمكن من خلاله تحديد ما إذا كان قد"
+" تم ترحيله."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
+msgid "Unsupported return invoice query. Update the Branch API integration."
+msgstr ""
+"استعلام فاتورة المرتجع غير مدعوم. حدّث تكامل واجهة برمجة تطبيقات الفرع."

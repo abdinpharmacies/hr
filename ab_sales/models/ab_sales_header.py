@@ -1933,10 +1933,6 @@ class AbdinSalesHeader(models.Model):
         stores = Store.search([('id', 'in', list(serials_by_store.keys()))])
         store_by_id = {s.id: s for s in stores}
 
-        def _chunks(seq, size):
-            for i in range(0, len(seq), size):
-                yield seq[i:i + size]
-
         for store_id, serials in serials_by_store.items():
             store = store_by_id.get(store_id)
             store_server = self._get_store_server(store) if store else False
@@ -1948,49 +1944,26 @@ class AbdinSalesHeader(models.Model):
                 continue
 
             try:
-                with self.connect_eplus(server=store_server, param_str=PARAM_STR, charset='CP1256') as conn:
-                    with conn.cursor() as crx:
-                        saved_serials = []
-                        missing_serials = set()
-                        for chunk in _chunks(serials, 2000):
-                            placeholders = ",".join([PARAM_STR] * len(chunk))
-                            sql = f"""
-                                SELECT sth_id, sth_flag
-                                FROM sales_trans_h WITH (NOLOCK)
-                                WHERE sth_id IN ({placeholders})
-                            """
-                            params = tuple(chunk)
-                            crx.execute(sql, params)
-                            rows = crx.fetchall()
-                            found_serials = set()
-                            for row in rows:
-                                try:
-                                    sth_id = int(row[0])
-                                    sth_flag = (row[1] or "").strip()
-                                except Exception:
-                                    continue
-                                found_serials.add(sth_id)
-                                if sth_flag == 'C':
-                                    saved_serials.append(sth_id)
-                            missing_serials.update(set(chunk) - found_serials)
+                statuses = self._backend_invoice_statuses(store, serials)
+                saved_serials = [row['invoice'] for row in statuses if row['status'] == 'saved']
+                missing_serials = set(serials) - {row['invoice'] for row in statuses}
+                if saved_serials:
+                    Header.search([
+                        ('status', '=', 'pending'),
+                        ('store_id', '=', store.id),
+                        ('eplus_serial', 'in', list(set(saved_serials))),
+                    ])._write_submission_state({'status': 'saved'})
 
-                        if saved_serials:
-                            Header.search([
-                                ('status', '=', 'pending'),
-                                ('store_id', '=', store.id),
-                                ('eplus_serial', 'in', list(set(saved_serials))),
-                            ])._write_submission_state({'status': 'saved'})
-
-                        if missing_serials:
-                            headers_to_archive = Header.search([
-                                ('status', '=', 'pending'),
-                                ('store_id', '=', store.id),
-                                ('eplus_serial', 'in', list(missing_serials)),
-                                ('active', '=', True),
-                            ])
-                            if headers_to_archive:
-                                headers_to_archive.line_ids.write({'active': False})
-                                headers_to_archive.write({'active': False})
+                if missing_serials:
+                    headers_to_archive = Header.search([
+                        ('status', '=', 'pending'),
+                        ('store_id', '=', store.id),
+                        ('eplus_serial', 'in', list(missing_serials)),
+                        ('active', '=', True),
+                    ])
+                    if headers_to_archive:
+                        headers_to_archive.line_ids.write({'active': False})
+                        headers_to_archive.write({'active': False})
             except Exception as ex:
                 _logger.error(
                     "Pending status sync failed for store %s (ip=%s): %s",
