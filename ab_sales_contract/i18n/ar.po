@@ -100,3 +100,15 @@ msgstr "تعذر تحميل العقد."
 #: code:addons/ab_sales_contract/models/ab_sales_return_header_inherit.py:0
 msgid "Source invoice was not found in the selected branch."
 msgstr "لم يتم العثور على الفاتورة الأصلية في الفرع المحدد."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_contract.py:0
+msgid ""
+"Allow Promotions requires zero default discounts, zero fixed copay, and a "
+"customer copay of 0% or 100%. Disable Allow Promotions before changing these"
+" terms."
+msgstr ""
+"يتطلب السماح بالعروض أن تكون الخصومات الافتراضية ومبلغ مساهمة العميل الثابت "
+"صفرًا، وأن تكون نسبة مساهمة العميل 0% أو 100%. عطّل السماح بالعروض قبل تغيير"
+" هذه الشروط."
