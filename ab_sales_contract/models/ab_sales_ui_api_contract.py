@@ -24,11 +24,13 @@ class AbSalesUiApiContract(models.TransientModel):
         if payload.get('document_type', 'sale') == 'sale' and lines and all(line.get('product_id') for line in lines):
             pricing = self.env['ab_sales_pos_api']
             program_id = header.get('applied_program_id')
+            customer_id = False if header.get('customer_mode') == 'new' else header.get('customer_id')
             if header.get('contract_id'):
                 totals = pricing.pos_contract_totals(
                     contract_id=header['contract_id'], store_id=header.get('store_id'), lines=lines,
                     total_invoice_discount=header.get('total_invoice_discount', 0.0),
                     applied_program_id=program_id, manual_clear=not bool(program_id),
+                    customer_id=customer_id,
                 )
                 header.update(total_after_discount=totals['total_after_discount'],
                               total_net_amount=totals['cust_pay'], cust_pay=totals['cust_pay'],
@@ -38,6 +40,7 @@ class AbSalesUiApiContract(models.TransientModel):
                 totals = pricing.pos_promotions(
                     store_id=header.get('store_id'), lines=lines,
                     applied_program_id=program_id, manual_clear=not bool(program_id),
+                    customer_id=customer_id,
                 )
                 header.update(total_after_discount=totals['amount_total_after_promo'],
                               total_net_amount=totals['total_net_amount'],
@@ -61,6 +64,7 @@ class AbSalesUiApiContract(models.TransientModel):
 
         values = {
             'store_id': header.store_id.id,
+            'customer_id': header.customer_id.id if header.customer_id else False,
             'line_ids': [fields.Command.create({
                 'product_id': line.product_id.id, 'uom_id': line.uom_id.id,
                 'qty_str': str(line.qty), 'sell_price': line.sell_price,

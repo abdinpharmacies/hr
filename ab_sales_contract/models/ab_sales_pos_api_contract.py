@@ -9,7 +9,7 @@ class AbSalesPosApiContract(models.TransientModel):
 
     @api.model
     def pos_contract_totals(self, contract_id=None, lines=None, total_invoice_discount=0.0,
-                            store_id=None, applied_program_id=None, manual_clear=False):
+                            store_id=None, applied_program_id=None, manual_clear=False, customer_id=None):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_contract")
 
         try:
@@ -50,6 +50,7 @@ class AbSalesPosApiContract(models.TransientModel):
 
         header = self.env["ab_sales_header"].new({
             "contract_id": contract.id,
+            "customer_id": customer_id or False,
             "store_id": int(store_id) if store_id else False,
             "total_invoice_discount": total_invoice_discount,
         })
@@ -85,7 +86,7 @@ class AbSalesPosApiContract(models.TransientModel):
             promotion = self.pos_promotions(
                 store_id=store_id, lines=lines, applied_program_id=applied_program_id,
                 manual_clear=manual_clear, contract_id=contract.id,
-                total_invoice_discount=total_invoice_discount,
+                total_invoice_discount=total_invoice_discount, customer_id=customer_id,
             )
             program_id = promotion.get('applied_program_id')
             header.applied_program_ids = [(6, 0, [program_id] if program_id else [])]
