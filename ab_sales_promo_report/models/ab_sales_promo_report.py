@@ -131,7 +131,7 @@ class AbSalesPromoReportWizard(models.TransientModel):
     include_off_customer = fields.Boolean(string="Invoices For Off Customers", default=True)
     include_no_promo_found = fields.Boolean(
         string="Include Lines With No Promo Found",
-        help="If enabled, BConnect rows with no matching local promo are included and marked as No Promo Found.",
+        help="Compatibility field. Unmatched report lines are always excluded.",
     )
     show_all_matching_promos = fields.Boolean(
         string="Show All Matching Promos",
@@ -173,9 +173,9 @@ class AbSalesPromoReportWizard(models.TransientModel):
         if not line_ids:
             if row_count:
                 raise UserError(_(
-                    "BConnect returned %s line(s), but no lines matched local stores/products/promotions. "
-                    "Use 'Show BConnect Query' to verify the SQL, then check eplus_serial mappings and promo dates/products. "
-                    "Enable 'Include Lines With No Promo Found' to include unmatched rows."
+                    "BConnect returned %s line(s), but no promotion passed application validation "
+                    "for the selected report products. Check product/store mappings, promotion dates, "
+                    "purchase conditions, and recorded invoice compensation."
                 ) % row_count)
             raise UserError(_("No matching sales promo lines were found. BConnect returned no rows."))
 
@@ -226,7 +226,6 @@ class AbSalesPromoReportWizard(models.TransientModel):
 
     def _prepare_bconnect_query(self):
         store_serials = self.store_ids.mapped("eplus_serial")
-        product_serials = self.product_ids.mapped("eplus_serial")
 
         where = [
             f"h.sec_insert_date >= {PARAM_STR}",
@@ -243,9 +242,6 @@ class AbSalesPromoReportWizard(models.TransientModel):
 
         if store_serials:
             where.append(self._sql_in_clause("h.sto_id", store_serials, params))
-
-        if product_serials:
-            where.append(self._sql_in_clause("d.itm_id", product_serials, params))
 
         odoo_marker = "ISNULL(h.sth_notice, '') LIKE N'%§§§%'"
         off_customer_marker = "ISNULL(c.cust_code, '') LIKE '%off%'"
@@ -336,6 +332,11 @@ class AbSalesPromoReportWizard(models.TransientModel):
             for promo in promos
         }
 
+        participation_by_id = {
+            promo.id: self._program_participation_products(promo, promo_scope_by_id[promo.id])
+            for promo in promos
+        }
+
         invoice_rows = defaultdict(list)
         for row in rows:
             invoice_key = (
@@ -359,9 +360,10 @@ class AbSalesPromoReportWizard(models.TransientModel):
             invoice_compensation = self._invoice_total_compensation(grouped_rows)
             is_odoo = any(self._row_bool(row, "is_odoo") for row in grouped_rows)
             matches_by_product = {}
+            validated_discounts = {}
             for product in invoice_products:
                 candidate_promos = self._product_matching_promos(
-                    promos, promo_scope_by_id, store, product, invoice_key[2],
+                    promos, participation_by_id, store, product, invoice_key[2],
                 )
                 matched_promo, promo_discount = self._matched_promo_for_invoice(
                     candidate_promos,
@@ -371,20 +373,18 @@ class AbSalesPromoReportWizard(models.TransientModel):
                     store,
                     invoice_compensation,
                     is_odoo,
+                    validated_discounts=validated_discounts,
                 )
                 if matched_promo:
-                    status = "in_date"
-                elif self._has_total_compensation(invoice_compensation) and candidate_promos:
-                    status = "no_promo_applied"
-                elif self.include_no_promo_found:
-                    status = "no_promo_found"
-                else:
-                    continue
-                matches_by_product[product.id] = (matched_promo, promo_discount, status)
+                    matches_by_product[product.id] = (matched_promo, promo_discount, "in_date")
 
             for row in grouped_rows:
                 product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
-                match = matches_by_product.get(product.id) if product else None
+                if not product or self._row_float(row, "qty") <= 0.0:
+                    continue
+                if self.product_ids and product not in self.product_ids._origin:
+                    continue
+                match = matches_by_product.get(product.id)
                 if match:
                     matched_promo, promo_discount, status = match
                     vals_list.append(self._report_vals_from_row(
@@ -443,23 +443,91 @@ class AbSalesPromoReportWizard(models.TransientModel):
         store,
         invoice_compensation,
         is_odoo,
+        validated_discounts=None,
     ):
         if not self._has_total_compensation(invoice_compensation):
             return candidate_promos.browse(), 0.0
 
-        tolerance = 1.0 if is_odoo else 5.0
+        if validated_discounts is None:
+            validated_discounts = {}
         for promo in candidate_promos:
-            promo_products = promo_scope_by_id.get(promo.id, self.env["ab_product"])
-            promo_discount = self._promo_discount_for_invoice(
-                rows,
-                products_by_serial,
-                store,
-                promo,
-                promo_products,
-            )
-            if abs(promo_discount - invoice_compensation) <= tolerance:
+            if promo.id not in validated_discounts:
+                promo_products = promo_scope_by_id.get(promo.id, self.env["ab_product"])
+                validated_discounts[promo.id] = self._validated_promo_discount(
+                    rows, products_by_serial, store, promo, promo_products,
+                    invoice_compensation, is_odoo,
+                )
+            promo_discount = validated_discounts[promo.id]
+            if promo_discount > 0.0:
                 return promo, promo_discount
         return candidate_promos.browse(), 0.0
+
+    def _validated_promo_discount(
+        self, rows, products_by_serial, store, promo, promo_products,
+        invoice_compensation, is_odoo,
+    ):
+        invoice_serial = self._row_int(rows[0], "invoice_eplus_serial") if rows else 0
+
+        def reject(reason):
+            _logger.info(
+                "Skipping report promotion %s for invoice %s at store %s: %s",
+                promo.id, invoice_serial, store.id, reason,
+            )
+            return 0.0
+
+        try:
+            header = self._promo_invoice_header(rows, products_by_serial, store, promo)
+            if not header or not self._promo_purchase_conditions_met(header, promo):
+                return reject("purchase conditions are incomplete")
+            promo_discount = self._promo_discount_for_invoice(
+                rows, products_by_serial, store, promo, promo_products,
+            )
+            if not promo_discount > 0.0:
+                return reject("expected promotion discount is not positive")
+            tolerance = 1.0 if is_odoo else 5.0
+            if not self._has_total_compensation(invoice_compensation):
+                return reject("recorded invoice compensation is not positive")
+            if not abs(promo_discount - invoice_compensation) <= tolerance:
+                return reject("recorded invoice compensation does not match the expected discount")
+            return promo_discount
+        except Exception as ex:
+            _logger.warning(
+                "Cannot validate report promotion %s for invoice %s at store %s: %r",
+                promo.id, invoice_serial, store.id, ex,
+            )
+            return 0.0
+
+    def _promo_purchase_conditions_met(self, header, promo):
+        if promo.apply_disc_on == "specific_products":
+            return bool(
+                header._specific_products_meets_min_qty(promo)
+                and header._specific_products_reward_unit(promo)[0]
+            )
+        scope = header._program_discount_products(promo)
+        if not scope:
+            return False
+        if promo.apply_disc_on == "cheapest_product":
+            need_qty = max(int(promo.rule_min_qty or 1), 1)
+            return len(header._scope_units(scope, promo)) >= need_qty
+        if promo.apply_disc_on in ("on_order", "fixed_price"):
+            qty = sum(
+                header._line_qty_in_program_uom(line, promo)
+                for line in header.line_ids
+                if line.product_id in scope and line.qty > 0.0
+            )
+            return qty > 0.0 and qty + 1e-8 >= float(promo.rule_min_qty or 0.0)
+        return False
+
+    @api.model
+    def _program_participation_products(self, promo, discount_products):
+        if promo.apply_disc_on == "incentives":
+            return self.env["ab_product"].browse()
+        if promo.apply_disc_on == "specific_products":
+            return (
+                self.env["ab_sales_header"]._specific_products_trigger_products(promo)
+                | promo.disc_specific_product_ids
+            )
+        return discount_products
 
     def _promos_report_products(self, promos, promo_scope_by_id):
         products = self.env["ab_product"].browse()
@@ -478,7 +546,7 @@ class AbSalesPromoReportWizard(models.TransientModel):
 
     @staticmethod
     def _has_total_compensation(total_compensation):
-        return abs(total_compensation) > 1e-8
+        return total_compensation > 0.0
 
     @api.model
     def _program_report_products(self, promo):
@@ -563,7 +631,7 @@ class AbSalesPromoReportWizard(models.TransientModel):
         product = products_by_serial.get(self._row_int(row, "product_eplus_serial"))
         return bool(product and product in products)
 
-    def _promo_discount_with_sales_logic(self, rows, products_by_serial, store, promo):
+    def _promo_invoice_header(self, rows, products_by_serial, store, promo):
         line_commands = []
         source_rows = []
         for row in rows:
@@ -580,18 +648,24 @@ class AbSalesPromoReportWizard(models.TransientModel):
             source_rows.append(row)
 
         if not line_commands:
-            return 0.0
+            return self.env["ab_sales_header"].browse()
 
+        header = self.env["ab_sales_header"].with_context(force_program_effective=True).new({
+            "store_id": store.id,
+            "applied_program_ids": [(6, 0, [promo.id])],
+            "line_ids": line_commands,
+        })
+        for line, row in zip(header.line_ids, source_rows):
+            line.qty_str = str(self._row_float(row, "qty"))
+            line._compute_qty()
+            line.sell_price = self._row_float(row, "price")
+        return header
+
+    def _promo_discount_with_sales_logic(self, rows, products_by_serial, store, promo):
         try:
-            header = self.env["ab_sales_header"].with_context(force_program_effective=True).new({
-                "store_id": store.id,
-                "applied_program_ids": [(6, 0, [promo.id])],
-                "line_ids": line_commands,
-            })
-            for line, row in zip(header.line_ids, source_rows):
-                line.qty_str = str(self._row_float(row, "qty"))
-                line._compute_qty()
-                line.sell_price = self._row_float(row, "price")
+            header = self._promo_invoice_header(rows, products_by_serial, store, promo)
+            if not header:
+                return 0.0
             products = header.line_ids.mapped("product_id")
             amount_total = sum(
                 float(line.qty or 0.0) * float(line.sell_price or 0.0)
