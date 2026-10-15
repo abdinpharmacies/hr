@@ -2588,6 +2588,10 @@ body.ab-storefront-location-picker-open {
     background: $ab-background;
 }
 
+body.ab-storefront .ab-storefront-promo-card {
+    color: $ab-surface;
+}
+
 .ab-storefront-promo-card {
     display: flex;
     min-height: 230px;
@@ -2630,7 +2634,6 @@ body.ab-storefront-location-picker-open {
 
     small {
         margin-bottom: .45rem;
-        opacity: .82;
         font-size: var(--ab-font-size-076);
         font-weight: var(--ab-font-weight-bold);
         letter-spacing: var(--ab-letter-spacing);
@@ -6124,16 +6127,16 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
     background: $ab-background;
 }
 
-.ab-storefront-closing-panel {
+body.ab-storefront .ab-storefront-closing-panel {
     padding: clamp(2rem, 5vw, 4rem);
     color: #fff;
     border-radius: 1.75rem;
     background:
-        radial-gradient(circle at 90% 10%, rgba($ab-orange, .36), transparent 30%),
+        radial-gradient(circle at 90% 10%, rgba($ab-orange, .12), transparent 30%),
         linear-gradient(130deg, $ab-green-dark, $ab-green);
 
     .ab-storefront-kicker {
-        color: #d8f5e6;
+        color: $ab-surface;
     }
 
     h2 {
@@ -6143,12 +6146,39 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
     }
 
     p {
-        color: rgba(#fff, .8);
+        color: $ab-surface;
     }
 
     .btn {
         border-radius: .75rem;
         font-weight: var(--ab-font-weight-bold);
+    }
+
+    .btn-light {
+        color: $ab-green-dark;
+        background-color: $ab-surface;
+        border-color: $ab-surface;
+
+        &:hover,
+        &:focus-visible,
+        &:active {
+            color: $ab-green-dark;
+            background-color: $ab-green-soft;
+            border-color: $ab-green-soft;
+        }
+    }
+
+    .btn-outline-light {
+        color: $ab-surface;
+        border-color: $ab-surface;
+
+        &:hover,
+        &:focus-visible,
+        &:active {
+            color: $ab-green-dark;
+            background-color: $ab-surface;
+            border-color: $ab-surface;
+        }
     }
 }
 
