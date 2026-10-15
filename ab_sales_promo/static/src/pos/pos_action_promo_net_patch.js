@@ -11,6 +11,9 @@ if (PosAction) {
     const originalNormalizePromo = PosAction.prototype._normalizePromo;
     const originalRecomputeBill = PosAction.prototype._recomputeBill;
     const originalAvailablePriceSelect = PosAction.prototype.onAvailablePriceSelect;
+    const originalCustomerM2OUpdate = PosAction.prototype.onCustomerM2OUpdate;
+    const originalSelectCustomer = PosAction.prototype.selectCustomer;
+    const originalSetCustomerMode = PosAction.prototype.setCustomerMode;
 
     patch(PosAction.prototype, {
         _defaultPromo() {
@@ -52,6 +55,21 @@ if (PosAction) {
             }
             this.schedulePromoRefresh(this.currentBill);
         },
+        async onCustomerM2OUpdate(value) {
+            const bill = this.currentBill;
+            await originalCustomerM2OUpdate.call(this, value);
+            this.schedulePromoRefresh(bill);
+        },
+        selectCustomer(customer) {
+            const bill = this.currentBill;
+            originalSelectCustomer.call(this, customer);
+            this.schedulePromoRefresh(bill);
+        },
+        setCustomerMode(mode) {
+            const bill = this.currentBill;
+            originalSetCustomerMode.call(this, mode);
+            this.schedulePromoRefresh(bill);
+        },
         async refreshPromotions(bill) {
             if (this._promoDisabled) {
                 return;
@@ -74,16 +92,21 @@ if (PosAction) {
                 return;
             }
             const requestId = ++this._promoRequestId;
+            const customerId = target.header?.customer_mode === "new" ? false : target.header?.customer_id || false;
             target.promo.loading = true;
             this.persistCache();
             try {
                 const result = await this.orm.call("ab_sales_pos_api", "pos_promotions", [], {
                     store_id: storeId,
+                    customer_id: customerId,
                     lines: payloadLines,
                     applied_program_id: target.promo.selected_id || false,
                     manual_clear: !!target.promo.manual_clear,
                 });
-                if (requestId !== this._promoRequestId || !this.billEditable(target) || target.header?.contract_id) {
+                const currentCustomerId = target.header?.customer_mode === "new"
+                    ? false : target.header?.customer_id || false;
+                if (requestId !== this._promoRequestId || !this.billEditable(target)
+                    || target.header?.contract_id || customerId !== currentCustomerId) {
                     return;
                 }
                 target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];

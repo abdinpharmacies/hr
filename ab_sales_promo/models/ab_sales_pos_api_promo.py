@@ -12,7 +12,7 @@ class AbSalesPosApi(models.TransientModel):
 
     @api.model
     def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
-                       contract_id=None, total_invoice_discount=0.0):
+                       contract_id=None, total_invoice_discount=0.0, customer_id=None):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_promo_program", "ab_product_uom")
         replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if isinstance(manual_clear, str):
@@ -177,6 +177,7 @@ class AbSalesPosApi(models.TransientModel):
         header_values = {
             "store_id": store_id,
             "line_ids": line_commands,
+            "customer_id": customer_id or False,
         }
         if contract_id:
             if 'contract_id' not in self.env['ab_sales_header']._fields:
