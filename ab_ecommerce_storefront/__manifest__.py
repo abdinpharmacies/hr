@@ -83,6 +83,7 @@
             "ab_ecommerce_storefront/static/src/js/shop_category_accordion.js",
             "ab_ecommerce_storefront/static/src/js/price_range_guard.js",
             "ab_ecommerce_storefront/static/src/js/shop_filter_draft.js",
+            "ab_ecommerce_storefront/static/src/js/shop_filter_loading.js",
             "ab_ecommerce_storefront/static/src/js/cart_selection.js",
             "ab_ecommerce_storefront/static/src/js/prescription_order.js",
             "ab_ecommerce_storefront/static/src/js/business_partnership.js",
