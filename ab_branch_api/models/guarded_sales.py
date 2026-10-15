@@ -110,10 +110,8 @@ class GuardedSales(models.AbstractModel):
             self.env.invalidate_all()
             return self._finish_guarded_sale(operation, _('Branch submission could not be confirmed. Retry the original bill.'))
         try:
-            # No old PostingConnection wrapper: ab_sales owns its dedicated
-            # connection, durable Unknown state and branch-scoped SQL recovery.
-            with self._posting_scope(operation):
-                header.action_submit()
+            # The backend owns submission, durable Unknown state and recovery.
+            header._backend_submit()
         except (UserError, ValidationError) as error:
             self.env.cr.rollback()
             self.env.invalidate_all()
@@ -138,26 +136,7 @@ class GuardedSales(models.AbstractModel):
         if header.status != 'unknown':
             return self._finish_guarded_sale(operation)
         try:
-            with header._submission_attempt():
-                connection = header._get_submission_connection()
-                try:
-                    cur = connection.cursor()
-                    serial = header._find_committed_eplus_invoice(cur)
-                    if serial:
-                        cur.execute('''SELECT h.sth_flag, h.no_of_items,
-                            (SELECT COUNT(*) FROM sales_trans_d d WITH (UPDLOCK, HOLDLOCK) WHERE d.sth_id=h.sth_id)
-                            FROM sales_trans_h h WITH (UPDLOCK, HOLDLOCK) WHERE h.sth_id=? AND h.sto_id=?''',
-                            (serial, int(header.store_id.eplus_serial)))
-                        row = cur.fetchone()
-                        if not row or row[0] not in ('P', 'C') or not row[2] or int(row[1] or 0) != int(row[2]):
-                            raise UserError(_('The branch invoice is incomplete; the original bill remains Unknown.'))
-                        header.sudo()._write_submission_state({'eplus_serial': serial,
-                            'status': 'saved' if row[0] == 'C' else 'pending', 'push_state': 'success', 'push_message': ''})
-                finally:
-                    try:
-                        connection.rollback()
-                    finally:
-                        connection.close()
+            header._backend_reconcile()
         except Exception:
             self.env.cr.rollback()
             self.env.invalidate_all()

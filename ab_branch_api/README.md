@@ -43,48 +43,35 @@ identities even for empty stock/return responses. No new connection field is use
 
 ## Reuse branch sales workflows
 
-The provider owns `_read_store_stock(store, product_serials)` through an inherited
-`ab_sales_header` class in `models/sales_workflow.py`. It is available only inside
-the authenticated private API scope. API sale-line inventory loading uses this
-reader, with sales price-cache updates kept in the existing `_update_default_price()`.
-The API retains its 200-product limit, product access checks and response fields.
-Stock reads use committed, parameterized store/product SQL; invalid conversions
-and cross-store rows fail.
+Backend behavior belongs to the five `ab_sales/models/ab_sales_*_backend.py`
+inheritance files. The API owns authentication, validation, pagination, response
+formatting and transport journals; it has no connector inheritance, external SQL,
+connection pool, cursor adapter or external transaction implementation.
 
-Branch `ab_sales` source files are unchanged. Outside the API scope, inherited
-stock and return methods delegate to `super()` and ordinary branch workflows
-retain their existing behavior. Client-supplied context flags cannot activate the
-private scope. The ordinary stock reader remains owned by `ab_sales`; future
-changes to its calculations should also be reviewed against the API reader.
+- Header: batch stock, invoice statuses, native sale submission and observation-only recovery.
+- Return: branch invoice validation, shared return-line loading, native submission and recovery.
+- Inventory: complete branch snapshots and selected-product balances/prices through the native POS refresh/cache.
+- Daily sales: explicit branch reads and shared query execution for the existing scheduled reader.
+- POS: private branch scope, routing, connection lifetime and customer lookup/import/creation.
 
-`ab_sales_header._get_store_server()` owns endpoint selection:
+The private backend scope binds database, user and store and pins the existing
+sales endpoint. It cannot be activated by client context flags. Read sessions
+never reconnect or replay statements; posting uses fresh native transactions.
+Outside that scope, ordinary POS routing and return loading delegate to `super()`.
 
-- Configured default store: `192.168.1.150:1433`.
-- Any other selected store: its `ip1` on port `1433`.
+Stock-critical reads use committed branch-filtered queries. Selected-product
+refresh uses the existing bounded POS reader with committed reads; an incomplete
+or failed refresh raises an unavailable error and retains cached values. Ordinary
+POS informational refresh keeps its existing policy. Sales-line `inventory_json`
+is populated from the batch reader without creating artificial lines.
 
-Missing/unreachable addresses fail. API operations never use `bconnect_ip1`,
-`bconnect_ip2`, or implicit fallback. Existing E-Plus credentials, database
-settings, drivers and `get_connection()` methods remain in use.
-
-A private API scope binds SQL to database, user and store, pins the endpoint at
-the first SQL requirement, and isolates connections/health caches per request.
-Opened connections are reused without health-check reconnection; automatic
-statement replay is disabled. SQL errors propagate, and connections close and
-the scope resets in `finally`. Ordinary branch connector behavior is unchanged
-outside this scope.
-
-An API-scoped `action_load_lines()` override uses the existing conversion helpers
-with normal ORM permissions. Invoice/header/detail reads are parameterized and
-store-filtered; quantities, prices, units and selections are preserved.
-Missing/ambiguous products and stale lines reject.
-
-The original `action_push_to_eplus()` and `action_push_to_eplus_return()` methods
-still own posting. Return posting reloads through the scoped loader. A small
-API-only return connection adapter adds the selected store parameter to the two
-legacy inline invoice total/date reads. It preserves external write SQL. The
-recovery wrapper described below commits API return phases together. Unknown direct invoice-header SELECTs
-fail closed; changes to the branch posting queries require reviewing this exact
-allowlist. The invoice-status helper is also overridden only within the scope.
+The return loader reuses native unit-conversion helpers and the posting cursor
+when called inside the native transaction. Branch checks, selected units and
+quantities are retained. Return cursor adaptations are owned by `ab_sales`.
+Submission still dispatches through the native sale/return actions, including
+installed extensions. Recovery only observes committed transactions and updates
+lifecycle state; it never posts a new bill. Legacy journal evidence remains
+supported without passing API operation records into the backend.
 
 ## Employee validation and replay
 
@@ -103,26 +90,19 @@ Existing recorded outcomes are returned with their authorized request identity.
 
 ## Rollout
 
-1. For the API-only correction, keep every branch addon except `ab_branch_api`
-   unchanged. Existing branch endpoint selection remains owned by its installed
-   sales workflow. This release requires no routing-module uninstall.
-2. Deploy branch `ab_branch_api` with the callcenter `ab_sales`
-   adapter in the same maintenance window. Keep their Git changes separate.
-3. Upgrade branch `ab_branch_api`; include
-   `ab_branch_api_return_employee` in that same upgrade where installed.
-   Upgrade callcenter `ab_sales`, restart the affected processes, and retest every
-   Branch Connection before business use. Branch `ab_sales` needs no source change
-   or upgrade for this rollout. Do not upgrade `base` for this change.
-4. The employee extension is now an installable deprecated shell. Administrators
-   may uninstall it normally after the joint upgrade. Provider validation,
-   translations and operation records remain. Fresh installations need only
-   `ab_branch_api`. Remove the shell directory in a later release after confirming
-   it is uninstalled everywhere.
+1. Deploy the branch `ab_sales` helper files and API delegation changes together.
+2. Upgrade branch `ab_sales`, then `ab_branch_api`, using targeted upgrades.
+3. Restart deployed workers during the normal release window and retest the
+   existing Branch Connection. Endpoint contracts and callcenter adapters remain
+   compatible; the existing callcenter failure handling preserves stale balances.
 
-No hooks, migrations, automatic provisioning or reservation cleanup are shipped.
-Validation uses isolated databases and mocked external operations. No production
-deployment or live E-Plus writes are included in implementation verification.
+No hooks, migrations, new models, synchronization jobs or external synchronization
+at installation are introduced. Verification uses the development database and
+mocked external operations; live E-Plus posting is not part of the test run.
+See `BRANCH_API_BACKEND_INDEPENDENCE_PLAN.md` for ownership and validation details.
 
+The versioned sections below describe historical releases; the current backend
+ownership and rollout instructions above supersede their API-owned SQL details.
 
 ## API-only call-center correction (19.0.5.0.0)
 

@@ -8,7 +8,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import config
 
-from .routing import api_request, request_store, selected_server, STORE_UNSET
+from .routing import api_request, request_store, STORE_UNSET
 
 
 _return_employee = ContextVar('branch_api_return_employee', default=None)
@@ -49,11 +49,6 @@ class BranchApiOperation(models.Model):
 class BranchApi(models.AbstractModel):
     _name = 'ab_branch_api'
     _description = 'Branch API'
-    _inherit = ['ab_eplus_connect']
-
-    @api.private
-    def decrypt_password(self):
-        return super().decrypt_password()
 
     @api.model
     def _authenticate_replica(self, db_serial):
@@ -187,7 +182,7 @@ class BranchApi(models.AbstractModel):
         products = self.env['ab_product'].search(fields.Domain('eplus_serial', 'in', serials))
         if set(products.mapped('eplus_serial')) != set(serials):
             raise AccessError(_('Requested products are not accessible.'))
-        rows = self.env['ab_sales_header']._read_store_stock(store, serials)
+        rows = self.env['ab_sales_header']._backend_stock_lines(store, serials)
         return {**self._identity(store, db_serial),
                 'data': [dict(row, db_serial=db_serial) for row in rows]}
 
@@ -230,19 +225,7 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     def _assert_invoice_branch(self, store, invoice, require_saved=False):
-        server = selected_server(self, store)
-        if not server:
-            raise UserError(_('The branch E-Plus server is not configured.'))
-        with self.connect_eplus(server=server, autocommit=False, charset='UTF-8', param_str='?') as conn:
-            cur = conn.cursor()
-            cur.execute('SELECT sth_id, sth_flag, sec_insert_date FROM sales_trans_h WHERE sth_id = ? AND sto_id = ?',
-                        (int(invoice), int(store.eplus_serial)))
-            source = cur.fetchone()
-            if not source:
-                raise UserError(_('Invoice does not belong to this branch.'))
-            if require_saved and source[1] != 'C':
-                raise UserError(_('Source invoice must be saved before posting a return.'))
-            return source[2]
+        return self.env['ab_sales_return_header']._backend_invoice_date(store, invoice, require_saved)
 
     @api.model
     def _return_header(self, store, operation, invoice):
@@ -295,7 +278,7 @@ class BranchApi(models.AbstractModel):
         header = self._return_header(store, operation, invoice)
         if header.status != 'saved':
             self._assert_invoice_branch(store, invoice)
-            header.action_load_lines()
+            header._backend_prepare()
             if selections is not False:
                 self._apply_return_lines(header, selections)
         return self._return_snapshot(header, db_serial)
@@ -319,8 +302,7 @@ class BranchApi(models.AbstractModel):
         # Concurrent updates conflict under Odoo repeatable-read; no automatic external retry.
         self.env.cr.commit()
         try:
-            with self._posting_scope(operation):
-                result = callback()
+            result = callback()
         except Exception as error:
             partial = {}
             if failure_snapshot:
@@ -388,7 +370,7 @@ class BranchApi(models.AbstractModel):
         header = self._return_header(store, operation, invoice)
         invoice_date = self._assert_invoice_branch(store, invoice, require_saved=True)
         header._validate_invoice_return_window(sth_id=int(invoice), sec_insert_date=invoice_date)
-        header.action_load_lines()
+        header._backend_prepare()
         self._apply_return_lines(header, lines)
         header.notes = str(notes)
         header._validate_return()
@@ -397,7 +379,7 @@ class BranchApi(models.AbstractModel):
         def post():
             actor_token = _return_employee.set(employee.id if employee else None)
             try:
-                posted = header.action_push_to_eplus_return()
+                posted = header._backend_submit()
                 if (not posted or header.status != 'saved'
                         or not header.sales_return_id or not header.f_transaction_id):
                     raise UserError(header.push_message or _(
