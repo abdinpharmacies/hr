@@ -30,6 +30,8 @@ if (PosAction) {
                     Object.assign(payload.header, {
                         server_header_id: !this.billEditable(bill) ? (bill.odoo_header_id || false) : false,
                         store_id: bill.header.store_id || false,
+                        customer_id: bill.header.customer_mode === "new" ? false : bill.header.customer_id || false,
+                        customer_mode: bill.header.customer_mode,
                         contract_id: bill.header.contract_id || false,
                         contract_name: bill.header.contract_name || "",
                         total_after_discount: this.totalAfterDiscount(bill),
@@ -231,7 +233,8 @@ if (PosAction) {
                 return;
             }
             const lines = this._contractPayloadLines(bill);
-            const input = JSON.stringify([contractId, bill.header.store_id, lines,
+            const customerId = bill.header.customer_mode === "new" ? false : bill.header.customer_id || false;
+            const input = JSON.stringify([contractId, bill.header.store_id, customerId, lines,
                 bill.header.total_invoice_discount, bill.promo?.selected_id, bill.promo?.manual_clear]);
             const requestId = ++this._contractTotalsRequestId;
             if (bill.promo) {
@@ -240,6 +243,7 @@ if (PosAction) {
             try {
                 const result = await this.orm.call("ab_sales_pos_api", "pos_contract_totals", [], {
                     contract_id: contractId,
+                    customer_id: customerId,
                     lines,
                     total_invoice_discount: bill.header.total_invoice_discount || 0,
                     store_id: bill.header.store_id || false,
@@ -248,6 +252,7 @@ if (PosAction) {
                 });
                 if (requestId !== this._contractTotalsRequestId || !this.billEditable(bill)
                     || input !== JSON.stringify([bill.header.contract_id, bill.header.store_id,
+                        bill.header.customer_mode === "new" ? false : bill.header.customer_id || false,
                         this._contractPayloadLines(bill), bill.header.total_invoice_discount,
                         bill.promo?.selected_id, bill.promo?.manual_clear])) {
                     return;
