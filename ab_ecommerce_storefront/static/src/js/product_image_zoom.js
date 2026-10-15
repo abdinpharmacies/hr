@@ -24,6 +24,7 @@ const ZOOM_SCALE = 2;
 const MOVE_EASE = 0.12;
 const HERO_VIEWPORT_PADDING = 48;
 const HERO_PAN_EASE = 0.16;
+const HERO_CLOSE_DURATION = 220;
 const CART_FLY_DURATION = 760;
 const SCROLL_TOP_SHOW_OFFSET = 520;
 const MOBILE_SEARCH_BREAKPOINT = 992;
@@ -83,6 +84,8 @@ export class AbStorefrontProductImageZoom extends Interaction {
         this.heroSource = null;
         this.heroZoomed = false;
         this.heroPanFrame = null;
+        this.heroCloseAnimation = null;
+        this.heroCloseTimer = null;
         this.currentHeroPan = null;
         this.targetHeroPan = null;
         this.heroDragging = false;
@@ -379,10 +382,12 @@ export class AbStorefrontProductImageZoom extends Interaction {
 
         this.setHeroImageRect(startRect);
         image.classList.add("ab-storefront-image-hero-source-hidden");
+        const overlay = this.heroOverlay;
         requestAnimationFrame(() => {
-            this.heroOverlay?.classList.remove("is-closing");
-            this.heroOverlay?.classList.add("is-visible");
-            this.setHeroImageRect(targetRect);
+            if (this.heroOverlay === overlay && !overlay.classList.contains("is-closing")) {
+                overlay.classList.add("is-visible");
+                this.setHeroImageRect(targetRect);
+            }
         });
         this.preloadHeroImage(image);
     }
@@ -392,6 +397,9 @@ export class AbStorefrontProductImageZoom extends Interaction {
             return;
         }
         const overlay = this.heroOverlay;
+        if (overlay.classList.contains("is-closing") && !options.immediate) {
+            return;
+        }
         const source = this.heroSource;
         let removed = false;
         const removeHero = () => {
@@ -399,6 +407,10 @@ export class AbStorefrontProductImageZoom extends Interaction {
                 return;
             }
             removed = true;
+            clearTimeout(this.heroCloseTimer);
+            this.heroCloseTimer = null;
+            this.heroCloseAnimation?.cancel();
+            this.heroCloseAnimation = null;
             if (this.heroPanFrame) {
                 cancelAnimationFrame(this.heroPanFrame);
                 this.heroPanFrame = null;
@@ -420,19 +432,42 @@ export class AbStorefrontProductImageZoom extends Interaction {
             }
             document.body.classList.remove("ab-storefront-image-hero-open");
         };
-        if (options.immediate) {
+        if (options.immediate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
             removeHero();
             return;
         }
 
-        this.resetHeroZoom();
-        const sourceRect = this.heroSource?.getBoundingClientRect();
-        if (sourceRect?.width && sourceRect?.height) {
-            this.setHeroImageRect(sourceRect);
+        const image = this.heroImage;
+        const currentRect = image.getBoundingClientRect();
+        const sourceRect = source?.getBoundingClientRect();
+        if (this.heroPanFrame) {
+            cancelAnimationFrame(this.heroPanFrame);
+            this.heroPanFrame = null;
         }
+        this.heroZoomed = false;
+        this.heroDragging = false;
+        image.style.transition = "none";
+        image.style.transform = "none";
+        image.style.transformOrigin = "top left";
+        this.setHeroImageRect(currentRect);
+        overlay.style.setProperty("--ab-hero-close-duration", `${HERO_CLOSE_DURATION}ms`);
         overlay.classList.add("is-closing");
-        requestAnimationFrame(() => overlay.classList.remove("is-visible"));
-        setTimeout(removeHero, 980);
+        if (sourceRect?.width && sourceRect?.height && currentRect.width && currentRect.height) {
+            const x = sourceRect.left - currentRect.left;
+            const y = sourceRect.top - currentRect.top;
+            const scaleX = sourceRect.width / currentRect.width;
+            const scaleY = sourceRect.height / currentRect.height;
+            this.heroCloseAnimation = image.animate([
+                { transform: "translate3d(0, 0, 0) scale(1, 1)" },
+                { transform: `translate3d(${x}px, ${y}px, 0) scale(${scaleX}, ${scaleY})` },
+            ], {
+                duration: HERO_CLOSE_DURATION,
+                easing: "cubic-bezier(.4, 0, .2, 1)",
+                fill: "forwards",
+            });
+            this.heroCloseAnimation.finished.then(removeHero, () => {});
+        }
+        this.heroCloseTimer = setTimeout(removeHero, HERO_CLOSE_DURATION + 40);
     }
 
     preloadHeroImage(source) {
@@ -442,7 +477,7 @@ export class AbStorefrontProductImageZoom extends Interaction {
         }
         const preload = new Image();
         preload.addEventListener("load", () => {
-            if (this.heroImage && this.heroSource === source) {
+            if (this.heroImage && this.heroSource === source && !this.heroOverlay.classList.contains("is-closing")) {
                 this.heroImage.src = heroSrc;
             }
         }, { once: true });

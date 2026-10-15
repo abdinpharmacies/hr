@@ -8539,6 +8539,8 @@ html[dir="rtl"] {
 
 .ab-storefront-image-hero.is-closing {
     pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--ab-hero-close-duration, 220ms) ease-out;
 }
 
 .ab-storefront-image-hero-source-hidden {
