@@ -316,6 +316,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
             percent.textContent = `${nextValue}%${suffix ? ` ${suffix.trim()}` : ""}`;
         }
         completion.classList.toggle("is-complete", nextValue === 100);
+        completion.dispatchEvent(new Event("ab:profile-completion-changed"));
     }
 
     updateGlobalAvatars(avatar, customSrc = null) {

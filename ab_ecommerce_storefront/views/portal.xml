@@ -523,9 +523,11 @@
                                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
                                 </a>
                             </div>
-                            <div t-att-class="'ab-account-completion is-complete' if profile_completion == 100 else 'ab-account-completion'"
+                            <div t-if="not profile_completion_seen"
+                                 class="ab-account-completion"
                                  t-att-style="profile_completion_style"
                                  t-att-data-ab-profile-completion="profile_completion"
+                                 t-att-data-ab-completion-csrf="request.csrf_token()"
                                  t-att-data-ab-avatar-complete="'1' if avatar_complete else '0'">
                                 <div class="ab-account-completion-copy">
                                     <strong><t t-out="profile_completion"/>% complete</strong>

@@ -11051,8 +11051,11 @@ html.ab-avatar-picker-open body {
     background: rgba($ab-green-soft, .62);
     overflow: hidden;
 
-    &.is-complete,
-    &[style*="--ab-profile-completion: 100%"] {
+    &[hidden] {
+        display: none;
+    }
+
+    &.is-celebrating {
         transform-origin: center;
         justify-self: stretch;
         max-height: 96px;
@@ -11813,12 +11816,16 @@ html.ab-avatar-picker-open body {
         transition-duration: .01ms !important;
     }
 
-    .ab-account-completion[style*="--ab-profile-completion: 100%"],
-    .ab-account-completion[style*="--ab-profile-completion: 100%"]::before,
-    .ab-account-completion[style*="--ab-profile-completion: 100%"]::after,
-    .ab-account-completion[style*="--ab-profile-completion: 100%"] .ab-account-completion-copy,
-    .ab-account-completion[style*="--ab-profile-completion: 100%"] .ab-account-completion-track {
+    .ab-account-completion.is-celebrating,
+    .ab-account-completion.is-celebrating::before,
+    .ab-account-completion.is-celebrating::after,
+    .ab-account-completion.is-celebrating .ab-account-completion-copy,
+    .ab-account-completion.is-celebrating .ab-account-completion-track {
         animation: none !important;
+    }
+
+    .ab-account-completion-track span {
+        transition: none !important;
     }
 }
 

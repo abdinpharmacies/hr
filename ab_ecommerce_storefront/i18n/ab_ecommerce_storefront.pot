@@ -11030,3 +11030,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "Need help with your order?"
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_profile_completion_seen
+msgid "Profile Completion Celebration Seen"
+msgstr ""

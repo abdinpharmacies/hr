@@ -100,6 +100,16 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
         values.update(self._prepare_home_portal_values([]))
         return request.render("portal.portal_my_home", values)
 
+    @route(
+        "/ab_storefront/profile/completion/claim", type="http", auth="user",
+        website=True, methods=["POST"], csrf=True, sitemap=False,
+    )
+    def ab_storefront_claim_profile_completion(self, **post):
+        result = request.env["res.users"]._ab_claim_profile_completion_celebration()
+        response = request.make_json_response(result)
+        response.headers["Cache-Control"] = "private, no-store"
+        return response
+
     @route("/track-order", type="http", auth="public", website=True, methods=["GET", "POST"], sitemap=True)
     def ab_storefront_track_order(self, **post):
         values = {
@@ -136,12 +146,7 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
         account_avatar = partner.ab_storefront_avatar or "avatar_none"
         avatar_complete = partner.ab_storefront_avatar_completed or account_avatar != "avatar_none"
         has_address = bool(partner.street or partner.city or partner.country_id)
-        profile_completion = (
-            (25 if partner.name else 0)
-            + (25 if account_phone else 0)
-            + (25 if avatar_complete else 0)
-            + (25 if has_address else 0)
-        )
+        profile_completion = user._ab_storefront_profile_completion()
 
         recent_orders = request.env["sale.order"]
         try:
@@ -185,6 +190,7 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
             "avatar_complete": avatar_complete,
             "has_address": has_address,
             "profile_completion": profile_completion,
+            "profile_completion_seen": user.sudo().ab_storefront_profile_completion_seen,
             "profile_completion_style": f"--ab-profile-completion: {profile_completion}%",
             "recent_orders": recent_orders,
             "recent_prescriptions": recent_prescriptions,

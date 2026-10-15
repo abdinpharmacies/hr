@@ -92,6 +92,7 @@
             "ab_ecommerce_storefront/static/src/js/stock_warning.js",
             "ab_ecommerce_storefront/static/src/js/wishlist_removal.js",
             "ab_ecommerce_storefront/static/src/js/portal_orders.js",
+            "ab_ecommerce_storefront/static/src/js/profile_completion.js",
             "ab_ecommerce_storefront/static/src/js/order_delivered.js",
             "ab_ecommerce_storefront/static/src/js/product_card.js",
             "ab_ecommerce_storefront/static/src/js/browsing_history.js",

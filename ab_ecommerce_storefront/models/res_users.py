@@ -29,6 +29,42 @@ def is_valid_egyptian_mobile(value):
 class ResUsers(models.Model):
     _inherit = "res.users"
 
+    ab_storefront_profile_completion_seen = fields.Boolean(
+        string="Profile Completion Celebration Seen",
+        default=False,
+        copy=False,
+        readonly=True,
+        groups="base.group_system",
+    )
+
+    def _ab_storefront_profile_completion(self):
+        self.ensure_one()
+        partner = self.partner_id
+        mobile = partner.mobile if "mobile" in partner._fields else False
+        return 25 * sum((
+            bool(partner.name),
+            bool(partner.phone or mobile or self.login),
+            bool(partner.ab_storefront_avatar_completed or (partner.ab_storefront_avatar or "avatar_none") != "avatar_none"),
+            bool(partner.street or partner.city or partner.country_id),
+        ))
+
+    @api.model
+    def _ab_claim_profile_completion_celebration(self):
+        user = self.env.user
+        result = {"celebrate": False, "seen": False}
+        if user._is_public():
+            return result
+        user_sudo = user.sudo().try_lock_for_update(allow_referencing=True)
+        if not user_sudo:
+            return result
+        user_sudo.invalidate_recordset(["ab_storefront_profile_completion_seen"])
+        if user_sudo.ab_storefront_profile_completion_seen:
+            return {"celebrate": False, "seen": True}
+        if user._ab_storefront_profile_completion() != 100:
+            return result
+        user_sudo.write({"ab_storefront_profile_completion_seen": True})
+        return {"celebrate": True, "seen": True}
+
     @api.model
     def _get_login_domain(self, login):
         domain = super()._get_login_domain(login)
