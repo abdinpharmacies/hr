@@ -57,4 +57,145 @@
             </div>
         </t>
     </template>
+
+    <template id="product_policy_links" name="Abdin Product Policy Links">
+        <div class="ab-product-policy-links d-flex flex-wrap gap-3 mt-3">
+            <a href="/terms-and-conditions">Terms and Conditions</a>
+            <a href="/return-policy">Returns and refunds</a>
+        </div>
+    </template>
+    <template id="terms_conditions_page" name="Abdin Terms and Conditions">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Terms and Conditions | Abdin Pharmacies</t>
+            <t t-set="website_meta_description">Draft terms for shopping with Abdin Pharmacies in Egypt, including orders, payment, delivery and consumer rights.</t>
+            <div id="wrap" class="ab-legal-page ab-terms-page">
+                <section class="ab-legal-hero">
+                    <div class="container">
+                        <nav class="ab-legal-breadcrumb" aria-label="Breadcrumb">
+                            <a href="/">Home</a>
+                            <i class="fa fa-angle-right" aria-hidden="true"/>
+                            <span aria-current="page">Terms and Conditions</span>
+                        </nav>
+                        <div class="ab-legal-hero-content">
+                            <span class="ab-storefront-kicker">Shopping with Abdin</span>
+                            <h1>Terms and Conditions</h1>
+                            <p>A clear guide to your order, our service and your rights.</p>
+                        </div>
+                    </div>
+                </section>
+                <div class="ab-legal-content">
+                    <div class="container">
+                        <aside class="ab-terms-sidebar">
+                            <nav class="ab-terms-index" aria-labelledby="ab-terms-index-title">
+                                <h2 id="ab-terms-index-title">On this page</h2>
+                                <ol>
+                                    <li>
+                                        <a href="#ab-terms-scope">About these terms</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-account">Your account and information</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-orders">Orders and availability</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-payment">Prices, payment and offers</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-pharmacy">Pharmacy products</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-delivery">Delivery and receiving your order</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-returns">Cancellation, returns and refunds</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-privacy">Privacy and communications</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-rights">Your rights and resolving concerns</a>
+                                    </li>
+                                    <li>
+                                        <a href="#ab-terms-updates">Updates to these terms</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                            <div class="ab-terms-help">
+                                <i class="fa fa-headphones" aria-hidden="true"/>
+                                <h2>Need help with your order?</h2>
+                                <a href="tel:19036">
+                                    <bdi>19036</bdi>
+                                </a>
+                                <a href="/contactus">Contact customer service</a>
+                            </div>
+                        </aside>
+                        <article class="ab-legal-card ab-terms-document" aria-label="Terms and conditions draft">
+                            <section id="ab-terms-scope" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">01</span>About these terms</h2>
+                                <p>These draft terms describe the proposed use of the Abdin Pharmacies online store and purchases delivered in Egypt. They are awaiting brand and legal review and are not the final approved policy.</p>
+                                <p>The seller responsible for your purchase must be identified in your order documents and invoice. Keep a copy of your order confirmation, invoice and the terms provided when you place your order.</p>
+                            </section>
+                            <section id="ab-terms-account" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">02</span>Your account and information</h2>
+                                <p>Provide accurate contact and delivery details, and use a payment method you are authorised to use. Keep your account credentials private and contact us if you suspect unauthorised access.</p>
+                                <p>Use the store lawfully. Do not submit false orders, misuse promotions, interfere with the service or attempt to access another customer’s information.</p>
+                            </section>
+                            <section id="ab-terms-orders" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">03</span>Orders and availability</h2>
+                                <p>Submitting an order starts a request to purchase. An automatic receipt message does not by itself confirm stock availability or acceptance. We will communicate acceptance or any issue using the contact details you provide.</p>
+                                <p>If an item is unavailable, we will contact you about the available options. A different product, strength, pack size or price requires your agreement before fulfilment. Amounts paid for cancelled items must be refunded in accordance with applicable rights.</p>
+                            </section>
+                            <section id="ab-terms-payment" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">04</span>Prices, payment and offers</h2>
+                                <p>Review the total in Egyptian pounds, including any applicable taxes and delivery charges, before confirming your order. Available payment methods and offer conditions are shown during checkout or with the relevant offer.</p>
+                                <p>If a pricing or product-information error affects your order, we will explain it and seek your agreement to any correction. We will not impose a higher price without your agreement. This does not limit your statutory rights.</p>
+                            </section>
+                            <section id="ab-terms-pharmacy" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">05</span>Pharmacy products</h2>
+                                <p>Orders for pharmacy products remain subject to applicable Egyptian requirements and pharmacist verification where required. A prescription or further information may be requested before an order can be fulfilled.</p>
+                                <p>Product pages provide general information and do not replace advice from a qualified healthcare professional. Follow the product leaflet and professional instructions. Do not use this store to request emergency care.</p>
+                            </section>
+                            <section id="ab-terms-delivery" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">06</span>Delivery and receiving your order</h2>
+                                <p>Delivery coverage, charges and the expected delivery time should be confirmed for your address before purchase. Timing may vary by location and product availability; we will notify you of material delays.</p>
+                                <p>Check the items and packaging when you receive them, where possible. Report missing, incorrect or damaged items with your order reference. A delivery signature does not remove your rights concerning defects discovered later.</p>
+                            </section>
+                            <section id="ab-terms-returns" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">07</span>Cancellation, returns and refunds</h2>
+                                <p>Contact customer service promptly if you wish to cancel or change an order. The available steps depend on whether the order has been prepared or dispatched, without prejudice to your legal rights.</p>
+                                <p>Egyptian consumer guidance distinguishes returns without a reason within 14 days of receipt, subject to legal exceptions, from remedies for defective goods within 30 days of receipt. Product type, condition and applicable law determine the relevant rights; this is not an unconditional return promise for all medicines or personal-care products.</p>
+                                <p>See the separate return policy for the request process. Any policy condition or processing estimate remains subject to mandatory consumer rights and applicable refund deadlines.</p>
+                                <a class="ab-terms-inline-link" href="/return-policy">Read the return policy</a>
+                            </section>
+                            <section id="ab-terms-privacy" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">08</span>Privacy and communications</h2>
+                                <p>Personal information used to manage orders and customer service must be handled in accordance with applicable data-protection requirements. Provide only the information needed for your request; avoid sending medical details through public reviews or comments.</p>
+                                <p>Order updates and service messages are separate from promotional communications. Marketing preferences must be respected, and customers should be able to request help with their personal information through customer service.</p>
+                            </section>
+                            <section id="ab-terms-rights" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">09</span>Your rights and resolving concerns</h2>
+                                <p>These terms are intended for transactions in Egypt and are subject to applicable Egyptian law. Nothing in them excludes mandatory consumer rights or liability that cannot lawfully be excluded.</p>
+                                <p>Contact us with your order reference and a clear description of the issue so we can investigate. You retain the right to contact the Egyptian Consumer Protection Agency or the competent authorities and courts.</p>
+                            </section>
+                            <section id="ab-terms-updates" tabindex="-1">
+                                <h2>
+                                    <span class="ab-terms-number" aria-hidden="true">10</span>Updates to these terms</h2>
+                                <p>The approved version should display its effective date. Later changes should not retrospectively reduce rights attached to an existing order. Material changes should be communicated clearly before new purchases.</p>
+                            </section>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
 </odoo>

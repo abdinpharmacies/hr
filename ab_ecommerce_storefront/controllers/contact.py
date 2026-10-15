@@ -9,6 +9,12 @@ from odoo.tools import email_normalize
 
 
 class AbBusinessPages(http.Controller):
+    @http.route("/terms-and-conditions", type="http", auth="public", website=True, sitemap=False)
+    def terms_and_conditions(self, **kwargs):
+        response = request.render("ab_ecommerce_storefront.terms_conditions_page")
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+        return response
+
     @http.route("/about-us", type="http", auth="public", website=True, sitemap=True)
     def about_us(self, **kwargs):
         return request.render("ab_ecommerce_storefront.about_us_page")

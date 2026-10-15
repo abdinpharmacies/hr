@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="product" name="Abdin eCommerce Product" inherit_id="website_sale.product" priority="90">
+        <xpath expr="//t[@t-call='website_sale.product_terms_and_conditions']" position="attributes">
+            <attribute name="t-call">ab_ecommerce_storefront.product_policy_links</attribute>
+        </xpath>
         <xpath expr="//div[@id='wrap']" position="attributes">
             <attribute name="class" add="ab-storefront-product-page" separator=" "/>
         </xpath>

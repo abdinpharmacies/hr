@@ -303,3 +303,77 @@ body.ab-storefront .ab-legal-page {
 }
 
 html[dir=rtl] .ab-legal-breadcrumb .fa-angle-right { transform: rotate(180deg); }
+
+body.ab-storefront .ab-terms-page {
+    .ab-legal-hero { background: var(--ab-surface, #fff); }
+    .ab-legal-breadcrumb { flex-wrap: wrap; }
+    .ab-legal-hero-content { max-width: 780px; }
+    p { color: var(--ab-ink); font-size: 1rem; line-height: 1.9; }
+
+    .ab-terms-sidebar { display: grid; gap: 20px; min-width: 0; }
+
+    .ab-terms-index,
+    .ab-terms-help {
+        padding: 24px;
+        border: 1px solid var(--ab-border);
+        border-radius: 16px;
+        background: #fff;
+
+        h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 16px; }
+        a { color: var(--ab-ink); text-underline-offset: 4px; }
+        a:hover { color: var(--ab-primary); text-decoration: underline; }
+    }
+
+    .ab-terms-index {
+        ol { margin: 0; padding-inline-start: 22px; }
+        li { padding-inline-start: 4px; }
+        li::marker { color: var(--ab-primary); font-weight: 700; }
+        a { display: block; padding: 10px 0; min-height: 44px; line-height: 1.5; text-decoration: none; }
+    }
+
+    .ab-terms-help {
+        background: #edf7f2;
+        > i { color: var(--ab-primary); font-size: 1.5rem; margin-bottom: 14px; }
+        a { display: block; padding: 10px 0; min-height: 44px; }
+        a[href^="tel:"] { font-size: 1.65rem; font-weight: 800; text-decoration: none; }
+    }
+
+    .ab-terms-document {
+        min-width: 0;
+        border-radius: 16px;
+        box-shadow: none;
+        overflow-wrap: anywhere;
+
+        section { scroll-margin-top: 220px; }
+        section + section { padding-top: 30px; margin-top: 30px; border-top: 1px solid var(--ab-border); }
+        section:focus { outline: 2px solid var(--ab-primary); outline-offset: 8px; }
+        h2 { display: flex; align-items: baseline; gap: 12px; font-size: clamp(1.2rem, 2vw, 1.45rem); line-height: 1.5; }
+        p:last-child { margin-bottom: 0; }
+        .ab-terms-number { flex-shrink: 0; font-size: .9rem; color: var(--ab-primary); font-variant-numeric: tabular-nums; }
+        .ab-terms-inline-link { display: inline-block; min-height: 44px; padding: 10px 0; color: var(--ab-primary); text-underline-offset: 4px; }
+    }
+
+    @media (max-width: 991.98px) {
+        .ab-terms-index ol { columns: 2; column-gap: 32px; }
+        .ab-terms-index li { break-inside: avoid; }
+    }
+
+    @media (max-width: 575.98px) {
+        .ab-terms-index ol { columns: 1; }
+        .ab-terms-index,
+        .ab-terms-help { padding: 20px; }
+        .ab-terms-document { padding: 22px 18px; }
+        .ab-terms-document section { scroll-margin-top: 160px; }
+    }
+}
+
+body.ab-storefront .ab-storefront-product-page .ab-product-policy-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ab-ink);
+    text-underline-offset: 4px;
+
+    &:hover { color: var(--ab-primary); }
+    &:focus-visible { outline: 3px solid var(--ab-primary); outline-offset: 3px; }
+}

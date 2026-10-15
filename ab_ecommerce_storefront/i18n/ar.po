@@ -633,6 +633,7 @@ msgstr "عرض الكل"
 msgid "Save on your favorites"
 msgstr "وفّر على منتجاتك المفضلة"
 
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_offers
 #. module: ab_ecommerce_storefront
 #. odoo-python
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
@@ -2802,14 +2803,15 @@ msgstr "تم الشحن"
 msgid "<span>Order</span>"
 msgstr "<span>الطلب</span>"
 
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #. module: ab_ecommerce_storefront
 #. odoo-python
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "Home"
 msgstr "الرئيسية"
 
@@ -3146,6 +3148,9 @@ msgstr "شروط السداد"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_policy_links
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "Terms and Conditions"
 msgstr "الشروط والأحكام"
 
@@ -7017,12 +7022,13 @@ msgstr ""
 "<i class=\"fa fa-angle-right\" aria-hidden=\"true\" title=\"فاصل مسار الصفحة\"/>\n"
 "                            <span aria-current=\"page\">سجل التصفح</span>"
 
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.branches_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
-#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.browsing_history_page
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.return_policy_page
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "Breadcrumb"
 msgstr "مسار الصفحة"
 
@@ -11820,3 +11826,436 @@ msgstr "محتاج مساعدة بخصوص طلبك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_users__ab_storefront_profile_completion_seen
 msgid "Profile Completion Celebration Seen"
 msgstr "تم عرض الاحتفال باكتمال الملف الشخصي"
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "<bdi>19036</bdi>"
+msgstr "<bdi>19036</bdi>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<i class=\"fa fa-angle-right\" aria-hidden=\"true\"/>\n"
+"                            <span aria-current=\"page\">Terms and Conditions</span>"
+msgstr ""
+"<i class=\"fa fa-angle-right\" aria-hidden=\"true\"/>\n"
+"                            <span aria-current=\"page\">الشروط والأحكام</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "<span class=\"ab-storefront-kicker\">Shopping with Abdin</span>"
+msgstr "<span class=\"ab-storefront-kicker\">التسوق من عابدين</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">01</span>About these "
+"terms"
+msgstr "<span class=\"ab-terms-number\" aria-hidden=\"true\">01</span>عن هذه الشروط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">02</span>Your account "
+"and information"
+msgstr "<span class=\"ab-terms-number\" aria-hidden=\"true\">02</span>حسابك وبياناتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">03</span>Orders and "
+"availability"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">03</span>الطلبات وتوافر"
+" المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">04</span>Prices, "
+"payment and offers"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">04</span>الأسعار والدفع"
+" والعروض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">05</span>Pharmacy "
+"products"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">05</span>المنتجات "
+"الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">06</span>Delivery and "
+"receiving your order"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">06</span>التوصيل "
+"واستلام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">07</span>Cancellation, "
+"returns and refunds"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">07</span>الإلغاء "
+"والاسترجاع واسترداد الأموال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">08</span>Privacy and "
+"communications"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">08</span>الخصوصية "
+"والتواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">09</span>Your rights "
+"and resolving concerns"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">09</span>حقوقك وحل "
+"الشكاوى"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">10</span>Updates to "
+"these terms"
+msgstr ""
+"<span class=\"ab-terms-number\" aria-hidden=\"true\">10</span>تحديث هذه "
+"الشروط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "<strong id=\"ab-terms-draft-title\">Draft for review</strong>"
+msgstr "<strong id=\"ab-terms-draft-title\">مسودة للمراجعة</strong>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "A clear guide to your order, our service and your rights."
+msgstr "دليل واضح لطلبك وخدماتنا وحقوقك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "About these terms"
+msgstr "عن هذه الشروط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Cancellation, returns and refunds"
+msgstr "الإلغاء والاسترجاع واسترداد الأموال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Check the items and packaging when you receive them, where possible. Report "
+"missing, incorrect or damaged items with your order reference. A delivery "
+"signature does not remove your rights concerning defects discovered later."
+msgstr ""
+"تحقق من المنتجات والعبوات عند الاستلام متى أمكن. وأبلغ عن أي منتجات ناقصة أو"
+" غير صحيحة أو تالفة مع ذكر مرجع الطلب. ولا يسقط توقيع الاستلام حقوقك بشأن "
+"العيوب التي تظهر لاحقًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Contact customer service"
+msgstr "تواصل مع خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Contact customer service promptly if you wish to cancel or change an order. "
+"The available steps depend on whether the order has been prepared or "
+"dispatched, without prejudice to your legal rights."
+msgstr ""
+"تواصل مع خدمة العملاء في أقرب وقت إذا رغبت في إلغاء الطلب أو تعديله. وتعتمد "
+"الإجراءات المتاحة على ما إذا كان الطلب قد جُهز أو شُحن، دون الإخلال بحقوقك "
+"القانونية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Contact us with your order reference and a clear description of the issue so"
+" we can investigate. You retain the right to contact the Egyptian Consumer "
+"Protection Agency or the competent authorities and courts."
+msgstr ""
+"تواصل معنا مع ذكر مرجع الطلب ووصف واضح للمشكلة حتى نتمكن من بحثها. ويظل لك "
+"الحق في اللجوء إلى جهاز حماية المستهلك المصري أو الجهات والمحاكم المختصة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Delivery and receiving your order"
+msgstr "التوصيل واستلام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Delivery coverage, charges and the expected delivery time should be "
+"confirmed for your address before purchase. Timing may vary by location and "
+"product availability; we will notify you of material delays."
+msgstr ""
+"ينبغي تأكيد نطاق التوصيل ورسومه والموعد المتوقع لعنوانك قبل الشراء. وقد "
+"يختلف الموعد بحسب المنطقة وتوافر المنتجات؛ وسنبلغك بأي تأخير مؤثر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Draft terms for shopping with Abdin Pharmacies in Egypt, including orders, "
+"payment, delivery and consumer rights."
+msgstr ""
+"مسودة شروط التسوق من صيدليات عابدين في مصر، بما يشمل الطلبات والدفع والتوصيل"
+" وحقوق المستهلك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Egyptian consumer guidance distinguishes returns without a reason within 14 "
+"days of receipt, subject to legal exceptions, from remedies for defective "
+"goods within 30 days of receipt. Product type, condition and applicable law "
+"determine the relevant rights; this is not an unconditional return promise "
+"for all medicines or personal-care products."
+msgstr ""
+"تميز إرشادات حماية المستهلك المصرية بين الاسترجاع دون سبب خلال 14 يومًا من "
+"الاستلام، مع مراعاة الاستثناءات القانونية، والحقوق المتعلقة بالسلع المعيبة "
+"خلال 30 يومًا من الاستلام. ويتحدد الحق المطبق بحسب نوع المنتج وحالته "
+"والقانون المعمول به؛ ولا يُعد ذلك وعدًا غير مشروط بإرجاع جميع الأدوية أو "
+"منتجات العناية الشخصية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If a pricing or product-information error affects your order, we will "
+"explain it and seek your agreement to any correction. We will not impose a "
+"higher price without your agreement. This does not limit your statutory "
+"rights."
+msgstr ""
+"إذا أثر خطأ في السعر أو بيانات المنتج على طلبك، فسنوضحه ونطلب موافقتك على أي"
+" تصحيح. ولن نفرض سعرًا أعلى دون موافقتك. ولا يحد ذلك من حقوقك المقررة "
+"قانونًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"If an item is unavailable, we will contact you about the available options. "
+"A different product, strength, pack size or price requires your agreement "
+"before fulfilment. Amounts paid for cancelled items must be refunded in "
+"accordance with applicable rights."
+msgstr ""
+"إذا لم يتوافر منتج، سنتواصل معك بشأن الخيارات المتاحة. ويتطلب تغيير المنتج "
+"أو التركيز أو حجم العبوة أو السعر موافقتك قبل التنفيذ. ويجب رد المبالغ "
+"المدفوعة عن المنتجات الملغاة وفقًا للحقوق المقررة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "On this page"
+msgstr "في هذه الصفحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Order updates and service messages are separate from promotional "
+"communications. Marketing preferences must be respected, and customers "
+"should be able to request help with their personal information through "
+"customer service."
+msgstr ""
+"تختلف تحديثات الطلب ورسائل الخدمة عن الرسائل الترويجية. ويجب احترام تفضيلات "
+"التسويق، وإتاحة طلب المساعدة بشأن البيانات الشخصية عبر خدمة العملاء."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Orders and availability"
+msgstr "الطلبات وتوافر المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Orders for pharmacy products remain subject to applicable Egyptian "
+"requirements and pharmacist verification where required. A prescription or "
+"further information may be requested before an order can be fulfilled."
+msgstr ""
+"تخضع طلبات المنتجات الصيدلية للمتطلبات المصرية المعمول بها ولمراجعة الصيدلي "
+"حيثما يلزم. وقد تُطلب وصفة طبية أو معلومات إضافية قبل تنفيذ الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Pending brand and legal approval. This draft is not yet effective."
+msgstr ""
+"بانتظار اعتماد إدارة العلامة التجارية والمراجعة القانونية. هذه المسودة غير "
+"سارية بعد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Personal information used to manage orders and customer service must be "
+"handled in accordance with applicable data-protection requirements. Provide "
+"only the information needed for your request; avoid sending medical details "
+"through public reviews or comments."
+msgstr ""
+"يجب التعامل مع البيانات الشخصية المستخدمة لإدارة الطلبات وخدمة العملاء وفقًا"
+" لمتطلبات حماية البيانات المعمول بها. قدم فقط البيانات اللازمة لطلبك، وتجنب "
+"إرسال معلومات طبية عبر التقييمات أو التعليقات العامة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Pharmacy products"
+msgstr "المنتجات الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Prices, payment and offers"
+msgstr "الأسعار والدفع والعروض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Privacy and communications"
+msgstr "الخصوصية والتواصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Product pages provide general information and do not replace advice from a "
+"qualified healthcare professional. Follow the product leaflet and "
+"professional instructions. Do not use this store to request emergency care."
+msgstr ""
+"تقدم صفحات المنتجات معلومات عامة ولا تغني عن استشارة متخصص رعاية صحية مؤهل. "
+"اتبع نشرة المنتج وتعليمات المتخصص. ولا تستخدم المتجر لطلب الرعاية الطارئة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Provide accurate contact and delivery details, and use a payment method you "
+"are authorised to use. Keep your account credentials private and contact us "
+"if you suspect unauthorised access."
+msgstr ""
+"قدم بيانات اتصال وتوصيل صحيحة، واستخدم وسيلة دفع مصرحًا لك باستخدامها. حافظ "
+"على سرية بيانات الدخول إلى حسابك وتواصل معنا إذا اشتبهت في استخدامه دون "
+"إذنك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Read the return policy"
+msgstr "اقرأ سياسة الاسترجاع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_policy_links
+msgid "Returns and refunds"
+msgstr "الاسترجاع واسترداد الأموال"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Review the total in Egyptian pounds, including any applicable taxes and "
+"delivery charges, before confirming your order. Available payment methods "
+"and offer conditions are shown during checkout or with the relevant offer."
+msgstr ""
+"راجع الإجمالي بالجنيه المصري، بما يشمل الضرائب ورسوم التوصيل المطبقة، قبل "
+"تأكيد طلبك. تظهر وسائل الدفع المتاحة وشروط العروض أثناء إتمام الشراء أو ضمن "
+"العرض المعني."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"See the separate return policy for the request process. Any policy condition"
+" or processing estimate remains subject to mandatory consumer rights and "
+"applicable refund deadlines."
+msgstr ""
+"راجع سياسة الاسترجاع المنفصلة لمعرفة إجراءات الطلب. وتظل أي شروط للسياسة أو "
+"مدد تقديرية للمعالجة خاضعة لحقوق المستهلك الإلزامية والمواعيد القانونية "
+"لاسترداد الأموال."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Submitting an order starts a request to purchase. An automatic receipt "
+"message does not by itself confirm stock availability or acceptance. We will"
+" communicate acceptance or any issue using the contact details you provide."
+msgstr ""
+"إرسال الطلب يبدأ طلب شراء. ولا تعني رسالة الاستلام الآلية وحدها تأكيد توافر "
+"المنتجات أو قبول الطلب. سنبلغك بالقبول أو بأي مشكلة عبر بيانات الاتصال التي "
+"تقدمها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Terms and Conditions | Abdin Pharmacies"
+msgstr "الشروط والأحكام | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Terms and conditions draft"
+msgstr "مسودة الشروط والأحكام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The approved version should display its effective date. Later changes should"
+" not retrospectively reduce rights attached to an existing order. Material "
+"changes should be communicated clearly before new purchases."
+msgstr ""
+"ينبغي أن تتضمن النسخة المعتمدة تاريخ سريانها. ولا ينبغي أن تنتقص التغييرات "
+"اللاحقة بأثر رجعي من الحقوق المرتبطة بطلب قائم. ويجب توضيح التغييرات "
+"الجوهرية قبل عمليات الشراء الجديدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"The seller responsible for your purchase must be identified in your order "
+"documents and invoice. Keep a copy of your order confirmation, invoice and "
+"the terms provided when you place your order."
+msgstr ""
+"يجب تحديد البائع المسؤول عن عملية الشراء في مستندات الطلب والفاتورة. احتفظ "
+"بنسخة من تأكيد الطلب والفاتورة والشروط المقدمة عند إجراء الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These draft terms describe the proposed use of the Abdin Pharmacies online "
+"store and purchases delivered in Egypt. They are awaiting brand and legal "
+"review and are not the final approved policy."
+msgstr ""
+"توضح هذه المسودة الشروط المقترحة لاستخدام متجر صيدليات عابدين الإلكتروني "
+"والمشتريات التي يتم توصيلها داخل مصر. وهي قيد مراجعة إدارة العلامة التجارية "
+"والمراجعة القانونية، وليست السياسة النهائية المعتمدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"These terms are intended for transactions in Egypt and are subject to "
+"applicable Egyptian law. Nothing in them excludes mandatory consumer rights "
+"or liability that cannot lawfully be excluded."
+msgstr ""
+"تخص هذه الشروط المعاملات داخل مصر وتخضع للقانون المصري المعمول به. ولا "
+"يستبعد أي بند فيها حقوق المستهلك الإلزامية أو المسؤولية التي لا يجوز قانونًا"
+" استبعادها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Updates to these terms"
+msgstr "تحديث هذه الشروط"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid ""
+"Use the store lawfully. Do not submit false orders, misuse promotions, "
+"interfere with the service or attempt to access another customer’s "
+"information."
+msgstr ""
+"استخدم المتجر بصورة مشروعة. لا تقدم طلبات وهمية، ولا تسئ استخدام العروض، ولا"
+" تعطل الخدمة، ولا تحاول الوصول إلى بيانات عميل آخر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Your account and information"
+msgstr "حسابك وبياناتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Your rights and resolving concerns"
+msgstr "حقوقك وحل الشكاوى"
