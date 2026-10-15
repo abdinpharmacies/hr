@@ -24,10 +24,11 @@ class ApiSaleValidation(models.Model):
         if any(not serial for serial in serials):
             raise UserError(_('Line with missing product E-Plus serial.'))
         balances = {}
-        provider = self.env['ab_branch_api']
+        self.env['ab_branch_api']._business_permissions('sale')
+        inventory = self.env['ab_sales_inventory']
         try:
             for offset in range(0, len(serials), 200):
-                rows = provider._balance_rows(self.store_id, serials[offset:offset + 200])
+                rows = inventory._backend_inventory_snapshot(self.store_id, serials[offset:offset + 200])
                 for row in rows:
                     serial = row['product_eplus_serial']
                     balance = float(row['balance'])

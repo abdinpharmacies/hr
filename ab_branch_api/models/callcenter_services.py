@@ -1,12 +1,10 @@
 """Authenticated services for clients which never connect to SQL Server."""
-from datetime import datetime, time, timedelta
-import math
+from datetime import timedelta
 from uuid import uuid4
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
-from odoo.addons.ab_sales.models.ab_sales_per_day import SALES_PER_DAY_SQL
-from .routing import api_request, request_store, selected_server, STORE_UNSET
+from .routing import api_request, request_store, STORE_UNSET
 
 
 class BranchSnapshot(models.TransientModel):
@@ -61,34 +59,9 @@ class CallcenterServices(models.AbstractModel):
 
     def _balance_rows(self, store, serials=None):
         self._business_permissions('sale')
-        params = [int(store.eplus_serial)]
-        restriction = ''
-        if serials is not None:
-            serials = sorted({int(s) for s in serials if int(s) > 0})
-            if len(serials) > 200:
-                raise UserError(_('At most 200 products may be requested.'))
-            if not serials:
-                return []
-            restriction = ' AND ic.itm_id IN (%s)' % ','.join('?' for s in serials)
-            params.extend(serials)
-        with self.connect_eplus(server=selected_server(self, store), param_str='?', autocommit=False) as conn:
-            with conn.cursor() as cur:
-                # One committed statement; inactive/missing items do not masquerade as zero stock.
-                cur.execute('''SELECT ic.itm_id, ic.itm_def_sell_price,
-                    COALESCE(SUM(CAST(ics.itm_qty AS decimal(28,8)) / NULLIF(ic.itm_unit1_unit3,0)),0),
-                    ic.itm_unit1_unit3
-                    FROM item_catalog ic
-                    LEFT JOIN Item_Class_Store ics ON ics.itm_id=ic.itm_id AND ics.sto_id=?
-                    WHERE ic.itm_active=1''' + restriction + '''
-                    GROUP BY ic.itm_id,ic.itm_def_sell_price,ic.itm_unit1_unit3 ORDER BY ic.itm_id''', tuple(params))
-                rows = cur.fetchall()
-        result = []
-        for serial, price, qty, factor in rows:
-            if not factor or float(factor) <= 0 or not all(math.isfinite(float(v or 0)) for v in (price, qty, factor)):
-                raise UserError(_('Invalid product unit conversion in E-Plus.'))
-            result.append({'product_eplus_serial': int(serial), 'store_eplus_serial': int(store.eplus_serial),
-                           'balance': max(0.0, float(qty)), 'default_price': float(price or 0)})
-        return result
+        inventory = self.env['ab_sales_inventory']
+        return (inventory._backend_inventory_snapshot(store) if serials is None
+                else inventory._backend_product_balances(store, serials))
 
     @api.model
     @api_request
@@ -118,19 +91,7 @@ class CallcenterServices(models.AbstractModel):
         if not day or day >= fields.Date.today():
             raise UserError(_('Only completed sales days can be requested.'))
         def load():
-            start = datetime.combine(day, time.min)
-            with self.connect_eplus(server=selected_server(self, store), param_str='?', autocommit=False) as conn:
-                with conn.cursor() as cur:
-                    sql = SALES_PER_DAY_SQL.format(store_placeholders='?').replace(' WITH (NOLOCK)', '')
-                    cur.execute(sql, (start, start + timedelta(days=1), int(store.eplus_serial)))
-                    rows = cur.fetchall()
-            result = []
-            for branch, product, qty in rows:
-                if int(branch) != store.eplus_serial or qty is None or not math.isfinite(float(qty)):
-                    raise UserError(_('The branch returned invalid sales data.'))
-                result.append({'store_eplus_serial': int(branch), 'product_eplus_serial': int(product),
-                               'sales_qty': float(qty), 'sale_date': str(day)})
-            return result
+            return self.env['ab_sales_per_day']._backend_sales_day(store, day)
         return self._snapshot_page(store, db_serial, 'sales:' + str(day), token, offset, load)
 
     @api.model
@@ -141,13 +102,7 @@ class CallcenterServices(models.AbstractModel):
         serials = sorted({int(s) for s in invoices if int(s) > 0})
         if len(serials) > 200:
             raise UserError(_('At most 200 invoices may be requested.'))
-        data = []
-        if serials:
-            with self.connect_eplus(server=selected_server(self, store), param_str='?', autocommit=False) as conn:
-                with conn.cursor() as cur:
-                    cur.execute('SELECT sth_id,sth_flag FROM sales_trans_h WHERE sto_id=? AND sth_id IN ('
-                                + ','.join('?' for s in serials) + ')', (store.eplus_serial, *serials))
-                    data = [{'invoice': int(s), 'status': 'saved' if flag == 'C' else 'pending'} for s, flag in cur.fetchall()]
+        data = self.env['ab_sales_header']._backend_invoice_statuses(store, serials)
         return {**self._identity(store, db_serial), 'data': data}
 
     @api.model
@@ -215,17 +170,8 @@ class CallcenterServices(models.AbstractModel):
         store = request_store(self)
         self._business_permissions('sale')
         self.env['ab_customer'].check_access('read')
-        pos = self.env['ab_sales_pos_api']
-        phone = pos._normalize_phone(phone)
-        if not phone:
-            raise UserError(_('Phone is required.'))
-        with pos.connect_eplus(server=selected_server(self, store), param_str='?', charset='CP1256', autocommit=False) as connection:
-            with connection.cursor() as cursor:
-                row = pos._bconnect_customer_by_phone(cursor, phone)
-        if not row:
-            return self._customer_result({'status': 'not_found'}, store, db_serial)
-        customer = pos._upsert_customer_from_bconnect(pos._customer_vals_from_bconnect(row, store))
-        result = self._customer_result({'status': 'found', 'customer': pos._customer_payload(customer)}, store, db_serial)
+        result = self._customer_result(
+            self.env['ab_sales_pos_api']._backend_lookup_customer(store, phone), store, db_serial)
         self.env.cr.commit()
         return result
 
@@ -239,7 +185,7 @@ class CallcenterServices(models.AbstractModel):
         operation = self._operation(store, token, 'customer')
         payload = {'phone': phone, 'name': name, 'address': address}
         return self._run_post(operation, payload, lambda: self._customer_result(
-            self.env['ab_sales_pos_api'].pos_customer_create(store_id=store.id, **payload), store, db_serial))
+            self.env['ab_sales_pos_api']._backend_create_customer(store, **payload), store, db_serial))
 
     def _bill_record(self, reference, store, db_serial):
         if (not isinstance(reference, dict) or reference.get('db_serial') != db_serial
