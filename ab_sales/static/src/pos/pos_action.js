@@ -2818,6 +2818,9 @@ class AbSalesPosAction extends Component {
             bill.header.store_code = store?.code || "";
             bill.header.store_ip = store?.ip1 || "";
         }
+        // Search cards belong to the previous branch until a new search returns.
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
         bill.updated_at = new Date().toISOString();
         this.persistCache();
         this.schedulePromoRefresh(bill);
@@ -3095,6 +3098,10 @@ class AbSalesPosAction extends Component {
             return;
         }
         const storeId = bill?.header?.store_id || null;
+        if (this._productResultsStoreId !== storeId) {
+            this.state.productResults = [];
+            this._productResultsStoreId = storeId;
+        }
         const customerPhone = this.activeCustomerPhone(bill);
         this.state.loadingProducts = true;
         try {
@@ -3193,20 +3200,21 @@ class AbSalesPosAction extends Component {
         }, 400);
     }
 
-    _refreshPosBalancesForResults(results, storeId, requestId, targets = results) {
+    _refreshPosBalancesForResults(results, storeId, requestId, targets = results, manual = false) {
         const bill = this.currentBill;
         const searchId = this._productSearchRequestId;
         return refreshPosBalances(this.orm, targets || [], storeId, "id", () =>
             !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
             searchId === this._productSearchRequestId && this.currentBill === bill &&
-            bill?.header?.store_id === storeId && this.state.productResults === results);
+            bill?.header?.store_id === storeId && this.state.productResults === results,
+            {showAge: true, manual});
     }
 
     refreshProductPosBalance(product) {
         if (product.pos_balance_refreshing) return;
         return this._refreshPosBalancesForResults(
             this.state.productResults, this.currentBill?.header?.store_id, this._posBalanceRequestId,
-            [product]);
+            [product], true);
     }
 
     scheduleLinePosBalanceRefresh(bill) {

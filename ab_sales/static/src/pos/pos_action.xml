@@ -379,6 +379,7 @@
                                      t-ref="cardsContainer" t-att-inert="!billEditable(currentBill)">
                                     <t t-foreach="state.productResults" t-as="p" t-key="p.id" t-foreach-index="idx">
                                         <t t-call="ab_sales.ProductCard">
+                                            <t t-set="showPosBalanceAge" t-value="true"/>
                                             <t t-set="p" t-value="p"/>
                                             <t t-set="idx" t-value="idx"/>
                                             <t t-set="selectionIndex" t-value="state.selectionIndex"/>

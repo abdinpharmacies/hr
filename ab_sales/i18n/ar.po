@@ -1364,3 +1364,65 @@ msgstr ""
 msgid "Unsupported return invoice query. Update the Branch API integration."
 msgstr ""
 "استعلام فاتورة المرتجع غير مدعوم. حدّث تكامل واجهة برمجة تطبيقات الفرع."
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_inventory_store_product_unique
+msgid "A product can have only one inventory record per branch."
+msgstr "يمكن أن يكون للمنتج سجل مخزون واحد فقط لكل فرع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__last_sync_at
+msgid "Last Sync At"
+msgstr "وقت آخر مزامنة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+msgid "since 1 second"
+msgstr "منذ ثانية واحدة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+#, javascript-format
+msgid "since %s seconds"
+msgstr "منذ %s ثانية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+msgid "since 1 minute"
+msgstr "منذ دقيقة واحدة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+#, javascript-format
+msgid "since %s minutes"
+msgstr "منذ %s دقيقة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+msgid "since 1 hour"
+msgstr "منذ ساعة واحدة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+#, javascript-format
+msgid "since %s hours"
+msgstr "منذ %s ساعة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+msgid "since 1 day"
+msgstr "منذ يوم واحد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_balance_refresh.js:0
+#, javascript-format
+msgid "since %s days"
+msgstr "منذ %s يوم"
