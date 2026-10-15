@@ -3421,7 +3421,7 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
         display: grid;
         width: 100%;
         flex: 1 1 auto;
-        grid-template-rows: 1.2rem 3.15rem 1.7rem auto minmax(40px, auto) auto;
+        grid-template-rows: 1.2rem minmax(3.15rem, auto) 1.7rem auto minmax(40px, auto) auto;
         align-content: stretch;
         gap: .45rem;
         padding: .9rem;
@@ -3443,17 +3443,16 @@ html[dir="rtl"] .ab-storefront-testimonial-controls svg {
     .ab-storefront-product-name,
     .o_wsale_products_item_title {
         grid-row: 2;
-        display: -webkit-box;
+        display: block;
         min-height: 3.15rem;
-        max-height: 3.15rem;
-        overflow: hidden;
+        max-height: none;
+        overflow: visible;
+        overflow-wrap: anywhere;
         margin: 0;
         color: $ab-ink;
         font-size: var(--ab-font-size-096);
         font-weight: var(--ab-font-weight-bold);
         line-height: var(--ab-line-height-140);
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
 
         a:hover {
             color: $ab-green;
