@@ -124,19 +124,11 @@
         <xpath expr="//div[@name='product_price_container']" position="after">
             <t t-set="ab_product_offer" t-value="website._ab_storefront_offer_details(product).get(product.id, {})"/>
             <div t-if="ab_product_offer.get('free_qty')" class="ab-storefront-product-bundle-offer my-3">
-                <strong class="badge text-bg-primary" dir="ltr">
+                <i class="fa fa-gift ab-storefront-product-offer-icon" aria-hidden="true"/>
+                <strong class="ab-storefront-product-offer-equation" dir="ltr">
                     <t t-out="ab_product_offer['buy_qty']"/> + <t t-out="ab_product_offer['free_qty']"/> <span>free</span>
                 </strong>
                 <small class="d-block mt-2">Free items are added to your cart automatically.</small>
-            </div>
-            <div class="ab-storefront-total-price"
-                 data-ab-animated-total-price="1"
-                 aria-live="polite">
-                <span class="ab-storefront-total-price-label">Total</span>
-                <span class="ab-storefront-total-price-value"
-                      data-ab-animated-total-price-value="1"
-                      t-out="combination_info['price']"
-                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
             </div>
         </xpath>
     </template>
