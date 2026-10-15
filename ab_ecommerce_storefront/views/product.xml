@@ -4,15 +4,6 @@
         <xpath expr="//div[@id='wrap']" position="attributes">
             <attribute name="class" add="ab-storefront-product-page" separator=" "/>
         </xpath>
-        <xpath expr="//section[@id='product_detail']" position="before">
-            <section class="ab-storefront-product-assurance-top">
-                <div class="container d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between gap-2 py-2">
-                    <span><i class="fa fa-shield me-2" aria-hidden="true"/>From Abdin Pharmacies</span>
-                    <span><i class="fa fa-lock me-2" aria-hidden="true"/>Secure checkout</span>
-                    <span><i class="fa fa-phone me-2" aria-hidden="true"/>Pharmacy help: <span class="o_force_ltr">19036</span></span>
-                </div>
-            </section>
-        </xpath>
         <xpath expr="//section[@id='product_detail']" position="attributes">
             <attribute name="class" add="ab-storefront-product-detail" separator=" "/>
             <attribute name="t-att-data-ab-history-product-id">product.id</attribute>
