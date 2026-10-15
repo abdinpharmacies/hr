@@ -11616,3 +11616,25 @@ msgstr "نسبة الخصم (%)"
 #: model:product.pricelist,name:ab_ecommerce_storefront.pricelist_storefront_standard
 msgid "Website Standard Pricelist (EGP)"
 msgstr "قائمة أسعار الموقع الأساسية (جنيه مصري)"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.storefront_category_image_action
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_storefront_category_images
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_list
+msgid "Category Images"
+msgstr "صور الأقسام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_list
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__ab_storefront_section_image
+msgid "Section Image"
+msgstr "صورة القسم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_form
+msgid ""
+"Upload a cover image for this category in the homepage Shop by Category "
+"section."
+msgstr "ارفع صورة لهذا القسم لعرضها في قسم تسوق حسب القسم بالصفحة الرئيسية."

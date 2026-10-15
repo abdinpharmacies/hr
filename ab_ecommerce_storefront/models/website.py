@@ -249,12 +249,7 @@ class Website(models.Model):
         prices.update(offer_prices)
         best_sellers = candidates[:product_limit]
         displayed_products = best_sellers | offers
-        category_ids = set(categories.ids)
-        category_products = {}
-        for product in candidates:
-            for category in product.public_categ_ids.parents_and_self:
-                if category.id in category_ids and category.id not in category_products:
-                    category_products[category.id] = product
+        category_products = self._ab_storefront_category_products(categories, candidates)
         variant_ids = [
             product._get_first_possible_variant_id()
             for product in displayed_products
@@ -283,6 +278,25 @@ class Website(models.Model):
             "offer_product_ids": set(offers.ids),
             "wishlist_product_ids": wishlist_product_ids,
         }
+
+    def _ab_storefront_category_products(self, categories, candidates=None):
+        self.ensure_one()
+        if candidates is None:
+            candidates = self.env["product.template"].with_context(bin_size=True).search(
+                self.website_domain()
+                & Domain("sale_ok", "=", True)
+                & Domain("is_published", "=", True)
+                & Domain("company_id", "in", [False, self.company_id.id])
+                & Domain("service_tracking", "in", self.env["product.template"]._get_saleable_tracking_types()),
+                order="website_sequence, id DESC", limit=32,
+            )
+        category_ids = set(categories.ids)
+        products = {}
+        for product in candidates:
+            for category in product.public_categ_ids.parents_and_self:
+                if category.id in category_ids and category.id not in products:
+                    products[category.id] = product
+        return products
 
     def _ab_storefront_offer_catalog(self, limit=8, offset=0):
         self.ensure_one()

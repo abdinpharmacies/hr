@@ -41,6 +41,7 @@
         "views/contact_message_views.xml",
         "views/business_partnership_views.xml",
         "views/management_menus.xml",
+        "views/category_image_views.xml",
         "views/storefront_offer_views.xml",
         "views/customer_testimonial_views.xml",
         "views/contact_templates.xml",
