@@ -10,7 +10,7 @@ class MailTemplate(models.Model):
     _inherit = "mail.template"
 
     def _ab_storefront_record_ids_without_customer_pdfs(self, res_ids):
-        if self.model not in ("sale.order", "ab.prescription.order"):
+        if self.model not in ("sale.order", "ab.prescription.order", "account.move"):
             return set()
         records = self.env[self.model].browse(res_ids).exists()
         return set(records.filtered("website_id").ids)
@@ -38,6 +38,12 @@ class MailTemplate(models.Model):
 
     def _generate_template_attachments(self, res_ids, render_fields, render_results=None):
         protected_record_ids = self._ab_storefront_record_ids_without_customer_pdfs(res_ids)
+        other_record_ids = [res_id for res_id in res_ids if res_id not in protected_record_ids]
+        if protected_record_ids and other_record_ids:
+            render_results = super()._generate_template_attachments(
+                other_record_ids, render_fields, render_results=render_results,
+            )
+            res_ids = [res_id for res_id in res_ids if res_id in protected_record_ids]
         if protected_record_ids and "report_template_ids" in render_fields:
             render_fields = tuple(
                 field for field in render_fields if field != "report_template_ids"

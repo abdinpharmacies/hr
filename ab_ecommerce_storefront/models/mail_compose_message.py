@@ -26,7 +26,7 @@ class MailComposeMessage(models.TransientModel):
         return prescriptions
 
     def _ab_storefront_record_ids_without_customer_pdfs(self, res_ids):
-        if self.model not in ("sale.order", "ab.prescription.order"):
+        if self.model not in ("sale.order", "ab.prescription.order", "account.move"):
             return set()
         records = self.env[self.model].browse(res_ids).exists()
         return set(records.filtered("website_id").ids)
@@ -72,9 +72,6 @@ class MailComposeMessage(models.TransientModel):
             .filtered(lambda attachment: self._ab_is_pdf_attachment(attachment))
             .ids
         )
-        if not pdf_attachment_ids:
-            return commands
-
         filtered_commands = []
         for command in commands:
             if isinstance(command, int):
@@ -123,6 +120,16 @@ class MailComposeMessage(models.TransientModel):
         find_or_create_partners=True,
     ):
         protected_record_ids = self._ab_storefront_record_ids_without_customer_pdfs(res_ids)
+        other_record_ids = [res_id for res_id in res_ids if res_id not in protected_record_ids]
+        other_values = {}
+        if protected_record_ids and other_record_ids:
+            other_values = super()._generate_template_for_composer(
+                other_record_ids,
+                render_fields,
+                allow_suggested=allow_suggested,
+                find_or_create_partners=find_or_create_partners,
+            )
+            res_ids = [res_id for res_id in res_ids if res_id in protected_record_ids]
         guarded_fields = tuple(
             field
             for field in render_fields
@@ -139,6 +146,7 @@ class MailComposeMessage(models.TransientModel):
         if not protected_record_ids:
             return values
 
+        values.update(other_values)
         for res_id in protected_record_ids:
             if res_id in values:
                 # Keep PDF reports available in Odoo, but do not attach them to customer messages.
