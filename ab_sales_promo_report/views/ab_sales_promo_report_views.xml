@@ -122,7 +122,6 @@
                             <group>
                                 <field name="include_promo_notice"/>
                                 <field name="include_off_customer"/>
-                                <field name="include_no_promo_found"/>
                                 <field name="replace_existing"/>
                             </group>
                         </group>

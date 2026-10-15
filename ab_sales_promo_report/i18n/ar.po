@@ -52,3 +52,21 @@ msgstr "تقرير العروض"
 #: model:ir.ui.menu,name:ab_sales_promo_report.ab_sales_promo_report_menu_lines
 msgid "Sales Promo Report Lines"
 msgstr "سطور تقرير العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,help:ab_sales_promo_report.field_ab_sales_promo_report_wizard__include_no_promo_found
+msgid "Compatibility field. Unmatched report lines are always excluded."
+msgstr "حقل للتوافق. تُستبعد دائمًا سطور التقرير التي لا تطابق عرضًا مطبقًا."
+
+#. module: ab_sales_promo_report
+#. odoo-python
+#: code:addons/ab_sales_promo_report/models/ab_sales_promo_report.py:0
+#, python-format
+msgid ""
+"BConnect returned %s line(s), but no promotion passed application validation"
+" for the selected report products. Check product/store mappings, promotion "
+"dates, purchase conditions, and recorded invoice compensation."
+msgstr ""
+"أعاد BConnect عدد %s من السطور، لكن لم يجتز أي عرض التحقق من التطبيق "
+"للمنتجات المحددة في التقرير. راجع ربط المنتجات والفروع، وتواريخ العروض، "
+"وشروط الشراء، والتعويض المسجل على الفاتورة."
