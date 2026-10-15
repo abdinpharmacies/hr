@@ -89,7 +89,9 @@ Files changed:
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
 
-Current changes before commit:
+## fecdc568 - hager yasser - 2026-10-13
+
+Original commit subject: ab_sales_promo/FEAT(#20897): Contract-controlled promotions with a single payer (part2)
 
 - Support normal promotion selection and pricing for eligible contracts while preserving contract priority when the option is disabled.
 - Allocate promotion savings once, preserve zero totals, and validate promotion availability again before submission.
@@ -113,3 +115,27 @@ Verification:
 - POS checks in both asset orders cover payers, selection/removal, cache reload, stale responses, and promotion-only invoices.
 - Both Arabic PO files pass msgfmt --check-format; runtime Arabic contract action and Allow Promotions label checked.
 - No migrations, lifecycle hooks, historical repricing, or live E-Plus writes. Development checks are kept outside the addon packages.
+
+Current changes before commit:
+
+- Enforce Allowed Customers during promotion discovery, application, discount evaluation, and sale validation; an empty list remains unrestricted.
+- Reject restricted promotions for other, absent, and unsaved customers, including direct assignment and changes to an existing sale's customer.
+- Send the selected customer through the optional POS promotion API argument and refresh promotions after customer selection, clearing, or switching to new-customer mode.
+- Remove unauthorized promotions from POS responses and ignore responses evaluated for a previous customer.
+- Preserve source-promotion return repricing through force_program_effective and add the validation message in both Arabic translation files.
+
+Files changed:
+
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+
+Verification:
+
+- Targeted ab_sales_promo upgrade passed in isolated database codex_promo_customers_20261015.
+- Nine grouped rollback-only Odoo checks cover unrestricted and allowed customers, unauthorized and unsaved customers, computed-field invalidation, ORM writes, final validation, return repricing, existing eligibility gates, and runtime Arabic translations; E-Plus connections were blocked.
+- Eight POS checks using the existing customer handlers and module patch cover requests, selection, clearing, new-customer mode, stale responses, bill switching, and read-only bills.
+- Both Arabic PO files pass msgfmt --check-format; development check scripts remain outside the addon package.

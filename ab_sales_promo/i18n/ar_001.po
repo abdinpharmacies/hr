@@ -229,3 +229,14 @@ msgstr "تعذر تحميل العروض."
 #: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
 msgid "The selected promotion is no longer available for this invoice."
 msgstr "العرض المحدد لم يعد متاحًا لهذه الفاتورة."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid ""
+"Promotion %(promotion)s requires an allowed existing customer. Select an "
+"allowed customer or remove the promotion."
+msgstr ""
+"العرض %(promotion)s يتطلب عميلًا مسجلًا ومسموحًا له. اختر عميلًا مسموحًا له "
+"أو أزل العرض."

@@ -48,6 +48,14 @@ class AbSalesHeaderPromo(models.Model):
                 remaining -= amount
         return result
 
+    def _program_customer_is_eligible(self, program):
+        self.ensure_one()
+        program = program._origin or program
+        if self.env.context.get('force_program_effective') or not program.partner_ids:
+            return True
+        customer = self.customer_id._origin
+        return bool(customer and customer in program.partner_ids)
+
     def _program_is_effective(self, program):
         """
         If a promotion program has no configured products, treat it as inactive.
@@ -67,6 +75,8 @@ class AbSalesHeaderPromo(models.Model):
         # Allow targeted callers (returns repricing) to honor an already-applied
         # source program even when current DB/store restrictions differ.
         force_program_effective = bool(self.env.context.get("force_program_effective"))
+        if not self._program_customer_is_eligible(program):
+            return False
         if (not force_program_effective) and program.store_ids and (
                 not self.store_id or self.store_id not in program.store_ids):
             return False
@@ -209,6 +219,7 @@ class AbSalesHeaderPromo(models.Model):
     # ---------------- Final totals ---------------- #
     @api.depends(
         'amount_total',
+        'customer_id',
         'applied_program_ids',
         'applied_program_ids.disc_percent',
         'applied_program_ids.apply_disc_on',
@@ -229,7 +240,7 @@ class AbSalesHeaderPromo(models.Model):
             h.amount_total_after_promo = h.amount_total - h.promo_discount_amount
 
     # available programs -> use VISIBILITY scope
-    @api.depends('line_ids.product_id', 'store_id')
+    @api.depends('line_ids.product_id', 'store_id', 'customer_id')
     def _compute_available_program_ids(self):
         Promo = self.env['ab_promo_program'].sudo()
         now = fields.Datetime.now()
@@ -385,7 +396,7 @@ class AbSalesHeaderPromo(models.Model):
                 # الكمية غير كافية → لا نطبق العرض أوتوماتيك
                 h.applied_program_ids = [(6, 0, [])]
 
-    @api.constrains('applied_program_ids', 'line_ids')
+    @api.constrains('applied_program_ids', 'line_ids', 'customer_id')
     def _constraint_ab_sales_header(self):
         for rec in self:
             def _get_code_with_padding(code):
@@ -396,6 +407,12 @@ class AbSalesHeaderPromo(models.Model):
 
             if rec.applied_program_ids:
                 prog = rec.applied_program_ids
+                if not rec._program_customer_is_eligible(prog):
+                    raise ValidationError(_(
+                        "Promotion %(promotion)s requires an allowed existing customer. "
+                        "Select an allowed customer or remove the promotion.",
+                        promotion=prog.display_name,
+                    ))
                 prog_products = rec._program_discount_products(prog)
                 prog_products_set = set(prog_products.ids)
 
