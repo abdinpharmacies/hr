@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="storefront_offer_list" model="ir.ui.view">
+        <field name="name">ab_storefront_offer.list</field>
+        <field name="model">ab_storefront_offer</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="not active">
+                <field name="sequence"/>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="offer_type" widget="badge"/>
+                <field name="website_id"/>
+                <field name="use_odoo_promotion"/>
+                <field name="date_from" optional="show"/>
+                <field name="date_to" optional="show"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+    <record id="storefront_offer_form" model="ir.ui.view">
+        <field name="name">ab_storefront_offer.form</field>
+        <field name="model">ab_storefront_offer</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-secondary" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Offer name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="website_id" options="{'no_create': True}"/>
+                            <field name="product_id" options="{'no_create': True}"/>
+                            <field name="offer_type" widget="radio"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="use_odoo_promotion"/>
+                            <field name="program_id" invisible="not use_odoo_promotion" required="use_odoo_promotion" options="{'no_create': True}"/>
+                            <field name="date_from" invisible="use_odoo_promotion"/>
+                            <field name="date_to" invisible="use_odoo_promotion"/>
+                        </group>
+                    </group>
+                    <group string="Free Gifts" invisible="offer_type != 'gift' or use_odoo_promotion">
+                        <field name="buy_qty"/>
+                        <field name="gift_qty"/>
+                        <div class="text-muted" colspan="2">Free units of the same product are added automatically for every qualifying purchase quantity.</div>
+                    </group>
+                    <group string="Offer Pricing" invisible="offer_type != 'price' or use_odoo_promotion">
+                        <field name="pricelist_id" required="offer_type == 'price' and not use_odoo_promotion" options="{'no_create': True}"/>
+                        <field name="price_before"/>
+                        <field name="discount_percentage" digits="[16, 2]"/>
+                        <field name="price_after"/>
+                        <div class="text-muted" colspan="2">Prices use the selected pricelist currency and the product's tax settings. The reduced price applies in the cart for this pricelist.</div>
+                    </group>
+                    <div class="alert alert-info" role="status" invisible="not use_odoo_promotion">
+                        The linked Odoo promotion controls quantities, discounts, dates and checkout eligibility. Manage or archive it in Odoo Promotions.
+                    </div>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="storefront_offer_search" model="ir.ui.view">
+        <field name="name">ab_storefront_offer.search</field>
+        <field name="model">ab_storefront_offer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="website_id"/>
+                <filter name="gift" string="Free Gifts" domain="[('offer_type', '=', 'gift')]"/>
+                <filter name="price" string="Before / After Price" domain="[('offer_type', '=', 'price')]"/>
+                <separator/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter name="group_type" string="Offer Type" context="{'group_by': 'offer_type'}"/>
+                    <filter name="group_website" string="Website" context="{'group_by': 'website_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="storefront_offer_action" model="ir.actions.act_window">
+        <field name="name">Storefront Offers</field>
+        <field name="res_model">ab_storefront_offer</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="storefront_offer_search"/>
+    </record>
+    <menuitem id="menu_abdin_management_offers" name="Offers"
+              parent="menu_abdin_management_root" sequence="35"
+              groups="sales_team.group_sale_manager,base.group_system"/>
+    <menuitem id="menu_storefront_offers" name="Storefront Offers"
+              parent="menu_abdin_management_offers" action="storefront_offer_action" sequence="10"
+              groups="sales_team.group_sale_manager,base.group_system"/>
+</odoo>

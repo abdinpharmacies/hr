@@ -68,7 +68,23 @@ class ProductTemplate(models.Model):
         offers = website._ab_storefront_offer_details(self)
         for product_id, values in prices.items():
             values["ab_offer"] = offers.get(product_id, {})
+            discount = values["ab_offer"].get("discount_percent")
+            if discount:
+                values["base_price"] = values["price_reduce"]
+                values["price_reduce"] *= 1 - discount / 100
         return prices
+
+    def _get_additionnal_combination_info(self, product_or_template, quantity, uom, date, website):
+        result = super()._get_additionnal_combination_info(product_or_template, quantity, uom, date, website)
+        offer = website._ab_storefront_offer_details(self).get(self.id, {})
+        discount = offer.get("discount_percent")
+        if discount:
+            result.update({
+                "list_price": result["price"],
+                "price": result["price"] * (1 - discount / 100),
+                "has_discounted_price": True,
+            })
+        return result
 
     def _ab_storefront_has_real_image(self):
         self.ensure_one()

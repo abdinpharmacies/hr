@@ -2330,6 +2330,8 @@ msgstr "تم استلام بيانات طلبك. سيتم التواصل معك 
 msgid "We use these details to confirm the prescription and secure tracking."
 msgstr "نستخدم هذه البيانات لتأكيد طلب الروشتة وتأمين متابعته."
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__website_id
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: model:ir.model,name:ab_ecommerce_storefront.model_website
@@ -2799,6 +2801,7 @@ msgstr "صفحة"
 msgid "of"
 msgstr "من"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__product_id
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_product_template
@@ -3032,6 +3035,7 @@ msgid ""
 "Partnership</span>"
 msgstr "<span><i class=\"fa fa-cubes\" aria-hidden=\"true\"/> تعاون المنتجات</span>"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_needaction
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
@@ -3039,6 +3043,7 @@ msgstr "<span><i class=\"fa fa-cubes\" aria-hidden=\"true\"/> تعاون الم�
 msgid "Action Needed"
 msgstr "إجراء مطلوب"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__active
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__active
@@ -3090,6 +3095,8 @@ msgstr "الإعلانات والتسويق"
 msgid "Advertising &amp; Marketing"
 msgstr "الإعلانات والتسويق"
 
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.business_partnership_search
@@ -3098,6 +3105,7 @@ msgstr "الإعلانات والتسويق"
 msgid "Archived"
 msgstr "مؤرشف"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_attachment_count
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_attachment_count
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_attachment_count
@@ -3168,6 +3176,7 @@ msgstr "اختر مسؤولاً داخلياً لديه صلاحية الوصو�
 msgid "City / Governorate"
 msgstr "المدينة / المحافظة"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__company_id
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
@@ -3209,6 +3218,7 @@ msgstr "خيارات التواصل"
 msgid "Contacted"
 msgstr "تم التواصل"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_uid
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_uid
@@ -3227,6 +3237,7 @@ msgstr "أنشئ بواسطة"
 msgid "Customer Support"
 msgstr "خدمة العملاء"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__display_name
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__display_name
@@ -3290,6 +3301,7 @@ msgid ""
 "hidden=\"true\"/>"
 msgstr "تعرّف على فرص التعاون <i class=\"fa fa-external-link\" aria-hidden=\"true\"/>"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_follower_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_follower_ids
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_follower_ids
@@ -3297,6 +3309,7 @@ msgstr "تعرّف على فرص التعاون <i class=\"fa fa-external-link\"
 msgid "Followers"
 msgstr "المتابعين"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_partner_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_partner_ids
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_partner_ids
@@ -3348,6 +3361,7 @@ msgstr "للمساعدة بخصوص الطلبات والخدمات."
 msgid "General Inquiries"
 msgstr "الاستفسارات العامة"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__has_message
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__has_message
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__has_message
@@ -3360,6 +3374,7 @@ msgstr "يحتوي على رسالة"
 msgid "How can we help?"
 msgstr "كيف يمكننا مساعدتك؟"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__id
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__id
@@ -3403,6 +3418,7 @@ msgstr "الأيقونة"
 msgid "Icon to indicate an exception activity."
 msgstr "الأيقونة للإشارة إلى النشاط المستثنى."
 
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__message_needaction
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction
@@ -3410,6 +3426,8 @@ msgstr "الأيقونة للإشارة إلى النشاط المستثنى."
 msgid "If checked, new messages require your attention."
 msgstr "إذا كان محددًا، فهناك رسائل جديدة عليك رؤيتها."
 
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_error
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_sms_error
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_sms_error
@@ -3431,6 +3449,7 @@ msgstr "قيد المراجعة"
 msgid "Inquiry"
 msgstr "الاستفسار"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_is_follower
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_is_follower
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_is_follower
@@ -3444,6 +3463,7 @@ msgstr "متابع"
 msgid "Job Title / Role"
 msgstr "المسمى الوظيفي"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_uid
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_uid
@@ -3457,6 +3477,7 @@ msgstr "المسمى الوظيفي"
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_date
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_date
@@ -3470,6 +3491,7 @@ msgstr "آخر تحديث بواسطة"
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_error
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error
@@ -3477,6 +3499,7 @@ msgstr "آخر تحديث في"
 msgid "Message Delivery error"
 msgstr "خطأ في تسليم الرسائل"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_ids
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_ids
@@ -3518,6 +3541,7 @@ msgstr "ملخص النشاط التالي"
 msgid "Next Activity Type"
 msgstr "نوع النشاط التالي"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_needaction_counter
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction_counter
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
@@ -3525,6 +3549,7 @@ msgstr "نوع النشاط التالي"
 msgid "Number of Actions"
 msgstr "عدد الإجراءات"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_error_counter
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error_counter
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
@@ -3532,6 +3557,7 @@ msgstr "عدد الإجراءات"
 msgid "Number of errors"
 msgstr "عدد الأخطاء"
 
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__message_needaction_counter
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_needaction_counter
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_needaction_counter
@@ -3539,6 +3565,7 @@ msgstr "عدد الأخطاء"
 msgid "Number of messages requiring action"
 msgstr "عدد الرسائل التي تتطلب اتخاذ إجراء"
 
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_error_counter
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__message_has_error_counter
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__message_has_error_counter
@@ -3648,6 +3675,7 @@ msgstr "التعاون المقترح"
 msgid "Qualified"
 msgstr "مؤهل للتعاون"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__rating_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__rating_ids
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__rating_ids
@@ -3677,6 +3705,7 @@ msgstr "مسؤول المتابعة"
 msgid "Responsible User"
 msgstr "المستخدم المسؤول"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__message_has_sms_error
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__message_has_sms_error
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__message_has_sms_error
@@ -3812,6 +3841,7 @@ msgstr ""
 msgid "Website / Social Media"
 msgstr "الموقع الإلكتروني / رابط التواصل الاجتماعي"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__website_message_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_message_ids
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
@@ -3819,6 +3849,7 @@ msgstr "الموقع الإلكتروني / رابط التواصل الاجتم
 msgid "Website Messages"
 msgstr "رسائل الموقع الإلكتروني"
 
+#: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_storefront_offer__website_message_ids
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_business_partnership__website_message_ids
 #: model:ir.model.fields,help:ab_ecommerce_storefront.field_ab_prescription_order__website_message_ids
@@ -4164,6 +4195,7 @@ msgstr "تابع حجز المنتجات مع فريق المخزن."
 msgid "Last-mile status is not configured"
 msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__name
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
@@ -5488,6 +5520,7 @@ msgstr "العدد"
 msgid "Create account"
 msgstr "إنشاء حساب"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_date
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__create_date
@@ -9536,6 +9569,7 @@ msgstr "رمز الحماية"
 msgid "Seen Storefront Profile Onboarding"
 msgstr "شاهد تهيئة الملف الشخصي في المتجر"
 
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__sequence
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__sequence
 msgid "Sequence"
@@ -11351,3 +11385,234 @@ msgstr "تصغير الخريطة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_extra_filters
 msgid "All needs"
 msgstr "كل الاحتياجات"
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__ab_storefront_offer_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist_item__ab_storefront_offer_id
+msgid "Ab Storefront Offer"
+msgstr "عرض واجهة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__price
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Before / After Price"
+msgstr "السعر قبل وبعد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__buy_qty
+msgid "Buy Quantity"
+msgstr "كمية الشراء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_offer__offer_type__gift
+msgid "Buy X + Free Gifts"
+msgstr "شراء كمية + هدايا مجانية"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Buy and free quantities must be positive whole numbers."
+msgstr "يجب أن تكون كميات الشراء والهدايا أعدادًا صحيحة أكبر من صفر."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__date_to
+msgid "End Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Free Gifts"
+msgstr "الهدايا المجانية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__gift_qty
+msgid "Free Quantity"
+msgstr "الكمية المجانية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Free units of the same product are added automatically for every qualifying "
+"purchase quantity."
+msgstr ""
+"تُضاف وحدات مجانية من نفس المنتج تلقائيًا لكل كمية شراء مستوفية لشروط العرض."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__generated_program_ids
+msgid "Generated Program"
+msgstr "البرنامج المُنشأ"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__use_odoo_promotion
+msgid "Link Existing Odoo Promotion"
+msgstr "ربط بعرض أودو موجود"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__program_id
+msgid "Odoo Promotion"
+msgstr "عرض أودو"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Offer Pricing"
+msgstr "تسعير العرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__offer_type
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
+msgid "Offer Type"
+msgstr "نوع العرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid "Offer name"
+msgstr "اسم العرض"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Offer rules are managed automatically."
+msgstr "تتم إدارة قواعد العرض تلقائيًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__price_after
+msgid "Price After"
+msgstr "السعر بعد العرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__price_before
+msgid "Price Before"
+msgstr "السعر قبل العرض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__price_rule_ids
+msgid "Price Rule"
+msgstr "قاعدة السعر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__pricelist_id
+msgid "Pricelist"
+msgstr "قائمة الأسعار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"Prices use the selected pricelist currency and the product's tax settings. "
+"The reduced price applies in the cart for this pricelist."
+msgstr ""
+"الأسعار بعملة قائمة الأسعار المحددة وبحسب إعدادات ضريبة المنتج. يُطبّق السعر"
+" المخفض في السلة عند استخدام هذه القائمة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Select a pricelist for this website and set a positive reduced price below "
+"the original price."
+msgstr ""
+"اختر قائمة أسعار لهذا الموقع وحدد سعرًا مخفضًا أكبر من صفر وأقل من السعر "
+"الأصلي."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a same-product free-gift promotion."
+msgstr "اختر عرض هدايا مجانية من نفس المنتج."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "Select a single-variant sale product available on this website."
+msgstr "اختر منتجًا متاحًا للبيع على هذا الموقع وله متغير واحد فقط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Select an automatic current-order promotion for this website and company."
+msgstr "اختر عرضًا تلقائيًا لهذا الموقع والشركة يُطبّق على الطلب الحالي."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"Select an uncapped percentage discount for this product, valid from one "
+"unit."
+msgstr ""
+"اختر خصمًا بنسبة مئوية لهذا المنتج دون حد أقصى لقيمة الخصم، ويُطبّق من وحدة "
+"واحدة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__date_from
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_offer
+msgid "Storefront Offer"
+msgstr "عرض واجهة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.storefront_offer_action
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_storefront_offers
+msgid "Storefront Offers"
+msgstr "عروض المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The end date must not precede the start date."
+msgstr "يجب ألا يسبق تاريخ الانتهاء تاريخ البداية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_form
+msgid ""
+"The linked Odoo promotion controls quantities, discounts, dates and checkout"
+" eligibility. Manage or archive it in Odoo Promotions."
+msgstr ""
+"يتحكم عرض أودو المرتبط في الكميات والخصومات والتواريخ وشروط التطبيق عند "
+"الشراء. يمكنك إدارته أو أرشفته من عروض أودو."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"The linked promotion must have one automatic product rule and one reward, "
+"without a minimum amount."
+msgstr ""
+"يجب أن يحتوي العرض المرتبط على قاعدة منتج تلقائية واحدة ومكافأة واحدة، دون "
+"حد أدنى للمبلغ."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "The selected product must qualify for the linked promotion."
+msgstr "يجب أن يستوفي المنتج المحدد شروط العرض المرتبط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid ""
+"This product already has an overlapping storefront offer on this website."
+msgstr "يوجد بالفعل عرض لهذا المنتج على هذا الموقع خلال فترة متداخلة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/storefront_offer.py:0
+msgid "You cannot manage offers outside your allowed companies."
+msgstr "لا يمكنك إدارة عروض خارج الشركات المسموح لك بها."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__discount_percentage
+msgid "Discount (%)"
+msgstr "نسبة الخصم (%)"
+
+#. module: ab_ecommerce_storefront
+#: model:product.pricelist,name:ab_ecommerce_storefront.pricelist_storefront_standard
+msgid "Website Standard Pricelist (EGP)"
+msgstr "قائمة أسعار الموقع الأساسية (جنيه مصري)"

@@ -4,6 +4,7 @@ from markupsafe import Markup
 from werkzeug.urls import url_encode
 
 from odoo import _, _lt, fields, models
+from odoo.exceptions import ValidationError
 from odoo.fields import Domain
 from odoo.http import request
 
@@ -287,14 +288,41 @@ class Website(models.Model):
         self.ensure_one()
         products = self.env["product.template"].with_context(bin_size=True)
         domain = Domain.AND([self.sale_product_domain(), self._ab_storefront_offer_candidate_domain()])
+        today = fields.Date.context_today(self)
+        configured_offers = self.env["ab_storefront_offer"].sudo().search(
+            Domain("website_id", "=", self.id)
+            & Domain("company_id", "=", self.company_id.id)
+            & Domain("active", "=", True)
+            & (
+                Domain("use_odoo_promotion", "=", True)
+                | (
+                    (Domain("date_from", "=", False) | Domain("date_from", "<=", today))
+                    & (Domain("date_to", "=", False) | Domain("date_to", ">=", today))
+                )
+            ),
+            order="sequence, id",
+        )
+        priority_ids = list(dict.fromkeys(
+            offer.product_id.product_tmpl_id.id for offer in configured_offers
+        ))
+        priority_order = {product_id: index for index, product_id in enumerate(priority_ids)}
+        priority_products = products.search(domain & Domain("id", "in", priority_ids)).sorted(
+            key=lambda product: priority_order[product.id]
+        )
+        domain &= Domain("id", "not in", priority_ids)
         offers = products.browse()
         prices = {}
         position = 0
         while len(offers) <= offset + limit:
-            candidates = products.search(
-                domain, order="website_sequence, id DESC",
-                offset=position, limit=128,
-            )
+            if priority_products:
+                candidates = priority_products[:128]
+                priority_products = priority_products[128:]
+            else:
+                candidates = products.search(
+                    domain, order="website_sequence, id DESC",
+                    offset=position, limit=128,
+                )
+                position += len(candidates)
             if not candidates:
                 break
             batch_prices = candidates._get_sales_prices(self)
@@ -304,7 +332,6 @@ class Website(models.Model):
                 > batch_prices[product.id]["price_reduce"]
             )
             prices.update(batch_prices)
-            position += len(candidates)
         displayed = offers[offset:offset + limit]
         return displayed, {product.id: prices[product.id] for product in displayed}, len(offers) > offset + limit
 
@@ -356,6 +383,21 @@ class Website(models.Model):
         )
         candidate_variants = candidates.product_variant_ids
         details = {}
+        linked_discounts = {}
+        linked_offers = self.env["ab_storefront_offer"].sudo().search([
+            ("website_id", "=", self.id), ("company_id", "=", self.company_id.id),
+            ("active", "=", True), ("use_odoo_promotion", "=", True),
+            ("offer_type", "=", "price"), ("program_id", "in", programs.ids),
+            ("product_id", "in", candidate_variants.ids),
+        ])
+        for linked_offer in linked_offers:
+            try:
+                linked_offer._check_linked_program()
+            except ValidationError:
+                continue
+            linked_discounts[(linked_offer.program_id.id, linked_offer.product_id.id)] = (
+                linked_offer.program_id.reward_ids.filtered("active").discount
+            )
         for program in programs:
             if program.limit_usage and program.total_order_count >= program.max_usage:
                 continue
@@ -388,7 +430,10 @@ class Website(models.Model):
                 for product in eligible.product_tmpl_id:
                     if product.product_variant_count == 1:
                         if offer.get("free_qty") or product.id not in details:
-                            details[product.id] = offer
+                            details[product.id] = dict(offer)
+                            discount = linked_discounts.get((program.id, product.product_variant_id.id))
+                            if discount:
+                                details[product.id]["discount_percent"] = discount
         return details
 
     def _ab_storefront_offer_program_domain(self):

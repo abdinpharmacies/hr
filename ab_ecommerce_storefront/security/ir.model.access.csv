@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_storefront_offer_manager,Storefront offers manager,model_ab_storefront_offer,sales_team.group_sale_manager,1,1,1,0
+access_ab_storefront_offer_system,Storefront offers administrator,model_ab_storefront_offer,base.group_system,1,1,1,0
 access_ab_prescription_order_internal,ab.prescription.order.internal,model_ab_prescription_order,base.group_user,1,1,1,0
 access_ab_prescription_order_portal,ab.prescription.order.portal,model_ab_prescription_order,base.group_portal,1,0,0,0
 access_ab_contact_message_designer,ab.contact.message.designer,model_ab_contact_message,website.group_website_designer,1,1,1,0

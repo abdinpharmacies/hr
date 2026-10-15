@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="pricelist_storefront_standard" model="product.pricelist">
+        <field name="name">Website Standard Pricelist (EGP)</field>
+        <field name="currency_id" ref="base.EGP"/>
+        <field name="website_id" ref="website.default_website"/>
+        <field name="company_id" eval="False"/>
+        <field name="sequence">100</field>
+        <field name="selectable" eval="True"/>
+    </record>
+</odoo>

@@ -16,3 +16,4 @@ from . import contact_message
 from . import business_partnership
 from . import browsing_history
 from . import customer_testimonial
+from . import storefront_offer
