@@ -11009,3 +11009,24 @@ msgid ""
 "Upload a cover image for this category in the homepage Shop by Category "
 "section."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "<span class=\"ab-order-delivered__eyebrow\">Delivered with care</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Your order is home."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Thank you for choosing Abdin. It is a pleasure to care for you."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Need help with your order?"
+msgstr ""

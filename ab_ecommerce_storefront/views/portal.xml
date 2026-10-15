@@ -2,6 +2,30 @@
 <odoo>
     <template id="order_tracking_timeline" name="Abdin Order Tracking Timeline">
         <t t-set="tracking_steps" t-value="tracking_record._ab_storefront_tracking_steps()"/>
+        <t t-set="delivery_completed" t-value="tracking_steps and tracking_steps[-1]['key'] in ('delivered', 'prescription_delivered') and tracking_steps[-1]['state'] in ('complete', 'current')"/>
+        <t t-if="delivery_completed and tracking_record.state not in ('cancel', 'cancelled', 'rejected') and (not sale_order or sale_order._ab_storefront_delivery_stage() not in ('cancelled', 'return_received'))">
+            <t t-set="celebration_order" t-value="sale_order or tracking_record"/>
+            <section class="ab-order-delivered d-print-none"
+                     t-att-data-ab-delivery-celebration="'%s:%s:%s' % (request.website.id, celebration_order._name, celebration_order.id)"
+                     aria-labelledby="abOrderDeliveredTitle">
+                <div class="ab-order-delivered__emblem" aria-hidden="true">
+                    <span class="ab-order-delivered__halo"/>
+                    <span class="ab-order-delivered__confetti">
+                        <i t-foreach="range(20)" t-as="particle"/>
+                    </span>
+                    <svg class="ab-order-delivered__check" viewBox="0 0 64 64" focusable="false">
+                        <circle cx="32" cy="32" r="29"/>
+                        <path d="m19 32 9 9 18-19" pathLength="1"/>
+                    </svg>
+                </div>
+                <div class="ab-order-delivered__copy">
+                    <span class="ab-order-delivered__eyebrow">Delivered with care</span>
+                    <h2 id="abOrderDeliveredTitle">Your order is home.</h2>
+                    <p>Thank you for choosing Abdin. It is a pleasure to care for you.</p>
+                </div>
+                <a href="/contactus" class="ab-order-delivered__help">Need help with your order?</a>
+            </section>
+        </t>
         <section class="ab-order-track-card" aria-labelledby="abOrderTrackTitle">
             <div class="ab-order-track-head">
                 <div>

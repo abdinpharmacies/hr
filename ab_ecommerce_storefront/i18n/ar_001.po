@@ -11679,3 +11679,24 @@ msgid ""
 "Upload a cover image for this category in the homepage Shop by Category "
 "section."
 msgstr "ارفع صورة لهذا القسم لعرضها في قسم تسوق حسب القسم بالصفحة الرئيسية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "<span class=\"ab-order-delivered__eyebrow\">Delivered with care</span>"
+msgstr "<span class=\"ab-order-delivered__eyebrow\">وصلك بكل عناية</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Your order is home."
+msgstr "طلبك وصل بالسلامة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+msgid "Thank you for choosing Abdin. It is a pleasure to care for you."
+msgstr "شكرًا لاختيارك عابدين. سعداء إننا كنا جزءًا من يومك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.order_tracking_timeline
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
+msgid "Need help with your order?"
+msgstr "محتاج مساعدة بخصوص طلبك؟"
