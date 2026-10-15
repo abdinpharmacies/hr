@@ -11618,6 +11618,47 @@ msgid "Website Standard Pricelist (EGP)"
 msgstr "قائمة أسعار الموقع الأساسية (جنيه مصري)"
 
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Previous review"
+msgstr "الرأي السابق"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Next review"
+msgstr "الرأي التالي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Enlarge customer review"
+msgstr "تكبير رأي العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span>Enlarge</span>"
+msgstr "<span>تكبير</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Customer review"
+msgstr "رأي العميل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Close review"
+msgstr "إغلاق الرأي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View original comment"
+msgstr "عرض التعليق الأصلي"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/customer_testimonials.js:0
+msgid "Review %s of %s"
+msgstr "الرأي %s من %s"
+
+#. module: ab_ecommerce_storefront
 #: model:ir.actions.act_window,name:ab_ecommerce_storefront.storefront_category_image_action
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_storefront_category_images
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_form

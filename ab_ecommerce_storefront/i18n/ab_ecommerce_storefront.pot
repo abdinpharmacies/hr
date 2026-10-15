@@ -10948,6 +10948,47 @@ msgstr ""
 msgid "All needs"
 msgstr ""
 #. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Previous review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Next review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Enlarge customer review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<span>Enlarge</span>"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Customer review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Close review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View original comment"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/customer_testimonials.js:0
+msgid "Review %s of %s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model:ir.actions.act_window,name:ab_ecommerce_storefront.storefront_category_image_action
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_storefront_category_images
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_category_image_form

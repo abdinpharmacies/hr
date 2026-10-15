@@ -68,6 +68,7 @@
         ],
         "web.assets_frontend": [
             "ab_ecommerce_storefront/static/src/js/hero_carousel.js",
+            "ab_ecommerce_storefront/static/src/js/customer_testimonials.js",
             "ab_ecommerce_storefront/static/src/js/auth.js",
             "ab_ecommerce_storefront/static/src/js/auth_proof.js",
             "ab_ecommerce_storefront/static/src/js/auth_phone_verification.js",
