@@ -112,6 +112,16 @@
                          t-on-pointerdown="onSidebarResizeStart"/>
 
                     <main class="o_ab_sales_pos_main ab_pos_main_panel">
+                    <div t-if="state.draftBackupMessage" class="alert alert-warning ab_pos_draft_backup m-0 d-flex flex-wrap align-items-center gap-2" role="status">
+                        <span t-esc="state.draftBackupMessage"/>
+                        <button type="button" class="btn btn-link" t-on-click="() => retryDraftBackup()">Retry backup</button>
+                        <t t-foreach="Object.keys(state.draftConflicts)" t-as="token" t-key="token">
+                            <button t-if="state.draftConflicts[token].status === 'conflict'" type="button" class="btn btn-link"
+                                    t-on-click="() => resolveDraftConflict(token)">Review conflict</button>
+                            <span t-else="">This draft was removed elsewhere. Local edits are retained.</span>
+                        </t>
+                    </div>
+
                 <t t-if="!currentBill">
                     <div class="o_ab_sales_pos_blank ab_pos_blank_state">
                         <div class="o_ab_sales_pos_blank_card ab_pos_blank_card">

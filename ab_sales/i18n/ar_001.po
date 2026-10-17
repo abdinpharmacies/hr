@@ -5004,3 +5004,150 @@ msgstr "منذ يوم واحد"
 #, javascript-format
 msgid "since %s days"
 msgstr "منذ %s يوم"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_draft_cache_uniq_pos_client_token
+msgid "A saved draft already exists for this POS token."
+msgstr "توجد مسودة محفوظة بالفعل بنفس رمز الفاتورة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__bill_json
+msgid "Bill Json"
+msgstr "بيانات الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_pos_draft_cache__state__completed
+msgid "Completed"
+msgstr "مكتملة"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_pos_draft_cache__state__retired
+msgid "Retired"
+msgstr "مستبعدة"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_draft_scope
+msgid "POS Draft Capacity Scope"
+msgstr "نطاق سعة مسودات نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__employee_key
+msgid "Employee Key"
+msgstr "معرّف الموظف"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_draft_scope_uniq_owner
+msgid "Draft capacity scope already exists."
+msgstr "نطاق سعة المسودات موجود بالفعل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft changed in another window"
+msgstr "تغيّرت المسودة في نافذة أخرى"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft backup is busy. Local edits are retained."
+msgstr "حفظ نسخة المسودة مشغول. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft conflicts need review. Local edits are retained."
+msgstr "تحتاج تعارضات المسودات إلى مراجعة. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "Invalid draft identity or branch."
+msgstr "معرّف المسودة أو الفرع غير صالح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Keep local changes"
+msgstr "الاحتفاظ بالتعديلات المحلية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Not backed up: saved draft limit reached."
+msgstr "لم تُحفظ نسخة احتياطية: تم بلوغ الحد الأقصى للمسودات المحفوظة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Reload saved version"
+msgstr "إعادة تحميل النسخة المحفوظة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Reloading replaces your local edits with the saved version. Keep local "
+"changes instead to save your version against the reviewed revision."
+msgstr ""
+"إعادة التحميل تستبدل تعديلاتك المحلية بالنسخة المحفوظة. اختر الاحتفاظ "
+"بالتعديلات المحلية لحفظ نسختك بناءً على المراجعة التي تم الاطلاع عليها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Retry backup"
+msgstr "إعادة محاولة الحفظ"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Review conflict"
+msgstr "مراجعة التعارض"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "This draft was removed elsewhere. Local edits are retained."
+msgstr "أُزيلت هذه المسودة من نافذة أخرى. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "You cannot access this draft bill."
+msgstr "لا يمكنك الوصول إلى مسودة الفاتورة هذه."
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_draft_cache
+msgid "Sales POS Draft Cache"
+msgstr "مسودات فواتير نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__revision
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__revision
+msgid "Revision"
+msgstr "المراجعة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Draft backup is unavailable. Your local edits are retained. Retry when "
+"connected."
+msgstr ""
+"حفظ نسخة المسودة غير متاح. تم الاحتفاظ بتعديلاتك المحلية. أعد المحاولة عند "
+"الاتصال."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"All %s local bill slots are occupied. Remove a Ready bill or an eligible "
+"draft to free a slot."
+msgstr ""
+"جميع خانات الفواتير المحلية البالغ عددها %s مشغولة. أزل فاتورة جاهزة أو "
+"مسودة قابلة للإزالة لإتاحة خانة."

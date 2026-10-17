@@ -2,7 +2,7 @@
 
 import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
-import {Component, onMounted, onWillStart, onWillUnmount, useExternalListener, useRef, useState} from "@odoo/owl";
+import {Component, onMounted, onWillStart, onWillUnmount, useEffect, useExternalListener, useRef, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {ConfirmationDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
 import {useService} from "@web/core/utils/hooks";
@@ -962,6 +962,8 @@ class AbSalesPosAction extends Component {
             draftLimit: 10,
             draftSlotBranches: {},
             draftCacheReady: false,
+            draftBackupMessage: "",
+            draftConflicts: {},
             draftCreating: false,
             draftManaging: false,
             draftDeleting: false,
@@ -1033,9 +1035,8 @@ class AbSalesPosAction extends Component {
         this._cacheSaveInFlight = false;
         this._cacheSaveQueued = false;
         this._cacheSaveStopped = false;
-        this._draftCacheRevision = 0;
         this._acknowledgedDrafts = new Map();
-        this._serverDraftSlots = new Map();
+        this._skippedDrafts = new Map();
         this._removedDraftIds = new Set();
         this._barcodeActive = false;
         this._barcodeBuffer = "";
@@ -1135,6 +1136,8 @@ class AbSalesPosAction extends Component {
         this.loadPosUiSettings = this.loadPosUiSettings.bind(this);
         this.loadCache = this.loadCache.bind(this);
         this.persistCache = this.persistCache.bind(this);
+        this.retryDraftBackup = this.retryDraftBackup.bind(this);
+        this.resolveDraftConflict = this.resolveDraftConflict.bind(this);
         this._saveCacheToServer = this._saveCacheToServer.bind(this);
         this._posDraftEmployeeId = this._posDraftEmployeeId.bind(this);
         this._posDraftSessionToken = this._posDraftSessionToken.bind(this);
@@ -1160,21 +1163,37 @@ class AbSalesPosAction extends Component {
             ["Enter", this._onHotkeyEnter.bind(this)],
         ]);
 
+        useEffect(() => {
+            if (!this.state.abSalesHr) return;
+            if (!this._posDraftSessionToken()) {
+                this._draftLoadScope = null;
+                this.state.draftCacheReady = false;
+                clearTimeout(this._cacheSaveTimer);
+                return;
+            }
+            this.loadCache().catch((error) => {
+                this.state.draftBackupMessage = this._getRpcErrorMessage(error);
+            });
+        }, () => [this._posDraftSessionToken()]);
+
         useExternalListener(window, "keydown", (ev) => this.onKeydown(ev), {capture: true});
         useExternalListener(window, "resize", () => this._syncWindowToViewport());
         useExternalListener(window, "pagehide", () => this._saveCacheToServer());
         useExternalListener(window, "focus", () => {
-            if (!this.state.draftCacheReady) this._scheduleCacheSaveToServer(0);
+            this.retryDraftBackup();
             this.refreshSubmissionStates();
         });
-        useExternalListener(window, "online", () => this._scheduleCacheSaveToServer(0));
+        useExternalListener(window, "online", () => this.retryDraftBackup());
         useExternalListener(window, "storage", (ev) => {
             if (ev.key === `${this._localCacheKey()}_removed`) {
                 try {
                     const ids = new Set(JSON.parse(ev.newValue || "[]"));
                     if (this.state.bills.some((bill) => ids.has(bill.id))) {
                         for (const id of ids) this._removedDraftIds.add(id);
-                        this._removeCachedBills(ids);
+                        for (const bill of this.state.bills.filter((item) => ids.has(item.id))) {
+                            this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
+                        }
+                        this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
                     }
                 } catch { /* Invalid signals cannot alter the workspace. */ }
                 return;
@@ -1312,7 +1331,14 @@ class AbSalesPosAction extends Component {
     }
 
     _draftFingerprint(bill) {
-        return JSON.stringify(bill, (key, value) => key === "submission_checking" ? undefined : value);
+        // Live stock/display refreshes are not cashier edits and must not compete
+        // with another window's quantity/customer changes.
+        const transient = new Set(["submission_checking", "draft_revision", "backup_status", "updated_at",
+            "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html",
+            "show_details", "loading_details", "balance", "balance_total", "available", "loading",
+            "slot_locked", "slot_protected", "slot_number", "slot_waiting", "previous_slot_number"]);
+        return JSON.stringify(bill, (key, value) => transient.has(key) || key.startsWith("pos_balance_") || key === "pos_balance"
+            ? undefined : value);
     }
 
     _writeLocalCache() {
@@ -1325,7 +1351,7 @@ class AbSalesPosAction extends Component {
             const shared = JSON.parse(previous || "[]");
             const bills = this._mergeBillCaches(Array.isArray(shared) ? shared : [], this.state.bills)
                 .filter((bill) => !this._removedDraftIds.has(bill.id));
-            const text = this._draftFingerprint(bills);
+            const text = JSON.stringify(bills);
             if (text !== previous) localStorage.setItem(key, text);
             const removed = JSON.stringify([...this._removedDraftIds].sort());
             if (removed !== localStorage.getItem(`${key}_removed`)) localStorage.setItem(`${key}_removed`, removed);
@@ -1376,15 +1402,52 @@ class AbSalesPosAction extends Component {
 
     _cachePayloadSnapshot() {
         const local = (this.state.bills || []).filter((bill) =>
-            this._draftFingerprint(bill) !== this._acknowledgedDrafts.get(bill.id));
+            (this.draftSlotState(bill) === "used" || bill.draft_revision || this._slotBillLocked(bill) || bill.odoo_header_id) &&
+            this._draftFingerprint(bill) !== this._acknowledgedDrafts.get(bill.id) &&
+            this._draftFingerprint(bill) !== this._skippedDrafts?.get(bill.id) &&
+            !this.state.draftConflicts[bill.id]);
         const fingerprints = new Map(local.map((bill) => [bill.id, this._draftFingerprint(bill)]));
-        const bills = JSON.parse(this._draftFingerprint(local));
-        for (const bill of bills) {
-            // Slot placement in this tab must not reorder the shared draft pool.
-            bill.slot_number = this._serverDraftSlots.get(bill.id) || null;
-        }
-        const payload = {bills};
-        return {payload, payloadText: JSON.stringify(payload), fingerprints};
+        const bills = JSON.parse(JSON.stringify(local));
+        return {payload: {bills}, fingerprints};
+    }
+
+    _draftRequestScope() {
+        return `${this._localCacheKey()}:${this._posDraftSessionToken()}`;
+    }
+
+    retryDraftBackup() {
+        this._draftRetryCount = 0;
+        this._scheduleCacheSaveToServer(0);
+    }
+
+    resolveDraftConflict(token) {
+        const conflict = this.state.draftConflicts[token];
+        const bill = this.state.bills.find((item) => item.id === token);
+        if (!conflict || !bill) return;
+        const scope = this._draftRequestScope();
+        this.dialog.add(ConfirmationDialog, {
+            title: _t("Draft changed in another window"),
+            body: _t("Reloading replaces your local edits with the saved version. Keep local changes instead to save your version against the reviewed revision."),
+            confirmLabel: _t("Reload saved version"),
+            cancelLabel: _t("Keep local changes"),
+            dismiss: () => {},
+            confirm: () => {
+                if (scope !== this._draftRequestScope()) return;
+                const restored = this._normalizeBill({...conflict.bill, draft_revision: conflict.revision});
+                restored.slot_number = bill.slot_number;
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, restored);
+                this._acknowledgedDrafts.set(token, this._draftFingerprint(restored));
+                delete this.state.draftConflicts[token];
+                this._syncInputsForBill(this.currentBill);
+                this.persistCache();
+            },
+            cancel: () => {
+                if (scope !== this._draftRequestScope()) return;
+                bill.draft_revision = conflict.revision;
+                delete this.state.draftConflicts[token];
+                this.retryDraftBackup();
+            },
+        });
     }
 
     _draftScopeArgs() {
@@ -1489,22 +1552,41 @@ class AbSalesPosAction extends Component {
     }
 
     _draftLimitWarning() {
-        this.notification.add(_t("All %s saved draft slots are occupied. Restore or delete a saved draft before creating a bill.",
+        this.notification.add(_t("All %s local bill slots are occupied. Remove a Ready bill or an eligible draft to free a slot.",
             this.state.draftLimit), {type: "warning"});
     }
 
     _applyDraftCacheResult(result, snapshot = null) {
-        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : 10;
-        this._draftCacheRevision = result?.revision || 0;
-        this._removedDraftIds = new Set(result?.removed_ids || []);
-        const rejected = new Set(result?.rejected_ids || []);
-        const server = new Map((result?.bills || []).map((bill) => [bill.id, bill]));
-        for (const bill of server.values()) this._serverDraftSlots.set(bill.id, bill.slot_number);
-        for (const [id, fingerprint] of snapshot?.fingerprints || []) {
-            if (!rejected.has(id)) this._acknowledgedDrafts.set(id, fingerprint);
+        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : this.state.draftLimit;
+        const server = new Map((result.bills || []).map((bill) => [bill.id, bill]));
+        const outcomes = result.outcomes || [];
+        this._lastDraftOutcomes = outcomes;
+        for (const outcome of outcomes) {
+            const bill = this.state.bills.find((item) => item.id === outcome.token);
+            if (!bill) continue;
+            if (["saved", "unchanged"].includes(outcome.status)) {
+                bill.draft_revision = outcome.revision;
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._acknowledgedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "skipped") {
+                // Suppress retries for this exact payload without claiming it was backed up.
+                this._skippedDrafts ||= new Map();
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._skippedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "conflict") {
+                this.state.draftConflicts[bill.id] = outcome;
+            } else if (["retired", "ready"].includes(outcome.status) &&
+                       this.draftSlotState(bill) !== "used" && !this._slotBillLocked(bill) && !bill.odoo_header_id) {
+                const oldId = bill.id;
+                bill.header.pos_client_token = generatePosToken(user.userId, bill.header.store_id);
+                bill.id = bill.header.pos_client_token;
+                delete bill.draft_revision;
+                if (this.state.selectedId === oldId) this.state.selectedId = bill.id;
+            }
         }
-        // Safety metadata can invalidate an open draft, but cannot import others.
-        for (const bill of this.state.bills) {
+        const completed = new Set([...(result.completed_ids || []), ...outcomes.filter((o) => o.status === "completed").map((o) => o.token)]);
+        const removed = new Set(result.removed_ids || []);
+        for (const bill of [...this.state.bills]) {
             const remote = server.get(bill.id);
             if (remote && this._slotBillLocked(remote)) {
                 for (const key of ["submission_status", "submission_checking", "submission_in_progress",
@@ -1512,62 +1594,67 @@ class AbSalesPosAction extends Component {
                     if (key in remote) bill[key] = remote[key];
                 }
             }
-        }
-        const replacements = [];
-        for (const [oldId, newId] of Object.entries(result.replacements || {})) {
-            const previous = this.state.bills.find((bill) => bill.id === oldId);
-            if (previous && server.has(newId)) {
-                const bill = this._normalizeBill(server.get(newId));
-                bill.slot_number = previous.slot_number || previous.previous_slot_number;
-                replacements.push(bill);
-                this._acknowledgedDrafts.set(bill.id, this._draftFingerprint(bill));
-                if (this.state.selectedId === oldId) this.state.selectedId = bill.id;
+            if (completed.has(bill.id)) {
+                const oldId = bill.id;
+                const token = generatePosToken(user.userId, bill.header.store_id);
+                const replacement = this._normalizeBill({id: token, header: {
+                    store_id: bill.header.store_id, store_name: bill.header.store_name,
+                    store_code: bill.header.store_code, store_ip: bill.header.store_ip, pos_client_token: token},
+                    lines: [], submission_status: "draft", slot_number: bill.slot_number || bill.previous_slot_number});
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, replacement);
+                if (this.state.selectedId === oldId) this.state.selectedId = token;
+            } else if (removed.has(bill.id)) {
+                // A stale window must not erase its own unsaved edits or revive a tombstone.
+                this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
             }
         }
-        const remaining = this.state.bills.filter((bill) => !this._removedDraftIds.has(bill.id));
-        remaining.push(...replacements);
-        if (replacements.length || remaining.length !== this.state.bills.length) {
-            this.state.bills = remaining;
-            if (!remaining.some((bill) => bill.id === this.state.selectedId)) {
-                this.state.selectedId = remaining[0]?.id || null;
-                this._syncInputsForBill(this.currentBill);
-            }
+        if (outcomes.some((o) => o.status === "capacity")) {
+            this.state.draftBackupMessage = _t("Not backed up: saved draft limit reached.");
+        } else if (outcomes.some((o) => o.status === "error")) {
+            this.state.draftBackupMessage = outcomes.find((o) => o.status === "error").message;
+        } else if (Object.keys(this.state.draftConflicts).length) {
+            this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
+        } else if (outcomes.some((o) => o.status === "busy")) {
+            this.state.draftBackupMessage = _t("Draft backup is busy. Local edits are retained.");
+        } else {
+            this.state.draftBackupMessage = "";
         }
         this._assignLocalDraftSlots();
-        this.state.draftCacheReady = true;
         this._writeLocalCache();
-        if (rejected.size) this._draftLimitWarning();
     }
 
     async loadCache() {
-        const localBills = this._readLocalCache();
-        const scope = this._localCacheKey();
-        this.state.draftCacheReady = false;
+        // PIN bootstrap calls this again when the employee identity is available.
+        if (this.state.abSalesHr && !this._posDraftSessionToken()) return;
+        const scope = this._draftRequestScope();
+        if (this._draftLoadScope === scope) return this._draftLoadPromise;
+        this._draftLoadScope = scope;
+        this._draftLoadPromise = this._loadDraftWorkspace(scope);
+        return this._draftLoadPromise;
+    }
+
+    async _loadDraftWorkspace(scope) {
         this._acknowledgedDrafts = new Map();
-        this._serverDraftSlots = new Map();
         this._removedDraftIds = new Set();
-        this._draftCacheRevision = 0;
+        this.state.draftConflicts = {};
         this.state.draftDiscardEligibility = {};
-        this.state.draftSlotBranches = {};
-        this.state.draftStoreIds = null;
-        this.state.bills = localBills.map((bill) => this._normalizeBill(bill));
+        this.state.bills = this._readLocalCache().map((bill) => this._normalizeBill(bill));
         let selected;
-        try { selected = sessionStorage.getItem(`${scope}_selection`); } catch { /* Optional. */ }
+        try { selected = sessionStorage.getItem(`${this._localCacheKey()}_selection`); } catch { /* Optional. */ }
         this.state.selectedId = this.state.bills.some((bill) => bill.id === selected)
             ? selected : (this.state.bills[0]?.id || null);
         this._assignLocalDraftSlots();
+        this.state.draftCacheReady = true;
         try {
-            // Read metadata first: never push an offline workspace through load's
-            // legacy import path, which may evict saved drafts at capacity.
-            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
-            if (scope !== this._localCacheKey()) return;
+            const result = await this.orm.call("ab_sales_pos_api", "pos_draft_workspace", [], {...this._draftScopeArgs(), tokens: this.state.bills.map((bill) => bill.id)});
+            if (scope !== this._draftRequestScope()) return;
             this._applyDraftCacheResult(result);
-            await this._saveCacheToServer();
-        } catch {
-            if (scope !== this._localCacheKey()) return;
-            this.notification.add(_t("Draft cache could not be synchronized. Your local bills are retained; reconnect before creating or removing drafts."), {type: "warning"});
-            this._scheduleCacheSaveToServer(5000);
+        } catch (error) {
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = this._getRpcErrorMessage(error);
         }
+        if (scope !== this._draftRequestScope()) return;
+        this.retryDraftBackup();
         await this.refreshSubmissionStates();
     }
 
@@ -1575,7 +1662,7 @@ class AbSalesPosAction extends Component {
         clearTimeout(this._cacheSaveTimer);
         this._cacheSaveTimer = null;
         if (this._cacheSavePromise) await this._cacheSavePromise;
-        await this._saveCacheToServer({throwOnError: true});
+        await this._saveCacheToServer({throwOnError: true, force: true});
         if (this._cachePayloadSnapshot().payload.bills.length) {
             throw new Error(_t("Drafts could not be saved. Please retry before restoring or deleting drafts."));
         }
@@ -1587,15 +1674,15 @@ class AbSalesPosAction extends Component {
         }
         this.state.draftManaging = true;
         this._submissionRevision = (this._submissionRevision || 0) + 1;
-        const scope = this._localCacheKey();
+        const scope = this._draftRequestScope();
         const checkScope = () => {
-            if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog."));
+            if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog."));
         };
         try {
-            await this._flushDraftSaves();
+            if (this._cacheSavePromise) await this._cacheSavePromise;
             checkScope();
             return await operation(checkScope);
-        } finally { this.state.draftManaging = false; }
+        } finally { this.state.draftManaging = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
     }
 
     async _listSavedDrafts() {
@@ -1619,7 +1706,7 @@ class AbSalesPosAction extends Component {
             const bill = this._normalizeBill(result.bills[0]);
             bill.slot_number = slotNumber;
             this.state.bills.push(bill);
-            this._acknowledgedDrafts.set(id, this._draftFingerprint(bill));
+            this._acknowledgedDrafts.set(bill.id, this._draftFingerprint(bill));
             this.selectBill(id);
         });
     }
@@ -1630,6 +1717,7 @@ class AbSalesPosAction extends Component {
                 ...this._draftScopeArgs(), bill_ids: ids, revision,
             });
             checkScope();
+            this._removeCachedBills(new Set(result.deleted_ids || []));
             this._applyDraftCacheResult(result);
             this.notification.add(_t("Deleted %s drafts; retained %s bills.", result.deleted_ids.length, result.retained_count), {type: "info"});
             return result;
@@ -1816,42 +1904,59 @@ class AbSalesPosAction extends Component {
     }
 
     async _saveCacheToServer(options = {}) {
-        if (this._cacheSavePromise) return this._cacheSavePromise;
+        const scope = this._draftRequestScope();
+        if (this._cacheSavePromise) {
+            if (this._cacheSaveScope === scope) return this._cacheSavePromise;
+            await this._cacheSavePromise;
+            if (scope !== this._draftRequestScope()) return;
+        }
+        this._cacheSaveScope = scope;
         this._cacheSavePromise = this._performCacheSave(options);
         try { return await this._cacheSavePromise; }
         finally { this._cacheSavePromise = null; }
     }
 
-    async _performCacheSave({allowRetry = true, throwOnError = false} = {}) {
-        if (this.state.draftDeleting || this.state.draftCreating) {
-            if (allowRetry && !this._cacheSaveStopped) this._cacheSaveQueued = true;
+    async _performCacheSave({allowRetry = true, throwOnError = false, force = false} = {}) {
+        if (!force && (this.state.draftDeleting || this.state.draftManaging)) {
+            this._cacheSaveQueued = true;
             return;
         }
-        const scope = this._localCacheKey();
+        this._cacheSaveQueued = false;
+        if (!this.state.draftCacheReady || (this.state.abSalesHr && !this._posDraftSessionToken())) return;
+        const scope = this._draftRequestScope();
+        const snapshot = this._cachePayloadSnapshot();
+        if (!snapshot.payload.bills.length) return;
         this._cacheSaveInFlight = true;
+        let transient = false;
         try {
-            if (!this.state.draftCacheReady) {
-                const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
-                if (scope !== this._localCacheKey()) return;
-                this._applyDraftCacheResult(result);
-            }
-            const snapshot = this._cachePayloadSnapshot();
-            if (!snapshot.payload.bills.length) return;
             const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), ...snapshot.payload, revision: this._draftCacheRevision,
+                ...this._draftScopeArgs(), ...snapshot.payload,
             });
-            if (scope !== this._localCacheKey()) return;
+            if (scope !== this._draftRequestScope()) return;
             this._applyDraftCacheResult(result, snapshot);
-            // A rejected offline draft is retained locally without a retry loop.
-            if (!result.rejected_ids?.length && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
+            transient = (result.outcomes || []).some((o) => o.status === "busy");
+            const rejected = (result.outcomes || []).some((o) => !["saved", "unchanged", "ready", "retired", "completed", "skipped"].includes(o.status));
+            if (throwOnError && rejected) throw new Error(this.state.draftBackupMessage);
+            if (!rejected && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
+            if (!rejected) this._draftRetryCount = 0;
             return result;
         } catch (error) {
-            if (scope !== this._localCacheKey()) return;
-            if (allowRetry && !this._cacheSaveStopped) this._scheduleCacheSaveToServer(5000);
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = error?.data ? this._getRpcErrorMessage(error) :
+                _t("Draft backup is unavailable. Your local edits are retained. Retry when connected.");
+            // RPC business errors require user action; transport errors may recover.
+            transient = !error?.data;
             if (throwOnError) throw error;
         } finally {
             this._cacheSaveInFlight = false;
-            if (this._cacheSaveQueued && !this._cacheSaveStopped) {
+            if (scope === this._draftRequestScope() && allowRetry && transient && !this._cacheSaveStopped) {
+                const delays = [1000, 2000, 5000];
+                const count = this._draftRetryCount || 0;
+                if (count < delays.length) {
+                    this._draftRetryCount = count + 1;
+                    this._scheduleCacheSaveToServer(delays[count]);
+                }
+            } else if (this._cacheSaveQueued && !this._cacheSaveStopped) {
                 this._cacheSaveQueued = false;
                 this._scheduleCacheSaveToServer(0);
             }
@@ -1898,12 +2003,13 @@ class AbSalesPosAction extends Component {
         }
         this._requestedDraftSlot = Number.isInteger(slotNumber) ? slotNumber : this.emptyDraftSlots[0]?.number;
         this.state.draftCreating = true;
-        const scope = this._localCacheKey();
+        const scope = this._draftRequestScope();
         try {
             const options = await this.orm.call("ab_sales_pos_api", "pos_draft_store_options", [], {
                 pos_hr_session_token: this._posDraftSessionToken() || false,
             });
-            if (scope !== this._localCacheKey()) return;
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftLimit = options.draft_limit || this.state.draftLimit;
             const stores = options.stores || [];
             this.state.draftStoreIds = stores.map((store) => store.id);
             this.state.stores = stores;
@@ -1916,11 +2022,11 @@ class AbSalesPosAction extends Component {
                 stores,
                 defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
                 domain: this.storeDomain(),
-                onSelect: (storeId) => scope === this._localCacheKey() && this.createNewBill(storeId),
+                onSelect: (storeId) => scope === this._draftRequestScope() && this.createNewBill(storeId),
                 draftManager: {
-                    list: () => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
-                    restore: (id) => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._restoreSavedDraft(id, this._requestedDraftSlot); },
-                    remove: (ids, revision) => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._removeSavedDrafts(ids, revision); },
+                    list: () => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
+                    restore: (id) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._restoreSavedDraft(id, this._requestedDraftSlot); },
+                    remove: (ids, revision) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._removeSavedDrafts(ids, revision); },
                     isOpen: (id) => this.state.bills.some((bill) => bill.id === id),
                     locked: (bill) => this._slotBillLocked(bill),
                     error: (error) => this._getRpcErrorMessage(error),
@@ -2169,7 +2275,7 @@ class AbSalesPosAction extends Component {
     }
 
     async createNewBill(storeId) {
-        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging || this._cacheSaveInFlight) return;
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging) return;
         this._assignLocalDraftSlots();
         const available = this.emptyDraftSlots;
         if (!available.length) {
@@ -2226,33 +2332,10 @@ class AbSalesPosAction extends Component {
             total_net_amount: 0,
             promo: this._defaultPromo(),
         };
-        const scope = this._localCacheKey();
-        const snapshot = this._cachePayloadSnapshot();
-        this.state.draftCreating = true;
-        try {
-            const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), bills: [bill, ...snapshot.payload.bills], selected_id: bill.id,
-                revision: this._draftCacheRevision,
-            });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result, snapshot);
-            const created = result.bills.find((item) => item.id === bill.id);
-            if (!created) return false;
-            const local = this._normalizeBill(created);
-            local.slot_number = slotNumber;
-            this.state.bills.push(local);
-            this._acknowledgedDrafts.set(local.id, this._draftFingerprint(local));
-            this.selectBill(local.id);
-            return true;
-        } catch {
-            this.notification.add(_t("Could not create a draft bill. Please reconnect and try again."), {type: "warning"});
-        } finally {
-            this.state.draftCreating = false;
-            if (this._cacheSaveQueued) {
-                this._cacheSaveQueued = false;
-                this._scheduleCacheSaveToServer(0);
-            }
-        }
+        bill.id = bill.header.pos_client_token;
+        this.state.bills.push(this._normalizeBill(bill));
+        this.selectBill(bill.id);
+        return true;
     }
 
     _defaultPromo() {
@@ -2317,7 +2400,7 @@ class AbSalesPosAction extends Component {
                 ? "" : generatePosToken(user.userId, normalized.header.store_id));
         normalized.updated_at = normalized.updated_at || new Date().toISOString();
         normalized.local_number = normalized.local_number || String(Date.now());
-        normalized.id = normalized.id || generateId("bill");
+        normalized.id = normalized.header.pos_client_token || normalized.id || generateId("bill");
         for (const line of normalized.lines) {
             line.id = line.id || generateId("line");
             line.qty_str = line.qty_str || DEFAULT_QTY;
@@ -2415,7 +2498,7 @@ class AbSalesPosAction extends Component {
 
     async removeAllBills() {
         try {
-            const scope = this._localCacheKey();
+            const scope = this._draftRequestScope();
             const result = await this._listSavedDrafts();
             const ids = result.bills.map((bill) => bill.id);
             if (!ids.length) return;
@@ -2423,7 +2506,7 @@ class AbSalesPosAction extends Component {
                 title: _t("Delete All Drafts"),
                 body: _t("Delete all eligible saved drafts for this employee, including open drafts? Protected invoices will be retained."),
                 confirm: async () => {
-                    if (scope !== this._localCacheKey()) return;
+                    if (scope !== this._draftRequestScope()) return;
                     try { await this._removeSavedDrafts(ids, result.revision); }
                     catch (error) { this.notification.add(this._getRpcErrorMessage(error), {type: "warning"}); }
                 },
@@ -2434,10 +2517,10 @@ class AbSalesPosAction extends Component {
     }
 
     async _syncCompletedDrafts() {
-        const scope = this._localCacheKey();
+        const scope = this._draftRequestScope();
         try {
             await this._flushDraftSaves();
-            if (scope !== this._localCacheKey()) return;
+            if (scope !== this._draftRequestScope()) return;
             this._syncInputsForBill(this.currentBill);
             this.refreshPromotions(this.currentBill);
             this.refreshCustomerInsights(this.currentBill);
@@ -2478,44 +2561,26 @@ class AbSalesPosAction extends Component {
     }
 
     async _deleteDrafts(bills) {
-        if (!bills.length || this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.draftCreating) return;
-        if (!this.state.draftCacheReady) return;
-        // Let an earlier save finish before removal; tombstones reject later stale saves.
-        if (this._cacheSaveInFlight) {
-            this.notification.add(_t("Draft cache is busy. Please try again."), {type: "info"});
-            return;
-        }
-        clearTimeout(this._cacheSaveTimer);
-        this._cacheSaveTimer = null;
+        if (!bills.length || this.state.submitting || this.state.draftDeleting) return;
+        const local = bills.filter((bill) => !bill.draft_revision && this.draftSlotState(bill) !== "used" && !bill.odoo_header_id && !this._slotBillLocked(bill));
+        this._removeCachedBills(new Set(local.map((bill) => bill.id)));
+        const saved = bills.filter((bill) => !local.includes(bill));
+        if (!saved.length) return;
         this.state.draftDeleting = true;
-        const scope = this._localCacheKey();
-        const snapshot = this._cachePayloadSnapshot();
+        const scope = this._draftRequestScope();
         try {
-            // Persist unsent edits first, so eligibility uses the current bill.
-            const saved = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), ...snapshot.payload, revision: this._draftCacheRevision,
-            });
-            if (scope !== this._localCacheKey()) return;
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
             const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
-                ...this._draftScopeArgs(), bill_ids: bills.map((bill) => bill.id), revision: saved.revision,
+                ...this._draftScopeArgs(), bill_ids: saved.map((bill) => bill.id),
+                revision: Object.fromEntries(saved.map((bill) => [bill.id, bill.draft_revision])),
             });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result, snapshot);
-            this._syncInputsForBill(this.currentBill);
-            this.refreshPromotions(this.currentBill);
-            this.refreshCustomerInsights(this.currentBill);
-            this.searchProducts((this.state.productQuery || "").trim());
-            this.notification.add(_t("Deleted %s drafts; retained %s bills.",
-                result.deleted_ids.length, result.retained_count), {type: "info"});
-        } catch {
-            this.notification.add(_t("Could not remove drafts. Your bills have been retained. Please try again."), {type: "warning"});
-        } finally {
-            this.state.draftDeleting = false;
-            if (this._cacheSaveQueued) {
-                this._cacheSaveQueued = false;
-                this._scheduleCacheSaveToServer(0);
-            }
-        }
+            if (scope !== this._draftRequestScope()) return;
+            this._removeCachedBills(new Set(result.deleted_ids || []));
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally { this.state.draftDeleting = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
     }
 
     updateHeaderField(field, value) {

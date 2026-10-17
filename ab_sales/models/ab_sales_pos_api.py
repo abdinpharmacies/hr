@@ -69,63 +69,10 @@ class AbSalesPosApi(models.TransientModel):
         if "ab_employee_access_sales_pos_session" in self.env.registry:
             return employee
 
-        return self.env["ab_hr_employee"].sudo().browse(parsed_employee_id).exists()[:1]
-
-    @api.model
-    def _pos_draft_cache_record(
-            self,
-            cache_key=None,
-            employee_id=None,
-            pos_hr_session_token=None,
-            create=False,
-    ):
-        self._require_models("ab_sales_pos_draft_cache", "ab_hr_employee")
-        key = self._pos_draft_cache_key(cache_key)
-        employee = self._pos_draft_employee(
-            employee_id=employee_id,
-            pos_hr_session_token=pos_hr_session_token,
-        )
-        employee_scope_key = int(employee.id or 0)
-        Cache = self.env["ab_sales_pos_draft_cache"].sudo()
-        record = Cache.search(
-            [
-                ("user_id", "=", self.env.uid),
-                ("employee_scope_key", "=", employee_scope_key),
-                ("cache_key", "=", key),
-            ],
-            limit=1,
-        )
-        if not record and create:
-            record = Cache.create(
-                {
-                    "user_id": self.env.uid,
-                    "employee_id": employee.id or False,
-                    "employee_scope_key": employee_scope_key,
-                    "cache_key": key,
-                    "selected_id": "",
-                    "last_synced_at": fields.Datetime.now(),
-                    "bills_json": [],
-                }
-            )
-        return record, key, employee
-
-    @api.model
-    def pos_load_draft_cache(self, cache_key=None, employee_id=None, pos_hr_session_token=None):
-        record, key, employee = self._pos_draft_cache_record(
-            cache_key=cache_key,
-            employee_id=employee_id,
-            pos_hr_session_token=pos_hr_session_token,
-        )
-        bills = record.bills_json if record and isinstance(record.bills_json, list) else []
-        bills = self._pos_draft_cache_with_product_pricing_flags(bills)
-        return {
-            "cache_key": key,
-            "employee_id": employee.id or False,
-            "bills": bills,
-            "selected_id": record.selected_id if record else "",
-            "last_synced_at": record.last_synced_at if record else False,
-            "updated_at": record.write_date if record else False,
-        }
+        employee = self.env["ab_hr_employee"].sudo().browse(parsed_employee_id).exists()[:1]
+        if not self.env.user.has_group("base.group_system"):
+            employee = employee.filtered(lambda item: item.user_id.id == self.env.uid)
+        return employee
 
     @api.model
     def _pos_draft_cache_with_product_pricing_flags(self, bills):
@@ -194,42 +141,6 @@ class AbSalesPosApi(models.TransientModel):
                         line["uom_name"] = flags["uom_name"]
                         line["uom_factor"] = uom_factor
         return bills
-
-    @api.model
-    def pos_save_draft_cache(
-            self,
-            cache_key=None,
-            bills=None,
-            selected_id=None,
-            employee_id=None,
-            pos_hr_session_token=None,
-    ):
-        record, key, employee = self._pos_draft_cache_record(
-            cache_key=cache_key,
-            employee_id=employee_id,
-            pos_hr_session_token=pos_hr_session_token,
-            create=True,
-        )
-        safe_bills = bills if isinstance(bills, list) else []
-        selected = str(selected_id or "").strip()
-        now = fields.Datetime.now()
-        record.write(
-            {
-                "cache_key": key,
-                "employee_id": employee.id or False,
-                "selected_id": selected,
-                "last_synced_at": now,
-                "bills_json": safe_bills,
-            }
-        )
-        return {
-            "cache_key": key,
-            "employee_id": employee.id or False,
-            "count": len(safe_bills),
-            "selected_id": selected,
-            "last_synced_at": record.last_synced_at,
-            "updated_at": record.write_date,
-        }
 
     @api.model
     def _store_default_price(self, store_id, product):

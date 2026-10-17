@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Run on every module upgrade, including upgrades without a version change. -->
+    <function model="ab_sales_pos_draft_cache" name="_cleanup_invalid_drafts"/>
+</odoo>
