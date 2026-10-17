@@ -48,7 +48,7 @@ browser. It does not save credentials, screenshots, or authenticated state.
 
 ## Sales UI scenarios
 
-`sales_ui_cases.json` contains eleven reusable scenarios using your fixed record
+`sales_ui_cases.json` contains fifteen reusable scenarios using your fixed record
 IDs. It includes setup requirements, UI steps, exact expected totals, backend
 checks and shortage handling. The runner also supports explicit normal submission.
 
@@ -153,23 +153,37 @@ Failures return a nonzero exit status. Credentials are not included in reports.
 | CONTRACT_100 | 261.33 |
 | PROMO_ONLY | 125.00 |
 | PROMO_MIXED | 126.00 |
-| PROMO_THEN_CONTRACT | 126.00 |
-| CONTRACT_THEN_PROMO | 126.00 |
-| CONTRACT_CLEAR_RESTORES_PROMO | 126.00 |
+| PROMO_THEN_CONTRACT | 281.00 |
+| CONTRACT_THEN_PROMO | 281.00 |
+| CONTRACT_CLEAR_NO_AUTO_PROMO | 281.00 |
 | PROMO_QTY_UPDATE | 251.00 |
 | PROMO_THEN_DISCOUNTED_CONTRACT | 70.25 |
+| CONTRACT_MANUAL_PROMO | 126.00 |
+| CONTRACT_CHANGE_CLEARS_MANUAL_PROMO | 281.00 |
+| CONTRACT_CLEAR_MANUAL_PROMO | 126.00 |
+| CONTRACT_MANUAL_PROMO_QTY_UPDATE | 251.00 |
 
 Both products are local. Prices are pinned at 1 and 280 and checked before
 testing; price drift is a failure, not a reason to silently change expectations.
-The combined cases expect promotions with an eligible contract; discounted
-contracts should still clear promotions. The running backend exposes `allow_promotions`,
-although the local source inspected did not declare it. These scenarios target
-the running application and will fail explicitly if that capability is missing.
+Contract-affected bills require explicit promotion selection. New cases assert no
+selected/applied chip and payment of 281 before clicking, then verify payment of
+126 after the click. Contract changes exercise 4 → 1 → 4 using existing fixtures;
+quantity updates retain the manual selection and produce payment of 251.
+`CONTRACT_CLEAR_RESTORES_PROMO` was renamed `CONTRACT_CLEAR_NO_AUTO_PROMO`;
+update any saved `--case` commands accordingly.
+
+The runner waits for browser RPCs to finish and a 700 ms quiet period covering
+the current 300/350 ms pricing debounces before checking pricing. UI-total steps
+may provide an inline `expected` object for intermediate totals; final checks use
+the case expectations. `select_promotion_manually` always clicks and rejects an
+already selected/applied chip. `assert_promotion_unselected` requires an available
+chip with no selection; `assert_promotion_applied` verifies the applied chip.
+Combined backend checks pass store, customer, and explicit selection through
+`pos_contract_totals`. All fifteen cases remain preview-only.
+
 The old reference
 invoice totals and its 10% promotion are not applicable to this fixed-price suite.
 
-Last successful live preview validation (before adding submit): **11 passed**, with exactly one Odoo login and one employee
-PIN login across all cases. All eleven distinct test drafts were cleaned up and
-the employee session closed. The two previously failing combined promotion cases
-now pass against the current development application with unchanged expectations.
-See `validation_results.json` for case coverage and the full report location.
+Historical live preview validation covered the original eleven cases only.
+`validation_results.json` records that earlier run, not verification of the expanded
+suite. Rerun the suite with runtime credentials to validate the fifteen cases.

@@ -36,11 +36,31 @@ try {
     const ownedDraftIds = new Set();
     const tasks = new Set();
     const requestOwners = new WeakMap();
+    const pendingPricing = new Set();
+    let lastPricingActivity = Date.now();
+    const isPricingRequest = request => request.url().includes('/web/dataset/call_kw/') &&
+        !request.url().endsWith('/pos_save_draft_cache');
+    const finishPricing = request => {
+        if (pendingPricing.delete(request)) lastPricingActivity = Date.now();
+    };
+    page.on('requestfinished', finishPricing);
+    page.on('requestfailed', finishPricing);
+    const waitForPricing = async () => {
+        // Cover the 300/350 ms pricing debounces, then wait for RPCs and rendering.
+        const started = Date.now();
+        await expect.poll(() => pendingPricing.size === 0 &&
+            Date.now() - Math.max(started, lastPricingActivity) >= 700,
+            { timeout: 15000, message: 'Pricing RPCs must settle before assertions' }).toBe(true);
+    };
     let selectedDraftId = null;
     const draftTokens = new Map();
     const protectedDraftIds = new Set();
     page.on('request', request => {
         requestOwners.set(request, activeResult);
+        if (isPricingRequest(request)) {
+            pendingPricing.add(request);
+            lastPricingActivity = Date.now();
+        }
         if (new URL(request.url()).pathname === '/web/login' && request.method() === 'POST')
             report.authentication.odoo_login_count++;
         if (request.url().endsWith('/employee_login')) report.authentication.employee_login_count++;
@@ -133,6 +153,9 @@ try {
             if (!(await sessionAvailable())) throw new Error('Session expired or locked; no automatic reauthentication');
             for (const step of test.steps) {
                 result.last_action = step.action;
+                const expected = typeof step.expected === 'object' ? step.expected : test.expected;
+                if (step.action.startsWith('assert_') || ['select_promotion_manually', 'ensure_promotion_selected', 'clear_contract'].includes(step.action))
+                    await waitForPricing();
                 switch (step.action) {
                     case 'new_empty_bill': {
                         if (caseDraftId) throw new Error('Only one new bill is allowed per case');
@@ -189,7 +212,7 @@ try {
                         }
                         break;
                     }
-                    case 'select_contract': await m2o('Contract...', cfg.metadata.contracts.find(c => c.id === step.id).name); break;
+                    case 'select_contract': await m2o('Contract...', cfg.metadata.contracts.find(c => c.id === step.id).name); await waitForPricing(); break;
                     case 'clear_contract': {
                         const input = page.getByPlaceholder('Contract...', { exact: true });
                         await input.fill(''); await input.press('Tab'); break;
@@ -207,35 +230,57 @@ try {
                         await expect(chip).toHaveClass(/is-applied/);
                         break;
                     }
+                    case 'assert_promotion_unselected': {
+                        const chip = page.locator('.o_ab_sales_pos_promo_chip').filter({ hasText: cfg.metadata.promotion.name });
+                        await expect(chip).toBeVisible();
+                        await expect(page.locator('.o_ab_sales_pos_promo_chip.is-applied, .o_ab_sales_pos_promo_chip.is-selected')).toHaveCount(0);
+                        result.checkpoints.push('promotion_unselected');
+                        break;
+                    }
+                    case 'select_promotion_manually': {
+                        const chip = page.locator('.o_ab_sales_pos_promo_chip').filter({ hasText: cfg.metadata.promotion.name });
+                        await expect(chip).toBeVisible();
+                        await expect(chip).not.toHaveClass(/is-applied|is-selected/);
+                        await chip.click();
+                        await waitForPricing();
+                        await expect(chip).toHaveClass(/is-applied/);
+                        result.checkpoints.push('promotion_manual_click');
+                        break;
+                    }
+                    case 'assert_promotion_applied':
+                        await expect(page.locator('.o_ab_sales_pos_promo_chip').filter({ hasText: cfg.metadata.promotion.name })).toHaveClass(/is-applied/);
+                        result.checkpoints.push('promotion_applied');
+                        break;
                     case 'assert_promotion_cleared':
                     case 'assert_promotion_unavailable': await expect(page.locator('.o_ab_sales_pos_promo_chip')).toHaveCount(0); break;
                     case 'assert_ui_totals':
-                        await expect.poll(async () => amount(await page.locator('.ab_pos_meta_value_total').innerText())).toBeCloseTo(test.expected.gross_total, 2);
-                        await expect.poll(async () => amount(await page.locator('.ab_pos_meta_value_net').innerText())).toBeCloseTo(test.expected.customer_pay, 2);
-                        await expect(page.locator('.ab_pos_line_row')).toHaveCount(test.expected.line_count);
+                        await expect.poll(async () => amount(await page.locator('.ab_pos_meta_value_total').innerText())).toBeCloseTo(expected.gross_total, 2);
+                        await expect.poll(async () => amount(await page.locator('.ab_pos_meta_value_net').innerText())).toBeCloseTo(expected.customer_pay, 2);
+                        await expect(page.locator('.ab_pos_line_row')).toHaveCount(expected.line_count);
                         result.checkpoints.push('ui_totals'); break;
                     case 'assert_backend_quote': {
                         const lines = test.lines.map(l => ({ product_id: l.product_id, qty_str: String(l.qty), uom_id: 1,
                             sell_price: suite.records.products.find(p => p.id === l.product_id).unit_price }));
                         let quote;
                         if (test.expected.contract_id) {
-                            quote = await rpc('ab_sales_pos_api', 'pos_contract_totals', [], { contract_id: test.expected.contract_id, lines });
-                            for (const [key, expected] of [['discount', 'contract_discount'], ['total_after_discount', 'contract_total_after_discount'], ['cust_pay', test.expected.applied_promotion_ids.length ? 'contract_customer_pay_before_promotion' : 'customer_pay'], ['company_pay', 'company_pay']])
-                                equalMoney(Number(quote[key]), test.expected[expected], key);
-                            if (test.expected.applied_promotion_ids.length) {
-                                if (!quote.allow_promotions) throw new Error('Contract does not allow promotions');
-                                const promoQuote = await rpc('ab_sales_pos_api', 'pos_promotions', [], {
-                                    store_id: suite.records.store_id, lines, applied_program_id: 2, manual_clear: false,
-                                });
-                                equalMoney(Number(promoQuote.total_net_amount ?? promoQuote.amount_total_after_promo), test.expected.customer_pay, 'combined net');
-                                if (promoQuote.applied_program_id !== 2) throw new Error('Wrong promotion applied by backend');
-                                equalMoney(Number(promoQuote.promo_discount_amount), test.expected.promotion_discount, 'promotion discount');
-                                result.promotion_quote = promoQuote;
+                            quote = await rpc('ab_sales_pos_api', 'pos_contract_totals', [], {
+                                contract_id: expected.contract_id, lines, store_id: suite.records.store_id,
+                                customer_id: suite.records.customer_id,
+                                applied_program_id: expected.applied_promotion_ids[0] || false, manual_clear: true,
+                            });
+                            for (const [key, field] of [['discount', 'contract_discount'], ['total_after_discount', 'contract_total_after_discount'], ['cust_pay', 'customer_pay'], ['company_pay', 'company_pay']])
+                                equalMoney(Number(quote[key]), expected[field], key);
+                            if ((quote.applied_program_id || false) !== (expected.applied_promotion_ids[0] || false))
+                                throw new Error('Wrong promotion applied by contract pricing');
+                            if (quote.allow_promotions) {
+                                if ((quote.selected_program_id || false) !== (expected.applied_promotion_ids[0] || false))
+                                    throw new Error('Wrong promotion selected by contract pricing');
+                                equalMoney(Number(quote.promo_discount_amount || 0), expected.promotion_discount || 0, 'promotion discount');
                             }
                         } else {
-                            quote = await rpc('ab_sales_pos_api', 'pos_promotions', [], { store_id: suite.records.store_id, lines,
+                            quote = await rpc('ab_sales_pos_api', 'pos_promotions', [], { store_id: suite.records.store_id, customer_id: suite.records.customer_id, lines,
                                 applied_program_id: test.expected.applied_promotion_ids[0] || false, manual_clear: !test.expected.applied_promotion_ids.length });
-                            equalMoney(Number(quote.total_net_amount ?? quote.amount_total_after_promo), test.expected.customer_pay, 'backend net');
+                            equalMoney(Number(quote.total_net_amount ?? quote.amount_total_after_promo), expected.customer_pay, 'backend net');
                             if ((quote.applied_program_id || false) !== (test.expected.applied_promotion_ids[0] || false))
                                 throw new Error('Wrong promotion applied by backend');
                             equalMoney(Number(quote.promo_discount_amount), test.expected.promotion_discount || 0, 'promotion discount');

@@ -669,10 +669,6 @@
           "policy": "out_of_stock"
         },
         {
-          "action": "ensure_promotion_selected",
-          "id": 2
-        },
-        {
           "action": "assert_ui_totals",
           "expected": "expected"
         },
@@ -768,10 +764,6 @@
           "policy": "out_of_stock"
         },
         {
-          "action": "ensure_promotion_selected",
-          "id": 2
-        },
-        {
           "action": "assert_ui_totals",
           "expected": "expected"
         },
@@ -808,17 +800,15 @@
       ],
       "expected": {
         "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "customer_pay": 281.0,
         "contract_id": 4,
-        "applied_promotion_ids": [
-          2
-        ],
+        "applied_promotion_ids": [],
         "line_count": 2,
         "contract_discount": 0.0,
         "contract_total_after_discount": 281.0,
         "company_pay": 0.0,
-        "promotion_discount": 155.0,
-        "total_after_promotion": 126.0,
+        "promotion_discount": 0.0,
+        "total_after_promotion": 281.0,
         "contract_customer_pay_before_promotion": 281.0
       },
       "steps": [
@@ -871,15 +861,11 @@
           "policy": "out_of_stock"
         },
         {
-          "action": "ensure_promotion_selected",
-          "id": 2
-        },
-        {
           "action": "select_contract",
           "id": 4
         },
         {
-          "action": "ensure_promotion_selected",
+          "action": "assert_promotion_unselected",
           "id": 2
         },
         {
@@ -919,17 +905,15 @@
       ],
       "expected": {
         "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "customer_pay": 281.0,
         "contract_id": 4,
-        "applied_promotion_ids": [
-          2
-        ],
+        "applied_promotion_ids": [],
         "line_count": 2,
         "contract_discount": 0.0,
         "contract_total_after_discount": 281.0,
         "company_pay": 0.0,
-        "promotion_discount": 155.0,
-        "total_after_promotion": 126.0,
+        "promotion_discount": 0.0,
+        "total_after_promotion": 281.0,
         "contract_customer_pay_before_promotion": 281.0
       },
       "steps": [
@@ -986,7 +970,7 @@
           "id": 4
         },
         {
-          "action": "ensure_promotion_selected",
+          "action": "assert_promotion_unselected",
           "id": 2
         },
         {
@@ -1012,8 +996,8 @@
       ]
     },
     {
-      "id": "CONTRACT_CLEAR_RESTORES_PROMO",
-      "name": "Clear contract and select promotion again",
+      "id": "CONTRACT_CLEAR_NO_AUTO_PROMO",
+      "name": "Clearing contract does not automatically restore promotion",
       "lines": [
         {
           "product_id": 74542,
@@ -1026,14 +1010,12 @@
       ],
       "expected": {
         "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "customer_pay": 281.0,
         "contract_id": null,
-        "applied_promotion_ids": [
-          2
-        ],
+        "applied_promotion_ids": [],
         "line_count": 2,
-        "promotion_discount": 155,
-        "total_after_promotion": 126.0
+        "promotion_discount": 0.0,
+        "total_after_promotion": 281.0
       },
       "steps": [
         {
@@ -1092,7 +1074,7 @@
           "action": "clear_contract"
         },
         {
-          "action": "ensure_promotion_selected",
+          "action": "assert_promotion_unselected",
           "id": 2
         },
         {
@@ -1191,10 +1173,6 @@
           "policy": "out_of_stock"
         },
         {
-          "action": "ensure_promotion_selected",
-          "id": 2
-        },
-        {
           "action": "assert_ui_totals",
           "expected": "expected"
         },
@@ -1289,15 +1267,579 @@
           "policy": "out_of_stock"
         },
         {
-          "action": "ensure_promotion_selected",
+          "action": "select_contract",
+          "id": 1
+        },
+        {
+          "action": "assert_promotion_cleared",
           "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": "expected"
+        },
+        {
+          "action": "assert_backend_quote",
+          "expected": "expected"
+        },
+        {
+          "action": "prepare_submission",
+          "settings": "submission"
+        },
+        {
+          "action": "submit_or_preview",
+          "mode": "defaults.execution_mode"
+        },
+        {
+          "action": "assert_saved_invoice_if_submitted",
+          "expected": "expected"
+        }
+      ]
+    },
+    {
+      "id": "CONTRACT_MANUAL_PROMO",
+      "name": "Select promotion manually after contract",
+      "lines": [
+        {
+          "product_id": 74542,
+          "qty": 1
+        },
+        {
+          "product_id": 94123,
+          "qty": 1
+        }
+      ],
+      "expected": {
+        "gross_total": 281.0,
+        "customer_pay": 126.0,
+        "contract_id": 4,
+        "applied_promotion_ids": [
+          2
+        ],
+        "line_count": 2,
+        "contract_discount": 155.0,
+        "contract_total_after_discount": 126.0,
+        "company_pay": 0.0,
+        "promotion_discount": 155.0,
+        "total_after_promotion": 126.0
+      },
+      "steps": [
+        {
+          "action": "new_empty_bill",
+          "store_id": 104
+        },
+        {
+          "action": "select_customer",
+          "id": 19934
+        },
+        {
+          "action": "search_product",
+          "id": 74542,
+          "query": "1",
+          "assert_result_id": 74542
+        },
+        {
+          "action": "add_product",
+          "id": 74542
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 74542,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 74542,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "search_product",
+          "id": 94123,
+          "query": "91950",
+          "assert_result_id": 94123
+        },
+        {
+          "action": "add_product",
+          "id": 94123
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 94123,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 94123,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "select_contract",
+          "id": 4
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "select_promotion_manually",
+          "id": 2
+        },
+        {
+          "action": "assert_promotion_applied",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 126,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": "expected"
+        },
+        {
+          "action": "assert_backend_quote",
+          "expected": "expected"
+        },
+        {
+          "action": "prepare_submission",
+          "settings": "submission"
+        },
+        {
+          "action": "submit_or_preview",
+          "mode": "defaults.execution_mode"
+        },
+        {
+          "action": "assert_saved_invoice_if_submitted",
+          "expected": "expected"
+        }
+      ]
+    },
+    {
+      "id": "CONTRACT_CHANGE_CLEARS_MANUAL_PROMO",
+      "name": "Changing contracts clears manual promotion",
+      "lines": [
+        {
+          "product_id": 74542,
+          "qty": 1
+        },
+        {
+          "product_id": 94123,
+          "qty": 1
+        }
+      ],
+      "expected": {
+        "gross_total": 281.0,
+        "customer_pay": 281.0,
+        "contract_id": 4,
+        "applied_promotion_ids": [],
+        "line_count": 2,
+        "contract_discount": 0.0,
+        "contract_total_after_discount": 281.0,
+        "company_pay": 0.0,
+        "promotion_discount": 0.0,
+        "total_after_promotion": 281.0,
+        "contract_customer_pay_before_promotion": 281.0
+      },
+      "steps": [
+        {
+          "action": "new_empty_bill",
+          "store_id": 104
+        },
+        {
+          "action": "select_customer",
+          "id": 19934
+        },
+        {
+          "action": "search_product",
+          "id": 74542,
+          "query": "1",
+          "assert_result_id": 74542
+        },
+        {
+          "action": "add_product",
+          "id": 74542
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 74542,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 74542,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "search_product",
+          "id": 94123,
+          "query": "91950",
+          "assert_result_id": 94123
+        },
+        {
+          "action": "add_product",
+          "id": 94123
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 94123,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 94123,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "select_contract",
+          "id": 4
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "select_promotion_manually",
+          "id": 2
+        },
+        {
+          "action": "assert_promotion_applied",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 126,
+            "line_count": 2
+          }
         },
         {
           "action": "select_contract",
           "id": 1
         },
         {
-          "action": "assert_promotion_cleared",
+          "action": "assert_promotion_unavailable"
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 70.25,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "select_contract",
+          "id": 4
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": "expected"
+        },
+        {
+          "action": "assert_backend_quote",
+          "expected": "expected"
+        },
+        {
+          "action": "prepare_submission",
+          "settings": "submission"
+        },
+        {
+          "action": "submit_or_preview",
+          "mode": "defaults.execution_mode"
+        },
+        {
+          "action": "assert_saved_invoice_if_submitted",
+          "expected": "expected"
+        }
+      ]
+    },
+    {
+      "id": "CONTRACT_CLEAR_MANUAL_PROMO",
+      "name": "Select promotion manually after clearing contract",
+      "lines": [
+        {
+          "product_id": 74542,
+          "qty": 1
+        },
+        {
+          "product_id": 94123,
+          "qty": 1
+        }
+      ],
+      "expected": {
+        "gross_total": 281.0,
+        "customer_pay": 126.0,
+        "contract_id": null,
+        "applied_promotion_ids": [
+          2
+        ],
+        "line_count": 2,
+        "promotion_discount": 155.0,
+        "total_after_promotion": 126.0
+      },
+      "steps": [
+        {
+          "action": "new_empty_bill",
+          "store_id": 104
+        },
+        {
+          "action": "select_customer",
+          "id": 19934
+        },
+        {
+          "action": "search_product",
+          "id": 74542,
+          "query": "1",
+          "assert_result_id": 74542
+        },
+        {
+          "action": "add_product",
+          "id": 74542
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 74542,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 74542,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "search_product",
+          "id": 94123,
+          "query": "91950",
+          "assert_result_id": 94123
+        },
+        {
+          "action": "add_product",
+          "id": 94123
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 94123,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 94123,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "select_contract",
+          "id": 4
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "clear_contract"
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "select_promotion_manually",
+          "id": 2
+        },
+        {
+          "action": "assert_promotion_applied",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": "expected"
+        },
+        {
+          "action": "assert_backend_quote",
+          "expected": "expected"
+        },
+        {
+          "action": "prepare_submission",
+          "settings": "submission"
+        },
+        {
+          "action": "submit_or_preview",
+          "mode": "defaults.execution_mode"
+        },
+        {
+          "action": "assert_saved_invoice_if_submitted",
+          "expected": "expected"
+        }
+      ]
+    },
+    {
+      "id": "CONTRACT_MANUAL_PROMO_QTY_UPDATE",
+      "name": "Retain manual promotion after quantity update",
+      "lines": [
+        {
+          "product_id": 74542,
+          "qty": 1
+        },
+        {
+          "product_id": 94123,
+          "qty": 2
+        }
+      ],
+      "expected": {
+        "gross_total": 561.0,
+        "customer_pay": 251.0,
+        "contract_id": 4,
+        "applied_promotion_ids": [
+          2
+        ],
+        "line_count": 2,
+        "contract_discount": 310.0,
+        "contract_total_after_discount": 251.0,
+        "company_pay": 0.0,
+        "promotion_discount": 310.0,
+        "total_after_promotion": 251.0
+      },
+      "steps": [
+        {
+          "action": "new_empty_bill",
+          "store_id": 104
+        },
+        {
+          "action": "select_customer",
+          "id": 19934
+        },
+        {
+          "action": "search_product",
+          "id": 74542,
+          "query": "1",
+          "assert_result_id": 74542
+        },
+        {
+          "action": "add_product",
+          "id": 74542
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 74542,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 74542,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "search_product",
+          "id": 94123,
+          "query": "91950",
+          "assert_result_id": 94123
+        },
+        {
+          "action": "add_product",
+          "id": 94123
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 94123,
+          "quantity": 1
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 94123,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "select_contract",
+          "id": 4
+        },
+        {
+          "action": "assert_promotion_unselected",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 281,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "select_promotion_manually",
+          "id": 2
+        },
+        {
+          "action": "assert_promotion_applied",
+          "id": 2
+        },
+        {
+          "action": "assert_ui_totals",
+          "expected": {
+            "gross_total": 281,
+            "customer_pay": 126,
+            "line_count": 2
+          }
+        },
+        {
+          "action": "set_quantity",
+          "product_id": 94123,
+          "quantity": 2
+        },
+        {
+          "action": "handle_shortage_if_present",
+          "product_id": 94123,
+          "policy": "out_of_stock"
+        },
+        {
+          "action": "assert_promotion_applied",
           "id": 2
         },
         {
@@ -1327,7 +1869,7 @@
     "Original contract percentages and origin discounts are preserved, but original invoice totals do not apply to these products.",
     "Both selected products are local, so imported-origin discount branches are configured but not exercised.",
     "Promotion 2 retains its existing fixed-price behavior; it does not reproduce the old 10% promotion.",
-    "The running backend exposes Allow Promotions. Contracts 1–3 disable it; contract 4 enables it with 100% copay and zero discounts/cap. Combined cases expect promotion support; initial UI checks found the controls disappear. A separate case verifies discounted contracts clear promotions."
+    "Contract-affected bills require manual promotion selection. Four added cases cover explicit selection, contract changes 4 to 1 to 4, selection after clearing the contract, and quantity updates. No fixture changes are required."
   ],
   "runner": {
     "command": "/opt/odoo19/venv19/bin/python ab_test_playwright/run_sales_ui.py",
