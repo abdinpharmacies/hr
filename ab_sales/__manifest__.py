@@ -1,6 +1,6 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
@@ -9,6 +9,7 @@
     'data': [
         'data/ir_cron.xml',
         'data/pos_draft_limit.xml',
+        'data/pos_draft_cleanup.xml',
         'security/groups_sales.xml',
         'security/rules_sales.xml',
         'security/ir.model.access.csv',

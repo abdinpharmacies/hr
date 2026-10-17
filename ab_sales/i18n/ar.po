@@ -1426,3 +1426,353 @@ msgstr "منذ يوم واحد"
 #, javascript-format
 msgid "since %s days"
 msgstr "منذ %s يوم"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_draft_cache_uniq_pos_client_token
+msgid "A saved draft already exists for this POS token."
+msgstr "توجد مسودة محفوظة بالفعل بنفس رمز الفاتورة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__active
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_pos_draft_cache__state__active
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_metadata_view_search
+msgid "Active"
+msgstr "نشطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__bill_json
+msgid "Bill Json"
+msgstr "بيانات الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_pos_draft_cache__state__completed
+msgid "Completed"
+msgstr "مكتملة"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_pos_draft_cache__state__retired
+msgid "Retired"
+msgstr "مستبعدة"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_draft_scope
+msgid "POS Draft Capacity Scope"
+msgstr "نطاق سعة مسودات نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__employee_key
+msgid "Employee Key"
+msgstr "معرّف الموظف"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_draft_scope_uniq_owner
+msgid "Draft capacity scope already exists."
+msgstr "نطاق سعة المسودات موجود بالفعل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft changed in another window"
+msgstr "تغيّرت المسودة في نافذة أخرى"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft backup is busy. Local edits are retained."
+msgstr "حفظ نسخة المسودة مشغول. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Draft conflicts need review. Local edits are retained."
+msgstr "تحتاج تعارضات المسودات إلى مراجعة. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "Invalid draft identity or branch."
+msgstr "معرّف المسودة أو الفرع غير صالح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Keep local changes"
+msgstr "الاحتفاظ بالتعديلات المحلية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Not backed up: saved draft limit reached."
+msgstr "لم تُحفظ نسخة احتياطية: تم بلوغ الحد الأقصى للمسودات المحفوظة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Reload saved version"
+msgstr "إعادة تحميل النسخة المحفوظة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Reloading replaces your local edits with the saved version. Keep local "
+"changes instead to save your version against the reviewed revision."
+msgstr ""
+"إعادة التحميل تستبدل تعديلاتك المحلية بالنسخة المحفوظة. اختر الاحتفاظ "
+"بالتعديلات المحلية لحفظ نسختك بناءً على المراجعة التي تم الاطلاع عليها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Retry backup"
+msgstr "إعادة محاولة الحفظ"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Review conflict"
+msgstr "مراجعة التعارض"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "This draft was removed elsewhere. Local edits are retained."
+msgstr "أُزيلت هذه المسودة من نافذة أخرى. تم الاحتفاظ بالتعديلات المحلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "You cannot access this draft bill."
+msgstr "لا يمكنك الوصول إلى مسودة الفاتورة هذه."
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_draft_cache
+msgid "Sales POS Draft Cache"
+msgstr "مسودات فواتير نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__pos_client_token
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__pos_client_token
+msgid "Pos Client Token"
+msgstr "رمز فاتورة نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__revision
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__revision
+msgid "Revision"
+msgstr "المراجعة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__last_synced_at
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__last_synced_at
+msgid "Last Synced At"
+msgstr "آخر مزامنة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_uid
+msgid "Created by"
+msgstr "أنشأه"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_eplus_connect__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_replica_db__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_eplus_connect__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_replica_db__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_priced__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_state__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_per_day_sync_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_scope__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"Draft backup is unavailable. Your local edits are retained. Retry when "
+"connected."
+msgstr ""
+"حفظ نسخة المسودة غير متاح. تم الاحتفاظ بتعديلاتك المحلية. أعد المحاولة عند "
+"الاتصال."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid ""
+"All %s local bill slots are occupied. Remove a Ready bill or an eligible "
+"draft to free a slot."
+msgstr ""
+"جميع خانات الفواتير المحلية البالغ عددها %s مشغولة. أزل فاتورة جاهزة أو "
+"مسودة قابلة للإزالة لإتاحة خانة."
