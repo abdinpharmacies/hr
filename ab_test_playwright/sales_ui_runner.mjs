@@ -1,5 +1,6 @@
 // Runs UI, backend quote, and explicitly requested submission checks.
 import { submitOnce, assertSavedInvoice } from './submission.mjs';
+import { readDraftWorkspace } from './draft_workspace.mjs';
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -32,7 +33,6 @@ try {
     page.setDefaultTimeout(15000);
     let hrSession = null;
     let authenticated = false;
-    const startedAt = new Date().toISOString();
     const ownedDraftIds = new Set();
     const tasks = new Set();
     const requestOwners = new WeakMap();
@@ -93,15 +93,6 @@ try {
         const work = (async () => {
             try {
                 const body = await response.json();
-                if (response.url().endsWith('/pos_save_draft_cache')) {
-                    const payload = response.request().postDataJSON()?.params?.kwargs || {};
-                    for (const draft of payload.bills || []) {
-                        if (!protectedDraftIds.has(draft.id) && draft.created_at >= startedAt && draft.header?.store_id === suite.records.store_id)
-                            ownedDraftIds.add(draft.id);
-                        draftTokens.set(draft.id, draft.header?.pos_client_token);
-                    }
-                }
-                if (body.result && response.url().endsWith('/pos_save_draft_cache')) selectedDraftId = body.result.selected_id;
                 if (body.error) owner.errors.push({ type: 'rpc', method: response.url().split('/').pop(), message: safeError(body.error.data?.message || body.error.message) });
                 if (response.url().endsWith('/employee_login')) {
                     hrToken = body.result?.token || hrToken;
@@ -160,18 +151,28 @@ try {
                     case 'new_empty_bill': {
                         if (caseDraftId) throw new Error('Only one new bill is allowed per case');
                         await Promise.all([...tasks]);
-                        // Login may create an empty draft. Reuse it only if this run owns it.
-                        if (!ownedDraftIds.has(selectedDraftId) || protectedDraftIds.has(selectedDraftId)) {
-                            const slot = page.locator('.ab_pos_draft_slot_empty').first();
-                            await expect(slot).toBeEnabled({ timeout: 15000 });
-                            await slot.click();
-                            const manager = page.locator('.ab_pos_draft_manager');
-                            await manager.waitFor();
-                            await m2o('Select store...', cfg.metadata.store.name, manager);
-                            await manager.getByRole('button', { name: 'Create', exact: true }).click();
-                            await manager.waitFor({ state: 'hidden' });
-                        }
-                        await expect.poll(() => ownedDraftIds.has(selectedDraftId) && !protectedDraftIds.has(selectedDraftId)).toBe(true);
+                        const before = await readDraftWorkspace(page, suite.records);
+                        const previousIds = new Set(before.bills.map(bill => bill.id));
+                        const slot = page.locator('.ab_pos_draft_slot_empty').first();
+                        await expect(slot).toBeEnabled({ timeout: 15000 });
+                        await slot.click();
+                        const manager = page.locator('.ab_pos_draft_manager');
+                        await manager.waitFor();
+                        await m2o('Select store...', cfg.metadata.store.name, manager);
+                        await manager.getByRole('button', { name: 'Create', exact: true }).click();
+                        await manager.waitFor({ state: 'hidden' });
+                        // Ready bills are tab-local and intentionally do not trigger a server save.
+                        await expect.poll(async () => {
+                            const workspace = await readDraftWorkspace(page, suite.records);
+                            const bill = workspace.bills.find(item => item.id === workspace.selectedId);
+                            if (!bill || previousIds.has(bill.id) || protectedDraftIds.has(bill.id) ||
+                                bill.header?.store_id !== suite.records.store_id ||
+                                bill.header?.pos_client_token !== bill.id) return false;
+                            selectedDraftId = bill.id;
+                            ownedDraftIds.add(bill.id);
+                            draftTokens.set(bill.id, bill.header.pos_client_token);
+                            return true;
+                        }, { timeout: 15000, message: 'Create must select a new test-owned local bill' }).toBe(true);
                         caseDraftId = selectedDraftId;
                         result.draft_id = caseDraftId;
                         await expect(page.locator('.ab_pos_line_row')).toHaveCount(0);
@@ -343,26 +344,18 @@ try {
                         await dialog.getByRole('button', { name: 'Back', exact: true }).click();
                         await dialog.waitFor({ state: 'hidden' });
                     }
+                    selectedDraftId = (await readDraftWorkspace(page, suite.records)).selectedId;
                     if (!ownedDraftIds.has(caseDraftId) || selectedDraftId !== caseDraftId)
                         throw new Error('Current bill is not the case-owned draft; refusing cleanup');
-                    // Use the UI so its cache/revision stays synchronized for the next case.
-                    let removed = false;
-                    for (let attempt = 0; attempt < 5 && !removed; attempt++) {
-                        const deletion = page.waitForResponse(r => r.url().endsWith('/pos_remove_draft_cache') &&
-                            r.request().postDataJSON()?.params?.kwargs?.bill_ids?.includes(caseDraftId), { timeout: 5000 })
-                            .catch(() => null);
-                        await page.locator('.ab_pos_btn_remove_bill').click();
-                        // Older deployed UI versions ask for confirmation.
-                        const confirm = page.getByRole('dialog').getByRole('button', { name: 'Confirm', exact: true });
-                        await confirm.waitFor({ timeout: 1000 }).then(() => confirm.click()).catch(() => {});
-                        const response = await deletion;
-                        if (response) {
-                            const body = await response.json();
-                            removed = body.result?.deleted_ids?.includes(caseDraftId);
-                            if (body.error) throw new Error(body.error.data?.message || body.error.message);
-                        }
-                    }
-                    if (!removed) throw new Error('Run-owned draft was retained by Odoo');
+                    // Click once: after removal another user's bill may become selected.
+                    // The UI handles local-only removal or revision-checked server deletion.
+                    await page.locator('.ab_pos_btn_remove_bill').click();
+                    const confirm = page.getByRole('dialog').getByRole('button', { name: 'Confirm', exact: true });
+                    await confirm.waitFor({ timeout: 1000 }).then(() => confirm.click()).catch(() => {});
+                    await expect.poll(async () => {
+                        const workspace = await readDraftWorkspace(page, suite.records);
+                        return !workspace.bills.some(bill => bill.id === caseDraftId);
+                    }, { timeout: 15000, message: 'Run-owned draft must leave the tab workspace' }).toBe(true);
                     await expect(page.locator('.ab_pos_draft_slot_empty').first()).toBeEnabled();
                     ownedDraftIds.delete(caseDraftId);
                     if (selectedDraftId === caseDraftId) selectedDraftId = null;
