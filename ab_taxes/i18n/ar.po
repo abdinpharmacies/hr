@@ -1,7 +1,8 @@
+#
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 
 #. module: ab_taxes
 msgid "Taxes"
@@ -10,3 +11,96 @@ msgstr "الضرائب"
 #. module: ab_taxes
 msgid "Taxes Super"
 msgstr "مدير الضرائب"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__active
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_taxes__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_taxes
+#: model:ir.model.fields.selection,name:ab_taxes.selection__ab_purchase_tax_policy__discount_timing__after_tax
+msgid "Discount After Tax"
+msgstr "الخصم بعد الضريبة"
+
+#. module: ab_taxes
+#: model:ir.model.fields.selection,name:ab_taxes.selection__ab_purchase_tax_policy__discount_timing__before_tax
+msgid "Discount Before Tax"
+msgstr "الخصم قبل الضريبة"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__discount_timing
+msgid "Discount Timing"
+msgstr "توقيت الخصم"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__approval_reference
+msgid "Finance Approval Reference"
+msgstr "مرجع اعتماد الإدارة المالية"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_taxes__inventory_cost
+msgid "Included in Inventory Cost"
+msgstr "ضمن تكلفة المخزون"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__name
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_taxes__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_taxes
+#: code:addons/ab_taxes/models/ab_taxes.py:0
+msgid ""
+"Provide a finance approval reference and rounding digits between 0 and 6."
+msgstr "أدخل مرجع اعتماد الإدارة المالية وعدد المنازل العشرية بين 0 و6."
+
+#. module: ab_taxes
+#: model:ir.actions.act_window,name:ab_taxes.purchase_tax_policy_action
+#: model:ir.ui.menu,name:ab_taxes.purchase_tax_policy_menu
+msgid "Purchase Tax Policies"
+msgstr "سياسات ضريبة المشتريات"
+
+#. module: ab_taxes
+#: model:ir.model,name:ab_taxes.model_ab_purchase_tax_policy
+msgid "Purchase Tax Policy"
+msgstr "سياسة ضريبة المشتريات"
+
+#. module: ab_taxes
+#: code:addons/ab_taxes/models/ab_taxes.py:0
+msgid ""
+"Purchase prices and quantities must be finite and non-negative; discounts "
+"must be between 0 and 100."
+msgstr ""
+"يجب أن تكون أسعار وكميات الشراء أرقاماً محدودة وغير سالبة، والخصومات بين 0 "
+"و100."
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__rounding_digits
+msgid "Rounding Digits"
+msgstr "المنازل العشرية للتقريب"
+
+#. module: ab_taxes
+#: model:ir.model.fields,field_description:ab_taxes.field_ab_purchase_tax_policy__tax_bonus
+msgid "Tax Bonus Quantities"
+msgstr "فرض ضريبة على كميات البونص"
+
+#. module: ab_taxes
+#: code:addons/ab_taxes/models/ab_taxes.py:0
+msgid "Tax calculations cannot produce negative purchase or inventory values."
+msgstr "لا يمكن أن تؤدي حسابات الضريبة إلى قيم شراء أو مخزون سالبة."
+
+#. module: ab_taxes
+#: code:addons/ab_taxes/models/ab_taxes.py:0
+msgid "Tax percentages must be finite and between -100 and 100."
+msgstr "يجب أن تكون نسب الضرائب أرقاماً محدودة بين -100 و100."
+
+#. module: ab_taxes
+#: code:addons/ab_taxes/models/ab_taxes.py:0
+msgid "The purchase tax policy must belong to the current company."
+msgstr "يجب أن تتبع سياسة ضريبة المشتريات الشركة الحالية."

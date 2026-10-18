@@ -1,0 +1,7 @@
+<odoo>
+    <record id="purchase_tax_policy_form" model="ir.ui.view"><field name="name">purchase.tax.policy.form</field><field name="model">ab_purchase_tax_policy</field><field name="arch" type="xml"><form><sheet><group><field name="name"/><field name="company_id"/><field name="active"/><field name="tax_bonus"/><field name="discount_timing"/><field name="rounding_digits"/><field name="approval_reference"/></group></sheet></form></field></record>
+    <record id="purchase_tax_policy_list" model="ir.ui.view"><field name="name">purchase.tax.policy.list</field><field name="model">ab_purchase_tax_policy</field><field name="arch" type="xml"><list><field name="name"/><field name="company_id"/><field name="approval_reference"/><field name="active"/></list></field></record>
+    <record id="purchase_tax_policy_action" model="ir.actions.act_window"><field name="name">Purchase Tax Policies</field><field name="res_model">ab_purchase_tax_policy</field><field name="view_mode">list,form</field></record>
+    <record id="tax_cost_form" model="ir.ui.view"><field name="name">tax.cost.form</field><field name="model">ab_taxes</field><field name="inherit_id" ref="ab_taxes_view_form"/><field name="arch" type="xml"><field name="apply_on_total" position="after"><field name="inventory_cost"/></field></field></record>
+<menuitem id="purchase_tax_policy_menu" name="Purchase Tax Policies" action="purchase_tax_policy_action" groups="group_ab_taxes_super"/>
+</odoo>
