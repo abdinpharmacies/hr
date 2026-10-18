@@ -782,22 +782,6 @@ class AbSalesPosCustomerLookupDialog extends Component {
 }
 
 
-class AbSalesPosValidationDialog extends Component {
-    static template = "ab_sales.PosValidationDialog";
-    static components = {Dialog};
-    static props = {
-        title: {type: String, optional: true},
-        message: {type: String, optional: true},
-        close: Function,
-    };
-
-    close() {
-        if (this.props.close) {
-            this.props.close();
-        }
-    }
-}
-
 class AbSalesPosAllInvoicesDialog extends Component {
     static template = "ab_sales.PosAllInvoicesDialog";
     static components = {Dialog};
@@ -2658,10 +2642,11 @@ class AbSalesPosAction extends Component {
         }
     }
 
-    _openSubmitErrorDialog(message, title) {
-        this.dialog.add(AbSalesPosValidationDialog, {
-            title: title || "Submit failed",
-            message: message || "Submit failed.",
+    _notifySubmissionError(message, title, type = "danger") {
+        this.notification.add(message || _t("Submit failed"), {
+            title: title || _t("Submit failed"),
+            type,
+            sticky: true,
         });
     }
 
@@ -2871,6 +2856,8 @@ class AbSalesPosAction extends Component {
         if (!bill) {
             return;
         }
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
         if (!value || !value.id) {
             bill.header.store_id = null;
             bill.header.store_name = "";
@@ -4746,8 +4733,9 @@ class AbSalesPosAction extends Component {
                     : _t("Bill submitted."), {type: "success"});
                 await this.removeBill(bill.id, true);
             } else if (bill.submission_message) {
-                this._openSubmitErrorDialog(bill.submission_message,
-                    bill.submission_status === "unknown" ? _t("Unknown") : _t("Submit failed"));
+                this._notifySubmissionError(bill.submission_message,
+                    bill.submission_status === "unknown" ? _t("Unknown") : _t("Submit failed"),
+                    bill.submission_status === "unknown" ? "warning" : "danger");
             }
         } catch (err) {
             const data = err?.data || err?.response?.data || {};
@@ -4755,7 +4743,7 @@ class AbSalesPosAction extends Component {
             bill.submission_validation_failed = name.includes("UserError") || name.includes("ValidationError");
             bill.submission_checking = true;
             bill.submission_message = this._getRpcErrorMessage(err);
-            this._openSubmitErrorDialog(bill.submission_message, _t("Submit failed"));
+            this._notifySubmissionError(bill.submission_message, _t("Submit failed"));
         } finally {
             this.state.submitting = false;
             this.persistCache();

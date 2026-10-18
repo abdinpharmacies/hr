@@ -1075,6 +1075,17 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         return rows
 
     @api.model
+    def _inventory_pos_sync_by_serial(self, product_serials, store_id=None):
+        if not store_id or not product_serials:
+            return {}
+        store = self.env['ab_sales_pos_api']._get_store_record(store_id)
+        lines = self.env['ab_sales_inventory'].search(
+            fields.Domain('store_id', '=', store.id)
+            & fields.Domain('product_eplus_serial', 'in', product_serials))
+        return {line.product_eplus_serial: fields.Datetime.to_string(line.last_sync_at)
+                if line.last_sync_at else False for line in lines}
+
+    @api.model
     def _inventory_total_and_pos_balances_by_serial(self, product_serials, store_id=None):
         """
         Return tuple:
@@ -1675,6 +1686,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             serials, store_id=store_id
         )
 
+        sync_by_serial = self._inventory_pos_sync_by_serial(serials, store_id)
         out = []
         seen_row_ids = set()
         for row in rows:
@@ -1693,6 +1705,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             row["balance"] = total_balance
             row["has_balance"] = bool(total_balance > 0)
             row["pos_balance"] = pos_balance
+            row["pos_balance_last_sync_at"] = sync_by_serial.get(serial, False)
             row["has_pos_balance"] = bool(pos_balance > 0)
             is_service_match = bool(row.get("is_service"))
 
@@ -1847,6 +1860,8 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 product_ids = [int(pid) for pid, _pos_bal, _total_bal in rows if pid]
                 products = Product.browse(product_ids).read(fields_list)
                 _attach_uom_factors(products)
+                sync_by_serial = self._inventory_pos_sync_by_serial(
+                    [int(product.get('eplus_serial') or 0) for product in products], store_id)
                 by_id = {p["id"]: p for p in products}
                 out = []
                 for pid in product_ids:
@@ -1857,6 +1872,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                     pos_balance = float(pos_balance_by_product_id.get(pid, 0.0) or 0.0)
                     total_balance = float(total_balance_by_product_id.get(pid, 0.0) or 0.0)
                     row["pos_balance"] = pos_balance
+                    row["pos_balance_last_sync_at"] = sync_by_serial.get(int(row.get('eplus_serial') or 0), False)
                     row["has_pos_balance"] = bool(pos_balance > 0)
                     row["balance"] = total_balance
                     row["has_balance"] = bool(total_balance > 0)
@@ -1882,6 +1898,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 total_balance_by_serial, pos_balance_by_serial = self._inventory_total_and_pos_balances_by_serial(
                     serials, store_id=store_id
                 )
+                sync_by_serial = self._inventory_pos_sync_by_serial(serials, store_id)
 
                 for row in rows:
                     if not self._product_price_matches(row, price_bounds):
@@ -1901,6 +1918,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                     row["balance"] = total_balance
                     row["has_balance"] = bool(total_balance > 0)
                     row["pos_balance"] = pos_balance
+                    row["pos_balance_last_sync_at"] = sync_by_serial.get(int(row.get('eplus_serial') or 0), False)
                     row["has_pos_balance"] = bool(pos_balance > 0)
                     is_service_match = bool(raw_query and row.get("is_service"))
 

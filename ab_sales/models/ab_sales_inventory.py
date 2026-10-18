@@ -2,7 +2,8 @@ import math
 
 from odoo import api, fields, models
 from odoo.tools.translate import _
-from odoo.exceptions import UserError
+from odoo.exceptions import ConcurrencyError, UserError
+from psycopg2.errors import UniqueViolation
 from .ab_sales_header import PARAM_STR
 import logging
 
@@ -24,19 +25,18 @@ SQL_TOTAL = """
             """
 
 SQL_PER_POS = """
-              SELECT main.itm_id                                                    AS product_eplus_serial,
-                     main.sto_id                                                    AS store_eplus_serial,
-                     SUM(CAST(main.itm_qty / ic.itm_unit1_unit3 AS decimal(18, 2))) AS balance
-              FROM Item_Class_Store main WITH (NOLOCK)
-        JOIN item_catalog ic
-              WITH (NOLOCK)
-              ON main.itm_id = ic.itm_id
-                  JOIN Store s on s.sto_id = main.sto_id
-              WHERE ic.itm_active = 1 and main.sto_id in ({store_placeholders})
-              GROUP BY main.itm_id, main.sto_id
-              HAVING SUM (CAST (main.itm_qty / ic.itm_unit1_unit3 AS decimal (18, 2))) > 0
-              ORDER BY main.itm_id, main.sto_id, balance desc -- order by sec_insert_date desc   \
-              """
+    SELECT main.itm_id AS product_eplus_serial,
+           main.sto_id AS store_eplus_serial,
+           CASE WHEN COUNT(main.itm_qty) = COUNT(*) AND MIN(ic.itm_unit1_unit3) > 0
+                THEN SUM(CAST(CAST(main.itm_qty AS decimal(28, 8)) /
+                    NULLIF(ic.itm_unit1_unit3, 0) AS decimal(18, 2)))
+                ELSE NULL END AS balance
+    FROM Item_Class_Store main
+    JOIN item_catalog ic ON main.itm_id = ic.itm_id
+    WHERE ic.itm_active = 1 AND main.sto_id IN ({store_placeholders})
+    GROUP BY main.itm_id, main.sto_id
+    ORDER BY main.itm_id, main.sto_id
+"""
 
 
 class InventorySyncBusy(Exception):
@@ -227,80 +227,75 @@ class InventoryEplus(models.Model):
 
     @api.model
     def _apply_store_balance_rows(self, store, store_eplus_serial, rows, sync_at,
-                                 requested_serials=None, prices=None):
-        """Apply one fully fetched informational snapshot, atomically.
-
-        NOLOCK source reads remain informational; this timestamp orders Odoo
-        reads, not replication freshness or stock reservations. All writers
-        take the branch lock after fetching, then recheck locked cache rows.
-        """
+                                  product_serials=None, prices=None):
         store.ensure_one()
-        if not store_eplus_serial or self._store_eplus_serial(store) != store_eplus_serial:
-            raise ValueError('Invalid inventory branch')
-        sync_at = fields.Datetime.to_datetime(sync_at)
+        store.check_access('read')
+        self.check_access('write')
+        if not store.exists() or not store_eplus_serial or self._store_eplus_serial(store) != store_eplus_serial:
+            raise ValueError("Invalid inventory branch")
         if not sync_at or rows is None:
-            raise ValueError('Incomplete inventory snapshot')
-        scope = None if requested_serials is None else set(requested_serials)
+            raise ValueError("Incomplete inventory snapshot")
+        sync_at = fields.Datetime.to_datetime(sync_at)
+        requested = set(product_serials) if product_serials is not None else None
         balances = {}
-        for serial, row_store, quantity in rows:
-            if (isinstance(serial, bool) or int(serial) != serial or int(serial) <= 0
-                    or int(row_store) != row_store or int(row_store) != store_eplus_serial):
-                raise ValueError('Invalid inventory identifier or branch')
-            serial, quantity = int(serial), float(quantity)
-            if (serial in balances or not math.isfinite(quantity) or quantity < 0
-                    or (scope is not None and serial not in scope)):
-                raise ValueError('Invalid inventory result')
-            balances[serial] = quantity
+        for serial, row_store_serial, balance in rows:
+            if (isinstance(serial, bool) or int(serial) != serial or serial <= 0
+                    or row_store_serial != store_eplus_serial or serial in balances
+                    or (requested is not None and serial not in requested)
+                    or balance is None or not math.isfinite(float(balance)) or float(balance) < 0):
+                raise ValueError("Invalid inventory snapshot")
+            balances[int(serial)] = float(balance)
         prices = dict(prices or {})
-        if any(serial not in (scope if scope is not None else balances)
-               or not math.isfinite(float(price)) or float(price) < 0
-               for serial, price in prices.items()):
-            raise ValueError('Invalid inventory prices')
-
-        Inventory = self.sudo()
-        with self.env.cr.savepoint():
-            if not store.sudo().try_lock_for_update(allow_referencing=True):
-                raise InventorySyncBusy()
-            domain = fields.Domain('store_id', '=', store.id)
-            if scope is not None:
-                domain &= fields.Domain('product_eplus_serial', 'in', sorted(scope))
-            lines = Inventory.search(domain, order='id')
-            if len(lines.try_lock_for_update()) != len(lines):
-                raise InventorySyncBusy()
-            lines.invalidate_recordset()
-            existing = {line.product_eplus_serial: line for line in lines}
-            serials = set(balances) if scope is None else scope
-            products = Inventory._product_lookup_by_eplus_serial(serials)
-            created = []
-            updated = 0
-            for line in lines:
-                if line.last_sync_at and line.last_sync_at >= sync_at:
-                    continue
-                serial = line.product_eplus_serial
-                vals = {'balance': balances.get(serial, 0.0), 'last_sync_at': sync_at}
-                if serial in prices:
-                    vals['default_price'] = prices[serial]
-                if serial in products:
-                    vals.update(Inventory._product_sync_vals(serial, products))
-                line.write(vals)
-                updated += 1
-            for serial in sorted(serials - set(existing)):
-                vals = {'store_id': store.id, 'product_eplus_serial': serial,
-                        'balance': balances.get(serial, 0.0), 'last_sync_at': sync_at,
-                        **Inventory._product_sync_vals(serial, products)}
-                if serial in prices:
-                    vals['default_price'] = prices[serial]
-                created.append(vals)
-            if created:
-                # Bound unique-index waits against writers outside this helper.
-                self.env.cr.execute("SELECT current_setting('lock_timeout')")
-                previous_timeout = self.env.cr.fetchone()[0]
-                self.env.cr.execute("SELECT set_config('lock_timeout', '1s', true)")
-                Inventory.create(created)
-                Inventory.flush_model()
-                self.env.cr.execute("SELECT set_config('lock_timeout', %s, true)", (previous_timeout,))
-            return {'product_count': len(balances), 'created_count': len(created),
-                    'updated_count': updated, 'product_resynced_count': 0}
+        if any(serial not in balances or price is None or not math.isfinite(float(price))
+               or float(price) < 0 for serial, price in prices.items()):
+            raise ValueError("Invalid inventory prices")
+        domain = fields.Domain('store_id', '=', store.id)
+        if requested is not None:
+            domain &= fields.Domain('product_eplus_serial', 'in', sorted(requested))
+        try:
+            with self.env.cr.savepoint():
+                store.lock_for_update(allow_referencing=True)
+                lines = self.search(domain, order='id')
+                lines.lock_for_update()
+                lines.invalidate_recordset(['balance', 'default_price', 'last_sync_at'])
+                existing = {line.product_eplus_serial: line for line in lines}
+                if len(existing) != len(lines):
+                    raise ValueError("Duplicate branch inventory records require review")
+                products = self._product_lookup_by_eplus_serial(balances)
+                created = []
+                updated_count = 0
+                for serial in sorted(set(existing) | set(balances)):
+                    line = existing.get(serial)
+                    if line and line.last_sync_at and line.last_sync_at >= sync_at:
+                        continue
+                    values = {'balance': balances.get(serial, 0.0), 'last_sync_at': sync_at}
+                    if serial in prices:
+                        values['default_price'] = prices[serial]
+                    if serial in balances:
+                        values.update(self._product_sync_vals(serial, products))
+                    if line:
+                        if 'default_price' in values and line.default_price != values['default_price']:
+                            _logger.info('Inventory cache price: store=%s product=%s old=%s new=%s actor=%s at=%s',
+                                         store.id, serial, line.default_price, values['default_price'],
+                                         self.env.uid, fields.Datetime.now())
+                        line.write(values)
+                        updated_count += 1
+                    else:
+                        created.append(dict(values, store_id=store.id, product_eplus_serial=serial))
+                if created:
+                    self.env.cr.execute("SELECT current_setting('lock_timeout')")
+                    previous_timeout = self.env.cr.fetchone()[0]
+                    self.env.cr.execute("SELECT set_config('lock_timeout', '2s', true)")
+                    self.create(created)
+                    self.env.cr.execute("SELECT set_config('lock_timeout', %s, true)", (previous_timeout,))
+                return {
+                    'product_count': len(balances),
+                    'created_count': len(created),
+                    'updated_count': updated_count,
+                    'product_resynced_count': 0,
+                }
+        except UniqueViolation as error:
+            raise ConcurrencyError("Concurrent branch inventory creation; retry the transaction") from error
 
     def btn_update_balance_total(self):
         eInv = self.env['ab_sales_inventory'].sudo()
@@ -377,6 +372,7 @@ class InventoryEplus(models.Model):
         btn_update_balance_default_sales_store() through the direct store connection.
         If a store has no products, its balances are set to 0.
         """
+        self.check_access('write')
         eInv = self.env['ab_sales_inventory'].sudo()
 
         default_store = self._get_default_sales_store()
@@ -427,6 +423,7 @@ class InventoryEplus(models.Model):
         Update the configured default sales store through its direct local server.
         This method owns only ab_sales_inventory rows for default_sales_store_id.
         """
+        self.check_access('write')
         eInv = self.env['ab_sales_inventory'].sudo()
         store = self._get_default_sales_store()
         if not store:

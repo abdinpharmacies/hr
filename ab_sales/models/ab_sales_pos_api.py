@@ -393,8 +393,10 @@ class AbSalesPosApi(models.TransientModel):
                 serials, store_id
             )
 
+        sync_by_serial = self.env['ab_sales_ui_api']._inventory_pos_sync_by_serial(serials, store_id)
         for product in products:
             serial = int(product.get("eplus_serial") or 0)
+            product["pos_balance_last_sync_at"] = sync_by_serial.get(serial, False)
             product["balance"] = float(total_by_serial.get(serial, 0.0) or 0.0)
             product["pos_balance"] = float(pos_by_serial.get(serial, 0.0) or 0.0)
         return self.env["ab_sales_ui_api"]._attach_pos_sync_metadata(products, store_id)

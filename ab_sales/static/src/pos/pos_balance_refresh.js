@@ -5,7 +5,7 @@ import {deserializeDateTime} from "@web/core/l10n/dates";
 
 // Tokens protect display updates; requests are not queued or automatically retried.
 const latestRefresh = new WeakMap();
-const ageContexts = new WeakMap();
+const refreshContext = new WeakMap();
 
 export function balanceAgeLabel(timestamp, now = Date.now()) {
     if (!timestamp) return "";
@@ -31,12 +31,15 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
     const productIds = new Map(targets.map((row) => [row, row[productKey]]));
     for (const row of targets) {
         const context = `${storeId}:${row[productKey]}`;
-        const previous = ageContexts.get(row);
-        if (showAge && previous !== context) {
+        const previous = refreshContext.get(row);
+        if (previous !== context) {
             row.pos_balance_age_label = "";
             row.pos_balance_unavailable = false;
-            if (previous !== undefined) row.pos_balance_last_sync_at = false;
-            ageContexts.set(row, context);
+            if (previous !== undefined) {
+                row.pos_balance_last_sync_at = false;
+                row.pos_balance = undefined;
+            }
+            refreshContext.set(row, context);
         }
         latestRefresh.set(row, token);
         row.pos_balance_refreshing = true;
@@ -45,15 +48,15 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
     try {
         balances = await orm.call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
             store_id: storeId,
-            include_sync_metadata: showAge,
-            product_ids: [...new Set(targets.map((row) => row[productKey]))],
+            product_ids: [...new Set(productIds.values())],
+            include_sync_metadata: true,
         });
     } catch {
         // Network/RPC failures have the same display meaning as unavailable SQL.
         balances = null;
     }
     for (const row of targets) {
-        if (latestRefresh.get(row) === token) {
+        if (latestRefresh.get(row) === token && row[productKey] === productIds.get(row)) {
             row.pos_balance_refreshing = false;
         }
     }
@@ -64,22 +67,16 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
         if (latestRefresh.get(row) !== token || row[productKey] !== productIds.get(row)) {
             continue;
         }
-        const value = balances?.[row[productKey]];
-        if (!showAge) {
-            row.pos_balance_unavailable = !Number.isFinite(value);
-            if (!row.pos_balance_unavailable) row.pos_balance = value;
-            continue;
-        }
+        const metadata = balances?.[row[productKey]];
         const wasUnavailable = row.pos_balance_unavailable;
-        if (value && Number.isFinite(value.balance)) {
-            row.pos_balance = value.balance;
-            row.pos_balance_last_sync_at = value.last_sync_at || false;
+        if (Number.isFinite(metadata?.balance)) {
+            row.pos_balance = metadata.balance;
+            row.pos_balance_last_sync_at = metadata.last_sync_at || false;
         }
-        const success = value?.refresh_success === true && Number.isFinite(value.balance);
-        row.pos_balance_unavailable = !success;
-        if (success) {
+        row.pos_balance_unavailable = !(metadata?.refresh_success === true && Number.isFinite(metadata.balance));
+        if (!row.pos_balance_unavailable) {
             row.pos_balance_age_label = "";
-        } else if (manual || !wasUnavailable) {
+        } else if (showAge && (!wasUnavailable || manual)) {
             row.pos_balance_age_label = balanceAgeLabel(row.pos_balance_last_sync_at);
         }
     }
