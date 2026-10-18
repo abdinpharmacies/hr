@@ -1,0 +1,78 @@
+<odoo>
+    <record id="sales_backend_list" model="ir.ui.view">
+        <field name="name">ab_sales_backend.list</field>
+        <field name="model">ab_sales_backend</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" delete="0"><field name="store_id"/><field name="company_id"/><field name="backend"/></list>
+        </field>
+    </record>
+    <record id="sales_backend_action" model="ir.actions.act_window">
+        <field name="name">Sales Inventory Backends</field>
+        <field name="res_model">ab_sales_backend</field>
+        <field name="view_mode">list</field>
+    </record>
+    <menuitem id="sales_backend_menu" name="Sales Inventory Backends" parent="ab_sales.config_sub_menu"
+              action="sales_backend_action" groups="base.group_system"/>
+    <record id="native_payments_list" model="ir.ui.view">
+        <field name="name">ab_sales_native_payment.list</field>
+        <field name="model">ab_sales_native_payment</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="create_date"/><field name="operation_key"/>
+                <field name="store_id"/><field name="cashier_id"/><field name="sale_id"/><field name="return_id"/>
+                <field name="kind"/><field name="amount" sum="Total"/><field name="balance_after"/></list>
+        </field>
+    </record>
+    <record id="native_payments_action" model="ir.actions.act_window">
+        <field name="name">Native Payments and Refunds</field>
+        <field name="res_model">ab_sales_native_payment</field><field name="view_mode">list</field>
+    </record>
+    <menuitem id="native_payments_menu" name="Native Payments and Refunds" parent="ab_sales.ab_sales_reports_menu"
+              action="native_payments_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
+    <record id="native_cash_balance_list" model="ir.ui.view">
+        <field name="name">ab_sales_native_cash_balance.list</field>
+        <field name="model">ab_sales_native_cash_balance</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="cashier_id"/><field name="amount" sum="Total"/></list>
+        </field>
+    </record>
+    <record id="native_cash_balance_action" model="ir.actions.act_window">
+        <field name="name">Native Cashier Balances</field>
+        <field name="res_model">ab_sales_native_cash_balance</field><field name="view_mode">list</field>
+    </record>
+    <menuitem id="native_cash_balance_menu" name="Native Cashier Balances" parent="ab_sales.ab_sales_reports_menu"
+              action="native_cash_balance_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
+    <record id="native_cash_count_list" model="ir.ui.view">
+        <field name="name">ab_sales_native_cash_close.list</field><field name="model">ab_sales_native_cash_close</field>
+        <field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="create_date"/><field name="store_id"/>
+            <field name="cashier_id"/><field name="expected_amount"/><field name="counted_amount"/><field name="difference"/></list></field>
+    </record>
+    <record id="native_cash_count_action" model="ir.actions.act_window">
+        <field name="name">Native Cash Counts</field><field name="res_model">ab_sales_native_cash_close</field><field name="view_mode">list</field>
+    </record>
+    <menuitem id="native_cash_count_menu" name="Native Cash Counts" parent="ab_sales.ab_sales_reports_menu"
+              action="native_cash_count_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
+    <record id="native_sale_form" model="ir.ui.view">
+        <field name="name">ab_sales_header.native.inventory</field><field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='eplus_serial']" position="before"><field name="native_backend" invisible="1"/></xpath>
+            <xpath expr="//button[@name='action_open_sales_return']" position="attributes">
+                <attribute name="invisible">(native_backend and status != 'saved') or (not native_backend and (status not in ('saved', 'pending') or not eplus_serial))</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="native_return_form" model="ir.ui.view">
+        <field name="name">ab_sales_return_header.native.inventory</field><field name="model">ab_sales_return_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_return_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='origin_header_id']" position="before"><field name="native_origin_id" invisible="not native_origin_id"/></xpath>
+            <xpath expr="//button[@name='action_push_to_eplus_return']" position="attributes"><attribute name="invisible">native_origin_id or status == 'saved'</attribute></xpath>
+            <xpath expr="//header" position="inside"><button name="action_set_pending" type="object" string="Send to Cashier" class="btn-primary" invisible="not native_origin_id or status != 'prepending'"/></xpath>
+        </field>
+    </record>
+    <record id="native_cash_count_form" model="ir.ui.view">
+        <field name="name">ab_sales_cashier_close_wizard.native.inventory</field><field name="model">ab_sales_cashier_close_wizard</field>
+        <field name="inherit_id" ref="ab_sales_cashier.ab_sales_cashier_close_wizard_view_form"/>
+        <field name="arch" type="xml"><xpath expr="//field[@name='employee_id']" position="after"><field name="native_backend" invisible="1"/><field name="native_cashier_pin" password="True" invisible="not native_backend"/></xpath></field>
+    </record>
+</odoo>

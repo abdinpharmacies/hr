@@ -1,0 +1,7 @@
+<odoo>
+    <record id="group_native_sales_user" model="res.groups">
+        <field name="name">Native Sales Operator</field>
+        <field name="privilege_id" ref="ab_sales.privilege_ab_sales"/>
+        <field name="implied_ids" eval="[(6, 0, [ref('ab_inventory.group_inventory_operator'), ref('ab_sales.group_ab_sales_pharmacist')])]"/>
+    </record>
+</odoo>

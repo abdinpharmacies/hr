@@ -1,0 +1,8 @@
+<templates xml:space="preserve">
+    <t t-name="ab_sales_inventory.NativeReturn" t-inherit="ab_sales.AbSalesReturnUiApiAction" t-inherit-mode="primary">
+        <xpath expr="//button[@t-on-click='pushToEplus']" position="replace">
+            <button class="btn btn-success" type="button" t-on-click="pushToEplus"
+                    t-att-disabled="state.busy || !state.record.can_set_pending">Send to Cashier</button>
+        </xpath>
+    </t>
+</templates>

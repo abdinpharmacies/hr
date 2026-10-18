@@ -1,0 +1,799 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_inventory
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-18 11:49+0000\n"
+"PO-Revision-Date: 2026-10-18 12:00+0300\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_native_cash_balance_cashier_store_unique
+msgid "A cashier has one balance per store."
+msgstr "لكل أمين صندوق رصيد واحد لكل فرع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "A native original line requires a native return header."
+msgstr "يتطلب بند البيع الأصلي مستند مرتجع داخلياً."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid ""
+"A native return requires its settled original invoice and allocations. Use "
+"historical review for missing originals."
+msgstr ""
+"يتطلب المرتجع الداخلي الفاتورة الأصلية المسددة وتخصيصات مخزونها. استخدم "
+"المراجعة التاريخية عند غياب الأصل."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "A native sale requires draft lines before posting."
+msgstr "يتطلب البيع الداخلي بنوداً في مسودة قبل الترحيل."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid ""
+"A store with posted native sales must keep its native backend for returns."
+msgstr ""
+"يجب أن يحتفظ الفرع الذي لديه مبيعات داخلية مرحلة بنظامه الداخلي لمعالجة "
+"المرتجعات."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__amount
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__amount
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__backend
+msgid "Backend"
+msgstr "نظام التشغيل"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__balance_after
+msgid "Balance After"
+msgstr "الرصيد بعد العملية"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Cash counts are recorded through the cashier closing screen."
+msgstr "تُسجل عمليات جرد النقدية من شاشة إغلاق الصندوق."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__cashier_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__cashier_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__cashier_id
+msgid "Cashier"
+msgstr "أمين الصندوق"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Cashier access is required."
+msgstr "يلزم الحصول على صلاحية أمين الصندوق."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Cashier balances are maintained only by settlement."
+msgstr "تُحدّث أرصدة الصندوق من خلال التسوية فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Cashier balances cannot be deleted."
+msgstr "لا يمكن حذف أرصدة الصندوق."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Cashier counts must use the current user and store wallet."
+msgstr "يجب تسجيل جرد النقدية للمستخدم الحالي وخزينة الفرع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Change the backend setting instead of deleting it."
+msgstr "غيّر إعداد نظام التشغيل بدلاً من حذفه."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__company_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__company_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__company_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__company_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Complete open sales and returns before changing the backend."
+msgstr "أكمل المبيعات والمرتجعات المفتوحة قبل تغيير نظام التشغيل."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__counted_amount
+msgid "Counted Amount"
+msgstr "المبلغ المجرد"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__difference
+msgid "Difference"
+msgstr "الفرق"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_product_uom__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_store__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_backend__backend__legacy
+msgid "E-Plus"
+msgstr "إي بلس"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "مستند مرتجع مبيعات إي بلس"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_return_line
+msgid "E-Plus Sales Return Line"
+msgstr "بند مرتجع مبيعات إي بلس"
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_backend_store_unique
+msgid "Each store has one sales backend."
+msgstr "لكل فرع نظام تشغيل مبيعات واحد."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Enter a finite counted cash amount."
+msgstr "أدخل مبلغ جرد نقدية صالحاً ومحدوداً."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__expected_amount
+msgid "Expected Amount"
+msgstr "المبلغ المتوقع"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Historical returns require a reviewed original transaction import."
+msgstr "تتطلب المرتجعات التاريخية استيراد المعاملة الأصلية ومراجعتها."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_product_uom__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_api__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_store__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__kind
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"Legacy invoices require their original backend; use the historical review "
+"process."
+msgstr ""
+"تتطلب الفواتير القديمة نظامها الأصلي؛ استخدم إجراء المراجعة التاريخية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Native Cash"
+msgstr "النقدية الداخلية"
+
+#. module: ab_sales_inventory
+#: model:ir.actions.act_window,name:ab_sales_inventory.native_cash_count_action
+#: model:ir.ui.menu,name:ab_sales_inventory.native_cash_count_menu
+msgid "Native Cash Counts"
+msgstr "جرد النقدية الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_cash_balance
+msgid "Native Cashier Balance"
+msgstr "رصيد الصندوق الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.actions.act_window,name:ab_sales_inventory.native_cash_balance_action
+#: model:ir.ui.menu,name:ab_sales_inventory.native_cash_balance_menu
+msgid "Native Cashier Balances"
+msgstr "أرصدة الصناديق الداخلية"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_cash_close
+msgid "Native Cashier Count"
+msgstr "جرد الصندوق الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_backend
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_backend__backend__native
+msgid "Native Inventory"
+msgstr "المخزون الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.actions.act_window,name:ab_sales_inventory.native_payments_action
+#: model:ir.ui.menu,name:ab_sales_inventory.native_payments_menu
+msgid "Native Payments and Refunds"
+msgstr "المدفوعات والمبالغ المرتجعة الداخلية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__native_refund
+msgid "Native Refund Amount"
+msgstr "مبلغ الرد الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_payment
+msgid "Native Sale Payment or Refund"
+msgstr "دفعة أو رد مبلغ بيع داخلي"
+
+#. module: ab_sales_inventory
+#: model:res.groups,name:ab_sales_inventory.group_native_sales_user
+msgid "Native Sales Operator"
+msgstr "مشغّل المبيعات الداخلية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_posted
+msgid "Native Stock Posted"
+msgstr "تم ترحيل المخزون الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__native_posted
+msgid "Native Stock Returned"
+msgstr "تم رد المخزون الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_totals
+msgid "Native Totals Snapshot"
+msgstr "لقطة إجماليات البيع الداخلي"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native original allocations cannot be changed."
+msgstr "لا يمكن تغيير التخصيصات الداخلية الأصلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Native posting fields are managed by the sales workflow."
+msgstr "تُدار حقول الترحيل الداخلي من خلال إجراءات البيع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native return quantities must be nonnegative."
+msgstr "يجب ألا تكون كميات المرتجع الداخلي سالبة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native return values are maintained by posting."
+msgstr "تُحدّث قيم المرتجع الداخلي من خلال الترحيل."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native returns cannot be deleted."
+msgstr "لا يمكن حذف المرتجعات الداخلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native returns cannot connect to E-Plus."
+msgstr "لا يمكن للمرتجعات الداخلية الاتصال بإي بلس."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Native returns must start as drafts."
+msgstr "يجب إنشاء المرتجعات الداخلية كمسودات."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"Native sale lines require a product, positive quantity and valid price."
+msgstr "تتطلب بنود البيع الداخلي صنفاً وكمية موجبة وسعراً صالحاً."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Native sale totals must be finite and nonnegative."
+msgstr "يجب أن تكون إجماليات البيع الداخلي محدودة وغير سالبة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Native sales access is required."
+msgstr "تلزم صلاحية المبيعات الداخلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Native sales cannot connect to E-Plus."
+msgstr "لا يمكن للمبيعات الداخلية الاتصال بإي بلس."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Native sales must be archived instead of deleted."
+msgstr "يجب أرشفة المبيعات الداخلية بدلاً من حذفها."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Native sales must start as unposted documents."
+msgstr "يجب إنشاء المبيعات الداخلية كمستندات غير مرحلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Only draft native returns can reload lines."
+msgstr "يمكن إعادة تحميل بنود مسودات المرتجعات الداخلية فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Only pending native returns with an original invoice can be posted."
+msgstr "يمكن ترحيل المرتجعات الداخلية المعلقة المرتبطة بفاتورة أصلية فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Only posted pending native documents can be settled."
+msgstr "يمكن تسوية المستندات الداخلية المعلقة التي رُحّل مخزونها فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Only system administrators can change the sales backend."
+msgstr "يمكن لمسؤولي النظام فقط تغيير نظام تشغيل المبيعات."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid ""
+"Only the quantity and compatible display unit can change on a native return."
+msgstr "يمكن تغيير الكمية ووحدة العرض المتوافقة فقط في المرتجع الداخلي."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__operation_key
+msgid "Operation Key"
+msgstr "مفتاح العملية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__native_origin_id
+msgid "Original Native Invoice"
+msgstr "الفاتورة الداخلية الأصلية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__native_origin_line_id
+msgid "Original Native Sale Line"
+msgstr "بند البيع الداخلي الأصلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_native_payment__kind__payment
+msgid "Payment"
+msgstr "دفعة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_native_payment_operation_unique
+msgid "Payment operation keys must be unique."
+msgstr "يجب أن تكون مفاتيح عمليات الدفع فريدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Payments are created only by cashier settlement."
+msgstr "تُنشأ المدفوعات من خلال تسوية أمين الصندوق فقط."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_allocations
+msgid "Posted Stock Allocations"
+msgstr "تخصيصات المخزون المرحلة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_stock_qty
+msgid "Posted Stock Quantity"
+msgstr "كمية المخزون المرحلة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_unit_factor
+msgid "Posted Unit Factor"
+msgstr "معامل الوحدة عند الترحيل"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Posted native sale lines cannot be changed."
+msgstr "لا يمكن تغيير بنود المبيعات الداخلية المرحلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Posted native sale lines cannot be deleted."
+msgstr "لا يمكن حذف بنود المبيعات الداخلية المرحلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Posted native sales are immutable; use a return."
+msgstr "المبيعات الداخلية المرحلة غير قابلة للتغيير؛ استخدم مرتجعاً."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Recorded cash counts cannot be changed."
+msgstr "لا يمكن تغيير عمليات جرد النقدية المسجلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Recorded cash counts cannot be deleted."
+msgstr "لا يمكن حذف عمليات جرد النقدية المسجلة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_native_payment__kind__refund
+msgid "Refund"
+msgstr "رد مبلغ"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__return_id
+msgid "Return"
+msgstr "مرتجع"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Return lines must retain the original product and unit."
+msgstr "يجب أن تحتفظ بنود المرتجع بالصنف ووحدة القياس الأصلية."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__native_stock_qty
+msgid "Returned Stock Quantity"
+msgstr "كمية المخزون المرتجعة"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Returned stock quantities are maintained by posting."
+msgstr "تُحدّث كميات المخزون المرتجعة من خلال الترحيل."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__sale_id
+msgid "Sale"
+msgstr "بيع"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_cashier_api
+msgid "Sales Cashier API"
+msgstr "واجهة أمين صندوق المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_cashier_close_wizard
+msgid "Sales Cashier Close Wizard"
+msgstr "معالج إغلاق صندوق المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_backend
+msgid "Sales Inventory Backend"
+msgstr "نظام مخزون المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.actions.act_window,name:ab_sales_inventory.sales_backend_action
+#: model:ir.ui.menu,name:ab_sales_inventory.sales_backend_menu
+msgid "Sales Inventory Backends"
+msgstr "أنظمة مخزون المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة نقاط بيع المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_return_ui_api
+msgid "Sales Return UI API"
+msgstr "واجهة مرتجع المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة المبيعات"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Select a unit from the original product category."
+msgstr "اختر وحدة من فئة وحدات الصنف الأصلي."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/pos.py:0
+msgid "Select an existing product."
+msgstr "اختر صنفاً موجوداً."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Select positive quantities on a draft native return."
+msgstr "حدد كميات موجبة في مسودة المرتجع الداخلي."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Select this store's native cash wallet."
+msgstr "اختر خزينة النقدية الداخلية لهذا الفرع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Settle the native invoice before creating a return."
+msgstr "سدّد الفاتورة الداخلية قبل إنشاء مرتجع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Settled payments and refunds cannot be changed."
+msgstr "لا يمكن تغيير المدفوعات والمبالغ المرتجعة المسددة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Settled payments and refunds cannot be deleted."
+msgstr "لا يمكن حذف المدفوعات والمبالغ المرتجعة المسددة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_operation_key
+msgid "Stock Operation Key"
+msgstr "مفتاح عملية المخزون"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Stock allocations are managed by native posting."
+msgstr "تُدار تخصيصات المخزون من خلال الترحيل الداخلي."
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_store
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid ""
+"Submitted native return lines and original economics cannot be changed."
+msgstr ""
+"لا يمكن تغيير بنود المرتجعات الداخلية المعتمدة وقيمها المالية الأصلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Submitted native return lines cannot be changed."
+msgstr "لا يمكن تغيير بنود المرتجعات الداخلية المعتمدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Submitted native return lines cannot be deleted."
+msgstr "لا يمكن حذف بنود المرتجعات الداخلية المعتمدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "Submitted native returns cannot be changed."
+msgstr "لا يمكن تغيير المرتجعات الداخلية المعتمدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "The employee profile does not permit this native operation."
+msgstr "لا تسمح صلاحيات الموظف بهذه العملية الداخلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "The employee session must belong to this service user and store."
+msgstr "يجب أن تتبع جلسة الموظف مستخدم الخدمة والفرع الحاليين."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "The native refund amount is invalid."
+msgstr "مبلغ الرد الداخلي غير صالح."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "The original sale line must belong to this return invoice."
+msgstr "يجب أن يتبع بند البيع الأصلي فاتورة هذا المرتجع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "The refund and original invoice must belong to the same store."
+msgstr "يجب أن يتبع رد المبلغ والفاتورة الأصلية الفرع نفسه."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "The return exceeds the original sold quantity."
+msgstr "يتجاوز المرتجع الكمية المبيعة الأصلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "The sale and store must belong to the same company."
+msgstr "يجب أن يتبع البيع والفرع الشركة نفسها."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "The sales backend must belong to an allowed company."
+msgstr "يجب أن يتبع نظام المبيعات شركة مسموحاً بها."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "This store is unavailable for native sales."
+msgstr "هذا الفرع غير متاح للمبيعات الداخلية."
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cash_balance_list
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_payments_list
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "فاتورة المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "بند المبيعات"
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "A store with posted native sales cannot change its company."
+msgstr "لا يمكن تغيير شركة فرع له مبيعات أصلية مرحّلة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_return_line_native_original_unique
+msgid "Each native original line can occur only once per return."
+msgstr "يمكن إدراج كل بند من الفاتورة الأصلية مرة واحدة فقط في المرتجع."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__native_cashier_pin
+msgid "Employee PIN"
+msgstr "الرقم السري للموظف"
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/cashier.py:0
+msgid "Enter the active cashier employee PIN to record the cash count."
+msgstr "أدخل الرقم السري لموظف الخزينة صاحب الجلسة النشطة لتسجيل جرد النقدية."
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
+msgid "Failed to send the return to cashier."
+msgstr "تعذر إرسال المرتجع إلى الخزينة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__native_backend
+msgid "Native Backend"
+msgstr "نظام المخزون المحلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_product_uom
+msgid "Product UoM"
+msgstr "وحدة قياس المنتج"
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
+msgid "Return sent to cashier."
+msgstr "تم إرسال المرتجع إلى الخزينة."
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_return_form
+msgid "Send to Cashier"
+msgstr "إرسال إلى الخزينة"
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "This return requires an employee authorized to approve returns."
+msgstr "يتطلب هذا المرتجع موظفًا مخولًا بالموافقة على المرتجعات."
+
+#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"Units used by posted native sales cannot change their factors or categories."
+msgstr ""
+"لا يمكن تغيير معاملات التحويل أو فئات الوحدات المستخدمة في المبيعات المحلية "
+"المرحّلة."

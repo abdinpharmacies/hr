@@ -1,0 +1,77 @@
+<odoo>
+    <record id="backend_company" model="ir.rule">
+        <field name="name">Backend Company</field>
+        <field name="model_id" ref="model_ab_sales_backend"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="sale_scope" model="ir.rule">
+        <field name="name">Sale Scope</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_header"/>
+        <field name="domain_force">['|', ('native_backend', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="sale_branch" model="ir.rule">
+        <field name="name">Sale Branch</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_header"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_backend', '=', False), ('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="line_company" model="ir.rule">
+        <field name="name">Line Company</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_line"/>
+        <field name="domain_force">['|', ('header_id.native_backend', '=', False), ('header_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="line_branch" model="ir.rule">
+        <field name="name">Line Branch</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_line"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_backend', '=', False), ('header_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="return_company" model="ir.rule">
+        <field name="name">Return Company</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_return_header"/>
+        <field name="domain_force">['|', ('native_origin_id', '=', False), ('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="return_branch" model="ir.rule">
+        <field name="name">Return Branch</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_return_header"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('native_origin_id', '=', False), ('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="return_line_company" model="ir.rule">
+        <field name="name">Return Line Company</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_return_line"/>
+        <field name="domain_force">['|', ('header_id.native_origin_id', '=', False), ('header_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="return_line_branch" model="ir.rule">
+        <field name="name">Return Line Branch</field>
+        <field name="model_id" ref="ab_sales.model_ab_sales_return_line"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else ['|', ('header_id.native_origin_id', '=', False), ('header_id.store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="ab_sales_native_payment_company" model="ir.rule">
+        <field name="name">Ab Sales Native Payment Company</field>
+        <field name="model_id" ref="model_ab_sales_native_payment"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="ab_sales_native_payment_branch" model="ir.rule">
+        <field name="name">Ab Sales Native Payment Branch</field>
+        <field name="model_id" ref="model_ab_sales_native_payment"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)]</field>
+    </record>
+    <record id="ab_sales_native_cash_balance_company" model="ir.rule">
+        <field name="name">Ab Sales Native Cash Balance Company</field>
+        <field name="model_id" ref="model_ab_sales_native_cash_balance"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="ab_sales_native_cash_balance_branch" model="ir.rule">
+        <field name="name">Ab Sales Native Cash Balance Branch</field>
+        <field name="model_id" ref="model_ab_sales_native_cash_balance"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)]</field>
+    </record>
+    <record id="ab_sales_native_cash_close_company" model="ir.rule">
+        <field name="name">Ab Sales Native Cash Close Company</field>
+        <field name="model_id" ref="model_ab_sales_native_cash_close"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="ab_sales_native_cash_close_branch" model="ir.rule">
+        <field name="name">Ab Sales Native Cash Close Branch</field>
+        <field name="model_id" ref="model_ab_sales_native_cash_close"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)]</field>
+    </record>
+</odoo>
