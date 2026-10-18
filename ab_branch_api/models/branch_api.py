@@ -85,7 +85,7 @@ class BranchApi(models.AbstractModel):
             & fields.Domain('active', '=', True) & fields.Domain('allow_sale', '=', True), limit=2)
         if len(store) != 1 or (default and store != default):
             raise UserError(_('An unambiguous active sales store is required for this E-Plus serial.'))
-        if not replica.allowed_sales_store_ids or store not in replica.allowed_sales_store_ids:
+        if replica.allowed_sales_store_ids and store not in replica.allowed_sales_store_ids:
             raise AccessError(_('The selected store is not in the replica Allowed Sales Stores.'))
         # Metadata lookup is privileged; business records retain the caller's environment.
         store = self.env['ab_store'].browse(store.id)
