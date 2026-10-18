@@ -92,6 +92,13 @@ next case to run. Cleanup failure or session expiry blocks remaining cases; the
 runner never automatically logs in or enters the PIN again. It closes the employee
 session and browser once at the end. Reports include login counts and draft IDs.
 
+Draft tracking reads the current tab's user/employee-scoped `sessionStorage`
+workspace and selection. Empty Ready bills are local-only, so creation does not
+wait for `pos_save_draft_cache`. Each case explicitly creates a bill and claims
+only its new token; existing bills and shared fallback cache entries are not
+claimed. Cleanup clicks Remove once and waits for that token to leave the tab
+workspace, supporting both local Ready removal and server-backed draft removal.
+
 **The bundled cases remain preview-only.** `PASS_PREVIEW` verifies UI, backend
 quote and dialog behavior, not saved invoices or E-Plus posting. There is no fake
 E-Plus environment in normal runs; stock reads use the configured backend.
