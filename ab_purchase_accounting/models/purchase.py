@@ -45,6 +45,9 @@ class PurchaseHeader(models.Model):
 
     def btn_save_inventory(self):
         self.ensure_one()
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
         if self.status == 'saved':
             return super().btn_save_inventory()
         with self.env.cr.savepoint():
@@ -58,6 +61,8 @@ class PurchaseHeader(models.Model):
         self.ensure_one()
         if self.purchase_accounting_journal_id:
             return self.purchase_accounting_journal_id
+        if self.env['ab_purchase_accounting_review']._capture_if_enabled(self):
+            return self.env['ab_accounting_je_header']
 
         config = self._purchase_accounting_config()
         supplier_total = _money(self.net_invoice or self.total_cost)
@@ -235,6 +240,9 @@ class PurchaseNoticeHeader(models.Model):
 
     def btn_submit_inventory(self):
         self.ensure_one()
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
         if self.status == 'saved':
             return super().btn_submit_inventory()
         with self.env.cr.savepoint():
@@ -248,6 +256,8 @@ class PurchaseNoticeHeader(models.Model):
         self.ensure_one()
         if self.purchase_accounting_journal_id:
             return self.purchase_accounting_journal_id
+        if self.env['ab_purchase_accounting_review']._capture_if_enabled(self):
+            return self.env['ab_accounting_je_header']
         notice_effect = self.notice_effect or 'physical'
         if notice_effect == 'physical' and self.notice_type != 'credit_notice':
             return self.env['ab_accounting_je_header']

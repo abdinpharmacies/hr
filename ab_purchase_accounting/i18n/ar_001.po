@@ -144,14 +144,17 @@ msgstr ""
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__branch_id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__branch_id
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_search
 msgid "Branch"
-msgstr ""
+msgstr "الفرع"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__company_id
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__company_id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__company_id
 msgid "Company"
-msgstr ""
+msgstr "الشركة"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__config_id
@@ -199,14 +202,16 @@ msgstr "يجب أن يكون مركز التكلفة نشطاً."
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__create_uid
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__create_uid
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "أنشئ بواسطة"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__create_date
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__create_date
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__create_date
 msgid "Created on"
-msgstr ""
+msgstr "تاريخ الإنشاء"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__posting_user_id
@@ -228,11 +233,12 @@ msgstr ""
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__display_name
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__display_name
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__display_name
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__display_name
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__display_name
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "اسم العرض"
 
 #. module: ab_purchase_accounting
 #: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_config_form
@@ -242,11 +248,12 @@ msgstr ""
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__id
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__id
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__id
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_header__id
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_notice_header__id
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_ob_header__id
 msgid "ID"
-msgstr ""
+msgstr "المعرف"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__inventory_account_id
@@ -256,14 +263,16 @@ msgstr ""
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__write_uid
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__write_uid
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: ab_purchase_accounting
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__write_date
 #: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_receipt_account__write_date
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "تاريخ آخر تحديث"
 
 #. module: ab_purchase_accounting
 #. odoo-python
@@ -476,3 +485,460 @@ msgstr ""
 #: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_ob_header
 msgid "opening_balance_header"
 msgstr ""
+
+#. module: ab_purchase_accounting
+#: model:ir.model.constraint,message:ab_purchase_accounting.constraint_ab_purchase_accounting_review_document_unique
+msgid "A finalized document can have only one accounting review log."
+msgstr "يمكن أن يكون للمستند المعتمد سجل مراجعة محاسبية واحد فقط."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Account"
+msgstr "الحساب"
+
+#. module: ab_purchase_accounting
+#: model:ir.actions.act_window,name:ab_purchase_accounting.action_purchase_accounting_review
+#: model:ir.ui.menu,name:ab_purchase_accounting.menu_purchase_accounting_review
+msgid "Accounting Review Logs"
+msgstr "سجلات المراجعة المحاسبية"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Accounting review logs cannot be deleted."
+msgstr "لا يمكن حذف سجلات المراجعة المحاسبية."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Accounting reviewer access is required."
+msgstr "يلزم امتلاك صلاحية المراجع المحاسبي."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Bonus"
+msgstr "البونص"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__captured_at
+msgid "Captured At"
+msgstr "وقت التسجيل"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__captured_by
+msgid "Captured By"
+msgstr "سجله"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Captured values cannot be changed. Use the review actions."
+msgstr "لا يمكن تغيير القيم المسجلة. استخدم إجراءات المراجعة."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Credit"
+msgstr "دائن"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Debit"
+msgstr "مدين"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Discount %"
+msgstr "نسبة الخصم"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__document_id
+msgid "Document"
+msgstr "المستند"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__document_date
+msgid "Document Date"
+msgstr "تاريخ المستند"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__document_model
+msgid "Document Model"
+msgstr "نموذج المستند"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__document_reference
+msgid "Document Reference"
+msgstr "مرجع المستند"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Entered invoice totals differ from calculated line totals."
+msgstr "إجماليات الفاتورة المدخلة تختلف عن إجماليات البنود المحسوبة."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__event_type
+msgid "Event Type"
+msgstr "نوع العملية"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Finalize the document before capturing its accounting review."
+msgstr "اعتمد المستند قبل تسجيل مراجعته المحاسبية."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__event_type__financial_credit
+msgid "Financial Credit Notice"
+msgstr "إشعار دائن مالي"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__event_type__financial_debit
+msgid "Financial Debit Notice"
+msgstr "إشعار مدين مالي"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (جهات الاتصال)"
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid ""
+"For manual review only. No accounting journal is posted by this log or its "
+"review actions."
+msgstr ""
+"للمراجعة اليدوية فقط. لا يرحل هذا السجل أو إجراءات مراجعته أي قيد محاسبي."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_review__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم تحديده، فهناك رسائل جديدة تتطلب انتباهك."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_error
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم تحديده، فهناك خطأ في تسليم بعض الرسائل."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__inventory_amount
+msgid "Inventory Amount"
+msgstr "قيمة المخزون"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__invoice_details
+msgid "Invoice Details"
+msgstr "تفاصيل الفاتورة"
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid "Invoice Snapshot"
+msgstr "نسخة الفاتورة عند الاعتماد"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__issues
+msgid "Issues"
+msgstr "ملاحظات التحقق"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Journal mode requires document types, inventory and supplier accounts."
+msgstr ""
+"يتطلب وضع ترحيل القيود تحديد أنواع المستندات وحسابي المخزون والموردين."
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid "Mark Reviewed"
+msgstr "تسجيل اكتمال المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Missing account mapping: %s"
+msgstr "الحساب غير محدد: %s"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__review_state__needs_attention
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_search
+msgid "Needs Attention"
+msgstr "يحتاج إلى متابعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__event_type__other_receipt
+msgid "Non-purchase Receipt"
+msgstr "استلام غير مشتريات"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Not configured"
+msgstr "غير محدد"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_review__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراء"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Only authorized document managers can capture accounting reviews."
+msgstr "يمكن لمديري المستندات المخولين فقط تسجيل المراجعات المحاسبية."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__activation_date
+msgid "Only documents dated on or after this date use this configuration."
+msgstr "يسري هذا الإعداد فقط على المستندات المؤرخة في هذا التاريخ أو بعده."
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid "Open Document"
+msgstr "فتح المستند"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__review_state__pending
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_search
+msgid "Pending Review"
+msgstr "بانتظار المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_config__processing_mode__journal
+msgid "Post Journals"
+msgstr "ترحيل القيود"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_config__processing_mode
+msgid "Processing Mode"
+msgstr "أسلوب المعالجة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__proposed_entries
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid "Proposed Entries"
+msgstr "البنود المحاسبية المقترحة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model,name:ab_purchase_accounting.model_ab_purchase_accounting_review
+msgid "Purchase Accounting Review Log"
+msgstr "سجل مراجعة محاسبة المشتريات"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Purchase Price"
+msgstr "سعر الشراء"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__event_type__receipt
+msgid "Purchase Receipt"
+msgstr "استلام مشتريات"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Purpose"
+msgstr "الغرض"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Receipt Offset"
+msgstr "مقابل الاستلام"
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_form
+msgid "Review"
+msgstr "المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_config__processing_mode__review
+msgid "Review Logs Only"
+msgstr "سجلات مراجعة فقط"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__review_note
+msgid "Review Note"
+msgstr "ملاحظة المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__review_state
+msgid "Review State"
+msgstr "حالة المراجعة"
+
+#. module: ab_purchase_accounting
+#: model_terms:ir.ui.view,arch_db:ab_purchase_accounting.view_purchase_accounting_review_search
+msgid "Review Status"
+msgstr "حالة المراجعة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Review logs are created only when a business document is finalized."
+msgstr "تنشأ سجلات المراجعة فقط عند اعتماد مستند العملية."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,help:ab_purchase_accounting.field_ab_purchase_accounting_config__processing_mode
+msgid ""
+"Review mode captures new finalized documents for manual review without "
+"posting journals."
+msgstr ""
+"يسجل وضع المراجعة المستندات المعتمدة الجديدة للمراجعة اليدوية دون ترحيل "
+"قيود."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__review_state__reviewed
+msgid "Reviewed"
+msgstr "تمت المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__reviewed_at
+msgid "Reviewed At"
+msgstr "وقت المراجعة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__reviewed_by
+msgid "Reviewed By"
+msgstr "راجعه"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__snapshot
+msgid "Snapshot"
+msgstr "النسخة المسجلة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields.selection,name:ab_purchase_accounting.selection__ab_purchase_accounting_review__event_type__return
+msgid "Supplier Return"
+msgstr "مرتجع مورد"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Tax"
+msgstr "الضريبة"
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__tax_amount
+msgid "Tax Amount"
+msgstr "قيمة الضريبة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "The source document is no longer available."
+msgstr "المستند الأصلي لم يعد متاحا."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "This document already has a different accounting snapshot."
+msgstr "يوجد بالفعل لهذا المستند سجل محاسبي بقيم مختلفة."
+
+#. module: ab_purchase_accounting
+#: model:ir.model.fields,field_description:ab_purchase_accounting.field_ab_purchase_accounting_review__total_amount
+msgid "Total Amount"
+msgstr "القيمة الإجمالية"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Unit"
+msgstr "الوحدة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Unit Tax"
+msgstr "ضريبة الوحدة"
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/review.py:0
+msgid "Unsupported review document."
+msgstr "نوع المستند غير مدعوم للمراجعة."

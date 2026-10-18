@@ -23,10 +23,16 @@ class PurchaseAccountingConfig(models.Model):
         domain="[('allow_purchase', '=', True), ('active', '=', True)]",
     )
     active = fields.Boolean(default=True)
+    processing_mode = fields.Selection(
+        [('journal', 'Post Journals'), ('review', 'Review Logs Only')],
+        required=True,
+        default='journal',
+        help='Review mode captures new finalized documents for manual review without posting journals.',
+    )
     activation_date = fields.Date(
         required=True,
         default=lambda self: fields.Date.context_today(self),
-        help='Only purchase documents dated on or after this date are posted automatically.',
+        help='Only documents dated on or after this date use this configuration.',
     )
     posting_user_id = fields.Many2one(
         'res.users',
@@ -38,19 +44,16 @@ class PurchaseAccountingConfig(models.Model):
     )
     purchase_doctype_id = fields.Many2one(
         'ab_accounting_doctype',
-        required=True,
         ondelete='restrict',
         string='Purchase Receipt Document Type',
     )
     return_doctype_id = fields.Many2one(
         'ab_accounting_doctype',
-        required=True,
         ondelete='restrict',
         string='Purchase Return Document Type',
     )
     inventory_account_id = fields.Many2one(
         'ab_accounting_account_guide',
-        required=True,
         ondelete='restrict',
         string='Inventory Account',
     )
@@ -61,7 +64,6 @@ class PurchaseAccountingConfig(models.Model):
     )
     supplier_account_id = fields.Many2one(
         'ab_accounting_account_guide',
-        required=True,
         ondelete='restrict',
         string='Supplier Account',
     )
@@ -97,6 +99,7 @@ class PurchaseAccountingConfig(models.Model):
             rec.display_name = '%s / %s / %s' % (company, branch, date)
 
     @api.constrains(
+        'processing_mode',
         'company_id',
         'branch_id',
         'purchase_doctype_id',
@@ -114,6 +117,11 @@ class PurchaseAccountingConfig(models.Model):
                 raise ValidationError(_('Supplier due days cannot be negative.'))
             if not rec.branch_id.active or not rec.branch_id.allow_purchase:
                 raise ValidationError(_('Purchase accounting requires an active purchase branch.'))
+            if rec.processing_mode == 'review':
+                continue
+            if not (rec.purchase_doctype_id and rec.return_doctype_id
+                    and rec.inventory_account_id and rec.supplier_account_id):
+                raise ValidationError(_('Journal mode requires document types, inventory and supplier accounts.'))
             rec._check_company_records()
             rec._check_posting_user()
 

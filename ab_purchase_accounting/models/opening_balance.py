@@ -45,6 +45,9 @@ class PurchaseObHeaderAccounting(models.Model):
 
     def btn_submit_inventory(self):
         self.ensure_one()
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
         if self.status == 'saved':
             return super().btn_submit_inventory()
         with self.env.cr.savepoint():
@@ -59,6 +62,8 @@ class PurchaseObHeaderAccounting(models.Model):
         if self.purchase_accounting_journal_id:
             return self.purchase_accounting_journal_id
         if self.purpose != 'non_purchase_receipt':
+            return self.env['ab_accounting_je_header']
+        if self.env['ab_purchase_accounting_review']._capture_if_enabled(self):
             return self.env['ab_accounting_je_header']
 
         accounting_date = self.doc_date or fields.Date.context_today(self)

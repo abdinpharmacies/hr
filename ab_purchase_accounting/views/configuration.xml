@@ -8,6 +8,7 @@
                 <field name="company_id"/>
                 <field name="branch_id"/>
                 <field name="activation_date"/>
+                <field name="processing_mode"/>
                 <field name="purchase_doctype_id"/>
                 <field name="return_doctype_id"/>
                 <field name="posting_user_id"/>
@@ -27,16 +28,17 @@
                         <field name="branch_id"/>
                         <field name="active"/>
                         <field name="activation_date"/>
+                        <field name="processing_mode"/>
                         <field name="posting_user_id"/>
                     </group>
                     <group string="Document Types">
-                        <field name="purchase_doctype_id" domain="[]"/>
-                        <field name="return_doctype_id" domain="[]"/>
+                        <field name="purchase_doctype_id" domain="[]" required="processing_mode == 'journal'"/>
+                        <field name="return_doctype_id" domain="[]" required="processing_mode == 'journal'"/>
                     </group>
                     <group string="Accounts">
-                        <field name="inventory_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="inventory_account_id" domain="[('is_final', '=', True), ('active', '=', True)]" required="processing_mode == 'journal'"/>
                         <field name="tax_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
-                        <field name="supplier_account_id" domain="[('is_final', '=', True), ('active', '=', True)]"/>
+                        <field name="supplier_account_id" domain="[('is_final', '=', True), ('active', '=', True)]" required="processing_mode == 'journal'"/>
                     </group>
                     <separator string="Non-purchase Receipt Offsets"/>
                     <field name="receipt_account_ids" nolabel="1" class="o_ab_responsive_x2many_table o_ab_purchase_accounting_receipt_table">

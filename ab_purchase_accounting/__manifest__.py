@@ -19,6 +19,7 @@
         'security/security_rules.xml',
         'views/configuration.xml',
         'views/purchase_views.xml',
+        'views/review.xml',
     ],
     'installable': True,
     'auto_install': False,

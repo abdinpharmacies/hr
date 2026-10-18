@@ -1,5 +1,9 @@
 # Plan 3 Purchase Accounting Operation Flow
 
+For the new branch 29/140 manual-review pilot, see [REVIEW_MODE.md](REVIEW_MODE.md).
+The journal-posting workflow below remains the default unless a branch's
+configuration explicitly selects Review Logs Only.
+
 The live-state notes below are historical observations from before the first-copy
 accounting restoration. They are not verification of the current live database.
 The adapter now uses the original journal fields and validates mappings at posting.
