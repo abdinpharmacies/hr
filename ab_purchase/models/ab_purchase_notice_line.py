@@ -1,3 +1,5 @@
+import math
+
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
@@ -9,20 +11,26 @@ class PurchaseNoticeLine(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            self._validate_numeric_input(vals)
             header = self.env['ab_purchase_notice_header'].browse(vals.get('header_id'))
             if header.exists() and header.status == 'saved':
                 raise ValidationError(_("Saved notice lines cannot be changed."))
         return super().create(vals_list)
 
     def write(self, vals):
+        self._validate_numeric_input(vals)
         if any(line.header_id.status == 'saved' for line in self):
             raise ValidationError(_("Saved notice lines cannot be changed."))
+        if 'header_id' in vals and self.env['ab_purchase_notice_header'].browse(vals['header_id']).status == 'saved':
+            raise ValidationError(_('Saved notice lines cannot be changed.'))
         return super().write(vals)
 
     def unlink(self):
         if any(line.header_id.status == 'saved' for line in self):
             raise ValidationError(_("Saved notice lines cannot be changed."))
         return super().unlink()
+
+    company_id = fields.Many2one(related='header_id.company_id', store=True, index=True)
 
     header_id = fields.Many2one(
         'ab_purchase_notice_header', required=True, ondelete='cascade', auto_join=True)
@@ -106,13 +114,13 @@ class PurchaseNoticeLine(models.Model):
                  'source_id.unit_cost', 'source_id.price')
     def _compute_line_calc(self):
         for rec in self:
-            rec.line_cost = rec.qty * rec.unit_cost + (rec.bonus * rec.unit_taxes_value)
+            rec.line_cost = rec.source_id._get_purchase_tax_values(qty=rec.qty, bonus=rec.bonus)['total']
             rec.line_price = rec.qty * rec.price + (rec.bonus * rec.unit_taxes_value)
 
     @api.depends('qty', 'bonus')
     def _compute_line_taxes_value(self):
         for rec in self:
-            rec.line_taxes_value = (rec.bonus + rec.qty) * rec.unit_taxes_value
+            rec.line_taxes_value = rec.source_id._get_purchase_tax_values(qty=rec.qty, bonus=rec.bonus)['total_tax']
 
     @api.depends('product_id', 'source_id', 'uom_id')
     def _compute_invoice_available_bonus(self):
@@ -155,3 +163,24 @@ class PurchaseNoticeLine(models.Model):
                                      if smallest_per_large else 0)
             else:
                 rec.available_qty = balance
+
+    @api.constrains('source_id', 'header_id', 'qty', 'bonus')
+    def _check_notice_source(self):
+        for line in self:
+            if not line.source_id or line.source_id not in line.header_id.purchase_header_id.line_ids.source_id:
+                raise ValidationError(_('Notice sources must belong to the selected purchase invoice.'))
+            if any(not math.isfinite(value) or value < 0 for value in (line.qty, line.bonus)):
+                raise ValidationError(_('Purchase quantities and bonuses cannot be negative.'))
+
+    def _check_return_limits(self):
+        for source in self.source_id:
+            requested = self.filtered(lambda line: line.source_id == source)
+            previous = self.search([('source_id', '=', source.id), ('header_id.status', '=', 'saved'),
+                                    ('header_id.notice_effect', '=', 'physical')])
+            if sum(requested.mapped('qty')) + sum(previous.mapped('qty')) > source.qty + 1e-9 or sum(requested.mapped('bonus')) + sum(previous.mapped('bonus')) > source.bonus:
+                raise ValidationError(_('Physical returns cannot exceed the received paid and bonus quantities.'))
+
+    def _validate_numeric_input(self, vals):
+        for key in ('qty', 'bonus'):
+            if key in vals and (not isinstance(vals[key], (int, float)) or not math.isfinite(vals[key]) or vals[key] < 0):
+                raise ValidationError(_('Purchase quantities and bonuses must be finite and non-negative.'))

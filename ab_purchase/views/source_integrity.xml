@@ -1,0 +1,33 @@
+<odoo>
+    <record id="purchase_source_integrity_form" model="ir.ui.view">
+        <field name="name">ab_purchase.source.integrity.form</field>
+        <field name="model">ab_purchase_header</field>
+        <field name="inherit_id" ref="ab_purchase_header_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='line_ids']/list/field[@name='exp_date']" position="after">
+                <field name="no_expiry" optional="show"/><field name="tax_policy_id" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/list/field[@name='exp_date']" position="attributes">
+                <attribute name="optional">show</attribute>
+                <attribute name="readonly">no_expiry</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="purchase_line_source_integrity_form" model="ir.ui.view">
+        <field name="name">ab_purchase_line.source.integrity.form</field>
+        <field name="model">ab_purchase_line</field>
+        <field name="inherit_id" ref="ab_purchase_line_view_form"/>
+        <field name="arch" type="xml">
+            <field name="exp_date" position="after"><field name="no_expiry"/><field name="tax_policy_id"/></field>
+            <field name="exp_date" position="attributes"><attribute name="readonly">no_expiry</attribute></field>
+        </field>
+    </record>
+    <record id="purchase_line_source_integrity_list" model="ir.ui.view">
+        <field name="name">ab_purchase_line.source.integrity.list</field>
+        <field name="model">ab_purchase_line</field>
+        <field name="inherit_id" ref="ab_purchase_line_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="exp_date" position="after"><field name="no_expiry" optional="show"/><field name="tax_policy_id" optional="hide"/></field>
+        </field>
+    </record>
+</odoo>

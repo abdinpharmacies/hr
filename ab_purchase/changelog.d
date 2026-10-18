@@ -1,5 +1,57 @@
 Current changes before commit:
 
+- Bind invoice sources to their branch/company and preserve immutable receipt economics and tax-policy snapshots.
+- Allocate invoice discounts and bonus quantities into frozen inventory cost, retaining original tax components for supplier returns.
+- Enforce receipt, return and financial-notice permissions and quantity limits on direct ORM calls; keep financial notices stock-neutral.
+- Complete native Data Entry expiry and tax-policy handling and maintain both Arabic catalogs.
+
+Files changed:
+
+- ab_purchase/__manifest__.py
+- ab_purchase/changelog.d
+- ab_purchase/i18n/ar.po
+- ab_purchase/i18n/ar_001.po
+- ab_purchase/models/ab_purchase_entry.py
+- ab_purchase/models/ab_purchase_header.py
+- ab_purchase/models/ab_purchase_line.py
+- ab_purchase/models/ab_purchase_links.py
+- ab_purchase/models/ab_purchase_notice_header.py
+- ab_purchase/models/ab_purchase_notice_line.py
+- ab_purchase/models/ab_purchase_source_guard.py
+- ab_purchase/security/company_rules.xml
+- ab_purchase/security/ir.model.access.csv
+- ab_purchase/security/security_groups.xml
+- ab_purchase/static/src/entry/purchase_entry.js
+- ab_purchase/static/src/entry/purchase_entry.xml
+- ab_purchase/views/source_integrity.xml
+
+Validation:
+
+- Fresh isolated installation, targeted upgrades, behavior/security checks, translation validation and operational evidence are recorded in `ab_independence_dev_plans/13_phase_1_6_execution.md`.
+
+commit eac9729f34f3c20129986c1b61df39ea6e4142b5
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date: 2026-09-30T14:06:37+03:00
+
+    ab_purchase/Refactor: separate physical returns from financial purchase notices
+
+- Separate physical supplier returns from financial notices.
+
+Files changed:
+
+- ab_purchase/changelog.d
+- ab_purchase/i18n/ar.po
+- ab_purchase/i18n/ar_001.po
+- ab_purchase/models/ab_purchase_links.py
+- ab_purchase/models/ab_purchase_notice_header.py
+- ab_purchase/models/ab_purchase_notice_line.py
+- ab_purchase/views/ab_purchase_links_views.xml
+- ab_purchase/views/ab_purchase_notice_header.xml
+
+Earlier committed work (historical summary):
+
+Historical implementation summary:
+
 - Add a financial-only purchase notice mode alongside physical supplier returns.
 - Keep physical return counts, returnable quantities, and availability calculations limited to physical credit notices; existing notices with no mode are treated as physical returns for compatibility.
 - Add financial notice menu/action and purchase-form shortcut while leaving inventory movements hidden for financial notices.

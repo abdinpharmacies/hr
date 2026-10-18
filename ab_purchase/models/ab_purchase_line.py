@@ -37,6 +37,11 @@ class AbdinPurchaseDetails(models.Model):
         'ePlus Serial CAN NOT BE DUPLICATED!',
     )
 
+    @api.onchange('no_expiry')
+    def _onchange_no_expiry(self):
+        if self.no_expiry:
+            self.exp_date = False
+
     @api.onchange('product_id')
     def _onchange_product(self):
         self.uom_id = self.product_id.unit_l_id.id
@@ -44,7 +49,7 @@ class AbdinPurchaseDetails(models.Model):
     @api.depends('unit_taxes_value', 'bonus', 'qty')
     def _compute_line_taxes_value(self):
         for rec in self:
-            rec.line_taxes_value = rec.unit_taxes_value * (rec.qty + rec.bonus)
+            rec.line_taxes_value = rec.source_id._get_purchase_tax_values()['total_tax']
 
     def _compute_display_name(self):
         for rec in self:
@@ -53,21 +58,19 @@ class AbdinPurchaseDetails(models.Model):
     @api.depends('line_purchase_price', 'line_taxes_value', 'source_id.extra_discount_percentage')
     def _compute_line_cost(self):
         for rec in self:
-            extra_discount_percentage = rec.source_id.extra_discount_percentage / 100
-
-            net_purchase_price = rec.line_purchase_price * (1 - extra_discount_percentage)
-
-            rec.line_cost = net_purchase_price + rec.line_taxes_value
+            rec.line_cost = rec.source_id._get_purchase_tax_values()['total']
 
     # @api.onchange("line_cost")
     def _inverse_line_cost(self):
         for rec in self:
             if rec.qty > 0:
-                discount_factor = 1 - rec.extra_discount_percentage / 100
-                t2 = sum(tax.percentage / 100 for tax in rec.taxes_ids if tax.apply_on_total)
-                t1 = sum(tax.percentage / 100 for tax in rec.taxes_ids if not tax.apply_on_total)
-                tax_rate = t1 + t2 * (1 + t1)
-                purchase_base = discount_factor * (rec.qty + (rec.qty + rec.bonus) * tax_rate)
+                calculation = rec.taxes_ids._compute_purchase_values(
+                    1, rec.qty, rec.bonus, rec.extra_discount_percentage,
+                    policy=rec.tax_policy_id or None,
+                )
+                taxable_qty = rec.qty + rec.bonus if calculation['policy']['tax_bonus'] else rec.qty
+                purchase_base = rec.qty * (1 - rec.extra_discount_percentage / 100) + sum(
+                    component['unit_amount'] * taxable_qty for component in calculation['components'])
                 if purchase_base <= 0:
                     raise ValidationError(_("Cannot set a line cost when its purchase base is zero or negative."))
                 rec.purchase_price = rec.line_cost / purchase_base
@@ -131,7 +134,17 @@ class AbdinPurchaseDetails(models.Model):
             if destination.status != 'prepending' or any(line.header_id.status != 'prepending' for line in self):
                 raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
         with self.env.cr.savepoint():
+            expiry_values = {key: vals[key] for key in ('exp_date', 'no_expiry') if key in vals}
+            if expiry_values:
+                self.check_access('write')
+                sources = (self.env['ab_product_source'].browse(vals['source_id'])
+                           if 'source_id' in vals else self.mapped('source_id'))
+                sources.write(expiry_values)
+                vals = {key: value for key, value in vals.items() if key not in expiry_values}
             result = super().write(vals)
+            if {'header_id', 'source_id'} & vals.keys():
+                for line in self:
+                    line.source_id._bind_origin(line.header_id.store_id, line.header_id._name, line.header_id.id, 'purchase')
             if {'qty', 'bonus', 'source_id', 'uom_id'} & vals.keys():
                 for rec in self.filtered(lambda line: line.header_id.status == 'pending'):
                     rec.env['ab_inventory_process'].inventory_write(
@@ -146,7 +159,10 @@ class AbdinPurchaseDetails(models.Model):
             header = self.env['ab_purchase_header'].browse(vals.get('header_id'))
             if header.exists() and header.status != 'prepending':
                 raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        for line in records:
+            line.source_id._bind_origin(line.header_id.store_id, line.header_id._name, line.header_id.id, 'purchase')
+        return records
 
     def unlink(self):
         if any(line.header_id.status != 'prepending' for line in self):

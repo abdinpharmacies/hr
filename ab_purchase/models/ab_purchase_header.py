@@ -2,6 +2,7 @@ from datetime import datetime
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import re
+import math
 
 
 class AbdinPurchaseHeader(models.Model):
@@ -10,6 +11,11 @@ class AbdinPurchaseHeader(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _rec_name = "doc_code"
     _order = "create_date desc"
+
+    _invoice_unique = models.Constraint('UNIQUE(store_id, supplier_id, doc_code)', 'Purchase invoice numbers must be unique per supplier and store.')
+
+    company_id = fields.Many2one(related='store_id.company_id', store=True, index=True)
+    tax_snapshot = fields.Json(readonly=True, copy=False)
 
     supplier_id = fields.Many2one("ab_supplier", required=True, tracking=True, index=True)
     store_id = fields.Many2one("ab_store", required=True, tracking=True, index=True, readonly=True)
@@ -154,6 +160,8 @@ class AbdinPurchaseHeader(models.Model):
         purchase_details = self.line_ids
         if not purchase_details:
             raise UserError(_("Error: No products found on the supplier invoice."))
+        if self.total_extra_discount > sum(self.line_ids.mapped('line_cost')):
+            raise ValidationError(_('The invoice discount cannot exceed its line total.'))
         if abs(self.total_cost - self.net_invoice) > 0.5:
             raise UserError(
                 _(
@@ -181,17 +189,28 @@ class AbdinPurchaseHeader(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        if any(vals.get('tax_snapshot') for vals in vals_list):
+            raise ValidationError(_('Purchase totals can only be frozen by receipt approval.'))
         if any(vals.get('status', 'prepending') != 'prepending' for vals in vals_list):
             raise ValidationError(_("Create purchase invoices as drafts."))
         return super().create(vals_list)
 
     def write(self, vals):
+        if 'tax_snapshot' in vals:
+            raise ValidationError(_('Purchase totals can only be frozen by receipt approval.'))
+        if any(rec.status == 'saved' for rec in self) and set(vals) - {'active', 'message_follower_ids', 'message_ids'}:
+            raise ValidationError(_('Saved purchase invoices cannot be changed.'))
+        if 'store_id' in vals and any(rec.line_ids and rec.store_id.id != vals['store_id'] for rec in self):
+            raise ValidationError(_('Remove draft lines before changing the purchase store.'))
         if 'status' in vals:
             raise ValidationError(_("Use the purchase inventory actions to change status."))
         return super().write(vals)
 
     def btn_submit_inventory(self):
         self.ensure_one()
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset()
         if not (self.env.user.has_group('base.group_system')
                 or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
             raise AccessError(_("Only purchase managers can submit invoices for inventory."))
@@ -211,6 +230,9 @@ class AbdinPurchaseHeader(models.Model):
 
     def btn_save_inventory(self):
         self.ensure_one()
+        self.check_access('write')
+        self.lock_for_update()
+        self.invalidate_recordset()
         if not (self.env.user.has_group('base.group_system')
                 or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
             raise AccessError(_("Only purchase managers can save receipts into stock."))
@@ -226,11 +248,13 @@ class AbdinPurchaseHeader(models.Model):
                 self.env['ab_inventory_process'].inventory_write(
                     line, line.qty + line.bonus, self.store_id.id, status='saved',
                 )
-            super(AbdinPurchaseHeader, self).write({'status': 'saved'})
+            snapshot = {key: self[key] for key in ('total_cost', 'total_tax', 'total_price', 'total_purchase_price')}
+            snapshot['lines'] = [line.source_id._get_purchase_tax_values() for line in self.line_ids]
+            super(AbdinPurchaseHeader, self).write({'status': 'saved', 'tax_snapshot': snapshot})
         return True
 
     @api.depends("line_ids", "line_ids.line_price", "line_ids.line_cost", "line_ids.line_taxes_value",
-                 "line_ids.extra_discount_percentage", "line_ids.qty", "total_extra_discount")
+                 "line_ids.extra_discount_percentage", "line_ids.qty", "total_extra_discount", "tax_snapshot")
     def compute_totals(self):
         for rec in self:
             rec.total_price = sum(rec.line_price for rec in rec.line_ids)
@@ -240,3 +264,17 @@ class AbdinPurchaseHeader(models.Model):
                 rec.line_purchase_price * (1 - rec.extra_discount_percentage / 100) for rec in rec.line_ids)
             rec.number_of_products = sum(rec.qty for rec in rec.line_ids)
             rec.lines_count = len(rec.line_ids)
+            if rec.tax_snapshot:
+                for key in ('total_cost', 'total_tax', 'total_price', 'total_purchase_price'):
+                    rec[key] = rec.tax_snapshot[key]
+
+    def unlink(self):
+        raise ValidationError(_('Archive purchase invoices instead of deleting them.'))
+
+    @api.constrains('net_invoice', 'net_tax', 'total_extra_discount', 'store_id')
+    def _check_purchase_inputs(self):
+        for invoice in self:
+            if any(not math.isfinite(value) or value < 0 for value in (invoice.net_invoice, invoice.net_tax, invoice.total_extra_discount)):
+                raise ValidationError(_('Invoice values must be finite and non-negative.'))
+            if not invoice.store_id.allow_purchase:
+                raise ValidationError(_('Purchasing is disabled for this store.'))

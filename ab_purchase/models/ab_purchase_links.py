@@ -149,11 +149,11 @@ class ReturnLinks(models.Model):
     total_cost = fields.Float(compute='compute_totals', store=True, digits=(16, 3))
     total_taxes_value = fields.Float(compute='compute_totals', store=True, digits=(16, 3))
 
-    @api.depends('line_ids.line_cost', 'line_ids.line_taxes_value')
+    @api.depends('line_ids.line_cost', 'line_ids.line_taxes_value', 'tax_snapshot')
     def compute_totals(self):
         for notice in self:
-            notice.total_cost = sum(notice.line_ids.mapped('line_cost'))
-            notice.total_taxes_value = sum(notice.line_ids.mapped('line_taxes_value'))
+            notice.total_cost = notice.tax_snapshot['total_cost'] if notice.tax_snapshot else sum(notice.line_ids.mapped('line_cost'))
+            notice.total_taxes_value = notice.tax_snapshot['total_taxes_value'] if notice.tax_snapshot else sum(notice.line_ids.mapped('line_taxes_value'))
             notice.lines_count = len(notice.line_ids)
 
     @api.constrains('purchase_header_id', 'supplier_id', 'notice_type', 'notice_effect')
@@ -266,7 +266,7 @@ class ReturnLineLinks(models.Model):
     @api.depends('qty', 'bonus', 'unit_taxes_value')
     def _compute_line_taxes_value(self):
         for line in self:
-            line.line_taxes_value = (line.qty + line.bonus) * line.unit_taxes_value
+            line.line_taxes_value = line.source_id._get_purchase_tax_values(qty=line.qty, bonus=line.bonus)['total_tax']
 
     @api.depends('qty', 'bonus', 'unit_taxes_value', 'price', 'purchase_line_id.purchase_price',
                  'purchase_line_id.extra_discount_percentage',
@@ -276,6 +276,5 @@ class ReturnLineLinks(models.Model):
             invoice = line.purchase_line_id.header_id
             gross = sum(invoice.line_ids.mapped('line_cost'))
             discount_factor = 1 - invoice.total_extra_discount / gross if gross else 1
-            unit_purchase = line.purchase_line_id.purchase_price * (1 - line.purchase_line_id.extra_discount_percentage / 100)
-            line.line_cost = (line.qty * unit_purchase + (line.qty + line.bonus) * line.unit_taxes_value) * discount_factor
+            line.line_cost = line.source_id._get_purchase_tax_values(qty=line.qty, bonus=line.bonus)['total'] * discount_factor
             line.line_price = (line.qty + line.bonus) * line.price

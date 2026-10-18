@@ -152,6 +152,13 @@ export class PurchaseDataEntry extends Component {
         line[name] = name === "exp_date" ? event.target.value : Number(event.target.value);
         this.state.dirty = true;
     }
+    setNoExpiry(line, event) {
+        line.no_expiry = event.target.checked;
+        if (line.no_expiry) {
+            line.exp_date = "";
+        }
+        this.state.dirty = true;
+    }
     setTax(line, event) {
         const taxId = Number(event.target.value || 0);
         line.taxes_ids = taxId ? [taxId] : [];
@@ -220,7 +227,7 @@ export class PurchaseDataEntry extends Component {
         if (this.state.quick && !this.commitProduct()) { return; }
         this.state.quick = { product_id: product.id, name: product.name, code: product.code,
             units: product.units, uom_id: product.uom_id, qty: 1, bonus: 0, price: product.price,
-            purchase_price: product.purchase_price, extra_discount_percentage: 0, taxes_ids: [], exp_date: this.state.config.expiry };
+            purchase_price: product.purchase_price, extra_discount_percentage: 0, taxes_ids: [], exp_date: this.state.config.expiry, no_expiry: false };
         this.state.productQuery = ""; this.state.products = []; this.state.dirty = true;
         this.lookupVersions.product = (this.lookupVersions.product || 0) + 1;
         this.focus("quickQty");
@@ -281,14 +288,20 @@ export class PurchaseDataEntry extends Component {
     removeLine(line) { this.state.doc.lines = this.state.doc.lines.filter((row) => row.key !== line.key); this.state.dirty = true; }
     lineTotals(line) {
         const qty = Number(line.qty) || 0, bonus = Number(line.bonus) || 0;
+        const policy = line.tax_contract?.policy || { tax_bonus: true, discount_timing: "before_tax", rounding_digits: 3 };
+        const round = (value) => Number(value.toFixed(policy.rounding_digits));
+        const taxableQty = policy.tax_bonus ? qty + bonus : qty;
         if (this.state.kind === "return") {
-            return { tax: (qty + bonus) * line.unit_tax, cost: (qty * line.unit_purchase + (qty + bonus) * line.unit_tax) * line.factor };
+            const tax = line.tax_contract ? line.tax_contract.components.reduce((sum, component) => sum + round(component.unit_amount * taxableQty), 0) : round(taxableQty * line.unit_tax);
+            return { tax: round(tax), cost: round(round(qty * line.unit_purchase) + tax) * line.factor };
         }
-        const price = (Number(line.purchase_price) || 0) * (1 - (Number(line.extra_discount_percentage) || 0) / 100);
+        const price = Number(line.purchase_price) || 0;
+        const discounted = price * (1 - (Number(line.extra_discount_percentage) || 0) / 100);
+        const taxBase = policy.discount_timing === "after_tax" ? price : discounted;
         const taxes = this.state.config.taxes.filter((tax) => line.taxes_ids.includes(tax.id));
-        const baseTax = taxes.filter((tax) => !tax.apply_on_total).reduce((sum, tax) => sum + price * tax.percentage / 100, 0);
-        const tax = baseTax + taxes.filter((tax) => tax.apply_on_total).reduce((sum, tax) => sum + (price + baseTax) * tax.percentage / 100, 0);
-        return { tax: (qty + bonus) * tax, cost: qty * price + (qty + bonus) * tax };
+        const baseTax = taxes.filter((tax) => !tax.apply_on_total).reduce((sum, tax) => sum + taxBase * tax.percentage / 100, 0);
+        const tax = taxes.reduce((sum, item) => sum + round((item.apply_on_total ? taxBase + baseTax : taxBase) * item.percentage / 100 * taxableQty), 0);
+        return { tax: round(tax), cost: round(round(qty * discounted) + tax) };
     }
     get totals() {
         return this.state.doc.lines.reduce((sum, line) => { const row = this.lineTotals(line);

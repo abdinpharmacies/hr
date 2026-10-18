@@ -1,7 +1,8 @@
+#
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=UTF-8\n"
 "Language: ar_001\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_purchase
@@ -125,8 +126,12 @@ msgid "Rejected"
 msgstr "مرفوض"
 
 #. module: ab_purchase
-msgid "Pending purchase quantities are observed inbound only. Stock becomes on-hand after an inventory movement is saved."
-msgstr "كميات المشتريات المعلقة وارد متوقع فقط. تصبح الكمية مخزوناً فعلياً بعد حفظ حركة المخزون."
+msgid ""
+"Pending purchase quantities are observed inbound only. Stock becomes on-hand"
+" after an inventory movement is saved."
+msgstr ""
+"كميات المشتريات المعلقة وارد متوقع فقط. تصبح الكمية مخزوناً فعلياً بعد حفظ "
+"حركة المخزون."
 
 #. module: ab_purchase
 msgid "Invoice Totals"
@@ -225,8 +230,8 @@ msgid "Only purchase returns are supported by this workflow."
 msgstr "هذا المسار يدعم مرتجعات المشتريات فقط."
 
 #. module: ab_purchase
-#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_form_links
 #. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_purchase.purchase_form_links
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
 msgid "Purchase Invoice"
 msgstr "فاتورة شراء"
@@ -239,9 +244,9 @@ msgstr "بند الشراء"
 
 #. module: ab_purchase
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_purchase/models/ab_purchase_links.py:0
 #: model_terms:ir.ui.view,arch_db:ab_purchase.return_form_links
-#. odoo-javascript
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
 msgid "Purchase Return"
 msgstr "مرتجع شراء"
@@ -346,21 +351,21 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_purchase
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__store_id
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__store_id
-#. odoo-javascript
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
 msgid "Store"
 msgstr "المخزن"
 
 #. module: ab_purchase
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__supplier_id
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__supplier_id
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__supplier_id
 #: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__supplier_id
 #: model:ir.ui.menu,name:ab_purchase.ab_supplier_menu
 #: model:ir.ui.menu,name:ab_purchase.ab_supplier_sub_menu
-#. odoo-javascript
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
 msgid "Supplier"
 msgstr "المورد"
@@ -416,7 +421,8 @@ msgstr "يجب ألا يكون تاريخ البداية بعد تاريخ ال�
 #. module: ab_purchase
 #. odoo-python
 #: code:addons/ab_purchase/models/ab_purchase_links.py:0
-msgid "Remove draft return lines before changing its purchase invoice or supplier."
+msgid ""
+"Remove draft return lines before changing its purchase invoice or supplier."
 msgstr "احذف بنود مسودة المرتجع قبل تغيير فاتورة الشراء أو المورد."
 
 #. module: ab_purchase
@@ -434,7 +440,8 @@ msgstr "خطأ: لا توجد منتجات في فاتورة المورد."
 #. module: ab_purchase
 #. odoo-python
 #: code:addons/ab_purchase/models/ab_purchase_header.py:0
-msgid "Error: Net invoice amount does not match the total cost of the products."
+msgid ""
+"Error: Net invoice amount does not match the total cost of the products."
 msgstr "خطأ: صافي الفاتورة لا يطابق إجمالي تكلفة المنتجات."
 
 #. module: ab_purchase
@@ -446,8 +453,11 @@ msgstr "خطأ: صافي الضريبة لا يطابق إجمالي ضريبة 
 #. module: ab_purchase
 #. odoo-python
 #: code:addons/ab_purchase/models/ab_purchase_header.py:0
-msgid "Error: Total cost cannot be equal to or greater than the total selling price of the products."
-msgstr "خطأ: لا يمكن أن تساوي التكلفة الإجمالية إجمالي سعر بيع المنتجات أو تتجاوزه."
+msgid ""
+"Error: Total cost cannot be equal to or greater than the total selling price"
+" of the products."
+msgstr ""
+"خطأ: لا يمكن أن تساوي التكلفة الإجمالية إجمالي سعر بيع المنتجات أو تتجاوزه."
 
 #. module: ab_purchase
 #. odoo-javascript
@@ -536,7 +546,8 @@ msgstr "Alt+S: حفظ"
 #. module: ab_purchase
 #. odoo-python
 #: code:addons/ab_purchase/models/ab_purchase_source_guard.py:0
-msgid "Only product sources belonging to your store purchase drafts can be edited."
+msgid ""
+"Only product sources belonging to your store purchase drafts can be edited."
 msgstr "يمكن تعديل مصادر المنتجات التابعة لمسودات الشراء في مخزنك فقط."
 
 #. module: ab_purchase
@@ -989,8 +1000,12 @@ msgstr "ابحث باسم المورد أو الكود"
 #. module: ab_purchase
 #. odoo-javascript
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
-msgid "Enter: quantity → purchase price → selling price → add. Ctrl+Enter: add with current values."
-msgstr "Enter: الكمية ← سعر الشراء ← سعر البيع ← إضافة. Ctrl+Enter: إضافة بالقيم الحالية."
+msgid ""
+"Enter: quantity → purchase price → selling price → add. Ctrl+Enter: add with"
+" current values."
+msgstr ""
+"Enter: الكمية ← سعر الشراء ← سعر البيع ← إضافة. Ctrl+Enter: إضافة بالقيم "
+"الحالية."
 
 #. module: ab_purchase
 #. odoo-javascript
@@ -1099,3 +1114,159 @@ msgstr "احفظ استلام المشتريات قبل إنشاء إشعار م
 #. module: ab_purchase
 msgid "Financial notices do not create inventory movements."
 msgstr "لا تنشئ الإشعارات المالية حركات مخزون."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__no_expiry
+msgid "No Expiry"
+msgstr "بدون تاريخ صلاحية"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__posting_snapshot
+msgid "Posted Source Snapshot"
+msgstr "القيم المثبتة للمصدر عند الترحيل"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__source_identity
+msgid "Source Identity"
+msgstr "هوية المصدر"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__active
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Archive purchase invoices instead of deleting them."
+msgstr "أرشف فواتير المشتريات بدلاً من حذفها."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Archive purchase notices instead of deleting them."
+msgstr "أرشف إشعارات المشتريات بدلاً من حذفها."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__company_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__company_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__company_id
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_line__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_source_guard.py:0
+msgid "Invoice discounts cannot make inventory value negative."
+msgstr "لا يمكن أن تجعل خصومات الفاتورة قيمة المخزون سالبة."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Invoice values must be finite and non-negative."
+msgstr "يجب أن تكون قيم الفاتورة أرقاماً محدودة وغير سالبة."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__legacy_reference
+msgid "Legacy Reference"
+msgstr "المرجع السابق"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__lot_id
+msgid "Lot"
+msgstr "التشغيلة"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_line.py:0
+msgid "Notice sources must belong to the selected purchase invoice."
+msgstr "يجب أن تتبع مصادر الإشعار فاتورة المشتريات المحددة."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Notice totals can only be frozen by approval."
+msgstr "لا يمكن تثبيت إجماليات الإشعار إلا عند الاعتماد."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__origin_database
+msgid "Origin Database"
+msgstr "قاعدة بيانات المصدر"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__origin_model
+msgid "Origin Model"
+msgstr "نموذج المنشأ"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__origin_res_id
+msgid "Origin Res"
+msgstr "سجل المنشأ"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__parent_source_id
+msgid "Parent Source"
+msgstr "المصدر الأصلي"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_line.py:0
+msgid "Physical returns cannot exceed the received paid and bonus quantities."
+msgstr ""
+"لا يمكن أن تتجاوز المرتجعات الفعلية الكميات المدفوعة والبونص المستلمة."
+
+#. module: ab_purchase
+#: model:ir.model.constraint,message:ab_purchase.constraint_ab_purchase_header_invoice_unique
+msgid "Purchase invoice numbers must be unique per supplier and store."
+msgstr "يجب أن تكون أرقام فواتير المشتريات فريدة لكل مورد وفرع."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Purchase totals can only be frozen by receipt approval."
+msgstr "لا يمكن تثبيت إجماليات المشتريات إلا عند اعتماد الاستلام."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Purchasing is disabled for this store."
+msgstr "الشراء معطل لهذا الفرع."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Remove draft lines before changing the purchase store."
+msgstr "أزل بنود المسودة قبل تغيير فرع الشراء."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Saved purchase invoices cannot be changed."
+msgstr "لا يمكن تعديل فواتير المشتريات المحفوظة."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Saved purchase notices cannot be changed."
+msgstr "لا يمكن تعديل إشعارات المشتريات المحفوظة."
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_inventory__model_ref
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__source_type
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_line__tax_policy_id
+msgid "Tax Policy"
+msgstr "سياسة الضرائب"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__tax_snapshot
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_notice_header__tax_snapshot
+msgid "Tax Snapshot"
+msgstr "لقطة الضرائب"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+#: code:addons/ab_purchase/models/ab_purchase_source_guard.py:0
+msgid "The invoice discount cannot exceed its line total."
+msgstr "لا يمكن أن يتجاوز خصم الفاتورة إجمالي بنودها."
+
+#. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_notice_line.py:0
+msgid "Purchase quantities and bonuses must be finite and non-negative."
+msgstr "يجب أن تكون كميات الشراء والبونص أرقاماً محدودة وغير سالبة."
