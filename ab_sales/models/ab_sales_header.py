@@ -402,8 +402,10 @@ class AbdinSalesHeader(models.Model):
         replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if not replica_db:
             return []
-        stores = replica_db.allowed_sales_store_ids.filtered("allow_sale")
-        return stores.ids
+        # Return the configured restriction, not just its eligible members.
+        # Filtering here would turn a nonempty list of disabled stores into
+        # an empty (unrestricted) list for callers.
+        return replica_db.allowed_sales_store_ids.ids
 
     @api.model
     def _get_default_store_id(self):
@@ -429,10 +431,11 @@ class AbdinSalesHeader(models.Model):
     @api.constrains("store_id")
     def _check_store_allowed(self):
         store_ids = self._get_allowed_store_ids()
-        if not store_ids:
-            return
         for rec in self:
-            if rec.store_id and rec.store_id.id not in store_ids:
+            if rec.store_id and (
+                not rec.store_id.active or not rec.store_id.allow_sale
+                or (store_ids and rec.store_id.id not in store_ids)
+            ):
                 raise UserError(_("Store %s is not allowed for sales.") % (rec.store_id.display_name,))
 
     _uniq_pos_client_token = models.Constraint(

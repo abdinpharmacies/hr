@@ -1948,22 +1948,12 @@ class AbSalesPosAction extends Component {
     }
 
     async loadStores() {
-        let allowedCodes = [];
-        let defaultCode = "";
-        try {
-            const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
-            allowedCodes = Array.isArray(settings?.allowed_store_codes)
-                ? settings.allowed_store_codes
-                : [];
-            defaultCode = (settings?.default_store_code || "").trim();
-        } catch {
-            allowedCodes = [];
-            defaultCode = "";
-        }
-        const domain = [["allow_sale", "=", true]];
-        if (allowedCodes.length) {
-            domain.push(["code", "in", allowedCodes]);
-        }
+        // A failed settings request must not expand the list of usable stores.
+        // Let the normal RPC error surface so the user can reload and retry.
+        const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
+        const allowedCodes = settings.allowed_store_codes || [];
+        const defaultCode = (settings.default_store_code || "").trim();
+        const domain = [["allow_sale", "=", true], ["id", "in", settings.available_store_ids || []]];
         const stores = await this.orm.searchRead("ab_store", domain, ["name", "code", "ip1"]);
         this.state.stores = stores || [];
         this.state.allowedStoreCodes = allowedCodes;
@@ -2248,10 +2238,7 @@ class AbSalesPosAction extends Component {
     }
 
     storeDomain() {
-        const domain = [["allow_sale", "=", true]];
-        if (this.state.allowedStoreCodes.length) {
-            domain.push(["code", "in", this.state.allowedStoreCodes]);
-        }
+        const domain = [["allow_sale", "=", true], ["id", "in", this.state.stores.map((store) => store.id)]];
         if (Array.isArray(this.state.draftStoreIds)) {
             domain.push(["id", "in", this.state.draftStoreIds]);
         }

@@ -23,12 +23,12 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
             raise UserError(_("Invalid store."))
         store.check_access("read")
         self.env['ab_sales_header'].check_access('read')
+        if not store.active or not store.allow_sale:
+            raise UserError(_("Invalid store."))
         if not (self.env.su or self.env.user.has_group('base.group_system')
                 or self.env.user.has_group('ab_sales.group_ab_sales_manager')):
             allowed = self.env['ab_sales_header']._get_allowed_store_ids()
-            user = self.env.user.sudo()
-            assigned = (user.ab_department_ids | user.ab_employee_ids.department_id).store_id
-            if store.id not in allowed or (assigned and store not in assigned):
+            if allowed and store.id not in allowed:
                 raise AccessError(_("The selected store is not in the replica Allowed Sales Stores."))
         return store
 

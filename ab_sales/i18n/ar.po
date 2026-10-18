@@ -1776,3 +1776,25 @@ msgid ""
 msgstr ""
 "جميع خانات الفواتير المحلية البالغ عددها %s مشغولة. أزل فاتورة جاهزة أو "
 "مسودة قابلة للإزالة لإتاحة خانة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Invalid store."
+msgstr "المخزن غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Store %s is not allowed for sales."
+msgstr "المخزن %s غير مسموح به للمبيعات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+msgid "The selected store is not in the replica Allowed Sales Stores."
+msgstr ""
+"المخزن المحدد غير موجود ضمن مخازن المبيعات المسموح بها للنسخة المتماثلة."
