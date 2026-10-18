@@ -318,6 +318,10 @@ msgid "Posting would create negative stock in a store or batch."
 msgstr "سيؤدي الترحيل إلى رصيد مخزون سالب في متجر أو دفعة."
 
 #. module: ab_inventory
+msgid "Pending outgoing stock exceeds available quantity in this store or batch."
+msgstr "تتجاوز كمية الصرف المعلقة الكمية المتاحة في هذا المتجر أو هذه الدفعة."
+
+#. module: ab_inventory
 msgid "Only posted movements can be reversed."
 msgstr "يمكن عكس الحركات المرحّلة فقط."
 
@@ -504,6 +508,22 @@ msgstr "لا يمكن تغيير تعريفات وحدات الصنف بعد ح�
 #. module: ab_inventory
 msgid "The item and unit cannot change after stock movements are saved."
 msgstr "لا يمكن تغيير الصنف أو الوحدة بعد حفظ حركات المخزون."
+
+#. module: ab_inventory
+msgid "Item unit definitions cannot change while inventory movements are pending or saved."
+msgstr "لا يمكن تغيير تعريفات وحدات الصنف ما دامت هناك حركات مخزون معلقة أو محفوظة."
+
+#. module: ab_inventory
+msgid "The item and unit cannot change while inventory movements are pending or saved."
+msgstr "لا يمكن تغيير الصنف أو الوحدة ما دامت هناك حركات مخزون معلقة أو محفوظة."
+
+#. module: ab_inventory
+msgid "Unit values cannot change while inventory movements are pending or saved."
+msgstr "لا يمكن تغيير قيم الوحدات ما دامت هناك حركات مخزون معلقة أو محفوظة."
+
+#. module: ab_inventory
+msgid "Cancel pending inventory through its business document instead of deleting it."
+msgstr "ألغِ حركة المخزون المعلقة من مستندها الأصلي بدلاً من حذفها."
 
 #. module: ab_inventory
 msgid "This integration uses the previous inventory workflow. Update it to create pending ab_inventory movements and save them explicitly."

@@ -24,11 +24,12 @@ smallest unit**. Positive means incoming stock; negative means outgoing stock.
 | Receipt or return | Extended by its module | Positive |
 | Sale or issue | Extended by its module | Negative |
 
-Only records with `status='saved'` affect stock; `status='pending'` has no
-on-hand effect. Saving stores the movement's
-`closing_balance = previous balance + qty` under a
-store lock. The period report uses `closing = opening + incoming - outgoing`.
-Saved movements and their closing balances are immutable.
+Only records with `status='saved'` affect physical stock. Pending outgoing
+movements reduce availability, while pending incoming movements are excluded.
+Saving checks physical stock and remaining pending holds under a store lock.
+`closing_balance` is a read-only computed historical sum through that saved
+movement. The period report uses `closing = opening + incoming - outgoing`.
+Saved movements are immutable.
 There is no manually entered `name` or reference column: the movement ID,
 store, product, and linked `model_ref`/`res_id` identify the entry. Manual
 movements have no external `res_id`.
@@ -89,21 +90,75 @@ movement = self.env['ab_inventory_process'].inventory_write(
 ```
 
 The pair (`model_ref`, `res_id`) is derived from the business line model and
-ID. One line has one movement. Calling again while pending updates that
+ID. One line has at most one movement in each store. Calling again for the
+same store while pending updates that
 pending movement; calling again after saving with identical values returns the
 same movement without a second stock effect. Saved values cannot be changed.
+The database unique index enforces `(store_id, model_ref, res_id)` for positive
+`res_id` values. The same linked ID may be used in another store; manual
+movements without a linked record may coexist.
 If a sale needs two batches, use two distinct business lines.
 
 The API checks the calling user's store access and serializes retries for the
-same business line. Saving locks the store, calculates `closing_balance`, and
-rejects negative batch stock. Posting reads the previous saved close through
-the same indexed latest-row lookup; it does not sum a batch's full transaction
-history. It uses elevated ORM access internally only
+same business line. Saving locks the store, sums saved movement quantities,
+and rejects negative batch stock. It uses elevated ORM access internally only
 after store checks. Do not wrap the call in `sudo()` or bypass it with direct
 SQL. For multi-line documents, call it inside one business transaction and
 let any failure roll back the entire document; do not commit partial results.
+Inventory locks the source, product, and referenced units before converting a
+line quantity. Their item and unit definitions cannot change while pending or
+saved movements reference them.
 Purchase and opening-balance models call the same service directly. It is a
 trusted server-side method, not a general end-user RPC endpoint.
+
+## Check a proposed operation
+
+`check_operation()` lets a business module check a proposed stock effect from
+its `create()`, `write()`, or `unlink()` override. Each module must call it
+explicitly; it does not intercept unrelated Odoo models. Pass `old` only for
+an inventory movement that already exists. Pass `new` for the proposed effect:
+
+```python
+effect = {
+    'store_id': store.id,
+    'source_id': source.id,
+    'qty': -3,              # signed quantity in the smallest unit
+    'status': 'pending',    # or 'saved'
+}
+process = self.env['ab_inventory_process']
+process.check_operation('create', new=effect)
+```
+
+For `write`, pass the existing movement's store, source, quantity, and status
+as `old`, and the complete proposed effect as `new`. When changing a pending
+outgoing quantity, the check releases that movement's old hold in its
+calculation before applying the new quantity. A saved effect cannot be edited:
+
+```python
+old = {
+    'store_id': movement.store_id.id,
+    'source_id': movement.source_id.id,
+    'qty': movement.qty,
+    'status': movement.status,
+}
+new = {**old, 'qty': -5}
+process.check_operation('write', old=old, new=new)
+```
+
+For `unlink`, pass the existing effect as `old`; the check rejects physical
+deletion of a pending or saved inventory effect. Passing `old=None` permits
+deleting a draft business line with no movement. Pending document cancellation
+needs a separate workflow that retains its inventory history; a saved effect
+requires a new return or correction operation.
+
+The check validates store access and locks all affected stores. Call it and
+perform the business write in the **same database transaction**, without an
+intermediate commit. It does not create, update, or delete a movement;
+`inventory_write()` still applies the stock effect and runs the ledger's final
+checks. `inventory_write()` itself calls `check_operation()` before creating
+or changing a movement. Integrating modules must supply truthful `old` and
+`new` values from their trusted server-side code; do not expose arbitrary
+effect dictionaries as an end-user RPC API.
 
 ## Read a balance
 
@@ -117,31 +172,30 @@ These are the two read methods, not four separate APIs. `get_balance()`
 returns one integer in the smallest unit; pass `source_id=source.id` instead
 of `product_id` when only one batch's balance is needed. It returns `0` for
 a depleted or absent source. `get_source_balances()` returns
-`{source_id: quantity}` and omits zero-close sources by default. For an audit
-that needs used-up batches, pass `include_zero=True`; sources without any
-saved movement are still omitted. Both methods use saved movements only.
+`{source_id: quantity}` and omits zero-balance sources by default. For an audit
+that needs used-up batches, pass `include_zero=True`; sources without a saved
+or pending outgoing movement are still omitted. Current reads sum saved `qty`
+and pending negative `qty`, excluding pending positive `qty`. Saved `+10`,
+pending `+2`, and pending `-3` therefore return `7`.
 Unexpected negative closes remain visible for investigation; a
 saleable-batch picker must require a quantity greater than zero. Product and
-whole-store queries read only the latest saved movement per
-matching batch and add those closing balances; they do not aggregate millions
-of historical movement rows. A partial composite index supports the latest-row
-lookup. Whole-store queries still scale with the number of product sources;
-the planned balance-projection table is needed for constant-size current-stock
-lookups at very large batch counts.
-`before=<UTC datetime>` uses only movements whose `saved_at` is strictly
-before that time. The source query orders by `saved_at` and movement ID so a
-timestamp tie still selects the last movement.
-The method enforces store access and ordinary Odoo read rules. A pre-sale
-balance check is informative, but it does **not** reserve stock: another
-transaction may post before yours. The posting operation is the final
-negative-stock check under the store lock.
+whole-store queries aggregate the same quantities across matching sources.
+Partial covering indexes on store/source, store/product, and store/date include
+aggregate inputs to support these sums. Query cost still grows with movement
+history;
+benchmark large ledgers before relying on current-stock reads at POS scale.
+`before=<UTC datetime>` uses only saved movements whose `saved_at` is strictly
+before that time. Computed `closing_balance` uses posting time and movement ID
+to order movements with the same timestamp.
+The method enforces store access and aggregates all movements in that store,
+including other users' pending outgoing movements. A balance read is a
+snapshot. Creating or changing a pending outgoing movement reserves its
+quantity under the store lock; posting also checks under that lock.
 
 For a step-by-step explanation and an example with a zero-balance batch, see
-[README.md](README.md#read-on-hand-stock). A separate screen-availability and
-reservation addon is recommended for showing on-hand, reserved, and available
-quantities when a user adds a product to a sales or transfer screen; the
-[proposed workflow](README.md#recommended-future-module-screen-availability)
-is not implemented here.
+[README.md](README.md#read-current-availability-and-historical-stock). A
+separate addon can add expiring holds for screens that have no saved business
+line yet; see the [proposed workflow](README.md#recommended-future-module-expiring-screen-holds).
 
 ## Corrections, returns, and transfers
 
@@ -163,8 +217,8 @@ is not implemented here.
 
 - **Inventory / Movement Schedule:** saved/pending movement list with date,
   store, item, batch, type, incoming, and outgoing filters/columns.
-- **Inventory / Reports / Current Stock Balance:** current balance by source
-  and store using the latest saved close per source; optionally include
+- **Inventory / Reports / Current Stock Balance:** current available quantity by source
+  and store; optionally include
   zero-balance sources that have movements.
 - **Inventory / Reports / Period Report:** opening, incoming, outgoing, and
   closing quantities for the selected dates. Selecting an item adds a running

@@ -47,11 +47,10 @@ class AbInventoryPeriodReport(models.TransientModel):
             )
             return {source.id: quantity or 0 for source, quantity in rows if source}
 
-        opening_movements = process._latest_movements_by_source(
-            self.store_id.id, product_id=self.product_id.id or None, before=start,
+        opening = process._source_balances(
+            self.store_id.id, product_id=self.product_id.id or None,
+            before=start, include_zero=True,
         )
-        opening = {entry.source_id.id: entry.closing_balance
-                   for entry in opening_movements}
         period_domain = [('saved_at', '>=', start), ('saved_at', '<', end)]
         incoming = quantities(period_domain + [('qty', '>', 0)])
         outgoing = {source_id: -quantity for source_id, quantity in
