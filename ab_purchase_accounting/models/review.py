@@ -176,19 +176,23 @@ class PurchaseAccountingReview(models.Model):
         invoice_lines = []
         for line in document.line_ids.sorted('id'):
             source = line.source_id
+            source_snapshot = source._get_posting_snapshot()
+            conversion = source._get_conversion_basis()
             invoice_lines.append({
                 'line_id': line.id, 'source_id': source.id, 'product_id': source.product_id.id,
                 'product': source.product_id.display_name, 'product_code': source.product_id.code,
                 'quantity': line.qty, 'bonus': 0 if is_other else line.bonus,
                 'unit': line.uom_id.display_name, 'unit_id': line.uom_id.id,
-                'small_units_per_large': source.product_id.unit_s_id.unit_no,
-                'medium_units_per_large': source.product_id.unit_m_id.unit_no,
+                'small_units_per_large': conversion['small'],
+                'medium_units_per_large': conversion['medium'],
+                'source_identity': source.source_identity, 'no_expiry': source.no_expiry,
                 'expiry': str(source.exp_date) if source.exp_date else False,
                 'selling_price': source.price, 'purchase_price': source.purchase_price,
                 'discount_percentage': source.extra_discount_percentage,
                 'unit_cost': source.unit_cost, 'unit_tax': source.unit_taxes_value,
-                'taxes': [{'id': tax.id, 'name': tax.name, 'percentage': tax.percentage,
-                           'apply_on_total': tax.apply_on_total} for tax in source.taxes_ids.sorted('id')],
+                'taxes': source_snapshot['taxes'] if source_snapshot else [
+                    {'id': tax.id, 'name': tax.name, 'percentage': tax.percentage,
+                     'apply_on_total': tax.apply_on_total} for tax in source.taxes_ids.sorted('id')],
             })
         snapshot = {
             'database': self.env.cr.dbname, 'configuration_id': config.id,

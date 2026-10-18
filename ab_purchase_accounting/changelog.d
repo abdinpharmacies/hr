@@ -1,5 +1,17 @@
 # Module changelog
 
+Current changes before commit:
+
+- Document review-only activation for development branches 29 and 140, including the explicitly approved branch 140 purchase setting and restored replication protection.
+- Link the retained isolated pilot examples, 110-check evidence and outstanding business acceptance decisions.
+- Use frozen source tax rates and unit factors in later review snapshots; include stable source identity and the explicit expiry choice.
+- Preserve review-only processing and existing journal activation settings. No source UI strings changed in this module.
+
+Files changed:
+- ab_purchase_accounting/REVIEW_MODE.md
+- ab_purchase_accounting/changelog.d
+- ab_purchase_accounting/models/review.py
+
 529f47bc | Alhassan Hossny | 2026-10-01 | ab_purchase_accounting: align posting with restored accounting contract
 
 - Align purchase journals with the restored accounting fields and validate mappings and posting access.
@@ -17,7 +29,7 @@ Files changed:
 - ab_purchase_accounting/views/configuration.xml
 - ab_purchase_accounting/views/purchase_views.xml
 
-Current changes before commit:
+6b3a5673 | Alhassan Hossny | 2026-10-18 | ab_purchase_accounting/add: optional review-only accounting mode
 
 - Add optional Review Logs Only configuration for newly finalized documents; preserve default journal posting.
 - Capture immutable invoice snapshots and proposed accounting entries, including missing-mapping issues for manual review.

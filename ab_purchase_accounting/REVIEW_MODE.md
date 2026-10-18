@@ -1,5 +1,24 @@
 # Purchase accounting review pilot
 
+## Current status — 2026-10-18
+
+The development database `rip_bconnect` now has active **Review Logs Only**
+configurations for branch codes **29** and **140**, effective **2026-10-18**.
+Purchasing was enabled for branch 140 with explicit user approval. Existing store
+replication protection was restored and independently verified after the change.
+The review schema was already installed, so no upgrade or application restart was
+needed.
+
+The full synthetic pilot is retained separately in `ab_purchase_review_test`:
+eight documents, seven pending review logs, no new journals, and 110 passing
+scenario assertions. Synthetic master data was not inserted into `rip_bconnect`,
+whose product/UoM replication restrictions remain in place. Account mappings and
+business calculation approval remain outstanding.
+
+See the [current pilot results and acceptance items](../ab_independence_dev_plans/10_purchase_review_pilot_status.md)
+for exact amounts, environment details and durable evidence. The historical
+implementation and validation notes below describe the earlier 2026-10-15 work.
+
 Implemented on 2026-10-15 for the next purchase milestone. The pilot branches are
 store code **29** (فرع العتبة) and store code **140** (مخزن افتراضي).
 Codes identify the business branches; no database row IDs are hardcoded.
@@ -86,5 +105,6 @@ Evidence scripts and outputs: `check_review.py` / `check_review.out`,
 `check_final.out` in that temporary directory.
 Fixtures are outside the addon package. Browser interaction was not tested.
 
-The running `rip_bconnect` database has not been upgraded, configured or seeded
-by this implementation. Activation and business review there remain outstanding.
+At the end of the 2026-10-15 implementation, `rip_bconnect` had not been upgraded,
+configured or seeded by that work. Development activation was subsequently
+completed as recorded above; business review remains outstanding.
