@@ -14,15 +14,7 @@ class AbSalesPosDraftSlots(models.TransientModel):
     def pos_draft_store_options(self, pos_hr_session_token=None):
         """Use the same replica, employee and service-user branch permissions."""
         Header = self.env["ab_sales_header"]
-        domain = fields.Domain("allow_sale", "=", True)
-        allowed = Header._get_allowed_store_ids()
-        if allowed:
-            domain &= fields.Domain("id", "in", allowed)
-        else:
-            replica = self.env["ab_replica_db"].sudo().get_current_from_config()
-            if replica and replica.allowed_sales_store_ids:
-                # A configured list with no eligible branch is not unrestricted.
-                domain &= fields.Domain("id", "in", [])
+        domain = Header._get_allowed_store_domain()
         stores = self.env["ab_store"].search(domain, order="id")
         if "ab_employee_access_sales_pos_api" in self.env.registry:
             session_api = self.env["ab_employee_access_sales_pos_api"]

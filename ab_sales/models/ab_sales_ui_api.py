@@ -987,15 +987,15 @@ for ($i = $startInt; $i -le $endInt; $i++) {
     @api.model
     def get_sales_store_settings(self):
         header_model = self.env["ab_sales_header"]
-        allowed_store_ids = header_model._get_allowed_store_ids()
         default_store_id = header_model._get_default_store_id()
-        stores = self.env["ab_store"].browse(allowed_store_ids).exists()
+        stores = self.env["ab_store"].search(header_model._get_allowed_store_domain())
         allowed_codes = [code for code in stores.mapped("code") if code]
         default_code = ""
-        if default_store_id:
-            default_store = self.env["ab_store"].browse(int(default_store_id)).exists()
-            default_code = (default_store.code or "").strip() if default_store else ""
+        if default_store_id in stores.ids:
+            default_store = stores.filtered(lambda store: store.id == default_store_id)
+            default_code = (default_store.code or "").strip()
         return {
+            "available_store_ids": stores.ids,
             "allowed_store_codes": allowed_codes,
             "default_store_code": default_code,
         }

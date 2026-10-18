@@ -5162,3 +5162,10 @@ msgstr "عمليات E-Plus القديمة غير متاحة. ثبّت إضاف�
 #: model:ir.model,name:ab_sales.model_ab_sales_external_connector
 msgid "Sales External Connector"
 msgstr "موصل المبيعات الخارجي"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+msgid "The selected store is not in the replica Allowed Sales Stores."
+msgstr ""
+"المخزن المحدد غير موجود ضمن مخازن المبيعات المسموح بها للنسخة المتماثلة."
