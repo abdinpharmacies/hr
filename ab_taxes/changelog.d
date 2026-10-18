@@ -1,29 +1,9 @@
 Current changes before commit:
 
-- Add company-scoped configurable purchase tax policies for discount timing, bonus taxation, capitalization and rounding.
-- Calculate deterministic tax components and inventory unit cost; reject invalid prices, quantities, discounts and company policies.
-- Keep synthetic tax examples separate from business approval and expose policy configuration in both Arabic catalogs.
-
-Files changed:
-
-- ab_taxes/__manifest__.py
-- ab_taxes/changelog.d
-- ab_taxes/i18n/ar.po
-- ab_taxes/i18n/ar_001.po
-- ab_taxes/models/ab_taxes.py
-- ab_taxes/security/ir.model.access.csv
-- ab_taxes/security/record_rules.xml
-- ab_taxes/views/purchase_tax_policy.xml
-
-Validation:
-
-- Fresh isolated installation, targeted upgrades, behavior/security checks, translation validation and operational evidence are recorded in `ab_independence_dev_plans/13_phase_1_6_execution.md`.
-
-commit 337728fee4b7ea0a497d80c0a04f6e0a88d4e061
-Author: Alhassan Hossny <alhassan.hossny@gmail.com>
-Date: 2026-09-27T15:59:55+03:00
-
-    ab_taxes/fix: Odoo 19 activation security and list view
+- Add an Odoo 19 security privilege for taxes and move tax groups from the removed `category_id` field to `privilege_id`.
+- Convert the active tax list view and action from legacy `tree` to Odoo 19 `list`.
+- Add minimal Arabic catalogs for the active tax labels touched in this activation fix.
+- Keep the inactive government tax-invoice screens untouched; the active tax setup still avoids requiring the tax-invoice service during purchase or inventory activation.
 
 Files changed:
 
@@ -32,6 +12,13 @@ Files changed:
 - ab_taxes/i18n/ar_001.po
 - ab_taxes/security/security_groups.xml
 - ab_taxes/views/ab_taxes.xml
+
+Validation:
+
+- XML parsing passed for the edited security and view files.
+- `msgfmt --check-format` passed for `ab_taxes/i18n/ar.po` and `ab_taxes/i18n/ar_001.po`.
+- `git diff --check -- ab_taxes ab_inventory ab_purchase` passed.
+- Targeted Odoo 19 activation/upgrade passed with `-u ab_taxes,ab_inventory,ab_purchase --without-demo --stop-after-init --no-http`.
 
 commit e2bca1f
 Author: emadco88 <emadco88@gmail.com>

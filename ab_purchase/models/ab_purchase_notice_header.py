@@ -11,10 +11,6 @@ class PurchaseNoticeHeader(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_names_search = ['doc_code', 'purchase_header_id.doc_code']
 
-    company_id = fields.Many2one(related='purchase_header_id.company_id', store=True, index=True)
-    tax_snapshot = fields.Json(readonly=True, copy=False)
-    active = fields.Boolean(default=True)
-
     supplier_id = fields.Many2one("ab_supplier", required=True, tracking=True)
 
     purchase_header_ids = fields.Many2many('ab_purchase_header', string='Invoice Numbers')
@@ -36,17 +32,13 @@ class PurchaseNoticeHeader(models.Model):
     doc_code = fields.Char(required=True, default='0000000000')
     invoice_number = fields.Char(related='purchase_header_id.doc_code', string='Invoice Number')
     eplus_g_header_serial = fields.Integer()
+    # @todo: activate 'Debit Notice'
+    #    1. only on invoice(s)
+    #    2. show all product_source_lines of invoice(s)
+    #    3. update - or reverse - journal entries
     notice_type = fields.Selection([('credit_notice', 'Credit Notice'),
                                     ('debit_notice', 'Debit Notice'), ],
-                                   required=True, default='credit_notice')
-    notice_effect = fields.Selection(
-        [
-            ('physical', 'Physical Stock Return'),
-            ('financial', 'Financial Only'),
-        ],
-        default='physical',
-        index=True,
-    )
+                                   required=True, default='credit_notice', readonly=True)
 
     status = fields.Selection(
         selection=[('pending', 'Pending'), ('saved', 'Saved')],
@@ -97,9 +89,6 @@ class PurchaseNoticeHeader(models.Model):
                 rec.total_taxes_value = sum(line.line_taxes_value for line in rec.line_ids)
 
             rec.lines_count = len(rec.line_ids)
-            if rec.tax_snapshot:
-                rec.total_cost = rec.tax_snapshot['total_cost']
-                rec.total_taxes_value = rec.tax_snapshot['total_taxes_value']
 
     # @api.depends('line_ids', 'line_ids.line_cost')
     # def compute_totals(self):
@@ -138,9 +127,6 @@ class PurchaseNoticeHeader(models.Model):
 
     def btn_submit_inventory(self):
         self.ensure_one()
-        self.check_access('write')
-        self.lock_for_update()
-        self.invalidate_recordset()
         if not (self.env.user.has_group('base.group_system')
                 or self.env.user.has_group('ab_purchase.group_ab_purchase_manager')):
             raise AccessError(_("Only purchase managers can save notices into stock."))
@@ -155,43 +141,24 @@ class PurchaseNoticeHeader(models.Model):
         lines = self.line_ids.filtered(lambda line: line.qty + line.bonus > 0)
         if not lines:
             raise ValidationError(_("Add a notice line with a positive quantity."))
-        if self.notice_effect == 'financial':
-            if self.total_cost <= 0:
-                raise ValidationError(_("Financial notices require a positive value."))
-            with self.env.cr.savepoint():
-                self._mark_notice_saved()
-            return True
-        if self.notice_type != 'credit_notice':
-            raise ValidationError(_("Only credit notices can create physical stock returns."))
+        sign = -1 if self.notice_type == 'credit_notice' else 1
         with self.env.cr.savepoint():
-            self.purchase_header_id.lock_for_update()
-            self.line_ids._check_return_limits()
             for line in lines:
                 self.env['ab_inventory_process'].inventory_write(
                     line, line.qty + line.bonus,
                     self.purchase_header_id.store_id.id,
-                    sign=-1, status='saved',
+                    sign=sign, status='saved',
                 )
-            self._mark_notice_saved()
+            super(PurchaseNoticeHeader, self).write({'status': 'saved'})
         return True
-
-    def _mark_notice_saved(self):
-        snapshot = {'total_cost': self.total_cost, 'total_taxes_value': self.total_taxes_value}
-        return super(PurchaseNoticeHeader, self).write({'status': 'saved', 'tax_snapshot': snapshot})
 
     @api.model_create_multi
     def create(self, vals_list):
-        if any(vals.get('tax_snapshot') for vals in vals_list):
-            raise ValidationError(_('Notice totals can only be frozen by approval.'))
         if any(vals.get('status', 'pending') != 'pending' for vals in vals_list):
             raise ValidationError(_("Create purchase notices as pending."))
         return super().create(vals_list)
 
     def write(self, vals):
-        if 'tax_snapshot' in vals:
-            raise ValidationError(_('Notice totals can only be frozen by approval.'))
-        if any(rec.status == 'saved' for rec in self) and set(vals) - {'active'}:
-            raise ValidationError(_('Saved purchase notices cannot be changed.'))
         if 'status' in vals:
             raise ValidationError(_("Use the notice Submit action to save inventory."))
         return super().write(vals)
@@ -199,6 +166,3 @@ class PurchaseNoticeHeader(models.Model):
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = f"{rec.purchase_header_id.doc_code or ''} - [{rec.doc_code or ''}]"
-
-    def unlink(self):
-        raise ValidationError(_('Archive purchase notices instead of deleting them.'))

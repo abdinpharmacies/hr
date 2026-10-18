@@ -1,5 +1,5 @@
 from odoo import models, _
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError
 
 
 class PurchaseSourceGuard(models.Model):
@@ -19,28 +19,3 @@ class PurchaseSourceGuard(models.Model):
                     or len(permitted) != len(lines)):
                 raise AccessError(_('Only product sources belonging to your store purchase drafts can be edited.'))
         return super().write(vals)
-
-    def _get_purchase_tax_values(self, qty=None, bonus=None):
-        values = super()._get_purchase_tax_values(qty=qty, bonus=bonus)
-        self.check_access('read')
-        snapshot = self.sudo().posting_snapshot if 'posting_snapshot' in self._fields else False
-        if qty is not None or bonus is not None or (snapshot and snapshot.get('tax_calculation')):
-            return values
-        self.ensure_one()
-        if self.origin_model != 'ab_purchase_header' or not self.origin_res_id:
-            return values
-        invoice = self.env['ab_purchase_header'].browse(self.origin_res_id).exists()
-        invoice.check_access('read')
-        if not invoice or not invoice.total_extra_discount:
-            return values
-        gross = sum(super(PurchaseSourceGuard, source)._get_purchase_tax_values()['total'] for source in invoice.line_ids.source_id)
-        if invoice.total_extra_discount > gross or gross <= 0:
-            raise ValidationError(_('The invoice discount cannot exceed its line total.'))
-        allocated_discount = invoice.total_extra_discount * values['total'] / gross
-        quantity = self.qty + self.bonus
-        inventory_value = values['untaxed'] + values['inventory_tax'] - allocated_discount
-        if inventory_value < 0:
-            raise ValidationError(_('Invoice discounts cannot make inventory value negative.'))
-        values['invoice_discount'] = allocated_discount
-        values['stock_unit_cost'] = inventory_value / quantity if quantity else 0
-        return values

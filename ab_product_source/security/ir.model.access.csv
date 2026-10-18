@@ -1,14 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_ab_product_source_admin,access_ab_product_source_admin,ab_product_source.model_ab_product_source,base.group_system,1,1,1,1
-access_source_user,Product source user,model_ab_product_source,group_source_user,1,1,1,0
-access_lot_user,Physical lot user,model_ab_product_lot,group_source_user,1,1,1,0
-access_lot_admin,Physical lot administrator,model_ab_product_lot,base.group_system,1,1,1,0
-access_history_user,Price history user,model_ab_product_price_history,group_source_user,1,0,0,0
-access_history_admin,Price history administrator,model_ab_product_price_history,base.group_system,1,0,0,0
-access_source_product_admin,Product stock configuration administrator,ab_product.model_ab_product,base.group_system,1,1,1,0
-access_source_card_admin,Product master administrator,ab_product.model_ab_product_card,base.group_system,1,1,1,0
-access_source_store_admin,Branch stock configuration administrator,ab_store.model_ab_store,base.group_system,1,1,1,0
-access_source_legacy_unit_admin,Legacy stock unit administrator,ab_product.model_ab_uom,base.group_system,1,1,1,0
-access_source_native_unit_admin,Native stock unit administrator,ab_product.model_ab_product_uom,base.group_system,1,1,1,0
-access_source_native_category_admin,Stock unit category administrator,ab_product.model_ab_product_uom_category,base.group_system,1,1,1,0
-access_source_legacy_unit_type_admin,Legacy unit type administrator,ab_product.model_ab_uom_type,base.group_system,1,1,1,0

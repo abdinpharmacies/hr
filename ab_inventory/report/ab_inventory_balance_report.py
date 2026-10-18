@@ -18,18 +18,16 @@ class AbInventoryBalanceReport(models.TransientModel):
 
     def action_generate(self):
         self.ensure_one()
-        process = self.env['ab_inventory_process']
-        store = process._check_store(self.store_id.id)
-        rows = process._balances(store, product_id=self.product_id.id or None)
-        balances = {}
-        for row in rows:
-            key = (row.product_id.id, row.source_id.id)
-            balances[key] = balances.get(key, 0) + row.on_hand
+        balances = self.env['ab_inventory_process'].get_source_balances(
+            self.store_id.id, product_id=self.product_id.id or None,
+            include_zero=self.include_zero,
+        )
         self.write({
             'generated_at': fields.Datetime.now(),
             'line_ids': [Command.clear()] + [
-                Command.create({'product_id': product_id, 'source_id': source_id, 'balance_qty': qty})
-                for (product_id, source_id), qty in balances.items() if qty or self.include_zero
+                Command.create({'source_id': source_id,
+                                'balance_qty': balances[source_id]})
+                for source_id in sorted(balances)
             ],
         })
         return {
@@ -49,5 +47,5 @@ class AbInventoryBalanceReportLine(models.TransientModel):
 
     report_id = fields.Many2one('ab_inventory_balance_report', required=True, ondelete='cascade')
     source_id = fields.Many2one('ab_product_source', string='Batch / Source', readonly=True)
-    product_id = fields.Many2one('ab_product', string='Item', readonly=True)
-    balance_qty = fields.Float(digits=(20, 6), string='Balance (Smallest Unit)', readonly=True)
+    product_id = fields.Many2one('ab_product', related='source_id.product_id', string='Item')
+    balance_qty = fields.Integer(string='Balance (Smallest Unit)', readonly=True)

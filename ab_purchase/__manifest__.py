@@ -14,7 +14,6 @@
         'ab_store',
         'ab_supplier',
         'ab_inventory',
-        'ab_taxes',
     ],
     'data': [
         'security/security_groups.xml',
@@ -22,7 +21,6 @@
         'security/record_rules_purchase_notice_header.xml',
         'security/record_rules_data_entry.xml',
         'security/ir.model.access.csv',
-        'security/company_rules.xml',
         'views/menus.xml',
         'views/ab_purchase_dashboard.xml',
         'views/ab_purchase_header.xml',
@@ -31,7 +29,6 @@
         'views/ab_purchase_notice_line.xml',
         'views/ab_purchase_links_views.xml',
         'views/ab_purchase_entry_views.xml',
-        'views/source_integrity.xml',
     ],
     'assets': {
         'web.assets_backend': [

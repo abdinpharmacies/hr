@@ -106,11 +106,8 @@
                             <field name="doc_code"/>
                             <field name="doc_date"/>
 
-                            <field name="notice_effect"
-                                   required="1"
-                                   readonly="status == 'saved' or lines_count != 0"/>
                             <field name="notice_type"
-                                   readonly="status == 'saved' or lines_count != 0"/>
+                                   readonly="status == 'saved'"/>
                             <button name="btn_get_all_line_ids"
                                     type="object"
                                     string="Get All Lines"
@@ -120,8 +117,6 @@
                         <notebook>
                             <page string="Purchase Notice Lines">
                                 <field name="line_ids"
-                                       nolabel="1"
-                                       class="o_ab_responsive_x2many_table o_ab_purchase_notice_line_table"
                                        readonly="status == 'saved'">
                                     <list editable="bottom">
                                         <field name="source_id_domain" invisible="1"/>

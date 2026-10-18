@@ -28,7 +28,7 @@ class PurchaseEntry(models.Model):
                        & fields.Domain('store_id', 'in', stores.ids), order='write_date desc', limit=20)
             drafts.extend({'id': rec.id, 'kind': kind, 'code': rec.doc_code,
                            'supplier': rec.supplier_id.display_name, 'store': rec.store_id.display_name} for rec in records)
-        return {'stores': [{'id': rec.id, 'name': rec.display_name, 'code': rec.code or ''} for rec in stores],
+        return {'stores': [{'id': rec.id, 'name': rec.display_name} for rec in stores],
                 'expiry': str(self.env['ab_product_source'].default_get(['exp_date']).get('exp_date') or ''),
                 'taxes': self.env['ab_taxes'].search_read([('status', 'in', ['purchase', 'all'])],
                     ['name', 'percentage', 'apply_on_total']), 'drafts': drafts, 'date': str(fields.Date.context_today(self))}
@@ -47,13 +47,9 @@ class PurchaseEntry(models.Model):
                      'units': [{'id': unit.id, 'name': unit.display_name} for unit in rec.uom_ids]}
                     for rec in self.env['ab_product'].search(domain, limit=15)]
         if kind == 'supplier':
-            Supplier = self.env['ab_supplier']
-            if query:
-                records = Supplier.search(fields.Domain('code', '=ilike', query), limit=15)
-                if records:
-                    return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in records]
             domain = fields.Domain('name', 'ilike', query) | fields.Domain('code', 'ilike', query)
-            return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in Supplier.search(domain, limit=15)]
+            return [{'id': rec.id, 'name': rec.display_name, 'code': rec.code} for rec in
+                    self.env['ab_supplier'].search(domain, limit=15)]
         if kind == 'invoice':
             domain = fields.Domain('status', '=', 'saved') & fields.Domain('store_id', '=', int(store_id or 0))
             if query:
@@ -76,7 +72,7 @@ class PurchaseEntry(models.Model):
                     'code': line.product_id.code, 'unit': line.uom_id.display_name,
                     'available_qty': line.returnable_qty, 'available_bonus': line.returnable_bonus,
                     'unit_purchase': line.purchase_price * (1 - line.extra_discount_percentage / 100),
-                    'unit_tax': line.unit_taxes_value, 'tax_contract': line.source_id._get_purchase_tax_values(), 'factor': factor, 'qty': 0, 'bonus': 0}
+                    'unit_tax': line.unit_taxes_value, 'factor': factor, 'qty': 0, 'bonus': 0}
                     for line in invoice.line_ids if line.returnable_qty or line.returnable_bonus]}
 
     @api.model
@@ -98,7 +94,7 @@ class PurchaseEntry(models.Model):
                     'units': [{'id': unit.id, 'name': unit.display_name} for unit in line.product_id.uom_ids],
                     'qty': line.qty, 'bonus': line.bonus, 'price': line.price, 'purchase_price': line.purchase_price,
                     'extra_discount_percentage': line.extra_discount_percentage, 'taxes_ids': line.taxes_ids.ids,
-                    'exp_date': str(line.exp_date or ''), 'no_expiry': line.no_expiry, 'tax_contract': line.source_id._get_purchase_tax_values()})
+                    'exp_date': str(line.exp_date or '')})
         else:
             original = self.entry_invoice(rec.purchase_header_id.id)
             result.update({'purchase_header_id': original['id'], 'invoice': original['code']})
@@ -113,7 +109,7 @@ class PurchaseEntry(models.Model):
                         'code': purchase.product_id.code, 'unit': purchase.uom_id.display_name,
                         'available_qty': purchase.returnable_qty, 'available_bonus': purchase.returnable_bonus,
                         'unit_purchase': purchase.purchase_price * (1 - purchase.extra_discount_percentage / 100),
-                        'unit_tax': purchase.unit_taxes_value, 'tax_contract': purchase.source_id._get_purchase_tax_values(),
+                        'unit_tax': purchase.unit_taxes_value,
                         'factor': 1 - purchase.header_id.total_extra_discount / gross if gross else 1}
                 result['lines'].append({**values, 'id': line.id, 'qty': line.qty, 'bonus': line.bonus})
         return result
@@ -153,7 +149,7 @@ class PurchaseEntry(models.Model):
                 vals.update({'purchase_header_id': invoice.id, 'supplier_id': invoice.supplier_id.id})
         commands, entered = [], set()
         for row in lines:
-            keys = ('qty', 'bonus', 'product_id', 'uom_id', 'price', 'purchase_price', 'extra_discount_percentage', 'exp_date', 'no_expiry') if kind == 'purchase' else ('qty', 'bonus', 'purchase_line_id')
+            keys = ('qty', 'bonus', 'product_id', 'uom_id', 'price', 'purchase_price', 'extra_discount_percentage', 'exp_date') if kind == 'purchase' else ('qty', 'bonus', 'purchase_line_id')
             values = {key: row.get(key) for key in keys}
             for key in ('qty', 'bonus', 'price', 'purchase_price', 'extra_discount_percentage'):
                 if key in values:
@@ -174,7 +170,6 @@ class PurchaseEntry(models.Model):
                     raise ValidationError(_('Select valid purchase taxes.'))
                 values['taxes_ids'] = [fields.Command.set(taxes.ids)]
                 values['exp_date'] = values['exp_date'] or False
-                values['no_expiry'] = values['no_expiry'] is True
             else:
                 purchase = invoice.line_ids.filtered(lambda line: line.id == int(values['purchase_line_id'] or 0))
                 if not purchase or values['qty'] > purchase.returnable_qty or values['bonus'] > purchase.returnable_bonus:

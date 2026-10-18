@@ -12,9 +12,7 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
-        'security/record_rules.xml',
         'views/ab_taxes.xml',
-        'views/purchase_tax_policy.xml',
         'data/taxes.xml',
     ],
     'installable': True,

@@ -43,11 +43,15 @@ class AbInventoryPeriodReport(models.TransientModel):
 
         def quantities(extra_domain):
             rows = movement._read_group(
-                base + extra_domain, ['product_id', 'source_id'], ['qty:sum'],
+                base + extra_domain, ['source_id'], ['qty:sum'],
             )
-            return {(product.id, source.id): quantity or 0 for product, source, quantity in rows}
+            return {source.id: quantity or 0 for source, quantity in rows if source}
 
-        opening = quantities([('saved_at', '<', start)])
+        opening_movements = process._latest_movements_by_source(
+            self.store_id.id, product_id=self.product_id.id or None, before=start,
+        )
+        opening = {entry.source_id.id: entry.closing_balance
+                   for entry in opening_movements}
         period_domain = [('saved_at', '>=', start), ('saved_at', '<', end)]
         incoming = quantities(period_domain + [('qty', '>', 0)])
         outgoing = {source_id: -quantity for source_id, quantity in
@@ -61,8 +65,7 @@ class AbInventoryPeriodReport(models.TransientModel):
                 order='saved_at, id',
             )
             for entry in movements:
-                key = (entry.product_id.id, entry.source_id.id)
-                before = running.get(key, 0)
+                before = running.get(entry.source_id.id, 0)
                 after = before + entry.qty
                 movement_commands.append(Command.create({
                     'movement_id': entry.id,
@@ -72,11 +75,10 @@ class AbInventoryPeriodReport(models.TransientModel):
                     'outgoing_qty': entry.outgoing_qty,
                     'closing_qty': after,
                 }))
-                running[key] = after
+                running[entry.source_id.id] = after
         self.write({'line_ids': [Command.clear()] + [
             Command.create({
-                'product_id': source_id[0],
-                'source_id': source_id[1],
+                'source_id': source_id,
                 'opening_qty': opening.get(source_id, 0),
                 'incoming_qty': incoming.get(source_id, 0),
                 'outgoing_qty': outgoing.get(source_id, 0),
@@ -102,11 +104,11 @@ class AbInventoryPeriodReportLine(models.TransientModel):
 
     report_id = fields.Many2one('ab_inventory_period_report', required=True, ondelete='cascade')
     source_id = fields.Many2one('ab_product_source', string='Batch / Source', readonly=True)
-    product_id = fields.Many2one('ab_product', string='Item', readonly=True)
-    opening_qty = fields.Float(digits=(20, 6), string='Opening', readonly=True)
-    incoming_qty = fields.Float(digits=(20, 6), string='Incoming', readonly=True)
-    outgoing_qty = fields.Float(digits=(20, 6), string='Outgoing', readonly=True)
-    closing_qty = fields.Float(digits=(20, 6), string='Closing', readonly=True)
+    product_id = fields.Many2one('ab_product', related='source_id.product_id', string='Item')
+    opening_qty = fields.Integer(string='Opening', readonly=True)
+    incoming_qty = fields.Integer(string='Incoming', readonly=True)
+    outgoing_qty = fields.Integer(string='Outgoing', readonly=True)
+    closing_qty = fields.Integer(string='Closing', readonly=True)
 
 
 class AbInventoryPeriodMovementLine(models.TransientModel):
@@ -118,7 +120,7 @@ class AbInventoryPeriodMovementLine(models.TransientModel):
     movement_id = fields.Many2one('ab_inventory', string='Movement', readonly=True)
     saved_at = fields.Datetime(related='movement_id.saved_at', string='Saved At')
     source_id = fields.Many2one('ab_product_source', string='Batch / Source', readonly=True)
-    opening_qty = fields.Float(digits=(20, 6), string='Opening', readonly=True)
-    incoming_qty = fields.Float(digits=(20, 6), string='Incoming', readonly=True)
-    outgoing_qty = fields.Float(digits=(20, 6), string='Outgoing', readonly=True)
-    closing_qty = fields.Float(digits=(20, 6), string='Closing', readonly=True)
+    opening_qty = fields.Integer(string='Opening', readonly=True)
+    incoming_qty = fields.Integer(string='Incoming', readonly=True)
+    outgoing_qty = fields.Integer(string='Outgoing', readonly=True)
+    closing_qty = fields.Integer(string='Closing', readonly=True)

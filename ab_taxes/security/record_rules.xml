@@ -1,3 +1,0 @@
-<odoo>
-    <record id="purchase_tax_policy_company" model="ir.rule"><field name="name">Purchase tax policy company</field><field name="model_id" ref="model_ab_purchase_tax_policy"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
-</odoo>
