@@ -190,6 +190,11 @@ class AbdinPurchaseHeader(models.Model):
             raise ValidationError(_("Use the purchase inventory actions to change status."))
         return super().write(vals)
 
+    def unlink(self):
+        if any(invoice.status != 'prepending' for invoice in self):
+            raise ValidationError(_("Only draft purchase invoices can be deleted."))
+        return super().unlink()
+
     def btn_submit_inventory(self):
         self.ensure_one()
         if not (self.env.user.has_group('base.group_system')

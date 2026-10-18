@@ -163,6 +163,11 @@ class PurchaseNoticeHeader(models.Model):
             raise ValidationError(_("Use the notice Submit action to save inventory."))
         return super().write(vals)
 
+    def unlink(self):
+        if any(notice.status == 'saved' for notice in self):
+            raise ValidationError(_("Saved purchase returns cannot be deleted."))
+        return super().unlink()
+
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = f"{rec.purchase_header_id.doc_code or ''} - [{rec.doc_code or ''}]"

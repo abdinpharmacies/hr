@@ -5,6 +5,16 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Only draft purchase invoices can be deleted."
+msgstr "لا يمكن حذف فواتير الشراء إلا إذا كانت مسودات."
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_notice_header.py:0
+msgid "Saved purchase returns cannot be deleted."
+msgstr "لا يمكن حذف مرتجعات الشراء المحفوظة."
+
+#. module: ab_purchase
 msgid "Abdin Purchase"
 msgstr "مشتريات العابدين"
 
