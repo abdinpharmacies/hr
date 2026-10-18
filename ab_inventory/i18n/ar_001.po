@@ -1,35 +1,44 @@
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: ab_inventory 19.0.1.0.0\n"
+"Language: ar_001\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar_001\n"
 
 #. module: ab_inventory
+#: model:ir.ui.menu,name:ab_inventory.menu_root
 msgid "Inventory"
 msgstr "المخزون"
 
 #. module: ab_inventory
+#: model:ir.module.category,name:ab_inventory.module_category_inventory
 msgid "Abdin Inventory"
 msgstr "مخزون العابدين"
 
 #. module: ab_inventory
+#: model:res.groups.privilege,name:ab_inventory.privilege_inventory_access
 msgid "Inventory Access"
 msgstr "صلاحيات المخزون"
 
 #. module: ab_inventory
+#: model:res.groups,name:ab_inventory.group_inventory_user
 msgid "Inventory User"
 msgstr "مستخدم المخزون"
 
 #. module: ab_inventory
+#: model:res.groups,name:ab_inventory.group_inventory_manager
 msgid "Inventory Manager"
 msgstr "مدير المخزون"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_res_users__inventory_store_ids
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_users_form_inventory_stores
 msgid "Inventory Stores"
 msgstr "متاجر المخزون"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/res_users.py:0
 msgid "Only administrators can assign inventory stores."
 msgstr "يمكن للمسؤولين فقط تعيين متاجر المخزون."
 
@@ -38,6 +47,9 @@ msgid "Inventory Movements"
 msgstr "حركات المخزون"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+#: model:ir.model,name:ab_inventory.model_ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_form
 msgid "Inventory Movement"
 msgstr "حركة مخزون"
 
@@ -50,6 +62,7 @@ msgid "Movements"
 msgstr "الحركات"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__movement_id
 msgid "Movement"
 msgstr "الحركة"
 
@@ -62,6 +75,7 @@ msgid "Posting Date"
 msgstr "تاريخ الترحيل"
 
 #. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__opening
 msgid "Opening Balance"
 msgstr "الرصيد الافتتاحي"
 
@@ -90,78 +104,130 @@ msgid "Quantity (Smallest Unit)"
 msgstr "الكمية (أصغر وحدة)"
 
 #. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_reservation__state__posted
 msgid "Posted"
 msgstr "مرحّل"
 
 #. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Pending"
 msgstr "معلّق"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/report/ab_inventory_period_report.py:0
+#: model:ir.actions.act_window,name:ab_inventory.action_inventory_period_report
+#: model:ir.model,name:ab_inventory.model_ab_inventory_period_report
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Inventory Period Report"
 msgstr "تقرير المخزون للفترة"
 
 #. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_period_report_line
 msgid "Inventory Period Report Line"
 msgstr "سطر تقرير المخزون للفترة"
 
 #. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_period_movement_line
 msgid "Inventory Period Movement Line"
 msgstr "سطر حركة المخزون للفترة"
 
 #. module: ab_inventory
+#: model:ir.ui.menu,name:ab_inventory.menu_inventory_period_report
 msgid "Period Report"
 msgstr "تقرير الفترة"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Period Balances"
 msgstr "أرصدة الفترة"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Item Movements"
 msgstr "حركات الصنف"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Generate Report"
 msgstr "إنشاء التقرير"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__date_from
 msgid "From Date"
 msgstr "من تاريخ"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__date_to
 msgid "To Date"
 msgstr "إلى تاريخ"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__store_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__store_id
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Store"
 msgstr "المتجر"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__product_id
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Item"
 msgstr "الصنف"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__source_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__source_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__source_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__source_id
 msgid "Batch / Source"
 msgstr "الدفعة / المصدر"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__opening_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__opening_qty
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Opening"
 msgstr "افتتاحي"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__incoming_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__incoming_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__incoming_qty
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Incoming"
 msgstr "وارد"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__outgoing_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__outgoing_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__outgoing_qty
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Outgoing"
 msgstr "صادر"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__closing_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__closing_qty
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_period_report_form
 msgid "Closing"
 msgstr "ختامي"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/report/ab_inventory_period_report.py:0
 msgid "From Date cannot be later than To Date."
 msgstr "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية."
 
@@ -174,10 +240,12 @@ msgid "Inventory movement requires a source document header."
 msgstr "تتطلب حركة المخزون رأس مستند مصدر."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Select a valid store."
 msgstr "اختر متجراً صالحاً."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "You are not allowed to access this store's inventory."
 msgstr "ليس لديك صلاحية الوصول إلى مخزون هذا المتجر."
 
@@ -190,7 +258,8 @@ msgid "An inventory document for this source and store already exists."
 msgstr "يوجد مستند مخزون لهذا المصدر والمتجر مسبقاً."
 
 #. module: ab_inventory
-msgid "Posted inventory movements cannot be changed. Create a reversal instead."
+msgid ""
+"Posted inventory movements cannot be changed. Create a reversal instead."
 msgstr "لا يمكن تعديل حركات المخزون المرحّلة. أنشئ حركة عكسية بدلاً من ذلك."
 
 #. module: ab_inventory
@@ -230,10 +299,14 @@ msgid "Reference"
 msgstr "المرجع"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__status
 msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__operation_key
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__operation_key
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__operation_key
 msgid "Operation Key"
 msgstr "مفتاح العملية"
 
@@ -254,14 +327,18 @@ msgid "Draft"
 msgstr "مسودة"
 
 #. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__manual
 msgid "Manual"
 msgstr "يدوي"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__model_ref
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Source Type"
 msgstr "نوع المصدر"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__res_id
 msgid "Source Record ID"
 msgstr "معرّف سجل المصدر"
 
@@ -274,6 +351,7 @@ msgid "Reversal Of"
 msgstr "عكس الحركة"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_form
 msgid "Post"
 msgstr "ترحيل"
 
@@ -310,6 +388,7 @@ msgid "Posted movements cannot be deleted."
 msgstr "لا يمكن حذف الحركات المرحّلة."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Only inventory managers can post movements."
 msgstr "يمكن لمديري المخزون فقط ترحيل الحركات."
 
@@ -362,42 +441,58 @@ msgid "Inventory report movements: manager all stores"
 msgstr "حركات تقرير المخزون: المدير لجميع المتاجر"
 
 #. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_inventory_movements
+#: model:ir.ui.menu,name:ab_inventory.menu_inventory_movements
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_list
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Movement Schedule"
 msgstr "جدول حركة المخزون"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/report/ab_inventory_balance_report.py:0
+#: model:ir.actions.act_window,name:ab_inventory.action_inventory_balance_report
+#: model:ir.ui.menu,name:ab_inventory.menu_inventory_balance_report
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_balance_report_form
 msgid "Current Stock Balance"
 msgstr "الرصيد الحالي للمخزون"
 
 #. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_balance_report
 msgid "Current Stock Balance Report"
 msgstr "تقرير الرصيد الحالي للمخزون"
 
 #. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_balance_report_line
 msgid "Current Stock Balance Line"
 msgstr "سطر الرصيد الحالي للمخزون"
 
 #. module: ab_inventory
+#: model:ir.ui.menu,name:ab_inventory.menu_inventory_reports
 msgid "Reports"
 msgstr "التقارير"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__include_zero
 msgid "Include Zero Balances"
 msgstr "إظهار الأرصدة الصفرية"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__generated_at
 msgid "Calculated At"
 msgstr "وقت احتساب الرصيد"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_balance_report_form
 msgid "Refresh Balances"
 msgstr "تحديث الأرصدة"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_balance_report_form
 msgid "Total Balance"
 msgstr "إجمالي الرصيد"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__balance_qty
 msgid "Balance (Smallest Unit)"
 msgstr "الرصيد (أصغر وحدة)"
 
@@ -406,6 +501,7 @@ msgid "Net"
 msgstr "الصافي"
 
 #. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Today"
 msgstr "اليوم"
 
@@ -446,20 +542,28 @@ msgid "Only draft movements can be posted."
 msgstr "يمكن ترحيل حركات المخزون المسودة فقط."
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__closing_balance
 msgid "Closing Balance"
 msgstr "الرصيد الختامي"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory.py:0
 msgid "Movement #%s"
 msgstr "حركة رقم %s"
 
 #. module: ab_inventory
-msgid "A linked movement needs a store, source, type, source record, and unique key."
-msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوعًا وسجل مصدر ومفتاحًا فريدًا."
+msgid ""
+"A linked movement needs a store, source, type, source record, and unique "
+"key."
+msgstr ""
+"تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوعًا وسجل مصدر ومفتاحًا فريدًا."
 
 #. module: ab_inventory
-msgid "A linked movement needs a store, source, source type, source record, and unique key."
-msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوع مصدر وسجل مصدر ومفتاحًا فريدًا."
+msgid ""
+"A linked movement needs a store, source, source type, source record, and "
+"unique key."
+msgstr ""
+"تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوع مصدر وسجل مصدر ومفتاحًا فريدًا."
 
 #. module: ab_inventory
 msgid "Incoming and outgoing quantities cannot be negative."
@@ -470,10 +574,15 @@ msgid "Enter either incoming or outgoing quantity, not both."
 msgstr "أدخل كمية للوارد أو للصادر فقط، وليس لكليهما."
 
 #. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__status__saved
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Saved"
 msgstr "محفوظ"
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__saved_at
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__saved_at
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_movement_search
 msgid "Saved At"
 msgstr "وقت الحفظ"
 
@@ -482,6 +591,7 @@ msgid "Saved movements are immutable; create a reversal."
 msgstr "لا يمكن تعديل الحركات المحفوظة؛ أنشئ حركة عكسية."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory.py:0
 msgid "Saved movements cannot be edited."
 msgstr "لا يمكن تعديل حركات المخزون المحفوظة."
 
@@ -490,6 +600,7 @@ msgid "Saved movements cannot be deleted."
 msgstr "لا يمكن حذف الحركات المحفوظة."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Only pending movements can be saved."
 msgstr "يمكن حفظ الحركات المعلقة فقط."
 
@@ -498,6 +609,7 @@ msgid "Only saved movements can be reversed."
 msgstr "يمكن عكس الحركات المحفوظة فقط."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_product.py:0
 msgid "Item unit definitions cannot change after stock movements are saved."
 msgstr "لا يمكن تغيير تعريفات وحدات الصنف بعد حفظ حركات المخزون."
 
@@ -506,8 +618,12 @@ msgid "The item and unit cannot change after stock movements are saved."
 msgstr "لا يمكن تغيير الصنف أو الوحدة بعد حفظ حركات المخزون."
 
 #. module: ab_inventory
-msgid "This integration uses the previous inventory workflow. Update it to create pending ab_inventory movements and save them explicitly."
-msgstr "يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون معلقة وحفظها صراحةً."
+msgid ""
+"This integration uses the previous inventory workflow. Update it to create "
+"pending ab_inventory movements and save them explicitly."
+msgstr ""
+"يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون معلقة "
+"وحفظها صراحةً."
 
 #. module: ab_inventory
 msgid "Source Record ID must be a positive integer."
@@ -522,14 +638,20 @@ msgid "A movement's source record cannot be changed."
 msgstr "لا يمكن تغيير السجل المصدر لحركة المخزون."
 
 #. module: ab_inventory
-msgid "A linked movement needs a store, source, source type, and source record."
+msgid ""
+"A linked movement needs a store, source, source type, and source record."
 msgstr "تتطلب الحركة المرتبطة متجرًا ومصدرًا ونوع مصدر وسجل مصدر."
 
 #. module: ab_inventory
-msgid "This integration uses the previous inventory workflow. Update it to create draft ab_inventory movements and post them explicitly."
-msgstr "يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون مسودة وترحيلها صراحةً."
+msgid ""
+"This integration uses the previous inventory workflow. Update it to create "
+"draft ab_inventory movements and post them explicitly."
+msgstr ""
+"يستخدم هذا الربط سير عمل المخزون السابق. حدّثه لإنشاء حركات مخزون مسودة "
+"وترحيلها صراحةً."
 
 #. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__qty
 msgid "Quantity Change"
 msgstr "تغير الكمية"
 
@@ -542,14 +664,17 @@ msgid "Use a signed quantity change instead of incoming or outgoing fields."
 msgstr "استخدم تغير كمية موجباً أو سالباً بدلاً من حقلي الوارد والصادر."
 
 #. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_process
 msgid "Inventory Integration Helper"
 msgstr "مساعد ربط المخزون"
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Inventory direction must be +1 or -1."
 msgstr "يجب أن يكون اتجاه حركة المخزون +1 أو -1."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Inventory quantity must be positive."
 msgstr "يجب أن تكون كمية المخزون موجبة."
 
@@ -566,14 +691,17 @@ msgid "Quantity cannot be represented exactly in the smallest unit."
 msgstr "لا يمكن تمثيل الكمية بدقة بأصغر وحدة للصنف."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Provide one saved business line for inventory."
 msgstr "حدد بند عملية محفوظاً واحداً للمخزون."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "Inventory status must be Pending or Saved."
 msgstr "يجب أن تكون حالة المخزون معلقة أو محفوظة."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
 msgid "The inventory line does not match the business line."
 msgstr "بند المخزون لا يطابق بند العملية."
 
@@ -582,5 +710,831 @@ msgid "Saved movements cannot return to Pending."
 msgstr "لا يمكن إعادة حركة مخزون محفوظة إلى الحالة المعلقة."
 
 #. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory.py:0
 msgid "Linked movements must be saved through their business document."
 msgstr "يجب حفظ حركات المخزون المرتبطة من خلال مستند العملية الخاص بها."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_product_source.py:0
+msgid "Enter an expiry date or select No Expiry before posting stock."
+msgstr "أدخل تاريخ الصلاحية أو حدد بدون تاريخ صلاحية قبل ترحيل المخزون."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_product_source__posting_snapshot
+msgid "Posted Source Snapshot"
+msgstr "القيم المثبتة للمصدر عند الترحيل"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_product_source.py:0
+msgid "Posted product sources cannot be deleted."
+msgstr "لا يمكن حذف مصادر المنتجات التي تم ترحيل مخزونها."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_product_source.py:0
+msgid ""
+"Posted source quantities, prices, taxes, units and expiry cannot be changed."
+msgstr ""
+"لا يمكن تغيير كميات المصدر أو أسعاره أو ضرائبه أو وحداته أو صلاحيته بعد "
+"الترحيل."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_product_source.py:0
+msgid "Source snapshots are created only by inventory posting."
+msgstr "يتم تثبيت قيم المصادر من خلال ترحيل المخزون فقط."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_product_source.py:0
+msgid ""
+"This source has saved stock without a posting snapshot. Review its "
+"historical values before posting again."
+msgstr ""
+"لهذا المصدر مخزون محفوظ دون قيم مثبتة عند الترحيل. راجع قيمه التاريخية قبل "
+"الترحيل مرة أخرى."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "A repeated stock operation must have identical inputs."
+msgstr "يجب أن تتطابق مدخلات عملية المخزون المكررة."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "A shortage reason is required."
+msgstr "سبب العجز مطلوب."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "A stable source identity is required before posting stock."
+msgstr "يجب تحديد هوية ثابتة للمصدر قبل ترحيل المخزون."
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_balance_scope_unique
+msgid "A stock layer can have only one current balance."
+msgstr "يمكن أن يكون لطبقة المخزون رصيد حالي واحد فقط."
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_posting_sequence_store_unique
+msgid "A store has one posting sequence."
+msgstr "لكل فرع تسلسل ترحيل واحد."
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_product
+msgid "Abdin Product"
+msgstr "صنف عابدين"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__actor_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__actor_id
+msgid "Actor"
+msgstr "منفذ العملية"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__actual_unit_cost
+msgid "Actual Unit Cost"
+msgstr "تكلفة الوحدة الفعلية"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__allocations
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__allocations
+msgid "Allocations"
+msgstr "التخصيصات"
+
+#. module: ab_inventory
+#: model:res.groups,name:ab_inventory.group_inventory_shortage
+msgid "Authorize Stock Shortages"
+msgstr "السماح بعجز المخزون"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_shortage
+msgid "Authorized Stock Shortage"
+msgstr "عجز مخزون معتمد"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__available
+msgid "Available"
+msgstr "المتاح"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__balance_id
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__business_date
+msgid "Business Date"
+msgstr "تاريخ المستند"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__changes
+msgid "Changes"
+msgstr "التغييرات"
+
+#. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_integrity_review
+msgid "Check Integrity"
+msgstr "فحص السلامة"
+
+#. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_integrity_review
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__company_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__conversion_snapshot
+msgid "Conversion Snapshot"
+msgstr "بيانات التحويل المثبتة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__correction_amount
+msgid "Correction Amount"
+msgstr "مبلغ التصحيح"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__create_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__create_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_balance
+msgid "Current Inventory Balance"
+msgstr "رصيد المخزون الحالي"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__location__damaged
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_balance__location__damaged
+msgid "Damaged"
+msgstr "تالف"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_process__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_protected__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_product_source__display_name
+#: model:ir.model.fields,field_description:ab_inventory.field_res_users__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__document_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__document_id
+msgid "Document"
+msgstr "المستند"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__document_model
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__document_model
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__document_model
+msgid "Document Model"
+msgstr "نوع المستند"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__ending_balance
+msgid "Ending Balance"
+msgstr "الرصيد الختامي"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_reservation__state__held
+msgid "Held"
+msgstr "محجوز"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_process__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_protected__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_product_source__id
+#: model:ir.model.fields,field_description:ab_inventory.field_res_users__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_inventory_integrity_review
+#: model:ir.model,name:ab_inventory.model_ab_inventory_integrity_review
+#: model:ir.ui.menu,name:ab_inventory.menu_inventory_integrity_review
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_integrity_review
+msgid "Inventory Integrity Review"
+msgstr "مراجعة سلامة المخزون"
+
+#. module: ab_inventory
+#: model:res.groups,name:ab_inventory.group_inventory_operator
+msgid "Inventory Operator"
+msgstr "مشغل المخزون"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_posting_sequence
+msgid "Inventory Posting Sequence"
+msgstr "تسلسل ترحيل المخزون"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_projection_repair
+msgid "Inventory Projection Repair Audit"
+msgstr "سجل إصلاح أرصدة المخزون"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_ab_inventory_projection_repair
+#: model:ir.ui.menu,name:ab_inventory.menu_ab_inventory_projection_repair
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_ab_inventory_projection_repair
+msgid "Inventory Repair Audit"
+msgstr "سجل إصلاح المخزون"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_return_event
+msgid "Inventory Return Event"
+msgstr "عملية مرتجع مخزون"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Inventory movements cannot be deleted."
+msgstr "لا يمكن حذف حركات المخزون."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Inventory operation access is required."
+msgstr "صلاحية تنفيذ عمليات المخزون مطلوبة."
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_operation_unique
+msgid "Inventory operation keys must be unique per store."
+msgstr "يجب ألا تتكرر مفاتيح عمليات المخزون داخل الفرع."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/stock_state.py:0
+msgid "Inventory state and audit records cannot be deleted."
+msgstr "لا يمكن حذف أرصدة المخزون أو سجلات التدقيق."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__last_movement_id
+msgid "Last Movement"
+msgstr "آخر حركة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__write_uid
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__write_uid
+msgid "Last Updated by"
+msgstr "آخر تعديل بواسطة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__write_date
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تعديل"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__layer_key
+msgid "Layer Key"
+msgstr "مفتاح الطبقة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report__line_ids
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__line_ids
+msgid "Line"
+msgstr "السطر"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Linked movements must be created through their business document."
+msgstr "يجب إنشاء الحركات المرتبطة من خلال مستندها الأصلي."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__location
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__location
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__location
+msgid "Location Transfer"
+msgstr "نقل بين المواقع"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Manual stock movements require an existing source."
+msgstr "تتطلب حركات المخزون اليدوية مصدراً موجوداً."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report__movement_line_ids
+msgid "Movement Line"
+msgstr "سطر الحركة"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__native_return
+msgid "Native Return"
+msgstr "مرتجع محلي"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__native
+msgid "Native Sale"
+msgstr "بيع محلي"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__on_hand
+msgid "On Hand"
+msgstr "الموجود فعلياً"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Only held reservations can be posted."
+msgstr "يمكن ترحيل الحجوزات المعلقة فقط."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Only the reservation owner or an inventory manager can change it."
+msgstr "يمكن لصاحب الحجز أو مدير المخزون فقط تغييره."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Post movements through the inventory business actions."
+msgstr "رحّل الحركات من خلال إجراءات المخزون المعتمدة."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Posted stock reservations cannot be released."
+msgstr "لا يمكن تحرير حجوزات المخزون المرحلة."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__posting_sequence
+msgid "Posting Sequence"
+msgstr "تسلسل الترحيل"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid ""
+"Posting would consume reserved stock or create negative physical stock."
+msgstr "سيؤدي الترحيل إلى استهلاك مخزون محجوز أو إنشاء رصيد فعلي سالب."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__product_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__product_id
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_product_source
+msgid "Products Source For Purchasing And Opening Balance"
+msgstr "مصادر الأصناف للمشتريات والأرصدة الافتتاحية"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_protected
+msgid "Protected Inventory State"
+msgstr "حالة مخزون محمية"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Provide a non-empty operation key of at most 200 characters."
+msgstr "أدخل مفتاح عملية غير فارغ لا يتجاوز 200 حرف."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Provide a reason for rebuilding the inventory projection."
+msgstr "أدخل سبباً لإعادة بناء أرصدة المخزون."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__provisional_unit_cost
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__provisional_unit_cost
+msgid "Provisional Unit Cost"
+msgstr "تكلفة الوحدة المؤقتة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__quantity
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Quantity change must be finite and non-zero in stock units."
+msgstr "يجب أن تكون كمية التغيير رقماً محدوداً وغير صفري بوحدات المخزون."
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__location__quarantine
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_balance__location__quarantine
+msgid "Quarantine"
+msgstr "حجر"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__reason
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_projection_repair__reason
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_integrity_review
+msgid "Reason required for a projection repair"
+msgstr "يلزم إدخال سبب لإصلاح أرصدة المخزون"
+
+#. module: ab_inventory
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_inventory_integrity_review
+msgid "Rebuild Projection"
+msgstr "إعادة بناء الأرصدة"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__receipt_movement_id
+msgid "Receipt Movement"
+msgstr "حركة الاستلام"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_reservation__state__released
+msgid "Released"
+msgstr "محرر"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__remaining_qty
+msgid "Remaining Qty"
+msgstr "الكمية المتبقية"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance_report_line__report_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_movement_line__report_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_period_report_line__report_id
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__request_fingerprint
+msgid "Request Fingerprint"
+msgstr "بصمة الطلب"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_return_event__reservation_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_shortage__reservation_id
+msgid "Reservation"
+msgstr "الحجز"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__reserved
+msgid "Reserved"
+msgstr "المحجوز"
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_balance_reserved_positive
+msgid "Reserved stock cannot be negative."
+msgstr "لا يمكن أن تكون كمية المخزون المحجوز سالبة."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Reserved stock has expired; release and allocate it again."
+msgstr "انتهت صلاحية المخزون المحجوز؛ حرر الحجز وأعد التخصيص."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_integrity_review__result
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_return_event_operation_unique
+msgid "Return operation keys must be unique per store."
+msgstr "يجب ألا تتكرر مفاتيح عمليات المرتجعات داخل الفرع."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__returned_qty
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__returned_qty
+msgid "Returned Qty"
+msgstr "الكمية المرتجعة"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Returns cannot exceed the unreturned original stock allocation."
+msgstr "لا يمكن أن تتجاوز المرتجعات الكمية الأصلية التي لم تُرتجع."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__revision
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_posting_sequence__revision
+msgid "Revision"
+msgstr "المراجعة"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__location__saleable
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_balance__location__saleable
+msgid "Saleable"
+msgstr "صالح للبيع"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Select an active stock product."
+msgstr "اختر صنف مخزون نشطاً."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Select different valid stock locations and provide a reason."
+msgstr "اختر موقعَي مخزون صالحين ومختلفين وأدخل السبب."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__shortage_id
+msgid "Shortage"
+msgstr "العجز"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_cost_correction
+msgid "Shortage Cost Correction"
+msgstr "تصحيح تكلفة العجز"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_ab_inventory_cost_correction
+#: model:ir.ui.menu,name:ab_inventory.menu_ab_inventory_cost_correction
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_ab_inventory_cost_correction
+msgid "Shortage Cost Corrections"
+msgstr "تصحيحات تكلفة العجز"
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__model_ref__shortage
+msgid "Shortage Settlement"
+msgstr "تسوية العجز"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Shortage sales require explicit shortage authorization."
+msgstr "تتطلب مبيعات العجز صلاحية صريحة للسماح بالعجز."
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_balance__source_id
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_cost_correction__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory_reservation__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_ab_inventory_balance
+#: model:ir.ui.menu,name:ab_inventory.menu_ab_inventory_balance
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_ab_inventory_balance
+msgid "Stock Layers"
+msgstr "طبقات المخزون"
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_ab_inventory_reservation
+msgid "Stock Reservation"
+msgstr "حجز المخزون"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_ab_inventory_reservation
+#: model:ir.ui.menu,name:ab_inventory.menu_ab_inventory_reservation
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_ab_inventory_reservation
+msgid "Stock Reservations"
+msgstr "حجوزات المخزون"
+
+#. module: ab_inventory
+#: model:ir.actions.act_window,name:ab_inventory.action_ab_inventory_shortage
+#: model:ir.ui.menu,name:ab_inventory.menu_ab_inventory_shortage
+#: model_terms:ir.ui.view,arch_db:ab_inventory.view_ab_inventory_shortage
+msgid "Stock Shortages"
+msgstr "عجز المخزون"
+
+#. module: ab_inventory
+#: model:ir.model.constraint,message:ab_inventory.constraint_ab_inventory_reservation_operation_unique
+msgid "Stock operation keys must be unique per store."
+msgstr "يجب ألا تتكرر مفاتيح عمليات المخزون داخل الفرع."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid ""
+"Stored movement history is inconsistent; projection repair cannot rewrite "
+"it."
+msgstr "سجل الحركات المحفوظ غير متسق؛ لا يمكن لإصلاح الأرصدة إعادة كتابته."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The business document and inventory store must match."
+msgstr "يجب أن يتطابق فرع المستند مع فرع المخزون."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The original shortage allocation cannot cover this return."
+msgstr "تخصيص العجز الأصلي لا يغطي هذا المرتجع."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The original shortage allocation is missing."
+msgstr "تخصيص العجز الأصلي غير موجود."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The original stock allocation is incomplete."
+msgstr "تخصيص المخزون الأصلي غير مكتمل."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The requested stock price must be finite and non-negative."
+msgstr "يجب أن يكون سعر المخزون المطلوب رقماً محدوداً وغير سالب."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The reserved product must match the business document."
+msgstr "يجب أن يتطابق الصنف المحجوز مع صنف المستند."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The source does not belong to this store."
+msgstr "المصدر لا ينتمي إلى هذا الفرع."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The stock reservation does not exist."
+msgstr "حجز المخزون غير موجود."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The stock source must match the movement product, store and company."
+msgstr "يجب أن يتطابق مصدر المخزون مع صنف الحركة وفرعها وشركتها."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "The store belongs to a company outside your allowed companies."
+msgstr "ينتمي الفرع إلى شركة خارج الشركات المسموح لك بها."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "There is not enough available saleable stock."
+msgstr "لا توجد كمية متاحة كافية من المخزون الصالح للبيع."
+
+#. module: ab_inventory
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory__location__transit
+#: model:ir.model.fields.selection,name:ab_inventory.selection__ab_inventory_balance__location__transit
+msgid "Transit"
+msgstr "بالطريق"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__unit_cost
+msgid "Unit Cost"
+msgstr "تكلفة الوحدة"
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Unsupported inventory business document."
+msgstr "مستند عملية المخزون غير مدعوم."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Unsupported native stock document."
+msgstr "مستند المخزون المحلي غير مدعوم."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/stock_state.py:0
+msgid "Use the inventory business operations to change stock state."
+msgstr "استخدم عمليات المخزون المعتمدة لتغيير حالة المخزون."
+
+#. module: ab_inventory
+#. odoo-python
+#: code:addons/ab_inventory/models/ab_inventory.py:0
+msgid "Use the originating business document to change this movement."
+msgstr "استخدم المستند الأصلي لتغيير هذه الحركة."
+
+#. module: ab_inventory
+#: model:ir.model,name:ab_inventory.model_res_users
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_inventory
+#: model:ir.model.fields,field_description:ab_inventory.field_ab_inventory__valuation
+msgid "Valuation"
+msgstr "قيمة المخزون"
+
+#. module: ab_inventory
+#: code:addons/ab_inventory/models/ab_inventory_process.py:0
+msgid "Stock operation quantities must be finite and positive."
+msgstr "يجب أن تكون كميات عمليات المخزون أرقاماً محدودة وموجبة."

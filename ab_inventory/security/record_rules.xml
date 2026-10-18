@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <record id="rule_inventory_branch" model="ir.rule">
         <field name="name">Inventory: assigned stores</field>
@@ -71,5 +71,110 @@
         <field name="model_id" ref="model_ab_inventory_balance_report_line"/>
         <field name="groups" eval="[(4, ref('group_inventory_manager')), (4, ref('base.group_system'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_ab_inventory_company_global" model="ir.rule">
+        <field name="name">ab_inventory: company</field>
+        <field name="model_id" ref="model_ab_inventory"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_scope_global" model="ir.rule">
+        <field name="name">ab_inventory: scope</field>
+        <field name="model_id" ref="model_ab_inventory"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_balance_company_global" model="ir.rule">
+        <field name="name">ab_inventory_balance: company</field>
+        <field name="model_id" ref="model_ab_inventory_balance"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_balance_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_balance: scope</field>
+        <field name="model_id" ref="model_ab_inventory_balance"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_posting_sequence_company_global" model="ir.rule">
+        <field name="name">ab_inventory_posting_sequence: company</field>
+        <field name="model_id" ref="model_ab_inventory_posting_sequence"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_posting_sequence_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_posting_sequence: scope</field>
+        <field name="model_id" ref="model_ab_inventory_posting_sequence"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_reservation_company_global" model="ir.rule">
+        <field name="name">ab_inventory_reservation: company</field>
+        <field name="model_id" ref="model_ab_inventory_reservation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_reservation_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_reservation: scope</field>
+        <field name="model_id" ref="model_ab_inventory_reservation"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_return_event_company_global" model="ir.rule">
+        <field name="name">ab_inventory_return_event: company</field>
+        <field name="model_id" ref="model_ab_inventory_return_event"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_return_event_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_return_event: scope</field>
+        <field name="model_id" ref="model_ab_inventory_return_event"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_shortage_company_global" model="ir.rule">
+        <field name="name">ab_inventory_shortage: company</field>
+        <field name="model_id" ref="model_ab_inventory_shortage"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_shortage_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_shortage: scope</field>
+        <field name="model_id" ref="model_ab_inventory_shortage"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_cost_correction_company_global" model="ir.rule">
+        <field name="name">ab_inventory_cost_correction: company</field>
+        <field name="model_id" ref="model_ab_inventory_cost_correction"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_cost_correction_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_cost_correction: scope</field>
+        <field name="model_id" ref="model_ab_inventory_cost_correction"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_projection_repair_company_global" model="ir.rule">
+        <field name="name">ab_inventory_projection_repair: company</field>
+        <field name="model_id" ref="model_ab_inventory_projection_repair"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_projection_repair_scope_global" model="ir.rule">
+        <field name="name">ab_inventory_projection_repair: scope</field>
+        <field name="model_id" ref="model_ab_inventory_projection_repair"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_inventory.group_inventory_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_period_report_company_global" model="ir.rule">
+        <field name="name">ab_inventory_period_report: company</field>
+        <field name="model_id" ref="model_ab_inventory_period_report"/>
+        <field name="domain_force">[('store_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_period_report_line_company_global" model="ir.rule">
+        <field name="name">ab_inventory_period_report_line: company</field>
+        <field name="model_id" ref="model_ab_inventory_period_report_line"/>
+        <field name="domain_force">[('report_id.store_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_period_movement_line_company_global" model="ir.rule">
+        <field name="name">ab_inventory_period_movement_line: company</field>
+        <field name="model_id" ref="model_ab_inventory_period_movement_line"/>
+        <field name="domain_force">[('report_id.store_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_balance_report_company_global" model="ir.rule">
+        <field name="name">ab_inventory_balance_report: company</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report"/>
+        <field name="domain_force">[('store_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="rule_ab_inventory_balance_report_line_company_global" model="ir.rule">
+        <field name="name">ab_inventory_balance_report_line: company</field>
+        <field name="model_id" ref="model_ab_inventory_balance_report_line"/>
+        <field name="domain_force">[('report_id.store_id.company_id', 'in', company_ids)]</field>
     </record>
 </odoo>

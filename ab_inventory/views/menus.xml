@@ -1,18 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <odoo>
     <data>
-        <menuitem id="menu_root"
-                  name="Inventory"
-                  web_icon="ab_inventory,static/description/icon.png"
-                  sequence="101"/>
-        <menuitem id="menu_inventory_movements" name="Movement Schedule"
-                  parent="menu_root" action="action_inventory_movements"
-                  groups="ab_inventory.group_inventory_user,base.group_system" sequence="10"/>
-        <menuitem id="menu_inventory_reports" name="Reports" parent="menu_root"
-                  groups="ab_inventory.group_inventory_user,base.group_system" sequence="20"/>
-        <menuitem id="menu_inventory_balance_report" name="Current Stock Balance"
-                  parent="menu_inventory_reports" action="action_inventory_balance_report" sequence="10"/>
-        <menuitem id="menu_inventory_period_report" name="Period Report"
-                  parent="menu_inventory_reports" action="action_inventory_period_report" sequence="20"/>
+        <menuitem id="menu_root" name="Inventory" web_icon="ab_inventory,static/description/icon.png" sequence="101"/>
+        <menuitem id="menu_inventory_movements" name="Movement Schedule" parent="menu_root" action="action_inventory_movements" groups="ab_inventory.group_inventory_user,base.group_system" sequence="10"/>
+        <menuitem id="menu_inventory_reports" name="Reports" parent="menu_root" groups="ab_inventory.group_inventory_user,base.group_system" sequence="20"/>
+        <menuitem id="menu_inventory_balance_report" name="Current Stock Balance" parent="menu_inventory_reports" action="action_inventory_balance_report" sequence="10"/>
+        <menuitem id="menu_inventory_period_report" name="Period Report" parent="menu_inventory_reports" action="action_inventory_period_report" sequence="20"/>
+        <menuitem id="menu_ab_inventory_balance" name="Stock Layers" parent="menu_root" action="action_ab_inventory_balance" groups="ab_inventory.group_inventory_user,base.group_system"/>
+        <menuitem id="menu_ab_inventory_reservation" name="Stock Reservations" parent="menu_root" action="action_ab_inventory_reservation" groups="ab_inventory.group_inventory_user,base.group_system"/>
+        <menuitem id="menu_ab_inventory_shortage" name="Stock Shortages" parent="menu_root" action="action_ab_inventory_shortage" groups="ab_inventory.group_inventory_user,base.group_system"/>
+        <menuitem id="menu_ab_inventory_cost_correction" name="Shortage Cost Corrections" parent="menu_root" action="action_ab_inventory_cost_correction" groups="ab_inventory.group_inventory_user,base.group_system"/>
+        <menuitem id="menu_ab_inventory_projection_repair" name="Inventory Repair Audit" parent="menu_root" action="action_ab_inventory_projection_repair" groups="ab_inventory.group_inventory_user,base.group_system"/>
+        <menuitem id="menu_inventory_integrity_review" name="Inventory Integrity Review" parent="menu_root" action="action_inventory_integrity_review" groups="ab_inventory.group_inventory_user,base.group_system"/>
     </data>
 </odoo>

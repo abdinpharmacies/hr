@@ -20,6 +20,7 @@
         'report/ab_inventory_period_report.xml',
         'report/ab_inventory_balance_report.xml',
         'views/res_users_inventory.xml',
+        'views/stock_state.xml',
         'views/menus.xml',
     ],
     'installable': True,
