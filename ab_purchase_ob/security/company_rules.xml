@@ -1,0 +1,5 @@
+<odoo>
+<record id="ab_purchase_ob_header_company_scope" model="ir.rule"><field name="name">ab_purchase_ob_header company scope</field><field name="model_id" ref="model_ab_purchase_ob_header"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="ab_purchase_ob_line_company_scope" model="ir.rule"><field name="name">ab_purchase_ob_line company scope</field><field name="model_id" ref="model_ab_purchase_ob_line"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+<record id="opening_run_company_scope" model="ir.rule"><field name="name">Opening run company scope</field><field name="model_id" ref="model_ab_purchase_ob_run"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+</odoo>

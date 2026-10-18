@@ -2,3 +2,5 @@ from . import ab_inventory_inherit
 from . import opening_balance_header
 from . import opening_balance_line
 from . import receipt_type
+
+from . import opening_run

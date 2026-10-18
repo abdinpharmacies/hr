@@ -59,3 +59,270 @@ msgstr "بند استلام"
 #. module: ab_purchase_ob
 msgid "Submit"
 msgstr "إرسال"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__no_expiry
+msgid "No Expiry"
+msgstr "بدون تاريخ صلاحية"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__posting_snapshot
+msgid "Posted Source Snapshot"
+msgstr "القيم المثبتة للمصدر عند الترحيل"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__source_identity
+msgid "Source Identity"
+msgstr "هوية المصدر"
+
+#. module: ab_purchase_ob
+#: model:ir.model.constraint,message:ab_purchase_ob.constraint_ab_purchase_ob_run_store_unique
+msgid "A store can have only one inventory opening run."
+msgstr "يمكن أن يكون للفرع دورة رصيد افتتاحي واحدة فقط."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__active
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_receipt_type__active
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Approve every opening document before closing its run."
+msgstr "اعتمد جميع مستندات الرصيد الافتتاحي قبل إغلاق الدورة."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Archive opening runs instead of deleting them."
+msgstr "أرشف دورات الرصيد الافتتاحي بدلاً من حذفها."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Archive receipt documents instead of deleting them."
+msgstr "أرشف مستندات الاستلام بدلاً من حذفها."
+
+#. module: ab_purchase_ob
+#: model_terms:ir.ui.view,arch_db:ab_purchase_ob.opening_run_form
+msgid "Close Opening Run"
+msgstr "إغلاق دورة الرصيد الافتتاحي"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields.selection,name:ab_purchase_ob.selection__ab_purchase_ob_run__state__closed
+msgid "Closed"
+msgstr "مغلقة"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__closed_at
+msgid "Closed At"
+msgstr "وقت الإغلاق"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__closed_by
+msgid "Closed By"
+msgstr "أغلقها"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__company_id
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__company_id
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+#: model_terms:ir.ui.view,arch_db:ab_purchase_ob.receipt_run_form
+msgid "Correct Receipt"
+msgstr "تصحيح الاستلام"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__correction_of_id
+msgid "Corrected Receipt"
+msgstr "مستند الاستلام المصحح"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__correction_qty
+msgid "Correction Quantity"
+msgstr "كمية التصحيح"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_line.py:0
+msgid "Correction quantities must be finite and non-negative."
+msgstr "يجب أن تكون كميات التصحيح أرقاماً محدودة وغير سالبة."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_line.py:0
+msgid "Correction sources must belong to the original receipt."
+msgstr "يجب أن تتبع مصادر التصحيح مستند الاستلام الأصلي."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_line.py:0
+msgid "Corrections cannot exceed the original received quantity."
+msgstr "لا يمكن أن تتجاوز التصحيحات الكمية المستلمة الأصلية."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid ""
+"Corrections must reference a saved original receipt in the same store and "
+"purpose."
+msgstr "يجب ربط التصحيحات بمستند استلام أصلي محفوظ لنفس الفرع والغرض."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Create opening runs in the open state."
+msgstr "أنشئ دورات الرصيد الافتتاحي بالحالة المفتوحة."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__cutoff_date
+msgid "Cutoff Date"
+msgstr "تاريخ الحد الفاصل"
+
+#. module: ab_purchase_ob
+#: model:ir.model,name:ab_purchase_ob.model_ab_purchase_ob_run
+msgid "Inventory Opening Run"
+msgstr "دورة الرصيد الافتتاحي للمخزون"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__legacy_reference
+msgid "Legacy Reference"
+msgstr "المرجع السابق"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__lot_id
+msgid "Lot"
+msgstr "التشغيلة"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_receipt_type__name
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_run__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Only inventory managers can close opening runs."
+msgstr "يمكن لمديري المخزون فقط إغلاق دورات الرصيد الافتتاحي."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields.selection,name:ab_purchase_ob.selection__ab_purchase_ob_run__state__open
+msgid "Open"
+msgstr "مفتوحة"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__opening_run_id
+msgid "Opening Run"
+msgstr "دورة الرصيد الافتتاحي"
+
+#. module: ab_purchase_ob
+#: model:ir.actions.act_window,name:ab_purchase_ob.opening_run_action
+#: model:ir.ui.menu,name:ab_purchase_ob.opening_run_menu
+msgid "Opening Runs"
+msgstr "دورات الرصيد الافتتاحي"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_line.py:0
+msgid ""
+"Opening and other receipts use a single quantity without purchase bonuses."
+msgstr ""
+"تستخدم الأرصدة الافتتاحية والاستلامات الأخرى كمية واحدة دون بونص شراء."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Opening runs with documents cannot be changed."
+msgstr "لا يمكن تعديل دورات الرصيد الافتتاحي المرتبطة بمستندات."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Opening stock must be posted within an open run and its cutoff date."
+msgstr ""
+"يجب ترحيل المخزون الافتتاحي ضمن دورة مفتوحة وبما لا يتجاوز تاريخ الحد "
+"الفاصل."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__origin_database
+msgid "Origin Database"
+msgstr "قاعدة بيانات المصدر"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__origin_model
+msgid "Origin Model"
+msgstr "نموذج المنشأ"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__origin_res_id
+msgid "Origin Res"
+msgstr "سجل المنشأ"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__parent_source_id
+msgid "Parent Source"
+msgstr "المصدر الأصلي"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Provide a receipt reason before posting stock."
+msgstr "أدخل سبب الاستلام قبل ترحيل المخزون."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__receipt_qty
+msgid "Receipt Qty"
+msgstr "كمية الاستلام"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__receipt_reason
+msgid "Receipt Reason"
+msgstr "سبب الاستلام"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid ""
+"Receipt corrections with active accounting require the accounting "
+"integration phase."
+msgstr ""
+"تتطلب تصحيحات الاستلام مع المحاسبة المفعلة إكمال مرحلة تكامل المحاسبة."
+
+#. module: ab_purchase_ob
+#: model:ir.model.constraint,message:ab_purchase_ob.constraint_ab_purchase_ob_header_document_unique
+msgid "Receipt document numbers must be unique per store and purpose."
+msgstr "يجب أن تكون أرقام مستندات الاستلام فريدة لكل فرع وغرض."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Receipt totals can only be frozen by approval."
+msgstr "لا يمكن تثبيت إجماليات الاستلام إلا عند الاعتماد."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Remove draft lines before changing receipt scope or purpose."
+msgstr "أزل بنود المسودة قبل تغيير نطاق الاستلام أو غرضه."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Select a saved original receipt to create a correction."
+msgstr "حدد مستند استلام أصلياً محفوظاً لإنشاء تصحيح."
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_balance_header.py:0
+msgid "Select an opening run belonging to this store."
+msgstr "حدد دورة رصيد افتتاحي تابعة لهذا الفرع."
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_inventory__model_ref
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__source_type
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_line__tax_policy_id
+msgid "Tax Policy"
+msgstr "سياسة الضرائب"
+
+#. module: ab_purchase_ob
+#: model:ir.model.fields,field_description:ab_purchase_ob.field_ab_purchase_ob_header__tax_snapshot
+msgid "Tax Snapshot"
+msgstr "لقطة الضرائب"
+
+#. module: ab_purchase_ob
+#: code:addons/ab_purchase_ob/models/opening_run.py:0
+msgid "Use Close Opening Run to close a run."
+msgstr "استخدم إجراء إغلاق دورة الرصيد الافتتاحي لإغلاق الدورة."

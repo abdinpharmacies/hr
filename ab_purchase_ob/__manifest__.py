@@ -9,7 +9,6 @@
     'depends': [
         'base',
         'mail',
-        'ab_purchase',
         'ab_product_source',
         'ab_inventory',
         'ab_taxes',
@@ -18,7 +17,10 @@
         'security/security_groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
+        'security/company_rules.xml',
         'views/opening_balance_header.xml',
+        'views/source_integrity.xml',
+        'views/opening_run.xml',
     ],
     'installable': True,
     'auto_install': False,

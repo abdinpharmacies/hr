@@ -1,5 +1,47 @@
 Current changes before commit:
 
+- Install opening-stock operations independently of purchasing and accounting modules.
+- Add one authorized opening run per branch with cutoff, explicit receipt reasons and irreversible closure after documents are received.
+- Post other receipts and bounded corrections through the inventory engine; retain the original source and prevent cumulative over-correction.
+- Create reviewable correction drafts with populated source lines and fail closed when accounting configurations would process unsupported corrections.
+- Enforce branch/company permissions and maintain both Arabic catalogs.
+
+Files changed:
+
+- ab_purchase_ob/__manifest__.py
+- ab_purchase_ob/changelog.d
+- ab_purchase_ob/i18n/ar.po
+- ab_purchase_ob/i18n/ar_001.po
+- ab_purchase_ob/models/__init__.py
+- ab_purchase_ob/models/opening_balance_header.py
+- ab_purchase_ob/models/opening_balance_line.py
+- ab_purchase_ob/models/opening_run.py
+- ab_purchase_ob/security/company_rules.xml
+- ab_purchase_ob/security/ir.model.access.csv
+- ab_purchase_ob/security/record_rules.xml
+- ab_purchase_ob/views/opening_run.xml
+- ab_purchase_ob/views/source_integrity.xml
+
+Validation:
+
+- Fresh isolated installation, targeted upgrades, behavior/security checks, translation validation and operational evidence are recorded in `ab_independence_dev_plans/13_phase_1_6_execution.md`.
+
+commit 5965f3db8b97be15add956c660db8f21b8da9556
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date: 2026-09-30T09:55:53+03:00
+
+    ab_purchase_ob/Update: mark opening receipt line grid as full-width
+
+- Expand the opening receipt line grid to the full form width.
+
+Files changed:
+
+- ab_purchase_ob/views/opening_balance_header.xml
+
+Earlier committed work (historical summary):
+
+Historical implementation summary:
+
 - Standardize Odoo 19 manifest version, company author, developer, and explicit application/install/auto-install flags; preserve active data-file order and remaining dependencies.
 - Declare delegated product-source inheritance on opening balance lines and add the direct tax dependency used by the line defaults.
 - Add explicit receipt purposes for opening inventory and non-purchase receipts, with document date/code and receipt type setup.
