@@ -1135,3 +1135,8 @@ msgid ""
 "The customer reference is duplicated on this branch. Review the customer "
 "records before retrying."
 msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلات العميل قبل إعادة المحاولة."
+
+#. module: ab_branch_api
+#: model:ir.module.module,description:base.module_ab_branch_api
+msgid "Authenticated branch API for sales, returns, stock and customer operations."
+msgstr "واجهة برمجة تطبيقات الفرع مع المصادقة لعمليات المبيعات والمرتجعات والمخزون والعملاء."
