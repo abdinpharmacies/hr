@@ -38,7 +38,7 @@ try {
  }
  const suite=JSON.parse(readFileSync(new URL('./sales_ui_cases.json', import.meta.url)));
  const test=suite.cases[0];
- const header={id:123,pos_client_token:'test-token',status:'saved',store_id:[104,'store'],customer_id:[19934,'customer'],employee_id:[668,'employee'],contract_id:false,applied_program_ids:[],total_price:281,total_net_amount:281,promo_discount_amount:0,line_ids:[1,2]};
+ const header={id:123,pos_client_token:'test-token',status:'saved',store_id:[104,'store'],customer_id:[19934,'customer'],employee_id:[668,'employee'],contract_id:false,applied_program_ids:[],total_price:380,total_net_amount:380,promo_discount_amount:0,line_ids:[1,2]};
  const lines=test.lines.map(l=>({product_id:[l.product_id,'product'],qty:l.qty,sell_price:suite.records.products.find(p=>p.id===l.product_id).unit_price,uom_id:[1,'unit'],unavailable_reason:false,unavailable_reason_other:false}));
  const result={submission:'SAVED',invoice_id:123,client_token:'test-token',checkpoints:[]};
  const rpc=async(model,method,args)=>{assert.equal(method,'read');return model==='ab_sales_header'?[header]:lines;};

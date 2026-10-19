@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 from psycopg2 import sql
-from prepare_test_data import connect, select_rows
+from prepare_test_data import connect, preparation_database, select_rows
 
 ROOT = Path(__file__).resolve().parent
 CONTRACT_FIELDS = {
@@ -22,10 +22,11 @@ CONTRACT_FIELDS = {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--suite', type=Path, default=ROOT / 'sales_ui_cases.json')
-    parser.add_argument('--config', default='/opt/odoo19/config/replica19.conf')
-    parser.add_argument('--db', default='abdin_replica19')
+    parser.add_argument('--config', default=str(ROOT.parent / 'odoo19-POS.conf'))
+    parser.add_argument('--db', help='Database name; prompted when omitted')
     parser.add_argument('--apply', action='store_true')
     args = parser.parse_args()
+    args.db = preparation_database(parser, args.db)
     suite = json.loads(args.suite.read_text())
     contracts = suite['fixtures']['contracts']
     promo = suite['fixtures']['promotion']

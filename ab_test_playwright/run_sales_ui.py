@@ -3,24 +3,56 @@
 import argparse
 from datetime import datetime, timezone
 import getpass
+import ipaddress
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
+from urllib.parse import urlsplit
 
 from prepare_test_data import connect, select_rows
 
 ROOT = Path(__file__).resolve().parent
 
 
+def connection_settings(parser, args):
+    for field, label, flag in (('url', 'Odoo URL', '--url'), ('db', 'Database name', '--db')):
+        value = getattr(args, field)
+        if value is None:
+            if not sys.stdin.isatty():
+                parser.error(f'Specify {flag} when running unattended')
+            try:
+                value = input(f'{label}: ')
+            except EOFError:
+                parser.error(f'{label} is required')
+        if not value.strip():
+            parser.error(f'{label} must not be empty')
+        setattr(args, field, value)
+    try:
+        target = urlsplit(args.url)
+        hostname = target.hostname
+        local = hostname == 'localhost'
+        if not local:
+            local = ipaddress.ip_address(hostname).is_loopback
+        if (target.scheme not in ('http', 'https') or not local
+                or target.username is not None or target.password is not None
+                or target.path not in ('', '/') or target.query or target.fragment
+                or any(char.isspace() for char in args.url)):
+            raise ValueError
+        if target.port is not None and target.port == 0:
+            raise ValueError
+    except (ValueError, TypeError):
+        parser.error('Odoo URL must be an HTTP/HTTPS localhost or loopback origin, without credentials, path, query or fragment')
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--list-actions', action='store_true', help='List registered JSON step actions and exit')
     p.add_argument('--suite', type=Path, default=ROOT / 'sales_ui_cases.json')
-    p.add_argument('--config', default='/opt/odoo19/config/replica19.conf')
-    p.add_argument('--db', default='abdin_replica19')
-    p.add_argument('--url', default='http://127.0.0.1:4050')
+    p.add_argument('--config', default=str(ROOT.parent / 'odoo19-POS.conf'))
+    p.add_argument('--db', help='Database name; prompted when omitted')
+    p.add_argument('--url', help='Local Odoo HTTP/HTTPS URL; prompted when omitted')
     p.add_argument('--case', action='append', dest='cases')
     mode = p.add_mutually_exclusive_group()
     mode.add_argument('--headed', action='store_true')
@@ -49,6 +81,7 @@ def main():
                 p.error(f"{case['id']}: submit must occur once immediately after prepare_submission")
             if names[index+1:] != ['assert_saved_invoice_if_submitted']:
                 p.error(f"{case['id']}: submit must be followed by assert_saved_invoice_if_submitted as the final step")
+    connection_settings(p, args)
     if not args.headed and not args.headless:
         if not sys.stdin.isatty():
             p.error('Specify --headed or --headless when running unattended')
@@ -66,9 +99,11 @@ def main():
             user = select_rows(cur, 'res_users', ['id', 'login', 'active'], [records['user_id']])[0]
             if not user['active'] or user['login'] != suite['credentials']['login']:
                 raise ValueError('Login identity changed')
-            profile = select_rows(cur, 'ab_employee_access', ['id', 'employee_id'], [records['employee_access_id']])[0]
+            profile = select_rows(cur, 'ab_employee_access', ['id', 'employee_id', 'pos_allow_login'], [records['employee_access_id']])[0]
             if profile['employee_id'] != records['employee_id']:
                 raise ValueError('Employee profile identity changed')
+            if not profile['pos_allow_login']:
+                raise ValueError(f"Employee access profile {profile['id']} has POS login disabled; enable Pos Allow Login in Odoo or select an authorized test profile")
             for key, table, ids in [('store', 'ab_store', [records['store_id']]),
                                     ('employee', 'ab_hr_employee', [records['employee_id']]),
                                     ('customer', 'ab_customer', [records['customer_id']]),

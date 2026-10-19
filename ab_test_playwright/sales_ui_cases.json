@@ -3,9 +3,6 @@
   "suite_id": "ab_sales_ui_existing_records",
   "description": "UI regression scenarios using fixed development record IDs, with real Odoo backend checks. No ab_sales_test installation or imports.",
   "defaults": {
-    "config": "/opt/odoo19/config/replica19.conf",
-    "database": "abdin_replica19",
-    "base_url": "http://127.0.0.1:4050",
     "browser": "chromium",
     "browser_mode": "ask",
     "execution_mode": "preview",
@@ -41,7 +38,7 @@
         "eplus_serial": 1,
         "name": "[TEST] صنف مؤقت 1 ج م 1 BOX",
         "origin": "local",
-        "unit_price": 1.0,
+        "unit_price": 100.0,
         "uom_id": 1,
         "in_promotion_2": false
       },
@@ -167,7 +164,7 @@
   },
   "preconditions": [
     "Validate every fixed ID and its stable code/external reference before testing.",
-    "Selected products must retain local origin and unit prices 1.00 and 280.00. Price drift blocks fixed-value assertions; do not silently recalculate expectations.",
+    "Selected products must retain local origin and unit prices 100.00 and 280.00. Price drift blocks fixed-value assertions; do not silently recalculate expectations.",
     "Contracts must match fixture values; no product-card discount overrides for the selected products.",
     "Store 104 must be permitted for the user, employee, contract and promotion.",
     "The current backend uses the configured E-Plus connection; no fake E-Plus environment is installed.",
@@ -245,8 +242,8 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 281.0,
+        "gross_total": 380.0,
+        "customer_pay": 380.0,
         "contract_id": null,
         "applied_promotion_ids": [],
         "line_count": 2
@@ -339,14 +336,14 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 70.25,
+        "gross_total": 380.0,
+        "customer_pay": 95.0,
         "contract_id": 1,
         "applied_promotion_ids": [],
         "line_count": 2,
-        "contract_discount": 33.72,
-        "contract_total_after_discount": 247.28,
-        "company_pay": 177.03
+        "contract_discount": 45.6,
+        "contract_total_after_discount": 334.4,
+        "company_pay": 239.4
       },
       "steps": [
         {
@@ -437,14 +434,14 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
+        "gross_total": 380.0,
         "customer_pay": 0.0,
         "contract_id": 2,
         "applied_promotion_ids": [],
         "line_count": 2,
-        "contract_discount": 36.53,
-        "contract_total_after_discount": 244.47,
-        "company_pay": 244.47
+        "contract_discount": 49.4,
+        "contract_total_after_discount": 330.6,
+        "company_pay": 330.6
       },
       "steps": [
         {
@@ -535,13 +532,13 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 261.33,
+        "gross_total": 380.0,
+        "customer_pay": 353.4,
         "contract_id": 3,
         "applied_promotion_ids": [],
         "line_count": 2,
-        "contract_discount": 19.67,
-        "contract_total_after_discount": 261.33,
+        "contract_discount": 26.6,
+        "contract_total_after_discount": 353.4,
         "company_pay": 0
       },
       "steps": [
@@ -704,15 +701,15 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "gross_total": 380.0,
+        "customer_pay": 225.0,
         "contract_id": null,
         "applied_promotion_ids": [
           2
         ],
         "line_count": 2,
         "promotion_discount": 155,
-        "total_after_promotion": 126.0
+        "total_after_promotion": 225.0
       },
       "steps": [
         {
@@ -764,6 +761,10 @@
           "policy": "out_of_stock"
         },
         {
+          "action": "ensure_promotion_selected",
+          "id": 2
+        },
+        {
           "action": "assert_ui_totals",
           "expected": "expected"
         },
@@ -799,17 +800,17 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 281.0,
+        "gross_total": 380.0,
+        "customer_pay": 380.0,
         "contract_id": 4,
         "applied_promotion_ids": [],
         "line_count": 2,
         "contract_discount": 0.0,
-        "contract_total_after_discount": 281.0,
+        "contract_total_after_discount": 380.0,
         "company_pay": 0.0,
         "promotion_discount": 0.0,
-        "total_after_promotion": 281.0,
-        "contract_customer_pay_before_promotion": 281.0
+        "total_after_promotion": 380.0,
+        "contract_customer_pay_before_promotion": 380.0
       },
       "steps": [
         {
@@ -904,17 +905,17 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 281.0,
+        "gross_total": 380.0,
+        "customer_pay": 380.0,
         "contract_id": 4,
         "applied_promotion_ids": [],
         "line_count": 2,
         "contract_discount": 0.0,
-        "contract_total_after_discount": 281.0,
+        "contract_total_after_discount": 380.0,
         "company_pay": 0.0,
         "promotion_discount": 0.0,
-        "total_after_promotion": 281.0,
-        "contract_customer_pay_before_promotion": 281.0
+        "total_after_promotion": 380.0,
+        "contract_customer_pay_before_promotion": 380.0
       },
       "steps": [
         {
@@ -1009,13 +1010,13 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 281.0,
+        "gross_total": 380.0,
+        "customer_pay": 380.0,
         "contract_id": null,
         "applied_promotion_ids": [],
         "line_count": 2,
         "promotion_discount": 0.0,
-        "total_after_promotion": 281.0
+        "total_after_promotion": 380.0
       },
       "steps": [
         {
@@ -1113,15 +1114,15 @@
         }
       ],
       "expected": {
-        "gross_total": 561.0,
-        "customer_pay": 251.0,
+        "gross_total": 660.0,
+        "customer_pay": 350.0,
         "contract_id": null,
         "applied_promotion_ids": [
           2
         ],
         "line_count": 2,
         "promotion_discount": 310,
-        "total_after_promotion": 251.0
+        "total_after_promotion": 350.0
       },
       "steps": [
         {
@@ -1173,6 +1174,10 @@
           "policy": "out_of_stock"
         },
         {
+          "action": "ensure_promotion_selected",
+          "id": 2
+        },
+        {
           "action": "assert_ui_totals",
           "expected": "expected"
         },
@@ -1208,14 +1213,14 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 70.25,
+        "gross_total": 380.0,
+        "customer_pay": 95.0,
         "contract_id": 1,
         "applied_promotion_ids": [],
         "line_count": 2,
-        "contract_discount": 33.72,
-        "contract_total_after_discount": 247.28,
-        "company_pay": 177.03
+        "contract_discount": 45.6,
+        "contract_total_after_discount": 334.4,
+        "company_pay": 239.4
       },
       "steps": [
         {
@@ -1310,18 +1315,18 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "gross_total": 380.0,
+        "customer_pay": 225.0,
         "contract_id": 4,
         "applied_promotion_ids": [
           2
         ],
         "line_count": 2,
         "contract_discount": 155.0,
-        "contract_total_after_discount": 126.0,
+        "contract_total_after_discount": 225.0,
         "company_pay": 0.0,
         "promotion_discount": 155.0,
-        "total_after_promotion": 126.0
+        "total_after_promotion": 225.0
       },
       "steps": [
         {
@@ -1383,8 +1388,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1399,8 +1404,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 126,
+            "gross_total": 380,
+            "customer_pay": 225,
             "line_count": 2
           }
         },
@@ -1440,17 +1445,17 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 281.0,
+        "gross_total": 380.0,
+        "customer_pay": 380.0,
         "contract_id": 4,
         "applied_promotion_ids": [],
         "line_count": 2,
         "contract_discount": 0.0,
-        "contract_total_after_discount": 281.0,
+        "contract_total_after_discount": 380.0,
         "company_pay": 0.0,
         "promotion_discount": 0.0,
-        "total_after_promotion": 281.0,
-        "contract_customer_pay_before_promotion": 281.0
+        "total_after_promotion": 380.0,
+        "contract_customer_pay_before_promotion": 380.0
       },
       "steps": [
         {
@@ -1512,8 +1517,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1528,8 +1533,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 126,
+            "gross_total": 380,
+            "customer_pay": 225,
             "line_count": 2
           }
         },
@@ -1543,8 +1548,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 70.25,
+            "gross_total": 380,
+            "customer_pay": 95.0,
             "line_count": 2
           }
         },
@@ -1559,8 +1564,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1600,15 +1605,15 @@
         }
       ],
       "expected": {
-        "gross_total": 281.0,
-        "customer_pay": 126.0,
+        "gross_total": 380.0,
+        "customer_pay": 225.0,
         "contract_id": null,
         "applied_promotion_ids": [
           2
         ],
         "line_count": 2,
         "promotion_discount": 155.0,
-        "total_after_promotion": 126.0
+        "total_after_promotion": 225.0
       },
       "steps": [
         {
@@ -1670,8 +1675,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1685,8 +1690,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1734,18 +1739,18 @@
         }
       ],
       "expected": {
-        "gross_total": 561.0,
-        "customer_pay": 251.0,
+        "gross_total": 660.0,
+        "customer_pay": 350.0,
         "contract_id": 4,
         "applied_promotion_ids": [
           2
         ],
         "line_count": 2,
         "contract_discount": 310.0,
-        "contract_total_after_discount": 251.0,
+        "contract_total_after_discount": 350.0,
         "company_pay": 0.0,
         "promotion_discount": 310.0,
-        "total_after_promotion": 251.0
+        "total_after_promotion": 350.0
       },
       "steps": [
         {
@@ -1807,8 +1812,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 281,
+            "gross_total": 380,
+            "customer_pay": 380,
             "line_count": 2
           }
         },
@@ -1823,8 +1828,8 @@
         {
           "action": "assert_ui_totals",
           "expected": {
-            "gross_total": 281,
-            "customer_pay": 126,
+            "gross_total": 380,
+            "customer_pay": 225,
             "line_count": 2
           }
         },

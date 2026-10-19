@@ -27,6 +27,19 @@ TARGETS = {
 }
 
 
+def preparation_database(parser, database):
+    if database is None:
+        if not sys.stdin.isatty():
+            parser.error('Specify --db when running unattended')
+        try:
+            database = input('Database name: ')
+        except EOFError:
+            parser.error('Database name is required')
+    if not database.strip():
+        parser.error('Database name must not be empty')
+    return database
+
+
 def connect(config_path, database):
     config = configparser.RawConfigParser()
     if not config.read(config_path):
@@ -56,12 +69,13 @@ def select_rows(cursor, table, columns, ids, lock=False):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", default="/opt/odoo19/config/replica19.conf")
-    parser.add_argument("--db", default="abdin_replica19")
+    parser.add_argument("--config", default=str(Path(__file__).resolve().parent.parent / "odoo19-POS.conf"))
+    parser.add_argument("--db", help="Database name; prompted when omitted")
     parser.add_argument("--apply", action="store_true", help="Apply changes; default is read-only preview")
     parser.add_argument("--password-env", default="AB_TEST_PASSWORD")
     parser.add_argument("--backup-dir", type=Path, default=Path(__file__).resolve().parent / "backups")
     args = parser.parse_args()
+    args.db = preparation_database(parser, args.db)
     password = None
     if args.apply:
         password = os.environ.get(args.password_env) or getpass.getpass("New Odoo test password: ")
