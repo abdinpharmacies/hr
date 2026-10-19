@@ -17,7 +17,7 @@ class AbdinPurchaseHeader(models.Model):
     doc_date = fields.Date(required=True, default=lambda self: datetime.today(), index=True, tracking=True)
     number_of_products = fields.Integer(compute="compute_totals")
     lines_count = fields.Integer(compute="compute_totals")
-    total_price = fields.Float(digits=(16, 3), compute="compute_totals", string="Total Selling Price")
+    total_price = fields.Float(digits=(16, 3), compute="compute_totals", string="Total Sale Price")
     total_purchase_price = fields.Float(digits=(16, 3), compute="compute_totals")
     total_cost = fields.Float(digits=(16, 3), compute="compute_totals")
     total_tax = fields.Float(digits=(16, 3), compute="compute_totals")
@@ -168,7 +168,7 @@ class AbdinPurchaseHeader(models.Model):
         if self.total_cost > self.total_price:
             raise UserError(
                 _(
-                    "Error: Total cost cannot be equal to or greater than the total selling price of the products."
+                    "Error: Total cost cannot be equal to or greater than the total sale price of the products."
                 )
             )
 

@@ -73,6 +73,5 @@
         <field name="name">Movement Schedule</field>
         <field name="res_model">ab_inventory</field>
         <field name="view_mode">list,form</field>
-        <field name="context">{'search_default_saved': 1}</field>
     </record>
 </odoo>

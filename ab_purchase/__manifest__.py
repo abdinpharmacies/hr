@@ -35,6 +35,7 @@
             'ab_purchase/static/src/dashboard/purchase_dashboard.js',
             'ab_purchase/static/src/dashboard/purchase_dashboard.xml',
             'ab_purchase/static/src/dashboard/purchase_dashboard.scss',
+            'ab_purchase/static/src/entry/reverse_cost.js',
             'ab_purchase/static/src/entry/purchase_entry.js',
             'ab_purchase/static/src/entry/purchase_entry.xml',
             'ab_purchase/static/src/entry/purchase_entry.scss',

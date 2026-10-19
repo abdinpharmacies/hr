@@ -1,5 +1,5 @@
 /** @odoo-module **/
-import { Component, onPatched, onWillStart, useRef, useState } from "@odoo/owl";
+import { Component, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { AutoComplete } from "@web/core/autocomplete/autocomplete";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
@@ -7,6 +7,7 @@ import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { useSetupAction } from "@web/search/action_hook";
 import { formatFloat } from "@web/views/fields/formatters";
+import { reverseLineCost, unitSalePriceFromTotal } from "./reverse_cost";
 
 export class PurchaseDataEntry extends Component {
     static template = "ab_purchase.DataEntry";
@@ -18,16 +19,28 @@ export class PurchaseDataEntry extends Component {
         this.dialog = useService("dialog");
         this.selectSupplier = this.selectSupplier.bind(this);
         this.lookupVersions = {};
+        this.productSearchTimer = null;
         this.key = 0;
-        this.refs = Object.fromEntries(["productSearch", "documentNumber", "quickQty", "quickPurchase", "quickSelling"].map((name) => [name, useRef(name)]));
-        onPatched(() => { if (this.pendingFocus) { const name = this.pendingFocus; this.pendingFocus = null; setTimeout(() => this.focus(name), 0); } });
+        this.refs = Object.fromEntries(["productSearch", "catalogResults", "documentNumber", "quickQty", "quickPurchase", "quickSale", "reverseTotal"].map((name) => [name, useRef(name)]));
+        onPatched(() => {
+            if (this.pendingFocus) { const name = this.pendingFocus; this.pendingFocus = null; setTimeout(() => this.focus(name), 0); }
+            if (this.pendingProductScroll) {
+                this.pendingProductScroll = false;
+                this.refs.catalogResults.el?.querySelector(".is-active")?.scrollIntoView({ block: "nearest" });
+            }
+        });
         this.state = useState({ loading: true, error: false, saving: false, dirty: false, kind: "purchase",
-            config: { stores: [], taxes: [], drafts: [] }, doc: {}, productQuery: "", supplierQuery: "", invoiceQuery: "",
-            products: [], suppliers: [], invoices: [], productIndex: 0, quick: null });
+            config: { stores: [], taxes: [], drafts: [], can_submit: false }, doc: {}, productQuery: "", supplierQuery: "", invoiceQuery: "",
+            products: [], suppliers: [], invoices: [], productIndex: 0, productLoading: false,
+            productSearched: false, quick: null, calculator: null });
         useSetupAction({ beforeLeave: () => this.confirmDiscard(), beforeUnload: (event) => {
             if (this.state.dirty) { event.preventDefault(); event.returnValue = ""; }
         } });
         onWillStart(() => this.start());
+        onWillUnmount(() => {
+            clearTimeout(this.productSearchTimer);
+            this.lookupVersions.product = (this.lookupVersions.product || 0) + 1;
+        });
     }
     async start() {
         this.state.loading = true;
@@ -37,13 +50,15 @@ export class PurchaseDataEntry extends Component {
         finally { this.state.loading = false; }
     }
     reset() {
+        clearTimeout(this.productSearchTimer);
         this.state.doc = { id: false, store_id: this.state.doc.store_id || this.state.config.stores[0]?.id || false,
             supplier_id: false, supplier: "", doc_code: "", doc_date: this.state.config.date, invoice_type: "medical",
             net_invoice: 0, net_tax: 0, total_extra_discount: 0, description: "", purchase_header_id: false, lines: [] };
         this.state.dirty = false;
         this.state.productQuery = this.state.supplierQuery = this.state.invoiceQuery = "";
         this.state.products = []; this.state.suppliers = []; this.state.invoices = [];
-        this.state.quick = null; this.state.productIndex = 0;
+        this.state.quick = null; this.state.calculator = null; this.state.productIndex = 0;
+        this.state.productLoading = false; this.state.productSearched = false;
         for (const kind of ["product", "supplier", "invoice"]) { this.lookupVersions[kind] = (this.lookupVersions[kind] || 0) + 1; }
     }
     async confirmDiscard() {
@@ -95,6 +110,75 @@ export class PurchaseDataEntry extends Component {
         this.state.dirty = true;
     }
     selectedTaxes(line) { return this.state.config.taxes.filter((tax) => line.taxes_ids.includes(tax.id)); }
+    openReverseCalculator(line, quick = false) {
+        this.state.calculator = {
+            kind: "cost", key: line.key || 0, quick,
+            total: String(Number(this.lineTotals(line).cost.toFixed(3)) || ""),
+            discounts: [String(line.extra_discount_percentage || 0)],
+        };
+        this.pendingFocus = "reverseTotal";
+    }
+    openSaleCalculator(line, quick = false) {
+        this.state.calculator = {
+            kind: "sale", key: line.key || 0, quick,
+            total: String(Number((Number(line.price || 0) * Number(line.qty || 0)).toFixed(3)) || ""),
+        };
+        this.pendingFocus = "reverseTotal";
+    }
+    calculatorLine() {
+        const calculator = this.state.calculator;
+        if (!calculator) { return null; }
+        return calculator.quick ? this.state.quick : this.state.doc.lines.find((line) => line.key === calculator.key);
+    }
+    get calculatorPreview() {
+        const calculator = this.state.calculator;
+        const line = this.calculatorLine();
+        if (!calculator || calculator.kind !== "cost" || !line || !calculator.total.trim()
+            || calculator.discounts.some((discount) => !discount.trim())) { return null; }
+        try {
+            return reverseLineCost({
+                total: Number(calculator.total), qty: Number(line.qty), bonus: Number(line.bonus),
+                discounts: calculator.discounts.map(Number), taxes: this.selectedTaxes(line),
+            });
+        } catch { return null; }
+    }
+    get saleCalculatorPreview() {
+        const calculator = this.state.calculator;
+        const line = this.calculatorLine();
+        if (!calculator || calculator.kind !== "sale" || !line || !calculator.total.trim()) { return null; }
+        try { return unitSalePriceFromTotal(Number(calculator.total), Number(line.qty)); }
+        catch { return null; }
+    }
+    setCalculatorTotal(event) { this.state.calculator.total = event.target.value; }
+    setCalculatorDiscount(index, event) { this.state.calculator.discounts[index] = event.target.value; }
+    addCalculatorDiscount() { this.state.calculator.discounts.push("0"); }
+    removeCalculatorDiscount(index) { this.state.calculator.discounts.splice(index, 1); }
+    closeReverseCalculator() { this.state.calculator = null; }
+    calculatorKeydown(event) {
+        if (event.key === "Escape") { event.preventDefault(); this.closeReverseCalculator(); }
+        else if (event.key === "Enter" && event.target.tagName === "INPUT") {
+            event.preventDefault();
+            if (this.state.calculator.kind === "sale") { this.applySalePrice(); }
+            else { this.applyReverseCost(); }
+        }
+    }
+    applyReverseCost() {
+        const line = this.calculatorLine();
+        const preview = this.calculatorPreview;
+        if (!line || !preview) { return; }
+        line.purchase_price = preview.purchasePrice;
+        line.extra_discount_percentage = preview.effectiveDiscount;
+        this.state.dirty = true;
+        this.closeReverseCalculator();
+    }
+    applySalePrice() {
+        const line = this.calculatorLine();
+        const preview = this.saleCalculatorPreview;
+        if (!line || !preview) { return; }
+        line.price = preview.salePrice;
+        this.state.dirty = true;
+        this.closeReverseCalculator();
+    }
     async lookup(kind, event) {
         const query = event.target.value;
         this.state[`${kind}Query`] = query;
@@ -105,6 +189,30 @@ export class PurchaseDataEntry extends Component {
             const rows = await this.orm.call("ab_purchase_header", "entry_lookup", [kind, query, this.state.doc.store_id]);
             if (this.lookupVersions[kind] === version) { this.state[`${kind}s`] = rows; if (kind === "product") { this.state.productIndex = 0; } }
         } catch (error) { this.showError(error); }
+    }
+    searchProducts(event) {
+        const query = event.target.value;
+        this.state.productQuery = query;
+        this.state.products = [];
+        this.state.productIndex = 0;
+        this.state.productSearched = false;
+        clearTimeout(this.productSearchTimer);
+        const version = (this.lookupVersions.product || 0) + 1;
+        this.lookupVersions.product = version;
+        if (!query.trim()) { this.state.productLoading = false; return; }
+        this.state.productLoading = true;
+        this.productSearchTimer = setTimeout(async () => {
+            try {
+                const rows = await this.orm.call("ab_purchase_header", "entry_lookup", ["product", query, this.state.doc.store_id]);
+                if (this.lookupVersions.product !== version) { return; }
+                this.state.products = rows;
+                this.state.productSearched = true;
+            } catch (error) {
+                if (this.lookupVersions.product === version) { this.showError(error); }
+            } finally {
+                if (this.lookupVersions.product === version) { this.state.productLoading = false; }
+            }
+        }, 150);
     }
     selectSupplier(supplier) {
         this.state.doc.supplier_id = supplier.id; this.state.doc.supplier = supplier.name;
@@ -141,6 +249,8 @@ export class PurchaseDataEntry extends Component {
             units: product.units, uom_id: product.uom_id, qty: 1, bonus: 0, price: product.price,
             purchase_price: product.purchase_price, extra_discount_percentage: 0, taxes_ids: [], exp_date: this.state.config.expiry };
         this.state.productQuery = ""; this.state.products = []; this.state.dirty = true;
+        this.state.productLoading = false; this.state.productSearched = false;
+        clearTimeout(this.productSearchTimer);
         this.lookupVersions.product = (this.lookupVersions.product || 0) + 1;
         this.focus("quickQty");
     }
@@ -171,7 +281,7 @@ export class PurchaseDataEntry extends Component {
         const row = event.target.closest("tr");
         const field = event.target.getAttribute("aria-label");
         const next = this.state.kind === "return" ? { Quantity: "Bonus" }
-            : { Quantity: "Purchase price", "Purchase price": "Selling price", "Selling price": "Bonus" };
+            : { Quantity: "Sale price", "Sale price": "Purchase price", "Purchase price": "Bonus" };
         const target = !event.ctrlKey && next[field] ? row.querySelector(`input[aria-label="${next[field]}"]`)
             : row.nextElementSibling?.querySelector('input[aria-label="Quantity"]');
         if (target) { target.focus(); target.select(); }
@@ -181,6 +291,7 @@ export class PurchaseDataEntry extends Component {
         if (["ArrowDown", "ArrowUp"].includes(event.key) && this.state.products.length) {
             event.preventDefault();
             this.state.productIndex = (this.state.productIndex + (event.key === "ArrowDown" ? 1 : -1) + this.state.products.length) % this.state.products.length;
+            this.pendingProductScroll = true;
         } else if (event.key === "Enter") {
             event.preventDefault();
             if (this.state.products.length) { this.chooseProduct(this.state.products[this.state.productIndex] || this.state.products[0]); }
@@ -214,7 +325,33 @@ export class PurchaseDataEntry extends Component {
             { cost: this.state.kind === "purchase" ? -Number(this.state.doc.total_extra_discount || 0) : 0, tax: 0, qty: 0 });
     }
     money(value) { return formatFloat(value || 0, { digits: [16, 3] }); }
-    async save(next = false) {
+    async submit() {
+        if (this.state.saving || !this.state.config.can_submit) { return; }
+        if (!this.commitProduct() || !this.state.doc.lines.length) { return; }
+        if (this.state.kind === "return") {
+            const confirmed = await new Promise((resolve) => this.dialog.add(ConfirmationDialog, {
+                title: _t("Post supplier return"),
+                body: _t("Post this return and deduct its quantity from stock?"),
+                confirmLabel: _t("Post return"),
+                confirm: () => resolve(true), cancel: () => resolve(false),
+            }, { onClose: () => resolve(false) }));
+            if (!confirmed) { return; }
+        }
+        this.state.saving = true;
+        try {
+            const kind = this.state.kind;
+            const doc = await this.orm.call("ab_purchase_header", "entry_save", [kind, JSON.parse(JSON.stringify(this.state.doc))]);
+            this.setDocument(doc);
+            const model = kind === "purchase" ? "ab_purchase_header" : "ab_purchase_notice_header";
+            await this.orm.call(model, "btn_submit_inventory", [[doc.id]]);
+            this.notification.add(kind === "purchase" ? _t("Purchase invoice submitted for inventory review.")
+                : _t("Supplier return posted to inventory."), { type: "success" });
+            this.reset();
+            this.state.config = await this.orm.call("ab_purchase_header", "entry_bootstrap", []);
+        } catch (error) { this.showError(error); }
+        finally { this.state.saving = false; }
+    }
+    async save() {
         if (this.state.saving) { return; }
         if (!this.commitProduct()) { return; }
         if (this.state.kind === "purchase" && !this.state.doc.supplier_id) {
@@ -226,7 +363,6 @@ export class PurchaseDataEntry extends Component {
             this.setDocument(doc);
             this.notification.add(_t("Draft saved. Stock is unchanged."), { type: "success" });
             this.state.config = await this.orm.call("ab_purchase_header", "entry_bootstrap", []);
-            if (next) { this.reset(); }
         } catch (error) { this.showError(error); }
         finally { this.state.saving = false; }
     }

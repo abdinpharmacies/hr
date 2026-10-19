@@ -5,6 +5,24 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Search results"
+msgstr "نتائج البحث"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Searching products..."
+msgstr "جارٍ البحث عن المنتجات..."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "No products found."
+msgstr "لم يتم العثور على منتجات."
+
+#. module: ab_purchase
 #: code:addons/ab_purchase/models/ab_purchase_header.py:0
 msgid "Only draft purchase invoices can be deleted."
 msgstr "لا يمكن حذف فواتير الشراء إلا إذا كانت مسودات."
@@ -1061,3 +1079,234 @@ msgstr "حدد الضرائب"
 #: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
 msgid "No purchase taxes available"
 msgstr "لا توجد ضرائب مشتريات متاحة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Reverse cost"
+msgstr "الحساب العكسي للتكلفة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Reverse cost calculator"
+msgstr "حاسبة التكلفة العكسية"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter the line total including tax, before the invoice discount. Discounts apply in sequence."
+msgstr "أدخل إجمالي السطر شاملاً الضريبة وقبل خصم الفاتورة. تُطبّق الخصومات بالتتابع."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Line total cost"
+msgstr "إجمالي تكلفة السطر"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Discounts"
+msgstr "الخصومات"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Add discount"
+msgstr "إضافة خصم"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Discount"
+msgstr "خصم"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Remove discount"
+msgstr "إزالة الخصم"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Unit purchase price"
+msgstr "سعر شراء الوحدة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Unit cost including tax"
+msgstr "تكلفة الوحدة شاملة الضريبة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Effective discount"
+msgstr "الخصم الفعلي"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Calculated line total"
+msgstr "إجمالي السطر المحسوب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter a positive line total and paid quantity. Each discount must be below 100%."
+msgstr "أدخل إجمالي سطر موجبًا وكمية مدفوعة. يجب أن يكون كل خصم أقل من 100٪."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Apply unit price"
+msgstr "تطبيق سعر الوحدة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Submit invoice"
+msgstr "إرسال الفاتورة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Post return"
+msgstr "ترحيل المرتجع"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Post supplier return"
+msgstr "ترحيل مرتجع المورد"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Post this return and deduct its quantity from stock?"
+msgstr "هل تريد ترحيل هذا المرتجع وخصم كميته من المخزون؟"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Purchase invoice submitted for inventory review."
+msgstr "تم إرسال فاتورة الشراء لمراجعة المخزون."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.js:0
+msgid "Supplier return posted to inventory."
+msgstr "تم ترحيل مرتجع المورد إلى المخزون."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Difference after rounding"
+msgstr "الفرق بعد التقريب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Manager only"
+msgstr "للمدير فقط"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Sale price"
+msgstr "سعر البيع"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Entry sale price"
+msgstr "سعر البيع للإدخال"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter: quantity → purchase price → sale price → add. Ctrl+Enter: add with current values."
+msgstr "Enter: الكمية → سعر الشراء → سعر البيع → إضافة. Ctrl+Enter: إضافة بالقيم الحالية."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Cost calculator"
+msgstr "حاسبة التكلفة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Sale price calculator"
+msgstr "حاسبة سعر البيع"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter the total sale amount for the paid quantity. Bonus units are excluded."
+msgstr "أدخل إجمالي مبلغ البيع للكمية المدفوعة. لا تشمل الكمية المجانية."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Line sale total"
+msgstr "إجمالي بيع البند"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Unit sale price"
+msgstr "سعر بيع الوحدة"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Calculated line sale total"
+msgstr "إجمالي بيع البند المحسوب"
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter a positive sale total and paid quantity."
+msgstr "أدخل إجمالي بيع وكمية مدفوعة أكبر من الصفر."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Apply sale price"
+msgstr "تطبيق سعر البيع"
+
+#. module: ab_purchase
+#: model:ir.model.fields,field_description:ab_purchase.field_ab_purchase_header__total_price
+msgid "Total Sale Price"
+msgstr "إجمالي سعر البيع"
+
+#. module: ab_purchase
+#: model_terms:ir.ui.view,arch_db:ab_purchase.ab_purchase_header_view_form
+msgid "∑ Sale Price:"
+msgstr "∑ سعر البيع:"
+
+#. module: ab_purchase
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+msgid "Error: Total cost cannot be equal to or greater than the total sale price of the products."
+msgstr "خطأ: لا يمكن أن تكون التكلفة الإجمالية مساوية لإجمالي سعر بيع المنتجات أو أكبر منه."
+
+#. module: ab_purchase
+#. odoo-javascript
+#: code:addons/ab_purchase/static/src/entry/purchase_entry.xml:0
+msgid "Enter: quantity → sale price → purchase price → add. Ctrl+Enter: add with current values."
+msgstr "Enter: الكمية → سعر البيع → سعر الشراء → إضافة. Ctrl+Enter: إضافة بالقيم الحالية."

@@ -28,7 +28,8 @@ class PurchaseEntry(models.Model):
                        & fields.Domain('store_id', 'in', stores.ids), order='write_date desc', limit=20)
             drafts.extend({'id': rec.id, 'kind': kind, 'code': rec.doc_code,
                            'supplier': rec.supplier_id.display_name, 'store': rec.store_id.display_name} for rec in records)
-        return {'stores': [{'id': rec.id, 'name': rec.display_name} for rec in stores],
+        return {'can_submit': manager,
+                'stores': [{'id': rec.id, 'name': rec.display_name} for rec in stores],
                 'expiry': str(self.env['ab_product_source'].default_get(['exp_date']).get('exp_date') or ''),
                 'taxes': self.env['ab_taxes'].search_read([('status', 'in', ['purchase', 'all'])],
                     ['name', 'percentage', 'apply_on_total']), 'drafts': drafts, 'date': str(fields.Date.context_today(self))}

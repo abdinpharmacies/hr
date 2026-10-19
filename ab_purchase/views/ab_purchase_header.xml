@@ -19,7 +19,7 @@
                             <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar"
                                     width="300px">
                                 <div class="o_field_widget o_stat_info mr4">
-                                    <span class="o_stat_text">∑ Selling Price:</span>
+                                    <span class="o_stat_text">∑ Sale Price:</span>
                                     <span class="o_stat_text">∑ Purchase Price:</span>
                                 </div>
                                 <div class="o_field_widget o_stat_info">
