@@ -1,5 +1,15 @@
 # Purchase accounting review pilot
 
+## Current cumulative-inventory integration — 2026-10-19
+
+The adapter now depends on `ab_stock_integration` for store company ownership and
+source snapshot helpers. It reads the current source unit factors and tax values
+at capture time and freezes them in the review log. It does not replace the
+current purchase or tax calculations, or reconstruct historical frozen source
+values. Current purchase notices are physical supplier returns; removed
+financial-notice fields are no longer required. Finalization shares the stock
+posting lock with opening receipts and cashier operations.
+
 ## Current status — 2026-10-18
 
 The development database `rip_bconnect` now has active **Review Logs Only**

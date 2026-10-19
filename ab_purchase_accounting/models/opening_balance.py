@@ -51,6 +51,7 @@ class PurchaseObHeaderAccounting(models.Model):
         if self.status == 'saved':
             return super().btn_submit_inventory()
         with self.env.cr.savepoint():
+            self.store_id._lock_stock_scope()
             result = super().btn_submit_inventory()
             self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
             if self.status == 'saved' and self.purpose == 'non_purchase_receipt':

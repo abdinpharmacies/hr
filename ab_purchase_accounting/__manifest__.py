@@ -7,6 +7,7 @@
     'developer': 'Alhassan Hossny',
     'application': False,
     'depends': [
+        'ab_stock_integration',
         'base',
         'mail',
         'ab_purchase',

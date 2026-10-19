@@ -1,6 +1,24 @@
+Current changes before commit:
+
+- Depend on the shared stock integration for company ownership and current source snapshots.
+- Serialize receipt/return finalization with cashier stock posting while preserving existing purchase and tax calculations.
+- Treat the current purchase-notice workflow as physical supplier returns without requiring the removed notice-effect field.
+- Document capture-time snapshot semantics; keep existing review/journal configuration behavior.
+
+Validation: 59 workflow/security checks and 4 concurrency checks passed; fresh installation, targeted upgrades and Arabic runtime labels verified. Live startup repair passed without changing stock or document states.
+
+Files changed:
+
+- ab_purchase_accounting/REVIEW_MODE.md
+- ab_purchase_accounting/__manifest__.py
+- ab_purchase_accounting/changelog.d
+- ab_purchase_accounting/models/opening_balance.py
+- ab_purchase_accounting/models/purchase.py
+- ab_purchase_accounting/models/review.py
+
 # Module changelog
 
-Current changes before commit:
+3815a24a | Alhassan Hossny | 2026-10-18 | fix(ab_purchase_accounting): use frozen source values in review snapshots
 
 - Document review-only activation for development branches 29 and 140, including the explicitly approved branch 140 purchase setting and restored replication protection.
 - Link the retained isolated pilot examples, 110-check evidence and outstanding business acceptance decisions.

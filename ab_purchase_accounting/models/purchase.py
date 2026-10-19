@@ -51,6 +51,7 @@ class PurchaseHeader(models.Model):
         if self.status == 'saved':
             return super().btn_save_inventory()
         with self.env.cr.savepoint():
+            self.store_id._lock_stock_scope()
             result = super().btn_save_inventory()
             self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
             if self.status == 'saved':
@@ -246,6 +247,7 @@ class PurchaseNoticeHeader(models.Model):
         if self.status == 'saved':
             return super().btn_submit_inventory()
         with self.env.cr.savepoint():
+            self.store_id._lock_stock_scope()
             result = super().btn_submit_inventory()
             self.invalidate_recordset(['status', 'purchase_accounting_journal_id'])
             if self.status == 'saved':
@@ -258,7 +260,7 @@ class PurchaseNoticeHeader(models.Model):
             return self.purchase_accounting_journal_id
         if self.env['ab_purchase_accounting_review']._capture_if_enabled(self):
             return self.env['ab_accounting_je_header']
-        notice_effect = self.notice_effect or 'physical'
+        notice_effect = 'physical'
         if notice_effect == 'physical' and self.notice_type != 'credit_notice':
             return self.env['ab_accounting_je_header']
 

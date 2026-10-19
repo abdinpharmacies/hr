@@ -141,9 +141,7 @@ class PurchaseAccountingReview(models.Model):
         tax = _money((document.net_tax or document.total_tax) if is_purchase
                      else document.total_tax if is_other else document.total_taxes_value)
         inventory = total if is_other else _money(total - tax)
-        event = 'receipt' if is_purchase else 'other_receipt' if is_other else (
-            'financial_credit' if document.notice_type == 'credit_notice' else 'financial_debit'
-        ) if document.notice_effect == 'financial' else 'return'
+        event = 'receipt' if is_purchase else 'other_receipt' if is_other else 'return'
         sign = -1 if event in {'return', 'financial_credit'} else 1
         offset = config.supplier_account_id
         if is_other:
