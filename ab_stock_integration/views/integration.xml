@@ -1,0 +1,14 @@
+<odoo>
+    <record id="product_stock_unit_mapping" model="ir.ui.view">
+        <field name="name">ab_product.stock.unit.mapping</field>
+        <field name="model">ab_product</field>
+        <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='uom_id']" position="after">
+                <field name="stock_sales_unit_id" groups="ab_inventory.group_inventory_manager,base.group_system"/>
+                <field name="stock_sales_reference_unit_id" groups="ab_inventory.group_inventory_manager,base.group_system"/>
+                <field name="stock_units_per_reference_unit" invisible="not stock_sales_reference_unit_id" groups="ab_inventory.group_inventory_manager,base.group_system"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
