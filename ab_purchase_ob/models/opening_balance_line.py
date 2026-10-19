@@ -14,6 +14,7 @@ class Opening_Balance_Details(models.Model):
         'ab_product_source', required=True, delegate=True, ondelete='cascade')
     header_id = fields.Many2one(
         'ab_purchase_ob_header', required=True, ondelete='cascade')
+    company_id = fields.Many2one(related='header_id.company_id', store=True, index=True)
     correction_qty = fields.Float(string='Correction Quantity')
     receipt_qty = fields.Float(compute='_compute_receipt_qty')
 

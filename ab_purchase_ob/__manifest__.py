@@ -7,6 +7,7 @@
     'developer': 'emadco88',
     'application': True,
     'depends': [
+        'ab_stock_integration',
         'base',
         'mail',
         'ab_product_source',

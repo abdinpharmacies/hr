@@ -1,5 +1,23 @@
 Current changes before commit:
 
+- Fix opening-run and receipt views failing in XML development mode by preserving leading architecture whitespace.
+- Depend on the shared stock integration to restore missing store/company and source helper contracts.
+- Scope delegated opening lines by their header company and serialize opening stock posting.
+- Grant inventory managers the source and tax-read permissions required for opening entry without purchase roles.
+
+Validation: 59 workflow/security checks and 4 concurrency checks passed; fresh installation, targeted upgrades and Arabic runtime labels verified. Live startup repair passed without changing stock or document states. View rendering passes 48 English/Arabic checks with --dev=xml; no UI strings or business logic changed by this XML repair.
+
+Files changed:
+
+- ab_purchase_ob/__manifest__.py
+- ab_purchase_ob/changelog.d
+- ab_purchase_ob/models/opening_balance_header.py
+- ab_purchase_ob/models/opening_balance_line.py
+- ab_purchase_ob/security/ir.model.access.csv
+- ab_purchase_ob/views/opening_run.xml
+
+9ffb7f85 | Alhassan Hossny | 2026-10-18 | feat(ab_purchase_ob): add independent opening runs and receipt corrections
+
 - Install opening-stock operations independently of purchasing and accounting modules.
 - Add one authorized opening run per branch with cutoff, explicit receipt reasons and irreversible closure after documents are received.
 - Post other receipts and bounded corrections through the inventory engine; retain the original source and prevent cumulative over-correction.

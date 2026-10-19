@@ -69,6 +69,7 @@ class OpeningBalanceHeader(models.Model):
             raise AccessError(_("Only inventory or purchase managers can save receipt documents into stock."))
         if self.status == 'saved':
             return True
+        self.store_id._lock_stock_scope()
         self._check_receipt_type()
         if not (self.receipt_reason or '').strip():
             raise ValidationError(_('Provide a receipt reason before posting stock.'))
