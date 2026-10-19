@@ -1,0 +1,6 @@
+<odoo>
+    <record id="config_company" model="ir.rule"><field name="name">Cash accounting configuration company</field><field name="model_id" ref="model_ab_accounting_cash_config"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+    <record id="config_branch" model="ir.rule"><field name="name">Cash accounting configuration branch</field><field name="model_id" ref="model_ab_accounting_cash_config"/><field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_accounting.group_ab_accounting_manager') else [('store_id', 'not in', user.store_ids.ids)]</field></record>
+    <record id="entry_company" model="ir.rule"><field name="name">Cash accounting entry company</field><field name="model_id" ref="model_ab_accounting_cash_entry"/><field name="domain_force">[('company_id', 'in', company_ids)]</field></record>
+    <record id="entry_branch" model="ir.rule"><field name="name">Cash accounting entry branch</field><field name="model_id" ref="model_ab_accounting_cash_entry"/><field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_accounting.group_ab_accounting_manager') else [('store_id', 'not in', user.store_ids.ids)]</field></record>
+</odoo>
