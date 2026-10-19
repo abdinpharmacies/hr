@@ -1,5 +1,6 @@
 // Runs UI, backend quote, and explicitly requested submission checks.
 import { submitOnce, assertSavedInvoice } from './submission.mjs';
+import { localOdooUrl } from './connection.mjs';
 import { readDraftWorkspace } from './draft_workspace.mjs';
 import { createRequire } from 'node:module';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -7,8 +8,7 @@ import { join } from 'node:path';
 const require = createRequire('/opt/playwright/package.json');
 const { chromium, expect } = require('@playwright/test');
 const cfg = JSON.parse(readFileSync(0, 'utf8'));
-const base = new URL(cfg.url);
-if (!['localhost', '127.0.0.1', '[::1]'].includes(base.hostname)) throw new Error('Only local development URLs are supported');
+const base = localOdooUrl(cfg.url);
 const suite = cfg.suite;
 const report = { suite_id: suite.suite_id, mode: suite.cases.some(c => c.steps.some(s => s.action === 'submit')) ? 'submit' : 'preview', database: cfg.database,
     submitted_invoices: [], cases: [], errors: [], authentication: { odoo_login_count: 0, employee_login_count: 0 } };
@@ -103,6 +103,7 @@ try {
         tasks.add(work); work.finally(() => tasks.delete(work));
     });
     try {
+        report.setup_stage = 'login_odoo';
         await page.goto(`${base.origin}/web/login?db=${encodeURIComponent(cfg.database)}`);
         await page.locator('[name=login]').fill(suite.credentials.login);
         await page.locator('[name=password]').fill(cfg.password);
@@ -111,9 +112,12 @@ try {
         const sessionResponse = await context.request.post(`${base.origin}/web/session/get_session_info`, { data: { jsonrpc: '2.0', method: 'call', params: {}, id: 1 } });
         const session = (await sessionResponse.json()).result;
         if (session?.uid !== suite.records.user_id || session?.db !== cfg.database) throw new Error('Wrong authenticated user/database');
+        report.setup_stage = 'open_pos';
         await page.goto(`${base.origin}/odoo/action-${cfg.metadata.action_id}`);
         await page.locator('.ab_pos_hr_overlay').waitFor({ timeout: 45000 });
+        report.setup_stage = 'select_employee';
         await m2o('Select employee...', cfg.metadata.employee.name);
+        report.setup_stage = 'employee_pin_login';
         await page.getByPlaceholder('Enter PIN', { exact: true }).fill(cfg.pin);
         await page.locator('.ab_pos_hr_overlay button.btn-primary').click();
         await page.locator('.ab_pos_hr_overlay').waitFor({ state: 'hidden', timeout: 30000 });
@@ -129,7 +133,7 @@ try {
         report.setup_error = blockedReason;
     }
     for (const test of suite.cases) {
-        const result = { id: test.id, status: 'RUNNING', last_action: 'new_empty_bill', checkpoints: [], errors: [], submission: 'NOT_EXECUTED' };
+        const result = { id: test.id, status: 'RUNNING', last_action: report.setup_error ? report.setup_stage : 'new_empty_bill', checkpoints: [], errors: [], submission: 'NOT_EXECUTED' };
         activeResult = result;
         let caseDraftId = null;
         const shortages = {};

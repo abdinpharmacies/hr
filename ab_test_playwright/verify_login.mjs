@@ -1,13 +1,11 @@
 // Credentials are supplied as JSON on stdin, never stored in this file.
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { localOdooUrl } from './connection.mjs';
 const require = createRequire('/opt/playwright/package.json');
 const { chromium } = require('playwright');
 const { url, database, login, password, expectedUserId } = JSON.parse(readFileSync(0, 'utf8'));
-const target = new URL(url);
-if (!['127.0.0.1', 'localhost', '[::1]'].includes(target.hostname)) {
-    throw new Error('Login verification is restricted to the local development server');
-}
+const target = localOdooUrl(url);
 const browser = await chromium.launch({ headless: true });
 try {
     const context = await browser.newContext();

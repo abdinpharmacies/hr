@@ -2,6 +2,23 @@
 
 Standalone tooling, not an Odoo addon. It does not import or install `ab_sales_test`.
 
+## Browser prerequisites
+
+The browser scripts load `@playwright/test` and `playwright` from `/opt/playwright`.
+Install the shared dependency and its Chromium browser once before running them:
+
+```bash
+npm install --prefix /opt/playwright --save-exact @playwright/test@1.64.1
+PLAYWRIGHT_BROWSERS_PATH=/opt/playwright/browsers /opt/playwright/node_modules/.bin/playwright install chromium
+```
+
+The account running these commands must have write access to `/opt/playwright`.
+The sales launcher sets `PLAYWRIGHT_BROWSERS_PATH` automatically. Headed runs
+require an active desktop display. Package installation alone does not install
+the Chromium binaries. See the [Playwright browser setup documentation](https://playwright.dev/docs/browsers).
+
+## Test record preparation
+
 Preview the fixed development record selection:
 
 ```bash
@@ -14,7 +31,11 @@ Apply the labels and enter the new Odoo password at the hidden prompt:
 /opt/odoo19/venv19/bin/python ab_test_playwright/prepare_test_data.py --apply
 ```
 
-Defaults: `--config /opt/odoo19/config/replica19.conf --db abdin_replica19`.
+Both preparation scripts default to `odoo19-POS.conf` in the project root and
+ask for the database name when `--db` is omitted. For unattended execution, pass
+`--db 'abdin_replica(POS)'` explicitly. Use `--config` for another configuration.
+They connect directly to PostgreSQL and do not require an Odoo URL. Without
+`--apply`, both scripts remain read-only previews.
 For automation, supply the password through `AB_TEST_PASSWORD` (or the variable
 named by `--password-env`), never in a committed file.
 
@@ -73,10 +94,42 @@ restrictions are removed for testing. Original values are backed up.
 /opt/odoo19/venv19/bin/python ab_test_playwright/run_sales_ui.py --headless
 ```
 
-For unattended runs provide `AB_TEST_PASSWORD` and `AB_TEST_PIN` through the
-environment. Config/database defaults match the preparation script; `--url`
-defaults to `http://127.0.0.1:4050`. Use `--suite` for a compatible JSON file and
-repeat `--case` to select several scenarios. Unknown actions fail explicitly.
+The sales launcher asks for the Odoo URL and database name on each interactive
+run unless supplied with `--url` and `--db`. Neither value has a default or is saved
+to the scenario JSON. For example, enter `http://127.0.0.11:4093` and
+`abdin_replica(POS)` at the prompts. Database names are preserved exactly.
+
+To supply the connection settings explicitly:
+
+```bash
+/opt/odoo19/venv19/bin/python ab_test_playwright/run_sales_ui.py \
+  --url http://127.0.0.11:4093 \
+  --db 'abdin_replica(POS)' \
+  --headed --case CASH
+```
+
+The sales launcher's `--config` defaults to `odoo19-POS.conf` in the project root,
+resolved independently of the current directory. Use `--config` to select another
+Odoo configuration containing the PostgreSQL connection settings. The preparation
+scripts use the same configuration default and also prompt for the database;
+launching tests does not apply fixtures or reset passwords.
+
+Only HTTP/HTTPS localhost or loopback origins are accepted, including `127.0.0.11`
+and `[::1]`. Do not include credentials, a page path, query parameters or a fragment
+in the URL. The browser runner and login verifier share the local-address check.
+
+For unattended runs, supply `--url`, `--db`, `--headed` or `--headless`, and
+`AB_TEST_PASSWORD` and `AB_TEST_PIN` through the environment. Missing connection
+arguments fail before authentication or database access. `--help` and
+`--list-actions` do not prompt for connection settings. Existing login identity,
+test records and expected values must still match the selected database.
+The configured employee access profile must have `pos_allow_login` enabled;
+otherwise the launcher stops before browser startup. An authorized POS HR manager
+can review this setting under POS HR → Configuration → Employees. The tooling
+does not enable login or change permissions. Browser setup failures record their
+actual setup stage, such as `select_employee`, instead of `new_empty_bill`.
+Use `--suite` for a compatible JSON file and repeat `--case` to select several
+scenarios. Unknown actions fail explicitly.
 
 The runner logs into Odoo once and enters the employee PIN once per run, keeping
 one browser page and employee session for all selected cases. Each case uses an
@@ -154,28 +207,33 @@ Failures return a nonzero exit status. Credentials are not included in reports.
 
 | Case | Expected customer payment |
 |---|---:|
-| CASH | 281.00 |
-| CONTRACT_25 | 70.25 |
+| CASH | 380.00 |
+| CONTRACT_25 | 95.00 |
 | CONTRACT_0 | 0.00 |
-| CONTRACT_100 | 261.33 |
+| CONTRACT_100 | 353.40 |
 | PROMO_ONLY | 125.00 |
-| PROMO_MIXED | 126.00 |
-| PROMO_THEN_CONTRACT | 281.00 |
-| CONTRACT_THEN_PROMO | 281.00 |
-| CONTRACT_CLEAR_NO_AUTO_PROMO | 281.00 |
-| PROMO_QTY_UPDATE | 251.00 |
-| PROMO_THEN_DISCOUNTED_CONTRACT | 70.25 |
-| CONTRACT_MANUAL_PROMO | 126.00 |
-| CONTRACT_CHANGE_CLEARS_MANUAL_PROMO | 281.00 |
-| CONTRACT_CLEAR_MANUAL_PROMO | 126.00 |
-| CONTRACT_MANUAL_PROMO_QTY_UPDATE | 251.00 |
+| PROMO_MIXED | 225.00 |
+| PROMO_THEN_CONTRACT | 380.00 |
+| CONTRACT_THEN_PROMO | 380.00 |
+| CONTRACT_CLEAR_NO_AUTO_PROMO | 380.00 |
+| PROMO_QTY_UPDATE | 350.00 |
+| PROMO_THEN_DISCOUNTED_CONTRACT | 95.00 |
+| CONTRACT_MANUAL_PROMO | 225.00 |
+| CONTRACT_CHANGE_CLEARS_MANUAL_PROMO | 380.00 |
+| CONTRACT_CLEAR_MANUAL_PROMO | 225.00 |
+| CONTRACT_MANUAL_PROMO_QTY_UPDATE | 350.00 |
 
-Both products are local. Prices are pinned at 1 and 280 and checked before
+Both products are local. Prices are pinned at 100 and 280 and checked before
 testing; price drift is a failure, not a reason to silently change expectations.
+Mixed-product and promotion-quantity cases explicitly select promotion 2 before
+checking totals, so other available promotions do not prevent the intended offer
+from being applied. Contract 2 must be permitted for store 104; preparation does
+not change contract store permissions. If a session locks, remaining cases stay
+blocked rather than automatically entering the PIN again.
 Contract-affected bills require explicit promotion selection. New cases assert no
-selected/applied chip and payment of 281 before clicking, then verify payment of
-126 after the click. Contract changes exercise 4 → 1 → 4 using existing fixtures;
-quantity updates retain the manual selection and produce payment of 251.
+selected/applied chip and payment of 380 before clicking, then verify payment of
+225 after the click. Contract changes exercise 4 → 1 → 4 using existing fixtures;
+quantity updates retain the manual selection and produce payment of 350.
 `CONTRACT_CLEAR_RESTORES_PROMO` was renamed `CONTRACT_CLEAR_NO_AUTO_PROMO`;
 update any saved `--case` commands accordingly.
 
@@ -194,3 +252,7 @@ invoice totals and its 10% promotion are not applicable to this fixed-price suit
 Historical live preview validation covered the original eleven cases only.
 `validation_results.json` records that earlier run, not verification of the expanded
 suite. Rerun the suite with runtime credentials to validate the fifteen cases.
+
+Product 74542 now uses an expected unit price of 100.00. Historical validation
+reports used 1.00 and do not validate the revised expectations. Database prices
+are not modified by this scenario update.
