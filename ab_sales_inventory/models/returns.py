@@ -47,6 +47,14 @@ class NativeReturn(models.Model):
             raise AccessError(_('Native returns cannot be deleted.'))
         return super().unlink()
 
+    def _check_return_store(self):
+        native = self.filtered('native_origin_id')
+        for record in native:
+            record.check_access('read')
+            self.env['ab_sales_backend']._check_store(record.store_id.id)
+        if self - native:
+            return super(NativeReturn, self - native)._check_return_store()
+
     def get_connection(self):
         if self.filtered('native_origin_id') or any(self.env['ab_sales_backend']._is_native(r.store_id.id) for r in self):
             raise AccessError(_('Native returns cannot connect to E-Plus.'))
@@ -140,7 +148,7 @@ class NativeReturn(models.Model):
             for line in rec.line_ids:
                 if line.qty < 0 or not math.isfinite(line.qty):
                     raise ValidationError(_('Native return quantities must be nonnegative.'))
-            super(NativeReturn, rec).write({'status': 'pending'})
+            super(NativeReturn, rec._return_records()).write({'status': 'pending'})
         if self - native:
             super(NativeReturn, self - native).action_set_pending()
         return True
@@ -163,7 +171,7 @@ class NativeReturn(models.Model):
                 previous = self.env['ab_sales_return_line'].search([
                     ('native_origin_line_id', '=', original.id), ('header_id.native_posted', '=', True)])
                 remaining = original.native_stock_qty - sum(previous.mapped('native_stock_qty'))
-                super(NativeReturnLine, line.sudo()).write({
+                super(NativeReturnLine, line.sudo().with_context(self._return_records().env.context)).write({
                     'max_returnable_qty': remaining / (original.native_unit_factor * line.uom_id.factor / original.uom_id.factor),
                     'max_returnable_source': remaining / original.native_unit_factor,
                 })
@@ -178,11 +186,9 @@ class NativeReturn(models.Model):
                     if qty + sum(previous.mapped('native_stock_qty')) > original.native_stock_qty:
                         raise ValidationError(_('The return exceeds the original sold quantity.'))
                 else:
-                    self.env['ab_inventory_process'].return_allocations(
-                        self.store_id.id, 'return:%s:line:%s' % (self.id, line.id), original.native_operation_key,
-                        qty, line._name, line.id)
-                super(NativeReturnLine, line.sudo()).write({'native_stock_qty': qty})
-            super(NativeReturn, self.sudo()).write({'native_posted': True, 'native_refund': self._native_refund_amount()})
+                    self.env['ab_sales_stock_allocation']._post_return(line, qty)
+                super(NativeReturnLine, line.sudo().with_context(self._return_records().env.context)).write({'native_stock_qty': qty})
+            super(NativeReturn, self.sudo()._return_records()).write({'native_posted': True, 'native_refund': self._native_refund_amount()})
         return True
 
     def action_push_to_eplus_return(self):
@@ -196,7 +202,7 @@ class NativeReturn(models.Model):
 
     def _native_settled(self):
         self.ensure_one()
-        super(NativeReturn, self.sudo()).write({'status': 'saved'})
+        super(NativeReturn, self.sudo()._return_records()).write({'status': 'saved'})
 
 
 class NativeReturnLine(models.Model):

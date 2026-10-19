@@ -5,7 +5,7 @@
     'category': 'AbdinSupplyChain',
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
-    'depends': ['ab_sales_cashier', 'ab_inventory', 'ab_hr'],
+    'depends': ['ab_stock_integration', 'ab_sales_cashier', 'ab_inventory', 'ab_hr'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',

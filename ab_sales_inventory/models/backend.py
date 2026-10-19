@@ -54,7 +54,7 @@ class NativeSalesBackend(models.Model):
                 raise AccessError(_('This return requires an employee authorized to approve returns.'))
         return session
 
-    def _check_configuration(self, store_ids):
+    def _check_configuration(self, store_ids, activating_native=False):
         if not self.env.user.has_group('base.group_system'):
             raise AccessError(_('Only system administrators can change the sales backend.'))
         stores = self.env['ab_store'].browse(store_ids).exists()
@@ -62,20 +62,26 @@ class NativeSalesBackend(models.Model):
             raise AccessError(_('The sales backend must belong to an allowed company.'))
         stores._lock_stock_scope()
         for model in ('ab_sales_header', 'ab_sales_return_header'):
-            if self.env[model].sudo().search_count([('store_id', 'in', stores.ids),
-                                                   ('status', 'in', ['prepending', 'pending'])]):
+            domain = fields.Domain('store_id', 'in', stores.ids) & fields.Domain('status', 'in', ['prepending', 'pending'])
+            if activating_native:
+                domain &= fields.Domain('native_backend', '=', True) if model == 'ab_sales_header' else fields.Domain('native_origin_id', '!=', False)
+            if self.env[model].sudo().search_count(domain):
                 raise ValidationError(_('Complete open sales and returns before changing the backend.'))
 
     @api.model_create_multi
     def create(self, vals_list):
-        self._check_configuration([v.get('store_id') for v in vals_list])
+        for backend in {'native', 'legacy'}:
+            store_ids = [v.get('store_id') for v in vals_list if v.get('backend', 'legacy') == backend]
+            if store_ids:
+                self._check_configuration(store_ids, activating_native=backend == 'native')
         return super().create(vals_list)
 
     def write(self, vals):
         if (vals.get('backend') == 'legacy' or 'store_id' in vals) and self.env['ab_sales_header'].sudo().search_count([
                 ('store_id', 'in', self.mapped('store_id').ids), ('native_posted', '=', True)]):
             raise ValidationError(_('A store with posted native sales must keep its native backend for returns.'))
-        self._check_configuration(self.mapped('store_id').ids + ([vals['store_id']] if vals.get('store_id') else []))
+        self._check_configuration(self.mapped('store_id').ids + ([vals['store_id']] if vals.get('store_id') else []),
+                                  activating_native=vals.get('backend') == 'native' and 'store_id' not in vals)
         return super().write(vals)
 
     def unlink(self):
@@ -110,6 +116,10 @@ class NativeSalesPayment(models.Model):
 
     @api.model
     def _settle(self, sale, return_header=False):
+        with self.env.cr.savepoint():
+            return self._settle_transaction(sale, return_header)
+
+    def _settle_transaction(self, sale, return_header=False):
         store = self.env['ab_sales_backend']._check_store(sale.store_id.id, cashier=True)
         self.env['ab_sales_backend']._check_employee_session(store, 'allow_cashier_screen')
         sale.check_access('read')
@@ -123,8 +133,10 @@ class NativeSalesPayment(models.Model):
         existing = self.sudo().search([('operation_key', '=', key)], limit=1)
         if existing:
             return existing.id, False
-        if document.status != 'pending' or not sale.native_posted:
-            raise ValidationError(_('Only posted pending native documents can be settled.'))
+        if document.status != 'pending' or not sale.native_submitted or not sale.native_backend:
+            raise ValidationError(_('Only submitted pending native documents can be settled.'))
+        if not return_header:
+            sale._post_native_stock()
         if return_header and not return_header.native_posted:
             return_header._post_native_return()
         amount = float(return_header.native_refund if return_header else sale.native_totals['total_bill_net'])

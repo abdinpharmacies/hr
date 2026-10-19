@@ -43,7 +43,8 @@
               action="native_cash_balance_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
     <record id="native_cash_count_list" model="ir.ui.view">
         <field name="name">ab_sales_native_cash_close.list</field><field name="model">ab_sales_native_cash_close</field>
-        <field name="arch" type="xml"><list create="0" edit="0" delete="0"><field name="create_date"/><field name="store_id"/>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="create_date"/><field name="store_id"/>
             <field name="cashier_id"/><field name="expected_amount"/><field name="counted_amount"/><field name="difference"/></list></field>
     </record>
     <record id="native_cash_count_action" model="ir.actions.act_window">
@@ -73,6 +74,7 @@
     <record id="native_cash_count_form" model="ir.ui.view">
         <field name="name">ab_sales_cashier_close_wizard.native.inventory</field><field name="model">ab_sales_cashier_close_wizard</field>
         <field name="inherit_id" ref="ab_sales_cashier.ab_sales_cashier_close_wizard_view_form"/>
-        <field name="arch" type="xml"><xpath expr="//field[@name='employee_id']" position="after"><field name="native_backend" invisible="1"/><field name="native_cashier_pin" password="True" invisible="not native_backend"/></xpath></field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='employee_id']" position="after"><field name="native_backend" invisible="1"/><field name="native_cashier_pin" password="True" invisible="not native_backend"/></xpath></field>
     </record>
 </odoo>

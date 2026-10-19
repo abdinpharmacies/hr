@@ -74,4 +74,14 @@
         <field name="model_id" ref="model_ab_sales_native_cash_close"/>
         <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids), ('cashier_id', '=', user.id)]</field>
     </record>
+    <record id="allocation_company" model="ir.rule">
+        <field name="name">Stock allocation company scope</field>
+        <field name="model_id" ref="model_ab_sales_stock_allocation"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="allocation_branch" model="ir.rule">
+        <field name="name">Stock allocation branch scope</field>
+        <field name="model_id" ref="model_ab_sales_stock_allocation"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
 </odoo>

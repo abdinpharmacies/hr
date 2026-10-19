@@ -34,14 +34,14 @@ class NativeCashier(models.TransientModel):
         if self.env['ab_sales_backend']._is_native(store.id):
             self.env['ab_sales_backend']._check_store(store.id, cashier=True)
             return self.env['ab_sales_header'].search([('store_id', '=', store.id),
-                ('native_posted', '=', True), ('status', '=', 'pending')], order='id desc', limit=int(limit))
+                ('native_submitted', '=', True), ('status', '=', 'pending')], order='id desc', limit=int(limit))
         return super()._fetch_pending_sale_headers_from_odoo(store, limit)
 
     @api.model
     def _pending_sales_source_odoo(self, store, limit):
         if self.env['ab_sales_backend']._is_native(store.id):
             headers = self._fetch_pending_sale_headers_from_odoo(store, limit)
-            return [self._pending_sale_header_payload_from_odoo(header) for header in headers], set(headers.ids)
+            return [self._pending_sale_header_payload_from_odoo(header) for header in headers]
         return super()._pending_sales_source_odoo(store, limit)
 
     @api.model
@@ -78,7 +78,7 @@ class NativeCashier(models.TransientModel):
     def _get_cashier_sale_header_from_odoo(self, store, invoice_id, pending_only=False):
         if self.env['ab_sales_backend']._is_native(store.id):
             self.env['ab_sales_backend']._check_store(store.id, cashier=True)
-            domain = [('id', '=', int(invoice_id)), ('store_id', '=', store.id), ('native_posted', '=', True)]
+            domain = [('id', '=', int(invoice_id)), ('store_id', '=', store.id), ('native_submitted', '=', True)]
             if pending_only:
                 domain.append(('status', '=', 'pending'))
             return self.env['ab_sales_header'].search(domain, limit=1)

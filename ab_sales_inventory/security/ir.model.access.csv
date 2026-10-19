@@ -12,3 +12,6 @@ access_ab_sales_native_cash_close_manager,ab_sales_native_cash_close read,model_
 access_ab_sales_native_cash_close_admin,ab_sales_native_cash_close read,model_ab_sales_native_cash_close,base.group_system,1,0,0,0
 access_native_return_ui,Native return screen,ab_sales.model_ab_sales_return_ui_api,group_native_sales_user,1,1,1,1
 access_native_return_ui_admin,Native return screen administrator,ab_sales.model_ab_sales_return_ui_api,base.group_system,1,1,1,1
+
+access_stock_allocation_user,Stock allocation read,model_ab_sales_stock_allocation,group_native_sales_user,1,0,0,0
+access_stock_allocation_admin,Stock allocation administrator,model_ab_sales_stock_allocation,base.group_system,1,0,0,0

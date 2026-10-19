@@ -797,3 +797,137 @@ msgid ""
 msgstr ""
 "لا يمكن تغيير معاملات التحويل أو فئات الوحدات المستخدمة في المبيعات المحلية "
 "المرحّلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "A stock return must reference its posted original bill."
+msgstr "يجب أن يشير مرتجع المخزون إلى فاتورته الأصلية المرحلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Insufficient stock at cashier posting. The bill remains pending."
+msgstr "المخزون غير كافٍ عند الترحيل بالكاشير. تظل الفاتورة قيد الانتظار."
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_inventory
+msgid "Inventory Movement"
+msgstr "حركة مخزون"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Only submitted native bills can post stock at the cashier."
+msgstr "يمكن ترحيل مخزون الفواتير المحلية المقدمة فقط لدى الكاشير."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Only submitted pending native documents can be settled."
+msgstr "يمكن تسوية المستندات المحلية المقدمة وقيد الانتظار فقط."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__original_id
+msgid "Original"
+msgstr "الأصل"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Posted stock allocations cannot be changed."
+msgstr "لا يمكن تعديل تخصيصات المخزون المرحلة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Posted stock allocations cannot be deleted."
+msgstr "لا يمكن حذف تخصيصات المخزون المرحلة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__return_line_id
+msgid "Return Line"
+msgstr "بند المرتجع"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__sale_line_id
+msgid "Sale Line"
+msgstr "بند البيع"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_stock_allocation
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_inventory__model_ref__ab_sales_stock_allocation
+msgid "Sales Stock Allocation"
+msgstr "تخصيص مخزون المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory__model_ref
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_stock_allocation_operation_unique
+msgid "Stock allocation operation keys must be unique."
+msgstr "يجب أن تكون مفاتيح عمليات تخصيص المخزون فريدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock allocations are created only by cashier posting."
+msgstr "تُنشأ تخصيصات المخزون فقط عند الترحيل بالكاشير."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_submitted
+msgid "Submitted to Cashier"
+msgstr "تم التقديم للكاشير"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "The bill already has different stock allocations."
+msgstr "توجد بالفعل تخصيصات مخزون مختلفة لهذه الفاتورة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "The return already has different stock allocations."
+msgstr "توجد بالفعل تخصيصات مخزون مختلفة لهذا المرتجع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "The return exceeds the original stock allocations."
+msgstr "يتجاوز المرتجع تخصيصات المخزون الأصلية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "The stock source has invalid unit or price values."
+msgstr "يحتوي مصدر المخزون على قيم غير صالحة للوحدة أو السعر."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "The stock unit mapping changed after bill submission."
+msgstr "تغير ربط وحدة المخزون بعد تقديم الفاتورة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__unit_cost
+msgid "Unit Cost"
+msgstr "تكلفة الوحدة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__uom_id
+msgid "Uom"
+msgstr "وحدة القياس"

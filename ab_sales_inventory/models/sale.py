@@ -8,6 +8,7 @@ class NativeSale(models.Model):
     _inherit = 'ab_sales_header'
 
     native_backend = fields.Boolean(string='Native Inventory', readonly=True, copy=False, index=True)
+    native_submitted = fields.Boolean(string='Submitted to Cashier', readonly=True, copy=False)
     native_posted = fields.Boolean(string='Native Stock Posted', readonly=True, copy=False)
     native_totals = fields.Json(string='Native Totals Snapshot', readonly=True, copy=False)
 
@@ -15,7 +16,7 @@ class NativeSale(models.Model):
     def create(self, vals_list):
         prepared = []
         for vals in vals_list:
-            if {'native_backend', 'native_posted', 'native_totals'} & vals.keys():
+            if {'native_backend', 'native_submitted', 'native_posted', 'native_totals'} & vals.keys():
                 raise AccessError(_('Native posting fields are managed by the sales workflow.'))
             vals = dict(vals)
             store_id = vals.get('store_id') or self._default_sales_store_id()
@@ -42,19 +43,19 @@ class NativeSale(models.Model):
         return super().create(prepared)
 
     def write(self, vals):
-        if {'native_backend', 'native_posted', 'native_totals'} & vals.keys():
+        if {'native_backend', 'native_submitted', 'native_posted', 'native_totals'} & vals.keys():
             raise AccessError(_('Native posting fields are managed by the sales workflow.'))
         for rec in self.filtered('native_backend'):
             self.env['ab_sales_backend']._check_store(rec.store_id.id)
             rec.lock_for_update(allow_referencing=True)
             rec.invalidate_recordset()
-            if rec.native_posted and all(
+            if rec.native_submitted and all(
                     (rec[key].id if rec._fields[key].type == 'many2one' else rec[key]) == value
                     for key, value in vals.items() if key in rec._fields):
                 continue
-            if rec.native_posted or {'store_id', 'company_id', 'eplus_serial', 'status'} & vals.keys():
+            if rec.native_submitted or {'store_id', 'company_id', 'eplus_serial', 'status'} & vals.keys():
                 raise AccessError(_('Posted native sales are immutable; use a return.'))
-        if self and all(rec.native_posted and all(
+        if self and all(rec.native_submitted and all(
                 (rec[key].id if rec._fields[key].type == 'many2one' else rec[key]) == value
                 for key, value in vals.items() if key in rec._fields) for rec in self):
             self.check_access('read')
@@ -67,7 +68,7 @@ class NativeSale(models.Model):
         return super().unlink()
 
     def get_connection(self):
-        if self.filtered('native_backend'):
+        if self.filtered('native_backend') or any(self.env['ab_sales_backend']._is_native(rec.store_id.id) for rec in self):
             raise AccessError(_('Native sales cannot connect to E-Plus.'))
         return super().get_connection()
 
@@ -93,7 +94,7 @@ class NativeSale(models.Model):
         self.env['ab_sales_backend']._check_employee_session(store, 'allow_pos_screen')
         self.lock_for_update(allow_referencing=True)
         self.invalidate_recordset()
-        if self.native_posted:
+        if self.native_submitted:
             return True
         self.check_access('write')
         if self.status != 'prepending' or not self.line_ids:
@@ -107,37 +108,47 @@ class NativeSale(models.Model):
         if any(not math.isfinite(float(value)) or float(value) < 0 for key, value in totals.items()
                if key in ('total_bill', 'total_bill_after_disc', 'total_bill_net')):
             raise ValidationError(_('Native sale totals must be finite and nonnegative.'))
-        totals['line_context'] = {str(line.id): {'is_service': bool(line.product_id.is_service),
-            'uom_factor': line.uom_id.factor} for line in self.line_ids}
-        engine = self.env['ab_inventory_process']
+        totals['line_context'] = {}
+        for line in self.line_ids:
+            if not line.product_id or line.qty <= 0 or not math.isfinite(line.qty) or not math.isfinite(line.sell_price) or line.sell_price < 0:
+                raise ValidationError(_('Native sale lines require a product, positive quantity and valid price.'))
+            service = bool(line.product_id.is_service)
+            qty = line.qty if service else line.product_id._to_stock_quantity(line.qty, line.uom_id)
+            totals['line_context'][str(line.id)] = {
+                'is_service': service, 'uom_factor': line.uom_id.factor,
+                'stock_qty': qty, 'stock_unit_id': line.product_id.unit_s_id.id,
+            }
+        super(NativeSale, self.sudo()._submission_records()).write({
+            'native_submitted': True, 'native_totals': totals, 'status': 'pending',
+            'push_state': 'success', **self._get_bill_customer_snapshot_vals(),
+        })
+        return True
+
+    def _post_native_stock(self):
+        self.ensure_one()
+        store = self.env['ab_sales_backend']._check_store(self.store_id.id, cashier=True)
+        self.env['ab_sales_backend']._check_employee_session(store, 'allow_cashier_screen')
+        self.check_access('read')
+        if self.native_posted:
+            return
+        if not self.native_backend or not self.native_submitted or self.status != 'pending':
+            raise ValidationError(_('Only submitted native bills can post stock at the cashier.'))
+        store._lock_stock_scope()
         with self.env.cr.savepoint():
             for line in self.line_ids.sorted('id'):
-                if not line.product_id or line.qty <= 0 or not math.isfinite(line.sell_price) or line.sell_price < 0:
-                    raise ValidationError(_('Native sale lines require a product, positive quantity and valid price.'))
-                if line.product_id.is_service:
-                    super(NativeSaleLine, line.sudo()).write({'native_stock_qty': line.qty,
-                        'native_operation_key': 'service:%s:line:%s' % (self.id, line.id),
-                        'native_allocations': [], 'native_unit_factor': 1.0})
-                    continue
-                qty = line.product_id._to_stock_quantity(line.qty, line.uom_id)
-                key = 'sale:%s:line:%s' % (self.id, line.id)
-                reason = line.unavailable_reason_other or line.unavailable_reason
-                reservation = engine.reserve_stock(store.id, line.product_id.id, qty, key,
-                                                   preferred_price=line.sell_price * line.qty / qty,
-                                                   allow_shortage=bool(reason), reason=reason)
-                engine.post_reserved(key, store.id, line._name, line.id)
-                super(NativeSaleLine, line.sudo()).write({'native_stock_qty': qty,
-                    'native_operation_key': key, 'native_allocations': reservation.allocations,
-                    'native_unit_factor': qty / line.qty})
-            super(NativeSale, self.sudo()).write({
-                'native_posted': True, 'native_totals': totals, 'status': 'pending',
-                'push_state': 'success', **self._get_bill_customer_snapshot_vals(),
-            })
-        return True
+                snapshot = self.native_totals['line_context'][str(line.id)]
+                allocations = [] if snapshot['is_service'] else self.env['ab_sales_stock_allocation']._post_sale(line)
+                qty = snapshot['stock_qty']
+                super(NativeSaleLine, line.sudo().with_context(self._submission_records().env.context)).write({
+                    'native_stock_qty': qty, 'native_unit_factor': qty / line.qty,
+                    'native_operation_key': 'sale:%s:line:%s' % (self.id, line.id),
+                    'native_allocations': allocations,
+                })
+            super(NativeSale, self.sudo()._submission_records()).write({'native_posted': True})
 
     def _native_settled(self):
         self.ensure_one()
-        super(NativeSale, self.sudo()).write({'status': 'saved'})
+        super(NativeSale, self.sudo()._submission_records()).write({'status': 'saved'})
 
     def action_open_sales_return(self):
         self.ensure_one()
@@ -184,7 +195,7 @@ class NativeSaleLine(models.Model):
                 header.lock_for_update(allow_referencing=True)
                 header.invalidate_recordset()
                 self.env['ab_sales_backend']._check_store(header.store_id.id)
-                if header.native_posted:
+                if header.native_submitted:
                     raise AccessError(_('Posted native sale lines cannot be changed.'))
                 product = self.env['ab_product'].browse(vals.get('product_id')).exists()
                 vals['inventory_json'] = {'data': self.env['ab_sales_pos_api']._native_inventory_rows(header.store_id.id, product)}
@@ -200,7 +211,7 @@ class NativeSaleLine(models.Model):
             header.lock_for_update(allow_referencing=True)
             header.invalidate_recordset()
             self.env['ab_sales_backend']._check_store(header.store_id.id)
-            if header.native_posted:
+            if header.native_submitted:
                 raise AccessError(_('Posted native sale lines cannot be changed.'))
         native = self.filtered(lambda line: line.header_id.native_backend)
         if native and {'product_id', 'sell_price', 'inventory_json'} & vals.keys():
@@ -217,7 +228,7 @@ class NativeSaleLine(models.Model):
         headers = self.mapped('header_id').filtered('native_backend')
         headers.lock_for_update(allow_referencing=True)
         headers.invalidate_recordset()
-        if self.filtered(lambda line: line.header_id.native_posted):
+        if self.filtered(lambda line: line.header_id.native_submitted):
             raise AccessError(_('Posted native sale lines cannot be deleted.'))
         return super().unlink()
 
@@ -225,7 +236,7 @@ class NativeSaleLine(models.Model):
         native = self.filtered(lambda line: line.header_id.native_backend or
                                self.env['ab_sales_backend']._is_native(line.header_id.store_id.id))
         for line in native:
-            if line.header_id.native_posted:
+            if line.header_id.native_submitted:
                 continue
             line.inventory_json = {'data': self.env['ab_sales_pos_api']._native_inventory_rows(
                 line.header_id.store_id.id, line.product_id)}
@@ -240,7 +251,7 @@ class NativeSalesUnit(models.Model):
             self.check_access('write')
             self.lock_for_update(allow_referencing=True)
             if self.env['ab_sales_line'].sudo().search_count([
-                    ('header_id.native_posted', '=', True),
+                    ('header_id.native_submitted', '=', True),
                     ('uom_id.category_id', 'in', self.mapped('category_id').ids)]):
                 raise ValidationError(_('Units used by posted native sales cannot change their factors or categories.'))
         return super().write(vals)

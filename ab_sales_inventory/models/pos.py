@@ -29,8 +29,10 @@ class NativeSalesPOS(models.TransientModel):
         product.check_access('read')
         if not product or product.is_service:
             return []
-        factor = product._to_stock_quantity(1, product.uom_id)
-        stock = self.env['ab_inventory_process'].source_stock(store.id, product.ids)
+        stock = self.env['ab_sales_stock_allocation']._source_rows(store, product)
+        if not stock:
+            return []
+        factor = float(product._stock_unit_factor(product.uom_id))
         return [{
             'source_id': row['source_id'], 'source_identity': row['source_identity'],
             'store_id': store.id, 'store_eplus_serial': store.eplus_serial,
@@ -38,7 +40,7 @@ class NativeSalesPOS(models.TransientModel):
             'qty': row['qty'] / factor, 'qty_in_small_unit': row['qty'],
             'price': row['price'] * factor, 'cost': row['cost'] * factor,
             'exp_date': row['expiry'] or False,
-        } for row in stock.get(product.id, [])]
+        } for row in stock]
 
     @api.model
     def _pos_submit_response(self, header, apply_submit=True):
@@ -90,15 +92,29 @@ class NativeSalesPOS(models.TransientModel):
         }
 
     @api.model
-    def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
+    def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         if not self.env['ab_sales_backend']._is_native(store_id):
-            return super().pos_refresh_pos_balances(store_id=store_id, product_ids=product_ids)
+            return super().pos_refresh_pos_balances(store_id=store_id, product_ids=product_ids,
+                                                  include_sync_metadata=include_sync_metadata)
         self.env['ab_sales_backend']._check_store(store_id)
         products = self.env['ab_product'].browse([int(pid) for pid in (product_ids or [])]).exists()
         products.check_access('read')
-        balances = self.env['ab_inventory_process'].available_stock(int(store_id), products.ids)
-        return {product.id: balances.get(product.id, 0) / (1.0 if product.is_service else product._to_stock_quantity(1, product.uom_id))
-                for product in products}
+        store = self.env['ab_store'].browse(int(store_id))
+        source_balances = self.env['ab_inventory_process'].get_source_balances(store.id)
+        sources = self.env['ab_product_source'].sudo().browse([source_id for source_id, qty in source_balances.items() if qty > 0])
+        today = fields.Date.context_today(self)
+        requested = set(products.ids)
+        balances = {}
+        for source in sources:
+            if source.product_id.id in requested and (not source.exp_date or source.exp_date >= today):
+                balances[source.product_id.id] = balances.get(source.product_id.id, 0) + source_balances[source.id]
+        result = {product.id: balances.get(product.id, 0) / (1.0 if product.is_service or not balances.get(product.id) else float(product._stock_unit_factor(product.uom_id)))
+                  for product in products}
+        if include_sync_metadata:
+            refreshed_at = fields.Datetime.to_string(fields.Datetime.now())
+            return {product_id: {'balance': balance, 'last_sync_at': refreshed_at, 'refresh_success': True}
+                    for product_id, balance in result.items()}
+        return result
 
     @api.model
     def pos_customer_lookup(self, phone=None, store_id=None):
@@ -131,6 +147,16 @@ class NativeSalesUI(models.TransientModel):
     _inherit = 'ab_sales_ui_api'
 
     @api.model
+    def _attach_pos_sync_metadata(self, rows, store_id):
+        if self.env['ab_sales_backend']._is_native(store_id):
+            self.env['ab_sales_backend']._check_store(store_id)
+            refreshed_at = fields.Datetime.to_string(fields.Datetime.now())
+            for row in rows:
+                row['pos_balance_last_sync_at'] = refreshed_at
+            return rows
+        return super()._attach_pos_sync_metadata(rows, store_id)
+
+    @api.model
     def pos_store_status(self, store_id=None):
         sid = store_id.id if isinstance(store_id, models.BaseModel) else store_id
         if self.env['ab_sales_backend']._is_native(sid):
@@ -155,21 +181,37 @@ class NativeSalesUI(models.TransientModel):
 
     @api.model
     def search_products(self, query='', limit=60, has_balance=True, has_pos_balance=False,
-                        header_id=None, store_id=None, customer_phone=None, item_type='all'):
+                        header_id=None, store_id=None, customer_phone=None, item_type='all',
+                        min_price=None, max_price=None):
         sid = self._resolve_store_id(header_id=header_id, store_id=store_id)
         if not self.env['ab_sales_backend']._is_native(sid):
             return super().search_products(query=query, limit=limit, has_balance=has_balance,
                 has_pos_balance=has_pos_balance, header_id=header_id, store_id=store_id,
-                customer_phone=customer_phone, item_type=item_type)
+                customer_phone=customer_phone, item_type=item_type,
+                min_price=min_price, max_price=max_price)
         self.env['ab_sales_backend']._check_store(sid)
+        price_bounds = self._product_price_bounds(min_price, max_price)
         limit = max(1, min(120, int(limit)))
-        domain = fields.Domain('active', '=', True)
+        domain = fields.Domain('active', '=', True) & self._product_price_domain(price_bounds)
+        if has_balance or has_pos_balance:
+            source_balances = self.env['ab_inventory_process'].get_source_balances(sid)
+            sources = self.env['ab_product_source'].sudo().browse([source_id for source_id, qty in source_balances.items() if qty > 0])
+            today = fields.Date.context_today(self)
+            stocked = sources.filtered(lambda source: not source.exp_date or source.exp_date >= today).product_id
+            stock_domain = fields.Domain('id', 'in', stocked.ids)
+            if query:
+                stock_domain |= fields.Domain('is_service', '=', True)
+            domain &= stock_domain
         if item_type in ('medicine', 'non_medicine'):
             domain &= fields.Domain('is_medicine', '=', item_type == 'medicine')
         if query.strip():
             term = query.strip().replace('*', '%')
             domain &= fields.Domain('name', 'ilike', term) | fields.Domain('code', 'ilike', term) | fields.Domain('barcode_ids.name', 'ilike', term)
         candidates = self.env['ab_product'].search(domain, order='name')
+        if price_bounds is not None:
+            candidates = candidates.filtered(
+                lambda product: self._product_price_matches(
+                    {'default_price': product.default_price}, price_bounds))
         balances = self.env['ab_sales_pos_api'].pos_refresh_pos_balances(sid, candidates.ids)
         if has_balance or has_pos_balance:
             candidates = candidates.filtered(lambda p: balances.get(p.id, 0) > 0 or (query and p.is_service))
