@@ -1,0 +1,96 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo 19.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "All closing transactions must belong to the shift branch and company."
+msgstr "يجب أن تتبع جميع معاملات الإغلاق فرع الوردية وشركتها."
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid ""
+"Bonus stock and invoice discounts require an approved valuation allocation "
+"before automatic cash accounting."
+msgstr ""
+"تتطلب كميات البونص وخصومات الفاتورة توزيع تقييم معتمداً قبل المحاسبة الآلية "
+"للنقدية."
+
+#. module: ab_sales_cash_accounting
+#: model:ir.model,name:ab_sales_cash_accounting.model_ab_sales_cash_shift
+msgid "Branch Cash Shift"
+msgstr "وردية نقدية الفرع"
+
+#. module: ab_sales_cash_accounting
+#: model:ir.model,name:ab_sales_cash_accounting.model_ab_sales_cash_operation
+msgid "Cash Shift Operation"
+msgstr "عملية الوردية النقدية"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "Close the shift before posting its accounting batch."
+msgstr "أغلق الوردية قبل ترحيل دفعتها المحاسبية."
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "Finance cash difference review %s"
+msgstr "مراجعة الإدارة المالية لفرق النقدية %s"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "Initial drawer funding %s"
+msgstr "تمويل الدرج الافتتاحي %s"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid ""
+"Nonzero sales tax requires an approved allocation before automatic cash "
+"accounting."
+msgstr ""
+"تتطلب ضريبة المبيعات غير الصفرية توزيعاً معتمداً قبل المحاسبة الآلية "
+"للنقدية."
+
+#. module: ab_sales_cash_accounting
+#: model:ir.ui.menu,name:ab_sales_cash_accounting.accounting_tender_menu
+msgid "Payment Breakdown"
+msgstr "تفاصيل طرق الدفع"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "Sales shift closing %s"
+msgstr "إغلاق وردية المبيعات %s"
+
+#. module: ab_sales_cash_accounting
+#: model:ir.ui.menu,name:ab_sales_cash_accounting.accounting_shift_menu
+msgid "Shift Closing Records"
+msgstr "سجلات إغلاق الورديات"
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid ""
+"Taxed stock requires an approved valuation allocation before automatic cash "
+"accounting."
+msgstr ""
+"يتطلب المخزون الخاضع للضريبة توزيع تقييم معتمداً قبل المحاسبة الآلية "
+"للنقدية."
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "The cash shift must belong to an allowed company."
+msgstr "يجب أن تتبع الوردية النقدية شركة مسموحاً بها."
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "The recorded payment breakdown does not match the settlement."
+msgstr "تفاصيل الدفع المسجلة لا تتطابق مع التسوية."
+
+#. module: ab_sales_cash_accounting
+#: code:addons/ab_sales_cash_accounting/models/cash_bridge.py:0
+msgid "Treasury receipt %s"
+msgstr "استلام الخزينة %s"

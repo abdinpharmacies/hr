@@ -1,0 +1,10 @@
+<odoo>
+    <data noupdate="1">
+    <record id="posting_user" model="res.users">
+        <field name="name">Branch Accounting Integration</field>
+        <field name="login">__ab_branch_accounting_integration__</field>
+        <field name="group_ids" eval="[(6, 0, [ref('base.group_user'), ref('ab_accounting.group_ab_accounting_accountant')])]"/>
+    </record>
+    </data>
+    <record id="ab_sales_cash_shift.privilege_cash_shift" model="res.groups.privilege"><field name="category_id" ref="ab_accounting.ab_accounting_category"/></record>
+</odoo>
