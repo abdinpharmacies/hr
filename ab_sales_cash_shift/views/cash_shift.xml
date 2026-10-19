@@ -1,0 +1,114 @@
+<odoo>
+    <record id="drawer_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_drawer.list</field><field name="model">ab_sales_cash_drawer</field>
+        <field name="arch" type="xml">
+            <list delete="0"><field name="store_id"/><field name="enabled"/><field name="treasury_id"/><field name="company_id"/></list>
+        </field>
+    </record>
+    <record id="drawer_form" model="ir.ui.view">
+        <field name="name">ab_sales_cash_drawer.form</field><field name="model">ab_sales_cash_drawer</field>
+        <field name="arch" type="xml">
+            <form delete="0"><header><button name="action_prepare_opening" type="object" string="Prepare First Opening" invisible="not enabled" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/></header>
+                <sheet><div class="alert alert-info" role="alert">Set up the treasury and payment methods first. Enabling this drawer requires an accepted cash shift before submitting sales.</div>
+                <group><field name="store_id"/><field name="company_id"/><field name="active"/><field name="enabled"/>
+                    <field name="treasury_id" domain="[('store_id', '=', store_id)]"/>
+                    <field name="method_ids" widget="many2many_tags" domain="[('company_id', '=', company_id)]"/>
+                </group></sheet></form>
+        </field>
+    </record>
+    <record id="treasury_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_treasury.list</field><field name="model">ab_sales_cash_treasury</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" delete="0"><field name="name"/><field name="code"/><field name="store_id"/><field name="receiver_id"/><field name="active"/></list>
+        </field>
+    </record>
+    <record id="method_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_method.list</field><field name="model">ab_sales_cash_method</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" delete="0"><field name="name"/><field name="kind"/><field name="require_reference"/><field name="company_id"/><field name="active"/></list>
+        </field>
+    </record>
+    <record id="treasury_form" model="ir.ui.view">
+        <field name="name">ab_sales_cash_treasury.form</field><field name="model">ab_sales_cash_treasury</field>
+        <field name="arch" type="xml">
+            <form delete="0"><sheet><group><field name="name"/><field name="code"/><field name="store_id"/>
+                <field name="receiver_id"/><field name="active"/></group></sheet></form>
+        </field>
+    </record>
+    <record id="shift_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_shift.list</field><field name="model">ab_sales_cash_shift</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="slot"/><field name="start_at"/><field name="end_at"/>
+                <field name="employee_id"/><field name="state"/><field name="currency_id" column_invisible="True"/>
+                <field name="opening_amount"/><field name="cash_amount"/><field name="counted_amount"/><field name="carry_amount"/>
+                <field name="variance"/><field name="review_state"/></list>
+        </field>
+    </record>
+    <record id="shift_form" model="ir.ui.view">
+        <field name="name">ab_sales_cash_shift.form</field><field name="model">ab_sales_cash_shift</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0"><header>
+                <button name="action_reschedule" type="object" string="Reassign Unaccepted Opening" invisible="state != 'waiting'" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
+                <button name="action_review" type="object" string="Review Difference" invisible="review_state != 'pending'" groups="base.group_system,ab_sales_cash_shift.group_cash_finance"/>
+                <field name="state" widget="statusbar"/></header><sheet><group>
+                <group><field name="store_id"/><field name="employee_id"/><field name="slot"/><field name="start_at"/><field name="end_at"/>
+                    <field name="assignment_history"/><field name="accepted_at"/><field name="accepted_user_id"/><field name="closed_at"/><field name="closed_user_id"/></group>
+                <group><field name="currency_id" invisible="1"/><field name="opening_amount"/><field name="cash_amount"/>
+                    <field name="counted_amount"/><field name="carry_amount"/><field name="variance"/><field name="variance_note"/>
+                    <field name="review_state"/><field name="review_note"/><field name="reviewed_by"/><field name="reviewed_at"/></group>
+                </group><notebook><page string="Payments and Refunds"><field name="event_ids"/></page>
+                    <page string="Treasury Transfers"><field name="transfer_ids"/></page></notebook></sheet></form>
+        </field>
+    </record>
+    <record id="event_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_event.list</field><field name="model">ab_sales_cash_event</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="create_date"/><field name="store_id"/><field name="shift_id"/><field name="employee_id"/>
+                <field name="payment_id"/><field name="currency_id" column_invisible="True"/><field name="total_amount" sum="Total"/><field name="cash_amount" sum="Cash Total"/></list>
+        </field>
+    </record>
+    <record id="tender_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_tender.list</field><field name="model">ab_sales_cash_tender</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="event_id"/><field name="method_id"/>
+                <field name="currency_id" column_invisible="True"/><field name="amount" sum="Total"/><field name="reference"/></list>
+        </field>
+    </record>
+    <record id="transfer_list" model="ir.ui.view">
+        <field name="name">ab_sales_cash_transfer.list</field><field name="model">ab_sales_cash_transfer</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="shift_id"/><field name="treasury_id"/><field name="direction"/>
+                <field name="currency_id" column_invisible="True"/><field name="amount"/><field name="receiver_id"/><field name="state"/>
+                <field name="received_at"/><button name="action_receive" type="object" string="Confirm Receipt" invisible="state == 'received' or direction != 'closing'"/>
+            </list>
+        </field>
+    </record>
+    <record id="shift_cashier_action" model="ir.actions.client"><field name="name">Shift Cashier</field><field name="tag">ab_sales_cash_shift.cashier</field></record>
+    <record id="drawer_action" model="ir.actions.act_window"><field name="name">Shared Cash Drawers</field><field name="res_model">ab_sales_cash_drawer</field><field name="view_mode">list,form</field></record>
+    <record id="treasury_action" model="ir.actions.act_window"><field name="name">Branch Treasuries</field><field name="res_model">ab_sales_cash_treasury</field><field name="view_mode">list,form</field></record>
+    <record id="method_action" model="ir.actions.act_window"><field name="name">Cashier Payment Methods</field><field name="res_model">ab_sales_cash_method</field><field name="view_mode">list</field></record>
+    <record id="shift_action" model="ir.actions.act_window"><field name="name">Cash Shifts</field><field name="res_model">ab_sales_cash_shift</field><field name="view_mode">list,form</field></record>
+    <record id="transfer_action" model="ir.actions.act_window"><field name="name">Treasury Transfers</field><field name="res_model">ab_sales_cash_transfer</field><field name="view_mode">list</field></record>
+    <record id="tender_action" model="ir.actions.act_window"><field name="name">Shift Payment Breakdown</field><field name="res_model">ab_sales_cash_tender</field><field name="view_mode">list</field></record>
+    <record id="finance_review_action" model="ir.actions.act_window">
+        <field name="name">Pending Finance Review</field><field name="res_model">ab_sales_cash_shift</field>
+        <field name="view_mode">list,form</field><field name="domain">[('review_state', '=', 'pending')]</field>
+    </record>
+    <menuitem id="cash_management_menu" name="Cash Management" parent="ab_sales.sales_menu_root" sequence="4"/>
+    <menuitem id="shift_cashier_menu" name="Shift Cashier" parent="cash_management_menu" action="shift_cashier_action" sequence="10" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager,base.group_system"/>
+    <menuitem id="shift_menu" name="Cash Shifts" parent="cash_management_menu" action="shift_action" sequence="20"/>
+    <menuitem id="transfer_menu" name="Treasury Transfers" parent="cash_management_menu" action="transfer_action" sequence="30"/>
+    <menuitem id="tender_menu" name="Shift Payment Breakdown" parent="cash_management_menu" action="tender_action" sequence="40"/>
+    <menuitem id="finance_review_menu" name="Pending Finance Review" parent="cash_management_menu" action="finance_review_action" sequence="50" groups="base.group_system,ab_sales_cash_shift.group_cash_finance"/>
+    <menuitem id="treasury_menu" name="Branch Treasuries" parent="cash_management_menu" action="treasury_action" sequence="60" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
+    <menuitem id="method_menu" name="Cashier Payment Methods" parent="cash_management_menu" action="method_action" sequence="70" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
+    <menuitem id="drawer_menu" name="Shared Cash Drawers" parent="cash_management_menu" action="drawer_action" sequence="80" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
+    <record id="payment_collection_label" model="ir.ui.view">
+        <field name="name">ab_sales_native_payment.cash_shift.label</field>
+        <field name="model">ab_sales_native_payment</field>
+        <field name="inherit_id" ref="ab_sales_inventory.native_payments_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='balance_after']" position="attributes"><attribute name="string">Accumulated Collections</attribute></xpath>
+        </field>
+    </record>
+</odoo>
