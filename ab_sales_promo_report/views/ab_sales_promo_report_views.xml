@@ -1,150 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="ab_sales_promo_report_line_view_list" model="ir.ui.view">
-            <field name="name">ab_sales_promo_report_line_view_list</field>
-            <field name="model">ab_sales_promo_report_line</field>
-            <field name="arch" type="xml">
-                <list string="Sales Promo Report" create="false" edit="false">
-                    <field name="store_name"/>
-                    <field name="invoice_eplus_serial"/>
-                    <field name="product_code"/>
-                    <field name="product_name"/>
-                    <field name="qty" sum="Qty"/>
-                    <field name="price"/>
-                    <field name="total_price" sum="Total Price"/>
-                    <field name="total_invoice"/>
-                    <field name="total_invoice_after_promo"/>
-                    <field name="total_compensation"/>
-                    <field name="promo_discount"/>
-                    <field name="is_odoo"/>
-                    <field name="invoice_date"/>
-                    <field name="promo_id"/>
-                    <field name="supplier_id"/>
-                    <field name="compensation_company_id"/>
-                    <field name="compensation_timing"/>
-                    <field name="compensation_type"/>
-                    <field name="approval_email_attachment"
-                           filename="approval_email_attachment_filename"/>
-                    <field name="approval_email_attachment_filename" optional="hide"/>
-                    <field name="promo_date_status"/>
-                    <field name="promo_start"/>
-                    <field name="promo_end"/>
-                    <field name="store_eplus_serial" optional="hide"/>
-                    <field name="product_eplus_serial" optional="hide"/>
-                    <field name="total_invoice_after_discount" optional="hide"/>
-                </list>
-            </field>
-        </record>
-
-        <record id="ab_sales_promo_report_line_view_search" model="ir.ui.view">
-            <field name="name">ab_sales_promo_report_line_view_search</field>
-            <field name="model">ab_sales_promo_report_line</field>
-            <field name="arch" type="xml">
-                <search string="Sales Promo Report">
-                    <field name="invoice_eplus_serial"/>
-                    <field name="store_id"/>
-                    <field name="product_id"/>
-                    <field name="promo_id"/>
-                    <field name="supplier_id" domain="[('code', '=like', '1-%')]"/>
-                    <field name="compensation_company_id"/>
-                    <field name="compensation_timing"/>
-                    <field name="compensation_type"/>
-                    <field name="promo_date_status"/>
-                    <field name="is_odoo"/>
-                    <field name="invoice_date"/>
-                    <filter name="odoo_invoice" string="Odoo Invoice" domain="[('is_odoo', '=', True)]"/>
-                    <filter name="bconnect_invoice" string="BConnect Invoice" domain="[('is_odoo', '=', False)]"/>
-                    <filter name="promo_in_date" string="In Promo Date" domain="[('promo_date_status', '=', 'in_date')]"/>
-                    <filter name="promo_out_of_date" string="Out of Promo Date" domain="[('promo_date_status', '=', 'out_of_date')]"/>
-                    <filter name="promo_no_promo_found" string="No Promo Found" domain="[('promo_date_status', '=', 'no_promo_found')]"/>
-                    <filter name="promo_no_promo_applied" string="No Promo Applied" domain="[('promo_date_status', '=', 'no_promo_applied')]"/>
-                    <filter name="group_store" string="Store" context="{'group_by': 'store_id'}"/>
-                    <filter name="group_invoice" string="Invoice" context="{'group_by': 'invoice_eplus_serial'}"/>
-                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
-                    <filter name="group_promo" string="Promo" context="{'group_by': 'promo_id'}"/>
-                    <filter name="group_supplier" string="Supplier" context="{'group_by': 'supplier_id'}"/>
-                    <filter name="group_compensation_company" string="Compensation Company" context="{'group_by': 'compensation_company_id'}"/>
-                    <filter name="group_compensation_timing" string="Compensation Timing" context="{'group_by': 'compensation_timing'}"/>
-                    <filter name="group_compensation_type" string="Compensation Type" context="{'group_by': 'compensation_type'}"/>
-                    <filter name="group_is_odoo" string="Odoo Invoice" context="{'group_by': 'is_odoo'}"/>
-                    <filter name="group_promo_date_status" string="Promo Date Status" context="{'group_by': 'promo_date_status'}"/>
-                    <filter name="group_invoice_date" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>
-                </search>
-            </field>
-        </record>
-
-        <record id="ab_sales_promo_report_line_view_pivot" model="ir.ui.view">
-            <field name="name">ab_sales_promo_report_line_view_pivot</field>
-            <field name="model">ab_sales_promo_report_line</field>
-            <field name="arch" type="xml">
-                <pivot string="Sales Promo Report">
-                    <field name="promo_id" type="row"/>
-                    <field name="store_id" type="row"/>
-                    <field name="invoice_date" type="col"/>
-                    <field name="qty" type="measure"/>
-                    <field name="total_price" type="measure"/>
-                </pivot>
-            </field>
-        </record>
-
-        <record id="ab_sales_promo_report_line_view_graph" model="ir.ui.view">
-            <field name="name">ab_sales_promo_report_line_view_graph</field>
-            <field name="model">ab_sales_promo_report_line</field>
-            <field name="arch" type="xml">
-                <graph string="Sales Promo Report" type="bar">
-                    <field name="promo_id"/>
-                    <field name="total_price" type="measure"/>
-                </graph>
-            </field>
-        </record>
-
-        <record id="ab_sales_promo_report_line_action" model="ir.actions.act_window">
-            <field name="name">Sales Promo Report Lines</field>
-            <field name="res_model">ab_sales_promo_report_line</field>
-            <field name="view_mode">list,pivot,graph</field>
-            <field name="context">{'create': False, 'edit': False}</field>
-        </record>
-
-        <record id="ab_sales_promo_report_wizard_view_form" model="ir.ui.view">
-            <field name="name">ab_sales_promo_report_wizard_view_form</field>
-            <field name="model">ab_sales_promo_report_wizard</field>
-            <field name="arch" type="xml">
-                <form string="Load Sales Promo Report">
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="date_from"/>
-                                <field name="date_to"/>
-                                <field name="exclude_store_eplus_serial"/>
-                            </group>
-                            <group>
-                                <field name="include_promo_notice"/>
-                                <field name="include_off_customer"/>
-                                <field name="include_no_promo_found"/>
-                                <field name="replace_existing"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="store_ids" widget="many2many_tags"/>
-                            <field name="product_ids" widget="many2many_tags"/>
-                            <field name="promo_ids" widget="many2many_tags"/>
-                        </group>
-                    </sheet>
-                    <footer>
-                        <button name="action_load_report" type="object" string="Load Report" class="btn-primary"/>
-                        <button name="action_show_query" type="object" string="Show BConnect Query" class="btn-secondary"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
-
-        <record id="ab_sales_promo_report_wizard_action" model="ir.actions.act_window">
-            <field name="name">Load Sales Promo Report</field>
-            <field name="res_model">ab_sales_promo_report_wizard</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-        </record>
-    </data>
+  <record id="ab_sales_promo_report_line_view_list" model="ir.ui.view">
+    <field name="name">Recorded Callcenter Promotions</field><field name="model">ab_sales_promo_report_line</field>
+    <field name="arch" type="xml"><list create="false" edit="false"><field name="invoice_id"/><field name="invoice_date"/><field name="store_id"/><field name="promo_id"/><field name="promotion_ownership"/><field name="product_id"/><field name="qty"/><field name="price"/><field name="total_price"/><field name="promo_discount"/><field name="total_invoice_after_promo"/></list></field>
+  </record>
+  <record id="ab_sales_promo_report_line_view_pivot" model="ir.ui.view">
+    <field name="name">Recorded promotions pivot</field><field name="model">ab_sales_promo_report_line</field>
+    <field name="arch" type="xml"><pivot><field name="promo_id" type="row"/><field name="store_id" type="row"/><field name="total_price" type="measure"/></pivot></field>
+  </record>
+  <record id="ab_sales_promo_report_line_view_graph" model="ir.ui.view">
+    <field name="name">Recorded promotions graph</field><field name="model">ab_sales_promo_report_line</field>
+    <field name="arch" type="xml"><graph><field name="promo_id"/><field name="total_price" type="measure"/></graph></field>
+  </record>
+  <record id="ab_sales_promo_report_line_action" model="ir.actions.act_window">
+    <field name="name">Recorded Callcenter Promotions</field><field name="res_model">ab_sales_promo_report_line</field><field name="view_mode">list,pivot,graph</field>
+  </record>
+  <record id="ab_sales_promo_report_wizard_view_form" model="ir.ui.view">
+    <field name="name">Load recorded promotions</field><field name="model">ab_sales_promo_report_wizard</field>
+    <field name="arch" type="xml"><form string="Load Recorded Callcenter Promotions"><sheet>
+      <p>Saved callcenter invoices and recorded promotions only. This report does not reconcile legacy compensation.</p>
+      <group><field name="date_from"/><field name="date_to"/><field name="store_ids" widget="many2many_tags"/><field name="product_ids" widget="many2many_tags"/><field name="promo_ids" widget="many2many_tags"/><field name="replace_existing"/></group>
+      </sheet><footer><button name="action_load_report" type="object" string="Load Report" class="btn-primary"/><button string="Cancel" special="cancel"/></footer></form></field>
+  </record>
+  <record id="ab_sales_promo_report_wizard_action" model="ir.actions.act_window">
+    <field name="name">Load Recorded Callcenter Promotions</field><field name="res_model">ab_sales_promo_report_wizard</field><field name="view_mode">form</field><field name="target">new</field>
+  </record>
 </odoo>

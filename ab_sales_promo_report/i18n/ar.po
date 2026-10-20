@@ -1,0 +1,225 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_promo_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 00:00+0000\n"
+"PO-Revision-Date: 2026-08-26 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__promotion_ownership__other_promotion
+msgid "Other Promotion"
+msgstr "عرض خارجي"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__promotion_ownership
+msgid "Promotion Ownership"
+msgstr "ملكية العرض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__promotion_ownership__our_promotion
+msgid "Our Promotion"
+msgstr "عرضنا"
+
+#. module: ab_sales_promo_report
+#: model:res.groups,name:ab_sales_promo_report.group_ab_sales_promo_reports
+msgid "Sales Promo Reports"
+msgstr "تقارير العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.ui.menu,name:ab_sales_promo_report.ab_sales_promo_report_menu_load
+msgid "Sales Promo Report"
+msgstr "تقرير العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.ui.menu,name:ab_sales_promo_report.ab_sales_promo_report_menu_lines
+msgid "Sales Promo Report Lines"
+msgstr "سطور تقرير العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,help:ab_sales_promo_report.field_ab_sales_promo_report_wizard__include_no_promo_found
+msgid "Compatibility field. Unmatched report lines are always excluded."
+msgstr "حقل للتوافق. تُستبعد دائمًا سطور التقرير التي لا تطابق عرضًا مطبقًا."
+
+#. module: ab_sales_promo_report
+#. odoo-python
+#: code:addons/ab_sales_promo_report/models/ab_sales_promo_report.py:0
+#, python-format
+msgid ""
+"BConnect returned %s line(s), but no promotion passed application validation"
+" for the selected report products. Check product/store mappings, promotion "
+"dates, purchase conditions, and recorded invoice compensation."
+msgstr ""
+"أعاد BConnect عدد %s من السطور، لكن لم يجتز أي عرض التحقق من التطبيق "
+"للمنتجات المحددة في التقرير. راجع ربط المنتجات والفروع، وتواريخ العروض، "
+"وشروط الشراء، والتعويض المسجل على الفاتورة."
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__store_ids
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_sales_promo_report
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_wizard_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__create_date
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__date_from
+msgid "Date From"
+msgstr "من تاريخ"
+
+#. module: ab_sales_promo_report
+#. odoo-python
+#: code:addons/ab_sales_promo_report/models/ab_sales_promo_report.py:0
+msgid "Date From must be before Date To."
+msgstr "يجب أن يكون تاريخ البداية قبل تاريخ النهاية."
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__date_to
+msgid "Date To"
+msgstr "إلى تاريخ"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__id
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__invoice_id
+msgid "Invoice"
+msgstr "الفاتورة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__invoice_date
+msgid "Invoice Date"
+msgstr "تاريخ الفاتورة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__write_date
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__total_price
+msgid "Line Gross Total"
+msgstr "إجمالي البند قبل الخصم"
+
+#. module: ab_sales_promo_report
+#: model:ir.actions.act_window,name:ab_sales_promo_report.ab_sales_promo_report_wizard_action
+#: model:ir.model,name:ab_sales_promo_report.model_ab_sales_promo_report_wizard
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_wizard_view_form
+msgid "Load Recorded Callcenter Promotions"
+msgstr "تحميل عروض مركز الاتصال المسجلة"
+
+#. module: ab_sales_promo_report
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_wizard_view_form
+msgid "Load Report"
+msgstr "تحميل التقرير"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__product_ids
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__promo_id
+msgid "Promotion"
+msgstr "عرض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__promo_ids
+msgid "Promotions"
+msgstr "العروض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__qty
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales_promo_report
+#: model:ir.model,name:ab_sales_promo_report.model_ab_sales_promo_report_line
+msgid "Recorded Callcenter Promotion"
+msgstr "عرض مركز اتصال مسجل"
+
+#. module: ab_sales_promo_report
+#. odoo-python
+#: code:addons/ab_sales_promo_report/models/ab_sales_promo_report.py:0
+#: model:ir.actions.act_window,name:ab_sales_promo_report.ab_sales_promo_report_line_action
+msgid "Recorded Callcenter Promotions"
+msgstr "عروض مركز الاتصال المسجلة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__promo_discount
+msgid "Recorded Invoice Promotion Discount"
+msgstr "خصم عرض الفاتورة المسجل"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__total_invoice_after_promo
+msgid "Recorded Invoice Total After Promotion"
+msgstr "إجمالي الفاتورة المسجل بعد العرض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_wizard__replace_existing
+msgid "Replace My Report Rows"
+msgstr "استبدال صفوف تقريري"
+
+#. module: ab_sales_promo_report
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_wizard_view_form
+msgid ""
+"Saved callcenter invoices and recorded promotions only. This report does not"
+" reconcile legacy compensation."
+msgstr ""
+"فواتير مركز الاتصال المحفوظة والعروض المسجلة فقط. لا يطابق هذا التقرير "
+"تعويضات النظام القديم."
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__store_id
+msgid "Store"
+msgstr "المخزن"
