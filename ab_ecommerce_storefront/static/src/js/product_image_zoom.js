@@ -283,6 +283,8 @@ export class AbStorefrontProductImageZoom extends Interaction {
         }
 
         const rect = this.image.getBoundingClientRect();
+        const wrapper = this.lens.offsetParent;
+        const wrapperRect = wrapper.getBoundingClientRect();
         this.zoomPointer = { clientX: ev.clientX, clientY: ev.clientY };
         const scale = this.getHoverZoomScale(rect);
         const x = Math.min(Math.max(ev.clientX - rect.left, 0), rect.width);
@@ -290,12 +292,12 @@ export class AbStorefrontProductImageZoom extends Interaction {
         const lensSize = Math.min(LENS_SIZE, Math.max(130, Math.min(rect.width, rect.height) * 0.48));
         const bgWidth = rect.width * scale;
         const bgHeight = rect.height * scale;
-        const bgX = Math.max(0, Math.min(bgWidth - lensSize, x * scale - lensSize / 2));
-        const bgY = Math.max(0, Math.min(bgHeight - lensSize, y * scale - lensSize / 2));
+        const bgX = x * scale - lensSize / 2;
+        const bgY = y * scale - lensSize / 2;
 
         this.targetZoom = {
-            left: x - lensSize / 2,
-            top: y - lensSize / 2,
+            left: rect.left - wrapperRect.left - wrapper.clientLeft + wrapper.scrollLeft + x - lensSize / 2,
+            top: rect.top - wrapperRect.top - wrapper.clientTop + wrapper.scrollTop + y - lensSize / 2,
             bgX,
             bgY,
             lensSize,
@@ -340,7 +342,7 @@ export class AbStorefrontProductImageZoom extends Interaction {
         this.lens.style.left = `${zoom.left}px`;
         this.lens.style.top = `${zoom.top}px`;
         this.lens.style.backgroundSize = `${zoom.bgWidth}px ${zoom.bgHeight}px`;
-        this.lens.style.backgroundPosition = `-${zoom.bgX}px -${zoom.bgY}px`;
+        this.lens.style.backgroundPosition = `${-zoom.bgX}px ${-zoom.bgY}px`;
     }
 
     openHeroImage(image) {
