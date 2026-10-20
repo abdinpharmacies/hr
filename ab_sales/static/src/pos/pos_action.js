@@ -792,6 +792,21 @@ class AbSalesPosCustomerLookupDialog extends Component {
     }
 }
 
+class AbSalesPosValidationDialog extends Component {
+    static template = "ab_sales.PosValidationDialog";
+    static components = {Dialog};
+    static props = {
+        title: {type: String, optional: true},
+        message: {type: String, optional: true},
+        branchResponse: {type: String, optional: true},
+        close: Function,
+    };
+
+    close() {
+        this.props.close();
+    }
+}
+
 class AbSalesPosAllInvoicesDialog extends Component {
     static template = "ab_sales.PosAllInvoicesDialog";
     static components = {Dialog};
