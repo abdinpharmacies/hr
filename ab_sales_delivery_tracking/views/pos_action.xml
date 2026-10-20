@@ -1,0 +1,1 @@
+<odoo><record id="ab_sales.ab_sales_pos_action" model="ir.actions.client"><field name="tag">ab_sales_delivery_tracking.pos</field></record></odoo>
