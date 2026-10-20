@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <data noupdate="1">
+    <record id="homepage" model="ir.ui.view">
+      <field name="website_meta_title">Abdin Pharmacies | Health &amp; Personal Care Online</field>
+      <field name="website_meta_description">Shop health and personal care products at Abdin Pharmacies. Explore offers, send a prescription request, find a branch, or contact our team on 19036.</field>
+      <field name="website_meta_keywords">Abdin Pharmacies, online pharmacy, health and personal care</field>
+    </record>
+    <record id="shop" model="ir.ui.view">
+      <field name="website_meta_title">Shop Medicines, Vitamins &amp; Personal Care | Abdin Pharmacies</field>
+      <field name="website_meta_description">Browse medicines, vitamins, skin care, baby care, and everyday pharmacy essentials at Abdin Pharmacies. Explore categories and check product availability.</field>
+      <field name="website_meta_keywords">Abdin pharmacy shop, vitamins, personal care</field>
+    </record>
+    <record id="about_us_page" model="ir.ui.view">
+      <field name="website_meta_title">About Abdin Pharmacies | Our Story in Egypt</field>
+      <field name="website_meta_description">Learn about Abdin Pharmacies, an Egyptian pharmacy chain founded in Sohag in 2014. Discover our story, products, and ways to contact our team.</field>
+      <field name="website_meta_keywords">about Abdin Pharmacies, Egyptian pharmacy chain, Abdin Sohag</field>
+    </record>
+    <record id="contact_us_abdin" model="ir.ui.view">
+      <field name="website_meta_title">Contact Abdin Pharmacies | Hotline 19036</field>
+      <field name="website_meta_description">Contact Abdin Pharmacies on 19036 or send a message. Our team can help with product enquiries, online orders, branch information, and business requests.</field>
+      <field name="website_meta_keywords">Abdin Pharmacies contact, Abdin hotline, 19036</field>
+    </record>
+    <record id="branches_page" model="ir.ui.view">
+      <field name="website_meta_title">Find an Abdin Pharmacy Branch | Addresses &amp; Directions</field>
+      <field name="website_meta_description">Find Abdin Pharmacies branches by governorate, area, or street. View addresses and directions, and call 19036 to confirm opening hours and services.</field>
+      <field name="website_meta_keywords">Abdin Pharmacies branches, pharmacy addresses, nearest Abdin branch</field>
+    </record>
+    <record id="prescription_order_page" model="ir.ui.view">
+      <field name="website_meta_title">Send a Prescription Request | Abdin Pharmacies</field>
+      <field name="website_meta_description">Upload a clear prescription image to Abdin Pharmacies and enter your contact details. Our team will review your request and contact you to confirm the order.</field>
+      <field name="website_meta_keywords">Abdin prescription request, upload prescription, pharmacy order</field>
+    </record>
+    <record id="business_partnerships" model="ir.ui.view">
+      <field name="website_meta_title">Company Contracts &amp; Business Enquiries | Abdin Pharmacies</field>
+      <field name="website_meta_description">Submit a company contracting request to Abdin Pharmacies. Share your company details and requirements so our business team can review your enquiry.</field>
+      <field name="website_meta_keywords">Abdin company contracts, pharmacy business enquiries</field>
+    </record>
+    <record id="return_policy_page" model="ir.ui.view">
+      <field name="website_meta_title">Returns &amp; Refunds Policy | Abdin Pharmacies</field>
+      <field name="website_meta_description">Read the Abdin Pharmacies return and refund policy for online purchases, including return conditions, product exceptions, and refund information.</field>
+      <field name="website_meta_keywords">Abdin returns, pharmacy refund policy</field>
+    </record>
+    <record id="offers_landing_page" model="ir.ui.view">
+      <field name="website_meta_title">Health, Beauty &amp; Personal Care Offers | Abdin Pharmacies</field>
+      <field name="website_meta_description">Explore current Abdin Pharmacies offers on health, beauty, and personal care products. View product details, current prices, and availability before ordering.</field>
+      <field name="website_meta_keywords">Abdin Pharmacies offers, personal care offers, pharmacy offers</field>
+    </record>
+  </data>
+</odoo>

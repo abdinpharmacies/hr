@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="homepage_seo" inherit_id="ab_ecommerce_storefront.homepage" name="Abdin Homepage SEO" priority="150">
+        <xpath expr="//section[hasclass('ab-storefront-hero-slider')]" position="before">
+            <div itemscope="itemscope" itemtype="https://schema.org/Organization" t-att-itemid="website.get_base_url() + '/#organization'">
+                <meta itemprop="name" t-att-content="website.name"/>
+                <link itemprop="url" t-att-href="website.get_base_url() + '/'"/>
+                <link itemprop="logo" t-att-href="website.get_base_url() + website.image_url(website, 'logo')"/>
+                <meta itemprop="telephone" content="19036"/>
+                <link t-if="website.social_facebook" itemprop="sameAs" t-att-href="website.social_facebook"/>
+                <link t-if="website.social_instagram" itemprop="sameAs" t-att-href="website.social_instagram"/>
+            </div>
+            <div itemscope="itemscope" itemtype="https://schema.org/WebSite" t-att-itemid="website.get_base_url() + '/#website'">
+                <meta itemprop="name" t-att-content="website.name"/>
+                <link itemprop="url" t-att-href="website.get_base_url() + '/'"/>
+                <link itemprop="publisher" t-att-href="website.get_base_url() + '/#organization'"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('ab-storefront-banner-content')]/h1" position="replace">
+            <h2 t-if="ab_slide.title" t-out="ab_slide.title"/>
+        </xpath>
+        <xpath expr="//div[hasclass('ab-storefront-feedback-panel')]/div/h2" position="replace">
+            <h1 class="h2">Your pharmacy essentials in one place</h1>
+        </xpath>
+        <xpath expr="//a[@href='/shop/category?deal=discount']" position="attributes">
+            <attribute name="href">/offers</attribute>
+        </xpath>
+    </template>
+
+    <template id="contact_seo" inherit_id="ab_ecommerce_storefront.contact_us_abdin" name="Abdin Contact SEO" priority="150">
+        <xpath expr="//div[@id='wrap']" position="before">
+            <t t-set="seo_object" t-value="website.with_context(website_id=website.id).viewref('ab_ecommerce_storefront.contact_us_abdin')"/>
+        </xpath>
+        <xpath expr="//h1" position="replace">
+            <h1 class="h2">Contact Abdin Pharmacies</h1>
+            <p>Call 19036 or send us a message about products, orders, or our branches.</p>
+        </xpath>
+    </template>
+
+    <template id="shop_seo" inherit_id="ab_ecommerce_storefront.shop" name="Abdin Shop SEO" priority="150">
+        <xpath expr="//div[@id='wrap']" position="before">
+            <t t-if="not category" t-set="seo_object" t-value="website.with_context(website_id=website.id).viewref('ab_ecommerce_storefront.shop')"/>
+        </xpath>
+        <xpath expr="//section[hasclass('ab-storefront-shop-hero')]//h1" position="replace">
+            <h2 class="h1 mb-2">
+                <span t-if="ab_shop_need" t-out="ab_shop_need.name"/>
+                <span t-elif="category" t-out="website._ab_storefront_category_label(category)"/>
+                <span t-else="">Healthcare products for every day</span>
+            </h2>
+        </xpath>
+    </template>
+
+    <template id="layout_seo" inherit_id="ab_ecommerce_storefront.layout" name="Abdin Indexing and Canonical URLs" priority="150">
+        <xpath expr="//t[@t-set='html_data']" position="before">
+            <t t-if="request.httprequest.path == '/'" t-set="seo_object" t-value="website.with_context(website_id=website.id).viewref('ab_ecommerce_storefront.homepage')"/>
+        </xpath>
+        <xpath expr="//t[@t-set='no_index']" position="before">
+            <t t-set="ab_seo_path" t-value="request.httprequest.path.rstrip('/') or '/'"/>
+            <t t-set="ab_seo_canonical_path" t-value="'/shop' + ab_seo_path[len('/shop/category'):] if ab_seo_path == '/shop/category' or ab_seo_path.startswith('/shop/category/page/') else ab_seo_path"/>
+        </xpath>
+        <xpath expr="//t[@t-set='no_index']" position="attributes">
+            <attribute name="t-value" add="ab_seo_path == '/my' or ab_seo_path.startswith('/my/') or ab_seo_path.startswith('/ab_storefront/auth/') or ab_seo_path in ('/web/login', '/web/signup', '/web/reset_password', '/authentication', '/track-order', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation', '/shop/wishlist', '/contactus-thank-you', '/business-partnerships/thank-you') or (ab_seo_path.startswith('/shop') and any(request.httprequest.args.get(key) for key in ('search', 'need', 'brand', 'deal', 'tags', 'attribute_values', 'attrib', 'min_price', 'max_price', 'order', 'include_oos'))) or (ab_offers_landing and not ab_catalog['offers'])" separator=" or "/>
+        </xpath>
+        <xpath expr="//link[@rel='canonical']" position="attributes">
+            <attribute name="t-att-href">url_localized(url=ab_seo_canonical_path, lang_code=request.lang.code, canonical_domain=canonical_domain)</attribute>
+        </xpath>
+        <xpath expr="//link[@t-att-hreflang='lg.hreflang']" position="attributes">
+            <attribute name="t-att-href">url_localized(url=ab_seo_canonical_path, lang_code=lg.code, prefetch_langs=True, canonical_domain=canonical_domain)</attribute>
+        </xpath>
+        <xpath expr="//link[@hreflang='x-default']" position="attributes">
+            <attribute name="t-att-href">url_localized(url=ab_seo_canonical_path, lang_code=website.default_lang_id.code, canonical_domain=canonical_domain)</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='ab_offers_href']" position="attributes">
+            <attribute name="t-value">'/offers'</attribute>
+        </xpath>
+    </template>
+
+    <template id="offers_landing_page" inherit_id="ab_ecommerce_storefront.offers_page" primary="True" name="Abdin Pharmacy Offers">
+        <xpath expr="//div[@id='wrap']" position="before">
+            <t t-set="ab_offers_landing" t-value="True"/>
+            <t t-set="ab_catalog" t-value="website._ab_storefront_home_catalog(product_limit=12, category_limit=1)"/>
+        </xpath>
+        <xpath expr="//h1" position="after">
+            <p>Explore current offers on health, beauty, and personal care products at Abdin Pharmacies. Check each product for its current price and availability.</p>
+        </xpath>
+        <xpath expr="//nav" position="replace">
+            <div t-if="ab_catalog['has_more_offers']" class="text-center mt-4">
+                <a href="/shop/category?deal=discount" class="btn btn-outline-primary">Browse all offers</a>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="sitemap_seo" inherit_id="website.sitemap_locs" name="Abdin Public Sitemap">
+        <xpath expr="//url[@t-as='page']" position="attributes">
+            <attribute name="t-if">page['loc'] != '/track-order'</attribute>
+        </xpath>
+    </template>
+
+    <data noupdate="1">
+        <record id="offers_website_page" model="website.page">
+            <field name="name">Pharmacy Offers</field>
+            <field name="url">/offers</field>
+            <field name="view_id" ref="offers_landing_page"/>
+            <field name="is_published" eval="True"/>
+            <field name="website_indexed" eval="True"/>
+        </record>
+    </data>
+</odoo>

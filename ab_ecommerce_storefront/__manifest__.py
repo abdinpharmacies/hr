@@ -65,6 +65,8 @@
         "views/sale_order_report.xml",
         "views/prescription_order_templates.xml",
         "views/empty_states.xml",
+        "views/seo.xml",
+        "data/seo_metadata.xml",
     ],
     "assets": {
         "web.assets_backend": [
