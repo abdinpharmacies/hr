@@ -2,6 +2,7 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 import { Component, onWillDestroy, onWillStart, useState } from "@odoo/owl";
 
 class AbSalesReturnUiApiAction extends Component {
@@ -196,7 +197,7 @@ class AbSalesReturnUiApiAction extends Component {
     }
 
     async pushToEplus() {
-        await this._runAction("push_to_eplus", "Failed to push return to E-Plus.", {}, "Return pushed to E-Plus.");
+        await this._runAction("push_to_eplus", _t("Failed to commit return."), {}, _t("Return committed."));
     }
 
     _findLine(lineId) {

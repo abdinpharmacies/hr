@@ -31,12 +31,12 @@
                                                         class="btn-primary"
                                                         invisible="status != 'prepending'"/>
                         -->
-                        <!-- Push to E-Plus after confirmation -->
+                        <!-- Commit after confirmation -->
                         <button name="action_push_to_eplus_return"
                                 type="object"
-                                string="Push to E-Plus"
+                                string="Commit"
                                 class="btn-success"
-                                confirm="Are you sure you want to push this return to E-Plus?"
+                                confirm="Are you sure you want to commit this return?"
                                 invisible="status == 'saved'"/>
                     </header>
 

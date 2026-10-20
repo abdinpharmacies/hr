@@ -177,7 +177,7 @@
                                         type="button"
                                         t-on-click="pushToEplus"
                                         t-att-disabled="state.busy || !state.record.can_push">
-                                    Push to E-Plus
+                                    Commit
                                 </button>
                             </div>
                         </div>
