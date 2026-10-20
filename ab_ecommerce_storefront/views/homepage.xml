@@ -429,7 +429,7 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <h2 class="mb-0">Browse our products</h2>
+                                <h2 class="mb-0">Best sellers</h2>
                             </div>
                             <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">All products</a>
                         </div>

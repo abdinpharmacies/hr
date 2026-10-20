@@ -242,12 +242,12 @@ class Website(models.Model):
             order="website_sequence, id DESC",
             limit=candidate_limit,
         )
-        prices = candidates._get_sales_prices(self)
+        best_sellers = self._ab_storefront_best_sellers(limit=product_limit)
+        prices = best_sellers._get_sales_prices(self)
         offers, offer_prices, has_more_offers = self._ab_storefront_offer_catalog(
             product_limit, offers_offset
         )
         prices.update(offer_prices)
-        best_sellers = candidates[:product_limit]
         displayed_products = best_sellers | offers
         category_products = self._ab_storefront_category_products(categories, candidates)
         variant_ids = [
@@ -278,6 +278,37 @@ class Website(models.Model):
             "offer_product_ids": set(offers.ids),
             "wishlist_product_ids": wishlist_product_ids,
         }
+
+    def _ab_storefront_best_sellers(self, limit=8):
+        self.ensure_one()
+        products = self.env["product.template"].with_context(bin_size=True)
+        if limit <= 0:
+            return products
+        product_domain = (
+            self.website_domain()
+            & Domain("active", "=", True)
+            & Domain("sale_ok", "=", True)
+            & Domain("is_published", "=", True)
+            & Domain("company_id", "in", [False, self.company_id.id])
+            & Domain("service_tracking", "in", products._get_saleable_tracking_types())
+        )
+        sales = self.env["sale.report"].sudo()._read_group(
+            Domain("website_id", "=", self.id)
+            & Domain("company_id", "=", self.company_id.id)
+            & Domain("state", "=", "sale")
+            & Domain("product_tmpl_id", "any", product_domain),
+            ["product_tmpl_id"],
+            ["product_uom_qty:sum"],
+            having=Domain("product_uom_qty:sum", ">", 0),
+            order="product_uom_qty:sum DESC, product_tmpl_id",
+            limit=limit,
+        )
+        product_ids = [product.id for product, quantity in sales]
+        available_products = products.search(
+            product_domain & Domain("id", "in", product_ids)
+        )
+        rank = {product_id: index for index, product_id in enumerate(product_ids)}
+        return available_products.sorted(lambda product: rank[product.id])
 
     def _ab_storefront_category_products(self, categories, candidates=None):
         self.ensure_one()
