@@ -1,0 +1,115 @@
+@mixin ab-storefront-scrollbar {
+    --ab-scroll-thumb: var(--ab-primary, #16834f);
+    --ab-scroll-track: #edf4f0;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--ab-scroll-thumb) var(--ab-scroll-track);
+
+    &:hover,
+    &:focus-within {
+        --ab-scroll-thumb: var(--ab-primary-dark, #0b5f39);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--ab-primary, #16834f);
+        outline-offset: 3px;
+    }
+
+    @supports #{"selector(::-webkit-scrollbar)"} {
+        scrollbar-width: auto !important;
+        scrollbar-color: auto;
+    }
+
+    &::-webkit-scrollbar {
+        display: block !important;
+        width: 12px;
+        height: 12px;
+    }
+
+    &::-webkit-scrollbar-track {
+        border-radius: 999px;
+        background: var(--ab-scroll-track);
+        border: 4px solid transparent;
+        background-clip: padding-box;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        min-width: 40px;
+        min-height: 40px;
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background-color: var(--ab-scroll-thumb);
+        background-image: repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, .65) 3px 4px);
+        background-size: 9px 4px;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-clip: padding-box;
+    }
+
+    &::-webkit-scrollbar-thumb:vertical {
+        background-image: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .65) 3px 4px);
+        background-size: 4px 9px;
+    }
+
+    &::-webkit-scrollbar-thumb:active {
+        background-color: #06492c;
+    }
+
+    &::-webkit-scrollbar-button {
+        display: none !important;
+        width: 0;
+        height: 0;
+    }
+
+    &::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+
+    @media (pointer: coarse) {
+        scrollbar-width: auto !important;
+
+        &::-webkit-scrollbar {
+            width: 14px;
+            height: 14px;
+        }
+    }
+
+    @media (forced-colors: active) {
+        scrollbar-color: auto;
+
+        &::-webkit-scrollbar-track {
+            background: Canvas;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-color: Canvas;
+            background: ButtonText;
+        }
+    }
+}
+
+body.ab-storefront :is(
+    .ab-storefront-scroll-region,
+    .ab-storefront-history-rail-track,
+    .ab-storefront-product-rail,
+    .ab-storefront-testimonial-rail,
+    .ab-storefront-unit-options,
+    .ab-storefront-brand-list,
+    .ab-storefront-category-menu,
+    .ab-storefront-need-menu,
+    .ab-storefront-primary-nav,
+    .ab-storefront-category-nav > .container,
+    .ab-storefront-header .o_dropdown_menu,
+    .ab-storefront-products-grid #o_wsale_products_header .o_searchbar_form > .o_dropdown_menu,
+    .ab-storefront-mobile-nav .offcanvas-body,
+    .ab-storefront-location-picker-body,
+    .ab-storefront-mobile-search-shell,
+    .ab-storefront-testimonial-dialog,
+    .ab-account-nav,
+    .ab-account-shell .table-responsive,
+    .ab-customer-orders-tabs-track,
+    .ab-branches-list,
+    .ab-branch-profile,
+    .ab-avatar-picker-panel
+) {
+    @include ab-storefront-scrollbar;
+}

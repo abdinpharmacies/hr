@@ -106,6 +106,7 @@
             "ab_ecommerce_storefront/static/src/scss/contact.scss",
             "ab_ecommerce_storefront/static/src/scss/about.scss",
             "ab_ecommerce_storefront/static/src/scss/branches.scss",
+            "ab_ecommerce_storefront/static/src/scss/scroll_region.scss",
         ],
     },
     "installable": True,

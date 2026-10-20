@@ -39,7 +39,7 @@
                 <div class="ab-storefront-history-skeleton" data-ab-history-skeleton="" aria-hidden="true">
                     <span/><span/><span/><span/>
                 </div>
-                <div class="ab-storefront-history-rail-track" data-ab-history-products="" tabindex="0"/>
+                <div class="ab-storefront-history-rail-track ab-storefront-scroll-region" data-ab-history-products="" tabindex="0"/>
             </div>
         </section>
     </template>
