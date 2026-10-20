@@ -10,7 +10,8 @@
                 <xpath expr="//field[last()]" position="after">
                     <field name="balance"/>
                     <field name="has_balance" optional="hide"/>
-                    <button name="btn_get_stores_balance" type="object" icon="fa-anchor" class="btn-primary"/>
+                    <button name="btn_get_stores_balance" type="object" icon="fa-anchor" class="btn-primary"
+                            title="Get Store Balances"/>
                 </xpath>
             </field>
         </record>

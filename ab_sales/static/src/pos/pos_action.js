@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
+import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
-import {Component, onMounted, onWillStart, onWillUnmount, useExternalListener, useRef, useState} from "@odoo/owl";
+import {Component, onMounted, onWillStart, onWillUnmount, useEffect, useExternalListener, useRef, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {ConfirmationDialog} from "@web/core/confirmation_dialog/confirmation_dialog";
-import {_t} from "@web/core/l10n/translation";
 import {useService} from "@web/core/utils/hooks";
 import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
 import {session} from "@web/session";
@@ -12,6 +12,7 @@ import {user} from "@web/core/user";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
 import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
+import {refreshPosBalances} from "./pos_balance_refresh";
 
 const CACHE_PREFIX = "ab_sales_pos_cache_v1";
 const DEFAULT_QTY = "1";
@@ -188,7 +189,6 @@ class AbSalesPosStoreDialog extends Component {
         if (!ids.length) return;
         const revision = this.state.revision;
         this.dialog.add(ConfirmationDialog, {
-            cancel: () => {},
             title: bill ? _t("Delete Draft") : _t("Delete All Drafts"),
             body: bill ? _t("Delete this saved draft? This cannot be undone.") :
                 _t("Delete all eligible saved drafts for this employee, including open drafts? Protected invoices will be retained."),
@@ -261,7 +261,9 @@ class AbSalesPosSubmitDialog extends Component {
             customer_insurance_name: header.customer_insurance_name || "",
             customer_insurance_number: header.customer_insurance_number || "",
             description: header.description || "",
-            is_delivery: header.is_delivery !== undefined ? !!header.is_delivery : !!header.customer_id,
+            is_delivery: !!header.customer_id && (this.props.bill?.lines || []).some(
+                (line) => String(line.product_code || "").trim().startsWith("00")
+            ),
             eplus_employee: Number.isFinite(employeeId) && employeeId > 0
                 ? {id: employeeId, display_name: employeeName || ""}
                 : false,
@@ -790,98 +792,6 @@ class AbSalesPosCustomerLookupDialog extends Component {
     }
 }
 
-class AbSalesPosDuplicateTokenDialog extends Component {
-    static template = "ab_sales.PosDuplicateTokenDialog";
-    static components = {Dialog};
-    static props = {
-        existing: Object,
-        message: {type: String, optional: true},
-        onCreateNewToken: Function,
-        close: Function,
-    };
-
-    setup() {
-        this.state = useState({submitting: false});
-        this.submitNewToken = this.submitNewToken.bind(this);
-        this.formatMoney2 = this.formatMoney2.bind(this);
-        this.formatQty = this.formatQty.bind(this);
-        this.formatDateTime = this.formatDateTime.bind(this);
-    }
-
-    get existing() {
-        return this.props.existing || {};
-    }
-
-    formatMoney2(value) {
-        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
-        if (!Number.isFinite(numberValue)) {
-            return "0.00";
-        }
-        return numberValue.toFixed(2);
-    }
-
-    formatQty(value) {
-        const numberValue = typeof value === "number" ? value : parseFloat(value ?? 0);
-        if (!Number.isFinite(numberValue)) {
-            return "0";
-        }
-        const fixed = numberValue.toFixed(2);
-        return fixed.replace(/(?:\.0+|(\.\d*?)0+)$/, "$1");
-    }
-
-    formatDateTime(value) {
-        if (!value) {
-            return "-";
-        }
-        try {
-            const dt = new Date(value);
-            return `${dt.toLocaleDateString()} ${dt.toLocaleTimeString()}`;
-        } catch {
-            return value;
-        }
-    }
-
-    async submitNewToken() {
-        if (this.state.submitting) {
-            return;
-        }
-        this.state.submitting = true;
-        try {
-            if (this.props.onCreateNewToken) {
-                await this.props.onCreateNewToken();
-            }
-            if (this.props.close) {
-                this.props.close();
-            }
-        } finally {
-            this.state.submitting = false;
-        }
-    }
-
-    cancel() {
-        if (this.props.close) {
-            this.props.close();
-        }
-    }
-}
-
-class AbSalesPosValidationDialog extends Component {
-    static template = "ab_sales.PosValidationDialog";
-    static components = {Dialog};
-    static props = {
-        title: {type: String, optional: true},
-        message: {type: String, optional: true},
-        branchResponse: {type: String, optional: true},
-        close: Function,
-    };
-
-    close() {
-        if (this.props.close) {
-            this.props.close();
-        }
-    }
-}
-
 class AbSalesPosAllInvoicesDialog extends Component {
     static template = "ab_sales.PosAllInvoicesDialog";
     static components = {Dialog};
@@ -1046,12 +956,12 @@ class AbSalesPosAction extends Component {
             draftLimit: 10,
             draftSlotBranches: {},
             draftCacheReady: false,
-            draftCacheError: "",
-            draftCacheAccessBlocked: false,
+            draftBackupMessage: "",
+            draftConflicts: {},
             draftCreating: false,
-            draftDeleting: false,
             draftManaging: false,
-            draftStoreIds: null,
+            draftDeleting: false,
+            draftDiscardEligibility: {},
             selectedId: null,
             stores: [],
             storeById: {},
@@ -1061,8 +971,11 @@ class AbSalesPosAction extends Component {
             storeResults: [],
             productResults: [],
             productQuery: "",
+            productMinPrice: "",
+            productMaxPrice: "",
             productHasBalanceOnly: !!initialPosUiSettings.productHasBalanceOnly,
             productHasPosBalanceOnly: !!initialPosUiSettings.productHasPosBalanceOnly,
+            productItemType: "all",
             productColumnPercent: initialProductColumnPercent,
             posSettingsSaving: false,
             selectionIndex: -1,
@@ -1073,8 +986,9 @@ class AbSalesPosAction extends Component {
             customerInsights: null,
             loadingCustomerInsights: false,
             storeOnline: null,
-            branchApiStatus: false,
+            branchApiStatus: true,
             storeStatusError: "",
+            draftCacheAccessBlocked: false,
             showStoreDetails: false,
             showCustomerDetails: false,
             showBillDetails: false,
@@ -1101,6 +1015,7 @@ class AbSalesPosAction extends Component {
         this.customerM2ORef = useRef("customerM2O");
 
         this._productSearchTimer = null;
+        this._productSearchRequestId = 0;
         this._customerSearchTimer = null;
         this._promoTimer = null;
         this._promoRequestId = 0;
@@ -1118,8 +1033,8 @@ class AbSalesPosAction extends Component {
         this._cacheSaveQueued = false;
         this._cacheSaveStopped = false;
         this._acknowledgedDrafts = new Map();
-        this._serverDraftSlots = new Map();
-        this._lastServerCachePayload = "";
+        this._skippedDrafts = new Map();
+        this._removedDraftIds = new Set();
         this._barcodeActive = false;
         this._barcodeBuffer = "";
         this._lineFocusObserver = null;
@@ -1139,6 +1054,7 @@ class AbSalesPosAction extends Component {
         this.selectBill = this.selectBill.bind(this);
         this.removeBill = this.removeBill.bind(this);
         this.removeCurrentBill = this.removeCurrentBill.bind(this);
+        this.removeAllBills = this.removeAllBills.bind(this);
         this.openNewBillDialog = this.openNewBillDialog.bind(this);
         this.openCustomerLookup = this.openCustomerLookup.bind(this);
         this.applyCustomerLookup = this.applyCustomerLookup.bind(this);
@@ -1160,17 +1076,20 @@ class AbSalesPosAction extends Component {
         this.onProductSearchKeydown = this.onProductSearchKeydown.bind(this);
         this.onProductHasBalanceChange = this.onProductHasBalanceChange.bind(this);
         this.onProductHasPosBalanceChange = this.onProductHasPosBalanceChange.bind(this);
+        this.onProductItemTypeChange = this.onProductItemTypeChange.bind(this);
         this.updateLineQty = this.updateLineQty.bind(this);
         this.updateLineSellPrice = this.updateLineSellPrice.bind(this);
         this.updateLineTargetPrice = this.updateLineTargetPrice.bind(this);
         this.loadLineDetails = this.loadLineDetails.bind(this);
         this.removeLine = this.removeLine.bind(this);
         this.submitCurrentBill = this.submitCurrentBill.bind(this);
+        this.retryCurrentBill = this.retryCurrentBill.bind(this);
         this.openBillWizard = this.openBillWizard.bind(this);
         this.openStoresBalance = this.openStoresBalance.bind(this);
         this.scheduleLinePosBalanceRefresh = this.scheduleLinePosBalanceRefresh.bind(this);
         this._refreshPosBalancesForLines = this._refreshPosBalancesForLines.bind(this);
         this.refreshLinePosBalance = this.refreshLinePosBalance.bind(this);
+        this.refreshProductPosBalance = this.refreshProductPosBalance.bind(this);
         this.onAvailablePriceSelect = this.onAvailablePriceSelect.bind(this);
         this._openBarcodeLinkDialog = this._openBarcodeLinkDialog.bind(this);
         this._openBarcodeRegisterDialog = this._openBarcodeRegisterDialog.bind(this);
@@ -1214,6 +1133,8 @@ class AbSalesPosAction extends Component {
         this.loadPosUiSettings = this.loadPosUiSettings.bind(this);
         this.loadCache = this.loadCache.bind(this);
         this.persistCache = this.persistCache.bind(this);
+        this.retryDraftBackup = this.retryDraftBackup.bind(this);
+        this.resolveDraftConflict = this.resolveDraftConflict.bind(this);
         this._saveCacheToServer = this._saveCacheToServer.bind(this);
         this._posDraftEmployeeId = this._posDraftEmployeeId.bind(this);
         this._posDraftSessionToken = this._posDraftSessionToken.bind(this);
@@ -1239,9 +1160,62 @@ class AbSalesPosAction extends Component {
             ["Enter", this._onHotkeyEnter.bind(this)],
         ]);
 
+        useEffect(() => {
+            if (!this.state.abSalesHr) return;
+            if (!this._posDraftSessionToken()) {
+                this._draftLoadScope = null;
+                this.state.draftCacheReady = false;
+                clearTimeout(this._cacheSaveTimer);
+                return;
+            }
+            this.loadCache().catch((error) => {
+                this.state.draftBackupMessage = this._getRpcErrorMessage(error);
+            });
+        }, () => [this._posDraftSessionToken()]);
+
         useExternalListener(window, "keydown", (ev) => this.onKeydown(ev), {capture: true});
         useExternalListener(window, "resize", () => this._syncWindowToViewport());
         useExternalListener(window, "pagehide", () => this._saveCacheToServer());
+        useExternalListener(window, "focus", () => {
+            this.retryDraftBackup();
+            this.refreshSubmissionStates();
+        });
+        useExternalListener(window, "online", () => this.retryDraftBackup());
+        useExternalListener(window, "storage", (ev) => {
+            if (ev.key === `${this._localCacheKey()}_removed`) {
+                try {
+                    const ids = new Set(JSON.parse(ev.newValue || "[]"));
+                    if (this.state.bills.some((bill) => ids.has(bill.id))) {
+                        for (const id of ids) this._removedDraftIds.add(id);
+                        for (const bill of this.state.bills.filter((item) => ids.has(item.id))) {
+                            this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
+                        }
+                        this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
+                    }
+                } catch { /* Invalid signals cannot alter the workspace. */ }
+                return;
+            }
+            if (ev.key !== this._localCacheKey()) return;
+            // Other tabs may signal submission danger, but never pull their drafts.
+            try {
+                const incoming = JSON.parse(ev.newValue || "[]");
+                let changed = false;
+                for (const bill of this.state.bills) {
+                    const other = incoming.find((item) => item.id === bill.id);
+                    if (other && !bill.submission_checking && (other.submission_in_progress ||
+                        ["unknown", "pending", "saved"].includes(other.submission_status) ||
+                        (other.submission_attempted && !other.submission_validation_failed && !other.odoo_header_id))) {
+                        bill.submission_attempted = true;
+                        bill.submission_checking = true;
+                        changed = true;
+                    }
+                }
+                if (changed) {
+                    this._submissionRevision = (this._submissionRevision || 0) + 1;
+                    this.refreshSubmissionStates();
+                }
+            } catch { /* Invalid fallback data cannot alter the workspace. */ }
+        });
         useExternalListener(document, "visibilitychange", () => {
             if (document.visibilityState === "hidden") {
                 this._saveCacheToServer();
@@ -1251,33 +1225,7 @@ class AbSalesPosAction extends Component {
             useExternalListener(window.visualViewport, "resize", () => this._syncWindowToViewport());
         }
 
-        useExternalListener(window, "focus", () => {
-            if (!this.state.submitting) this._syncDraftsFromServer().then(() => this.refreshBranchSubmissions());
-        });
-        useExternalListener(window, "storage", (ev) => {
-            if (ev.key !== this._localCacheKey() && ev.key !== `${this._localCacheKey()}_removed`) return;
-            try {
-                const incoming = JSON.parse(ev.newValue || "[]");
-                if (!Array.isArray(incoming)) return;
-                if (ev.key.endsWith("_removed")) {
-                    const ids = new Set(incoming);
-                    if (this.state.bills.some((bill) => ids.has(bill.id))) this._syncDraftsFromServer();
-                    return;
-                }
-                let danger = false;
-                for (const bill of this.state.bills) {
-                    const other = incoming.find((item) => item.id === bill.id);
-                    if (other && !bill.submission?.checking && this._slotBillLocked(other)) {
-                        bill.submission = {...bill.submission, checking: true, unresolved: true};
-                        danger = true;
-                    }
-                }
-                if (danger) this.refreshBranchSubmissions({force: true});
-            } catch { /* Invalid signals cannot alter the workspace. */ }
-        });
         onWillStart(async () => {
-            this._installBranchMutationGuards();
-            this.state.branchApiStatus = await user.hasGroup("ab_sales.group_call_center");
             await this.loadStores();
             await this.loadPrinterSettings();
             await this.loadCache();
@@ -1285,6 +1233,7 @@ class AbSalesPosAction extends Component {
         });
 
         onMounted(() => {
+            this._installBranchMutationGuards();
             if (!this.state.selectedId && this.state.bills.length) {
                 this.state.selectedId = this.state.bills[0].id;
             }
@@ -1320,7 +1269,7 @@ class AbSalesPosAction extends Component {
         });
 
         onWillUnmount(() => {
-            clearTimeout(this._draftStorageTimer);
+            this._balanceRefreshUnmounted = true;
             if (this._viewportCheckTimer) {
                 clearInterval(this._viewportCheckTimer);
                 this._viewportCheckTimer = null;
@@ -1380,7 +1329,14 @@ class AbSalesPosAction extends Component {
     }
 
     _draftFingerprint(bill) {
-        return JSON.stringify(bill, (key, value) => ["checking", "in_progress"].includes(key) ? undefined : value);
+        // Live stock/display refreshes are not cashier edits and must not compete
+        // with another window's quantity/customer changes.
+        const transient = new Set(["submission_checking", "draft_revision", "backup_status", "updated_at",
+            "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html",
+            "show_details", "loading_details", "balance", "balance_total", "available", "loading",
+            "slot_locked", "slot_protected", "slot_number", "slot_waiting", "previous_slot_number"]);
+        return JSON.stringify(bill, (key, value) => transient.has(key) || key.startsWith("pos_balance_") || key === "pos_balance"
+            ? undefined : value);
     }
 
     _writeLocalCache() {
@@ -1393,7 +1349,7 @@ class AbSalesPosAction extends Component {
             const shared = JSON.parse(previous || "[]");
             const bills = this._mergeBillCaches(Array.isArray(shared) ? shared : [], this.state.bills)
                 .filter((bill) => !this._removedDraftIds.has(bill.id));
-            const text = JSON.stringify(bills, (key, value) => key === "checking" ? undefined : value);
+            const text = JSON.stringify(bills);
             if (text !== previous) localStorage.setItem(key, text);
             const removed = JSON.stringify([...this._removedDraftIds].sort());
             if (removed !== localStorage.getItem(`${key}_removed`)) localStorage.setItem(`${key}_removed`, removed);
@@ -1444,191 +1400,52 @@ class AbSalesPosAction extends Component {
 
     _cachePayloadSnapshot() {
         const local = (this.state.bills || []).filter((bill) =>
-            this._draftFingerprint(bill) !== this._acknowledgedDrafts.get(bill.id));
+            (this.draftSlotState(bill) === "used" || bill.draft_revision || this._slotBillLocked(bill) || bill.odoo_header_id) &&
+            this._draftFingerprint(bill) !== this._acknowledgedDrafts.get(bill.id) &&
+            this._draftFingerprint(bill) !== this._skippedDrafts?.get(bill.id) &&
+            !this.state.draftConflicts[bill.id]);
         const fingerprints = new Map(local.map((bill) => [bill.id, this._draftFingerprint(bill)]));
-        const bills = JSON.parse(this._draftFingerprint(local));
-        for (const bill of bills) {
-            // Slot placement in this tab must not reorder the shared draft pool.
-            bill.slot_number = this._serverDraftSlots.get(bill.id) || null;
-        }
-        const payload = {bills};
-        return {payload, payloadText: JSON.stringify(payload), fingerprints};
+        const bills = JSON.parse(JSON.stringify(local));
+        return {payload: {bills}, fingerprints};
     }
 
-    _handleDraftCacheError(error) {
-        const name = error?.data?.name || error?.response?.data?.name || error?.name || "";
-        const denied = ["odoo.exceptions.AccessError", "odoo.exceptions.AccessDenied",
-            "odoo.http.SessionExpiredException"].includes(name);
-        const fallback = _t("Draft cache could not be synchronized. Your local bills are retained; reconnect before creating or removing drafts.");
-        const message = denied ? this._getRpcErrorMessage(error, _t("Sign in again to access draft bills.")) : fallback;
-        this.state.draftCacheError = message;
-        if (denied) {
-            this.state.draftCacheAccessBlocked = true;
-            this.state.draftCacheReady = false;
-            clearTimeout(this._cacheSaveTimer);
-            this._cacheSaveTimer = null;
-            this._cacheSaveQueued = false;
-        }
+    _draftRequestScope() {
+        return `${this._localCacheKey()}:${this._posDraftSessionToken()}`;
     }
 
-    async retryDraftCache() {
-        if (this._cacheSaveInFlight || this._draftReadInFlight || this.state.submitting) return;
-        await this.loadCache();
-        this._syncInputsForBill(this.currentBill);
+    retryDraftBackup() {
+        this._draftRetryCount = 0;
+        this._scheduleCacheSaveToServer(0);
     }
 
-    async loadCache() {
-        if (this.state.abSalesHr && !this._posDraftSessionToken()) return;
-        this.state.draftCacheAccessBlocked = false;
-        this.state.draftCacheError = "";
-        const localBills = this._readLocalCache();
-        const scope = this._localCacheKey();
-        this.state.draftCacheReady = false;
-        this._acknowledgedDrafts = new Map();
-        this._serverDraftSlots = new Map();
-        this._removedDraftIds = new Set();
-        this._draftCacheRevision = 0;
-        this.state.draftDiscardEligibility = {};
-        this.state.draftSlotBranches = {};
-        this.state.draftStoreIds = null;
-        this.state.bills = localBills.map((bill) => this._normalizeBill(bill));
-        let selected;
-        try { selected = sessionStorage.getItem(`${scope}_selection`); } catch { /* Optional. */ }
-        this.state.selectedId = this.state.bills.some((bill) => bill.id === selected)
-            ? selected : (this.state.bills[0]?.id || null);
-        this._assignLocalDraftSlots();
-        try {
-            // Read metadata first: never push an offline workspace through load's
-            // legacy import path, which may evict saved drafts at capacity.
-            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result);
-            await this._saveCacheToServer();
-        } catch (error) {
-            if (scope !== this._localCacheKey()) return;
-            this._handleDraftCacheError(error);
-        }
-        if (!this.state.draftCacheAccessBlocked) await this.refreshBranchSubmissions();
-    }
-
-    _applyDraftCacheResult(result, snapshot = null) {
-        if (Number.isInteger(result?.revision) && result.revision < (this._draftCacheRevision || 0)) return;
-        const previousSelectedId = this.state.selectedId;
-        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : 10;
-        this._draftCacheRevision = result?.revision || 0;
-        this._removedDraftIds = new Set(result?.removed_ids || []);
-        const rejected = new Set(result?.rejected_ids || []);
-        const server = new Map((result?.bills || []).map((bill) => [bill.id, bill]));
-        for (const bill of server.values()) this._serverDraftSlots.set(bill.id, bill.slot_number);
-        for (const [id, fingerprint] of snapshot?.fingerprints || []) {
-            if (!rejected.has(id)) this._acknowledgedDrafts.set(id, fingerprint);
-        }
-        // Safety metadata can invalidate an open draft, but cannot import others.
-        for (const bill of this.state.bills) {
-            const remote = server.get(bill.id);
-            if (remote) {
-                const live = bill.submission || {};
-                if (!live.in_progress && (remote.submission?.revision || 0) >= (live.revision || 0)) {
-                    bill.submission = {...live, ...remote.submission,
-                        version: Math.max(live.version || 0, remote.submission?.version || 0)};
-                    bill.slot_locked = remote.slot_locked;
-                    bill.slot_protected = remote.slot_protected;
-                    bill.slot_removable = remote.slot_removable;
-                }
-            }
-        }
-        const replacements = [];
-        for (const [oldId, newId] of Object.entries(result.replacements || {})) {
-            const previous = this.state.bills.find((bill) => bill.id === oldId);
-            if (previous && server.has(newId)) {
-                const bill = this._normalizeBill(server.get(newId));
-                bill.slot_number = previous.slot_number || previous.previous_slot_number;
-                replacements.push(bill);
-                this._acknowledgedDrafts.set(bill.id, this._draftFingerprint(bill));
-                if (this.state.selectedId === oldId) this.state.selectedId = bill.id;
-            }
-        }
-        const remaining = this.state.bills.filter((bill) => !this._removedDraftIds.has(bill.id));
-        remaining.push(...replacements);
-        if (replacements.length || remaining.length !== this.state.bills.length) {
-            this.state.bills = remaining;
-            if (!remaining.some((bill) => bill.id === this.state.selectedId)) {
-                this.state.selectedId = remaining[0]?.id || null;
+    resolveDraftConflict(token) {
+        const conflict = this.state.draftConflicts[token];
+        const bill = this.state.bills.find((item) => item.id === token);
+        if (!conflict || !bill) return;
+        const scope = this._draftRequestScope();
+        this.dialog.add(ConfirmationDialog, {
+            title: _t("Draft changed in another window"),
+            body: _t("Reloading replaces your local edits with the saved version. Keep local changes instead to save your version against the reviewed revision."),
+            confirmLabel: _t("Reload saved version"),
+            cancelLabel: _t("Keep local changes"),
+            dismiss: () => {},
+            confirm: () => {
+                if (scope !== this._draftRequestScope()) return;
+                const restored = this._normalizeBill({...conflict.bill, draft_revision: conflict.revision});
+                restored.slot_number = bill.slot_number;
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, restored);
+                this._acknowledgedDrafts.set(token, this._draftFingerprint(restored));
+                delete this.state.draftConflicts[token];
                 this._syncInputsForBill(this.currentBill);
-            }
-        }
-        this._assignLocalDraftSlots();
-        if (previousSelectedId !== this.state.selectedId) this._syncInputsForBill(this.currentBill);
-        this.state.draftCacheAccessBlocked = false;
-        this.state.draftCacheError = "";
-        this.state.draftCacheReady = true;
-        this._writeLocalCache();
-        if (rejected.size) this._draftLimitWarning();
-    }
-
-    async removeAllBills() {
-        await this._deleteDrafts([...this.state.bills]);
-    }
-
-    async _syncCompletedDrafts() {
-        const scope = this._localCacheKey();
-        try {
-            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], {
-                ...this._draftScopeArgs(),
-            });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result);
-            this._syncInputsForBill(this.currentBill);
-            this.refreshPromotions(this.currentBill);
-            this.refreshCustomerInsights(this.currentBill);
-            this.refreshStoreStatus(this.currentBill?.header?.store_id);
-        } catch {
-            // The invoice is already confirmed. Retry cache synchronization,
-            // never report a sale failure or replay the submission.
-            this.persistCache();
-        }
-    }
-
-    async _deleteDrafts(bills) {
-        if (!bills.length || this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.draftCreating) return;
-        if (!this.state.draftCacheReady) return;
-        // Let an earlier save finish before removal; tombstones reject later stale saves.
-        if (this._cacheSaveInFlight) {
-            this.notification.add(_t("Draft cache is busy. Please try again."), {type: "info"});
-            return;
-        }
-        clearTimeout(this._cacheSaveTimer);
-        this._cacheSaveTimer = null;
-        this.state.draftDeleting = true;
-        const scope = this._localCacheKey();
-        const snapshot = this._cachePayloadSnapshot();
-        try {
-            // Persist unsent edits first, so eligibility uses the current bill.
-            const saved = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), ...snapshot.payload, revision: this._draftCacheRevision,
-            });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(saved, snapshot);
-            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
-                ...this._draftScopeArgs(), bill_ids: bills.map((bill) => bill.id), revision: saved.revision,
-            });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result);
-            this._syncInputsForBill(this.currentBill);
-            this.refreshPromotions(this.currentBill);
-            this.refreshCustomerInsights(this.currentBill);
-            this.searchProducts((this.state.productQuery || "").trim());
-            this.notification.add(_t("Deleted %s drafts; retained %s bills.",
-                result.deleted_ids.length, result.retained_count), {type: "info"});
-        } catch {
-            this.notification.add(_t("Could not remove drafts. Your bills have been retained. Please try again."), {type: "warning"});
-        } finally {
-            this.state.draftDeleting = false;
-            if (this._cacheSaveQueued) {
-                this._cacheSaveQueued = false;
-                this._scheduleCacheSaveToServer(0);
-            }
-        }
+                this.persistCache();
+            },
+            cancel: () => {
+                if (scope !== this._draftRequestScope()) return;
+                bill.draft_revision = conflict.revision;
+                delete this.state.draftConflicts[token];
+                this.retryDraftBackup();
+            },
+        });
     }
 
     _draftScopeArgs() {
@@ -1648,7 +1465,7 @@ class AbSalesPosAction extends Component {
     _assignLocalDraftSlots() {
         const used = new Set();
         const editable = this.state.bills.filter((bill) =>
-            !this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission?.status));
+            !this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status));
         for (const bill of this.state.bills) {
             if (!editable.includes(bill)) {
                 if (bill.slot_number) bill.previous_slot_number = bill.slot_number;
@@ -1678,9 +1495,9 @@ class AbSalesPosAction extends Component {
     }
 
     get draftSlots() {
-        const slots = Array.from({length: this.state.draftLimit}, (_, index) => ({number: index + 1, bill: null, branch: null}));
+        const slots = Array.from({length: this.state.draftLimit}, (_, index) => ({number: index + 1, bill: null, branch: this.state.draftSlotBranches[String(index + 1)] || null}));
         for (const bill of this.state.bills) {
-            if (!this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission?.status) &&
+            if (!this._slotBillLocked(bill) && !["pending", "saved"].includes(bill.submission_status) &&
                 Number.isInteger(bill.slot_number) && slots[bill.slot_number - 1]) {
                 slots[bill.slot_number - 1].bill = bill;
             }
@@ -1726,7 +1543,7 @@ class AbSalesPosAction extends Component {
 
     get waitingDraftBills() {
         return this.state.bills.filter((bill) => !this._slotBillLocked(bill) && !bill.slot_number &&
-            !["pending", "saved"].includes(bill.submission?.status));
+            !["pending", "saved"].includes(bill.submission_status));
     }
 
     _draftSlotLabel(number) {
@@ -1734,15 +1551,121 @@ class AbSalesPosAction extends Component {
     }
 
     _draftLimitWarning() {
-        this.notification.add(_t("All %s saved draft slots are occupied. Restore or delete a saved draft before creating a bill.",
+        this.notification.add(_t("All %s local bill slots are occupied. Remove a Ready bill or an eligible draft to free a slot.",
             this.state.draftLimit), {type: "warning"});
+    }
+
+    _applyDraftCacheResult(result, snapshot = null) {
+        this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : this.state.draftLimit;
+        const server = new Map((result.bills || []).map((bill) => [bill.id, bill]));
+        const outcomes = result.outcomes || [];
+        this._lastDraftOutcomes = outcomes;
+        for (const outcome of outcomes) {
+            const bill = this.state.bills.find((item) => item.id === outcome.token);
+            if (!bill) continue;
+            if (["saved", "unchanged"].includes(outcome.status)) {
+                bill.draft_revision = outcome.revision;
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._acknowledgedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "skipped") {
+                // Suppress retries for this exact payload without claiming it was backed up.
+                this._skippedDrafts ||= new Map();
+                const fingerprint = snapshot?.fingerprints.get(bill.id);
+                if (fingerprint) this._skippedDrafts.set(bill.id, fingerprint);
+            } else if (outcome.status === "conflict") {
+                this.state.draftConflicts[bill.id] = outcome;
+            } else if (["retired", "ready"].includes(outcome.status) &&
+                       this.draftSlotState(bill) !== "used" && !this._slotBillLocked(bill) && !bill.odoo_header_id) {
+                const oldId = bill.id;
+                bill.header.pos_client_token = generatePosToken(user.userId, bill.header.store_id);
+                bill.id = bill.header.pos_client_token;
+                delete bill.draft_revision;
+                if (this.state.selectedId === oldId) this.state.selectedId = bill.id;
+            }
+        }
+        const completed = new Set([...(result.completed_ids || []), ...outcomes.filter((o) => o.status === "completed").map((o) => o.token)]);
+        const removed = new Set(result.removed_ids || []);
+        for (const bill of [...this.state.bills]) {
+            const remote = server.get(bill.id);
+            if (remote && this._slotBillLocked(remote)) {
+                if (!bill.submission?.in_progress && (remote.submission?.revision || 0) >= (bill.submission?.revision || 0)) {
+                    bill.submission = {...bill.submission, ...remote.submission};
+                    this._syncBranchDisplay(bill);
+                }
+                for (const key of ["submission_status", "submission_checking", "submission_in_progress",
+                    "submission_can_edit", "submission_attempted", "odoo_header_id", "eplus_serial"]) {
+                    if (key in remote) bill[key] = remote[key];
+                }
+            }
+            if (completed.has(bill.id)) {
+                const oldId = bill.id;
+                const token = generatePosToken(user.userId, bill.header.store_id);
+                const replacement = this._normalizeBill({id: token, header: {
+                    store_id: bill.header.store_id, store_name: bill.header.store_name,
+                    store_code: bill.header.store_code, store_ip: bill.header.store_ip, pos_client_token: token},
+                    lines: [], submission_status: "draft", slot_number: bill.slot_number || bill.previous_slot_number});
+                this.state.bills.splice(this.state.bills.indexOf(bill), 1, replacement);
+                if (this.state.selectedId === oldId) this.state.selectedId = token;
+            } else if (removed.has(bill.id)) {
+                // A stale window must not erase its own unsaved edits or revive a tombstone.
+                this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
+            }
+        }
+        if (outcomes.some((o) => o.status === "capacity")) {
+            this.state.draftBackupMessage = _t("Not backed up: saved draft limit reached.");
+        } else if (outcomes.some((o) => o.status === "error")) {
+            this.state.draftBackupMessage = outcomes.find((o) => o.status === "error").message;
+        } else if (Object.keys(this.state.draftConflicts).length) {
+            this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
+        } else if (outcomes.some((o) => o.status === "busy")) {
+            this.state.draftBackupMessage = _t("Draft backup is busy. Local edits are retained.");
+        } else {
+            this.state.draftBackupMessage = "";
+        }
+        this._assignLocalDraftSlots();
+        this._writeLocalCache();
+    }
+
+    async loadCache() {
+        // PIN bootstrap calls this again when the employee identity is available.
+        if (this.state.abSalesHr && !this._posDraftSessionToken()) return;
+        const scope = this._draftRequestScope();
+        if (this._draftLoadScope === scope) return this._draftLoadPromise;
+        this._draftLoadScope = scope;
+        this._draftLoadPromise = this._loadDraftWorkspace(scope);
+        return this._draftLoadPromise;
+    }
+
+    async _loadDraftWorkspace(scope) {
+        this._acknowledgedDrafts = new Map();
+        this._removedDraftIds = new Set();
+        this.state.draftConflicts = {};
+        this.state.draftDiscardEligibility = {};
+        this.state.bills = this._readLocalCache().map((bill) => this._normalizeBill(bill));
+        let selected;
+        try { selected = sessionStorage.getItem(`${this._localCacheKey()}_selection`); } catch { /* Optional. */ }
+        this.state.selectedId = this.state.bills.some((bill) => bill.id === selected)
+            ? selected : (this.state.bills[0]?.id || null);
+        this._assignLocalDraftSlots();
+        this.state.draftCacheReady = true;
+        try {
+            const result = await this.orm.call("ab_sales_pos_api", "pos_draft_workspace", [], {...this._draftScopeArgs(), tokens: this.state.bills.map((bill) => bill.id)});
+            if (scope !== this._draftRequestScope()) return;
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = this._getRpcErrorMessage(error);
+        }
+        if (scope !== this._draftRequestScope()) return;
+        this.retryDraftBackup();
+        await this.refreshSubmissionStates();
     }
 
     async _flushDraftSaves() {
         clearTimeout(this._cacheSaveTimer);
         this._cacheSaveTimer = null;
         if (this._cacheSavePromise) await this._cacheSavePromise;
-        await this._saveCacheToServer({throwOnError: true});
+        await this._saveCacheToServer({throwOnError: true, force: true});
         if (this._cachePayloadSnapshot().payload.bills.length) {
             throw new Error(_t("Drafts could not be saved. Please retry before restoring or deleting drafts."));
         }
@@ -1753,15 +1676,16 @@ class AbSalesPosAction extends Component {
             throw new Error(_t("Draft cache is busy. Please try again."));
         }
         this.state.draftManaging = true;
-        const scope = this._localCacheKey();
+        this._submissionRevision = (this._submissionRevision || 0) + 1;
+        const scope = this._draftRequestScope();
         const checkScope = () => {
-            if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog."));
+            if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog."));
         };
         try {
-            await this._flushDraftSaves();
+            if (this._cacheSavePromise) await this._cacheSavePromise;
             checkScope();
             return await operation(checkScope);
-        } finally { this.state.draftManaging = false; }
+        } finally { this.state.draftManaging = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
     }
 
     async _listSavedDrafts() {
@@ -1782,13 +1706,10 @@ class AbSalesPosAction extends Component {
             });
             checkScope();
             this._applyDraftCacheResult(result);
-            if (result.revision < this._draftCacheRevision || this._removedDraftIds.has(id)) {
-                throw new Error(_t("This draft is no longer available. Refresh the draft list."));
-            }
             const bill = this._normalizeBill(result.bills[0]);
             bill.slot_number = slotNumber;
             this.state.bills.push(bill);
-            this._acknowledgedDrafts.set(id, this._draftFingerprint(bill));
+            this._acknowledgedDrafts.set(bill.id, this._draftFingerprint(bill));
             this.selectBill(id);
         });
     }
@@ -1799,6 +1720,7 @@ class AbSalesPosAction extends Component {
                 ...this._draftScopeArgs(), bill_ids: ids, revision,
             });
             checkScope();
+            this._removeCachedBills(new Set(result.deleted_ids || []));
             this._applyDraftCacheResult(result);
             this.notification.add(_t("Deleted %s drafts; retained %s bills.", result.deleted_ids.length, result.retained_count), {type: "info"});
             return result;
@@ -1941,7 +1863,7 @@ class AbSalesPosAction extends Component {
             this._applyPosUiSettings(result?.settings || payload, true);
             this.notification.add("Settings saved.", {type: "success"});
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to save settings.")), {type: "danger"});
+            this.notification.add(err?.message || "Failed to save settings.", {type: "danger"});
         } finally {
             this.state.posSettingsSaving = false;
         }
@@ -1972,7 +1894,7 @@ class AbSalesPosAction extends Component {
     }
 
     _scheduleCacheSaveToServer(delay = 350) {
-        if (this._cacheSaveStopped || this.state.draftCacheAccessBlocked) {
+        if (this._cacheSaveStopped) {
             return;
         }
         if (this._cacheSaveTimer) {
@@ -1985,47 +1907,59 @@ class AbSalesPosAction extends Component {
     }
 
     async _saveCacheToServer(options = {}) {
-        if (this._cacheSavePromise) return this._cacheSavePromise;
+        const scope = this._draftRequestScope();
+        if (this._cacheSavePromise) {
+            if (this._cacheSaveScope === scope) return this._cacheSavePromise;
+            await this._cacheSavePromise;
+            if (scope !== this._draftRequestScope()) return;
+        }
+        this._cacheSaveScope = scope;
         this._cacheSavePromise = this._performCacheSave(options);
         try { return await this._cacheSavePromise; }
         finally { this._cacheSavePromise = null; }
     }
 
-    async _performCacheSave({allowRetry = true, throwOnError = false} = {}) {
-        if (this.state.draftCacheAccessBlocked) {
-            if (throwOnError) throw new Error(this.state.draftCacheError);
+    async _performCacheSave({allowRetry = true, throwOnError = false, force = false} = {}) {
+        if (!force && (this.state.draftDeleting || this.state.draftManaging)) {
+            this._cacheSaveQueued = true;
             return;
         }
-        if (this.state.draftDeleting || this.state.draftCreating) {
-            if (allowRetry && !this._cacheSaveStopped) this._cacheSaveQueued = true;
-            return;
-        }
-        const scope = this._localCacheKey();
+        this._cacheSaveQueued = false;
+        if (!this.state.draftCacheReady || (this.state.abSalesHr && !this._posDraftSessionToken())) return;
+        const scope = this._draftRequestScope();
+        const snapshot = this._cachePayloadSnapshot();
+        if (!snapshot.payload.bills.length) return;
         this._cacheSaveInFlight = true;
+        let transient = false;
         try {
-            if (!this.state.draftCacheReady) {
-                const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
-                if (scope !== this._localCacheKey()) return;
-                this._applyDraftCacheResult(result);
-            }
-            const snapshot = this._cachePayloadSnapshot();
-            if (!snapshot.payload.bills.length) return;
             const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), ...snapshot.payload, revision: this._draftCacheRevision,
+                ...this._draftScopeArgs(), ...snapshot.payload,
             });
-            if (scope !== this._localCacheKey()) return;
+            if (scope !== this._draftRequestScope()) return;
             this._applyDraftCacheResult(result, snapshot);
-            // A rejected offline draft is retained locally without a retry loop.
-            if (!result.rejected_ids?.length && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
+            transient = (result.outcomes || []).some((o) => o.status === "busy");
+            const rejected = (result.outcomes || []).some((o) => !["saved", "unchanged", "ready", "retired", "completed", "skipped"].includes(o.status));
+            if (throwOnError && rejected) throw new Error(this.state.draftBackupMessage);
+            if (!rejected && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
+            if (!rejected) this._draftRetryCount = 0;
             return result;
         } catch (error) {
-            if (scope !== this._localCacheKey()) return;
-            this._cacheSaveQueued = false;
-            this._handleDraftCacheError(error);
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftBackupMessage = error?.data ? this._getRpcErrorMessage(error) :
+                _t("Draft backup is unavailable. Your local edits are retained. Retry when connected.");
+            // RPC business errors require user action; transport errors may recover.
+            transient = !error?.data;
             if (throwOnError) throw error;
         } finally {
             this._cacheSaveInFlight = false;
-            if (this._cacheSaveQueued && !this._cacheSaveStopped) {
+            if (scope === this._draftRequestScope() && allowRetry && transient && !this._cacheSaveStopped) {
+                const delays = [1000, 2000, 5000];
+                const count = this._draftRetryCount || 0;
+                if (count < delays.length) {
+                    this._draftRetryCount = count + 1;
+                    this._scheduleCacheSaveToServer(delays[count]);
+                }
+            } else if (this._cacheSaveQueued && !this._cacheSaveStopped) {
                 this._cacheSaveQueued = false;
                 this._scheduleCacheSaveToServer(0);
             }
@@ -2033,22 +1967,12 @@ class AbSalesPosAction extends Component {
     }
 
     async loadStores() {
-        let allowedCodes = [];
-        let defaultCode = "";
-        try {
-            const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
-            allowedCodes = Array.isArray(settings?.allowed_store_codes)
-                ? settings.allowed_store_codes
-                : [];
-            defaultCode = (settings?.default_store_code || "").trim();
-        } catch {
-            allowedCodes = [];
-            defaultCode = "";
-        }
-        const domain = [["allow_sale", "=", true]];
-        if (allowedCodes.length) {
-            domain.push(["code", "in", allowedCodes]);
-        }
+        // A failed settings request must not expand the list of usable stores.
+        // Let the normal RPC error surface so the user can reload and retry.
+        const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
+        const allowedCodes = settings.allowed_store_codes || [];
+        const defaultCode = (settings.default_store_code || "").trim();
+        const domain = [["allow_sale", "=", true], ["id", "in", settings.available_store_ids || []]];
         const stores = await this.orm.searchRead("ab_store", domain, ["name", "code", "ip1"]);
         this.state.stores = stores || [];
         this.state.allowedStoreCodes = allowedCodes;
@@ -2057,12 +1981,10 @@ class AbSalesPosAction extends Component {
             byId[store.id] = store;
         }
         this.state.storeById = byId;
-        if (defaultCode) {
+        if (defaultCode && this.state.stores.some((store) => store.code === defaultCode)) {
             this.state.defaultStoreCode = defaultCode;
-        } else if (allowedCodes.length === 1) {
-            this.state.defaultStoreCode = allowedCodes[0];
         } else {
-            this.state.defaultStoreCode = "";
+            this.state.defaultStoreCode = this.state.stores[0]?.code || "";
         }
     }
 
@@ -2074,12 +1996,13 @@ class AbSalesPosAction extends Component {
         }
         this._requestedDraftSlot = Number.isInteger(slotNumber) ? slotNumber : this.emptyDraftSlots[0]?.number;
         this.state.draftCreating = true;
-        const scope = this._localCacheKey();
+        const scope = this._draftRequestScope();
         try {
             const options = await this.orm.call("ab_sales_pos_api", "pos_draft_store_options", [], {
                 pos_hr_session_token: this._posDraftSessionToken() || false,
             });
-            if (scope !== this._localCacheKey()) return;
+            if (scope !== this._draftRequestScope()) return;
+            this.state.draftLimit = options.draft_limit || this.state.draftLimit;
             const stores = options.stores || [];
             this.state.draftStoreIds = stores.map((store) => store.id);
             this.state.stores = stores;
@@ -2092,11 +2015,11 @@ class AbSalesPosAction extends Component {
                 stores,
                 defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
                 domain: this.storeDomain(),
-                onSelect: (storeId) => scope === this._localCacheKey() && this.createNewBill(storeId),
+                onSelect: (storeId) => scope === this._draftRequestScope() && this.createNewBill(storeId),
                 draftManager: {
-                    list: () => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
-                    restore: (id) => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._restoreSavedDraft(id, this._requestedDraftSlot); },
-                    remove: (ids, revision) => { if (scope !== this._localCacheKey()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._removeSavedDrafts(ids, revision); },
+                    list: () => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
+                    restore: (id) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._restoreSavedDraft(id, this._requestedDraftSlot); },
+                    remove: (ids, revision) => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._removeSavedDrafts(ids, revision); },
                     isOpen: (id) => this.state.bills.some((bill) => bill.id === id),
                     locked: (bill) => this._slotBillLocked(bill),
                     error: (error) => this._getRpcErrorMessage(error),
@@ -2112,7 +2035,7 @@ class AbSalesPosAction extends Component {
     }
 
     openCustomerLookup() {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) return;
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2131,7 +2054,9 @@ class AbSalesPosAction extends Component {
     }
 
     async applyCustomerLookup(customer) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         if (!customer || !customer.id) {
             return;
         }
@@ -2247,7 +2172,9 @@ class AbSalesPosAction extends Component {
     }
 
     async copyLastAddress() {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const text = this.state.customerInsights?.customer?.last_address || "";
         if (!text) {
             this.notification.add("No address to copy.", {type: "warning"});
@@ -2284,12 +2211,14 @@ class AbSalesPosAction extends Component {
                 onAddAll: (payload) => this.addLastInvoiceItems(payload),
             });
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load invoices.")), {type: "danger"});
+            this.notification.add(err?.message || "Failed to load invoices.", {type: "danger"});
         }
     }
 
     addLastInvoiceItems(invoice) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const lines = invoice?.lines || [];
         if (!lines.length) {
             this.notification.add("No items in selected invoice.", {type: "warning"});
@@ -2328,15 +2257,15 @@ class AbSalesPosAction extends Component {
     }
 
     storeDomain() {
-        const domain = [["allow_sale", "=", true]];
-        if (this.state.allowedStoreCodes.length) {
-            domain.push(["code", "in", this.state.allowedStoreCodes]);
+        const domain = [["allow_sale", "=", true], ["id", "in", this.state.stores.map((store) => store.id)]];
+        if (Array.isArray(this.state.draftStoreIds)) {
+            domain.push(["id", "in", this.state.draftStoreIds]);
         }
         return domain;
     }
 
     async createNewBill(storeId) {
-        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging || this._cacheSaveInFlight) return;
+        if (!this.state.draftCacheReady || this.state.draftCreating || this.state.draftDeleting || this.state.draftManaging) return;
         this._assignLocalDraftSlots();
         const available = this.emptyDraftSlots;
         if (!available.length) {
@@ -2357,7 +2286,7 @@ class AbSalesPosAction extends Component {
         const bill = {
             id: generateId("bill"),
             slot_number: slotNumber,
-            submission: {status: "prepending", attempted: false},
+            submission_status: "draft",
             local_number: `${Date.now()}`,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -2393,33 +2322,10 @@ class AbSalesPosAction extends Component {
             total_net_amount: 0,
             promo: this._defaultPromo(),
         };
-        const scope = this._localCacheKey();
-        const snapshot = this._cachePayloadSnapshot();
-        this.state.draftCreating = true;
-        try {
-            const result = await this.orm.call("ab_sales_pos_api", "pos_save_draft_cache", [], {
-                ...this._draftScopeArgs(), bills: [bill, ...snapshot.payload.bills], selected_id: bill.id,
-                revision: this._draftCacheRevision,
-            });
-            if (scope !== this._localCacheKey()) return;
-            this._applyDraftCacheResult(result, snapshot);
-            const created = result.bills.find((item) => item.id === bill.id);
-            if (!created) return false;
-            const local = this._normalizeBill(created);
-            local.slot_number = slotNumber;
-            this.state.bills.push(local);
-            this._acknowledgedDrafts.set(local.id, this._draftFingerprint(local));
-            this.selectBill(local.id);
-            return true;
-        } catch {
-            this.notification.add(_t("Could not create a draft bill. Please reconnect and try again."), {type: "warning"});
-        } finally {
-            this.state.draftCreating = false;
-            if (this._cacheSaveQueued) {
-                this._cacheSaveQueued = false;
-                this._scheduleCacheSaveToServer(0);
-            }
-        }
+        bill.id = bill.header.pos_client_token;
+        this.state.bills.push(this._normalizeBill(bill));
+        this.selectBill(bill.id);
+        return true;
     }
 
     _defaultPromo() {
@@ -2459,6 +2365,7 @@ class AbSalesPosAction extends Component {
     _normalizeBill(bill) {
         const normalized = bill || {};
         normalized.header = normalized.header || {};
+        normalized.submission = normalized.submission || {status: "prepending", attempted: false};
         normalized.lines = Array.isArray(normalized.lines) ? normalized.lines : [];
         normalized.promo = this._normalizePromo(normalized.promo);
         normalized.header.customer_mode = normalized.header.customer_mode || "current";
@@ -2480,10 +2387,11 @@ class AbSalesPosAction extends Component {
         normalized.header.customer_phone = normalized.header.customer_phone || "";
         normalized.header.customer_code = normalized.header.customer_code || "";
         normalized.header.pos_client_token =
-            normalized.header.pos_client_token || generatePosToken(session.user_id, normalized.header.store_id);
+            normalized.header.pos_client_token || (normalized.submission_attempted
+                ? "" : generatePosToken(user.userId, normalized.header.store_id));
         normalized.updated_at = normalized.updated_at || new Date().toISOString();
         normalized.local_number = normalized.local_number || String(Date.now());
-        normalized.id = normalized.id || generateId("bill");
+        normalized.id = normalized.header.pos_client_token || normalized.id || generateId("bill");
         for (const line of normalized.lines) {
             line.id = line.id || generateId("line");
             line.qty_str = line.qty_str || DEFAULT_QTY;
@@ -2503,6 +2411,8 @@ class AbSalesPosAction extends Component {
             line.pos_balance = Number.isFinite(line.pos_balance)
                 ? line.pos_balance
                 : parseFloat(line.pos_balance || 0) || 0;
+            line.pos_balance_unavailable = !!line.pos_balance_unavailable;
+            line.pos_balance_refreshing = false;
             line.available_prices = Array.isArray(line.available_prices) ? line.available_prices : [];
             line.available_prices_base = Array.isArray(line.available_prices_base)
                 ? line.available_prices_base
@@ -2577,8 +2487,99 @@ class AbSalesPosAction extends Component {
         if (this.currentBill) await this.removeBill(this.currentBill.id);
     }
 
+    async removeAllBills() {
+        try {
+            const scope = this._draftRequestScope();
+            const result = await this._listSavedDrafts();
+            const ids = result.bills.map((bill) => bill.id);
+            if (!ids.length) return;
+            this.dialog.add(ConfirmationDialog, {
+                title: _t("Delete All Drafts"),
+                body: _t("Delete all eligible saved drafts for this employee, including open drafts? Protected invoices will be retained."),
+                confirm: async () => {
+                    if (scope !== this._draftRequestScope()) return;
+                    try { await this._removeSavedDrafts(ids, result.revision); }
+                    catch (error) { this.notification.add(this._getRpcErrorMessage(error), {type: "warning"}); }
+                },
+            });
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        }
+    }
+
+    async _syncCompletedDrafts() {
+        const scope = this._draftRequestScope();
+        try {
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
+            this._syncInputsForBill(this.currentBill);
+            this.refreshPromotions(this.currentBill);
+            this.refreshCustomerInsights(this.currentBill);
+            this.refreshStoreStatus(this.currentBill?.header?.store_id);
+        } catch {
+            // The invoice is already confirmed. Retry cache persistence,
+            // never replay submission or report the sale as failed.
+            this.persistCache();
+        }
+    }
+
+    _removeCachedBills(ids) {
+        if (!ids.has(this.state.selectedId)) {
+            this.state.bills = this.state.bills.filter((bill) => !ids.has(bill.id));
+            this.persistCache();
+            return;
+        }
+        for (const name of ["_productSearchTimer", "_promoTimer", "_posBalanceTimer", "_linePosBalanceTimer"]) {
+            clearTimeout(this[name]);
+            this[name] = null;
+        }
+        this._promoRequestId += 1;
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        this._storeStatusRequestId += 1;
+        this.state.showStoreDetails = false;
+        this.state.showCustomerDetails = false;
+        this.state.showBillDetails = false;
+        this.state.bills = this.state.bills.filter((bill) => !ids.has(bill.id));
+        if (!this.state.bills.some((bill) => bill.id === this.state.selectedId)) {
+            this.state.selectedId = this.state.bills[0]?.id || null;
+        }
+        this._syncInputsForBill(this.currentBill);
+        this.refreshPromotions(this.currentBill);
+        this.refreshCustomerInsights(this.currentBill);
+        this.searchProducts((this.state.productQuery || "").trim());
+        this.persistCache();
+    }
+
+    async _deleteDrafts(bills) {
+        if (!bills.length || this.state.submitting || this.state.draftDeleting) return;
+        const local = bills.filter((bill) => !bill.draft_revision && this.draftSlotState(bill) !== "used" && !bill.odoo_header_id && !this._slotBillLocked(bill));
+        this._removeCachedBills(new Set(local.map((bill) => bill.id)));
+        const saved = bills.filter((bill) => !local.includes(bill));
+        if (!saved.length) return;
+        this.state.draftDeleting = true;
+        const scope = this._draftRequestScope();
+        try {
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
+            const result = await this.orm.call("ab_sales_pos_api", "pos_remove_draft_cache", [], {
+                ...this._draftScopeArgs(), bill_ids: saved.map((bill) => bill.id),
+                revision: Object.fromEntries(saved.map((bill) => [bill.id, bill.draft_revision])),
+            });
+            if (scope !== this._draftRequestScope()) return;
+            this._removeCachedBills(new Set(result.deleted_ids || []));
+            this._applyDraftCacheResult(result);
+        } catch (error) {
+            this.notification.add(this._getRpcErrorMessage(error), {type: "warning"});
+        } finally { this.state.draftDeleting = false; if (this._cacheSaveQueued) this._scheduleCacheSaveToServer(0); }
+    }
+
     updateHeaderField(field, value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (["pos_client_token", "status", "eplus_serial"].includes(field) ||
+            (field === "store_id" && this.currentBill?.submission_attempted)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2591,7 +2592,14 @@ class AbSalesPosAction extends Component {
     }
 
     _openSubmitDialog(bill) {
-        if (!this.branchBillEditable(bill)) {
+        if (!this.billEditable(bill)) {
+            return;
+        }
+        if (!bill) {
+            return;
+        }
+        if (!bill.lines.length) {
+            this.notification.add(_t("No lines to send."), {type: "warning"});
             return;
         }
         const defaultEmployee = this._submitDialogDefaultEmployee(bill);
@@ -2601,7 +2609,6 @@ class AbSalesPosAction extends Component {
             preferredBillAddress: this.state.customerInsights?.customer?.last_address || "",
             defaultEmployee,
             onSubmit: async (payload) => {
-                if (!this.branchBillEditable(bill)) return;
                 await this._applySubmitDialog(bill, payload);
                 await this._submitBillInternal(bill);
             },
@@ -2635,37 +2642,22 @@ class AbSalesPosAction extends Component {
         return false;
     }
 
-    _openDuplicateTokenDialog(bill, payload) {
-        if (bill?.submission?.attempted) return;
-        if (!bill) {
-            return;
-        }
-        const existing = payload?.existing_header || {};
-        const message = payload?.message || "An invoice already exists with the same token.";
-        this.dialog.add(AbSalesPosDuplicateTokenDialog, {
-            existing,
-            message,
-            onCreateNewToken: async () => {
-                if (bill?.submission?.attempted) return;
-                const storeId = bill.header?.store_id || existing?.store?.id;
-                bill.header.pos_client_token = generatePosToken(session.user_id, storeId);
-                bill.updated_at = new Date().toISOString();
-                this.persistCache();
-                await this._submitBillInternal(bill);
-            },
-        });
+    _openDuplicateTokenDialog() {
+        this.refreshBranchSubmissions({force: true});
     }
 
-    _openSubmitErrorDialog(message, title, branchResponse = "") {
-        this.dialog.add(AbSalesPosValidationDialog, {
+    _notifySubmissionError(message, title, type = "danger") {
+        this.notification.add(message || _t("Submit failed"), {
             title: title || _t("Submit failed"),
-            message: message || _t("Submit failed."),
-            branchResponse,
+            type,
+            sticky: true,
         });
     }
 
     _applySubmitDialog(bill, payload) {
-        if (!this.branchBillEditable(bill)) return;
+        if (!this.billEditable(bill)) {
+            return;
+        }
         if (!bill) {
             return;
         }
@@ -2800,7 +2792,12 @@ class AbSalesPosAction extends Component {
     }
 
     async onLineUomUpdate(line, value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !line) {
             return;
@@ -2820,10 +2817,11 @@ class AbSalesPosAction extends Component {
         }
         if (line.uom_id) {
             const selectedFactor = await this._getUomFactor(line.uom_id);
-            if (!this.branchBillEditable(bill)) return;
             const defaultUomId = line.default_uom_id || line.uom_id;
             const defaultFactor = defaultUomId ? await this._getUomFactor(defaultUomId) : 0;
-            if (!this.branchBillEditable(bill)) return;
+            if (!this.billEditable(bill) || this.currentBill !== bill) {
+                return;
+            }
             if (defaultFactor > 0) {
                 line.default_uom_factor = defaultFactor;
             }
@@ -2852,11 +2850,18 @@ class AbSalesPosAction extends Component {
     }
 
     async onStoreM2OUpdate(value) {
-        if (this.currentBill?.submission?.attempted) return;
+        this._posBalanceRequestId += 1;
+        this._linePosBalanceRequestId += 1;
+        if (this.currentBill?.submission_attempted) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
         }
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
         if (!value || !value.id) {
             bill.header.store_id = null;
             bill.header.store_name = "";
@@ -2869,6 +2874,9 @@ class AbSalesPosAction extends Component {
             bill.header.store_code = store?.code || "";
             bill.header.store_ip = store?.ip1 || "";
         }
+        // Search cards belong to the previous branch until a new search returns.
+        this._productSearchRequestId += 1;
+        this.state.productResults = [];
         bill.updated_at = new Date().toISOString();
         this.persistCache();
         this.schedulePromoRefresh(bill);
@@ -2882,7 +2890,9 @@ class AbSalesPosAction extends Component {
     }
 
     async onCustomerM2OUpdate(value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -2927,7 +2937,7 @@ class AbSalesPosAction extends Component {
             bill.header.bill_customer_address = bill.header.invoice_address || "";
             bill.header.customer_mode = "current";
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load customer.")), {type: "danger"});
+            this.notification.add(err?.message || "Failed to load customer.", {type: "danger"});
         }
         bill.updated_at = new Date().toISOString();
         this.persistCache();
@@ -2952,7 +2962,9 @@ class AbSalesPosAction extends Component {
     }
 
     setCustomerMode(mode) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -3016,14 +3028,16 @@ class AbSalesPosAction extends Component {
                 "address",
             ]);
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to search customers.")), {type: "danger"});
+            this.notification.add(err?.message || "Failed to search customers.", {type: "danger"});
         } finally {
             this.state.loadingCustomers = false;
         }
     }
 
     selectCustomer(cust) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !cust) {
             return;
@@ -3061,14 +3075,45 @@ class AbSalesPosAction extends Component {
         this.searchProducts(this.state.productQuery.trim());
     }
 
+    onProductItemTypeChange(itemType) {
+        this.state.productItemType = ["medicine", "non_medicine"].includes(itemType) ? itemType : "all";
+        this.searchProducts(this.state.productQuery.trim());
+    }
+
+    isProductMinPriceValid() {
+        const value = this.state.productMinPrice.trim();
+        return /^(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)$/.test(value) && Number.isFinite(Number(value));
+    }
+
+    onProductMinPriceInput(ev) {
+        this.state.productMinPrice = ev.target.value || "";
+        if (!this.isProductMinPriceValid()) {
+            this.state.productMaxPrice = "";
+        }
+        this.queueProductSearch();
+    }
+
+    onProductMaxPriceInput(ev) {
+        this.state.productMaxPrice = this.isProductMinPriceValid() ? ev.target.value || "" : "";
+        this.queueProductSearch();
+    }
+
     onProductSearch(ev) {
         this.state.productQuery = ev.target.value || "";
-        if (this._productSearchTimer) {
-            clearTimeout(this._productSearchTimer);
-        }
-        const query = this.state.productQuery.trim();
-        this._productSearchTimer = setTimeout(async () => {
-            await this.searchProducts(query);
+        this.queueProductSearch();
+    }
+
+    queueProductSearch() {
+        clearTimeout(this._productSearchTimer);
+        this._productSearchRequestId += 1;
+        this.state.selectionIndex = -1;
+        this.state.qtyBuffer = "";
+        this.state.qtyBufferProductId = null;
+        this.state.productResults = [];
+        this.state.loadingProducts = true;
+        this._productSearchTimer = setTimeout(() => {
+            this._productSearchTimer = null;
+            this.searchProducts(this.state.productQuery.trim());
         }, 200);
     }
 
@@ -3100,18 +3145,19 @@ class AbSalesPosAction extends Component {
     }
 
     async searchProducts(query) {
-        if (!this.currentBill?.header?.store_id) {
+        const requestId = ++this._productSearchRequestId;
+        const bill = this.currentBill;
+        if (!bill || !bill.header?.store_id) {
             this.state.productResults = [];
+            this.state.selectionIndex = -1;
             this.state.loadingProducts = false;
             return;
         }
-        const bill = this.currentBill;
-        if (!bill) {
-            this.state.productResults = [];
-            this.state.selectionIndex = -1;
-            return;
-        }
         const storeId = bill?.header?.store_id || null;
+        if (this._productResultsStoreId !== storeId) {
+            this.state.productResults = [];
+            this._productResultsStoreId = storeId;
+        }
         const customerPhone = this.activeCustomerPhone(bill);
         this.state.loadingProducts = true;
         try {
@@ -3128,9 +3174,16 @@ class AbSalesPosAction extends Component {
                     has_pos_balance: this.state.productHasPosBalanceOnly,
                     store_id: storeId,
                     customer_phone: customerPhone,
+                    item_type: this.state.productItemType || "all",
+                    min_price: this.state.productMinPrice,
+                    max_price: this.state.productMaxPrice,
                     context: ctx,
                 }
             );
+
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
 
             // Fetch promotion information for these products
             if (productResults && productResults.length > 0) {
@@ -3172,20 +3225,27 @@ class AbSalesPosAction extends Component {
                 }
             }
 
+            if (requestId !== this._productSearchRequestId) {
+                return;
+            }
             this.state.productResults = productResults;
             this.state.selectionIndex = -1;
             this.state.qtyBuffer = "";
             this.state.qtyBufferProductId = null;
             this.schedulePosBalanceRefresh(this.state.productResults, storeId);
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to search products.")), {type: "danger"});
+            if (requestId === this._productSearchRequestId) {
+                this.state.productResults = [];
+                this.notification.add(err?.data?.message || err?.message || _t("Failed to search products."), {type: "danger"});
+            }
         } finally {
-            this.state.loadingProducts = false;
+            if (requestId === this._productSearchRequestId) {
+                this.state.loadingProducts = false;
+            }
         }
     }
 
     schedulePosBalanceRefresh(results, storeId) {
-        for (const product of results || []) { product.pos_balance_stale = true; }
         if (this._posBalanceTimer) {
             clearTimeout(this._posBalanceTimer);
         }
@@ -3196,45 +3256,21 @@ class AbSalesPosAction extends Component {
         }, 400);
     }
 
-    _refreshPosBalancesForResults(results, storeId, requestId) {
-        if (!storeId || !Array.isArray(results) || !results.length) {
-            return;
-        }
-        const productIds = results
-            .map((row) => row?.id)
-            .filter((id) => Number.isFinite(id) || parseInt(id || 0, 10));
-        if (!productIds.length) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: productIds,
-            })
-            .then((balances) => {
-                if (requestId !== this._posBalanceRequestId) {
-                    return;
-                }
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                const list = this.state.productResults || [];
-                for (const product of list) {
-                    const balance = balances[product.id];
-                    if (balance === undefined) {
-                        continue;
-                    }
-                    const val = parseFloat(balance || 0) || 0;
-                    product.pos_balance = val;
-                    product.pos_balance_stale = false;
-                    product.pos_balance_refreshed_at = balances._refreshed_at || "";
-                }
-            })
-            .catch(() => {
-                if (requestId === this._posBalanceRequestId) {
-                    for (const product of this.state.productResults || []) { product.pos_balance_stale = true; }
-                }
-            });
+    _refreshPosBalancesForResults(results, storeId, requestId, targets = results, manual = false) {
+        const bill = this.currentBill;
+        const searchId = this._productSearchRequestId;
+        return refreshPosBalances(this.orm, targets || [], storeId, "id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
+            searchId === this._productSearchRequestId && this.currentBill === bill &&
+            bill?.header?.store_id === storeId && this.state.productResults === results,
+            {showAge: true, manual});
+    }
+
+    refreshProductPosBalance(product) {
+        if (product.pos_balance_refreshing) return;
+        return this._refreshPosBalancesForResults(
+            this.state.productResults, this.currentBill?.header?.store_id, this._posBalanceRequestId,
+            [product], true);
     }
 
     scheduleLinePosBalanceRefresh(bill) {
@@ -3251,70 +3287,19 @@ class AbSalesPosAction extends Component {
     _refreshPosBalancesForLines(bill, requestId) {
         const target = bill || this.currentBill;
         const storeId = target?.header?.store_id;
-        if (!storeId || !target || !Array.isArray(target.lines) || !target.lines.length) {
-            return;
-        }
-        const productIds = target.lines
-            .map((row) => row?.product_id)
-            .filter((id) => Number.isFinite(id) || parseInt(id || 0, 10));
-        if (!productIds.length) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: productIds,
-            })
-            .then((balances) => {
-                if (requestId !== this._linePosBalanceRequestId) {
-                    return;
-                }
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                for (const line of target.lines) {
-                    const balance = balances[line.product_id];
-                    if (balance === undefined) {
-                        continue;
-                    }
-                    const val = parseFloat(balance || 0) || 0;
-                    line.pos_balance = val;
-                    line.pos_balance_stale = false;
-                    line.pos_balance_refreshed_at = balances._refreshed_at || "";
-                }
-            })
-            .catch(() => {
-                if (requestId === this._linePosBalanceRequestId) {
-                    for (const line of target.lines || []) { line.pos_balance_stale = true; }
-                }
-            });
+        return refreshPosBalances(this.orm, target?.lines || [], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === target && target?.header?.store_id === storeId);
     }
 
     refreshLinePosBalance(line) {
+        if (line.pos_balance_refreshing) return;
         const bill = this.currentBill;
         const storeId = bill?.header?.store_id;
-        const productId = line?.product_id;
-        if (!storeId || !productId) {
-            return;
-        }
-        this.orm
-            .call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
-                store_id: storeId,
-                product_ids: [productId],
-            })
-            .then((balances) => {
-                if (!balances || typeof balances !== "object") {
-                    return;
-                }
-                const balance = balances[productId];
-                if (balance === undefined) {
-                    return;
-                }
-                line.pos_balance = parseFloat(balance || 0) || 0;
-                line.pos_balance_stale = false;
-                line.pos_balance_refreshed_at = balances._refreshed_at || "";
-            })
-            .catch(() => { line.pos_balance_stale = true; });
+        const requestId = this._linePosBalanceRequestId;
+        return refreshPosBalances(this.orm, [line], storeId, "product_id", () =>
+            !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
+            this.currentBill === bill && bill?.header?.store_id === storeId && bill.lines.includes(line));
     }
 
     refreshStoreStatus(storeId) {
@@ -3410,7 +3395,9 @@ class AbSalesPosAction extends Component {
     }
 
     addProduct(product, qty = 1) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !product?.id) {
             return null;
@@ -3457,6 +3444,7 @@ class AbSalesPosAction extends Component {
                 balance: product.balance || 0,
                 balance_total: product.balance || 0,
                 pos_balance: product.pos_balance || 0,
+                pos_balance_unavailable: !!product.pos_balance_unavailable,
                 cost: 0,
                 target_sell_price: 0,
                 net_amount: defaultPrice * qty,
@@ -3760,7 +3748,7 @@ class AbSalesPosAction extends Component {
                 this.addProductAndFocus(products[0], 1);
             }
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Barcode scan failed.")), {type: "danger"});
+            this.notification.add(err?.message || "Barcode scan failed.", {type: "danger"});
         } finally {
             this.state.loadingProducts = false;
         }
@@ -3775,7 +3763,6 @@ class AbSalesPosAction extends Component {
     }
 
     _applyBarcodeResults(barcode, products) {
-        if (!this.branchBillEditable(this.currentBill)) return;
         this.state.productQuery = barcode || "";
         this.state.productResults = Array.isArray(products) ? products : [];
         this.state.selectionIndex = -1;
@@ -3824,7 +3811,7 @@ class AbSalesPosAction extends Component {
                 }
             }
         } catch (err) {
-            this.notification.add(this._getRpcErrorMessage(err, _t("Failed to save barcode links.")), {type: "danger"});
+            this.notification.add(err?.message || "Failed to save barcode links.", {type: "danger"});
         }
     }
 
@@ -4061,7 +4048,12 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineQty(line, value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.qty_str = value;
         this._recomputeLine(line);
         this._recomputeBill(this.currentBill);
@@ -4069,7 +4061,12 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineSellPrice(line, value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.sell_price_str = value;
         const price = parseFloat(value || 0) || 0;
         line.sell_price = price;
@@ -4082,13 +4079,23 @@ class AbSalesPosAction extends Component {
     }
 
     updateLineTargetPrice(line, value) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         line.target_sell_price = parseFloat(value || 0) || 0;
         this._recomputeBill(this.currentBill);
     }
 
     onAvailablePriceSelect(line, priceValue) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const price = parseFloat(priceValue || "");
         if (!Number.isFinite(price)) {
             return;
@@ -4103,7 +4110,12 @@ class AbSalesPosAction extends Component {
     }
 
     removeLine(line) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.currentBill?.lines.includes(line)) {
+            return;
+        }
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -4119,8 +4131,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
-        if (!this.branchBillEditable(target)) return;
-        if (!target) {
+        if (!this.billEditable(target)) {
             return;
         }
         if (this._promoTimer) {
@@ -4165,7 +4176,6 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
-        if (!this.branchBillEditable(target)) return;
         if (!target) {
             return;
         }
@@ -4189,7 +4199,7 @@ class AbSalesPosAction extends Component {
                 applied_program_id: target.promo.selected_id || false,
                 manual_clear: !!target.promo.manual_clear,
             });
-            if (!this.branchBillEditable(target) || requestId !== this._promoRequestId) {
+            if (requestId !== this._promoRequestId || !this.billEditable(target)) {
                 return;
             }
             target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
@@ -4213,12 +4223,12 @@ class AbSalesPosAction extends Component {
                 target.total_net_amount = target.total_price || 0;
             }
         } catch (err) {
-            const message = this._getRpcErrorMessage(err, _t("Failed to load promotions."));
+            const message = err?.message || "";
             if (message.includes("does not exist")) {
                 this._promoDisabled = true;
                 this._resetPromotions(target);
             } else {
-                this.notification.add(message, {type: "warning"});
+                this.notification.add(message || "Failed to load promotions.", {type: "warning"});
             }
         } finally {
             if (requestId === this._promoRequestId) {
@@ -4229,7 +4239,9 @@ class AbSalesPosAction extends Component {
     }
 
     selectPromotion(program) {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill || !program) {
             return;
@@ -4256,7 +4268,9 @@ class AbSalesPosAction extends Component {
     }
 
     clearPromotion() {
-        if (!this.branchBillEditable(this.currentBill)) return;
+        if (!this.billEditable(this.currentBill)) {
+            return;
+        }
         const bill = this.currentBill;
         if (!bill) {
             return;
@@ -4289,7 +4303,7 @@ class AbSalesPosAction extends Component {
 
     async loadLineDetails(line, options = {}) {
         const bill = this.currentBill;
-        if (!this.branchBillEditable(bill)) return;
+        if (!this.billEditable(bill) || !bill.lines.includes(line)) return;
         const storeId = bill?.header?.store_id;
         if (!storeId || !line?.product_id) {
             return;
@@ -4300,7 +4314,7 @@ class AbSalesPosAction extends Component {
                 store_id: storeId,
                 product_id: line.product_id,
             });
-            if (!this.branchBillEditable(bill)) return;
+            if (!this.billEditable(bill) || this.currentBill !== bill || !bill.lines.includes(line)) return;
             line.balance = details.balance || 0;
             const totalBalance = Number.isFinite(details?.total_balance)
                 ? details.total_balance
@@ -4378,7 +4392,7 @@ class AbSalesPosAction extends Component {
             this.schedulePromoRefresh(this.currentBill);
         } catch (err) {
             if (!options?.silent) {
-                this.notification.add(this._getRpcErrorMessage(err, _t("Failed to load line details.")), {type: "danger"});
+                this.notification.add(err?.message || "Failed to load line details.", {type: "danger"});
             }
         } finally {
             line.loading_details = false;
@@ -4391,7 +4405,6 @@ class AbSalesPosAction extends Component {
     }
 
     _recomputeBill(bill, {persist = true} = {}) {
-        if (!this.branchBillEditable(bill)) return;
         if (!bill) {
             return;
         }
@@ -4445,21 +4458,18 @@ class AbSalesPosAction extends Component {
         }
     }
 
-    _getRpcErrorMessage(err, fallback) {
-        const fallbackMessage = fallback || _t("Request failed.");
+    _getRpcErrorMessage(err) {
         if (!err) {
-            return fallbackMessage;
+            return "Submit failed.";
         }
         const data = err.data || err?.response?.data || {};
-        // Show business errors, never a technical server exception or traceback.
-        if (data.name && !["odoo.exceptions.UserError", "odoo.exceptions.ValidationError",
-            "odoo.exceptions.AccessError", "odoo.exceptions.AccessDenied"].includes(data.name)) {
-            return fallbackMessage;
-        }
-        const rpcArgs = data.arguments;
-        const message = data.message || (Array.isArray(rpcArgs) && rpcArgs[0]) || err.message;
-        return typeof message === "string" && message !== "Odoo Server Error"
-            ? message : fallbackMessage;
+        const rpcArgs = data?.["arguments"];
+        return (
+            (Array.isArray(rpcArgs) && rpcArgs[0]) ||
+            data?.message ||
+            err.message ||
+            "Submit failed."
+        );
     }
 
     productLabel(product) {
@@ -4487,6 +4497,190 @@ class AbSalesPosAction extends Component {
             name: "Bill Wizard",
             tag: "ab_sales.bill_wizard",
         });
+    }
+
+    billEditable(bill = this.currentBill) {
+        return this.branchBillEditable(bill) && !this.state.submitting && !this.state.draftCreating;
+    }
+
+    _plainDraftRemovable(bill) {
+        return !!bill && !this._slotBillLocked(bill) && !bill.odoo_header_id;
+    }
+
+    _draftDiscardCandidate() { return false;
+    }
+
+    _draftDiscardFingerprint(bill) {
+        return JSON.stringify(bill, (key, value) => key === "submission_checking" ? undefined : value);
+    }
+
+    billRemovable(bill = this.currentBill) {
+        return !this.state.submitting && !this.state.draftManaging && !this.state.draftDeleting &&
+            (this._plainDraftRemovable(bill) || (this._draftDiscardCandidate(bill) &&
+                this.state.draftDiscardEligibility[bill.header.pos_client_token] ===
+                    this._draftDiscardFingerprint(bill)));
+    }
+
+    async _verifyDraftDiscard(bills) {
+        const revision = this._submissionRevision || 0;
+        const candidates = bills.filter((bill) => this._draftDiscardCandidate(bill) &&
+            !this._plainDraftRemovable(bill)).map((bill) => ({
+                bill, fingerprint: this._draftDiscardFingerprint(bill),
+                token: bill.header.pos_client_token, store_id: bill.header.store_id,
+            }));
+        const verified = new Set();
+        for (let offset = 0; offset < candidates.length; offset += 200) {
+            const batch = candidates.slice(offset, offset + 200);
+            try {
+                const result = await this.orm.call("ab_sales_pos_api", "pos_check_draft_discard", [], {
+                    drafts: batch.map(({token, store_id}) => ({token, store_id})),
+                });
+                if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+                for (const {bill, fingerprint, token} of batch) {
+                    if (result[token] === true && this.state.bills.includes(bill) &&
+                        this._draftDiscardCandidate(bill) && fingerprint === this._draftDiscardFingerprint(bill)) {
+                        verified.add(bill.id);
+                    }
+                }
+            } catch {
+                // Failed verification retains the bill, including while offline.
+            }
+        }
+        // A later batch can outlive a change to an earlier candidate.
+        if (revision !== (this._submissionRevision || 0) || this.state.submitting) return new Set();
+        return new Set(candidates.filter(({bill, fingerprint}) => verified.has(bill.id) &&
+            this.state.bills.includes(bill) && this._draftDiscardCandidate(bill) &&
+            fingerprint === this._draftDiscardFingerprint(bill))
+            .map(({bill}) => bill.id));
+    }
+
+    async _refreshDraftDiscardEligibility(bills) {
+        const request = this._draftDiscardRequest = (this._draftDiscardRequest || 0) + 1;
+        this.state.draftDiscardEligibility = {};
+        const verified = await this._verifyDraftDiscard(bills);
+        if (request !== this._draftDiscardRequest) return;
+        this.state.draftDiscardEligibility = Object.fromEntries(bills.filter((bill) => verified.has(bill.id))
+            .map((bill) => [bill.header.pos_client_token, this._draftDiscardFingerprint(bill)]));
+    }
+
+    submissionStatusLabel(bill) {
+        if (bill.submission?.in_progress) return _t("Submitting...");
+        if (bill.submission?.unresolved) return _t("Checking submission...");
+        const labels = {prepending: _t("PrePending"), unknown: _t("Unknown"),
+            rejected: _t("Rejected"), pending: _t("Pending"), saved: _t("Saved")};
+        return labels[bill.submission?.status] || _t("Draft");
+    }
+
+    _applySubmissionState(bill, result) {
+        bill.odoo_header_id = result.id || result.recovery_header_id || bill.odoo_header_id || false;
+        bill.submission_status = result.status || bill.submission_status || "draft";
+        bill.submission_in_progress = !!result.submission_in_progress;
+        bill.submission_can_edit = result.can_edit === true;
+        bill.submission_message = result.message || "";
+        bill.submission_checking = false;
+        bill.submission_attempted = !!bill.odoo_header_id || bill.submission_attempted;
+        bill.eplus_serial = result.eplus_serial || false;
+        bill.submission_draft_discardable = !!result.can_discard_draft;
+    }
+
+    async refreshSubmissionStates() {
+        return this.refreshBranchSubmissions();
+    }
+
+    async retryCurrentBill() {
+        return this.submitCurrentBill();
+    }
+
+    async submitCurrentBill() {
+        if (this.state.draftCacheAccessBlocked) return;
+        const bill = this.currentBill;
+        if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.branchEditInFlight) {
+            return;
+        }
+        if (document.body.classList.contains("modal-open")) {
+            return;
+        }
+        if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
+        if (this._slotBillLocked(bill)) {
+            await this._submitBillInternal(bill);
+            return;
+        }
+        this._openSubmitDialog(bill);
+    }
+
+    async _submitBillInternal(bill) {
+        if (!bill) {
+            return;
+        }
+        if (this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.branchEditInFlight) {
+            return;
+        }
+        this.state.submitting = true;
+        this._promoRequestId += 1;
+        bill.submission = {...bill.submission, attempted: true, unresolved: true, in_progress: true,
+            version: (bill.submission?.version || 0) + 1, message: _t("Checking branch submission...")};
+        this.persistCache();
+        try {
+            const header = this._buildSubmitHeader(bill);
+            const lines = bill.lines.map((line) => ({
+                product_id: line.product_id,
+                qty_str: line.qty_str || DEFAULT_QTY,
+                sell_price: line.sell_price,
+                target_sell_price: line.target_sell_price,
+                uom_id: line.uom_id || false,
+            }));
+            const result = await this.orm.call("ab_sales_pos_api", "pos_submit", [], {
+                header,
+                lines,
+                applied_program_id: bill.promo?.applied_id || false,
+                on_existing_token: "warn",
+                pos_hr_session_token: this._posDraftSessionToken() || false,
+                submission_guard_version: 1,
+            });
+            if (result?.submission_guard_version === 1) {
+                if (!this.applyBranchSubmission(bill, result)) {
+                    throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
+                }
+                if (!["pending", "saved"].includes(result.status)) {
+                    if (result.status === "rejected") this.scheduleLinePosBalanceRefresh(bill);
+                    this.showSubmissionFeedback(bill);
+                    return;
+                }
+                this.notification.add(_t("Submitted to branch invoice ID %(id)s", {id: result.branch_header_id}), {type: "success"});
+                await this._syncCompletedDrafts();
+                return;
+            }
+            throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
+        } catch (err) {
+            const foundTokens = await this.refreshBranchSubmissions({force: true});
+            const failureName = err?.data?.name || err?.response?.data?.name || "";
+            if (/odoo.exceptions.(UserError|ValidationError)/.test(failureName) &&
+                Array.isArray(foundTokens) && !foundTokens.includes(bill.header.pos_client_token)) {
+                // The local RPC completed with a validation error and an
+                // authoritative local read confirms that it stored no bill.
+                bill.submission = {...bill.submission, status: "prepending", attempted: false,
+                    unresolved: false, in_progress: false};
+                this.persistCache();
+            }
+            const message = this._getRpcErrorMessage(err);
+            const data = err?.data || err?.response?.data || {};
+            const errorName = data?.name || "";
+            const title = errorName.includes("ValidationError")
+                    ? _t("Validation Error")
+                : errorName.includes("UserError")
+                    ? _t("Warning")
+                    : _t("Submit failed");
+            this._openSubmitErrorDialog(message, title);
+        } finally {
+            bill.submission = {...bill.submission, in_progress: false};
+            this._syncBranchDisplay(bill);
+            this.state.submitting = false;
+            this.persistCache();
+        }
+    }
+
+    async _sendBillSubmission(bill) {
+        return this._submitBillInternal(bill);
     }
 
     _installBranchMutationGuards() {
@@ -4543,18 +4737,12 @@ class AbSalesPosAction extends Component {
         return protect(bill);
     }
 
-    billRemovable(bill) {
-        return !!bill && !this.state.submitting && !this.state.draftDeleting &&
-            !this.state.draftCreating && !this._slotBillLocked(bill) &&
-            (bill.slot_removable !== false);
-    }
-
-    submissionStatusLabel(bill) {
-        if (bill.submission?.in_progress) return _t("Submitting...");
-        if (bill.submission?.unresolved) return _t("Checking submission...");
-        const labels = {prepending: _t("PrePending"), unknown: _t("Unknown"),
-            rejected: _t("Rejected"), pending: _t("Pending"), saved: _t("Saved")};
-        return labels[bill.submission?.status] || _t("Draft");
+    _openSubmitErrorDialog(message, title, branchResponse = "") {
+        this.dialog.add(AbSalesPosValidationDialog, {
+            title: title || _t("Submit failed"),
+            message: message || _t("Submit failed."),
+            branchResponse,
+        });
     }
 
     submissionMessage(bill) {
@@ -4569,26 +4757,6 @@ class AbSalesPosAction extends Component {
             : bill.submission?.status === "rejected" ? _t("Rejected") : _t("Warning");
         const original = bill.submission?.message || "";
         this._openSubmitErrorDialog(message, title, original !== message ? original : "");
-    }
-
-    async _syncDraftsFromServer() {
-        if (this.state.draftCacheAccessBlocked) return;
-        if (this._draftReadInFlight || this.state.submitting || this.state.draftCreating ||
-            this.state.draftDeleting || this.state.draftManaging || this._cacheSaveInFlight) return;
-        if (this._cachePayloadSnapshot().payload.bills.length) {
-            await this._saveCacheToServer();
-            return;
-        }
-        const scope = this._localCacheKey();
-        const snapshot = this._cachePayloadSnapshot();
-        this._draftReadInFlight = true;
-        try {
-            const result = await this.orm.call("ab_sales_pos_api", "pos_load_draft_cache", [], this._draftScopeArgs());
-            if (scope === this._localCacheKey()) this._applyDraftCacheResult(result, snapshot);
-        } catch (error) {
-            if (scope === this._localCacheKey()) this._handleDraftCacheError(error);
-        }
-        finally { this._draftReadInFlight = false; }
     }
 
     branchBillEditable(bill) {
@@ -4611,6 +4779,8 @@ class AbSalesPosAction extends Component {
             local_header_id: result.local_header_id, revision: result.request_revision,
             branch_header_id: result.branch_header_id, unresolved: false,
             in_progress: !!result.submission_in_progress};
+        bill.eplus_serial = result.eplus_serial;
+        this._syncBranchDisplay(bill);
         return true;
     }
 
@@ -4620,10 +4790,10 @@ class AbSalesPosAction extends Component {
             if (!force) return this._branchRefreshPromise;
             await this._branchRefreshPromise;
         }
-        const scope = this._localCacheKey();
+        const scope = this._draftRequestScope();
         const snapshots = (this.state.bills || []).map(bill => ({bill, version: bill.submission?.version || 0}));
         if (!snapshots.length) return [];
-        const previous = this._cachePayloadSnapshot().payloadText;
+        const previous = JSON.stringify(this.state.bills);
         this._branchRefreshPromise = (async () => {
             const found = [];
             try {
@@ -4633,7 +4803,7 @@ class AbSalesPosAction extends Component {
                         tokens: batch.map(({bill}) => bill.header.pos_client_token),
                         pos_hr_session_token: this._posDraftSessionToken(),
                     });
-                    if (scope !== this._localCacheKey()) return;
+                    if (scope !== this._draftRequestScope()) return;
                     if (!Array.isArray(results)) throw new Error("Invalid submission states");
                     for (const result of results) {
                         const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
@@ -4645,7 +4815,7 @@ class AbSalesPosAction extends Component {
                 }
                 if (snapshots.some(({bill}) => ["pending", "saved"].includes(bill.submission?.status))) {
                     await this._syncCompletedDrafts();
-                } else if (previous !== this._cachePayloadSnapshot().payloadText) {
+                } else if (previous !== JSON.stringify(this.state.bills)) {
                     this.persistCache();
                 }
                 return found;
@@ -4655,89 +4825,15 @@ class AbSalesPosAction extends Component {
         finally { this._branchRefreshPromise = null; }
     }
 
-    async submitCurrentBill() {
-        if (this.state.draftCacheAccessBlocked) return;
-        const bill = this.currentBill;
-        if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.branchEditInFlight) {
-            return;
-        }
-        if (document.body.classList.contains("modal-open")) {
-            return;
-        }
-        if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
-        if (this._slotBillLocked(bill)) {
-            await this._submitBillInternal(bill);
-            return;
-        }
-        this._openSubmitDialog(bill);
-    }
-
-    async _submitBillInternal(bill) {
-        if (!bill) {
-            return;
-        }
-        if (this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.branchEditInFlight) {
-            return;
-        }
-        this.state.submitting = true;
-        bill.submission = {...bill.submission, attempted: true, unresolved: true, in_progress: true,
-            version: (bill.submission?.version || 0) + 1, message: _t("Checking branch submission...")};
-        this.persistCache();
-        try {
-            const header = this._buildSubmitHeader(bill);
-            const lines = bill.lines.map((line) => ({
-                product_id: line.product_id,
-                qty_str: line.qty_str || DEFAULT_QTY,
-                sell_price: line.sell_price,
-                target_sell_price: line.target_sell_price,
-                uom_id: line.uom_id || false,
-            }));
-            const result = await this.orm.call("ab_sales_pos_api", "pos_submit", [], {
-                header,
-                lines,
-                applied_program_id: bill.promo?.applied_id || false,
-                on_existing_token: "warn",
-                submission_guard_version: 1,
-            });
-            if (result?.submission_guard_version === 1) {
-                if (!this.applyBranchSubmission(bill, result)) {
-                    throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
-                }
-                if (!["pending", "saved"].includes(result.status)) {
-                    if (result.status === "rejected") this.scheduleLinePosBalanceRefresh(bill);
-                    this.showSubmissionFeedback(bill);
-                    return;
-                }
-                this.notification.add(_t("Submitted to branch invoice ID %(id)s", {id: result.branch_header_id}), {type: "success"});
-                await this._syncCompletedDrafts();
-                return;
-            }
-            throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
-        } catch (err) {
-            const foundTokens = await this.refreshBranchSubmissions({force: true});
-            const failureName = err?.data?.name || err?.response?.data?.name || "";
-            if (/odoo.exceptions.(UserError|ValidationError)/.test(failureName) &&
-                Array.isArray(foundTokens) && !foundTokens.includes(bill.header.pos_client_token)) {
-                // The local RPC completed with a validation error and an
-                // authoritative local read confirms that it stored no bill.
-                bill.submission = {...bill.submission, status: "prepending", attempted: false,
-                    unresolved: false, in_progress: false};
-                this.persistCache();
-            }
-            const message = this._getRpcErrorMessage(err);
-            const data = err?.data || err?.response?.data || {};
-            const errorName = data?.name || "";
-            const title = errorName.includes("ValidationError")
-                    ? _t("Validation Error")
-                : errorName.includes("UserError")
-                    ? _t("Warning")
-                    : _t("Submit failed");
-            this._openSubmitErrorDialog(message, title);
-        } finally {
-            bill.submission = {...bill.submission, in_progress: false};
-            this.state.submitting = false;
-            this.persistCache();
-        }
+    _syncBranchDisplay(bill) {
+        const state = bill.submission || {};
+        bill.submission_status = state.status || "draft";
+        bill.submission_attempted = !!state.attempted;
+        bill.submission_checking = !!state.unresolved;
+        bill.submission_in_progress = !!state.in_progress;
+        bill.submission_can_edit = !this._slotBillLocked(bill);
+        bill.odoo_header_id = state.local_header_id || false;
+        bill.submission_message = state.message || "";
     }
 
     onResizeStart(ev) {

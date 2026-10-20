@@ -440,3 +440,28 @@ submission error alongside any recovery failure. A reconciliation conflict is
 not an E-Plus connectivity test. The branch correction in `ab_branch_api`
 19.0.5.3.1 excludes invoice ID zero when the draft has no serial and reports the
 specific reason for any remaining conflict. Keep using the original bill/token.
+
+
+## Callcenter parity release (19.0.4.0.0)
+
+This release targets a **clean callcenter installation**. Its per-draft storage
+replaces the aggregate cache schema. Do not upgrade the existing development
+database with this release; keep that database intact and provision a separate
+database. No conversion, cleanup, or migration hook is included. Earlier upgrade
+procedures above describe earlier releases, not this schema change.
+
+Once a submission starts, its bill contents remain immutable in every outcome,
+including rejected, unknown, pending, and saved. Retrying uses the original token,
+revision, serialized request and branch/database identity. Corrections are new
+business requests; retry never generates a replacement identity. Annotations are
+append-only local records and never alter invoice notes or the submission payload.
+
+Drafts have per-token revisions, employee scope, and serialized capacity admission.
+Conflicting edits require reconciliation with the current server draft. Protected
+submissions cannot be discarded by cache reset or treated as ordinary empty slots.
+Optional printing uses local authorized invoices. Delivery consent depends on the
+branch capability and remains owned by the branch provider. Promotion reports use
+saved local callcenter invoices and totals recorded on first submission.
+
+See [implementation and verification](doc/CALLCENTER_PARITY_2026_10_20.md) for the
+feature mapping, paired API change, and rollout checks.

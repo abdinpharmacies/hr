@@ -137,6 +137,7 @@ if (PosAction) {
             const sourceLines = targetBill?.lines || [];
             const baseLines = Array.isArray(kwargs?.lines) ? kwargs.lines : [];
             payload.lines = baseLines.map((line, idx) => {
+                if (Object.hasOwn(line, "unavailable_reason")) return line;
                 const source = sourceLines[idx] || line || {};
                 return {
                     ...line,

@@ -1,6 +1,6 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.3.8.4',
+    'version': '19.0.4.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
@@ -12,6 +12,7 @@
         'security/groups_sales.xml',
         'security/rules_sales.xml',
         'security/local_bill_rules.xml',
+        'security/annotation_rules.xml',
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/pos_action.xml',

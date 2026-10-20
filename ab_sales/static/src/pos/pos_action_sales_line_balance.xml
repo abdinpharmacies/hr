@@ -25,18 +25,21 @@
                         class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 ab_pos_line_btn_refresh_pos_balance"
                         t-att-class="line.pos_balance_stale ? 'text-danger' : 'text-muted'"
                         t-on-click.stop="() => refreshLinePosBalance(line)"
-                        title="Balance">
-                    <span class="ab_pos_line_btn_refresh_pos_balance_text" t-esc="formatQty(((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : 0) || 0)"/>
-                    <small t-if="line.pos_balance_stale" class="text-danger" title="Balance refresh failed; cached value shown">Stale</small>
-                    <small t-if="line.pos_balance_refreshed_at" class="text-muted" t-att-title="line.pos_balance_refreshed_at">↻</small>
+                        t-att-disabled="line.pos_balance_refreshing"
+                        title="Refresh balance from branch" aria-label="Refresh balance from branch">
+                    <span t-if="line.pos_balance_unavailable" class="ab_pos_line_btn_refresh_pos_balance_text text-danger fw-bold"
+                          title="Balance refresh failed. Showing the previous balance."
+                          t-esc="formatQty(line.pos_balance || 0)"/>
+                    <span t-else="" class="ab_pos_line_btn_refresh_pos_balance_text" t-esc="formatQty(((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : 0) || 0)"/>
                     <i class="fa fa-shopping-cart ab_pos_line_btn_refresh_pos_balance_icon" aria-hidden="true" title="Balance"/>
+                    <i class="fa fa-refresh" t-att-class="{'text-danger': line.pos_balance_unavailable, 'fa-spin': line.pos_balance_refreshing}" aria-hidden="true"/>
                 </button>
             </div>
         </xpath>
         <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//tr[@t-att-data-line-id='line.id']"
                position="attributes">
             <attribute name="t-att-class">
-                (((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : line.balance) || 0) &lt;= 0
+                !line.pos_balance_unavailable &amp;&amp; (((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : line.balance) || 0) &lt;= 0
                         ? 'o_ab_sales_pos_line--no-balance'
                         : ''
             </attribute>

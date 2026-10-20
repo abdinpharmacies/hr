@@ -847,6 +847,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
   margin-left: auto;
 }
 
@@ -854,10 +855,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .o_ab_sales_pos_product_search .form-control {
   flex: 1;
+  min-width: 150px;
+}
+
+.ab_pos_product_item_type_filter .btn {
+  white-space: nowrap;
 }
 
 .o_ab_sales_pos_product_hint {
@@ -1099,6 +1106,19 @@
   color: var(--pos-muted);
 }
 
+// Secondary price criteria occupy their own row directly below product search.
+.ab_pos_product_price_filters {
+  flex: 0 0 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .form-control {
+    flex: 0 1 140px;
+    min-width: 0;
+    width: 140px;
+  }
+}
 
 // Numbered draft slots are distinct from the branch identifier on bill cards.
 .o_ab_sales_pos_sidebar {

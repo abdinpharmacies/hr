@@ -10,7 +10,7 @@ class LocalBills(models.TransientModel):
     def bill_wizard_search(self, query='', product_query='', product_ids=None, customer_query='',
                            date_start=False, date_end=False, eplus_serial='', page=1, per_page=20,
                            store_id=False, document_type='', status='', search_token=False,
-                           refresh_status=False, **kwargs):
+                           refresh_status=False, item_type="all", doctor_ids=None, **kwargs):
         if document_type not in ('', 'sale', 'return') or status not in ('', 'prepending', 'pending', 'saved', 'unknown', 'rejected'):
             raise UserError(_('Invalid bill filter.'))
         if query and not any((product_query, product_ids, customer_query, eplus_serial)):
@@ -19,9 +19,13 @@ class LocalBills(models.TransientModel):
             else:
                 product_query = query
         filters = dict(product_query=product_query, product_ids=product_ids, customer_query=customer_query,
-                       date_start=date_start, date_end=date_end, eplus_serial=eplus_serial)
+                       date_start=date_start, date_end=date_end, eplus_serial=eplus_serial, item_type=item_type)
         sale_domain = fields.Domain(self._bill_wizard_domain(**filters)[0])
         return_domain = fields.Domain(self._bill_wizard_return_domain(**filters)[0])
+        if doctor_ids and hasattr(self, '_normalize_bill_wizard_doctor_ids'):
+            ids = self._normalize_bill_wizard_doctor_ids(doctor_ids)
+            sale_domain &= fields.Domain('is_doctor_prescription', '=', True) & fields.Domain('doctor_id', 'in', ids)
+            return_domain &= fields.Domain.FALSE
         # The base helpers exclude drafts for branch installations only.
         sale_domain = sale_domain.map_conditions(lambda c: fields.Domain.TRUE if c.field_expr == 'status' else c)
         return_domain = return_domain.map_conditions(lambda c: fields.Domain.TRUE if c.field_expr == 'status' else c)

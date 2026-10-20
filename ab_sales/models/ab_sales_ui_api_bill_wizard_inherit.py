@@ -14,6 +14,20 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
     _inherit = "ab_sales_ui_api"
 
     @api.model
+    def _normalize_item_type_filter(self, item_type="all"):
+        item_type = str(item_type or "all").strip()
+        if item_type not in ("all", "medicine", "non_medicine"):
+            return "all"
+        return item_type
+
+    @api.model
+    def _item_type_product_domain(self, item_type="all", product_path="line_ids.product_id"):
+        item_type = self._normalize_item_type_filter(item_type)
+        if item_type == "all":
+            return fields.Domain.TRUE
+        return fields.Domain(f"{product_path}.is_medicine", "=", item_type == "medicine")
+
+    @api.model
     def _bill_wizard_like(self, value):
         value = " ".join(str(value or "").strip().split())
         if not value:
@@ -59,9 +73,10 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
 
     @api.model
     def _bill_wizard_domain(self, product_query="", product_ids=None, customer_query="", date_start=False,
-                            date_end=False, eplus_serial=""):
+                            date_end=False, eplus_serial="", item_type="all"):
         domain = fields.Domain("status", "in", ["pending", "saved"])
         is_search = False
+        item_type = self._normalize_item_type_filter(item_type)
 
         product_query = " ".join(str(product_query or "").strip().split())
         has_product_filter = bool(product_query or product_ids)
@@ -118,6 +133,10 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             domain &= fields.Domain("create_date", ">=", datetime.combine(start_date, time.min))
         if end_date:
             domain &= fields.Domain("create_date", "<=", datetime.combine(end_date, time.max))
+
+        if item_type != "all":
+            is_search = True
+            domain &= self._item_type_product_domain(item_type)
 
         return list(domain), is_search
 
@@ -1207,6 +1226,17 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         }
 
     @api.model
+    def _bill_wizard_invoice_type_label(self, header):
+        if self._bill_wizard_header_contract_parts(header)[-1]:
+            return _("Contract")
+        promo_name, _discount_label, _discount_value = self._bill_wizard_receipt_promo_data(header)
+        if promo_name:
+            return _("Promo")
+        if getattr(header, "is_delivery", False):
+            return _("Delivery")
+        return ""
+
+    @api.model
     def _bill_wizard_header_payload(self, header, record_type="sale"):
         customer_name, customer_phone, customer_address = self._bill_wizard_header_customer_parts(
             header,
@@ -1230,7 +1260,10 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             notes = (header.description or "").strip()
             can_return = bool(header.eplus_serial and header.status in ("pending", "saved"))
             doc_type = "sale"
+        employee = getattr(header, "employee_id", False)
         return {
+            "employee_name": employee.display_name if employee else "",
+            "invoice_type": self._bill_wizard_invoice_type_label(header),
             "id": payload_id,
             "eplus_serial": eplus_serial,
             "status": header.status or "",
@@ -1262,9 +1295,11 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             date_start=False,
             date_end=False,
             eplus_serial="",
+            item_type="all",
     ):
         domain = fields.Domain("status", "in", ["pending", "saved"])
         is_search = False
+        item_type = self._normalize_item_type_filter(item_type)
 
         product_query = " ".join(str(product_query or "").strip().split())
         has_product_filter = bool(product_query or product_ids)
@@ -1328,6 +1363,10 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         if end_date:
             domain &= fields.Domain("create_date", "<=", datetime.combine(end_date, time.max))
 
+        if item_type != "all":
+            is_search = True
+            domain &= self._item_type_product_domain(item_type)
+
         return list(domain), is_search
 
     @api.model
@@ -1358,7 +1397,9 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             per_page=20,
             query="",
             limit=0,
+            item_type="all",
     ):
+        item_type = self._normalize_item_type_filter(item_type)
         legacy_query = (query or "").strip()
         if legacy_query and not any([product_query, product_ids, customer_query, date_start, date_end, eplus_serial]):
             if legacy_query.isdigit():
@@ -1373,6 +1414,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             date_start=date_start,
             date_end=date_end,
             eplus_serial=eplus_serial,
+            item_type=item_type,
         )
         return_domain, return_is_search = self._bill_wizard_return_domain(
             product_query=product_query,
@@ -1381,6 +1423,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
             date_start=date_start,
             date_end=date_end,
             eplus_serial=eplus_serial,
+            item_type=item_type,
         )
         is_search = bool(is_search or return_is_search)
         per_page = 20
@@ -1440,6 +1483,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
                 "date_start": date_start or False,
                 "date_end": date_end or False,
                 "eplus_serial": (eplus_serial or "").strip(),
+                "item_type": item_type,
             },
             "pagination": {
                 "page": page,

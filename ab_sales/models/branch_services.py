@@ -70,10 +70,24 @@ class ApiInventory(models.Model):
     _inherit = 'ab_sales_inventory'
     branch_refreshed_at = fields.Datetime(string='Branch Refreshed At', readonly=True)
 
+    def _branch_sync_metadata(self, store, serials):
+        store.check_access('read')
+        rows = self.search(fields.Domain('store_id', '=', store.id)
+                           & fields.Domain('product_eplus_serial', 'in', list(serials)))
+        return {row.product_eplus_serial: {'balance': row.balance,
+                'last_sync_at': fields.Datetime.to_string(row.branch_refreshed_at) if row.branch_refreshed_at else False}
+                for row in rows}
+
     def _apply_api_balances(self, store, rows, fetched, complete=False):
         client = self.env['ab_sales_branch_client']
         client._config(store)  # Validate before scoped elevation, even for cron callers.
         client._validate_balance_rows(store, rows)
+        fetched = fields.Datetime.to_datetime(fetched)
+        if not fetched:
+            raise UserError(_('The branch returned invalid stock data.'))
+        # Serialize snapshots per store, including the initial empty cache.
+        if not store.sudo().try_lock_for_update():
+            raise UserError(_('A stock refresh is already running. Please retry.'))
         Inventory = self.sudo()
         serials = [r['product_eplus_serial'] for r in rows]
         existing = Inventory.search([('store_id', '=', store.id)])
@@ -85,6 +99,8 @@ class ApiInventory(models.Model):
             values = {**Inventory._product_sync_vals(serial, products), 'balance': row['balance'],
                       'default_price': row['default_price'], 'branch_refreshed_at': fetched}
             if serial in by_serial:
+                if by_serial[serial].branch_refreshed_at and by_serial[serial].branch_refreshed_at > fetched:
+                    continue
                 old_price = by_serial[serial].default_price
                 if old_price != values['default_price']:
                     _logger.info('Branch price cache store=%s product=%s old_price=%s new_price=%s changed_by=%s change_date=%s',
@@ -95,7 +111,8 @@ class ApiInventory(models.Model):
         if creates:
             Inventory.create(creates)
         if complete:
-            missing = existing.filtered(lambda r: r.product_eplus_serial not in set(serials))
+            missing = existing.filtered(lambda r: r.product_eplus_serial not in set(serials)
+                and (not r.branch_refreshed_at or r.branch_refreshed_at <= fetched))
             missing.write({'balance': 0, 'branch_refreshed_at': fetched})
 
     def _api_refresh_stores(self, stores):
@@ -181,7 +198,7 @@ class ApiPosServices(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
 
     @api.model
-    def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
+    def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         client = self.env['ab_sales_branch_client']
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
@@ -189,6 +206,10 @@ class ApiPosServices(models.TransientModel):
         rows = client._balances(store, products.mapped('eplus_serial'))
         by_serial = {r['product_eplus_serial']: r['balance'] for r in rows}
         result = {p.id: by_serial[p.eplus_serial] for p in products if p.eplus_serial in by_serial}
+        if include_sync_metadata:
+            metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
+            return {p.id: dict(metadata[p.eplus_serial], refresh_success=True)
+                    for p in products if p.eplus_serial in metadata}
         result['_refreshed_at'] = fields.Datetime.to_string(fields.Datetime.now())
         return result
 

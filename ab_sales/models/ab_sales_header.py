@@ -121,10 +121,11 @@ class AbdinSalesHeader(models.Model):
 
     @api.model
     def _get_allowed_store_domain(self):
-        domain = [("allow_sale", "=", True)]
-        store_ids = self._get_allowed_store_ids()
-        if store_ids:
-            domain.append(("id", "in", store_ids))
+        ids = self.env['ab_sales_branch_rpc_config'].sudo().search([('active', '=', True)]).store_id.ids
+        domain = fields.Domain('allow_sale', '=', True) & fields.Domain('active', '=', True)
+        domain &= fields.Domain('id', 'in', ids)
+        domain &= fields.Domain(self.env.user._ab_sales_bill_domain()).map_conditions(
+            lambda c: fields.Domain('id', c.operator, c.value) if c.field_expr == 'store_id' else c)
         return domain
 
     @api.model

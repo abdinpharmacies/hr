@@ -34,18 +34,21 @@
 }
 
 .o_ab_sales_bill_wizard_filters {
-  display: grid;
-  grid-template-columns: minmax(260px, 1.4fr) minmax(180px, 1fr) 180px 150px 150px auto;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   align-items: end;
 }
 
 .o_ab_sales_bill_wizard_filter {
+  flex: 1 1 180px;
   min-width: 0;
 }
 
 .o_ab_sales_bill_wizard_filter_product {
-  min-width: 260px;
+  flex: 2 1 300px;
+  max-width: 520px;
+  min-width: 280px;
 }
 
 .o_ab_sales_bill_wizard_filter_product .o_ab_many2many_tags {
@@ -64,17 +67,31 @@
 }
 
 .o_ab_sales_bill_wizard_filter_actions {
+  flex: 0 1 160px;
+  min-width: 0;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
 .o_ab_sales_bill_wizard_filter_serial {
+  flex: 0 1 190px;
   max-width: 220px;
 }
 
 .o_ab_sales_bill_wizard_filter_date {
+  flex: 0 1 150px;
   max-width: 170px;
+}
+
+.o_ab_sales_bill_wizard_filter_item_type {
+  flex: 0 1 250px;
+}
+
+.o_ab_sales_bill_wizard_filter_item_type .btn {
+  white-space: nowrap;
 }
 
 .o_ab_sales_bill_wizard_body {
@@ -221,22 +238,39 @@
 }
 
 @media (max-width: 1100px) {
-  .o_ab_sales_bill_wizard_filters {
-    grid-template-columns: 1fr 1fr;
-  }
-
+  .o_ab_sales_bill_wizard_filter_product,
   .o_ab_sales_bill_wizard_filter_serial,
   .o_ab_sales_bill_wizard_filter_date {
     max-width: none;
   }
 
   .o_ab_sales_bill_wizard_filter_actions {
-    grid-column: span 2;
     justify-content: flex-end;
   }
 
   .o_ab_sales_bill_wizard_body {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(220px, 35vh) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .o_ab_sales_bill_wizard_filter,
+  .o_ab_sales_bill_wizard_filter_product,
+  .o_ab_sales_bill_wizard_filter_serial,
+  .o_ab_sales_bill_wizard_filter_date,
+  .o_ab_sales_bill_wizard_filter_item_type,
+  .o_ab_sales_bill_wizard_filter_actions {
+    flex-basis: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .o_ab_sales_bill_wizard_filter_actions {
+    justify-content: stretch;
+  }
+
+  .o_ab_sales_bill_wizard_filter_actions .btn {
+    flex: 1 1 0;
   }
 }

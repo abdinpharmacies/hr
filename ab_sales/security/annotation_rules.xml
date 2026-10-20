@@ -1,0 +1,7 @@
+<odoo>
+    <record id="bill_annotation_branch_rule" model="ir.rule">
+        <field name="name">Callcenter annotations: authorized bills</field>
+        <field name="model_id" ref="model_ab_sales_bill_annotation"/>
+        <field name="domain_force">user._ab_sales_annotation_domain()</field>
+    </record>
+</odoo>

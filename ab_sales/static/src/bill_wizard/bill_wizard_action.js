@@ -87,6 +87,7 @@ class AbSalesBillWizardAction extends Component {
                 eplusSerial: "",
                 dateStart: "",
                 dateEnd: "",
+                itemType: "all",
             },
             pagination: {
                 page: 1,
@@ -118,6 +119,7 @@ class AbSalesBillWizardAction extends Component {
         });
 
         this.onFilterInput = this.onFilterInput.bind(this);
+        this.onItemTypeChange = this.onItemTypeChange.bind(this);
         this.onProductSelectionUpdate = this.onProductSelectionUpdate.bind(this);
         this.productSelectionDomain = this.productSelectionDomain.bind(this);
         this.onFilterKeydown = this.onFilterKeydown.bind(this);
@@ -164,6 +166,7 @@ class AbSalesBillWizardAction extends Component {
             document_type: this.state.filters.documentType,
             status: this.state.filters.status,
             search_token: targetPage === 1 ? false : this.state.searchToken,
+            item_type: this.state.filters.itemType || "all",
             page: targetPage,
             per_page: 20,
         };
@@ -288,9 +291,9 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async loadBills({page = null, refreshStatus = false} = {}) {
-        if (this.state.loadingList) {
-            return;
-        }
+        const request = this._listRequest = (this._listRequest || 0) + 1;
+        this._detailsRequest = (this._detailsRequest || 0) + 1;
+        this.state.loadingDetails = false;
         this.state.loadingList = true;
         try {
             const result = await this.orm.call(
@@ -299,6 +302,7 @@ class AbSalesBillWizardAction extends Component {
                 [],
                 {...this._searchPayload(page), refresh_status: refreshStatus}
             );
+            if (request !== this._listRequest) return;
             const items = Array.isArray(result?.items) ? result.items : [];
             this.state.items = items;
             this.state.branches = result.branches || [];
@@ -324,6 +328,7 @@ class AbSalesBillWizardAction extends Component {
             }
             await this.loadDetails(this.state.selectedId);
         } catch (err) {
+            if (request !== this._listRequest) return;
             this.state.items = [];
             this.state.details = null;
             this.state.selectedId = null;
@@ -333,7 +338,7 @@ class AbSalesBillWizardAction extends Component {
             this.state.pagination.pageCount = 1;
             this.notification.add(this._getErrorMessage(err, _t("Failed to load bills.")), {type: "danger"});
         } finally {
-            this.state.loadingList = false;
+            if (request === this._listRequest) this.state.loadingList = false;
         }
     }
 
@@ -342,6 +347,11 @@ class AbSalesBillWizardAction extends Component {
             return;
         }
         this.state.filters[filterKey] = ev.target.value || "";
+    }
+
+    onItemTypeChange(itemType) {
+        this.state.filters.itemType = ["medicine", "non_medicine"].includes(itemType) ? itemType : "all";
+        this.applyFilters();
     }
 
     onProductSelectionUpdate(value) {
@@ -377,6 +387,7 @@ class AbSalesBillWizardAction extends Component {
         this.state.filters.eplusSerial = "";
         this.state.filters.dateStart = "";
         this.state.filters.dateEnd = "";
+        this.state.filters.itemType = "all";
         await this.loadBills({page: 1, refreshStatus: true});
     }
 
@@ -413,6 +424,7 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async loadDetails(billId = null) {
+        const request = this._detailsRequest = (this._detailsRequest || 0) + 1;
         const targetId = billId || this.state.selectedId;
         if (!targetId) {
             this.state.details = null;
@@ -425,41 +437,32 @@ class AbSalesBillWizardAction extends Component {
             const payload = await this.orm.call("ab_sales_ui_api", "bill_wizard_details", [], {
                 header_id: targetId,
             });
-            if (this.state.selectedId !== targetId) { return; }
+            if (request !== this._detailsRequest || this.state.selectedId !== targetId) { return; }
             this.state.details = payload || null;
-            this.state.notesDraft = payload?.notes || "";
+            this.state.notesDraft = "";
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Failed to load bill details."), {type: "danger"});
+            if (request !== this._detailsRequest || this.state.selectedId !== targetId) return;
+            this.notification.add(this._getErrorMessage(err, _t("Failed to load bill details.")), {type: "danger"});
         } finally {
-            this.state.loadingDetails = false;
+            if (request === this._detailsRequest) this.state.loadingDetails = false;
         }
     }
 
     async saveNotes() {
-        if (!this.state.selectedId || this.state.savingNotes) {
-            return;
-        }
+        const target = this.state.selectedId;
+        const body = this.state.notesDraft.trim();
+        if (!target || !body || this.state.savingNotes) return;
         this.state.savingNotes = true;
         try {
-            const updated = await this.orm.call("ab_sales_ui_api", "bill_wizard_update_notes", [], {
-                header_id: this.state.selectedId,
-                notes: this.state.notesDraft || "",
-            });
-            if (this.state.details) {
-                this.state.details.notes = updated?.notes || this.state.notesDraft || "";
+            const annotations = await this.orm.call("ab_sales_ui_api", "bill_wizard_add_annotation", [], {header_id: target, body});
+            if (this.state.selectedId === target && this.state.details) {
+                this.state.details.annotations = annotations;
+                this.state.notesDraft = "";
             }
-            for (const row of this.state.items) {
-                if (row.id === this.state.selectedId) {
-                    row.notes = updated?.notes || this.state.notesDraft || "";
-                    break;
-                }
-            }
-            this.notification.add("Notes saved.", {type: "success"});
-        } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Failed to save notes."), {type: "danger"});
-        } finally {
-            this.state.savingNotes = false;
-        }
+            this.notification.add(_t("Annotation added."), {type: "success"});
+        } catch (error) {
+            this.notification.add(this._getErrorMessage(error, _t("Could not add annotation.")), {type: "danger"});
+        } finally { this.state.savingNotes = false; }
     }
 
     async openReturn() {
