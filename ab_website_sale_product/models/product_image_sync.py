@@ -166,8 +166,6 @@ class ProductImageSyncService(models.AbstractModel):
             identifiers.append(("code", product.code))
         for barcode in product.barcode_ids.filtered("name"):
             identifiers.append(("barcode", barcode.name))
-        if "eplus_serial" in product._fields and product.eplus_serial:
-            identifiers.append(("eplus_serial", product.eplus_serial))
         return [
             (method, raw_value, self._normalize_identifier(raw_value))
             for method, raw_value in identifiers
@@ -316,7 +314,6 @@ class ProductImageSyncService(models.AbstractModel):
         return {
             "code": 1,
             "barcode": 2,
-            "eplus_serial": 3,
         }.get(method, 99)
 
     @api.model

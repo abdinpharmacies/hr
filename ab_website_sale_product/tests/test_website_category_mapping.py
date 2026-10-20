@@ -115,6 +115,49 @@ class TestWebsiteCategoryMapping(TransactionCase):
         self.assertEqual(line["match_method"], "code")
         self.assertEqual(line["relative_path"], "IMG-FLAT.jpg")
 
+    def test_external_serial_cannot_match_another_products_image(self):
+        owner = self._create_website_product("98520001")
+        recipient = self._create_website_product("98520002")
+        recipient.eplus_serial = int(owner.code)
+        template = recipient.website_product_tmpl_id
+        output = BytesIO()
+        Image.new("RGB", (1, 1), (20, 40, 60)).save(output, format="PNG")
+        template.image_1920 = base64.b64encode(output.getvalue())
+        original_image = template.image_1920
+        service = self.env["ab.website.product.image.sync.service"]
+
+        for relative_path in ("98520001.png", "98520001/main.png"):
+            with self.subTest(relative_path=relative_path), tempfile.TemporaryDirectory() as root:
+                self._write_image(root, relative_path)
+                plan = self._plan_for(root, owner | recipient)
+                owner_line = self._single_product_line(plan, owner)
+                recipient_line = self._single_product_line(plan, recipient)
+                self.assertEqual(owner_line["match_method"], "code")
+                self.assertEqual(recipient_line["status"], "missing")
+                self.assertFalse(recipient_line["image_path"])
+                service.apply_sync_plan(self._plan_for(root, recipient))
+                self.assertEqual(template.image_1920, original_image)
+
+    def test_product_code_image_wins_over_external_serial(self):
+        product = self._create_website_product("98520002")
+        product.eplus_serial = 98520001
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "98520001/main.png")
+            self._write_image(root, "98520002.png")
+            line = self._single_product_line(self._plan_for(root, product), product)
+        self.assertEqual(line["match_method"], "code")
+        self.assertEqual(line["relative_path"], "98520002.png")
+
+    def test_barcode_image_matching_is_preserved(self):
+        product = self._create_website_product("IMG-BARCODE")
+        barcode = self.env["ab_product_barcode"].create({"name": "9988776655443"})
+        product.barcode_ids = barcode
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "9988776655443.png")
+            line = self._single_product_line(self._plan_for(root, product), product)
+        self.assertEqual(line["match_method"], "barcode")
+        self.assertEqual(line["matched_identifier"], barcode.name)
+
     def test_nested_product_folder_matches_product_code(self):
         product = self._create_website_product("IMG-NESTED")
         with tempfile.TemporaryDirectory() as root:

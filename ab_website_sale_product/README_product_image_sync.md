@@ -54,10 +54,13 @@ The matcher uses exact identifiers only:
 ```text
 product code
 → barcode
-→ Eplus serial / external identifier
 ```
 
 For each identifier, both filename stems and parent folder names are considered.
+Eplus serials are not image identifiers: a serial can equal another product's
+code and would incorrectly assign that product's image. Products without a code
+or barcode match remain missing and keep their existing Odoo image. This rule
+does not repair images assigned by earlier synchronization runs.
 
 ## Main Image Convention
 
