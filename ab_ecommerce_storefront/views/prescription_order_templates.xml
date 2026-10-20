@@ -43,6 +43,7 @@
                                   data-ab-prescription-form=""
                                   t-att-data-ab-prescription-max-size="prescription_max_upload_mb * 1024 * 1024">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="idempotency_key" t-att-value="idempotency_key"/>
 
                                 <div t-if="error_code" class="alert alert-danger" role="alert">
                                     <t t-if="error_code == 'missing_image'">Please upload a prescription image.</t>

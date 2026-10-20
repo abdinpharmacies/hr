@@ -8,3 +8,4 @@ from . import wishlist
 from . import contact
 from . import browsing_history
 from . import catalog
+from . import checkout_submission

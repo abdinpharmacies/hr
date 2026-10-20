@@ -174,6 +174,11 @@ class AbPrescriptionOrder(models.Model):
     def _ab_storefront_create_sale_order(self, allow_unreviewed=False):
         self.ensure_one()
         self.check_access("write")
+        self.flush_recordset()
+        self.env.cr.execute(
+            "SELECT id FROM ab_prescription_order WHERE id = %s FOR UPDATE", (self.id,),
+        )
+        self.invalidate_recordset()
         if self.sale_order_id:
             return self.sale_order_id
         if not allow_unreviewed and self.state not in ("waiting_call_center", "confirmed"):
@@ -256,7 +261,24 @@ class AbPrescriptionOrder(models.Model):
         self.write({"state": "waiting_call_center"})
 
     def action_confirmed(self):
+        self.check_access("write")
+        for prescription in self:
+            order = prescription.sale_order_id
+            if not order or not order.order_line.filtered(lambda line: line.product_id and not line.display_type):
+                raise ValidationError(_("Review the prescription products and quantities before confirming the order."))
+            if order.state in ("draft", "sent"):
+                order.action_confirm()
+            elif order.state != "sale":
+                raise ValidationError(_("The prescription order cannot be confirmed in its current state."))
         self.write({"state": "confirmed"})
+
+    @api.constrains("state", "sale_order_id")
+    def _check_confirmed_website_stock(self):
+        for prescription in self.filtered(lambda item: item.website_id and item.state in (
+            "confirmed", "preparing", "out_for_delivery", "delivered",
+        )):
+            if not prescription.sale_order_id or prescription.sale_order_id.state != "sale":
+                raise ValidationError(_("Review the prescription products and quantities before confirming the order."))
 
     def action_preparing(self):
         self._check_unlinked_fulfillment()

@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { _t } from "@web/core/l10n/translation";
+import { _t, translationIsReady } from "@web/core/l10n/translation";
 import { rpc } from "@web/core/network/rpc";
 import wishlistUtils from "@website_sale_wishlist/js/website_sale_wishlist_utils";
 
@@ -431,7 +431,8 @@ function scheduleCartRebindAfterOdooUpdate() {
     });
 }
 
-function startCartSelection() {
+async function startCartSelection() {
+    await translationIsReady;
     bindCartSelection();
     syncCartActionsViewportBottom();
 }

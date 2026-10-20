@@ -21,3 +21,5 @@ access_call_center_testimonial,Call center social comments,model_ab_ecommerce_cu
 access_call_center_carousel,Call center homepage carousel,ab_website_admin_content.model_ab_website_carousel_slide,group_call_center,1,1,1,0
 access_call_center_category,Call center category images,website_sale.model_product_public_category,group_call_center,1,1,0,0
 access_call_center_ribbon,Call center product ribbons,website_sale.model_product_ribbon,group_call_center,1,1,1,0
+access_cart_hold_admin,Cart holds administrator,model_ab_storefront_cart_hold,base.group_system,1,0,0,0
+access_submission_admin,Storefront submissions administrator,model_ab_storefront_submission,base.group_system,1,0,0,0

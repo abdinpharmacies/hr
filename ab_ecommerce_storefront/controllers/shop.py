@@ -98,18 +98,21 @@ class AbEcommerceStorefrontShop(WebsiteSale):
         return fuzzy_search_term, len(products), products
 
     def _ab_storefront_available_products(self, products, website):
-        templates = products.sudo()
-        eplus_templates = templates.filtered(
-            lambda template: template.ab_product_id and not template.ab_product_id.is_service
+        templates = products.sudo().with_context(active_test=False)
+        eplus_templates = templates.search_fetch(
+            fields.Domain("id", "in", templates.ids)
+            & fields.Domain("ab_product_id", "!=", False)
+            & fields.Domain("ab_product_id.is_service", "=", False),
+            ["ab_product_id", "eplus_stock_shown_qty_value"],
         )
         sold_out_ids = set()
         source_ids = eplus_templates.mapped('ab_product_id').ids
         quantities = {}
         snapshots = request.env['ab_eplus_stock_snapshot'].sudo()
-        for start in range(0, len(source_ids), 500):
+        if source_ids:
             rows = snapshots._read_group(
                 [
-                    ('product_id', 'in', source_ids[start:start + 500]),
+                    ('product_id', 'in', source_ids),
                     ('active', '=', True),
                 ],
                 ['product_id'],
@@ -123,18 +126,50 @@ class AbEcommerceStorefrontShop(WebsiteSale):
             ):
                 sold_out_ids.add(template.id)
 
-        stock_limited = (templates - eplus_templates).filtered(
-            lambda template: template.is_storable and not template.allow_out_of_stock_order
+        stock_limited = templates.search(
+            fields.Domain("id", "in", (templates - eplus_templates).ids)
+            & fields.Domain("is_storable", "=", True)
+            & fields.Domain("allow_out_of_stock_order", "=", False)
         )
-        for start in range(0, len(stock_limited), 500):
-            batch = stock_limited[start:start + 500]
-            variants = batch.mapped('product_variant_id').sudo().with_context(
-                warehouse_id=website.warehouse_id.id
-            )
-            quantities_by_variant = {variant.id: variant.free_qty for variant in variants}
-            for template in batch:
-                if quantities_by_variant.get(template.product_variant_id.id, 0) <= 0:
-                    sold_out_ids.add(template.id)
+        scoped_templates = (eplus_templates | stock_limited).filtered(
+            lambda template: template.id not in sold_out_ids
+        )
+        warehouse_id = website._ab_storefront_stock_warehouse_id()
+        warehouse = request.env["stock.warehouse"].sudo().browse(warehouse_id).exists()
+        cart = request.cart
+        exclude_order = cart if cart and cart.website_id == website else None
+        if not warehouse:
+            sold_out_ids.update(scoped_templates.ids)
+        else:
+            scoped_templates.fetch(['type', 'uom_id'])
+            services = scoped_templates.filtered(lambda template: template.type == 'service')
+            sold_out_ids.update(services.ids)
+            scoped_templates -= services
+            for start in range(0, len(scoped_templates), 5000):
+                batch = scoped_templates[start:start + 5000]
+                variants = request.env['product.product'].sudo().with_context(
+                    active_test=False,
+                    warehouse_id=warehouse.id, allowed_company_ids=website.company_id.ids,
+                ).search_fetch(
+                    fields.Domain('product_tmpl_id', 'in', batch.ids), ['product_tmpl_id'],
+                )
+                first_variants = {}
+                for variant in variants:
+                    first_variants.setdefault(variant.product_tmpl_id.id, variant.id)
+                variants = variants.browse(first_variants.values())
+                quantities_by_variant = variants._compute_quantities_dict(
+                    variants.env.context.get('lot_id'), variants.env.context.get('owner_id'),
+                    variants.env.context.get('package_id'), variants.env.context.get('from_date'),
+                    variants.env.context.get('to_date'),
+                )
+                held = request.env["ab_storefront_cart_hold"]._quantities(
+                    variants, website.company_id, warehouse, exclude_order,
+                )
+                for template in batch:
+                    variant_id = first_variants.get(template.id)
+                    free_quantity = quantities_by_variant.get(variant_id, {}).get('free_qty', 0)
+                    if free_quantity - held.get(variant_id, 0) <= 0:
+                        sold_out_ids.add(template.id)
         return products.filtered(lambda product: product.id not in sold_out_ids)
 
     def _get_shop_domain(self, search, category, attribute_value_dict, search_in_description=True):

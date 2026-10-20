@@ -1,5 +1,6 @@
 import base64
 import binascii
+import hashlib
 import io
 
 from PIL import Image, UnidentifiedImageError
@@ -12,6 +13,7 @@ from odoo.http import request, route
 from werkzeug.utils import secure_filename
 
 from .auth import is_valid_egyptian_mobile, normalize_egyptian_phone
+from .submission_security import submission_owner
 
 
 class AbPrescriptionOrderPortal(CustomerPortal):
@@ -63,6 +65,10 @@ class AbPrescriptionOrderPortal(CustomerPortal):
             return False
 
     def _prescription_page_values(self, **values):
+        if not values.get("idempotency_key"):
+            values["idempotency_key"] = request.env["ab_storefront_submission"]._issue(
+                "prescription", request.website, submission_owner(),
+            ).key
         PrescriptionOrder = request.env["ab.prescription.order"]
         country = self._prescription_country()
         recent_prescriptions = PrescriptionOrder if request.env.user._is_public() else PrescriptionOrder.search(
@@ -233,24 +239,46 @@ class AbPrescriptionOrderPortal(CustomerPortal):
     @route("/prescription-order/submit", type="http", auth="public", methods=["POST"], website=True)
     def prescription_order_submit(self, **post):
         try:
-            vals = self._read_prescription_upload()
-            PrescriptionOrder = request.env["ab.prescription.order"].sudo()
-            payment_method = PrescriptionOrder._ab_storefront_cash_on_delivery_method(
-                request.website.company_id
-            )
-            if not payment_method:
-                raise UserError("payment_method_unavailable")
-            vals.update(self._prescription_partner_values(post))
-            vals["payment_method_id"] = payment_method.id
-            vals["customer_note"] = (post.get("customer_note") or "").strip()[:2000]
-            vals["company_id"] = request.website.company_id.id
-            vals["website_id"] = request.website.id
-            order = PrescriptionOrder.create(vals)
-            order._ab_storefront_create_sale_order(allow_unreviewed=True)
+            with request.env.cr.savepoint():
+                vals = self._read_prescription_upload()
+                payload = {key: (post.get(key) or "").strip() for key in (
+                    "guest_name", "guest_phone", "guest_email", "guest_address",
+                    "guest_city", "guest_state_id", "customer_note",
+                )}
+                payload["image"] = hashlib.sha256(vals["prescription_image"]).hexdigest()
+                submission = request.env["ab_storefront_submission"]._claim(
+                    post.get("idempotency_key"), "prescription", request.website,
+                    submission_owner(), payload,
+                )
+                if submission.prescription_id:
+                    existing = submission.prescription_id
+                    if (existing.website_id != request.website
+                            or existing.company_id != request.website.company_id
+                            or existing.partner_id != submission.result_partner_id):
+                        raise AccessError(request.env._("This submission does not belong to your session."))
+                    return request.redirect(existing.get_portal_url(query_string="&submitted=1"))
+                PrescriptionOrder = request.env["ab.prescription.order"].sudo()
+                payment_method = PrescriptionOrder._ab_storefront_cash_on_delivery_method(
+                    request.website.company_id
+                )
+                if not payment_method:
+                    raise UserError("payment_method_unavailable")
+                vals.update(self._prescription_partner_values(post))
+                vals["payment_method_id"] = payment_method.id
+                vals["customer_note"] = (post.get("customer_note") or "").strip()[:2000]
+                vals["company_id"] = request.website.company_id.id
+                vals["website_id"] = request.website.id
+                order = PrescriptionOrder.create(vals)
+                order._ab_storefront_create_sale_order(allow_unreviewed=True)
+                submission.write({
+                    "prescription_id": order.id, "order_id": order.sale_order_id.id,
+                    "result_partner_id": order.partner_id.id,
+                })
         except UserError as error:
             return request.render(
                 "ab_ecommerce_storefront.prescription_order_page",
                 self._prescription_page_values(
+                    idempotency_key=post.get("idempotency_key"),
                     error_code=error.args[0],
                     customer_note=post.get("customer_note", ""),
                     guest_name=post.get("guest_name", ""),

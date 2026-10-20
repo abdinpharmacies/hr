@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cart_hold_company_rule" model="ir.rule">
+        <field name="name">Cart holds by company</field>
+        <field name="model_id" ref="model_ab_storefront_cart_hold"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="submission_company_rule" model="ir.rule">
+        <field name="name">Storefront submissions by company</field>
+        <field name="model_id" ref="model_ab_storefront_submission"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>
