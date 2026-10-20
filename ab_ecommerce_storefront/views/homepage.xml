@@ -370,8 +370,13 @@
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V8a6 6 0 1 1 12 0v2h1.5v10h-15V10H6Zm2 0h8V8a4 4 0 0 0-8 0v2Zm-1.5 2v6h11v-6h-11Zm6.5 2v2h-2v-2h2Z"/></svg>
-                                    <span><strong>Secure payment</strong><small>Choose your payment method</small></span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                                            <circle cx="10" cy="10" r="6.5"/>
+                                            <path d="m15 15 6 6"/>
+                                        </g>
+                                    </svg>
+                                    <span><strong>Order tracking</strong><small>Follow your order status</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
@@ -455,40 +460,7 @@
                             <div class="ab-storefront-feedback-metrics">
                                 <div><strong>19036</strong><span>Support hotline</span></div>
                                 <div><strong>24/7</strong><span>Online ordering</span></div>
-                                <div><strong>Secure</strong><span>Checkout experience</span></div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <section class="ab-storefront-why py-5" data-name="Why Abdin">
-                    <div class="container">
-                        <div class="ab-storefront-section-heading mb-4">
-                            <div>
-                                <h2 class="mb-0">Why choose Abdin Pharmacies?</h2>
-                            </div>
-                        </div>
-                        <div class="row g-3 g-lg-4">
-                            <div class="col-12 col-md-4">
-                                <div class="ab-storefront-why-card">
-                                    <span><i class="fa fa-medkit" aria-hidden="true"/></span>
-                                    <strong>Pharmacy expertise</strong>
-                                    <p>Contact our pharmacy team with questions about a product.</p>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <div class="ab-storefront-why-card">
-                                    <span><i class="fa fa-truck" aria-hidden="true"/></span>
-                                    <strong>Convenient delivery</strong>
-                                    <p>Order your pharmacy essentials for delivery to your address.</p>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <div class="ab-storefront-why-card">
-                                    <span><i class="fa fa-shield" aria-hidden="true"/></span>
-                                    <strong>Review your order</strong>
-                                    <p>Review your products and total before placing your order.</p>
-                                </div>
+                                <div><strong>Delivery</strong><span>To your door</span></div>
                             </div>
                         </div>
                     </div>

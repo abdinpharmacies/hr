@@ -70,7 +70,8 @@ export class AbStorefrontTestimonials extends Interaction {
         this.previous.disabled = !overflow || (rtl ? cards[0].right <= bounds.right + 2 : cards[0].left >= bounds.left - 2);
         const last = cards.at(-1);
         this.next.disabled = !overflow || (rtl ? last.left >= bounds.left - 2 : last.right <= bounds.right + 2);
-        this.position.textContent = overflow ? _t("Review %s of %s", index + 1, this.cards.length) : "";
+        const currentReview = this.next.disabled ? this.cards.length : index + 1;
+        this.position.textContent = overflow ? _t("Review %s of %s", currentReview, this.cards.length) : "";
     }
 
     move(step) {

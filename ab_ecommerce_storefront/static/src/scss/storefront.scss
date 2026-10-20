@@ -3189,6 +3189,10 @@ body.ab-storefront .ab-storefront-promo-card {
     &:empty {
         display: none;
     }
+
+    @media (min-width: 992px) {
+        display: none;
+    }
 }
 
 .ab-storefront-testimonial-dialog {
