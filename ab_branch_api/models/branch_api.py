@@ -117,7 +117,9 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('sale')
         can_post = all(self._business_permissions(kind, post=True, raise_exception=False)
                        for kind in ('sale', 'return'))
-        return {'version': 1, 'sales_submission_guard': 1, **self._identity(store, db_serial),
+        return {'version': 1, 'sales_submission_guard': 1,
+                'delivery_notifications': int('ab_delivery_request' in self.env.registry),
+                **self._identity(store, db_serial),
                 'store_name': store.display_name or '', 'branch_store_id': store.id, 'can_post': can_post,
                 'methods': ['get_capabilities', 'get_connection_status', 'search_products',
                             'get_stock_lines', 'submit_sale', 'get_return_invoice',
@@ -403,7 +405,8 @@ class BranchApi(models.AbstractModel):
         Pos = self.env['ab_sales_pos_api']
         header_model = self.env['ab_sales_header']
         allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
-                   'is_delivery', 'description', 'invoice_address', 'new_customer_name',
+                   'is_delivery', 'delivery_notify', 'delivery_instructions',
+                   'description', 'invoice_address', 'new_customer_name',
                    'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
                    'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
                    'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',

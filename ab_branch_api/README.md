@@ -338,3 +338,18 @@ against the existing committed branch invoice marker; this reads E-Plus and
 never creates a sale or consumes stock. Missing, ambiguous, incomplete or
 unavailable evidence leaves the outcome Unknown. Return posting/recovery keeps
 its existing protocol.
+
+
+## Optional callcenter delivery consent (19.0.5.5.4)
+
+`get_capabilities` adds `delivery_notifications`: 1 only when the branch delivery
+request model is installed, otherwise 0. The callcenter checks this capability
+before offering notification consent. `submit_sale` accepts `delivery_notify` and
+`delivery_instructions` in its existing header whitelist. Branch workflows retain
+ownership of notification creation and delivery; callcenter has no bot credentials
+or notification jobs. Ordinary sales omit these optional fields for older providers.
+
+The endpoint signatures, identity validation, operation journal, payload hash, and
+retry/reconciliation rules are unchanged. Apply this companion change to branch
+providers before enabling callcenter delivery notifications. No live posting or
+notification sending was performed during verification.
