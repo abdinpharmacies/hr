@@ -71,10 +71,12 @@ class AbEcommerceStorefrontShop(WebsiteSale):
         return options
 
     def _shop_lookup_products(self, options, post, search, website):
+        deals = self._ab_storefront_deals()
+        if 'discount' in deals or 'today' in deals:
+            request.env.cr.execute("SET LOCAL jit = off")
         fuzzy_search_term, _product_count, products = super()._shop_lookup_products(
             options, post, search, website
         )
-        deals = self._ab_storefront_deals()
         include_oos = request.params.get('include_oos') == '1'
         if deals:
             matching_ids = set()
