@@ -20,3 +20,4 @@ from . import browsing_history
 from . import customer_testimonial
 from . import storefront_offer
 from . import product_public_category
+from . import catalog_cache

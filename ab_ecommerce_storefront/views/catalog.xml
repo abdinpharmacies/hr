@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="catalog_fragment_layout" name="Storefront Catalog Fragment Layout">
+        <t t-out="0"/>
+    </template>
+
+    <template id="catalog_page" name="Storefront Catalog Page"
+              inherit_id="website_sale.products" primary="True">
+        <xpath expr="//t[@t-call='website.layout']" position="attributes">
+            <attribute name="t-call">ab_ecommerce_storefront.catalog_fragment_layout</attribute>
+        </xpath>
+    </template>
+</odoo>

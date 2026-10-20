@@ -64,7 +64,7 @@
             <input type="hidden" name="uom_id" t-att-value="ab_card_default_option['uom_id']"/>
 
             <div class="ab-storefront-product-media">
-                <a t-att-href="product._get_product_url()" t-att-title="product.name">
+                <a t-att-href="product._get_product_url()" t-att-title="product.name" data-ab-catalog-static="media">
                     <img t-if="ab_card_image_field"
                          t-att-src="website.image_url(product, ab_card_image_field)"
                          t-att-alt="product.name"
@@ -105,10 +105,10 @@
             </div>
 
             <div class="ab-storefront-product-body d-flex flex-column flex-grow-1">
-                <p t-if="product.public_categ_ids" class="ab-storefront-product-category mb-1">
+                <p t-if="product.public_categ_ids" class="ab-storefront-product-category mb-1" data-ab-catalog-static="category">
                     <span t-field="product.public_categ_ids[0].name"/>
                 </p>
-                <h3 class="ab-storefront-product-name">
+                <h3 class="ab-storefront-product-name" data-ab-catalog-static="name">
                     <a t-att-href="product._get_product_url()" class="text-decoration-none">
                         <span t-field="product.name"/>
                     </a>
