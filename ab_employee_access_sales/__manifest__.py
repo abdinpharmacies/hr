@@ -1,13 +1,13 @@
 {
     "name": "Ab Sales HR",
-    "version": "19.0.1.0.0",
+    "version": "19.0.2.0.0",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
-    "summary": "Branch service-user POS with employee PIN, roles, shifts, and audit logs.",
+    "summary": "Callcenter POS with employee PIN, roles, shifts, and audit logs.",
     "depends": [
         "web",
         "ab_widgets",
-        "ab_sales_cashier",
+        "ab_sales",
         "ab_employee_access",
     ],
     "data": [
@@ -23,9 +23,6 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "ab_employee_access_sales/static/src/cashier/**/*.js",
-            "ab_employee_access_sales/static/src/cashier/**/*.xml",
-            "ab_employee_access_sales/static/src/cashier/**/*.scss",
             "ab_employee_access_sales/static/src/pos/**/*.js",
             "ab_employee_access_sales/static/src/pos/**/*.xml",
             "ab_employee_access_sales/static/src/pos/**/*.scss",

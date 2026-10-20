@@ -1,0 +1,675 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_employee_access_sales
+#: model:ir.module.category,name:ab_employee_access_sales.category_ab_employee_access_sales
+msgid "Ab Sales HR"
+msgstr "موظفو المبيعات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_pos_session__state__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__cancel
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py:0
+msgid "Cashier PIN login is required."
+msgstr "يلزم تسجيل دخول الكاشير بالرمز السري."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__change_store
+msgid "Change Store"
+msgstr "تغيير الفرع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__close_reason
+msgid "Close Reason"
+msgstr "سبب الإغلاق"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_pos_session__state__closed
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_shift__state__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_config
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__create_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__create_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_status__denied
+msgid "Denied"
+msgstr "مرفوض"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__details_json
+msgid "Details Json"
+msgstr "تفاصيل JSON"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__device_ip
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__device_ip
+msgid "Device Ip"
+msgstr "عنوان الجهاز"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__device_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__device_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__device_name
+msgid "Device Name"
+msgstr "اسم الجهاز"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__device_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__device_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__device_uid
+msgid "Device Uid"
+msgstr "معرّف الجهاز"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__discount
+msgid "Discount"
+msgstr "خصم"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_role__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__employee_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__employee_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access
+msgid "Employee Access Profile"
+msgstr "ملف صلاحيات الموظف"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Employee PIN is invalid."
+msgstr "الرمز السري للموظف غير صالح."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+msgid "Employee POS profile is missing."
+msgstr "ملف نقطة البيع للموظف غير موجود."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Employee POS session is missing or expired."
+msgstr "جلسة نقطة البيع للموظف مفقودة أو منتهية الصلاحية."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_pos_api.py:0
+msgid "Employee POS session is required."
+msgstr "جلسة نقطة بيع الموظف مطلوبة."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Employee and PIN are required."
+msgstr "الموظف والرمز السري مطلوبان."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Employee is invalid or POS login is disabled."
+msgstr "الموظف غير صالح أو تسجيل دخول نقطة البيع معطل."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+#: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+msgid "Employee is not allowed to work in store %s."
+msgstr "الموظف غير مسموح له بالعمل في الفرع %s."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+msgid "Employee login is required."
+msgstr "يلزم تسجيل دخول الموظف."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Employee role does not allow POS screen access."
+msgstr "دور الموظف لا يسمح بفتح شاشة نقطة البيع."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py:0
+msgid "Employee role does not allow cashier screen access."
+msgstr "دور الموظف لا يسمح بفتح شاشة الكاشير."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+msgid "Employee role does not allow sales return screen access."
+msgstr "دور الموظف لا يسمح بفتح شاشة مرتجع المبيعات."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_pos_api.py:0
+msgid "Employee session does not match the selected store."
+msgstr "جلسة الموظف لا تطابق الفرع المحدد."
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menua_ab_employee_access_sales_employee
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__end_at
+msgid "End At"
+msgstr "وقت النهاية"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_status__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__heartbeat
+msgid "Heartbeat"
+msgstr "آخر إشارة اتصال"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_role__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__last_activity_at
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__last_activity_at
+msgid "Last Activity At"
+msgstr "وقت آخر نشاط"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__write_uid
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__write_date
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__lock
+msgid "Lock"
+msgstr "قفل"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_pos_session__state__locked
+msgid "Locked"
+msgstr "مقفلة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__locked_at
+msgid "Locked At"
+msgstr "وقت القفل"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__login
+msgid "Login"
+msgstr "تسجيل الدخول"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__login_at
+msgid "Login At"
+msgstr "وقت تسجيل الدخول"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__logout
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__logout_at
+msgid "Logout At"
+msgstr "وقت تسجيل الخروج"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__manager_employee_id
+msgid "Manager Employee"
+msgstr "الموظف المدير"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_monitor
+msgid "Monitoring"
+msgstr "المراقبة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__name
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "No POS store is available for this employee."
+msgstr "لا يوجد فرع نقطة بيع متاح لهذا الموظف."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_shift__state__open
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__operation_at
+msgid "Operation At"
+msgstr "وقت العملية"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__operation_log_ids
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__operation_log_ids
+msgid "Operation Log"
+msgstr "سجل العملية"
+
+#. module: ab_employee_access_sales
+#: model:ir.actions.act_window,name:ab_employee_access_sales.action_ab_employee_access_sales_operation_log
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_operation_log
+msgid "Operation Logs"
+msgstr "سجلات العمليات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__operation_status
+msgid "Operation Status"
+msgstr "حالة العملية"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__operation_type
+msgid "Operation Type"
+msgstr "نوع العملية"
+
+#. module: ab_employee_access_sales
+#: model_terms:ir.ui.view,arch_db:ab_employee_access_sales.view_ab_employee_access_sales_pos_session_form
+#: model_terms:ir.ui.view,arch_db:ab_employee_access_sales.view_ab_employee_access_sales_shift_form
+msgid "Operations"
+msgstr "العمليات"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_root
+#: model_terms:ir.ui.view,arch_db:ab_employee_access_sales.view_ab_sales_header_form_pos_hr
+msgid "POS HR"
+msgstr "موظفو نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:res.groups.privilege,name:ab_employee_access_sales.privilege_ab_employee_access_sales_audit
+msgid "POS HR Audit"
+msgstr "تدقيق موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:res.groups,name:ab_employee_access_sales.group_ab_employee_access_sales_auditor
+msgid "POS HR Auditor"
+msgstr "مدقق موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:res.groups,name:ab_employee_access_sales.group_ab_employee_access_sales_manager
+msgid "POS HR Manager"
+msgstr "مدير موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:res.groups.privilege,name:ab_employee_access_sales.privilege_ab_employee_access_sales_ops
+msgid "POS HR Operations"
+msgstr "عمليات موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py:0
+msgid "POS HR module is required for cashier PIN access."
+msgstr "وحدة موظفي نقطة البيع مطلوبة للدخول إلى الكاشير بالرمز السري."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__pos_pin
+msgid "POS PIN"
+msgstr "الرمز السري لنقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__pos_service_user_id
+msgid "POS Service User"
+msgstr "مستخدم خدمة نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.actions.act_window,name:ab_employee_access_sales.action_ab_employee_access_sales_pos_session
+msgid "POS Sessions"
+msgstr "جلسات نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.actions.act_window,name:ab_employee_access_sales.action_ab_employee_access_sales_shift
+msgid "POS Shifts"
+msgstr "ورديات نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.constraint,message:ab_employee_access_sales.constraint_ab_employee_access_sales_pos_session_session_token_key
+msgid "POS session token must be unique."
+msgstr "يجب أن يكون رمز جلسة نقطة البيع فريداً."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_status__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_device_ip
+msgid "Pos Hr Device Ip"
+msgstr "عنوان جهاز الموظف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_device_name
+msgid "Pos Hr Device Name"
+msgstr "اسم جهاز الموظف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_device_uid
+msgid "Pos Hr Device Uid"
+msgstr "معرّف جهاز الموظف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_employee_id
+msgid "Pos Hr Employee"
+msgstr "موظف نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_profile_id
+msgid "Pos Hr Profile"
+msgstr "ملف موظف نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_role_id
+msgid "Pos Hr Role"
+msgstr "دور موظف نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_service_user_id
+msgid "Pos Hr Service User"
+msgstr "مستخدم خدمة موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_session_id
+msgid "Pos Hr Session"
+msgstr "جلسة موظف نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_sales_header__pos_hr_shift_id
+msgid "Pos Hr Shift"
+msgstr "وردية موظف نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__pos_operation_log_ids
+msgid "Pos Operation Log"
+msgstr "سجل عمليات نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access__pos_session_ids
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__pos_session_ids
+msgid "Pos Session"
+msgstr "جلسة نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_store__pos_shift_ids
+msgid "Pos Shift"
+msgstr "وردية نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__price_change
+msgid "Price Change"
+msgstr "تغيير السعر"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__profile_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__profile_id
+msgid "Profile"
+msgstr "ملف التعريف"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__return_open
+msgid "Return Screen Open"
+msgstr "فتح شاشة المرتجع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__role_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__role_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__role_id
+msgid "Role"
+msgstr "الدور"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_role
+msgid "Roles"
+msgstr "الأدوار"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__sale_submit
+msgid "Sale Submit"
+msgstr "إرسال عملية بيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_pos_api
+msgid "Sales HR POS API"
+msgstr "واجهة موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_operation_log
+msgid "Sales HR POS Operation Log"
+msgstr "سجل عمليات موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_role
+msgid "Sales HR POS Role"
+msgstr "دور موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_pos_session
+msgid "Sales HR POS Session"
+msgstr "جلسة موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_employee_access_sales_shift
+msgid "Sales HR POS Shift"
+msgstr "وردية موظفي نقطة البيع"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة برمجة نقاط بيع المبيعات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_sales_return_ui_api
+msgid "Sales Return UI API"
+msgstr "واجهة برمجة تطبيقات مرتجع المبيعات"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+msgid "Sales return store is missing."
+msgstr "فرع مرتجع المبيعات غير محدد."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py:0
+msgid "Selected employee has no POS profile."
+msgstr "الموظف المحدد ليس لديه ملف نقطة بيع."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Selected store is not available for the current service user."
+msgstr "الفرع المحدد غير متاح لمستخدم الخدمة الحالي."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__service_user_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__service_user_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__service_user_id
+msgid "Service User"
+msgstr "مستخدم الخدمة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__session_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__session_ids
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__session_token
+msgid "Session Token"
+msgstr "رمز الجلسة"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_pos_session
+#: model_terms:ir.ui.view,arch_db:ab_employee_access_sales.view_ab_employee_access_sales_shift_form
+msgid "Sessions"
+msgstr "الجلسات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,help:ab_employee_access_sales.field_ab_store__pos_service_user_id
+msgid ""
+"Shared Odoo user used by this branch/device instead of creating an Odoo "
+"account per employee."
+msgstr "مستخدم أودو مشترك لهذا الفرع أو الجهاز بدلاً من إنشاء حساب لكل موظف."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__shift_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__shift_id
+msgid "Shift"
+msgstr "الوردية"
+
+#. module: ab_employee_access_sales
+#: model:ir.ui.menu,name:ab_employee_access_sales.menu_ab_employee_access_sales_shift
+msgid "Shifts"
+msgstr "الورديات"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__start_at
+msgid "Start At"
+msgstr "وقت البداية"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__state
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_store
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__store_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__store_id
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__store_id
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Store %s is assigned to another service user."
+msgstr "الفرع %s مرتبط بمستخدم خدمة آخر."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_sales_pos_api.py:0
+msgid "Store is required."
+msgstr "المخزن مطلوب."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Store not found."
+msgstr "الفرع غير موجود."
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_status__success
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_employee_access_sales
+#: model_terms:ir.ui.view,arch_db:ab_employee_access_sales.view_ab_employee_access_sales_operation_log_search
+msgid "Today"
+msgstr "اليوم"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields.selection,name:ab_employee_access_sales.selection__ab_employee_access_sales_operation_log__operation_type__unlock
+msgid "Unlock"
+msgstr "فتح القفل"
+
+#. module: ab_employee_access_sales
+#: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__unlock_count
+msgid "Unlock Count"
+msgstr "عدد مرات فتح القفل"
+
+#. module: ab_employee_access_sales
+#: model:ir.model,name:ab_employee_access_sales.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "ab_sales_header"
