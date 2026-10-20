@@ -494,6 +494,7 @@ msgstr "أرسل الفرع بنوداً تخص فاتورة أو فرعاً آ�
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
 #: code:addons/ab_sales/models/local_bills.py:0
 msgid "This store is not allowed."
 msgstr "هذا الفرع غير مسموح به."

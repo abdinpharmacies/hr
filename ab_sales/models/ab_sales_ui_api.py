@@ -14,7 +14,7 @@ from datetime import timedelta
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.tools.misc import find_in_path
 
 _logger = logging.getLogger(__name__)
@@ -1078,12 +1078,14 @@ for ($i = $startInt; $i -le $endInt; $i++) {
     def _inventory_pos_sync_by_serial(self, product_serials, store_id=None):
         if not store_id or not product_serials:
             return {}
-        store = self.env['ab_sales_pos_api']._get_store_record(store_id)
-        lines = self.env['ab_sales_inventory'].search(
-            fields.Domain('store_id', '=', store.id)
-            & fields.Domain('product_eplus_serial', 'in', product_serials))
-        return {line.product_eplus_serial: fields.Datetime.to_string(line.branch_refreshed_at)
-                if line.branch_refreshed_at else False for line in lines}
+        store = self.env['ab_store'].search(
+            self.env['ab_sales_header']._get_allowed_store_domain()
+            & fields.Domain('id', '=', int(store_id)), limit=1)
+        if not store:
+            raise AccessError(_('This store is not allowed.'))
+        # Search reads the retained API snapshot even while the branch is offline.
+        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, product_serials)
+        return {serial: values['last_sync_at'] for serial, values in metadata.items()}
 
     @api.model
     def _inventory_total_and_pos_balances_by_serial(self, product_serials, store_id=None):
