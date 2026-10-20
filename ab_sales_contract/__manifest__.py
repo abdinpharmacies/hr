@@ -1,5 +1,6 @@
 {
     'name': 'Abdin Sales Contract',
+    'version': '19.0.2.0.0',
     'application': True,
     'depends': ['ab_sales'],
 

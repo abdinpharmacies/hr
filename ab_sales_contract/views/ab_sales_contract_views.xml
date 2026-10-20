@@ -34,6 +34,20 @@
             </field>
         </record>
 
+        <record id="ab_sales_header_view_tree_inherit_contract_total_after_discount" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_tree_inherit_contract_total_after_discount</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='store_id']" position="after">
+                    <field name="contract_id" string="Contract" optional="show"/>
+                </xpath>
+                <xpath expr="//field[@name='total_price']" position="after">
+                    <field name="total_after_discount"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Contract management (basic) -->
         <record id="ab_contract_view_tree" model="ir.ui.view">
             <field name="name">ab_contract_view_tree</field>
@@ -46,6 +60,7 @@
                     <field name="paid_amount"/>
                     <field name="discount_percentage_rule"/>
                     <field name="allow_total_invoice_discount"/>
+                    <field name="allow_promotions"/>
                     <field name="allowed_store_ids" widget="many2many_tags"/>
                     <field name="total_invoice_discount_source"/>
                     <field name="max_bill_value"/>
@@ -73,6 +88,7 @@
                                 <field name="paid_amount"/>
                                 <field name="discount_percentage_rule"/>
                                 <field name="allow_total_invoice_discount"/>
+                                <field name="allow_promotions"/>
                                 <field name="total_invoice_discount_source"
                                        invisible="not allow_total_invoice_discount"/>
                                 <field name="max_bill_value"/>

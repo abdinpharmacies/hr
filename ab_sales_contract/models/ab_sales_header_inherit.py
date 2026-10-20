@@ -12,6 +12,32 @@ class AbSalesHeaderContract(models.Model):
     _logger = logging.getLogger(__name__)
 
     contract_id = fields.Many2one("ab_contract", string="Contract")
+    contract_promotion_pricing = fields.Boolean(
+        string="Contract Promotion Pricing", readonly=True, copy=False,
+    )
+    contract_promotion_customer_pays = fields.Boolean(
+        string="Contract Promotion Customer Pays", readonly=True, copy=False,
+    )
+
+    def _ab_contract_uses_promotions(self):
+        self.ensure_one()
+        if not self.contract_id:
+            return False
+        if self.status in ('pending', 'saved', 'unknown', 'rejected'):
+            return self.contract_promotion_pricing
+        return self.contract_id.allow_promotions
+
+    def _ab_contract_promotion_customer_pays(self):
+        self.ensure_one()
+        if self.status in ('pending', 'saved', 'unknown', 'rejected'):
+            return self.contract_promotion_customer_pays
+        return self.contract_id.paid_percentage == 100.0
+
+    def _ab_contract_promotion_discounts(self):
+        self.ensure_one()
+        if self._ab_contract_uses_promotions() and hasattr(self, '_promotion_discounts_by_line'):
+            return self._promotion_discounts_by_line()
+        return {}
 
     # Stored totals for clarity on the header.
     discount = fields.Float(
@@ -109,6 +135,10 @@ class AbSalesHeaderContract(models.Model):
     def _validate_before_push(self):
         super()._validate_before_push()
         self._ab_contract_validate_store_allowed(check_status=False)
+        if self.status != 'unknown':
+            self.contract_id._check_allow_promotions()
+            self._ab_contract_recompute_lines()
+            self._compute_contract_totals()
 
     # -------------------------------------------------------------------------
     # Pricing recomputation (header + lines)
@@ -123,6 +153,8 @@ class AbSalesHeaderContract(models.Model):
         - line create/write (see `ab_sales_line_inherit`)
         """
         for header in self:
+            if header.status in ('pending', 'saved', 'unknown', 'rejected'):
+                continue
             header._ab_contract_recompute_lines_single()
 
     def _ab_contract_recompute_lines_single(self):
@@ -130,6 +162,11 @@ class AbSalesHeaderContract(models.Model):
         header = self
 
         contract = header.contract_id
+        if header.status not in ('pending', 'saved', 'unknown', 'rejected'):
+            header.update({
+                'contract_promotion_pricing': bool(contract and contract.allow_promotions),
+                'contract_promotion_customer_pays': bool(contract and contract.paid_percentage == 100.0),
+            })
         if not contract:
             for line in header.line_ids:
                 gross = float(line.qty or 0.0) * float(line.sell_price or 0.0)
@@ -157,13 +194,18 @@ class AbSalesHeaderContract(models.Model):
             return
 
         header._ab_contract_validate()
+        promotion_pricing = header._ab_contract_uses_promotions()
+        if promotion_pricing and header.status not in ('pending', 'saved', 'unknown', 'rejected'):
+            contract._check_allow_promotions()
+        promotion_discounts = header._ab_contract_promotion_discounts()
         discount_rule = header.contract_id.discount_percentage_rule
 
         # 1) Resolve discount percent per line (contract table -> origin defaults -> 0).
         line_data = []
         for line in header.line_ids:
             gross = float(line.qty or 0.0) * float(line.sell_price or 0.0)
-            discount_pct, discount_source = line._ab_contract_get_discount_percent(contract)
+            discount_pct, discount_source = ((0.0, 'none') if promotion_pricing else
+                                             line._ab_contract_get_discount_percent(contract))
             discount_pct = max(0.0, min(100.0, float(discount_pct or 0.0)))
             line_data.append({
                 "line": line,
@@ -199,12 +241,18 @@ class AbSalesHeaderContract(models.Model):
 
             # Discount always applied on gross
             discount_amount = gross * (discount_pct / 100.0)
+            if promotion_pricing:
+                discount_amount = promotion_discounts.get(line, 0.0)
+                discount_pct = 100.0 * discount_amount / gross if gross else 0.0
             net = gross - discount_amount
 
             base_customer = gross * (effective_copay_pct / 100.0)
             base_company = gross - base_customer
 
-            if discount_rule == "person":
+            if promotion_pricing:
+                customer_amount = net if header._ab_contract_promotion_customer_pays() else 0.0
+                company_amount = net - customer_amount
+            elif discount_rule == "person":
                 customer_amount = max(0.0, base_customer - discount_amount)
                 customer_amount = min(net, customer_amount)
                 company_amount = net - customer_amount
@@ -225,7 +273,7 @@ class AbSalesHeaderContract(models.Model):
 
             vals = {
                 "discount": discount_pct,
-                "ab_contract_discount_source": d["discount_source"],
+                "ab_contract_discount_source": "promotion" if promotion_pricing and discount_amount else d["discount_source"],
                 "ab_contract_copay_mode": False,
                 "ab_contract_copay_percent": effective_copay_pct,
                 "ab_contract_gross_amount": gross,
@@ -262,6 +310,18 @@ class AbSalesHeaderContract(models.Model):
                 "cust_pay": 0.0,
                 "company_pay": 0.0,
             }
+
+        if self._ab_contract_uses_promotions():
+            gross = sum(float(line.qty or 0.0) * float(line.sell_price or 0.0) for line in self.line_ids)
+            # Submitted invoices retain their stored line pricing even if the
+            # contract or promotion is subsequently edited.
+            discount = (sum(self.line_ids.mapped('ab_contract_discount_amount'))
+                        if self.status in ('pending', 'saved', 'unknown', 'rejected')
+                        else sum(self._ab_contract_promotion_discounts().values()))
+            net = max(0.0, gross - discount)
+            customer = net if self._ab_contract_promotion_customer_pays() else 0.0
+            return {'discount': discount, 'total_after_discount': net,
+                    'cust_pay': customer, 'company_pay': net - customer}
 
         discount = sum(self.line_ids.mapped("ab_contract_discount_amount"))
         total_after_discount = sum(self.line_ids.mapped("ab_contract_net_amount"))
@@ -380,6 +440,10 @@ class AbSalesHeaderContract(models.Model):
         super().compute_totals()
         for header in self:
             if header.contract_id:
+                header.total_price = sum(
+                    float(line.ab_contract_gross_amount or (float(line.qty or 0.0) * float(line.sell_price or 0.0)))
+                    for line in header.line_ids
+                )
                 header.total_net_amount = float(header.cust_pay or 0.0)
 
     # -------------------------------------------------------------------------
@@ -409,7 +473,8 @@ class AbSalesHeaderContract(models.Model):
             total_bill += gross_line
 
             if self.contract_id:
-                net_line = float(line.ab_contract_net_amount or gross_line) * scale
+                net_line = float(line.ab_contract_net_amount if self._ab_contract_uses_promotions()
+                                 else (line.ab_contract_net_amount or gross_line)) * scale
                 cust_line = float(line.ab_customer_amount or 0.0) * scale
                 total_bill_after_disc += net_line
                 total_bill_net += cust_line
@@ -589,7 +654,7 @@ class AbSalesHeaderContract(models.Model):
             self._ab_contract_validate_store_allowed(vals=vals)
 
         res = super().write(vals)
-        if "contract_id" in vals:
+        if {'contract_id', 'applied_program_ids', 'line_ids'} & vals.keys():
             for rec in self:
                 if rec.contract_id:
                     rec._ab_contract_validate()

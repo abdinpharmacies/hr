@@ -3,6 +3,13 @@
     <t t-name="ab_sales_contract.PosActionContractInherit"
        t-inherit="ab_sales.PosAction"
        t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('ab_pos_meta_block_total')]" position="after">
+            <div class="o_ab_sales_pos_meta_block ab_sales_contract_total_after_discount">
+                <span class="label text-wrap">Total After Discount</span>
+                <span class="o_ab_sales_pos_readonly"
+                      t-esc="formatMoney2(totalAfterDiscount(currentBill))"/>
+            </div>
+        </xpath>
         <xpath expr="//div[contains(@class, 'o_ab_sales_pos_customer_group')]" position="before">
             <div class="o_ab_sales_pos_top_group o_ab_sales_pos_contract_group">
                 <div class="o_ab_sales_pos_field_row">
