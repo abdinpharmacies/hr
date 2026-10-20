@@ -290,7 +290,7 @@ msgstr "إنستغرام"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_customer_testimonial__platform__tiktok
 msgid "TikTok"
-msgstr "TikTok"
+msgstr "تيك توك"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
@@ -751,6 +751,7 @@ msgstr "تصفح القسم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_seo
 msgid "Healthcare products for every day"
 msgstr "منتجات صحية لكل يوم"
 
@@ -2027,6 +2028,8 @@ msgstr "جاري تجهيز الطلب"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_form
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 #: code:addons/ab_ecommerce_storefront/static/src/js/call_center_order_workspace.js:0
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__prescription_id
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_submission__kind__prescription
 msgid "Prescription"
 msgstr "الروشتة"
 
@@ -2058,6 +2061,7 @@ msgid "Open prescription image"
 msgstr "فتح صورة الروشتة"
 
 #. module: ab_ecommerce_storefront
+#. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 msgid "Open in new tab"
 msgstr "فتح في تبويب جديد"
@@ -2097,6 +2101,7 @@ msgstr "رفض"
 #: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__rejected
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_prescription_stage__rejected
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__decision__rejected
 msgid "Rejected"
 msgstr "تعذر تنفيذ الطلب"
 
@@ -2331,10 +2336,10 @@ msgstr "تم استلام بيانات طلبك. سيتم التواصل معك 
 msgid "We use these details to confirm the prescription and secure tracking."
 msgstr "نستخدم هذه البيانات لتأكيد طلب الروشتة وتأمين متابعته."
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__website_id
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__website_id
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.storefront_offer_search
 #: model:ir.model,name:ab_ecommerce_storefront.model_website
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__website_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__website_id
@@ -2345,6 +2350,7 @@ msgstr "نستخدم هذه البيانات لتأكيد طلب الروشتة 
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__website_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__website_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.customer_testimonial_search
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__website_id
 msgid "Website"
 msgstr "الموقع الإلكتروني"
 
@@ -2441,6 +2447,8 @@ msgstr "الرئيسية"
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_sale_order_call_center_list
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__order_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__order_id
 msgid "Order"
 msgstr "الطلب"
 
@@ -2806,10 +2814,11 @@ msgstr "صفحة"
 msgid "of"
 msgstr "من"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__product_id
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__product_id
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model:ir.model,name:ab_ecommerce_storefront.model_product_template
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__product_id
 msgid "Product"
 msgstr "المنتج"
 
@@ -2821,6 +2830,7 @@ msgstr "الوصف"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.report_saleorder_document_abdin_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_card
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__quantity
 msgid "Quantity"
 msgstr "الكمية"
 
@@ -3181,12 +3191,14 @@ msgstr "اختر مسؤولاً داخلياً لديه صلاحية الوصو�
 msgid "City / Governorate"
 msgstr "المدينة / المحافظة"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__company_id
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -3223,8 +3235,8 @@ msgstr "خيارات التواصل"
 msgid "Contacted"
 msgstr "تم التواصل"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_uid
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__create_uid
@@ -3234,6 +3246,10 @@ msgstr "تم التواصل"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__create_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -3242,8 +3258,8 @@ msgstr "أنشئ بواسطة"
 msgid "Customer Support"
 msgstr "خدمة العملاء"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__display_name
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ir_http__display_name
@@ -3269,6 +3285,16 @@ msgstr "خدمة العملاء"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_compose_message__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_template__display_name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_account_move__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_account_move_send__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist_item__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__display_name
 msgid "Display Name"
 msgstr "الاسم المعروض"
 
@@ -3379,8 +3405,8 @@ msgstr "يحتوي على رسالة"
 msgid "How can we help?"
 msgstr "كيف يمكننا مساعدتك؟"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__id
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ir_http__id
@@ -3406,6 +3432,16 @@ msgstr "كيف يمكننا مساعدتك؟"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_compose_message__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_mail_template__id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_config_settings__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_account_move__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_account_move_send__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_loyalty_program__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_pricelist_item__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_public_category__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__id
 msgid "ID"
 msgstr "المعرّف"
 
@@ -3468,8 +3504,8 @@ msgstr "متابع"
 msgid "Job Title / Role"
 msgstr "المسمى الوظيفي"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_uid
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__write_uid
@@ -3479,11 +3515,15 @@ msgstr "المسمى الوظيفي"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__write_uid
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_date
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__write_date
@@ -3493,6 +3533,10 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__write_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -3899,6 +3943,7 @@ msgstr "فريق صيدليات عابدين جاهز لمساعدتك"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_tracking_abdin
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.sale_order_portal_shell_abdin
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_seo
 msgid "Contact Abdin Pharmacies"
 msgstr "تواصل مع صيدليات عابدين"
 
@@ -4200,15 +4245,16 @@ msgstr "تابع حجز المنتجات مع فريق المخزن."
 msgid "Last-mile status is not configured"
 msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__name
 #. module: ab_ecommerce_storefront
 #. odoo-javascript
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__name
 #: code:addons/ab_ecommerce_storefront/static/src/xml/call_center_order_workspace.xml:0
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__name
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__name
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -4419,6 +4465,7 @@ msgstr "فشل الدفع ويحتاج إلى متابعة."
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_call_center_payment_status__pending
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_event__state__pending
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__decision__pending
 msgid "Pending"
 msgstr "قيد الانتظار"
 
@@ -5384,6 +5431,7 @@ msgstr "استعادة الحساب"
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_email_confirm
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
 msgid "Account security"
 msgstr "أمان الحساب"
 
@@ -5466,6 +5514,7 @@ msgstr "افتح بريدك الإلكتروني لتأكيده."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__code_hash
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__code_hash
 msgid "Code Hash"
 msgstr "بصمة الرمز"
 
@@ -5525,8 +5574,8 @@ msgstr "العدد"
 msgid "Create account"
 msgstr "إنشاء حساب"
 
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_date
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_browsing_history__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_customer_testimonial__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__create_date
@@ -5534,17 +5583,23 @@ msgstr "إنشاء حساب"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_event__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__create_date
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__credential_stamp
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__credential_stamp
 msgid "Credential Stamp"
 msgstr "بصمة بيانات الدخول"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
 msgid "Current password"
 msgstr "كلمة المرور الحالية"
 
@@ -5578,6 +5633,9 @@ msgstr "تفعيل التحقق عبر Telegram"
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__expires_at
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__expires_at
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__expires_at
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__expires_at
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__expires_at
 msgid "Expires At"
 msgstr "وقت انتهاء الصلاحية"
 
@@ -5628,11 +5686,13 @@ msgstr "قناة استعادة الحساب غير صحيحة."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_rate__key
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__key
 msgid "Key"
 msgstr "المفتاح"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__kind
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__kind
 msgid "Kind"
 msgstr "النوع"
 
@@ -5963,7 +6023,7 @@ msgstr "إرسال رسائل التحقق بالمتجر"
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__telegram
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
 msgid "Telegram"
-msgstr "Telegram"
+msgstr "تيليجرام"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__telegram_chat_id
@@ -6084,6 +6144,7 @@ msgstr "طلب الربط غير صحيح أو انتهت صلاحيته. ابد
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__token_hash
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__token_hash
 msgid "Token Hash"
 msgstr "بصمة رمز التحقق"
 
@@ -6109,6 +6170,7 @@ msgstr "استخدم 8 أحرف على الأقل مع حرف كبير وحرف 
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__used_at
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__used_at
 msgid "Used At"
 msgstr "وقت الاستخدام"
 
@@ -6117,6 +6179,8 @@ msgstr "وقت الاستخدام"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_prescription_order__user_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__user_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_identity__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_recovery_code__user_id
 msgid "User"
 msgstr "المستخدم"
 
@@ -6966,6 +7030,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage_seo
 msgid "Your pharmacy essentials in one place"
 msgstr "كل اللي تحتاجه من صيدليات عابدين"
 
@@ -8276,6 +8341,7 @@ msgid "Close quantity warning"
 msgstr "إغلاق تنبيه الكمية"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
@@ -8307,6 +8373,7 @@ msgid "Location permission is required"
 msgstr "اسمح للموقع بمعرفة موقعك"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/current_location.js:0
 #: code:addons/ab_ecommerce_storefront/models/website.py:0
@@ -8389,6 +8456,7 @@ msgid "Hide password"
 msgstr "إخفاء كلمة المرور"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
 #. odoo-javascript
 #: code:addons/ab_ecommerce_storefront/static/src/js/auth.js:0
 #: code:addons/ab_ecommerce_storefront/controllers/auth.py:0
@@ -9339,7 +9407,7 @@ msgstr "رسالة تواصل معنا"
 #. module: ab_ecommerce_storefront
 #: model:ir.model,website_form_label:ab_ecommerce_storefront.model_res_partner
 msgid "Create a Customer"
-msgstr "Create a Customer"
+msgstr "إنشاء عميل"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_prescription_order_search
@@ -11503,6 +11571,7 @@ msgstr "قاعدة السعر"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_offer__pricelist_id
+#: model:ir.model,name:ab_ecommerce_storefront.model_product_pricelist
 msgid "Pricelist"
 msgstr "قائمة الأسعار"
 
@@ -12260,3 +12329,874 @@ msgstr "حسابك وبياناتك"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.terms_conditions_page
 msgid "Your rights and resolving concerns"
 msgstr "حقوقك وحل الشكاوى"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_storefront_has_real_image
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_template__ab_storefront_has_real_image
+msgid "Has Storefront Image"
+msgstr "له صورة في المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "A moment of care"
+msgstr "لحظة ونكون معك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Loading your next page…"
+msgstr "جارٍ تحميل الصفحة التالية…"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Hide loading screen"
+msgstr "إخفاء شاشة التحميل"
+
+#. module: ab_ecommerce_storefront
+#. odoo-javascript
+#: code:addons/ab_ecommerce_storefront/static/src/js/logo_motion.js:0
+msgid "This is taking a little longer than usual."
+msgstr "التحميل يستغرق وقتًا أطول من المعتاد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Your health matters"
+msgstr "صحتك تهمنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"When washing your hands, rub with soap for at least 20 seconds, then rinse "
+"and dry."
+msgstr ""
+"عند غسل يديك، افركهما بالصابون لمدة 20 ثانية على الأقل، ثم اشطفهما وجففهما."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Source: CDC"
+msgstr "المصدر: مراكز مكافحة الأمراض والوقاية منها (CDC)"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"Clean your teeth twice daily for around two minutes, using toothpaste that "
+"contains fluoride."
+msgstr ""
+"نظّف أسنانك مرتين يوميًا لمدة دقيقتين تقريبًا باستخدام معجون يحتوي على "
+"الفلورايد."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Source: NHS"
+msgstr "المصدر: هيئة الخدمات الصحية الوطنية البريطانية (NHS)"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"Keep medicines in a locked cupboard, where children cannot see or reach "
+"them."
+msgstr "احفظ الأدوية في خزانة مقفلة بعيدًا عن متناول الأطفال وأنظارهم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"Include a variety of vegetables, fruit, pulses and whole grains in your "
+"meals."
+msgstr "نوّع وجباتك بالخضروات والفواكه والبقول والحبوب الكاملة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Source: WHO"
+msgstr "المصدر: منظمة الصحة العالمية (WHO)"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid ""
+"Make room for movement each day. Walking and other everyday activities "
+"count."
+msgstr ""
+"اجعل الحركة جزءًا من يومك؛ المشي والأنشطة اليومية تُحتسب ضمن نشاطك البدني."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Antibiotics do not treat viral infections such as colds or flu."
+msgstr ""
+"المضادات الحيوية لا تعالج العدوى الفيروسية مثل نزلات البرد والإنفلونزا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "<strong>Delivery</strong><span>To your door</span>"
+msgstr "<strong>توصيل</strong><span>لحد بابك</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid ""
+"<span><strong>Order tracking</strong><small>Follow your order "
+"status</small></span>"
+msgstr "<span><strong>تتبّع طلبك</strong><small>تابع حالة طلبك</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model:res.groups,name:ab_ecommerce_storefront.group_call_center
+msgid "Call Center"
+msgstr "مركز الاتصال"
+
+#. module: ab_ecommerce_storefront
+#: model:res.groups.privilege,name:ab_ecommerce_storefront.privilege_storefront
+msgid "eCommerce Storefront"
+msgstr "المتجر الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
+msgid ""
+"Only Sales Administrators or Call Center users handling website orders can "
+"mark orders as delivered."
+msgstr ""
+"يمكن لمسؤولي المبيعات أو مستخدمي مركز الاتصال المسؤولين عن طلبات الموقع فقط "
+"تحديد الطلبات كمسلّمة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid ""
+"<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
+"                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+"                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
+msgstr ""
+"<span data-ab-cart-hold-active=\"\">الوقت المتبقي لحجز الموقع:</span>\n"
+"                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+"                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">انتهت مهلة الحجز على الموقع. تظل الأصناف في سلتك وسيتم التحقق من توافرها مرة أخرى عند إتمام الطلب.</span>"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_cart_hold_order_product_unique
+msgid "A cart can only hold a product once."
+msgstr "يمكن للسلة حجز الصنف مرة واحدة فقط."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "All items must be reserved before this order can be confirmed."
+msgstr "يجب حجز جميع الأصناف قبل تأكيد هذا الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_product_product__ab_cart_hold_revision
+msgid "Cart Hold Revision"
+msgstr "إصدار حجز السلة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_cart_operation_revision
+msgid "Cart Operation Revision"
+msgstr "إصدار عملية السلة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_submission__kind__checkout
+msgid "Checkout"
+msgstr "إتمام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_checkout_submission_id
+msgid "Checkout Submission"
+msgstr "عملية إتمام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_cart_hold_quantity_positive
+msgid "Held quantity cannot be negative."
+msgstr "لا يمكن أن تكون الكمية المحجوزة سالبة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__owner_hash
+msgid "Owner Hash"
+msgstr "بصمة صاحب العملية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__payload_hash
+msgid "Payload Hash"
+msgstr "بصمة بيانات العملية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid ""
+"Removing an item releases its website hold. Final stock availability is "
+"checked at checkout."
+msgstr ""
+"حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
+"إتمام الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__result_partner_id
+msgid "Result Partner"
+msgstr "العميل المرتبط بالنتيجة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid ""
+"Review the prescription products and quantities before confirming the order."
+msgstr "راجع أصناف الروشتة وكمياتها قبل تأكيد الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__revision
+msgid "Revision"
+msgstr "الإصدار"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "Some items are no longer available. Please review your cart."
+msgstr "بعض الأصناف لم تعد متاحة. يرجى مراجعة سلتك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid ""
+"Stock reservation is temporarily unavailable. Your order has not been "
+"confirmed. Please try again later."
+msgstr "حجز المخزون غير متاح مؤقتًا. لم يتم تأكيد طلبك. يرجى المحاولة لاحقًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_cart_hold
+msgid "Storefront Cart Hold"
+msgstr "حجز سلة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_submission
+msgid "Storefront Submission"
+msgstr "عملية إرسال في المتجر"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "The cart warehouse does not belong to this company."
+msgstr "مخزن السلة لا يتبع هذه الشركة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/prescription_order.py:0
+msgid "The prescription order cannot be confirmed in its current state."
+msgstr "لا يمكن تأكيد طلب الروشتة في حالته الحالية."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_submission_key_unique
+msgid "The submission key must be unique."
+msgstr "يجب أن يكون مفتاح عملية الإرسال فريدًا."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "This cart can no longer be changed."
+msgstr "لم يعد من الممكن تعديل هذه السلة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/checkout_submission.py:0
+msgid "This checkout is no longer valid. Please review your cart."
+msgstr "لم تعد عملية إتمام الطلب هذه صالحة. يرجى مراجعة سلتك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/checkout_submission.py:0
+msgid "This form has expired. Refresh the page and try again."
+msgstr "انتهت صلاحية هذا النموذج. حدّث الصفحة وحاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/checkout_submission.py:0
+msgid "This order does not belong to this website."
+msgstr "هذا الطلب لا يتبع هذا الموقع."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/checkout_submission.py:0
+msgid "This order does not belong to your account."
+msgstr "هذا الطلب لا يتبع حسابك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/checkout_submission.py:0
+msgid "This order does not belong to your session."
+msgstr "هذا الطلب لا يتبع جلستك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "This order is already being processed."
+msgstr "هذا الطلب قيد المعالجة بالفعل."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/prescription_order.py:0
+#: code:addons/ab_ecommerce_storefront/models/checkout_submission.py:0
+msgid "This submission does not belong to your session."
+msgstr "عملية الإرسال هذه لا تتبع جلستك."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/checkout_submission.py:0
+msgid ""
+"This submission was already used with different details. Refresh the page "
+"and try again."
+msgstr ""
+"تم استخدام عملية الإرسال هذه بتفاصيل مختلفة. حدّث الصفحة وحاول مرة أخرى."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__transaction_id
+msgid "Transaction"
+msgstr "المعاملة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/cart_hold.py:0
+msgid "Use Confirm to reserve all items before confirming this order."
+msgstr "استخدم إجراء التأكيد لحجز جميع الأصناف قبل تأكيد هذا الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__warehouse_id
+msgid "Warehouse"
+msgstr "المخزن"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_sale_order__ab_cart_hold_expires_at
+msgid "Website Hold Expires At"
+msgstr "وقت انتهاء الحجز على الموقع"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n                    <span><strong>With you for better health</strong><small>All your essentials from Abdin Pharmacies</small></span>"
+msgstr "<i class=\"fa fa-check-circle\" aria-hidden=\"true\"/>\n                    <span><strong>معاك لصحة أفضل</strong><small>كل احتياجاتك من صيدليات عابدين</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_security_link
+msgid ""
+"<span class=\"ab-security-action-icon\" aria-hidden=\"true\"><i class=\"fa fa-shield\"/></span>\n"
+"                <span class=\"ab-security-action-copy\"><strong>Browsers and recovery codes</strong><small>Manage trusted browsers and save backup access codes.</small></span>"
+msgstr ""
+"<span class=\"ab-security-action-icon\" aria-hidden=\"true\"><i class=\"fa fa-shield\"/></span>\n"
+"                <span class=\"ab-security-action-copy\"><strong>المتصفحات وأكواد الاسترداد</strong><small>إدارة المتصفحات الموثوقة وحفظ أكواد الدخول الاحتياطية.</small></span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "<span>Expires:</span>"
+msgstr "<span>تنتهي الصلاحية:</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "<span>Unused recovery codes:</span>"
+msgstr "<span>أكواد الاسترداد غير المستخدمة:</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid ""
+"An approval request could not be sent right now. Use a saved recovery code, "
+"or return to sign in and try again later."
+msgstr ""
+"تعذّر إرسال طلب الموافقة الآن. استخدم كود استرداد محفوظًا، أو ارجع لتسجيل "
+"الدخول وحاول لاحقًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__approval_sent
+msgid "Approval Sent"
+msgstr "تم إرسال طلب الموافقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Approve browser sign-in"
+msgstr "الموافقة على تسجيل الدخول من المتصفح"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid "Approve sign-in"
+msgstr "الموافقة على الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__decision__approved
+msgid "Approved"
+msgstr "تمت الموافقة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__browser_name
+msgid "Browser Name"
+msgstr "اسم المتصفح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_device_unique_token
+msgid "Browser tokens must be unique."
+msgstr "يجب أن تكون رموز المتصفحات فريدة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_device.py:0
+msgid "Browser trust revoked. A new sign-in will require verification."
+msgstr "تم إلغاء الثقة بالمتصفح. سيتطلب تسجيل الدخول التالي التحقق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Browsers and recovery codes"
+msgstr "المتصفحات وأكواد الاسترداد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Cancel and return to sign in"
+msgstr "إلغاء والعودة لتسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid ""
+"Check your linked Telegram account and approve this sign-in. Delivery may "
+"take a minute. Return here and select Continue after approval."
+msgstr ""
+"افتح حساب تليجرام المرتبط ووافق على تسجيل الدخول. قد يستغرق وصول الرسالة "
+"دقيقة. ارجع هنا واختر المتابعة بعد الموافقة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Continue after approval"
+msgstr "المتابعة بعد الموافقة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__decision
+msgid "Decision"
+msgstr "القرار"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Generate new recovery codes"
+msgstr "إنشاء أكواد استرداد جديدة"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid ""
+"New sign-in to your Abdin Pharmacy account. Browser: %(browser)s. IP: "
+"%(ip)s. Time (UTC): %(time)s. Approve only if you just entered your "
+"password. This request expires in 5 minutes."
+msgstr ""
+"طلب دخول جديد إلى حسابك في صيدليات عابدين. المتصفح: %(browser)s. عنوان "
+"الإنترنت: %(ip)s. الوقت بالتوقيت العالمي: %(time)s. وافق فقط إذا كنت قد "
+"أدخلت كلمة مرورك الآن. تنتهي صلاحية الطلب خلال 5 دقائق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "No browsers are currently remembered."
+msgstr "لا توجد متصفحات موثوقة حاليًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Recovery code"
+msgstr "كود الاسترداد"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.constraint,message:ab_ecommerce_storefront.constraint_ab_storefront_auth_recovery_code_unique_code
+msgid "Recovery codes must be unique."
+msgstr "يجب أن تكون أكواد الاسترداد فريدة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid "Reject sign-in"
+msgstr "رفض تسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_signup_remember
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Remember this browser for 30 days"
+msgstr "تذكّر هذا المتصفح لمدة 30 يومًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Remembered browsers"
+msgstr "المتصفحات الموثوقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid ""
+"Remembered browsers still require your password. Trust expires after 30 days"
+" and is revoked when your password changes."
+msgstr ""
+"تظل كلمة المرور مطلوبة للمتصفحات الموثوقة. تنتهي الثقة بعد 30 يومًا وتُلغى "
+"عند تغيير كلمة المرور."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Revoke all browser trust"
+msgstr "إلغاء الثقة بجميع المتصفحات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Revoke browser trust"
+msgstr "إلغاء الثقة بالمتصفح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__revoked_at
+msgid "Revoked At"
+msgstr "تاريخ إلغاء الثقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Save your recovery codes now"
+msgstr "احفظ أكواد الاسترداد الآن"
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid "Sign-in approved. Return to the requesting browser and continue."
+msgstr "تمت الموافقة على الدخول. ارجع للمتصفح الذي طلب الدخول واضغط متابعة."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/controllers/auth_device.py:0
+msgid ""
+"Sign-in has not been approved, or the request or recovery code is invalid. "
+"Try again or return to sign in."
+msgstr ""
+"لم تتم الموافقة على الدخول، أو أن الطلب أو كود الاسترداد غير صالح. حاول "
+"مجددًا أو ارجع لتسجيل الدخول."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid ""
+"Sign-in rejected. Your current sessions remain active. Change your password "
+"if this was not you."
+msgstr ""
+"تم رفض الدخول. تظل جلساتك الحالية نشطة. غيّر كلمة المرور إذا لم تكن أنت صاحب"
+" المحاولة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_challenge__source_ip
+msgid "Source Ip"
+msgstr "عنوان الإنترنت للمصدر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_recovery_code
+msgid "Storefront Recovery Code"
+msgstr "كود استرداد حساب المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_auth_device
+msgid "Storefront Trusted Browser"
+msgstr "متصفح موثوق للمتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid ""
+"These codes are shown only once. Store them somewhere private, outside this "
+"browser. Generating new codes invalidates all previous codes."
+msgstr ""
+"تظهر هذه الأكواد مرة واحدة فقط. احفظها في مكان خاص خارج هذا المتصفح. إنشاء "
+"أكواد جديدة يُبطل جميع الأكواد السابقة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid ""
+"This request expires after 5 minutes. Your account stays locked on this "
+"browser until verification is complete."
+msgstr ""
+"تنتهي صلاحية هذا الطلب بعد 5 دقائق. يظل الوصول إلى حسابك محظورًا على هذا "
+"المتصفح حتى اكتمال التحقق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid ""
+"This sign-in request was rejected, expired, or already used. Return to sign "
+"in to start again."
+msgstr ""
+"تم رفض طلب الدخول أو انتهت صلاحيته أو استُخدم بالفعل. ارجع لتسجيل الدخول "
+"للبدء مجددًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid ""
+"Use a code you saved earlier if Telegram is unavailable. Each code works "
+"once and revokes previously remembered browsers."
+msgstr ""
+"استخدم كودًا حفظته سابقًا إذا تعذّر استخدام تليجرام. يعمل كل كود مرة واحدة "
+"ويُلغي الثقة بالمتصفحات المحفوظة سابقًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_wait
+msgid "Use recovery code"
+msgstr "استخدام كود الاسترداد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid "Verify this sign-in"
+msgstr "التحقق من تسجيل الدخول"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_device_management
+msgid ""
+"Verify this sign-in through Telegram before remembering browsers or "
+"generating recovery codes."
+msgstr ""
+"تحقق من تسجيل الدخول عبر تليجرام قبل تذكّر المتصفحات أو إنشاء أكواد "
+"الاسترداد."
+
+#. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/auth_device.py:0
+msgid "Browser"
+msgstr "المتصفح"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_challenge__purpose__device_login
+msgid "Browser sign-in"
+msgstr "تسجيل الدخول من المتصفح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "<bdi dir=\"ltr\">2014</bdi>"
+msgstr "<bdi dir=\"ltr\">2014</bdi>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "<bdi dir=\"ltr\">60+</bdi>"
+msgstr "<bdi dir=\"ltr\">60+</bdi>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid ""
+"<span aria-hidden=\"true\">/</span>\n"
+"                            <span aria-current=\"page\">Who We Are</span>"
+msgstr ""
+"<span aria-hidden=\"true\">/</span>\n"
+"                            <span aria-current=\"page\">من نحن</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.about_us_page
+msgid "<span class=\"ab-about-eyebrow\">Abdin Pharmacies Pharma.</span>"
+msgstr "<span class=\"ab-about-eyebrow\">شركة صيدليات عابدين فارما</span>"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.branches_page
+msgid "Abdin Pharmacies branches, pharmacy addresses, nearest Abdin branch"
+msgstr "فروع صيدليات عابدين، عناوين الصيدليات، أقرب فرع عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.contact_us_abdin
+msgid "Abdin Pharmacies contact, Abdin hotline, 19036"
+msgstr "التواصل مع صيدليات عابدين، الخط الساخن لعابدين، 19036"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.offers_landing_page
+msgid "Abdin Pharmacies offers, personal care offers, pharmacy offers"
+msgstr "عروض صيدليات عابدين، عروض العناية الشخصية، عروض الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.homepage
+msgid "Abdin Pharmacies | Health & Personal Care Online"
+msgstr "صيدليات عابدين | منتجات الصحة والعناية أونلاين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.homepage
+msgid "Abdin Pharmacies, online pharmacy, health and personal care"
+msgstr "صيدليات عابدين، صيدلية أونلاين، منتجات الصحة والعناية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage_seo
+msgid "Abdin Pharmacies: health and personal care online"
+msgstr "صيدليات عابدين: منتجات الصحة والعناية الشخصية أونلاين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.business_partnerships
+msgid "Abdin company contracts, pharmacy business enquiries"
+msgstr "تعاقدات شركات عابدين، استفسارات التعاقد مع الصيدليات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.shop
+msgid "Abdin pharmacy shop, vitamins, personal care"
+msgstr "متجر صيدليات عابدين، فيتامينات، عناية شخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.prescription_order_page
+msgid "Abdin prescription request, upload prescription, pharmacy order"
+msgstr "طلب روشتة عابدين، رفع الروشتة، طلب من الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.return_policy_page
+msgid "Abdin returns, pharmacy refund policy"
+msgstr "استرجاع عابدين، سياسة استرداد المبالغ"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.about_us_page
+msgid "About Abdin Pharmacies | Our Story in Egypt"
+msgstr "عن صيدليات عابدين | قصتنا في مصر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_account_move_send
+msgid "Account Move Send"
+msgstr "إرسال المستند المحاسبي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_landing_page
+msgid "Browse all offers"
+msgstr "تصفح جميع العروض"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.shop
+msgid ""
+"Browse medicines, vitamins, skin care, baby care, and everyday pharmacy "
+"essentials at Abdin Pharmacies. Explore categories and check product "
+"availability."
+msgstr ""
+"تصفح الأدوية والفيتامينات ومنتجات العناية بالبشرة والأطفال واحتياجاتك "
+"اليومية من صيدليات عابدين. اكتشف الأقسام وتحقق من توفر المنتجات."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.contact_seo
+msgid ""
+"Call 19036 or send us a message about products, orders, or our branches."
+msgstr ""
+"اتصل على 19036 أو أرسل لنا رسالة للاستفسار عن المنتجات أو الطلبات أو فروعنا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.business_partnerships
+msgid "Company Contracts & Business Enquiries | Abdin Pharmacies"
+msgstr "تعاقدات الشركات والاستفسارات التجارية | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.contact_us_abdin
+msgid ""
+"Contact Abdin Pharmacies on 19036 or send a message. Our team can help with "
+"product enquiries, online orders, branch information, and business requests."
+msgstr ""
+"تواصل مع صيدليات عابدين على 19036 أو أرسل رسالة. يساعدك فريقنا في الاستفسار "
+"عن المنتجات والطلبات أونلاين والفروع وطلبات التعاقد للشركات."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.contact_us_abdin
+msgid "Contact Abdin Pharmacies | Hotline 19036"
+msgstr "تواصل مع صيدليات عابدين | الخط الساخن 19036"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.offers_landing_page
+msgid ""
+"Explore current Abdin Pharmacies offers on health, beauty, and personal care"
+" products. View product details, current prices, and availability before "
+"ordering."
+msgstr ""
+"اكتشف عروض صيدليات عابدين على منتجات الصحة والجمال والعناية الشخصية. اطلع "
+"على تفاصيل المنتجات والأسعار الحالية والتوفر قبل إتمام طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.offers_landing_page
+msgid ""
+"Explore current offers on health, beauty, and personal care products at "
+"Abdin Pharmacies. Check each product for its current price and availability."
+msgstr ""
+"اكتشف العروض الحالية على منتجات الصحة والجمال والعناية الشخصية في صيدليات "
+"عابدين. راجع صفحة كل منتج لمعرفة سعره الحالي ومدى توفره."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage_seo
+msgid ""
+"Explore medicines, vitamins, skin care, and everyday essentials. Browse our "
+"offers, send a prescription request, or find your nearest Abdin branch."
+msgstr ""
+"اكتشف الأدوية والفيتامينات ومنتجات العناية بالبشرة واحتياجاتك اليومية. تصفح "
+"عروضنا، أو أرسل طلب الروشتة، أو اعثر على أقرب فرع لصيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.branches_page
+msgid ""
+"Find Abdin Pharmacies branches by governorate, area, or street. View "
+"addresses and directions, and call 19036 to confirm opening hours and "
+"services."
+msgstr ""
+"اعثر على فروع صيدليات عابدين حسب المحافظة أو المنطقة أو الشارع. تعرف على "
+"العناوين واتجاهات الوصول، واتصل على 19036 لتأكيد مواعيد العمل والخدمات."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.branches_page
+msgid "Find an Abdin Pharmacy Branch | Addresses & Directions"
+msgstr "فروع صيدليات عابدين | العناوين واتجاهات الوصول"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.offers_landing_page
+msgid "Health, Beauty & Personal Care Offers | Abdin Pharmacies"
+msgstr "عروض الصحة والجمال والعناية الشخصية | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_account_move
+msgid "Journal Entry"
+msgstr "قيد اليومية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.about_us_page
+msgid ""
+"Learn about Abdin Pharmacies, an Egyptian pharmacy chain founded in Sohag in"
+" 2014. Discover our story, products, and ways to contact our team."
+msgstr ""
+"تعرف على صيدليات عابدين، سلسلة صيدليات مصرية بدأت في سوهاج عام 2014. اكتشف "
+"قصتنا ومنتجاتنا وطرق التواصل مع فريقنا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_loyalty_program
+msgid "Loyalty Program"
+msgstr "برنامج الولاء"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_product_pricelist_item
+msgid "Pricelist Rule"
+msgstr "قاعدة قائمة الأسعار"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.return_policy_page
+msgid ""
+"Read the Abdin Pharmacies return and refund policy for online purchases, "
+"including return conditions, product exceptions, and refund information."
+msgstr ""
+"اطلع على سياسة الاسترجاع واسترداد المبالغ للمشتريات أونلاين من صيدليات "
+"عابدين، بما يشمل شروط الاسترجاع والمنتجات المستثناة ومعلومات رد المبالغ."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.return_policy_page
+msgid "Returns & Refunds Policy | Abdin Pharmacies"
+msgstr "سياسة الاسترجاع واسترداد المبالغ | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.prescription_order_page
+msgid "Send a Prescription Request | Abdin Pharmacies"
+msgstr "أرسل طلب الروشتة | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_title:ab_ecommerce_storefront.shop
+msgid "Shop Medicines, Vitamins & Personal Care | Abdin Pharmacies"
+msgstr "تسوق الأدوية والفيتامينات والعناية الشخصية | صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.homepage
+msgid ""
+"Shop health and personal care products at Abdin Pharmacies. Explore offers, "
+"send a prescription request, find a branch, or contact our team on 19036."
+msgstr ""
+"تسوق منتجات الصحة والعناية الشخصية من صيدليات عابدين. اكتشف العروض، وأرسل "
+"طلب الروشتة، واعثر على أقرب فرع، أو تواصل مع فريقنا على 19036."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.business_partnerships
+msgid ""
+"Submit a company contracting request to Abdin Pharmacies. Share your company"
+" details and requirements so our business team can review your enquiry."
+msgstr ""
+"قدم طلب تعاقد لشركتك مع صيدليات عابدين. أرسل بيانات الشركة ومتطلباتها ليتمكن"
+" فريق التعاقدات من مراجعة طلبك والتواصل معك."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_description:ab_ecommerce_storefront.prescription_order_page
+msgid ""
+"Upload a clear prescription image to Abdin Pharmacies and enter your contact"
+" details. Our team will review your request and contact you to confirm the "
+"order."
+msgstr ""
+"ارفع صورة واضحة للروشتة إلى صيدليات عابدين وأدخل بيانات التواصل. يراجع "
+"فريقنا طلبك ويتواصل معك لتأكيد تفاصيل الطلب."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_product_public_category
+msgid "Website Product Category"
+msgstr "فئة منتجات الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.about_us_page
+msgid "about Abdin Pharmacies, Egyptian pharmacy chain, Abdin Sohag"
+msgstr "عن صيدليات عابدين، سلسلة صيدليات مصرية، عابدين سوهاج"
