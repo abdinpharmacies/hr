@@ -19173,3 +19173,155 @@ body.ab-storefront {
         font-weight: var(--ab-font-weight-bold);
     }
 }
+
+.ab-storefront-header [data-ab-nav-motion] {
+    --ab-nav-icon-motion: none;
+    --ab-nav-icon-duration: 560ms;
+    --ab-nav-icon-easing: cubic-bezier(.22, 1, .36, 1);
+
+    > .ab-storefront-nav-icon {
+        display: inline-block;
+        flex: 0 0 1.05em;
+        width: 1.05em;
+        height: 1.05em;
+        overflow: visible;
+        vertical-align: -.125em;
+        pointer-events: none;
+        transform-origin: center;
+    }
+
+    &[data-ab-nav-motion="home"] {
+        --ab-nav-icon-motion: ab-nav-home-arrive;
+    }
+
+    &[data-ab-nav-motion="offers"] {
+        --ab-nav-icon-motion: ab-nav-tag-swing;
+        --ab-nav-icon-duration: 640ms;
+
+        > .ab-storefront-nav-icon {
+            color: var(--ab-accent);
+            transform-origin: 25% 25%;
+        }
+    }
+
+    &[data-ab-nav-motion="track"] {
+        --ab-nav-icon-motion: ab-nav-search-scan;
+        --ab-nav-icon-duration: 620ms;
+    }
+
+    .ab-nav-tile,
+    .ab-nav-heart {
+        transform-box: fill-box;
+        transform-origin: center;
+    }
+
+    .ab-nav-document-line {
+        transform-box: fill-box;
+        transform-origin: left center;
+    }
+
+    .ab-nav-heart-signal {
+        opacity: 0;
+        stroke-dasharray: 26 74;
+        stroke-dashoffset: 100;
+    }
+}
+
+@mixin ab-nav-icon-feedback {
+    > .ab-storefront-nav-icon {
+        animation: var(--ab-nav-icon-motion) var(--ab-nav-icon-duration) var(--ab-nav-icon-easing) both;
+    }
+
+    .ab-nav-tile {
+        animation: ab-nav-tile-arrange 380ms var(--ab-nav-icon-easing) both;
+
+        @for $index from 1 through 4 {
+            &:nth-child(#{$index}) {
+                animation-delay: #{($index - 1) * 45ms};
+            }
+        }
+    }
+
+    .ab-nav-heart {
+        animation: ab-nav-heartbeat 760ms ease-in-out both;
+    }
+
+    .ab-nav-heart-trace {
+        animation: ab-nav-heart-trace 760ms ease-in-out both;
+    }
+
+    .ab-nav-heart-signal {
+        animation: ab-nav-heart-signal 760ms linear both;
+    }
+
+    .ab-nav-document-line {
+        animation: ab-nav-document-write 320ms var(--ab-nav-icon-easing) both;
+
+        @for $index from 2 through 4 {
+            &:nth-child(#{$index}) {
+                animation-delay: #{($index - 2) * 65ms};
+            }
+        }
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .ab-storefront-header [data-ab-nav-motion]:is(:focus-visible, :active) {
+        @include ab-nav-icon-feedback;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .ab-storefront-header [data-ab-nav-motion]:hover {
+            @include ab-nav-icon-feedback;
+        }
+    }
+}
+
+@keyframes ab-nav-home-arrive {
+    0%, 100% { transform: translateY(0) scale(1); }
+    35% { transform: translateY(-2px) scale(1.04); }
+    65% { transform: translateY(.5px) scale(.98); }
+}
+
+@keyframes ab-nav-tag-swing {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-14deg); }
+    55% { transform: rotate(9deg); }
+    78% { transform: rotate(-4deg); }
+}
+
+@keyframes ab-nav-tile-arrange {
+    0%, 100% { transform: translateY(0) scale(1); }
+    40% { transform: translateY(-1.5px) scale(.82); }
+    70% { transform: translateY(.5px) scale(1.04); }
+}
+
+@keyframes ab-nav-heartbeat {
+    0%, 35%, 70%, 100% { transform: scale(1); }
+    18% { transform: scale(1.08); }
+    52% { transform: scale(1.05); }
+}
+
+@keyframes ab-nav-heart-trace {
+    0%, 100% { opacity: 1; }
+    20%, 75% { opacity: .4; }
+}
+
+@keyframes ab-nav-heart-signal {
+    0% { stroke-dashoffset: 100; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { stroke-dashoffset: 0; opacity: 0; }
+}
+
+@keyframes ab-nav-document-write {
+    0% { transform: scaleX(.2); opacity: .4; }
+    100% { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes ab-nav-search-scan {
+    0%, 100% { transform: translate(0, 0) rotate(0); }
+    25% { transform: translate(-1.5px, -1px) rotate(-8deg); }
+    60% { transform: translate(1.5px, -1px) rotate(6deg); }
+    82% { transform: translate(0, -.5px) rotate(0); }
+}
