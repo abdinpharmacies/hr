@@ -1,6 +1,6 @@
 import re
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 
 
 _UNIT_LABELS = {
@@ -41,8 +41,28 @@ _AB_PRODUCT_VARIANT_IMAGE_FIELDS = (
 )
 
 
+def _storefront_image_flags(records, image_fields):
+    attachments = records.env["ir.attachment"].sudo().search_fetch([
+        ("res_model", "=", records._name),
+        ("res_id", "in", records.ids),
+        ("res_field", "in", image_fields),
+    ], ["res_id", "checksum"])
+    flags = {}
+    for attachment in attachments:
+        flags.setdefault(
+            attachment.res_id,
+            attachment.checksum != _AB_STOREFRONT_PLACEHOLDER_CHECKSUM,
+        )
+    return flags
+
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
+
+    ab_storefront_has_real_image = fields.Boolean(
+        string="Has Storefront Image",
+        compute="_compute_ab_storefront_has_real_image",
+    )
 
     ab_storefront_brand_id = fields.Many2one(
         "ab_product_company",
@@ -86,17 +106,15 @@ class ProductTemplate(models.Model):
             })
         return result
 
+    @api.depends(*_AB_PRODUCT_TEMPLATE_IMAGE_FIELDS)
+    def _compute_ab_storefront_has_real_image(self):
+        flags = _storefront_image_flags(self, _AB_PRODUCT_TEMPLATE_IMAGE_FIELDS)
+        for product in self:
+            product.ab_storefront_has_real_image = flags.get(product.id, False)
+
     def _ab_storefront_has_real_image(self):
         self.ensure_one()
-        image_attachment = self.env["ir.attachment"].sudo().search([
-            ("res_model", "=", self._name),
-            ("res_id", "=", self.id),
-            ("res_field", "in", _AB_PRODUCT_TEMPLATE_IMAGE_FIELDS),
-        ], limit=1)
-        return bool(
-            image_attachment
-            and image_attachment.checksum != _AB_STOREFRONT_PLACEHOLDER_CHECKSUM
-        )
+        return self.ab_storefront_has_real_image
 
     def _ab_storefront_sales_price(self, product=None):
         """Provide website prices where a tile caller has no batch price helper."""
@@ -153,13 +171,22 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    ab_storefront_has_real_image = fields.Boolean(
+        string="Has Storefront Image",
+        compute="_compute_ab_storefront_has_real_image",
+    )
+
+    @api.depends(*_AB_PRODUCT_VARIANT_IMAGE_FIELDS, "product_tmpl_id.ab_storefront_has_real_image")
+    def _compute_ab_storefront_has_real_image(self):
+        flags = _storefront_image_flags(self, _AB_PRODUCT_VARIANT_IMAGE_FIELDS)
+        templates = (self.filtered(lambda product: product.id not in flags)).product_tmpl_id
+        template_flags = {template.id: template.ab_storefront_has_real_image for template in templates}
+        for product in self:
+            product.ab_storefront_has_real_image = (
+                flags[product.id] if product.id in flags
+                else template_flags.get(product.product_tmpl_id.id, False)
+            )
+
     def _ab_storefront_has_real_image(self):
         self.ensure_one()
-        image_attachment = self.env["ir.attachment"].sudo().search([
-            ("res_model", "=", self._name),
-            ("res_id", "=", self.id),
-            ("res_field", "in", _AB_PRODUCT_VARIANT_IMAGE_FIELDS),
-        ], limit=1)
-        if image_attachment:
-            return image_attachment.checksum != _AB_STOREFRONT_PLACEHOLDER_CHECKSUM
-        return self.product_tmpl_id._ab_storefront_has_real_image()
+        return self.ab_storefront_has_real_image
