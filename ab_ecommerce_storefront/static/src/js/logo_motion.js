@@ -5,75 +5,218 @@ import { _t } from "@web/core/l10n/translation";
 import { Interaction } from "@web/public/interaction";
 
 const DOUBLE_CLICK_DELAY = 430;
-const LOADER_FALLBACK_DELAY = 4200;
+const LOADER_APPEAR_DELAY = 450;
+const LOADER_RECOVERY_DELAY = 20000;
+const LOADER_TIP_STORAGE_KEY = "ab_storefront_loader_tip";
 const CHECKOUT_TOAST_STORAGE_PREFIX = "ab_storefront_checkout_success_toast:";
 
 export class AbStorefrontPageLoader extends Interaction {
-    static selector = "body";
+    static selector = ".ab-storefront #wrapwrap";
 
     setup() {
+        this.body = this.el.ownerDocument.body;
+        this.onNavigate = this.onNavigate.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+        this.onKeydown = this.onKeydown.bind(this);
+        this.schedule = this.schedule.bind(this);
         this.dismiss = this.dismiss.bind(this);
     }
 
     start() {
-        if (document.body.classList.contains("editor_enable")) {
+        if (this.body.classList.contains("editor_enable")) {
             return;
         }
-        this.loaderEl = this.createLoader();
+        this.loaderEl = this.body.querySelector("[data-ab-storefront-loader]");
         if (!this.loaderEl) {
             return;
         }
-        document.body.prepend(this.loaderEl);
-        this.fallbackTimer = setTimeout(this.dismiss, LOADER_FALLBACK_DELAY);
-        if (document.readyState === "complete") {
-            requestAnimationFrame(this.dismiss);
-            return;
+        this.tips = [...this.loaderEl.querySelectorAll("[data-ab-loader-tip]")];
+        this.loaderEl.addEventListener("keydown", this.onKeydown);
+        window.addEventListener("pageshow", this.dismiss);
+        window.addEventListener("pagehide", this.dismiss);
+        document.addEventListener("ab-storefront:navigation-pending", this.schedule);
+        if (window.navigation) {
+            window.navigation.addEventListener("navigate", this.onNavigate);
+            window.navigation.addEventListener("navigateerror", this.dismiss);
+        } else {
+            document.addEventListener("click", this.onClick, true);
+            document.addEventListener("submit", this.onSubmit, true);
         }
-        window.addEventListener("load", this.dismiss, { once: true });
     }
 
-    destroy() {
-        clearTimeout(this.fallbackTimer);
-        window.removeEventListener("load", this.dismiss);
+    isPageDestination(href) {
+        let target;
+        try {
+            target = new URL(href, window.location.href);
+        } catch {
+            return false;
+        }
+        return target.origin === window.location.origin
+            && /^https?:$/.test(target.protocol)
+            && !["1", "true"].includes(target.searchParams.get("download"))
+            && !/\/(?:web\/(?:content|image)|report|odoo)(?:\/|$)/.test(target.pathname)
+            && !/\.(?:pdf|zip|csv|xlsx?|docx?|png|jpe?g|svg|webp|mp4)$/i.test(target.pathname);
+    }
+
+    onNavigate(event) {
+        if (event.destination.sameDocument || event.downloadRequest !== null
+            || !this.isPageDestination(event.destination.url)) {
+            return;
+        }
+        queueMicrotask(() => {
+            if (event.defaultPrevented || event.signal.aborted || this.isDestroyed) {
+                return;
+            }
+            this.navigationSignal = event.signal;
+            event.signal.addEventListener("abort", () => {
+                if (this.navigationSignal === event.signal) {
+                    this.dismiss();
+                }
+            }, { once: true });
+            this.schedule();
+        });
+    }
+
+    onClick(event) {
+        if (!(event.target instanceof Element) || event.button !== 0
+            || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        const link = event.target.closest("a[href]");
+        if (!link || link.hasAttribute("download")
+            || (link.target && link.target !== "_self")
+            || link.getAttribute("aria-disabled") === "true"
+            || !this.isPageDestination(link.href)) {
+            return;
+        }
+        const target = new URL(link.href, window.location.href);
+        if (target.pathname === window.location.pathname && target.search === window.location.search) {
+            return;
+        }
+        queueMicrotask(() => {
+            if (!event.defaultPrevented) {
+                this.schedule();
+            }
+        });
+    }
+
+    onSubmit(event) {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) {
+            return;
+        }
+        const submitter = event.submitter;
+        const target = submitter?.getAttribute("formtarget") ?? form.target;
+        const method = submitter?.getAttribute("formmethod") ?? form.method;
+        const action = submitter?.getAttribute("formaction") ?? form.action;
+        if ((target && target !== "_self") || method.toLowerCase() === "dialog"
+            || !this.isPageDestination(action)) {
+            return;
+        }
+        queueMicrotask(() => {
+            if (!event.defaultPrevented) {
+                this.schedule();
+            }
+        });
+    }
+
+    schedule() {
+        if (this.pending || !this.loaderEl || this.isDestroyed
+            || this.body.classList.contains("editor_enable")) {
+            return;
+        }
+        this.pending = true;
+        this.appearTimer = setTimeout(() => this.show(), LOADER_APPEAR_DELAY);
+        this.recoveryTimer = setTimeout(this.dismiss, LOADER_RECOVERY_DELAY);
+    }
+
+    show() {
+        this.selectTip();
+        this.previousFocus = document.activeElement;
+        this.inertElements = [...this.body.children].filter((element) => (
+            element !== this.loaderEl && !element.hasAttribute("inert")
+        ));
+        this.inertElements.forEach((element) => element.setAttribute("inert", ""));
+        this.content = this.el;
+        this.originalBusy = this.content?.getAttribute("aria-busy");
+        this.content?.setAttribute("aria-busy", "true");
+        this.loaderEl.hidden = false;
+        this.body.classList.add("ab-storefront-is-navigating");
+        this.loaderEl.focus({ preventScroll: true });
+    }
+
+    selectTip() {
+        if (!this.tips.length) {
+            return;
+        }
+        let previousIndex = this.tipIndex;
+        try {
+            const storedIndex = window.sessionStorage.getItem(LOADER_TIP_STORAGE_KEY);
+            if (storedIndex !== null && /^\d+$/.test(storedIndex)) {
+                previousIndex = Number(storedIndex);
+            }
+        } catch {
+            previousIndex = this.tipIndex;
+        }
+        this.tipIndex = Number.isSafeInteger(previousIndex) && previousIndex < this.tips.length
+            ? (previousIndex + 1) % this.tips.length
+            : Math.floor(Math.random() * this.tips.length);
+        this.tips.forEach((tip, index) => { tip.hidden = index !== this.tipIndex; });
+        this.loaderEl.setAttribute("aria-describedby", this.tips[this.tipIndex].id);
+        try {
+            window.sessionStorage.setItem(LOADER_TIP_STORAGE_KEY, String(this.tipIndex));
+        } catch {
+            return;
+        }
+    }
+
+    onKeydown(event) {
+        if (event.key === "Escape") {
+            this.dismiss();
+        } else if (event.key === "Tab") {
+            event.preventDefault();
+            this.loaderEl.focus({ preventScroll: true });
+        }
     }
 
     dismiss() {
-        clearTimeout(this.fallbackTimer);
+        clearTimeout(this.appearTimer);
+        clearTimeout(this.recoveryTimer);
+        this.pending = false;
+        this.navigationSignal = null;
         if (!this.loaderEl) {
             return;
         }
-        this.loaderEl.classList.add("is-hiding");
-        setTimeout(() => this.loaderEl?.remove(), 420);
-    }
-
-    createLoader() {
-        const logoSrc = this.getWebsiteLogoSrc();
-        if (!logoSrc) {
-            return null;
+        const restoreFocus = this.loaderEl.contains(document.activeElement);
+        this.loaderEl.hidden = true;
+        this.body.classList.remove("ab-storefront-is-navigating");
+        this.inertElements?.forEach((element) => element.removeAttribute("inert"));
+        this.inertElements = [];
+        if (this.content) {
+            if (this.originalBusy === null) {
+                this.content.removeAttribute("aria-busy");
+            } else {
+                this.content.setAttribute("aria-busy", this.originalBusy);
+            }
+            this.content = null;
         }
-        const loader = document.createElement("div");
-        loader.className = "ab-storefront-page-loader";
-        loader.dataset.abStorefrontLoader = "true";
-        loader.setAttribute("aria-hidden", "true");
-
-        const logoWrap = document.createElement("span");
-        logoWrap.className = "ab-storefront-loader-logo";
-
-        const image = document.createElement("img");
-        image.src = logoSrc;
-        image.alt = "";
-        image.width = 176;
-        image.height = 58;
-        image.loading = "eager";
-
-        logoWrap.appendChild(image);
-        loader.appendChild(logoWrap);
-        return loader;
+        if (restoreFocus && this.previousFocus?.isConnected) {
+            this.previousFocus.focus({ preventScroll: true });
+        }
+        this.loaderEl.removeAttribute("aria-describedby");
     }
 
-    getWebsiteLogoSrc() {
-        const logo = document.querySelector(".ab-storefront-brand-logo img, .ab-storefront-brand img");
-        return logo?.currentSrc || logo?.src || "";
+    destroy() {
+        this.dismiss();
+        this.loaderEl?.removeEventListener("keydown", this.onKeydown);
+        window.removeEventListener("pageshow", this.dismiss);
+        window.removeEventListener("pagehide", this.dismiss);
+        window.navigation?.removeEventListener("navigate", this.onNavigate);
+        window.navigation?.removeEventListener("navigateerror", this.dismiss);
+        document.removeEventListener("click", this.onClick, true);
+        document.removeEventListener("submit", this.onSubmit, true);
+        document.removeEventListener("ab-storefront:navigation-pending", this.schedule);
     }
 }
 
@@ -115,6 +258,7 @@ export class AbStorefrontLogoMotion extends Interaction {
             if (link?.href) {
                 ev.preventDefault();
                 this.navigationTimer = setTimeout(() => {
+                    document.dispatchEvent(new Event("ab-storefront:navigation-pending"));
                     window.location.assign(link.href);
                 }, DOUBLE_CLICK_DELAY);
             }

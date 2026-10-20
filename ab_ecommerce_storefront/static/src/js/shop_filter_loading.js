@@ -63,6 +63,7 @@ export class AbStorefrontFilterLoading extends Interaction {
             return;
         }
         this.loading = true;
+        document.dispatchEvent(new Event("ab-storefront:navigation-pending"));
         this.grid.classList.add("ab-storefront-results-pending");
         this.grid.setAttribute("aria-busy", "true");
         this.products?.setAttribute("inert", "");

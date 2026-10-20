@@ -6,6 +6,33 @@
         </xpath>
 
         <xpath expr="//body" position="inside">
+            <div class="ab-storefront-page-loader" data-ab-storefront-loader=""
+                 hidden="hidden" tabindex="-1" role="dialog" aria-modal="true"
+                 aria-labelledby="abStorefrontLoaderMessage">
+                <div class="ab-storefront-loader-content">
+                    <div class="ab-storefront-loader-scene" aria-hidden="true">
+                        <span class="ab-storefront-loader-halo"/>
+                        <span class="ab-storefront-loader-spark ab-storefront-loader-spark--green"/>
+                        <span class="ab-storefront-loader-spark ab-storefront-loader-spark--orange"/>
+                        <span class="ab-storefront-loader-spark ab-storefront-loader-spark--blue"/>
+                        <span class="ab-storefront-loader-logo">
+                            <img t-att-src="website.image_url(website, 'logo')" alt=""
+                                 width="176" height="120" decoding="async"/>
+                        </span>
+                        <span class="ab-storefront-loader-shadow"/>
+                    </div>
+                    <div role="status" aria-live="polite" aria-atomic="true">
+                        <p id="abStorefrontLoaderMessage" class="ab-storefront-loader-message"
+                           data-ab-loader-message="">Loading your next page…</p>
+                    </div>
+                    <p id="abStorefrontTipHandwashing" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">When washing your hands, rub with soap for at least 20 seconds, then rinse and dry.</p>
+                    <p id="abStorefrontTipDentalCare" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">Clean your teeth twice daily for around two minutes, using toothpaste that contains fluoride.</p>
+                    <p id="abStorefrontTipMedicineStorage" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">Keep medicines in a locked cupboard, where children cannot see or reach them.</p>
+                    <p id="abStorefrontTipFoodVariety" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">Include a variety of vegetables, fruit, pulses and whole grains in your meals.</p>
+                    <p id="abStorefrontTipMovement" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">Make room for movement each day. Walking and other everyday activities count.</p>
+                    <p id="abStorefrontTipAntibiotics" class="ab-storefront-loader-tip" data-ab-loader-tip="" hidden="hidden">Antibiotics do not treat viral infections such as colds or flu.</p>
+                </div>
+            </div>
             <aside t-if="not no_footer"
                    class="ab-storefront-support-widget"
                    data-ab-support-widget=""
