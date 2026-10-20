@@ -330,6 +330,12 @@ class AuthService(models.AbstractModel):
         Event = self.env["ab_storefront_auth_event"].sudo()
         if Event.search_count([("update_key", "=", key)], limit=1):
             return True
+        callback = update.get("callback_query")
+        if callback is not None:
+            if not isinstance(callback, dict):
+                return False
+            self._queue("telegram_update", {"update_id": update_id, "callback_query": {key: callback[key] for key in ("id", "from", "message", "data") if key in callback}}, update_key=key)
+            return True
         message = update.get("message", {})
         if not isinstance(message, dict):
             return False
@@ -339,6 +345,12 @@ class AuthService(models.AbstractModel):
 
     def _process_telegram_update(self, update):
         if not self._channel("telegram")._enabled():
+            return
+        if isinstance(update.get("callback_query"), dict):
+            callback = update["callback_query"]
+            self._process_device_callback(callback)
+            if isinstance(callback.get("id"), str):
+                self._queue("telegram", {"callback_query_id": callback["id"][:200]})
             return
         message = update.get("message", {})
         sender = message.get("from", {})

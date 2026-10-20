@@ -203,6 +203,8 @@ class StorefrontAuthSecurity(http.Controller):
                     request.session["ab_auth_deep_link"] = False
                     request.session.pop("ab_auth_telegram_auto_open", None)
                     request.session.pop("ab_auth_signup_name", None)
+                    from .auth_device import StorefrontAuthDevice
+                    StorefrontAuthDevice()._mark_verified(user)
                     return request.redirect("/my/authentication", 303)
                 elif action == "signup" and not user:
                     password = self._password(post)
@@ -212,12 +214,18 @@ class StorefrontAuthSecurity(http.Controller):
                     with request.env.cr.savepoint():
                         user = service._finish_phone_signup(token, browser, {"name": name, "password": password, "lang": request.env.lang})
                     request.env.cr.commit()
+                    request.httprequest.environ["ab_storefront_verified_signup"] = user.id
                     request.session.authenticate(request.env, {"login": user.login, "password": password, "type": "password"})
                     request.session["ab_auth_link"] = False
                     request.session["ab_auth_deep_link"] = False
                     request.session.pop("ab_auth_telegram_auto_open", None)
                     request.session.pop("ab_auth_signup_name", None)
-                    return request.redirect("/my/authentication", 303)
+                    from .auth_device import StorefrontAuthDevice
+                    device = StorefrontAuthDevice()
+                    if request.session.get("pre_uid") == user.id:
+                        return device._finish(user, remember=post.get("remember") == "1")
+                    device._mark_verified(user)
+                    return request.redirect("/my/authentication/browsers", 303)
             except (UserError, ValidationError) as error:
                 values["error"] = error.args[0]
                 values["retry_after"] = getattr(error, "retry_after", 0)

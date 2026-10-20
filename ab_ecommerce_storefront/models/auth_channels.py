@@ -108,7 +108,7 @@ class TelegramChannel(models.AbstractModel):
         return self.env["ir.config_parameter"].sudo().get_param("ab_storefront_auth.telegram_enabled", "False") == "True" and bool(deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN"))
 
     def _api(self, method, payload):
-        if method not in {"sendMessage", "setWebhook", "deleteWebhook", "getUpdates", "getMe", "getWebhookInfo", "setMyCommands"}:
+        if method not in {"sendMessage", "answerCallbackQuery", "setWebhook", "deleteWebhook", "getUpdates", "getMe", "getWebhookInfo", "setMyCommands"}:
             raise UserError(_("Unsupported Telegram operation."))
         token = deployment_secret("AB_STOREFRONT_TELEGRAM_TOKEN")
         if not token:
@@ -126,7 +126,13 @@ class TelegramChannel(models.AbstractModel):
     def _deliver(self, payload):
         if not self._enabled():
             raise UserError(_("Telegram delivery is unavailable."))
-        self._api("sendMessage", payload)
+        if "callback_query_id" in payload:
+            try:
+                self._api("answerCallbackQuery", payload)
+            except UserError:
+                return
+        else:
+            self._api("sendMessage", payload)
 
     def _configure_webhook(self):
         params = self.env["ir.config_parameter"].sudo()
@@ -137,7 +143,7 @@ class TelegramChannel(models.AbstractModel):
         username = params.get_param("ab_storefront_auth.telegram_bot_username", "Abdin_Pharmacy_Bot").lstrip("@")
         if self._api("getMe", {}).get("username", "").lower() != username.lower():
             raise UserError(_("The configured Telegram bot username does not match the token."))
-        self._api("setWebhook", {"url": url, "secret_token": secret, "allowed_updates": ["message"], "max_connections": 10, "drop_pending_updates": False})
+        self._api("setWebhook", {"url": url, "secret_token": secret, "allowed_updates": ["message", "callback_query"], "max_connections": 10, "drop_pending_updates": False})
         for language_code, language in [("", "en_US"), ("ar", "ar_001")]:
             translated = self.with_context(lang=language).env
             commands = [{"command": "start", "description": translated._("Account verification")}, {"command": "help", "description": translated._("Help")}, {"command": "cancel", "description": translated._("Cancel verification")}]
@@ -152,7 +158,7 @@ class TelegramChannel(models.AbstractModel):
         if self._api("getWebhookInfo", {}).get("url"):
             raise UserError(_("Remove the webhook before using development polling."))
         offset = int(params.get_param("ab_storefront_auth.telegram_poll_offset", "0"))
-        updates = self._api("getUpdates", {"offset": offset, "timeout": 0, "limit": 10, "allowed_updates": ["message"]})
+        updates = self._api("getUpdates", {"offset": offset, "timeout": 0, "limit": 10, "allowed_updates": ["message", "callback_query"]})
         for update in updates:
             self.env["ab_storefront_auth_service"].sudo()._ingest_update(update)
             offset = max(offset, update["update_id"] + 1)

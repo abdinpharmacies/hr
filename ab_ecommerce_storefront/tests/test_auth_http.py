@@ -11,13 +11,15 @@ class TestStorefrontAuthHTTP(HttpCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.env.ref("base.lang_en").active = True
+        cls.env.ref("website.default_website").write({"language_ids": [(4, cls.env.ref("base.lang_en").id)], "default_lang_id": cls.env.ref("base.lang_en").id})
         params = cls.env["ir.config_parameter"].sudo()
         params.set_param("ab_storefront_auth.development", "True")
         params.set_param("ab_storefront_auth.base_url", cls.base_url())
         params.set_param("auth_signup.reset_password", "True")
         params.set_param("auth_signup.invitation_scope", "b2c")
         cls.user = cls.env["res.users"].with_context(no_reset_password=True).create({
-            "name": "HTTP customer", "login": "http.customer@example.test", "email": "http.customer@example.test",
+            "name": "HTTP customer", "login": "http.customer@example.test", "email": "http.customer@example.test", "lang": "en_US",
             "password": "Original9!Pass", "group_ids": [(6, 0, [cls.env.ref("base.group_portal").id])],
         })
 
@@ -93,10 +95,10 @@ class TestStorefrontAuthHTTP(HttpCase):
             service._process_telegram_update({"message": {"from": sender, "chat": chat, "text": "/start " + token}})
             service._process_telegram_update({"message": {"from": sender, "chat": chat, "contact": {"user_id": 910005, "phone_number": "+201012345678"}}})
             verified = self.url_open("/ab_storefront/auth/phone")
-            self.assertIn("Phone verified", verified.text)
+            self.assertIn('name="action" value="signup"', verified.text)
             created = self.url_open("/ab_storefront/auth/phone", data={"csrf_token": self._csrf(verified), "action": "signup", "name": "HTTP phone customer", "password": "Original9!Pass", "confirm_password": "Original9!Pass"})
             self.assertEqual(created.status_code, 200)
-            self.assertIn("security_email", created.text)
+            self.assertIn("Browsers and recovery codes", created.text)
             self.url_open("/web/session/logout?redirect=/web/login")
             page = self.url_open("/ab_storefront/auth/recover")
             sent = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(page), "action": "request", "channel": "telegram", "identifier": "01012345678"})
@@ -108,8 +110,9 @@ class TestStorefrontAuthHTTP(HttpCase):
             self.assertIn('name="action" value="password"', grant.text)
             reset = self.url_open("/ab_storefront/auth/recover", data={"csrf_token": self._csrf(grant), "action": "password", "password": "Replacement9!Pass", "confirm_password": "Replacement9!Pass"})
             self.assertIn("Your password has been reset successfully", reset.text)
-            self.authenticate("01012345678", "Replacement9!Pass")
-            self.assertEqual(self.url_open("/my/authentication").status_code, 200)
+            login_page = self.url_open("/web/login")
+            pending = self.url_open("/web/login", data={"csrf_token": self._csrf(login_page), "login": "01012345678", "password": "Replacement9!Pass"})
+            self.assertIn('id="device_recovery_code"', pending.text)
 
     def test_email_signup_queues_verification(self):
         page = self.url_open("/web/signup")
@@ -129,7 +132,7 @@ class TestStorefrontAuthHTTP(HttpCase):
             self.assertIn("/ab_storefront/auth/phone", linked.url)
             token = re.search(r'https://t.me/Abdin_Pharmacy_Bot\?start=([A-Za-z0-9_-]{43})', linked.text).group(1)
             self.assertFalse(self.env["res.users"].sudo().search([("login", "=", "+201012345679")]))
-            premature = self.url_open("/ab_storefront/auth/phone", data={"csrf_token": self._csrf(linked), "action": "signup", "name": "Shared signup customer", "password": "Original9!Pass", "confirm_password": "Original9!Pass"})
+            premature = self.url_open("/ab_storefront/auth/phone", data={"csrf_token": self._csrf(page), "action": "signup", "name": "Shared signup customer", "password": "Original9!Pass", "confirm_password": "Original9!Pass"})
             self.assertIn("Complete Telegram phone verification first", premature.text)
             sender = {"id": 910006, "language_code": "en"}
             chat = {"id": 910006, "type": "private"}
@@ -223,7 +226,7 @@ class TestStorefrontAuthHTTP(HttpCase):
                         if (!form.querySelector('.ab-auth-alert-error')) {
                             throw new Error('Signup request failure has no visible message');
                         }
-                        if (status === 403 && !form.querySelector('.ab-auth-alert-error').textContent.includes('HTTPS')) {
+                        if (status === 403 && !form.querySelector('.ab-auth-alert-error').textContent.includes('secure website link')) {
                             throw new Error('HTTPS rejection is not explained');
                         }
                     }

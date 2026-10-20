@@ -114,6 +114,8 @@ class AbStorefrontAuth(OAuthLogin):
         return normalized
 
     def _login_redirect(self, uid, redirect=None):
+        if request.session.get("pre_uid") and not request.session.uid:
+            return super()._login_redirect(uid, redirect=redirect)
         if request.params.get("login_success") and not self._is_backend_login_request(redirect):
             user = request.env["res.users"].browse(uid)
             if user._is_internal():

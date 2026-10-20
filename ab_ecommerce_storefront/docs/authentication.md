@@ -82,7 +82,7 @@ Reset grants last five minutes. Additional limits protect signup, identity linki
 
 ## Register the production webhook
 
-Run the following with the secret-file environment already exported. It validates the configured bot username against `getMe` and sends `setWebhook` with `secret_token`, `allowed_updates=["message"]` and `drop_pending_updates=false`. Only a success message is printed.
+Run the following with the secret-file environment already exported. It validates the configured bot username against `getMe` and sends `setWebhook` with `secret_token`, `allowed_updates=["message", "callback_query"]` and `drop_pending_updates=false`. Only a success message is printed.
 
 ```bash
 /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin shell \
@@ -176,7 +176,25 @@ Odoo autovacuum removes expired challenges after one day, expired rate buckets a
 
 ## Architecture and extension points
 
-The four new tables are `ab_storefront_auth_identity`, `ab_storefront_auth_challenge`, `ab_storefront_auth_rate` and `ab_storefront_auth_event`. Identities are unique by type/value and user/type. Challenges store keyed token/code digests, expiry, attempt count, optional browser binding and a credential stamp. Delivery payloads are encrypted with a key derived from Odoo's database secret and cleared on success or terminal failure. No plaintext password is stored outside Odoo's hashing implementation.
+### Trusted browsers and Telegram sign-in approval
+
+Portal customers with a verified Telegram identity require a second step when signing in from an unremembered browser. Password verification creates an Odoo partial session; it does not grant access to orders, customer details or authenticated APIs. The linked Telegram account receives **Approve sign-in** and **Reject sign-in** buttons. No Telegram sign-in OTP is introduced. Existing password-recovery codes sent by Telegram retain their separate recovery purpose.
+
+Approval belongs to one user, one requesting session and one five-minute challenge. Only the currently linked Telegram sender in the matching private chat can decide it. Approvals, rejections and recovery codes cannot be replayed. A rejected request cannot subsequently be approved. Other requests do not invalidate a pending request belonging to the account owner. Expired requests cannot finish login. Selecting **Continue after approval** completes the requesting session and rotates its session identifier.
+
+The existing delivery queue also handles callbacks, so outgoing requests and approval decisions can each wait for a cron cycle. Telegram's button spinner may time out before a queued acknowledgement; the website checks the persisted approval decision. Keep the existing delivery cron running and monitor queue latency. After deploying the targeted module upgrade and reloading workers, rerun `_configure_webhook()` so Telegram sends `callback_query` updates. The development polling adapter also requests both update types. Do not create another bot or register another consumer for this bot.
+
+After verified phone registration or completed approval, customers can explicitly remember the browser for 30 days. The server generates a 256-bit token, stores only its keyed digest and sends a host-only cookie with `Secure`, `HttpOnly`, `SameSite=Lax` and `Path=/`. The token is not a hardware identifier or a password substitute. HTTPS is required for persistent browser trust, including when testing outside browsers' localhost exceptions. Deleting cookies causes verification on the next sign-in.
+
+**Account security → Browsers and recovery codes** lists the customer's remembered browsers and expiry dates. Remembering a browser, revoking trust and generating replacement recovery codes require the current password plus a verified session or a valid trusted-browser token. Existing sessions created before this feature must first complete the verification step before enrolling trust or generating backup codes. The verified phone-linking flow can establish that proof. Existing native Odoo MFA remains authoritative when enabled. Staff authentication and customers without linked Telegram retain their existing authentication policy.
+
+Eight independent 128-bit recovery codes are displayed once when requested. Only keyed digests are stored; refresh does not reveal them again. Each code can finish one password-verified pending login if Telegram is unavailable. Using it revokes all remembered browsers and pending sign-in requests while retaining other unused recovery codes. Regenerating codes invalidates the previous set. Password changes and password recovery revoke remembered browsers and pending challenges, but preserve unused recovery codes so losing Telegram does not also remove the independent fallback. Account deactivation or replacement of the verified Telegram identity invalidates the remaining codes as well. Customers should save these codes before losing Telegram access; absence of both Telegram and saved codes never falls back to password-only access.
+
+Unknown browsers produce at most one notification per account per minute and three per 15 minutes. Source limits also bound challenge creation and notifications. Rejection applies a user/source cooldown of one, five, then fifteen minutes; it does not archive the account or revoke unrelated active sessions. Recovery-code failures are limited per challenge and user/source. All counters and challenge consumption use the existing PostgreSQL transaction-lock mechanism shared across workers. The existing fixed-window limiter is retained; this feature does not introduce Redis or a token-bucket implementation. Edge request limits remain necessary.
+
+The two additional private models are `ab_storefront_auth_device` and `ab_storefront_auth_recovery_code`. Portal and public users have no ORM ACL on either model. Controllers scope access to the current user or password-verified partial session. Password-only noninteractive RPC is disabled for protected accounts; authorized API keys follow native Odoo policy. `/web/session/authenticate` returns an unauthenticated partial result until verification, and a supplied backend redirect cannot bypass the second step.
+
+The original authentication tables are `ab_storefront_auth_identity`, `ab_storefront_auth_challenge`, `ab_storefront_auth_rate` and `ab_storefront_auth_event`. Identities are unique by type/value and user/type. Challenges store keyed token/code digests, expiry, attempt count, optional browser binding and a credential stamp. Delivery payloads are encrypted with a key derived from Odoo's database secret and cleared on success or terminal failure. No plaintext password is stored outside Odoo's hashing implementation.
 
 Only administrators can read these models through ORM/RPC; writes are performed through private service methods after controller validation. Portal/public users receive no model ACL. Signed-in identity changes require the current password. Narrow PostgreSQL advisory transaction locks serialize challenge use, identity claims, rate counters and queue processing; they never update business or inventory tables.
 

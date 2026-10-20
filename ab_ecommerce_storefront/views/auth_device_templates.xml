@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="auth_device_wait" name="Approve browser sign-in">
+        <t t-call="website.login_layout">
+            <div class="ab-auth-form">
+                <div class="ab-auth-form-head"><h2>Approve browser sign-in</h2></div>
+                <p t-if="error" class="alert alert-danger" role="alert" t-out="error"/>
+                <t t-if="pending">
+                    <p t-if="sent" role="status">Check your linked Telegram account and approve this sign-in. Delivery may take a minute. Return here and select Continue after approval.</p>
+                    <p t-else="" role="status">An approval request could not be sent right now. Use a saved recovery code, or return to sign in and try again later.</p>
+                    <p>This request expires after 5 minutes. Your account stays locked on this browser until verification is complete.</p>
+                    <form action="/ab_storefront/auth/device" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <label class="d-block mb-3"><input type="checkbox" name="remember" value="1"/> Remember this browser for 30 days</label>
+                        <button t-if="sent" type="submit" name="action" value="continue" class="btn btn-primary ab-auth-primary mb-3">Continue after approval</button>
+                        <div class="ab-auth-field">
+                            <label for="device_recovery_code">Recovery code</label>
+                            <div class="ab-auth-input"><input id="device_recovery_code" name="recovery_code" type="text" maxlength="64" autocomplete="off" spellcheck="false" dir="ltr"/></div>
+                        </div>
+                        <p>Use a code you saved earlier if Telegram is unavailable. Each code works once and revokes previously remembered browsers.</p>
+                        <button type="submit" name="action" value="recovery" class="btn ab-auth-secondary">Use recovery code</button>
+                    </form>
+                </t>
+                <p t-else="" role="status">This sign-in request was rejected, expired, or already used. Return to sign in to start again.</p>
+                <form action="/ab_storefront/auth/device" method="post" class="mt-3">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <button type="submit" name="action" value="cancel" class="btn btn-link">Cancel and return to sign in</button>
+                </form>
+            </div>
+        </t>
+    </template>
+    <template id="auth_device_management" name="Browsers and recovery codes">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <a href="/my/authentication" class="btn btn-link ps-0">Account security</a>
+                <h1>Browsers and recovery codes</h1>
+                <p t-if="error" class="alert alert-danger" role="alert" t-out="error"/>
+                <p t-if="message" class="alert alert-success" role="status" t-out="message"/>
+                <section t-if="codes" class="alert alert-warning" aria-labelledby="abRecoveryCodesTitle">
+                    <h2 id="abRecoveryCodesTitle">Save your recovery codes now</h2>
+                    <p>These codes are shown only once. Store them somewhere private, outside this browser. Generating new codes invalidates all previous codes.</p>
+                    <ul class="list-unstyled" dir="ltr"><li t-foreach="codes" t-as="code" class="mb-2"><code class="text-break" t-out="code"/></li></ul>
+                </section>
+                <p>Remembered browsers still require your password. Trust expires after 30 days and is revoked when your password changes.</p>
+                <p><span>Unused recovery codes:</span> <strong t-out="code_count"/></p>
+                <form action="/my/authentication/browsers" method="post" class="mb-4">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="mb-3">
+                        <label for="device_current_password" class="form-label">Current password</label>
+                        <input id="device_current_password" type="password" name="current_password" class="form-control" required="required" maxlength="4096" autocomplete="current-password"/>
+                    </div>
+                    <div t-if="verified" class="d-flex flex-wrap gap-2">
+                        <button type="submit" name="action" value="remember" class="btn btn-primary">Remember this browser for 30 days</button>
+                        <button type="submit" name="action" value="codes" class="btn btn-outline-primary">Generate new recovery codes</button>
+                        <button type="submit" name="action" value="revoke_all" class="btn btn-outline-danger">Revoke all browser trust</button>
+                    </div>
+                    <t t-else="">
+                        <p>Verify this sign-in through Telegram before remembering browsers or generating recovery codes.</p>
+                        <button type="submit" name="action" value="verify" class="btn btn-primary">Verify this sign-in</button>
+                    </t>
+                </form>
+                <h2>Remembered browsers</h2>
+                <p t-if="not devices">No browsers are currently remembered.</p>
+                <article t-foreach="devices" t-as="device" class="card mb-3">
+                    <div class="card-body">
+                        <p class="text-break" t-out="device['name']"/>
+                        <p><span>Expires:</span> <time t-out="device['expires_at']"/></p>
+                        <form t-if="verified" action="/my/authentication/browsers" method="post" class="d-flex flex-wrap gap-2 align-items-end">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="device_id" t-att-value="device['id']"/>
+                            <div>
+                                <label t-att-for="'device_password_%s' % device['id']" class="form-label">Current password</label>
+                                <input t-att-id="'device_password_%s' % device['id']" type="password" name="current_password" class="form-control" required="required" maxlength="4096" autocomplete="current-password"/>
+                            </div>
+                            <button type="submit" name="action" value="revoke" class="btn btn-outline-danger">Revoke browser trust</button>
+                        </form>
+                    </div>
+                </article>
+            </div>
+        </t>
+    </template>
+    <template id="auth_device_security_link" inherit_id="ab_ecommerce_storefront.auth_account_security" name="Browser security navigation">
+        <xpath expr="//div[hasclass('ab-security-action-grid')]" position="inside">
+            <a t-if="telegram_connected" href="/my/authentication/browsers" class="ab-security-action">
+                <span class="ab-security-action-icon" aria-hidden="true"><i class="fa fa-shield"/></span>
+                <span class="ab-security-action-copy"><strong>Browsers and recovery codes</strong><small>Manage trusted browsers and save backup access codes.</small></span>
+            </a>
+        </xpath>
+    </template>
+    <template id="auth_device_signup_remember" inherit_id="ab_ecommerce_storefront.auth_phone_link" name="Remember verified signup browser">
+        <xpath expr="//form[.//input[@name='action'][@t-att-value]]/button[@type='submit']" position="before">
+            <label t-if="not signed_in" class="d-block mb-3"><input type="checkbox" name="remember" value="1"/> Remember this browser for 30 days</label>
+        </xpath>
+    </template>
+</odoo>
