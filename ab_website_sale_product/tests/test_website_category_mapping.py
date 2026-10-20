@@ -1,7 +1,9 @@
 import base64
+import hashlib
 from io import BytesIO
 import os
 import tempfile
+from unittest.mock import patch
 
 from PIL import Image
 
@@ -103,6 +105,19 @@ class TestWebsiteCategoryMapping(TransactionCase):
         lines = [line for line in plan["report"] if line.get("product_id") == product.id]
         self.assertEqual(len(lines), 1)
         return lines[0]
+
+    def _guard_product_image_reads(self):
+        image_field_type = type(self.env["product.template"]._fields["image_1920"])
+        original_read = image_field_type.read
+
+        def read(field, records):
+            self.assertFalse(
+                records._name == "product.template" and field.name == "image_1920",
+                "Product image payload loaded during planning",
+            )
+            return original_read(field, records)
+
+        return patch.object(image_field_type, "read", read)
 
     def test_flat_image_matches_product_code(self):
         product = self._create_website_product("IMG-FLAT")
@@ -242,6 +257,82 @@ class TestWebsiteCategoryMapping(TransactionCase):
             line = self._single_product_line(self._plan_for(root, product), product)
 
         self.assertEqual(line["status"], "unchanged")
+
+    def test_image_checksum_does_not_read_base64_image_field(self):
+        product = self._create_website_product("IMG-ATTACHMENT")
+        template = product.website_product_tmpl_id
+        expected_checksum = hashlib.sha256(PNG_1X1).hexdigest()
+
+        template.image_1920 = base64.b64encode(PNG_1X1)
+        template.invalidate_recordset(["image_1920"])
+        with self._guard_product_image_reads():
+            checksum = self.env["ab.website.product.image.sync.service"]._template_image_sha256(template)
+
+        self.assertEqual(checksum, expected_checksum)
+
+    def test_sync_button_requests_replacement_without_loading_images(self):
+        product = self._create_website_product("IMG-BUTTON")
+        template = product.website_product_tmpl_id
+        template.image_1920 = base64.b64encode(PNG_1X1)
+        original_checksum = hashlib.sha256(PNG_1X1).hexdigest()
+        output = BytesIO()
+        Image.new("RGB", (1, 1), (20, 40, 60)).save(output, format="PNG")
+        service = self.env["ab.website.product.image.sync.service"]
+
+        with tempfile.TemporaryDirectory() as root:
+            self._write_image(root, "IMG-BUTTON.png", payload=output.getvalue())
+            wizard = self.env["ab.website.sale.add.many.by.codes.wizard"].create({
+                "directory_path": root,
+            })
+            self.env.flush_all()
+            template.invalidate_recordset(["image_1920"])
+            with (
+                patch.object(type(service), "_get_website_products", return_value=product),
+                self._guard_product_image_reads(),
+            ):
+                wizard.action_preview_images()
+                action = wizard.action_sync_images()
+
+        self.assertEqual(action["res_id"], wizard.id)
+        self.assertTrue(wizard.image_sync_confirmation_required)
+        self.assertEqual(wizard.image_sync_replacement_count, 1)
+        self.assertEqual(wizard.image_sync_line_ids.status, "matched")
+        self.assertTrue(wizard.image_sync_line_ids.replaces_existing)
+        self.assertEqual(service._template_image_sha256(template), original_checksum)
+
+    def test_image_plan_distinguishes_empty_placeholder_and_unchanged_without_loading_images(self):
+        empty = self._create_website_product("IMG-EMPTY")
+        placeholder = self._create_website_product("IMG-PLACEHOLDER")
+        unchanged = self._create_website_product("IMG-UNCHANGED")
+        products = empty | placeholder | unchanged
+        templates = products.mapped("website_product_tmpl_id")
+        empty.website_product_tmpl_id.image_1920 = False
+        placeholder.website_product_tmpl_id.image_1920 = base64.b64encode(PNG_1X1)
+        output = BytesIO()
+        Image.new("RGB", (1, 1), (20, 40, 60)).save(output, format="PNG")
+        unchanged.website_product_tmpl_id.image_1920 = base64.b64encode(output.getvalue())
+        service = self.env["ab.website.product.image.sync.service"]
+
+        with tempfile.TemporaryDirectory() as root:
+            for product in products:
+                self._write_image(root, product.code + ".png", payload=output.getvalue())
+            self.env.flush_all()
+            templates.invalidate_recordset(["image_1920"])
+            with (
+                patch.object(type(service), "_placeholder_image_sha256",
+                             return_value=hashlib.sha256(PNG_1X1).hexdigest()),
+                self._guard_product_image_reads(),
+            ):
+                plan = self._plan_for(root, products)
+
+        self.assertEqual(plan["summary"]["new_images"], 2)
+        self.assertEqual(plan["summary"]["replacements"], 0)
+        self.assertEqual(plan["summary"]["unchanged"], 1)
+        for product in empty | placeholder:
+            line = self._single_product_line(plan, product)
+            self.assertEqual(line["status"], "matched")
+            self.assertFalse(line["replaces_existing"])
+        self.assertEqual(self._single_product_line(plan, unchanged)["status"], "unchanged")
 
     def test_changed_image_replaces_previous_and_repeated_plan_is_noop(self):
         product = self._create_website_product("IMG-CHANGED")

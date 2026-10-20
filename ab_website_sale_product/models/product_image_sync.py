@@ -272,7 +272,7 @@ class ProductImageSyncService(models.AbstractModel):
                 matched_identifier=selected["identifier"],
                 current_checksum=current_checksum,
             )
-        replaces_existing = bool(template.image_1920) and current_checksum != placeholder_checksum
+        replaces_existing = bool(current_checksum) and current_checksum != placeholder_checksum
         return self._report_line(
             product=product,
             status="matched",
@@ -375,13 +375,23 @@ class ProductImageSyncService(models.AbstractModel):
 
     @api.model
     def _template_image_sha256(self, template):
-        if not template or not template.image_1920:
+        if not template:
             return ""
-        try:
-            image_data = base64.b64decode(template.image_1920)
-        except (TypeError, ValueError):
+        attachment = self.env["ir.attachment"].sudo().search([
+            ("res_model", "=", template._name),
+            ("res_field", "=", "image_1920"),
+            ("res_id", "=", template.id),
+        ], limit=1)
+        if not attachment:
             return ""
-        return hashlib.sha256(image_data).hexdigest()
+        if attachment.store_fname:
+            image_path = attachment._full_path(attachment.store_fname)
+            if os.path.isfile(image_path):
+                return self._file_sha256(image_path)
+        image_data = attachment.raw or b""
+        checksum = hashlib.sha256(image_data).hexdigest() if image_data else ""
+        attachment.invalidate_recordset(["raw", "db_datas"])
+        return checksum
 
     @api.model
     def _placeholder_image_sha256(self):
@@ -416,11 +426,15 @@ class ProductImageSyncService(models.AbstractModel):
             product = Product.browse(line["product_id"])
             try:
                 image_path = line["image_path"]
+                source_checksum = self._file_sha256(image_path)
                 with open(image_path, "rb") as image_file:
                     image_payload = base64.b64encode(image_file.read())
                 with self.env.cr.savepoint():
-                    template = product.website_product_tmpl_id.sudo().with_context(bin_size=False)
-                    if not template._apply_website_sync_image(image_payload):
+                    template = product.website_product_tmpl_id.sudo()
+                    if not template._apply_website_sync_image(
+                        image_payload,
+                        source_checksum=source_checksum,
+                    ):
                         summary["unchanged"] += 1
                         report.append(dict(line, status="unchanged", reason=_("The current Odoo image already matches the source file checksum.")))
                         continue

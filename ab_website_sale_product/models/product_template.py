@@ -25,19 +25,19 @@ class ProductTemplate(models.Model):
         string="Website Image Applied Checksum", readonly=True, copy=False, groups="base.group_user",
     )
 
-    def _apply_website_sync_image(self, image_payload):
+    def _apply_website_sync_image(self, image_payload, source_checksum=None):
         self.ensure_one()
-        template = self.sudo().with_context(bin_size=False)
-        source_checksum = hashlib.sha256(base64.b64decode(image_payload)).hexdigest()
-        current_image = template.image_1920
-        current_checksum = hashlib.sha256(base64.b64decode(current_image)).hexdigest() if current_image else ""
+        template = self.sudo()
+        source_checksum = source_checksum or hashlib.sha256(base64.b64decode(image_payload)).hexdigest()
+        image_service = self.env["ab.website.product.image.sync.service"]
+        current_checksum = image_service._template_image_sha256(template)
         if current_checksum == source_checksum or (
             template.website_image_source_checksum == source_checksum
             and template.website_image_applied_checksum == current_checksum
         ):
             return False
         template.write({"image_1920": image_payload, "website_image_source_checksum": source_checksum})
-        applied_checksum = hashlib.sha256(base64.b64decode(template.image_1920)).hexdigest()
+        applied_checksum = image_service._template_image_sha256(template)
         template.write({"website_image_applied_checksum": applied_checksum})
         return True
 
