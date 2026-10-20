@@ -1,0 +1,64 @@
+body { margin: 0; background: #f3f6fb; color: #172c4d; font: 15px/1.6 system-ui, sans-serif; }
+.ab-speed-monitor {
+    --ab-ink: #172c4d;
+    --ab-muted: #50627b;
+    --ab-line: #dbe3ef;
+    --ab-blue: #2453bc;
+    --ab-green: #187044;
+    --ab-red: #ac2637;
+    max-width: 1360px;
+    margin: auto;
+    padding: 32px;
+
+    *, *::before, *::after { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: clamp(24px, 3vw, 34px); line-height: 1.3; margin-block: 6px 10px; }
+    h2 { font-size: 19px; }
+    p { color: var(--ab-muted); }
+    button, select, a { font: inherit; }
+    button, select { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--ab-blue); outline-offset: 3px; }
+    .ab-speed-heading { display: flex; gap: 24px; justify-content: space-between; align-items: start; margin-block-end: 22px; }
+    .ab-speed-heading p { max-width: 760px; }
+    .ab-speed-eyebrow { font-size: 12px; letter-spacing: .12em; font-weight: 700; color: var(--ab-blue); }
+    .ab-speed-button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 9px 18px; border: 1px solid var(--ab-line); border-radius: 8px; background: white; color: var(--ab-ink); font-weight: 600; text-decoration: none; white-space: nowrap; }
+    .ab-speed-button:hover { background: #e9eff9; }
+    .ab-speed-primary { color: white; background: var(--ab-blue); border-color: var(--ab-blue); }
+    .ab-speed-primary:hover { background: #193e92; }
+    .ab-speed-secondary { color: var(--ab-blue); border-color: var(--ab-blue); }
+    .ab-speed-danger { color: var(--ab-red); }
+    button:disabled { opacity: .5; cursor: default; }
+    .ab-speed-status { display: inline-block; border-radius: 6px; background: #e7edf8; padding: 7px 12px; font-weight: 600; margin-block-end: 16px; }
+    .ab-speed-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+    .ab-speed-hint { margin-block: 12px 24px; font-size: 14px; }
+    .ab-speed-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-block-end: 24px; }
+    .ab-speed-stats article { background: white; border: 1px solid var(--ab-line); border-radius: 12px; padding: 18px 22px; }
+    .ab-speed-stats span { color: var(--ab-muted); }
+    .ab-speed-stats strong { display: block; font-size: 34px; line-height: 1.4; font-variant-numeric: tabular-nums; }
+    .ab-speed-panel { background: white; border: 1px solid var(--ab-line); border-radius: 12px; margin-block-end: 20px; padding: 22px; }
+    .ab-speed-panel p { font-size: 14px; margin-block: 10px; }
+    .ab-speed-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    select { min-height: 44px; padding: 6px 10px; border: 1px solid var(--ab-line); border-radius: 6px; color: var(--ab-ink); background: white; }
+    .ab-speed-table-wrap { overflow-x: auto; margin-block-start: 16px; }
+    table { border-collapse: collapse; width: 100%; text-align: start; font-variant-numeric: tabular-nums; }
+    th { font-size: 12px; color: var(--ab-muted); background: #f5f7fc; white-space: nowrap; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--ab-line); text-align: start; }
+    td { white-space: pre-line; font-size: 14px; overflow-wrap: anywhere; }
+    td:first-child { min-width: 130px; }
+    .ab-speed-better { color: var(--ab-green); font-weight: 700; }
+    .ab-speed-worse { color: var(--ab-red); font-weight: 700; }
+    summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+    dialog { width: 500px; max-width: 90vw; border: 1px solid var(--ab-line); border-radius: 12px; padding: 28px; color: var(--ab-ink); }
+    dialog::backdrop { background: #172c4d66; }
+    dialog form { display: flex; justify-content: end; gap: 10px; margin-block-start: 24px; }
+    @media (max-width: 650px) {
+        padding: 16px;
+        .ab-speed-heading { flex-direction: column; }
+        .ab-speed-stats { gap: 8px; }
+        .ab-speed-stats article { padding: 12px; }
+        .ab-speed-stats span { font-size: 12px; }
+        .ab-speed-stats strong { font-size: 26px; }
+        .ab-speed-panel { padding: 14px; }
+    }
+}

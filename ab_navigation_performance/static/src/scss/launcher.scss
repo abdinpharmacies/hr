@@ -1,0 +1,29 @@
+.ab-speed-launcher {
+    position: fixed;
+    inset-block-end: 18px;
+    inset-inline-start: 18px;
+    z-index: 1040;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 9px 16px;
+    border: 1px solid #dbe3ef;
+    border-radius: 24px;
+    background: #ffffff;
+    color: #172c4d;
+    box-shadow: 0 3px 14px #162c4d1a;
+    font: 600 14px/1.4 system-ui, sans-serif;
+    text-decoration: none;
+    max-width: calc(100vw - 36px);
+    flex-wrap: wrap;
+
+    [hidden] { display: none !important; }
+    button, a { min-height: 44px; display: inline-flex; align-items: center; padding: 8px 12px; border: 0; border-radius: 16px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+    button:focus-visible, a:focus-visible { outline: 2px solid #1546a0; outline-offset: 2px; }
+    [data-state='error'], [data-state='unsupported'] { flex-basis: 100%; max-width: 280px; color: #ac2637; }
+
+    &:hover, &:focus-visible { color: #1546a0; outline: 2px solid #1546a0; outline-offset: 3px; }
+    &.ab-speed-recording { border-color: #187044; background: #edf8f1; }
+    &.ab-speed-recording::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #187044; }
+}

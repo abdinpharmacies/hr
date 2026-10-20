@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_speed_monitor" model="ir.actions.act_url">
+        <field name="name">Storefront Speed Monitor</field>
+        <field name="url">/ab/performance</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_speed_root" name="Storefront Speed Monitor"
+              action="action_speed_monitor" groups="base.group_system"
+              web_icon="ab_navigation_performance,static/description/icon.png" sequence="95"/>
+    <menuitem id="menu_speed_monitor" name="Storefront Speed Monitor"
+              parent="website.menu_website_configuration" action="action_speed_monitor"
+              groups="base.group_system" sequence="95"/>
+</odoo>

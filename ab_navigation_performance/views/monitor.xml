@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="launcher" inherit_id="website.layout" name="Speed Monitor Launcher">
+        <xpath expr="//body" position="inside">
+            <div id="ab-speed-launcher" groups="base.group_system" class="ab-speed-launcher"
+               t-att-data-scope="'%s:%s:%s:%s' % (request.db, request.env.uid, website.id, website.company_id.id)">
+                <button type="button" data-action="toggle" aria-pressed="false">
+                    <span data-state="start">Start tracking</span><span data-state="stop" hidden="hidden">Stop tracking</span>
+                </button>
+                <a href="/ab/performance" target="abSpeedMonitor" aria-label="Open speed monitor">Results</a>
+                <span data-state="error" role="alert" hidden="hidden">Browser storage is unavailable.</span>
+                <span data-state="unsupported" hidden="hidden">This browser cannot track background requests.</span>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="monitor" name="Storefront Speed Monitor">
+        <t t-call="web.layout">
+            <t t-set="title">Storefront Speed Monitor</t>
+            <t t-set="html_data" t-value="{'lang': request.env.lang, 'dir': 'rtl' if request.env['res.lang']._get_data(code=request.env.lang).direction == 'rtl' else 'ltr'}"/>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <t t-call-assets="ab_navigation_performance.assets_monitor"/>
+            </t>
+            <main id="ab-speed-monitor" class="ab-speed-monitor"
+                  t-att-data-scope="'%s:%s:%s:%s' % (request.db, request.env.uid, request.website.id, request.website.company_id.id)">
+                <header class="ab-speed-heading">
+                    <div><span class="ab-speed-eyebrow">WEBSITE PERFORMANCE</span><h1>Storefront Speed Monitor</h1>
+                        <p>Keep this window open and browse the store in another window. Measurements arrive automatically.</p></div>
+                    <a href="/" target="abSpeedStore" class="ab-speed-button">Open store</a>
+                </header>
+                <div class="ab-speed-status" role="status" aria-live="polite">
+                    <span data-state="idle">Recording stopped</span>
+                    <span data-state="before" hidden="hidden">Recording BEFORE</span>
+                    <span data-state="after" hidden="hidden">Recording AFTER</span>
+                    <span data-state="error" hidden="hidden">Browser storage is unavailable. Allow site storage to record measurements.</span>
+                </div>
+                <section class="ab-speed-controls" aria-label="Recording controls">
+                    <label>Recording phase <select id="ab-speed-phase"><option value="before">Before</option><option value="after">After</option></select></label>
+                    <button type="button" data-action="toggle" aria-pressed="false" class="ab-speed-button ab-speed-primary"><span data-toggle="start">Start tracking</span><span data-toggle="stop" hidden="hidden">Stop tracking</span></button>
+                    <button type="button" data-action="export" class="ab-speed-button">Export report</button>
+                    <button type="button" data-action="clear" class="ab-speed-button ab-speed-danger">Clear measurements</button>
+                </section>
+                <p class="ab-speed-hint">Start recording, then navigate or reload the store page. Repeat each page at least three times with the same account, window size, cache settings and network.</p>
+                <section class="ab-speed-stats" aria-label="Measurement summary">
+                    <article><span>Before visits</span><strong data-count="before">0</strong></article>
+                    <article><span>After visits</span><strong data-count="after">0</strong></article>
+                    <article><span>Comparable pages</span><strong data-count="matched">0</strong></article>
+                </section>
+                <section class="ab-speed-panel">
+                    <div class="ab-speed-section-heading"><h2>Endpoint timings</h2>
+                        <label>Show phase <select id="ab-speed-endpoint-phase"><option value="before">Before</option><option value="after">After</option></select></label>
+                    </div>
+                    <p>Every visited page and completed same-site fetch or AJAX request is grouped by path and type, slowest first. Query values are not stored. Page time is full load; request time is network duration, not screen rendering.</p>
+                    <div class="ab-speed-table-wrap"><table><thead><tr><th>Endpoint / type</th><th>Count</th><th>Mean time</th><th>Slowest</th><th>First response</th><th>Latest source page</th></tr></thead><tbody id="ab-speed-endpoints"/></table></div>
+                    <p data-empty="endpoints">Start tracking and browse the store. Page and request timings will appear here automatically.</p>
+                </section>
+                <section class="ab-speed-panel">
+                    <div class="ab-speed-section-heading"><h2>Before / after comparison</h2>
+                        <label>Metric <select id="ab-speed-metric"><option value="ttfb_ms">First response (TTFB)</option><option value="fcp_ms">First content (FCP)</option><option value="load_ms">Page load</option></select></label>
+                    </div>
+                    <p>Mean time in milliseconds. Positive improvement means faster. Different URL filters, languages, window sizes and navigation types are compared separately.</p>
+                    <div class="ab-speed-table-wrap"><table><thead><tr><th>Page / sample</th><th>Before</th><th>After</th><th>Improvement</th><th>Samples (before / after)</th></tr></thead><tbody id="ab-speed-comparison"/></table></div>
+                    <p data-empty="comparison">No comparable measurements yet. Record the same pages before and after your change.</p>
+                </section>
+                <section class="ab-speed-panel">
+                    <h2>Recent page visits</h2>
+                    <div class="ab-speed-table-wrap"><table><thead><tr><th>Time / phase</th><th>Page</th><th>First response</th><th>First content</th><th>Page load</th><th>LCP candidate</th></tr></thead><tbody id="ab-speed-visits"/></table></div>
+                    <p data-empty="visits">Your next store navigation will appear here while recording is active.</p>
+                </section>
+                <details class="ab-speed-panel"><summary>How to read the numbers</summary>
+                    <p>TTFB includes network and server waiting. Page load is not the same as visual readiness. LCP is the latest observed candidate, not a final Core Web Vitals score.</p>
+                    <p>Back/forward cache restores and pages loaded in the background are listed but excluded from averages. Missing timings are shown as a dash.</p>
+                    <p>Measurements stay in this browser for this user and website. Up to 200 visits and 500 background requests are retained. Export before clearing browser data. No results are sent to a server.</p>
+                    <p>Tracking continues across store pages without keeping this window open. The floating button starts a Before recording or stops the current recording. Choose After here for a comparison run.</p>
+                    <p>Requests are tracked from the moment recording starts; page loads are tracked from the next navigation. Only requests completed while recording are captured. Backend screens, other sites, WebSockets and screen changes without a request are outside this tracker.</p>
+                    <p>Endpoint totals combine query filters and include background activity. Use the matched page comparison for controlled before/after measurements.</p>
+                </details>
+                <dialog id="ab-speed-clear"><h2>Clear measurements?</h2><p>This removes the before and after records from this browser. Export your report first if you need to keep it.</p><form method="dialog"><button value="cancel" class="ab-speed-button">Cancel</button><button value="confirm" class="ab-speed-button ab-speed-danger">Clear measurements</button></form></dialog>
+                <template id="ab-speed-row"><tr><td/><td/><td/><td/><td/><td/></tr></template>
+                <span hidden="hidden" data-label="before">Before</span><span hidden="hidden" data-label="after">After</span>
+                <span hidden="hidden" data-label="navigate">Navigation</span><span hidden="hidden" data-label="reload">Reload</span>
+                <span hidden="hidden" data-label="back_forward">Back / forward</span><span hidden="hidden" data-label="bfcache">Cached restore</span>
+                <span hidden="hidden" data-label="background">Background</span><span hidden="hidden" data-label="ms">ms</span>
+                <span hidden="hidden" data-label="page">Page load</span><span hidden="hidden" data-label="fetch">Fetch request</span><span hidden="hidden" data-label="xmlhttprequest">AJAX request</span>
+            </main>
+        </t>
+    </template>
+</odoo>

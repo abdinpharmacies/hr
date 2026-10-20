@@ -1,0 +1,456 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-18 08:04+0000\n"
+"PO-Revision-Date: 2026-10-18 08:04+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.launcher
+msgid "<span aria-hidden=\"true\">◷</span><span>Speed monitor</span>"
+msgstr "<span aria-hidden=\"true\">◷</span><span>قياس السرعة</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "<span class=\"ab-speed-eyebrow\">WEBSITE PERFORMANCE</span>"
+msgstr "<span class=\"ab-speed-eyebrow\">أداء الموقع</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"<span data-state=\"idle\">Recording stopped</span>\n"
+"                    <span data-state=\"before\" hidden=\"hidden\">Recording BEFORE</span>\n"
+"                    <span data-state=\"after\" hidden=\"hidden\">Recording AFTER</span>\n"
+"                    <span data-state=\"error\" hidden=\"hidden\">Browser storage is unavailable. Allow site storage to record measurements.</span>"
+msgstr ""
+"<span data-state=\"idle\">القياس متوقف</span>\n"
+"                    <span data-state=\"before\" hidden=\"hidden\">جارٍ تسجيل قياسات قبل</span>\n"
+"                    <span data-state=\"after\" hidden=\"hidden\">جارٍ تسجيل قياسات بعد</span>\n"
+"                    <span data-state=\"error\" hidden=\"hidden\">تخزين المتصفح غير متاح. اسمح للموقع بالتخزين لتسجيل القياسات.</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"<span hidden=\"hidden\" data-label=\"before\">Before</span><span hidden=\"hidden\" data-label=\"after\">After</span>\n"
+"                <span hidden=\"hidden\" data-label=\"navigate\">Navigation</span><span hidden=\"hidden\" data-label=\"reload\">Reload</span>\n"
+"                <span hidden=\"hidden\" data-label=\"back_forward\">Back / forward</span><span hidden=\"hidden\" data-label=\"bfcache\">Cached restore</span>\n"
+"                <span hidden=\"hidden\" data-label=\"background\">Background</span><span hidden=\"hidden\" data-label=\"ms\">ms</span>"
+msgstr ""
+"<span hidden=\"hidden\" data-label=\"before\">قبل</span><span hidden=\"hidden\" data-label=\"after\">بعد</span>\n"
+"                <span hidden=\"hidden\" data-label=\"navigate\">تنقل</span><span hidden=\"hidden\" data-label=\"reload\">إعادة تحميل</span>\n"
+"                <span hidden=\"hidden\" data-label=\"back_forward\">رجوع / تقدم</span><span hidden=\"hidden\" data-label=\"bfcache\">استعادة من الذاكرة</span>\n"
+"                <span hidden=\"hidden\" data-label=\"background\">في الخلفية</span><span hidden=\"hidden\" data-label=\"ms\">ملّي ثانية</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "<span>After visits</span><strong data-count=\"after\">0</strong>"
+msgstr "<span>زيارات بعد</span><strong data-count=\"after\">0</strong>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "<span>Before visits</span><strong data-count=\"before\">0</strong>"
+msgstr "<span>زيارات قبل</span><strong data-count=\"before\">0</strong>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "<span>Comparable pages</span><strong data-count=\"matched\">0</strong>"
+msgstr ""
+"<span>صفحات قابلة للمقارنة</span><strong data-count=\"matched\">0</strong>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "After"
+msgstr "بعد"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Back/forward cache restores and pages loaded in the background are listed "
+"but excluded from averages. Missing timings are shown as a dash."
+msgstr ""
+"تظهر استعادة الصفحات من الذاكرة والصفحات المحمّلة في الخلفية في السجل، "
+"وتُستبعد من المتوسطات. تشير الشرطة إلى قياس غير متاح."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Before"
+msgstr "قبل"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Before / after comparison"
+msgstr "مقارنة قبل / بعد"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Clear measurements"
+msgstr "مسح القياسات"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Clear measurements?"
+msgstr "مسح القياسات؟"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Export report"
+msgstr "تصدير التقرير"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "First content"
+msgstr "ظهور أول محتوى"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "First response"
+msgstr "أول استجابة"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "How to read the numbers"
+msgstr "كيف تقرأ الأرقام"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Improvement"
+msgstr "التحسن"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Keep this window open and browse the store in another window. Measurements "
+"arrive automatically."
+msgstr ""
+"اترك هذه النافذة مفتوحة وتصفّح المتجر في نافذة أخرى. تظهر القياسات تلقائيًا."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "LCP candidate"
+msgstr "ظهور أكبر محتوى — رصد مبدئي"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Mean time in milliseconds. Positive improvement means faster. Different URL "
+"filters, languages, window sizes and navigation types are compared "
+"separately."
+msgstr ""
+"متوسط الزمن بالملّي ثانية. نسبة التحسن الموجبة تعني سرعة أعلى. تُقارن فلاتر "
+"الروابط واللغات وأحجام النوافذ وأنواع التنقل المختلفة كلٌّ على حدة."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Measurement summary"
+msgstr "ملخص القياسات"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Measurements stay in this browser for this user and website. Up to 200 "
+"visits are retained. Export before clearing browser data. No results are "
+"sent to a server."
+msgstr ""
+"تُحفظ القياسات في هذا المتصفح لهذا المستخدم والموقع، بحد أقصى 200 زيارة. "
+"صدّر التقرير قبل مسح بيانات المتصفح. لا تُرسل النتائج إلى أي خادم."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Metric <select id=\"ab-speed-metric\"><option value=\"ttfb_ms\">First "
+"response (TTFB)</option><option value=\"fcp_ms\">First content "
+"(FCP)</option><option value=\"load_ms\">Page load</option></select>"
+msgstr ""
+"المقياس <select id=\"ab-speed-metric\"><option value=\"ttfb_ms\">أول استجابة"
+" (TTFB)</option><option value=\"fcp_ms\">ظهور أول محتوى "
+"(FCP)</option><option value=\"load_ms\">اكتمال التحميل</option></select>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"No comparable measurements yet. Record the same pages before and after your "
+"change."
+msgstr ""
+"لا توجد قياسات قابلة للمقارنة بعد. سجّل الصفحات نفسها قبل التعديل وبعده."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Only full website page navigations are measured. Odoo backend actions and "
+"partial AJAX updates are not page-load samples."
+msgstr ""
+"تُقاس التنقلات التي تحمّل صفحة موقع كاملة فقط. لا تُعدّ إجراءات شاشات Odoo "
+"الداخلية والتحديثات الجزئية عينات لتحميل الصفحات."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.launcher
+msgid "Open speed monitor"
+msgstr "فتح أداة قياس السرعة"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Open store"
+msgstr "فتح المتجر"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Page"
+msgstr "الصفحة"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Page / sample"
+msgstr "الصفحة / العينة"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Page load"
+msgstr "اكتمال التحميل"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Recent page visits"
+msgstr "آخر زيارات الصفحات"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Record after"
+msgstr "تسجيل بعد"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Record before"
+msgstr "تسجيل قبل"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Recording controls"
+msgstr "التحكم في القياس"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Samples (before / after)"
+msgstr "العينات (قبل / بعد)"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Start recording, then navigate or reload the store page. Repeat each page at"
+" least three times with the same account, window size, cache settings and "
+"network."
+msgstr ""
+"ابدأ التسجيل، ثم تنقّل أو أعد تحميل صفحة المتجر. كرّر كل صفحة ثلاث مرات على "
+"الأقل باستخدام الحساب وحجم النافذة وإعدادات الذاكرة والشبكة نفسها."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Stop recording"
+msgstr "إيقاف التسجيل"
+
+#. module: ab_navigation_performance
+#: model:ir.actions.act_url,name:ab_navigation_performance.action_speed_monitor
+#: model:ir.ui.menu,name:ab_navigation_performance.menu_speed_monitor
+#: model:ir.ui.menu,name:ab_navigation_performance.menu_speed_root
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Storefront Speed Monitor"
+msgstr "قياس سرعة المتجر"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"TTFB includes network and server waiting. Page load is not the same as "
+"visual readiness. LCP is the latest observed candidate, not a final Core Web"
+" Vitals score."
+msgstr ""
+"يشمل TTFB انتظار الشبكة والخادم. اكتمال التحميل لا يعني اكتمال ظهور المحتوى."
+" قياس LCP هو آخر رصد مبدئي لأكبر محتوى، وليس نتيجة نهائية لمؤشرات الويب "
+"الأساسية."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"This removes the before and after records from this browser. Export your "
+"report first if you need to keep it."
+msgstr ""
+"سيُمسح سجل قبل وبعد من هذا المتصفح. صدّر التقرير أولًا إذا أردت الاحتفاظ به."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Time / phase"
+msgstr "الوقت / المرحلة"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Your next store navigation will appear here while recording is active."
+msgstr "سيظهر انتقالك التالي في المتجر هنا أثناء تشغيل التسجيل."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.launcher
+msgid ""
+"<span data-state=\"error\" role=\"alert\" hidden=\"hidden\">Browser storage is unavailable.</span>\n"
+"                <span data-state=\"unsupported\" hidden=\"hidden\">This browser cannot track background requests.</span>"
+msgstr ""
+"<span data-state=\"error\" role=\"alert\" hidden=\"hidden\">تخزين المتصفح غير متاح.</span>\n"
+"                <span data-state=\"unsupported\" hidden=\"hidden\">هذا المتصفح لا يدعم تتبع طلبات الخلفية.</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.launcher
+msgid ""
+"<span data-state=\"start\">Start tracking</span><span data-state=\"stop\" "
+"hidden=\"hidden\">Stop tracking</span>"
+msgstr ""
+"<span data-state=\"start\">بدء التتبع</span><span data-state=\"stop\" "
+"hidden=\"hidden\">إيقاف التتبع</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"<span data-toggle=\"start\">Start tracking</span><span data-toggle=\"stop\" "
+"hidden=\"hidden\">Stop tracking</span>"
+msgstr ""
+"<span data-toggle=\"start\">بدء التتبع</span><span data-toggle=\"stop\" "
+"hidden=\"hidden\">إيقاف التتبع</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"<span hidden=\"hidden\" data-label=\"before\">Before</span><span hidden=\"hidden\" data-label=\"after\">After</span>\n"
+"                <span hidden=\"hidden\" data-label=\"navigate\">Navigation</span><span hidden=\"hidden\" data-label=\"reload\">Reload</span>\n"
+"                <span hidden=\"hidden\" data-label=\"back_forward\">Back / forward</span><span hidden=\"hidden\" data-label=\"bfcache\">Cached restore</span>\n"
+"                <span hidden=\"hidden\" data-label=\"background\">Background</span><span hidden=\"hidden\" data-label=\"ms\">ms</span>\n"
+"                <span hidden=\"hidden\" data-label=\"page\">Page load</span><span hidden=\"hidden\" data-label=\"fetch\">Fetch request</span><span hidden=\"hidden\" data-label=\"xmlhttprequest\">AJAX request</span>"
+msgstr ""
+"<span hidden=\"hidden\" data-label=\"before\">قبل</span><span hidden=\"hidden\" data-label=\"after\">بعد</span>\n"
+"                <span hidden=\"hidden\" data-label=\"navigate\">تنقل</span><span hidden=\"hidden\" data-label=\"reload\">إعادة تحميل</span>\n"
+"                <span hidden=\"hidden\" data-label=\"back_forward\">رجوع / تقدم</span><span hidden=\"hidden\" data-label=\"bfcache\">استعادة من الذاكرة</span>\n"
+"                <span hidden=\"hidden\" data-label=\"background\">في الخلفية</span><span hidden=\"hidden\" data-label=\"ms\">ملّي ثانية</span>\n"
+"                <span hidden=\"hidden\" data-label=\"page\">اكتمال التحميل</span><span hidden=\"hidden\" data-label=\"fetch\">طلب Fetch</span><span hidden=\"hidden\" data-label=\"xmlhttprequest\">طلب AJAX</span>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Count"
+msgstr "العدد"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Endpoint / type"
+msgstr "المسار / النوع"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Endpoint timings"
+msgstr "أوقات المسارات"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Endpoint totals combine query filters and include background activity. Use "
+"the matched page comparison for controlled before/after measurements."
+msgstr ""
+"تجمع إحصاءات المسارات فلاتر الروابط وتشمل نشاط الخلفية. استخدم مقارنة "
+"الصفحات المتطابقة لقياس قبل وبعد تحت ظروف متشابهة."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Every visited page and completed same-site fetch or AJAX request is grouped "
+"by path and type, slowest first. Query values are not stored. Page time is "
+"full load; request time is network duration, not screen rendering."
+msgstr ""
+"تُجمع الصفحات التي تزورها وطلبات Fetch وAJAX المكتملة لنفس الموقع حسب المسار"
+" والنوع، من الأبطأ للأسرع. لا تُحفظ قيم الاستعلام. زمن الصفحة هو اكتمال "
+"تحميلها؛ وزمن الطلب هو مدة الشبكة وليس عرض الشاشة."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Latest source page"
+msgstr "آخر صفحة مصدر"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Mean time"
+msgstr "متوسط الزمن"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Measurements stay in this browser for this user and website. Up to 200 "
+"visits and 500 background requests are retained. Export before clearing "
+"browser data. No results are sent to a server."
+msgstr ""
+"تُحفظ القياسات في هذا المتصفح لهذا المستخدم والموقع، بحد أقصى 200 زيارة و500"
+" طلب خلفية. صدّر التقرير قبل مسح بيانات المتصفح. لا تُرسل النتائج إلى أي "
+"خادم."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Recording phase <select id=\"ab-speed-phase\"><option "
+"value=\"before\">Before</option><option "
+"value=\"after\">After</option></select>"
+msgstr ""
+"مرحلة التسجيل <select id=\"ab-speed-phase\"><option "
+"value=\"before\">قبل</option><option value=\"after\">بعد</option></select>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Requests are tracked from the moment recording starts; page loads are "
+"tracked from the next navigation. Only requests completed while recording "
+"are captured. Backend screens, other sites, WebSockets and screen changes "
+"without a request are outside this tracker."
+msgstr ""
+"تُتبع الطلبات من لحظة بدء التسجيل، وتُقاس الصفحات من الانتقال التالي. تُسجّل"
+" الطلبات المكتملة أثناء التسجيل فقط. لا يشمل التتبع شاشات الإدارة والمواقع "
+"الأخرى وWebSockets وتغييرات الشاشة التي لا تُرسل طلبًا."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.launcher
+msgid "Results"
+msgstr "النتائج"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Show phase <select id=\"ab-speed-endpoint-phase\"><option "
+"value=\"before\">Before</option><option "
+"value=\"after\">After</option></select>"
+msgstr ""
+"عرض المرحلة <select id=\"ab-speed-endpoint-phase\"><option "
+"value=\"before\">قبل</option><option value=\"after\">بعد</option></select>"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid "Slowest"
+msgstr "الأبطأ"
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Start tracking and browse the store. Page and request timings will appear "
+"here automatically."
+msgstr "ابدأ التتبع وتصفح المتجر. ستظهر أوقات الصفحات والطلبات هنا تلقائيًا."
+
+#. module: ab_navigation_performance
+#: model_terms:ir.ui.view,arch_db:ab_navigation_performance.monitor
+msgid ""
+"Tracking continues across store pages without keeping this window open. The "
+"floating button starts a Before recording or stops the current recording. "
+"Choose After here for a comparison run."
+msgstr ""
+"يستمر التتبع بين صفحات المتجر دون الحاجة لإبقاء هذه النافذة مفتوحة. يبدأ "
+"الزر العائم تسجيل «قبل» أو يوقف التسجيل الحالي. اختر «بعد» هنا لتسجيل "
+"المقارنة."
