@@ -37,7 +37,7 @@ class AbBusinessPartnership(models.Model):
     ], default="new", required=True, tracking=True, group_expand=True, index=True)
     user_id = fields.Many2one("res.users", string="Responsible", tracking=True,
                               domain=[("share", "=", False)])
-    internal_notes = fields.Text(groups="website.group_website_designer")
+    internal_notes = fields.Text(groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center")
     website_id = fields.Many2one("website", readonly=True)
     company_id = fields.Many2one("res.company", required=True,
                                 default=lambda self: self.env.company, readonly=True)

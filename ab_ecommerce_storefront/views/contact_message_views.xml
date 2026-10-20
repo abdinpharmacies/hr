@@ -4,7 +4,7 @@
               name="Contact Us"
               parent="website.menu_website_configuration"
               sequence="55"
-              groups="website.group_website_designer"/>
+              groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"/>
 
     <record id="contact_message_list" model="ir.ui.view">
         <field name="name">ab.contact.message.list</field>
@@ -120,5 +120,5 @@
               parent="contact_us_menu"
               action="contact_message_action"
               sequence="10"
-              groups="website.group_website_designer"/>
+              groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"/>
 </odoo>

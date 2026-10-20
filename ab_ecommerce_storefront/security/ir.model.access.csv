@@ -14,3 +14,10 @@ access_auth_identity_admin,auth.identity.admin,model_ab_storefront_auth_identity
 access_auth_challenge_admin,auth.challenge.admin,model_ab_storefront_auth_challenge,base.group_system,1,0,0,0
 access_auth_rate_admin,auth.rate.admin,model_ab_storefront_auth_rate,base.group_system,1,0,0,0
 access_auth_event_admin,auth.event.admin,model_ab_storefront_auth_event,base.group_system,1,0,0,0
+access_call_center_contact_message,Call center contact messages,model_ab_contact_message,group_call_center,1,1,1,0
+access_call_center_business_partnership,Call center business partnerships,model_ab_business_partnership,group_call_center,1,1,1,0
+access_call_center_offer,Call center storefront offers,model_ab_storefront_offer,group_call_center,1,1,1,0
+access_call_center_testimonial,Call center social comments,model_ab_ecommerce_customer_testimonial,group_call_center,1,1,1,0
+access_call_center_carousel,Call center homepage carousel,ab_website_admin_content.model_ab_website_carousel_slide,group_call_center,1,1,1,0
+access_call_center_category,Call center category images,website_sale.model_product_public_category,group_call_center,1,1,0,0
+access_call_center_ribbon,Call center product ribbons,website_sale.model_product_ribbon,group_call_center,1,1,1,0

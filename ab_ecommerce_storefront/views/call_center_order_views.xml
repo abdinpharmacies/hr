@@ -178,7 +178,7 @@
                         string="Mark as Delivered"
                         type="object"
                         class="btn-primary"
-                        groups="sales_team.group_sale_manager"
+                        groups="sales_team.group_sale_manager,ab_ecommerce_storefront.group_call_center"
                         invisible="state != 'sale' or ab_call_center_delivery_status != 'warehouse_done' or ab_last_mile_status == 'delivered'"/>
                 <button name="action_ab_prescription_confirm_customer_call"
                         string="Customer Call Confirmed"

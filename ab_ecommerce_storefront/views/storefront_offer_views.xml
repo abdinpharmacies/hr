@@ -92,8 +92,8 @@
     </record>
     <menuitem id="menu_abdin_management_offers" name="Offers"
               parent="menu_abdin_management_root" sequence="35"
-              groups="sales_team.group_sale_manager,base.group_system"/>
+              groups="sales_team.group_sale_manager,base.group_system,ab_ecommerce_storefront.group_call_center"/>
     <menuitem id="menu_storefront_offers" name="Storefront Offers"
               parent="menu_abdin_management_offers" action="storefront_offer_action" sequence="10"
-              groups="sales_team.group_sale_manager,base.group_system"/>
+              groups="sales_team.group_sale_manager,base.group_system,ab_ecommerce_storefront.group_call_center"/>
 </odoo>

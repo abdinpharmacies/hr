@@ -153,5 +153,5 @@
               parent="menu_abdin_management_style_ads"
               action="customer_testimonial_action"
               sequence="30"
-              groups="website.group_website_designer"/>
+              groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"/>
 </odoo>

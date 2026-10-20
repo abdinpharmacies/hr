@@ -14,7 +14,7 @@
     <menuitem id="menu_abdin_management_contact"
               name="Contact Us"
               parent="menu_abdin_management_root"
-              groups="website.group_website_designer"
+              groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"
               sequence="20"/>
 
     <record id="contact_message_menu" model="ir.ui.menu">
@@ -34,15 +34,17 @@
     <menuitem id="menu_abdin_management_style_ads"
               name="Style / Ads"
               parent="menu_abdin_management_root"
-              groups="website.group_website_designer"
+              groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"
               sequence="30"/>
 
     <record id="ab_website_admin_content.menu_website_homepage_carousel" model="ir.ui.menu">
+        <field name="group_ids" eval="[Command.link(ref('group_call_center'))]"/>
         <field name="parent_id" ref="menu_abdin_management_style_ads"/>
         <field name="sequence">10</field>
     </record>
 
     <record id="website_sale.product_catalog_product_ribbons" model="ir.ui.menu">
+        <field name="group_ids" eval="[Command.link(ref('group_call_center'))]"/>
         <field name="parent_id" ref="menu_abdin_management_style_ads"/>
         <field name="sequence">20</field>
     </record>

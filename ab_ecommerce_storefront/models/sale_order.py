@@ -339,7 +339,10 @@ class SaleOrder(models.Model):
     def action_ab_mark_delivered(self):
         self.check_access("write")
         if not self.env.user.has_group("sales_team.group_sale_manager"):
-            raise AccessError(self.env._("Only Sales Administrators can mark orders as delivered."))
+            if not self.env.user.has_group("ab_ecommerce_storefront.group_call_center") or any(
+                not order.website_id for order in self
+            ):
+                raise AccessError(self.env._("Only Sales Administrators or Call Center users handling website orders can mark orders as delivered."))
 
         delivered_at = fields.Datetime.now()
         for order in self:

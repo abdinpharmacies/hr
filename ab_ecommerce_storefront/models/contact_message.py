@@ -31,7 +31,7 @@ class AbContactMessage(models.Model):
         tracking=True,
         domain=[("share", "=", False)],
     )
-    internal_notes = fields.Text(groups="website.group_website_designer")
+    internal_notes = fields.Text(groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center")
     website_id = fields.Many2one("website", readonly=True)
     company_id = fields.Many2one(
         "res.company",

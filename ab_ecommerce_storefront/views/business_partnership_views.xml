@@ -88,5 +88,5 @@
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="business_partnership_search"/>
     </record>
-    <menuitem id="business_partnership_menu" name="Business Partnerships" parent="contact_us_menu" action="business_partnership_action" sequence="20" groups="website.group_website_designer"/>
+    <menuitem id="business_partnership_menu" name="Business Partnerships" parent="contact_us_menu" action="business_partnership_action" sequence="20" groups="website.group_website_designer,ab_ecommerce_storefront.group_call_center"/>
 </odoo>

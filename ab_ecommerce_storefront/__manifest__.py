@@ -19,8 +19,10 @@
         "website_sale_wishlist",
     ],
     "data": [
+        "security/security_groups.xml",
         "security/ir.model.access.csv",
         "security/record_rules.xml",
+        "security/call_center_rules.xml",
         "security/business_partnership.xml",
         "security/auth_security.xml",
         "security/storefront_pricing.xml",
