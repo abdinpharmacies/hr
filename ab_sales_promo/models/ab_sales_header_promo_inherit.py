@@ -16,6 +16,46 @@ class AbSalesHeaderPromo(models.Model):
     _name = 'ab_sales_header'
     _inherit = ['ab_sales_header', 'abdin_et.extra_tools']
 
+    def _promotions_allowed(self):
+        self.ensure_one()
+        if 'contract_id' not in self._fields or not self.contract_id:
+            return True
+        return self._ab_contract_uses_promotions()
+
+    def _promotion_discounts_by_line(self):
+        """Allocate normal promotion savings once, using gross line prices."""
+        self.ensure_one()
+        result = {line: 0.0 for line in self.line_ids}
+        program = self.applied_program_ids.filtered(lambda p: self._program_is_effective(p))[:1]
+        origin = getattr(program.id, 'origin', None) if program else None
+        if origin:
+            program = self.env['ab_promo_program'].browse(origin)
+        if not program:
+            return result
+        for product in self.line_ids.product_id:
+            lines = self.line_ids.filtered(
+                lambda line: line.product_id == product and line.qty > 0.0 and line.sell_price > 0.0
+            )
+            gross = sum(line.qty * line.sell_price for line in lines)
+            if not gross:
+                continue
+            discount = min(gross, max(0.0, self._discount_for_program_on_product(program, product) or 0.0))
+            remaining = discount
+            for index, line in enumerate(lines):
+                amount = (remaining if index == len(lines) - 1 else
+                          min(remaining, float_round(discount * line.qty * line.sell_price / gross, precision_digits=2)))
+                result[line] = amount
+                remaining -= amount
+        return result
+
+    def _program_customer_is_eligible(self, program):
+        self.ensure_one()
+        program = program._origin or program
+        if self.env.context.get('force_program_effective') or not program.partner_ids:
+            return True
+        customer = self.customer_id._origin
+        return bool(customer and customer in program.partner_ids)
+
     def _program_is_effective(self, program):
         """
         If a promotion program has no configured products, treat it as inactive.
@@ -25,11 +65,18 @@ class AbSalesHeaderPromo(models.Model):
         - If program is restricted to replica DBs, current db_serial must match.
         """
         self.ensure_one()
+        if not self._promotions_allowed():
+            return False
         if not program:
             return False
+        origin = getattr(program.id, 'origin', None)
+        if origin:
+            program = self.env['ab_promo_program'].browse(origin)
         # Allow targeted callers (returns repricing) to honor an already-applied
         # source program even when current DB/store restrictions differ.
         force_program_effective = bool(self.env.context.get("force_program_effective"))
+        if not self._program_customer_is_eligible(program):
+            return False
         if (not force_program_effective) and program.store_ids and (
                 not self.store_id or self.store_id not in program.store_ids):
             return False
@@ -46,6 +93,10 @@ class AbSalesHeaderPromo(models.Model):
     def _compute_header_numbers(self, cur=None):
         """Keep sales_trans_h totals aligned with promotion discount during push."""
         totals = super()._compute_header_numbers(cur=cur)
+        # Contract integration already includes promotion savings in line
+        # pricing, then applies the existing additional invoice discount.
+        if 'contract_id' in self._fields and self.contract_id:
+            return totals
 
         program = self.applied_program_ids.filtered(lambda p: self._program_is_effective(p))[:1]
         if not program:
@@ -168,6 +219,7 @@ class AbSalesHeaderPromo(models.Model):
     # ---------------- Final totals ---------------- #
     @api.depends(
         'amount_total',
+        'customer_id',
         'applied_program_ids',
         'applied_program_ids.disc_percent',
         'applied_program_ids.apply_disc_on',
@@ -179,28 +231,22 @@ class AbSalesHeaderPromo(models.Model):
     )
     def _compute_promo_totals(self):
         for h in self:
-            program = h.applied_program_ids.filtered(lambda p: h._program_is_effective(p))[:1]
-            program_id = getattr(program, "id", None)
-            origin = getattr(program_id, "origin", None)
-            if origin:
-                program = self.env["ab_promo_program"].browse(int(origin))
-            products_in_order = h.line_ids.mapped('product_id')
-            total_discount = 0.0
-            if program:
-                for prod in products_in_order:
-                    total_discount += h._discount_for_program_on_product(program, prod) or 0.0
-
+            if ('contract_id' in h._fields and h.contract_id
+                    and h.contract_promotion_pricing and h.status in ('pending', 'saved', 'unknown', 'rejected')):
+                total_discount = sum(h.line_ids.mapped('ab_contract_discount_amount'))
+            else:
+                total_discount = sum(h._promotion_discounts_by_line().values())
             h.promo_discount_amount = min(total_discount, h.amount_total)
             h.amount_total_after_promo = h.amount_total - h.promo_discount_amount
 
     # available programs -> use VISIBILITY scope
-    @api.depends('line_ids.product_id', 'store_id')
+    @api.depends('line_ids.product_id', 'store_id', 'customer_id')
     def _compute_available_program_ids(self):
         Promo = self.env['ab_promo_program'].sudo()
         now = fields.Datetime.now()
         for rec in self:
             products_in_order = rec.line_ids.mapped('product_id')
-            if not products_in_order:
+            if not products_in_order or not rec._promotions_allowed():
                 rec.available_program_ids = [(6, 0, [])]
                 continue
 
@@ -242,6 +288,9 @@ class AbSalesHeaderPromo(models.Model):
 
     def _recompute_promo_totals(self):
         self._compute_promo_totals()
+        if hasattr(self, '_ab_contract_recompute_lines'):
+            self._ab_contract_recompute_lines()
+            self._compute_contract_totals()
         self.compute_totals()
 
     @api.onchange('applied_program_ids')
@@ -284,8 +333,24 @@ class AbSalesHeaderPromo(models.Model):
     def compute_totals(self):
         super().compute_totals()
         for header in self:
-            if header.applied_program_ids:
+            if 'contract_id' in header._fields and header.contract_id:
+                header.total_net_amount = header.cust_pay
+            elif header.applied_program_ids:
                 header.total_net_amount = header.amount_total_after_promo
+
+    def _validate_before_push(self):
+        super()._validate_before_push()
+        if self.status == 'unknown':
+            return
+        self._compute_available_program_ids()
+        if not self._promotions_allowed():
+            self.applied_program_ids = [(6, 0, [])]
+            return
+        if self.applied_program_ids - self.available_program_ids:
+            raise ValidationError(_("The selected promotion is no longer available for this invoice."))
+        if self.applied_program_ids:
+            self._apply_promotion_to_lines()
+        self._recompute_promo_totals()
 
     def _auto_apply_programs(self):
         """
@@ -331,7 +396,7 @@ class AbSalesHeaderPromo(models.Model):
                 # الكمية غير كافية → لا نطبق العرض أوتوماتيك
                 h.applied_program_ids = [(6, 0, [])]
 
-    @api.constrains('applied_program_ids', 'line_ids')
+    @api.constrains('applied_program_ids', 'line_ids', 'customer_id')
     def _constraint_ab_sales_header(self):
         for rec in self:
             def _get_code_with_padding(code):
@@ -342,6 +407,12 @@ class AbSalesHeaderPromo(models.Model):
 
             if rec.applied_program_ids:
                 prog = rec.applied_program_ids
+                if not rec._program_customer_is_eligible(prog):
+                    raise ValidationError(_(
+                        "Promotion %(promotion)s requires an allowed existing customer. "
+                        "Select an allowed customer or remove the promotion.",
+                        promotion=prog.display_name,
+                    ))
                 prog_products = rec._program_discount_products(prog)
                 prog_products_set = set(prog_products.ids)
 

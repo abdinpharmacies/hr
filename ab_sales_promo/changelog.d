@@ -72,18 +72,36 @@ Files changed:
 - ab_sales_promo/tests/test_ab_sales_specific_promo.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
 
-Current changes before commit:
+Commit: a53e7fe853f924ead3a25c4f299f7fe69eee01ba
+Author: hager yasser <hageryasser2002@gmail.com>
+Date: 2026-08-23T11:57:30+03:00
+Subject: ab_sales_promo/FIX(#2168): remove promo compensation model
 
-- Remove the compensation metadata model extension from `ab_sales_promo` after moving ownership to `ab_promo_program`.
-- Remove the inherited compensation form view registration and file from `ab_sales_promo`.
-- Remove stale Arabic compensation translations from `ab_sales_promo` so the base module owns those labels.
+User-facing changes:
+- Move promotion compensation metadata ownership out of the sales extension.
 
 Files changed:
-
-- ab_sales_promo/changelog.d
 - ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
 - ab_sales_promo/i18n/ar.po
 - ab_sales_promo/i18n/ar_001.po
 - ab_sales_promo/models/__init__.py
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
+
+Current changes before commit:
+- Port promotion eligibility and contract-aware totals.
+- Record promotion IDs and financial totals on first submission for local reporting; block later edits.
+- Retain immutable callcenter submission behavior and both Arabic catalogs.
+
+Files changed:
+- ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/__init__.py
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/models/ab_sales_return_promo.py
+- ab_sales_promo/models/callcenter_promo_snapshot.py
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js

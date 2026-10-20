@@ -12,10 +12,11 @@ class AbSalesReturnHeaderPromo(models.Model):
             return False
         fields_map = getattr(source_header, "_fields", {}) or {}
         if "contract_id" in fields_map and source_header.contract_id:
-            return False
+            if not source_header.contract_promotion_pricing:
+                return False
         if "applied_program_ids" not in fields_map:
             return False
-        return bool(source_header.applied_program_ids)
+        return bool(source_header.with_context(active_test=False).applied_program_ids)
 
     def _promo_return_get_source_header(self):
         self.ensure_one()
@@ -35,7 +36,7 @@ class AbSalesReturnHeaderPromo(models.Model):
         source_header = source_header or self._promo_return_get_source_header()
         if not self._promo_return_is_promo_source(source_header):
             return self.env["ab_promo_program"]
-        program = source_header.applied_program_ids[:1]
+        program = source_header.with_context(active_test=False).applied_program_ids[:1]
         program_id = getattr(program, "id", None)
         origin = getattr(program_id, "origin", None)
         if origin:
@@ -140,7 +141,7 @@ class AbSalesReturnHeaderPromo(models.Model):
 
         virtual_header.applied_program_ids = program
         virtual_header.with_context(force_program_effective=True)._compute_promo_totals()
-        return float(virtual_header.amount_total_after_promo or amount_total or 0.0)
+        return float(virtual_header.amount_total_after_promo)
 
     def _promo_return_reprice_values(self):
         self.ensure_one()
