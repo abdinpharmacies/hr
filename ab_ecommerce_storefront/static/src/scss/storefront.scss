@@ -9784,6 +9784,8 @@ html[dir="rtl"] {
 
 .ab-auth-visual {
     position: relative;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     min-height: 500px;
     padding: clamp(2rem, 5vw, 3.5rem);
@@ -9854,12 +9856,12 @@ html[dir="rtl"] {
 }
 
 .ab-auth-trust-grid {
-    position: absolute;
-    inset-inline: clamp(1.5rem, 4vw, 3rem);
-    bottom: clamp(1.5rem, 4vw, 3rem);
+    position: relative;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: .75rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
 
     span {
         min-height: 46px;
