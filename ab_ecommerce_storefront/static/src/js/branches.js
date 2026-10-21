@@ -50,6 +50,7 @@ export class AbBranchLocator extends Interaction {
             this.map?.invalidateSize();
         });
         listen(window, "hashchange", () => this.openHash());
+        listen(document, "ab-storefront-location:position", (event) => this.usePosition(event.detail));
         this.el.classList.add("is-enhanced");
         this.filter(false);
         this.openHash();
@@ -286,28 +287,32 @@ export class AbBranchLocator extends Interaction {
         navigator.geolocation.getCurrentPosition((position) => {
             if (this.stopped) return;
             finish();
-            const { latitude, longitude } = position.coords;
-            const radians = (degrees) => degrees * Math.PI / 180;
-            for (const branch of this.branches) {
-                const [lat, lng] = branch.coords;
-                const a = Math.sin(radians(lat - latitude) / 2) ** 2 + Math.cos(radians(latitude)) * Math.cos(radians(lat)) * Math.sin(radians(lng - longitude) / 2) ** 2;
-                branch.distance = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
-                const distance = branch.card.querySelector("[data-branch-distance]");
-                distance.hidden = false;
-                distance.textContent = this.distanceLabel(branch.distance);
-            }
-            this.branches.sort((first, second) => first.distance - second.distance);
-            this.branches.forEach((branch) => this.list.append(branch.card));
-            this.search.value = "";
-            this.region.value = "";
-            this.filter(false);
-            this.selectBranch(this.branches[0]);
-            this.setStatus(_t("Branches are sorted by distance from your location. Distances are approximate."));
+            this.usePosition(position.coords);
         }, (error) => {
             if (this.stopped) return;
             finish();
             this.setStatus(error.code === 1 ? _t("Location access was declined. You can still search by area or governorate.") : _t("We couldn't find your location. Try again or search for your area."));
         }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
+    }
+
+    usePosition({ latitude, longitude } = {}) {
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+        const radians = (degrees) => degrees * Math.PI / 180;
+        for (const branch of this.branches) {
+            const [lat, lng] = branch.coords;
+            const a = Math.sin(radians(lat - latitude) / 2) ** 2 + Math.cos(radians(latitude)) * Math.cos(radians(lat)) * Math.sin(radians(lng - longitude) / 2) ** 2;
+            branch.distance = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(Math.max(0, 1 - a)));
+            const distance = branch.card.querySelector("[data-branch-distance]");
+            distance.hidden = false;
+            distance.textContent = this.distanceLabel(branch.distance);
+        }
+        this.branches.sort((first, second) => first.distance - second.distance);
+        this.branches.forEach((branch) => this.list.append(branch.card));
+        this.search.value = "";
+        this.region.value = "";
+        this.filter(false);
+        this.selectBranch(this.branches[0]);
+        this.setStatus(_t("Branches are sorted by distance from your location. Distances are approximate."));
     }
 
     destroy() {

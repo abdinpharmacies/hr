@@ -10,6 +10,7 @@ const FALLBACK_SET_LABEL = _t("Area selected");
 const GEOLOCATION_UNAVAILABLE_LABEL = _t("Location service is unavailable");
 const LOADING_LABEL = _t("Detecting area...");
 const PERMISSION_NEEDED_LABEL = _t("Location permission is required");
+const SECURE_LOCATION_LABEL = _t("Your browser needs a secure HTTPS connection to use your location. Search by area or governorate instead.");
 const REVERSE_GEOCODE_URL = "https://nominatim.openstreetmap.org/reverse";
 const RECENT_LOCATIONS_KEY = "ab_storefront_recent_locations";
 const REGION_LABELS = {
@@ -26,6 +27,20 @@ const REGION_LABELS = {
 
 function regionLabel(region) {
     return REGION_LABELS[region] || region;
+}
+
+function storeRecentLocation(location) {
+    try {
+        const stored = JSON.parse(window.localStorage.getItem(RECENT_LOCATIONS_KEY) || "[]");
+        const recent = Array.isArray(stored) ? stored.slice(0, 4) : [];
+        const next = [
+            location,
+            ...recent.filter((item) => (item.governorate || item.region) !== location.governorate),
+        ].slice(0, 4);
+        window.localStorage.setItem(RECENT_LOCATIONS_KEY, JSON.stringify(next));
+    } catch {
+        return;
+    }
 }
 
 export class AbStorefrontCurrentLocation extends Interaction {
@@ -75,7 +90,52 @@ export class AbStorefrontCurrentLocation extends Interaction {
     }
 
     async onClick() {
-        document.dispatchEvent(new CustomEvent("ab-storefront-location:open"));
+        if (this.button.disabled) {
+            return;
+        }
+        if (!window.isSecureContext) {
+            this.setState("is-error", GEOLOCATION_UNAVAILABLE_LABEL);
+            this.status.textContent = SECURE_LOCATION_LABEL;
+            document.dispatchEvent(new CustomEvent("ab-storefront-location:open", {
+                detail: { locationError: SECURE_LOCATION_LABEL },
+            }));
+            return;
+        }
+        this.button.disabled = true;
+        this.button.setAttribute("aria-busy", "true");
+        this.setState("is-loading", LOADING_LABEL);
+        try {
+            const position = await this.getCurrentPosition();
+            const { latitude, longitude, accuracy } = position.coords;
+            const governorate = await this.getGovernorateName(latitude, longitude);
+            if (!governorate) {
+                throw new Error("Area lookup failed");
+            }
+            const payload = {
+                governorate,
+                region: governorate,
+                detailedAddress: "",
+                latitude,
+                longitude,
+                accuracy,
+                timestamp: position.timestamp,
+            };
+            window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+            storeRecentLocation(payload);
+            document.dispatchEvent(new CustomEvent("ab-storefront-location:set", { detail: payload }));
+            document.dispatchEvent(new CustomEvent("ab-storefront-location:position", {
+                detail: { latitude, longitude },
+            }));
+        } catch (error) {
+            const message = error?.code === 1 ? PERMISSION_NEEDED_LABEL : GEOLOCATION_UNAVAILABLE_LABEL;
+            this.setState("is-error", message);
+            document.dispatchEvent(new CustomEvent("ab-storefront-location:open", {
+                detail: { locationError: message },
+            }));
+        } finally {
+            this.button.disabled = false;
+            this.button.removeAttribute("aria-busy");
+        }
     }
 
     getCurrentPosition() {
@@ -94,7 +154,7 @@ export class AbStorefrontCurrentLocation extends Interaction {
         url.searchParams.set("addressdetails", "1");
         url.searchParams.set("lat", latitude);
         url.searchParams.set("lon", longitude);
-        url.searchParams.set("accept-language", "ar");
+        url.searchParams.set("accept-language", document.documentElement.lang.replace("_", "-") || "en");
 
         try {
             const response = await fetch(url.toString(), { method: "GET" });
@@ -224,13 +284,21 @@ export class AbStorefrontLocationPicker extends Interaction {
         }
     }
 
-    onOpen() {
+    onOpen(event) {
         this.lastFocus = document.activeElement;
+        this.applyStoredLocation();
         this.renderRecentLocations();
+        if (event.detail?.locationError) {
+            this.setAutoState("is-error", event.detail.locationError);
+        }
         this.panel.classList.add("is-open");
         this.panel.setAttribute("aria-hidden", "false");
         document.body.classList.add("ab-storefront-location-picker-open");
-        setTimeout(() => this.searchInput?.focus({ preventScroll: true }), 80);
+        setTimeout(() => {
+            if (this.panel.classList.contains("is-open")) {
+                this.searchInput?.focus({ preventScroll: true });
+            }
+        }, 80);
     }
 
     onCloseClick() {
@@ -271,29 +339,46 @@ export class AbStorefrontLocationPicker extends Interaction {
     }
 
     async onAutoLocation() {
+        if (this.autoButton?.disabled) {
+            return;
+        }
+        if (!window.isSecureContext) {
+            this.setAutoState("is-error", SECURE_LOCATION_LABEL);
+            return;
+        }
         if (!navigator.geolocation) {
             this.setAutoState("is-error", GEOLOCATION_UNAVAILABLE_LABEL);
             return;
         }
 
+        this.autoButton.disabled = true;
         this.setAutoState("is-loading", LOADING_LABEL);
         try {
             const position = await this.getCurrentPosition();
             const data = await this.getReverseGeocode(position.coords.latitude, position.coords.longitude);
-            const governorate = this.extractGovernorate(data.address || {}) || FALLBACK_SET_LABEL;
+            if (!this.panel.classList.contains("is-open")) {
+                return;
+            }
+            const governorate = this.extractGovernorate(data.address || {});
+            if (!governorate) {
+                this.setAutoState("is-error", GEOLOCATION_UNAVAILABLE_LABEL);
+                return;
+            }
             this.geoPayload = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
                 accuracy: position.coords.accuracy,
                 timestamp: position.timestamp,
             };
-            this.selectRegion(governorate);
+            this.selectRegion(governorate, true);
             if (this.detailInput && data.display_name) {
                 this.detailInput.value = data.display_name;
             }
             this.setAutoState("", _t("Use my current location"));
         } catch {
             this.setAutoState("is-error", PERMISSION_NEEDED_LABEL);
+        } finally {
+            this.autoButton.disabled = false;
         }
     }
 
@@ -316,10 +401,22 @@ export class AbStorefrontLocationPicker extends Interaction {
             detail: payload,
         }));
         this.close();
+        if (Number.isFinite(payload.latitude) && Number.isFinite(payload.longitude)) {
+            document.dispatchEvent(new CustomEvent("ab-storefront-location:position", {
+                detail: { latitude: payload.latitude, longitude: payload.longitude },
+            }));
+        }
     }
 
-    selectRegion(region) {
-        this.selectedRegion = region || "Egypt";
+    selectRegion(region, keepCoordinates = false) {
+        const selectedRegion = region || "Egypt";
+        if (!keepCoordinates) {
+            this.geoPayload = {};
+            if (this.selectedRegion !== selectedRegion && this.detailInput) {
+                this.detailInput.value = "";
+            }
+        }
+        this.selectedRegion = selectedRegion;
         this.updateSelection();
     }
 
@@ -362,13 +459,17 @@ export class AbStorefrontLocationPicker extends Interaction {
         url.searchParams.set("addressdetails", "1");
         url.searchParams.set("lat", latitude);
         url.searchParams.set("lon", longitude);
-        url.searchParams.set("accept-language", "ar");
+        url.searchParams.set("accept-language", document.documentElement.lang.replace("_", "-") || "en");
 
-        const response = await fetch(url.toString(), { method: "GET" });
-        if (!response.ok) {
+        try {
+            const response = await fetch(url.toString(), { method: "GET" });
+            if (!response.ok) {
+                return {};
+            }
+            return await response.json() || {};
+        } catch {
             return {};
         }
-        return response.json();
     }
 
     extractGovernorate(address) {
@@ -391,12 +492,7 @@ export class AbStorefrontLocationPicker extends Interaction {
     }
 
     storeRecentLocation(location) {
-        const recent = this.getRecentLocations();
-        const next = [
-            location,
-            ...recent.filter((item) => (item.governorate || item.region) !== location.governorate),
-        ].slice(0, 4);
-        window.localStorage.setItem(RECENT_LOCATIONS_KEY, JSON.stringify(next));
+        storeRecentLocation(location);
     }
 
     renderRecentLocations() {

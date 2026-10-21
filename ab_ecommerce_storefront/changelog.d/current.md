@@ -1,5 +1,18 @@
 # Storefront change log
 
+## Current changes before commit
+
+- Show detection and failure feedback in the header location control, save the detected governorate on success, and avoid treating an approximate geocoded street address as confirmed delivery details.
+- Explain the HTTPS requirement in the manual area picker when a visitor opens the storefront through an HTTP LAN address.
+- Use the same coordinates to select the nearest branch when the branch directory is open. Keep manual area selection available when location access or area lookup fails.
+- Clear coordinates and stale address details when a visitor manually changes governorate, and request geocoded names in the page language.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/js/current_location.js`
+- `ab_ecommerce_storefront/static/src/js/branches.js`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
 ## Recent commits
 
 Commit: `b7d91bc1`
