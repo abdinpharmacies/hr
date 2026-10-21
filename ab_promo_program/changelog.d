@@ -62,3 +62,28 @@ Files changed:
 - ab_promo_program/models/ab_promo_program_wiz.py
 - ab_promo_program/views/ab_promo_program.xml
 - ab_promo_program/views/ab_promo_program_wizard.xml
+
+Commit: 18f840661382883c625c2f57468cddbc71515ac7
+Author: hager yasser <hageryasser2002@gmail.com>
+Date: 2026-08-23T11:59:44+03:00
+Subject: ab_promo_program/FEAT(#2168): move promo compensation and update wizard placeholder
+
+User-facing changes:
+- Move promotion compensation settings into the promotion module and clarify import fields.
+
+Files changed:
+- ab_promo_program/changelog.d
+- ab_promo_program/i18n/ar.po
+- ab_promo_program/i18n/ar_001.po
+- ab_promo_program/models/ab_promo_program.py
+- ab_promo_program/models/ab_promo_program_wiz.py
+- ab_promo_program/views/ab_promo_program.xml
+- ab_promo_program/views/ab_promo_program_wizard.xml
+
+Current changes before commit:
+- Complete missing Arabic labels and messages using Odoo-exported terms; preserve existing translations and keep ar/ar_001 coverage aligned.
+
+Files changed:
+- ab_promo_program/__manifest__.py
+- ab_promo_program/changelog.d
+- ab_promo_program/i18n/ar.po
