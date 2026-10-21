@@ -192,12 +192,15 @@ msgstr "لم يتم نسخ الدكتور إلى هذا الفرع."
 #. module: ab_sales_doctor
 #. odoo-javascript
 #: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+#: code:addons/ab_sales_doctor/static/src/pos/bill_wizard_doctor_filter.xml:0
 msgid "Doctor..."
 msgstr "الدكتور..."
 
 #. module: ab_sales_doctor
+#. odoo-javascript
 #: model:ir.actions.act_window,name:ab_sales_doctor.ab_doctor_action
 #: model:ir.ui.menu,name:ab_sales_doctor.ab_doctor_menu
+#: code:addons/ab_sales_doctor/static/src/pos/bill_wizard_doctor_filter.xml:0
 msgid "Doctors"
 msgstr "الدكاترة"
 

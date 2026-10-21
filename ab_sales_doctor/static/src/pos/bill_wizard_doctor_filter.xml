@@ -10,7 +10,7 @@
                         relation="'ab_doctor'"
                         value="state.filters.doctorSelection"
                         onUpdate="onDoctorSelectionUpdate"
-                        placeholder="'Doctor...'"
+                        placeholder.translate="Doctor..."
                         domain="doctorSelectionDomain"
                         context="{active_test: false}"
                         canCreate="false"
@@ -18,7 +18,7 @@
                         canQuickCreate="false"
                         canOpen="false"
                         canWrite="false"
-                        string="'Doctors'"
+                        string.translate="Doctors"
                 />
             </div>
         </xpath>

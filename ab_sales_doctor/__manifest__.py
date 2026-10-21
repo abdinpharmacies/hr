@@ -1,6 +1,6 @@
 {
     "name": "Abdin Sales Doctor Prescription",
-    "version": "19.0.2.0.0",
+    "version": "19.0.2.0.1",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "depends": ["ab_sales", "ab_odoo_connect", "ab_odoo_replication"],
