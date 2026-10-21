@@ -3320,6 +3320,12 @@ msgid "Category Description"
 msgstr "وصف الفئة"
 
 #. module: ab_website_sale_product
+#. odoo-python
+#: code:addons/ab_website_sale_product/models/product_classification.py:0
+msgid "Category description translations must have matching line breaks."
+msgstr "يجب أن تتطابق فواصل الأسطر في ترجمات وصف الفئة."
+
+#. module: ab_website_sale_product
 #: model:product.tag,name:ab_website_sale_product.shop_need_sensitive_skin
 msgid "Sensitive skin care"
 msgstr "العناية بالبشرة الحساسة"

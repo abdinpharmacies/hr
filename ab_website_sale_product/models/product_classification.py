@@ -196,10 +196,28 @@ class ClassificationTaxonomy(models.Model):
         return result
 
     def _sync_category_descriptions(self):
-        for node in self.filtered(lambda n: n.ready and n.description):
-            value = '<p>%s</p>' % html_escape(node.description).replace('\n', '<br/>')
-            if node.category_id.website_description != value:
-                node.category_id.write({'website_description': value})
+        languages = self.env['res.lang'].search([('code', 'in', ['ar', 'ar_001'])]).mapped('code')
+        for node in self.filtered('ready'):
+            source = node.with_context(lang='en_US').description
+            if not source:
+                continue
+            category = node.category_id.with_context(lang='en_US')
+            source_html = '<p>%s</p>' % html_escape(source).replace('\n', '<br/>')
+            if category.website_description != source_html:
+                category.write({'website_description': source_html})
+            field = category._fields['website_description']
+            source_terms = field.get_trans_terms(source_html)
+            for language in languages:
+                translation = node.with_context(lang=language).description
+                translated_html = '<p>%s</p>' % html_escape(translation).replace('\n', '<br/>')
+                translated_terms = field.get_trans_terms(translated_html)
+                if len(source_terms) != len(translated_terms):
+                    raise ValidationError(_('Category description translations must have matching line breaks.'))
+                if category.with_context(lang=language).website_description != translated_html:
+                    category.update_field_translations(
+                        'website_description',
+                        {language: dict(zip(source_terms, translated_terms))},
+                    )
 
     def _ensure_default_descriptions(self):
         languages = self.env['res.lang'].search([('code', 'in', ['ar', 'ar_001'])])
@@ -260,8 +278,7 @@ class ClassificationTaxonomy(models.Model):
                 translated = node.with_context(lang=lang.code).name
                 if node.category_id.with_context(lang=lang.code).name != translated:
                     node.category_id.with_context(lang=lang.code).name = translated
-        for language in ['en_US', *self.env['res.lang'].search([('code', 'in', ['ar', 'ar_001'])]).mapped('code')]:
-            nodes.with_context(lang=language)._sync_category_descriptions()
+        nodes._sync_category_descriptions()
         return {"ready": len(nodes.filtered("ready")), "total": len(nodes), "unresolved": problems}
 
     @api.model

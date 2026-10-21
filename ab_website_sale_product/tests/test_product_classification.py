@@ -254,6 +254,29 @@ class TestProductClassification(TransactionCase):
         with self.assertRaises(AccessError):
             self.node("Medicines").write({"name": "Invented"})
 
+    def test_category_description_preserves_both_languages(self):
+        if not self.env['res.lang'].search_count([('code', '=', 'ar_001')]):
+            self.skipTest('Arabic language is not installed')
+        node = self.node('Medical Devices & Supplies')
+        category = node.category_id
+        english = '<p>Medical devices and supplies for monitoring, patient care, mobility, wound care, and first aid.</p>'
+        arabic = '<p>أجهزة ومستلزمات طبية للقياس والمتابعة ورعاية المرضى والحركة والعناية بالجروح والإسعافات الأولية.</p>'
+
+        category.with_context(lang='en_US').website_description = arabic
+        node._sync_category_descriptions()
+
+        self.assertEqual(category.with_context(lang='en_US').website_description, english)
+        self.assertEqual(category.with_context(lang='ar_001').website_description, arabic)
+
+        updated_arabic = 'أجهزة طبية للقياس والمتابعة ورعاية المرضى.'
+        node.with_context(lang='ar_001').write({'description': updated_arabic})
+
+        self.assertEqual(category.with_context(lang='en_US').website_description, english)
+        self.assertEqual(
+            category.with_context(lang='ar_001').website_description,
+            '<p>%s</p>' % updated_arabic,
+        )
+
     def test_real_queue_checkpoint_and_recovery(self):
         self.product()
         run = self.Run.browse(self.Run.with_user(self.env.ref("base.user_admin")).start_classification(scope="all", website_id=self.website.id))
