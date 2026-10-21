@@ -230,13 +230,14 @@ class AbSalesPosApi(models.TransientModel):
         )
 
     @api.model
-    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False):
+    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False, **kwargs):
         return self._blocked_super(
             "pos_promotions",
             store_id=store_id,
             lines=lines,
             applied_program_id=applied_program_id,
             manual_clear=manual_clear,
+            **kwargs,
         )
 
     @api.model
@@ -260,11 +261,12 @@ class AbSalesPosApi(models.TransientModel):
         return self._blocked_super("pos_submit", payload=payload, **kwargs)
 
     @api.model
-    def pos_refresh_pos_balances(self, store_id=None, product_ids=None):
+    def pos_refresh_pos_balances(self, store_id=None, product_ids=None, **kwargs):
         return self._blocked_super(
             "pos_refresh_pos_balances",
             store_id=store_id,
             product_ids=product_ids,
+            **kwargs,
         )
 
     @api.model
