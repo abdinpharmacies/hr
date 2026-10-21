@@ -123,7 +123,7 @@
                         <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
                         <filter name="group_store" string="Store" context="{'group_by': 'store_id'}"/>
                         <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
-                        <filter name="group_user" string="Cashier" context="{'group_by': 'user_id'}"/>
+                        <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
                         <filter name="group_date" string="Date" context="{'group_by': 'create_date:day'}"/>
                     </group>
                 </search>
