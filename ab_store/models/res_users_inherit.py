@@ -51,6 +51,9 @@ class ResUsers(models.Model):
         if user.has_group('base.group_system'):
             return res
 
+        if not user._is_internal():
+            return res
+
         # ✅ If user has the "login anywhere" group, bypass IP restriction
         if user.has_group("ab_store.ab_login_from_anywhere"):
             return res
