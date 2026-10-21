@@ -2,6 +2,24 @@
 
 ## Current changes before commit
 
+- Hide the header navigation scrollbar at every screen size while preserving touch scrolling.
+- Show the homepage banner carousel indicators as compact dots on mobile instead of bars.
+
+Files changed:
+
+- `ab_ecommerce_storefront/static/src/scss/scroll_region.scss`
+- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+## Recent commits
+
+Commit: `72e79437`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/FIX: keep storefront Google sign-ins portal-only`
+
+User-facing changes:
+
 - Mark Google OAuth requests started from the storefront as customer sign-ins.
 - Create or reuse a portal-only OAuth account with a stable login even when the verified Google email matches an internal employee account.
 - Reject storefront OAuth links that resolve to internal, administrator, inactive, conflicting, or unverified identities.
@@ -9,11 +27,9 @@
 
 Files changed:
 
+- `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/controllers/auth.py`
 - `ab_ecommerce_storefront/models/res_users.py`
-- `ab_ecommerce_storefront/changelog.d/current.md`
-
-## Recent commits
 
 Commit: `3a69b7d0`
 Author: Mohamed Fawzy

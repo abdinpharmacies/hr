@@ -13910,7 +13910,38 @@ html.ab-avatar-picker-open body {
         }
 
         .carousel-indicators {
+            gap: .1rem;
             margin-bottom: 1.15rem;
+
+            [data-bs-target] {
+                position: relative;
+                width: 1.5rem;
+                height: 1.5rem;
+                border: 0;
+                border-radius: 50%;
+                background: transparent;
+                box-shadow: none;
+
+                &::before {
+                    position: absolute;
+                    inset: 50% auto auto 50%;
+                    width: .55rem;
+                    height: .55rem;
+                    border-radius: 50%;
+                    background: rgba($ab-green-dark, .48);
+                    content: "";
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .active {
+                width: 1.5rem;
+                background: transparent;
+
+                &::before {
+                    background: $ab-orange;
+                }
+            }
         }
     }
 
