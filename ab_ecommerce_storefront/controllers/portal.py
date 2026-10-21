@@ -144,6 +144,10 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
         partner_mobile = partner.mobile if "mobile" in partner._fields else False
         account_phone = partner.phone or partner_mobile
         account_email = partner.email or user.email
+        account_user_sudo = user.sudo()
+        account_is_oauth = bool(
+            account_user_sudo.oauth_provider_id and account_user_sudo.oauth_uid
+        )
         account_avatar = partner.ab_storefront_avatar or "avatar_none"
         avatar_complete = partner.ab_storefront_avatar_completed or account_avatar != "avatar_none"
         has_address = bool(partner.street or partner.city or partner.country_id)
@@ -188,6 +192,7 @@ class AbStorefrontCustomerPortal(SaleCustomerPortal):
             "account_partner": partner,
             "account_phone": account_phone,
             "account_email": account_email,
+            "account_is_oauth": account_is_oauth,
             "account_avatar": account_avatar,
             "avatar_complete": avatar_complete,
             "has_address": has_address,

@@ -560,7 +560,7 @@
                                                 <t t-else="">Not provided</t>
                                             </dd>
                                         </div>
-                                        <div>
+                                        <div t-if="not account_is_oauth" data-ab-password-row="">
                                             <dt>Password</dt>
                                             <dd class="ab-account-password-value">
                                                 <span class="ab-account-password-mask">••••••••</span>

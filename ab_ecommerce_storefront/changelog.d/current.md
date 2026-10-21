@@ -2,16 +2,34 @@
 
 ## Current changes before commit
 
-- Hide the header navigation scrollbar at every screen size while preserving touch scrolling.
-- Show the homepage banner carousel indicators as compact dots on mobile instead of bars.
+- Hide the password row from OAuth customer account details.
+- Refresh an existing Google customer's displayed email from Google's verified identity on sign-in.
+- Cover password visibility and verified OAuth email refresh with regression tests.
+
+Files changed:
+
+- `ab_ecommerce_storefront/controllers/portal.py`
+- `ab_ecommerce_storefront/models/res_users.py`
+- `ab_ecommerce_storefront/tests/test_auth_http.py`
+- `ab_ecommerce_storefront/views/portal.xml`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+## Recent commits
+
+Commit: `35fe9683`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/FIX: show correct account contact details`
+
+User-facing changes:
+
 - Keep Google OAuth login identifiers out of the account phone field.
 - Show a clear missing-value message when no phone is saved and add the customer email to personal information.
 - Cover Google account contact rendering with an HTTP regression test.
 
 Files changed:
 
-- `ab_ecommerce_storefront/static/src/scss/scroll_region.scss`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/changelog.d/current.md`
 - `ab_ecommerce_storefront/controllers/portal.py`
 - `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
 - `ab_ecommerce_storefront/i18n/ar.po`
@@ -19,9 +37,6 @@ Files changed:
 - `ab_ecommerce_storefront/models/res_users.py`
 - `ab_ecommerce_storefront/tests/test_auth_http.py`
 - `ab_ecommerce_storefront/views/portal.xml`
-- `ab_ecommerce_storefront/changelog.d/current.md`
-
-## Recent commits
 
 Commit: `72e79437`
 Author: Mohamed Fawzy

@@ -57,6 +57,8 @@ class TestStorefrontAuthHTTP(HttpCase):
 
     def test_authenticated_identity_page_and_existing_password_page(self):
         self.authenticate(self.user.login, "Original9!Pass")
+        dashboard = self.url_open("/my/home")
+        self.assertIn('data-ab-password-row=""', dashboard.text)
         self.assertEqual(self.url_open("/my/authentication").status_code, 200)
         self.assertEqual(self.url_open("/my/security").status_code, 200)
         page = self.url_open("/my/authentication")
@@ -71,6 +73,8 @@ class TestStorefrontAuthHTTP(HttpCase):
             "login": login,
             "email": email,
             "password": "Original9!Pass",
+            "oauth_provider_id": self.env.ref("auth_oauth.provider_google").id,
+            "oauth_uid": "108573294113610888782",
             "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
         })
         user.partner_id.write({
@@ -84,14 +88,37 @@ class TestStorefrontAuthHTTP(HttpCase):
 
         self.assertEqual(user._ab_storefront_profile_completion(), 25)
 
-        with patch.object(type(user), "_client_ip", return_value="127.0.0.1"):
-            self.authenticate(login, "Original9!Pass")
+        self.authenticate(login, "Original9!Pass")
         page = self.url_open("/my/home")
 
         self.assertEqual(page.status_code, 200)
         self.assertNotIn(login, page.text)
         self.assertIn(email, page.text)
         self.assertIn("Not provided", page.text)
+        self.assertNotIn('data-ab-password-row=""', page.text)
+
+    def test_google_signin_refreshes_verified_email(self):
+        provider = self.env.ref("auth_oauth.provider_google")
+        oauth_uid = "108573294113610888783"
+        user = self.env["res.users"].with_context(no_reset_password=True).create({
+            "name": "Existing Google customer",
+            "login": f"google_oauth_{oauth_uid}",
+            "email": False,
+            "oauth_provider_id": provider.id,
+            "oauth_uid": oauth_uid,
+            "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+        })
+
+        login = self.env["res.users"].with_context(
+            ab_storefront_portal_oauth=True,
+        )._auth_oauth_signin(provider.id, {
+            "user_id": oauth_uid,
+            "email": "updated.google.customer@example.test",
+            "email_verified": True,
+        }, {"access_token": "updated-access-token"})
+
+        self.assertEqual(login, user.login)
+        self.assertEqual(user.email, "updated.google.customer@example.test")
 
     def test_email_reset_http_round_trip(self):
         page = self.url_open("/ab_storefront/auth/recover")

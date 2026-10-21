@@ -136,7 +136,10 @@ class ResUsers(models.Model):
                 or oauth_user._is_system()
             ):
                 raise AccessDenied()
-            oauth_user.write({"oauth_access_token": params["access_token"]})
+            oauth_user.write({
+                "email": email,
+                "oauth_access_token": params["access_token"],
+            })
             return oauth_user.login
 
         portal_login = f"google_oauth_{oauth_uid}"
