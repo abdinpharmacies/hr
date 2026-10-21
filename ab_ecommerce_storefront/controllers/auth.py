@@ -105,6 +105,15 @@ class AbStorefrontAuth(OAuthLogin):
             return providers
         return [provider for provider in providers if provider.get("id") == google_provider.id]
 
+    def get_state(self, provider):
+        state = super().get_state(provider)
+        if not self._is_backend_login_request():
+            state["c"] = {
+                **state.get("c", {}),
+                "ab_storefront_portal_oauth": True,
+            }
+        return state
+
     def _prepare_phone_login_params(self):
         login = request.params.get("login") or request.params.get("phone")
         normalized = normalize_egyptian_phone(login)

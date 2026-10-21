@@ -2,18 +2,34 @@
 
 ## Current changes before commit
 
-- Show detection and failure feedback in the header location control, save the detected governorate on success, and avoid treating an approximate geocoded street address as confirmed delivery details.
-- Explain the HTTPS requirement in the manual area picker when a visitor opens the storefront through an HTTP LAN address.
-- Use the same coordinates to select the nearest branch when the branch directory is open. Keep manual area selection available when location access or area lookup fails.
-- Clear coordinates and stale address details when a visitor manually changes governorate, and request geocoded names in the page language.
+- Mark Google OAuth requests started from the storefront as customer sign-ins.
+- Create or reuse a portal-only OAuth account with a stable login even when the verified Google email matches an internal employee account.
+- Reject storefront OAuth links that resolve to internal, administrator, inactive, conflicting, or unverified identities.
+- Preserve the native backend OAuth flow for explicitly requested backend destinations.
+
+Files changed:
+
+- `ab_ecommerce_storefront/controllers/auth.py`
+- `ab_ecommerce_storefront/models/res_users.py`
+- `ab_ecommerce_storefront/changelog.d/current.md`
+
+## Recent commits
+
+Commit: `3a69b7d0`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/FIX: sync header location with nearest branches`
+
+User-facing changes:
+
+- Use the header location control to detect the visitor's area and sort the branch directory by the same coordinates.
+- Explain the HTTPS requirement when browser location access is unavailable on an HTTP LAN address.
 
 Files changed:
 
 - `ab_ecommerce_storefront/static/src/js/current_location.js`
 - `ab_ecommerce_storefront/static/src/js/branches.js`
 - `ab_ecommerce_storefront/changelog.d/current.md`
-
-## Recent commits
 
 Commit: `b7d91bc1`
 Author: Mohamed Fawzy
