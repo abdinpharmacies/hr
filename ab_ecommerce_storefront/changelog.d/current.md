@@ -2,6 +2,19 @@
 
 ## Recent commits
 
+Commit: `8122017d`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/FIX: use valid product breadcrumb selector`
+
+User-facing changes:
+
+- Allow the Arabic product breadcrumb translation to load on Odoo 19.
+
+Files changed:
+
+- `ab_ecommerce_storefront/views/product.xml`
+
 Commit: `f688467e`
 Author: Mohamed Fawzy
 Date: 2026-10-21
