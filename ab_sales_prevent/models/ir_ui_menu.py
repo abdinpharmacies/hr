@@ -9,7 +9,6 @@ class IrUiMenu(models.Model):
         "ab_sales.ab_sales_bill_wizard_menu",
         "ab_sales.ab_sales_header_menu",
         "ab_sales.ab_sales_return_header_menu",
-        "ab_sales_cashier.ab_sales_cashier_menu",
         "ab_sales_lead.ab_sales_lead_menu",
     )
     _SALES_PREVENT_ROOT_MENU_XMLID = "ab_sales.sales_menu_root"

@@ -118,8 +118,6 @@ class TestAbSalesPrevent(TransactionCase):
         with self.assertRaises(AccessError):
             self.env["ab_sales_ui_api"].bill_wizard_search()
         with self.assertRaises(AccessError):
-            self.env["ab_sales_cashier_api"].get_cashier_bootstrap()
-        with self.assertRaises(AccessError):
             self.env["ab_sales_lead"].pos_item_report()
         with self.assertRaises(AccessError):
             self.env["ab_sales_header"].get_sales_dashboard_payload()
