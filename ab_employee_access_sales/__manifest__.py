@@ -1,6 +1,6 @@
 {
     "name": "Ab Sales HR",
-    "version": "19.0.2.0.0",
+    "version": "19.0.2.0.1",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "summary": "Callcenter POS with employee PIN, roles, shifts, and audit logs.",

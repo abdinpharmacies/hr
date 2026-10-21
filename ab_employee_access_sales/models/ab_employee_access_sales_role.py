@@ -19,7 +19,6 @@ class AbSalesHrRole(models.Model):
         self.ensure_one()
         return {
             "allow_pos_screen": bool(self.allow_pos_screen),
-            "allow_cashier_screen": bool(self.allow_cashier_screen),
             "allow_return_screen": bool(self.allow_return_screen),
             "pin_rotation_days": int(self.pin_rotation_days or 90),
         }
