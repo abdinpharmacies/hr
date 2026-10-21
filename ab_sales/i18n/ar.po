@@ -1295,6 +1295,7 @@ msgstr "تعذر البحث عن المنتجات."
 #. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
 msgid "Barcode scan failed."
 msgstr "تعذر مسح الباركود."
 
@@ -1551,6 +1552,7 @@ msgstr "الصنف"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
 msgid "Retry"
 msgstr "إعادة المحاولة"
 
@@ -2520,6 +2522,7 @@ msgstr "تحذير"
 #. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "Validation Error"
 msgstr "خطأ في التحقق"
 
@@ -2940,8 +2943,10 @@ msgstr "بيانات الفاتورة"
 
 #. module: ab_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_sales/models/ab_sales_header.py:0
 #: model:ir.ui.menu,name:ab_sales.ab_sales_bill_wizard_menu
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Bill Wizard"
 msgstr "معالج الفاتورة"
 
@@ -3122,7 +3127,9 @@ msgstr "مهمة Cron"
 
 #. module: ab_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual_patch.js:0
 msgid "Cron has been triggered."
 msgstr "تم تشغيل مهمة Cron."
 
@@ -4562,7 +4569,9 @@ msgstr "لصق أرقام الفواتير"
 
 #. module: ab_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_sales/models/ab_replica_db_inherit.py:0
+#: code:addons/ab_sales/static/src/invoice_exclusions/invoice_exclusion_text_field.js:0
 msgid "Paste at least one invoice number first."
 msgstr "الصق رقم فاتورة واحداً على الأقل أولاً."
 
@@ -4957,6 +4966,7 @@ msgstr "إدخال التصنيف المنتج موجود بالفعل لهذا 
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: model:ir.ui.menu,name:ab_sales.ab_product_menu
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
 msgid "Products"
 msgstr "المنتجات"
 
@@ -5654,7 +5664,9 @@ msgstr "حدد الفاتورة لمعرفة التفاصيل."
 
 #. module: ab_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Select a branch to search BConnect."
 msgstr "حدد فرعًا للبحث عن BConnect."
 
@@ -5864,9 +5876,13 @@ msgid "Store %s is not allowed for sales."
 msgstr "المخزن %s غير مسموح به للمبيعات."
 
 #. module: ab_sales
+#. odoo-javascript
 #: model:ir.actions.act_window,name:ab_sales.action_ab_product_balance_wizard
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__balance_html
 #: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+#: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Store Balances"
 msgstr "أرصدة المخازن"
 
@@ -6455,6 +6471,7 @@ msgstr "تعذر تحميل تفاصيل الفاتورة."
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+#: code:addons/ab_sales/static/src/pos/return_form_buttons.xml:0
 msgid "Commit"
 msgstr "اعتماد"
 
@@ -6474,3 +6491,746 @@ msgstr "تعذر اعتماد المرتجع."
 #: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
 msgid "Return committed."
 msgstr "تم اعتماد المرتجع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid ""
+"Adjust quantities or change the promotion, then submit the correction. The "
+"previous attempt is preserved."
+msgstr ""
+"عدّل الكميات أو غيّر العرض، ثم أرسل التصحيح. يتم الاحتفاظ بالمحاولة السابقة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "All draft slots are occupied. Free a slot before correcting this bill."
+msgstr "جميع خانات المسودات مشغولة. أفرغ خانة قبل تصحيح هذه الفاتورة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_correction
+msgid "Bill Correction"
+msgstr "تصحيح الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Cancel correction"
+msgstr "إلغاء التصحيح"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid "Cancel the correction before retrying the original bill."
+msgstr "ألغِ التصحيح قبل إعادة محاولة إرسال الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Cannot correct bill"
+msgstr "تعذر تصحيح الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Cannot submit bill"
+msgstr "تعذر إرسال الفاتورة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Change a quantity or promotion before submitting the correction."
+msgstr "غيّر كمية أو العرض قبل إرسال التصحيح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Correct bill"
+msgstr "تصحيح الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Correcting rejected bill"
+msgstr "تصحيح فاتورة مرفوضة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Draft slots are busy. Try again shortly."
+msgstr "خانات المسودات مشغولة الآن. حاول مجددًا بعد قليل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Invalid bill correction."
+msgstr "تصحيح الفاتورة غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Only a confirmed rejected bill can be corrected. Check its status."
+msgstr "يمكن تصحيح الفاتورة فقط بعد تأكيد رفضها. تحقق من حالتها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Only quantities and the promotion can change in a correction."
+msgstr "يمكن تغيير الكميات والعرض فقط أثناء التصحيح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Promotion quantity exceeded"
+msgstr "تجاوز الكمية المسموحة للعرض"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "Save this bill to the draft cache before correcting it."
+msgstr "احفظ هذه الفاتورة ضمن المسودات قبل تصحيحها."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_submission_history
+msgid "Submission History"
+msgstr "سجل محاولات الإرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Submit correction"
+msgstr "إرسال التصحيح"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "The bill could not be refreshed."
+msgstr "تعذر تحديث الفاتورة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid ""
+"The branch could not confirm that this bill can be corrected. Check its "
+"status."
+msgstr "تعذر تأكيد إمكانية تصحيح هذه الفاتورة من الفرع. تحقق من حالتها."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid ""
+"The cached bill does not match its submitted lines. Reload the original "
+"bill."
+msgstr ""
+"بنود الفاتورة المحفوظة لا تطابق البنود المرسلة. أعد تحميل الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "The original bill lines could not be matched."
+msgstr "تعذرت مطابقة بنود الفاتورة الأصلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid ""
+"This bill is locked until its branch submission is resolved. Check its "
+"status or retry."
+msgstr ""
+"هذه الفاتورة مقفلة حتى تتضح نتيجة إرسالها إلى الفرع. تحقق من حالتها أو أعد "
+"المحاولة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "This correction is no longer active. Refresh the bill."
+msgstr "هذا التصحيح لم يعد نشطًا. حدّث الفاتورة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "This draft changed in another window. Refresh before continuing."
+msgstr "تغيّرت هذه المسودة في نافذة أخرى. حدّثها قبل المتابعة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/bill_corrections.py:0
+msgid "This draft is being edited. Refresh and try again."
+msgstr "يجري تعديل هذه المسودة. حدّثها وحاول مجددًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Add products before printing."
+msgstr "أضف أصنافًا قبل الطباعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/invoice_exclusions/invoice_exclusion_text_field.js:0
+msgid "Added %(added)s invoice(s). %(existing)s were already listed."
+msgstr "تمت إضافة %(added)s فاتورة. كانت %(existing)s فاتورة مدرجة بالفعل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Added %(count)s item(s) from selected invoice."
+msgstr "تمت إضافة %(count)s صنف من الفاتورة المحددة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "Added lines: %(created)s, updated: %(updated)s"
+msgstr "البنود المضافة: %(created)s، والمحدّثة: %(updated)s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Address copied."
+msgstr "تم نسخ العنوان."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Barcode links saved (%(count)s product(s))."
+msgstr "تم حفظ ربط الباركود (%(count)s صنف)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Before Submit ..."
+msgstr "قبل الإرسال..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Copy failed."
+msgstr "تعذر النسخ."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Create a bill before scanning."
+msgstr "أنشئ فاتورة قبل مسح الباركود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "Current store: %(store)s"
+msgstr "المخزن الحالي: %(store)s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Customer Lookup"
+msgstr "البحث عن عميل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Customer already exists in BConnect."
+msgstr "العميل موجود بالفعل في BConnect."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Customer created in BConnect."
+msgstr "تم إنشاء العميل في BConnect."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Customer creation failed."
+msgstr "تعذر إنشاء العميل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Customer not found. Enter details to create."
+msgstr "لم يُعثر على العميل. أدخل بياناته لإنشائه."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Customer selected."
+msgstr "تم اختيار العميل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Customer..."
+msgstr "العميل..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Default printer saved."
+msgstr "تم حفظ الطابعة الافتراضية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Direct print failed."
+msgstr "فشلت الطباعة المباشرة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid ""
+"Discovery completed. Discovered %(discovered)s, installed %(installed)s."
+msgstr ""
+"اكتمل البحث. تم اكتشاف %(discovered)s طابعة وتثبيت %(installed)s طابعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/print_dialog.js:0
+msgid "End IP"
+msgstr "عنوان IP النهائي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Enter a phone number."
+msgstr "أدخل رقم هاتف."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Exact code, then product name"
+msgstr "الكود المطابق أولًا، ثم اسم الصنف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "Failed to apply products."
+msgstr "تعذرت إضافة الأصناف إلى الفاتورة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to clear lines."
+msgstr "تعذر مسح البنود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to load lines."
+msgstr "تعذر تحميل البنود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Failed to load printer options."
+msgstr "تعذر تحميل خيارات الطابعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "Failed to load products."
+msgstr "تعذر تحميل الأصناف."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to load sales return."
+msgstr "تعذر تحميل مرتجع المبيعات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to mark invoice as total return."
+msgstr "تعذر تحديد الفاتورة كمرتجع كامل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Failed to print receipt."
+msgstr "تعذرت طباعة الإيصال."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to save notes."
+msgstr "تعذر حفظ الملاحظات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Failed to save print preferences."
+msgstr "تعذر حفظ تفضيلات الطباعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Failed to save printer."
+msgstr "تعذر حفظ الطابعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to set return pending."
+msgstr "تعذر نقل المرتجع إلى حالة الانتظار."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual_patch.js:0
+msgid "Failed to trigger cron."
+msgstr "تعذر تشغيل المهمة المجدولة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/invoice_exclusions/invoice_exclusion_text_field.js:0
+msgid "Failed to update excluded invoices."
+msgstr "تعذر تحديث الفواتير المستبعدة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Failed to update line."
+msgstr "تعذر تحديث البند."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Fullscreen not available."
+msgstr "وضع ملء الشاشة غير متاح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Invalid submission states"
+msgstr "حالات الإرسال غير صالحة"
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.ir_cron_update_balance_per_pos_ir_actions_server
+msgid "Inventory: Update Balance Per Store"
+msgstr "المخزون: تحديث الرصيد لكل المخزن"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
+msgid "Invoice is not editable."
+msgstr "لا يمكن تعديل الفاتورة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Invoice marked as total return."
+msgstr "تم تحديد الفاتورة كمرتجع كامل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Lines cleared."
+msgstr "تم مسح البنود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Lines loaded."
+msgstr "تم تحميل البنود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Link Barcode"
+msgstr "ربط الباركود"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Lookup failed."
+msgstr "تعذر البحث."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "No active sales header."
+msgstr "لا توجد فاتورة مبيعات نشطة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No address to copy."
+msgstr "لا يوجد عنوان لنسخه."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No customer found."
+msgstr "لم يُعثر على عميل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No description"
+msgstr "بلا وصف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No invoices found for this customer."
+msgstr "لا توجد فواتير لهذا العميل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No items in selected invoice."
+msgstr "لا توجد أصناف في الفاتورة المحددة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "No lines to preview."
+msgstr "لا توجد بنود للمعاينة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "No lines to print."
+msgstr "لا توجد سطور للطباعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
+msgid "No product found for barcode %(barcode)s."
+msgstr "لا يوجد صنف مرتبط بالباركود %(barcode)s."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "No valid items to add."
+msgstr "لا توجد أصناف صالحة للإضافة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Notes saved."
+msgstr "تم حفظ الملاحظات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Nothing to preview."
+msgstr "لا يوجد محتوى للمعاينة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Pinned:"
+msgstr "المثبتة:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Please fill the required fields."
+msgstr "يرجى ملء الحقول المطلوبة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
+msgid "Please save the invoice before scanning."
+msgstr "احفظ الفاتورة قبل مسح الباركود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Popup blocked. Allow popups to print."
+msgstr "تم حظر النافذة المنبثقة. اسمح بالنوافذ المنبثقة للطباعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Preview failed."
+msgstr "تعذرت المعاينة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Print command sent to '%(printer)s'."
+msgstr "تم إرسال أمر الطباعة إلى '%(printer)s'."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Print command sent to default system printer."
+msgstr "تم إرسال أمر الطباعة إلى طابعة النظام الافتراضية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Printer Settings"
+msgstr "إعدادات الطابعة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Printer discovery failed."
+msgstr "تعذر البحث عن الطابعات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/invoice_exclusions/invoice_exclusion_text_field.js:0
+msgid "Removed %(removed)s invoice(s). %(missing)s were not listed."
+msgstr "تمت إزالة %(removed)s فاتورة. لم تكن %(missing)s فاتورة مدرجة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Replication Popup"
+msgstr "نافذة المزامنة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Return action is not available."
+msgstr "إجراء المرتجع غير متاح."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "Return moved to pending."
+msgstr "تم نقل المرتجع إلى حالة الانتظار."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/bill_wizard/print_preview.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Sales Receipt"
+msgstr "إيصال مبيعات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Search product..."
+msgstr "ابحث عن صنف..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_select_dialog.xml:0
+msgid "Select Product"
+msgstr "اختر صنفًا"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Select a bill first."
+msgstr "اختر فاتورة أولًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Select a bill to print."
+msgstr "حدد فاتورة للطباعة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Select a branch."
+msgstr "اختر فرعًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Select a customer with phone number first."
+msgstr "اختر عميلًا له رقم هاتف أولًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
+msgid "Select at least one product."
+msgstr "اختر صنفًا واحدًا على الأقل."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Select branch..."
+msgstr "اختر الفرع..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Select delivery employee (optional)..."
+msgstr "اختر موظف التوصيل (اختياري)..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Select employee..."
+msgstr "اختر الموظف..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Select store..."
+msgstr "اختر المخزن..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Settings saved."
+msgstr "تم حفظ الإعدادات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/print_dialog.js:0
+msgid "Start IP"
+msgstr "عنوان IP الابتدائي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Start IP and End IP are required."
+msgstr "عنوانا IP الابتدائي والنهائي مطلوبان."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Store..."
+msgstr "المخزن..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.js:0
+msgid "Thank you."
+msgstr "شكرًا لك."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid "Unexpected error."
+msgstr "حدث خطأ غير متوقع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Delivery Employee"
+msgstr "موظف التوصيل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "ePlus Employee"
+msgstr "موظف ePlus"

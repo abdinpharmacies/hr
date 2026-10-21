@@ -112,8 +112,8 @@ class AbSalesBillWizardAction extends Component {
             loadingPrintOptions: false,
             printerId: 0,
             printerName: "",
-            receiptHeader: "Sales Receipt",
-            receiptFooter: "Thank you.",
+            receiptHeader: _t("Sales Receipt"),
+            receiptFooter: _t("Thank you."),
             availablePrinters: [],
             defaultPrintFormat: "a4",
         });
@@ -173,7 +173,7 @@ class AbSalesBillWizardAction extends Component {
     }
 
     _getErrorMessage(err, fallbackMessage) {
-        const fallback = fallbackMessage || "Unexpected error.";
+        const fallback = fallbackMessage || _t("Unexpected error.");
         const blocked = new Set(["odoo server error", "rpc_error"]);
         const normalize = (msg) => String(msg || "").trim();
         const safe = (msg) => {
@@ -238,12 +238,12 @@ class AbSalesBillWizardAction extends Component {
                 this.state.printerId = selected ? selected.id : 0;
                 this.state.printerName = selected?.label || String(result?.printer_name || "").trim();
                 this.state.defaultPrintFormat = selected?.paper_size || (result?.print_format === "pos_80mm" ? "pos_80mm" : "a4");
-                this.state.receiptHeader = result?.receipt_header || "Sales Receipt";
-                this.state.receiptFooter = result?.receipt_footer || "Thank you.";
+                this.state.receiptHeader = result?.receipt_header || _t("Sales Receipt");
+                this.state.receiptFooter = result?.receipt_footer || _t("Thank you.");
                 return printerRecords;
             } catch (err) {
                 if (!silent) {
-                    this.notification.add(this._getErrorMessage(err, "Failed to load printer options."), {type: "warning"});
+                    this.notification.add(this._getErrorMessage(err, _t("Failed to load printer options.")), {type: "warning"});
                 }
                 return this.state.availablePrinters;
             } finally {
@@ -259,7 +259,7 @@ class AbSalesBillWizardAction extends Component {
         const startText = String(startIp || "").trim();
         const endText = String(endIp || "").trim();
         if (!startText || !endText) {
-            this.notification.add("Start IP and End IP are required.", {type: "warning"});
+            this.notification.add(_t("Start IP and End IP are required."), {type: "warning"});
             return this.state.availablePrinters || [];
         }
         try {
@@ -280,12 +280,12 @@ class AbSalesBillWizardAction extends Component {
             const installedCount = parseInt(result?.installed_count || 0, 10) || 0;
             const discoveredCount = parseInt(result?.discovered_count || 0, 10) || 0;
             this.notification.add(
-                `Discovery completed. Discovered ${discoveredCount}, installed ${installedCount}.`,
+                _t("Discovery completed. Discovered %(discovered)s, installed %(installed)s.", {discovered: discoveredCount, installed: installedCount}),
                 {type: "success"}
             );
             return this.state.availablePrinters || [];
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Printer discovery failed."), {type: "danger"});
+            this.notification.add(this._getErrorMessage(err, _t("Printer discovery failed.")), {type: "danger"});
             return this.state.availablePrinters || [];
         }
     }
@@ -478,7 +478,7 @@ class AbSalesBillWizardAction extends Component {
                 await this.action.doAction(actionDef);
             }
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Return action is not available."), {type: "warning"});
+            this.notification.add(this._getErrorMessage(err, _t("Return action is not available.")), {type: "warning"});
         } finally {
             this.state.openingReturn = false;
         }
@@ -534,7 +534,7 @@ class AbSalesBillWizardAction extends Component {
                 printer: selectedRecord,
             });
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Failed to save print preferences."), {type: "danger"});
+            this.notification.add(this._getErrorMessage(err, _t("Failed to save print preferences.")), {type: "danger"});
             return;
         }
 
@@ -550,12 +550,12 @@ class AbSalesBillWizardAction extends Component {
             this.state.printerId = Number.parseInt(result?.printer_id || this.state.printerId || 0, 10) || 0;
             this.notification.add(
                 finalPrinter
-                    ? `Print command sent to '${finalPrinter}'.`
-                    : "Print command sent to default system printer.",
+                    ? _t("Print command sent to '%(printer)s'.", {printer: finalPrinter})
+                    : _t("Print command sent to default system printer."),
                 {type: "success"}
             );
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Direct print failed."), {type: "danger"});
+            this.notification.add(this._getErrorMessage(err, _t("Direct print failed.")), {type: "danger"});
         }
     }
 
@@ -579,12 +579,12 @@ class AbSalesBillWizardAction extends Component {
     async printReceipt() {
         const bill = this.state.details;
         if (!bill) {
-            this.notification.add("Select a bill first.", {type: "warning"});
+            this.notification.add(_t("Select a bill first."), {type: "warning"});
             return;
         }
         const lines = Array.isArray(bill.lines) ? bill.lines : [];
         if (!lines.length) {
-            this.notification.add("No lines to print.", {type: "warning"});
+            this.notification.add(_t("No lines to print."), {type: "warning"});
             return;
         }
         await this.openPrintDialog();
@@ -593,12 +593,12 @@ class AbSalesBillWizardAction extends Component {
     async previewReceipt(payload = {}) {
         const bill = this.state.details;
         if (!bill) {
-            this.notification.add("Select a bill first.", {type: "warning"});
+            this.notification.add(_t("Select a bill first."), {type: "warning"});
             return;
         }
         const lines = Array.isArray(bill.lines) ? bill.lines : [];
         if (!lines.length) {
-            this.notification.add("No lines to preview.", {type: "warning"});
+            this.notification.add(_t("No lines to preview."), {type: "warning"});
             return;
         }
         await this.loadPrintOptions({silent: true});
@@ -626,15 +626,15 @@ class AbSalesBillWizardAction extends Component {
             });
             const content = String(result?.content || "").trim();
             if (!content) {
-                this.notification.add("Nothing to preview.", {type: "warning"});
+                this.notification.add(_t("Nothing to preview."), {type: "warning"});
                 return;
             }
             const win = openBillWizardPrintWindow(content, format, {focus: true});
             if (!win) {
-                this.notification.add("Popup blocked. Allow popups to print.", {type: "warning"});
+                this.notification.add(_t("Popup blocked. Allow popups to print."), {type: "warning"});
             }
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, "Preview failed."), {type: "danger"});
+            this.notification.add(this._getErrorMessage(err, _t("Preview failed.")), {type: "danger"});
         }
     }
 

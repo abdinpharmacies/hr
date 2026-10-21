@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ab_sales.PosBarcodeLinkDialog">
-        <Dialog title="'Link Barcode'" size="'md'">
+        <Dialog title.translate="Link Barcode" size="'md'">
             <div class="d-flex flex-column gap-3">
                 <t t-if="props.allowEdit">
                     <div>
@@ -28,14 +28,14 @@
                             relation="'ab_product'"
                             value="state.selected"
                             onUpdate="onProductsUpdate"
-                            placeholder="'Search product...'"
+                            placeholder.translate="Search product..."
                             domain="() => []"
                             canCreate="false"
                             canCreateEdit="false"
                             canQuickCreate="false"
                             canOpen="false"
                             canWrite="true"
-                            string="'Products'"
+                            string.translate="Products"
                     />
                 </div>
                 <div class="d-flex justify-content-end gap-2">

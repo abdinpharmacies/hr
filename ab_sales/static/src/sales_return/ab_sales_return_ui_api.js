@@ -83,7 +83,7 @@ class AbSalesReturnUiApiAction extends Component {
             });
             this._applyRecord(record);
         } catch (error) {
-            this.notification.add(this._messageFromError(error, "Failed to load sales return."), {
+            this.notification.add(this._messageFromError(error, _t("Failed to load sales return.")), {
                 type: "danger",
             });
         } finally {
@@ -165,9 +165,9 @@ class AbSalesReturnUiApiAction extends Component {
                 notes: this.state.notesDraft || "",
             });
             this._applyRecord(record);
-            this.notification.add("Notes saved.", { type: "success" });
+            this.notification.add(_t("Notes saved."), { type: "success" });
         } catch (error) {
-            this.notification.add(this._messageFromError(error, "Failed to save notes."), {
+            this.notification.add(this._messageFromError(error, _t("Failed to save notes.")), {
                 type: "danger",
             });
         } finally {
@@ -176,24 +176,24 @@ class AbSalesReturnUiApiAction extends Component {
     }
 
     async reloadLines() {
-        await this._runAction("reload_lines", "Failed to load lines.", {}, "Lines loaded.");
+        await this._runAction("reload_lines", _t("Failed to load lines."), {}, _t("Lines loaded."));
     }
 
     async clearLines() {
-        await this._runAction("clear_lines", "Failed to clear lines.", {}, "Lines cleared.");
+        await this._runAction("clear_lines", _t("Failed to clear lines."), {}, _t("Lines cleared."));
     }
 
     async totalReturnInvoice() {
         await this._runAction(
             "total_return_invoice",
-            "Failed to mark invoice as total return.",
+            _t("Failed to mark invoice as total return."),
             {},
-            "Invoice marked as total return."
+            _t("Invoice marked as total return.")
         );
     }
 
     async setPending() {
-        await this._runAction("set_pending", "Failed to set return pending.", {}, "Return moved to pending.");
+        await this._runAction("set_pending", _t("Failed to set return pending."), {}, _t("Return moved to pending."));
     }
 
     async pushToEplus() {
@@ -229,7 +229,7 @@ class AbSalesReturnUiApiAction extends Component {
             });
             this._applyRecord(record);
         } catch (error) {
-            this.notification.add(this._messageFromError(error, "Failed to update line."), {
+            this.notification.add(this._messageFromError(error, _t("Failed to update line.")), {
                 type: "danger",
             });
             await this.load();

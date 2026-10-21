@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ab_sales.BillWizardPrintDialog">
-        <Dialog title="'Print Receipt'" size="'md'">
+        <Dialog title.translate="Print Receipt" size="'md'">
             <div class="d-flex flex-column gap-3">
                 <div>
                     <label class="form-label">Paper Size</label>
@@ -108,7 +108,7 @@
                                 relation="'ab_product'"
                                 value="state.filters.productSelection"
                                 onUpdate="onProductSelectionUpdate"
-                                placeholder="'Exact code, then product name'"
+                                placeholder.translate="Exact code, then product name"
                                 domain="productSelectionDomain"
                                 context="{ab_bill_wizard_product_search: true}"
                                 canCreate="false"
@@ -116,7 +116,7 @@
                                 canQuickCreate="false"
                                 canOpen="false"
                                 canWrite="false"
-                                string="'Products'"
+                                string.translate="Products"
                         />
                     </div>
                     <div class="o_ab_sales_bill_wizard_filter">
@@ -209,7 +209,7 @@
                                         <div class="d-flex gap-1 align-items-center">
                                             <span class="badge"
                                                   t-att-class="bill.document_type === 'return' ? 'text-bg-danger' : 'text-bg-secondary'">
-                                                <t t-esc="bill.document_type === 'return' ? 'Return' : 'Sales'"/>
+                                                <t t-if="bill.document_type === 'return'">Return</t><t t-else="">Sales</t>
                                             </span>
                                             <span class="badge"
                                                   t-att-class="bill.status === 'saved' ? 'text-bg-success' : 'text-bg-info'"
@@ -271,7 +271,7 @@
                                     <span>
                                         <span class="badge"
                                               t-att-class="state.details.document_type === 'return' ? 'text-bg-danger' : 'text-bg-secondary'">
-                                            <t t-esc="state.details.document_type === 'return' ? 'Return' : 'Sales'"/>
+                                            <t t-if="state.details.document_type === 'return'">Return</t><t t-else="">Sales</t>
                                         </span>
                                     </span>
                                     <span><i class="fa fa-flag" aria-hidden="true"/> <t t-esc="billStatusLabel(state.details.status)"/></span>

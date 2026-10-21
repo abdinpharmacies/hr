@@ -385,7 +385,7 @@ class AbSalesPosSubmitDialog extends Component {
                 this.state.new_customer_name = "";
                 this.state.new_customer_phone = "";
                 this.state.new_customer_address = "";
-                this.state.message = "Customer selected.";
+                this.state.message = _t("Customer selected.");
             },
         });
     }
@@ -482,7 +482,7 @@ class AbSalesPosSubmitDialog extends Component {
         // }
         this.state.errors = errors;
         this.state.message = Object.keys(errors).length
-            ? "Please fill the required fields."
+            ? _t("Please fill the required fields.")
             : "";
         return !Object.keys(errors).length;
     }
@@ -676,7 +676,7 @@ class AbSalesPosCustomerLookupDialog extends Component {
         const phone = (this.state.phone || "").trim();
         if (!phone) {
             this.state.errors = {phone: true};
-            this.state.message = "Enter a phone number.";
+            this.state.message = _t("Enter a phone number.");
             return;
         }
         const branchId = this._branchId();
@@ -700,18 +700,18 @@ class AbSalesPosCustomerLookupDialog extends Component {
             } else if (result?.status === "need_store") {
                 this.state.mode = "search";
                 this.state.customer = null;
-                this.state.message = result?.message || "Select a branch to search BConnect.";
+                this.state.message = result?.message || _t("Select a branch to search BConnect.");
                 this.state.errors = {branch: true};
                 this.state.pendingBconnect = true;
             } else if (result?.status === "not_found") {
                 this.state.mode = "create";
                 this.state.customer = null;
-                this.state.message = "Customer not found. Enter details to create.";
+                this.state.message = _t("Customer not found. Enter details to create.");
             } else {
-                this.state.message = result?.message || "No customer found.";
+                this.state.message = result?.message || _t("No customer found.");
             }
         } catch (err) {
-            this.state.message = this._getRpcErrorMessage(err, "Lookup failed.");
+            this.state.message = this._getRpcErrorMessage(err, _t("Lookup failed."));
         } finally {
             this.state.loading = false;
         }
@@ -741,8 +741,8 @@ class AbSalesPosCustomerLookupDialog extends Component {
         if (Object.keys(errors).length) {
             this.state.errors = errors;
             this.state.message = errors.branch && Object.keys(errors).length === 1
-                ? "Select a branch."
-                : "Please fill the required fields.";
+                ? _t("Select a branch.")
+                : _t("Please fill the required fields.");
             return;
         }
         this.state.loading = true;
@@ -766,13 +766,13 @@ class AbSalesPosCustomerLookupDialog extends Component {
                 this.state.customer = result.customer;
                 this.state.mode = "found";
                 this.state.message = result?.status === "created"
-                    ? "Customer created in BConnect."
-                    : "Customer already exists in BConnect.";
+                    ? _t("Customer created in BConnect.")
+                    : _t("Customer already exists in BConnect.");
             } else {
-                this.state.message = result?.message || "Customer creation failed.";
+                this.state.message = result?.message || _t("Customer creation failed.");
             }
         } catch (err) {
-            this.state.message = this._getRpcErrorMessage(err, "Customer creation failed.");
+            this.state.message = this._getRpcErrorMessage(err, _t("Customer creation failed."));
         } finally {
             this.state.loading = false;
         }
@@ -793,6 +793,10 @@ class AbSalesPosCustomerLookupDialog extends Component {
 }
 
 class AbSalesPosValidationDialog extends Component {
+    get dialogTitle() {
+        return this.props.title || _t("Validation Error");
+    }
+
     static template = "ab_sales.PosValidationDialog";
     static components = {Dialog};
     static props = {
@@ -1472,6 +1476,9 @@ class AbSalesPosAction extends Component {
     }
 
     _slotBillLocked(bill) {
+        if (bill?.correction && bill.submission?.status === "rejected" &&
+            bill.correction.base_revision === bill.submission.revision &&
+            !bill.submission?.unresolved && !bill.submission?.in_progress) return false;
         return !!bill && (bill.submission?.attempted || bill.submission?.local_header_id ||
             bill.submission?.unresolved || bill.submission?.in_progress ||
             ["unknown", "rejected", "pending", "saved"].includes(bill.submission?.status));
@@ -1603,6 +1610,7 @@ class AbSalesPosAction extends Component {
         for (const bill of [...this.state.bills]) {
             const remote = server.get(bill.id);
             if (remote && this._slotBillLocked(remote)) {
+                if (!bill.submission?.in_progress && !remote.correction) delete bill.correction;
                 if (!bill.submission?.in_progress && (remote.submission?.revision || 0) >= (bill.submission?.revision || 0)) {
                     bill.submission = {...bill.submission, ...remote.submission};
                     this._syncBranchDisplay(bill);
@@ -1876,9 +1884,9 @@ class AbSalesPosAction extends Component {
                 settings: payload,
             });
             this._applyPosUiSettings(result?.settings || payload, true);
-            this.notification.add("Settings saved.", {type: "success"});
+            this.notification.add(_t("Settings saved."), {type: "success"});
         } catch (err) {
-            this.notification.add(err?.message || "Failed to save settings.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to save settings."), {type: "danger"});
         } finally {
             this.state.posSettingsSaving = false;
         }
@@ -2192,16 +2200,16 @@ class AbSalesPosAction extends Component {
         }
         const text = this.state.customerInsights?.customer?.last_address || "";
         if (!text) {
-            this.notification.add("No address to copy.", {type: "warning"});
+            this.notification.add(_t("No address to copy."), {type: "warning"});
             return;
         }
         try {
             if (navigator?.clipboard?.writeText) {
                 await navigator.clipboard.writeText(text);
             }
-            this.notification.add("Address copied.", {type: "success"});
+            this.notification.add(_t("Address copied."), {type: "success"});
         } catch {
-            this.notification.add("Copy failed.", {type: "danger"});
+            this.notification.add(_t("Copy failed."), {type: "danger"});
         }
     }
 
@@ -2209,7 +2217,7 @@ class AbSalesPosAction extends Component {
         const bill = this.currentBill;
         const phone = this.activeCustomerPhone(bill);
         if (!phone) {
-            this.notification.add("Select a customer with phone number first.", {type: "warning"});
+            this.notification.add(_t("Select a customer with phone number first."), {type: "warning"});
             return;
         }
         try {
@@ -2218,7 +2226,7 @@ class AbSalesPosAction extends Component {
                 limit: 20,
             });
             if (!Array.isArray(invoices) || !invoices.length) {
-                this.notification.add("No invoices found for this customer.", {type: "warning"});
+                this.notification.add(_t("No invoices found for this customer."), {type: "warning"});
                 return;
             }
             this.dialog.add(AbSalesPosAllInvoicesDialog, {
@@ -2226,7 +2234,7 @@ class AbSalesPosAction extends Component {
                 onAddAll: (payload) => this.addLastInvoiceItems(payload),
             });
         } catch (err) {
-            this.notification.add(err?.message || "Failed to load invoices.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to load invoices."), {type: "danger"});
         }
     }
 
@@ -2236,7 +2244,7 @@ class AbSalesPosAction extends Component {
         }
         const lines = invoice?.lines || [];
         if (!lines.length) {
-            this.notification.add("No items in selected invoice.", {type: "warning"});
+            this.notification.add(_t("No items in selected invoice."), {type: "warning"});
             return;
         }
         let addedLines = 0;
@@ -2262,13 +2270,13 @@ class AbSalesPosAction extends Component {
             addedLines += 1;
         }
         if (!addedLines) {
-            this.notification.add("No valid items to add.", {type: "warning"});
+            this.notification.add(_t("No valid items to add."), {type: "warning"});
             return;
         }
         if (firstLine) {
             this._focusLineQty(firstLine);
         }
-        this.notification.add(`Added ${addedLines} item(s) from selected invoice.`, {type: "success"});
+        this.notification.add(_t("Added %(count)s item(s) from selected invoice.", {count: addedLines}), {type: "success"});
     }
 
     storeDomain() {
@@ -2372,6 +2380,8 @@ class AbSalesPosAction extends Component {
         normalized.manual_clear = !!raw.manual_clear;
         normalized.total_net_amount = parseFloat(raw.total_net_amount || 0) || 0;
         normalized.message = raw.message || "";
+        normalized.validation_errors = Array.isArray(raw.validation_errors) ? raw.validation_errors : [];
+        normalized.validation_pending = !!raw.validation_pending;
         normalized.discount_amount = parseFloat(raw.discount_amount || 0) || 0;
         normalized.total_after = parseFloat(raw.total_after || 0) || 0;
         return normalized;
@@ -2952,7 +2962,7 @@ class AbSalesPosAction extends Component {
             bill.header.bill_customer_address = bill.header.invoice_address || "";
             bill.header.customer_mode = "current";
         } catch (err) {
-            this.notification.add(err?.message || "Failed to load customer.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to load customer."), {type: "danger"});
         }
         bill.updated_at = new Date().toISOString();
         this.persistCache();
@@ -3043,7 +3053,7 @@ class AbSalesPosAction extends Component {
                 "address",
             ]);
         } catch (err) {
-            this.notification.add(err?.message || "Failed to search customers.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to search customers."), {type: "danger"});
         } finally {
             this.state.loadingCustomers = false;
         }
@@ -3747,7 +3757,7 @@ class AbSalesPosAction extends Component {
         }
         const bill = this.currentBill;
         if (!bill) {
-            this.notification.add("Create a bill before scanning.", {type: "warning"});
+            this.notification.add(_t("Create a bill before scanning."), {type: "warning"});
             return;
         }
         this.state.loadingProducts = true;
@@ -3763,7 +3773,7 @@ class AbSalesPosAction extends Component {
                 this.addProductAndFocus(products[0], 1);
             }
         } catch (err) {
-            this.notification.add(err?.message || "Barcode scan failed.", {type: "danger"});
+            this.notification.add(err?.message || _t("Barcode scan failed."), {type: "danger"});
         } finally {
             this.state.loadingProducts = false;
         }
@@ -3815,7 +3825,7 @@ class AbSalesPosAction extends Component {
                 product_ids: productIds,
             });
             const count = Array.isArray(result?.product_ids) ? result.product_ids.length : 0;
-            this.notification.add(`Barcode links saved (${count} product(s)).`, {type: "success"});
+            this.notification.add(_t("Barcode links saved (%(count)s product(s)).", {count}), {type: "success"});
             const bill = this.currentBill;
             if (bill) {
                 const storeId = bill.header?.store_id || false;
@@ -3826,7 +3836,7 @@ class AbSalesPosAction extends Component {
                 }
             }
         } catch (err) {
-            this.notification.add(err?.message || "Failed to save barcode links.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to save barcode links."), {type: "danger"});
         }
     }
 
@@ -4066,7 +4076,7 @@ class AbSalesPosAction extends Component {
         if (!this.currentBill?.lines.includes(line)) {
             return;
         }
-        if (!this.billEditable(this.currentBill)) {
+        if (!this.promotionEditable(this.currentBill)) {
             return;
         }
         line.qty_str = value;
@@ -4146,12 +4156,14 @@ class AbSalesPosAction extends Component {
             return;
         }
         const target = bill || this.currentBill;
-        if (!this.billEditable(target)) {
+        if (!this.promotionEditable(target)) {
             return;
         }
         if (this._promoTimer) {
             clearTimeout(this._promoTimer);
         }
+        this._promoRequestId += 1;
+        if (target.promo) target.promo.validation_pending = true;
         this._promoTimer = setTimeout(() => {
             this.refreshPromotions(target);
         }, 350);
@@ -4214,7 +4226,7 @@ class AbSalesPosAction extends Component {
                 applied_program_id: target.promo.selected_id || false,
                 manual_clear: !!target.promo.manual_clear,
             });
-            if (requestId !== this._promoRequestId || !this.billEditable(target)) {
+            if (requestId !== this._promoRequestId || !this.promotionEditable(target)) {
                 return;
             }
             target.promo.available = Array.isArray(result?.available_programs) ? result.available_programs : [];
@@ -4227,6 +4239,8 @@ class AbSalesPosAction extends Component {
             target.promo.selected_name =
                 result?.selected_program_name || this._findPromoName(target.promo.available, target.promo.selected_id);
             target.promo.message = result?.promo_message || "";
+            target.promo.validation_errors = result?.validation_errors || [];
+            target.promo.validation_pending = false;
             target.promo.discount_amount = parseFloat(result?.promo_discount_amount || 0) || 0;
             target.promo.total_after = parseFloat(result?.amount_total_after_promo || 0) || 0;
             const totalNetAmount = parseFloat(result?.total_net_amount);
@@ -4243,18 +4257,19 @@ class AbSalesPosAction extends Component {
                 this._promoDisabled = true;
                 this._resetPromotions(target);
             } else {
-                this.notification.add(message || "Failed to load promotions.", {type: "warning"});
+                this.notification.add(message || _t("Failed to load promotions."), {type: "warning"});
             }
         } finally {
             if (requestId === this._promoRequestId) {
                 target.promo.loading = false;
+                target.promo.validation_pending = false;
                 this.persistCache();
             }
         }
     }
 
     selectPromotion(program) {
-        if (!this.billEditable(this.currentBill)) {
+        if (!this.promotionEditable(this.currentBill)) {
             return;
         }
         const bill = this.currentBill;
@@ -4283,7 +4298,7 @@ class AbSalesPosAction extends Component {
     }
 
     clearPromotion() {
-        if (!this.billEditable(this.currentBill)) {
+        if (!this.promotionEditable(this.currentBill)) {
             return;
         }
         const bill = this.currentBill;
@@ -4407,7 +4422,7 @@ class AbSalesPosAction extends Component {
             this.schedulePromoRefresh(this.currentBill);
         } catch (err) {
             if (!options?.silent) {
-                this.notification.add(err?.message || "Failed to load line details.", {type: "danger"});
+                this.notification.add(err?.message || _t("Failed to load line details."), {type: "danger"});
             }
         } finally {
             line.loading_details = false;
@@ -4475,7 +4490,7 @@ class AbSalesPosAction extends Component {
 
     _getRpcErrorMessage(err) {
         if (!err) {
-            return "Submit failed.";
+            return _t("Submit failed.");
         }
         const data = err.data || err?.response?.data || {};
         const rpcArgs = data?.["arguments"];
@@ -4483,7 +4498,7 @@ class AbSalesPosAction extends Component {
             (Array.isArray(rpcArgs) && rpcArgs[0]) ||
             data?.message ||
             err.message ||
-            "Submit failed."
+            _t("Submit failed.")
         );
     }
 
@@ -4497,7 +4512,7 @@ class AbSalesPosAction extends Component {
         }
         this.dialog.add(FormViewDialog, {
             resModel: "ab_product_balance_wizard",
-            title: "Store Balances",
+            title: _t("Store Balances"),
             context: {
                 default_product_id: product.id,
             },
@@ -4509,13 +4524,13 @@ class AbSalesPosAction extends Component {
     async openBillWizard() {
         this.action.doAction({
             type: "ir.actions.client",
-            name: "Bill Wizard",
+            name: _t("Bill Wizard"),
             tag: "ab_sales.bill_wizard",
         });
     }
 
     billEditable(bill = this.currentBill) {
-        return this.branchBillEditable(bill) && !this.state.submitting && !this.state.draftCreating;
+        return !bill?.correction && this.branchBillEditable(bill) && !this.state.submitting && !this.state.draftCreating && !this.state.submissionPreparing && !this.state.correctionBusy;
     }
 
     _plainDraftRemovable(bill) {
@@ -4578,8 +4593,74 @@ class AbSalesPosAction extends Component {
             .map((bill) => [bill.header.pos_client_token, this._draftDiscardFingerprint(bill)]));
     }
 
+    promotionEditable(bill = this.currentBill) {
+        return (this.billEditable(bill) || (bill?.correction && this.branchBillEditable(bill))) &&
+            !this.state.submitting && !this.state.submissionPreparing && !this.state.correctionBusy;
+    }
+
+    async _checkPromotionBeforeSubmission(bill) {
+        if (!bill.promo?.applied_id && !bill.promo?.selected_id) return true;
+        const result = await this.orm.call("ab_sales_pos_api", "pos_promotions", [], {
+            store_id: bill.header.store_id, lines: this._promoPayloadLines(bill),
+            customer_id: bill.header.customer_id || false,
+            applied_program_id: bill.promo.selected_id || bill.promo.applied_id,
+            manual_clear: !!bill.promo.manual_clear, contract_id: bill.header.contract_id || false,
+            total_invoice_discount: bill.header.total_invoice_discount || 0,
+        });
+        bill.promo.validation_errors = result.validation_errors || [];
+        bill.promo.validation_pending = false;
+        if (bill.promo.validation_errors.length) {
+            bill.promo.message = bill.promo.validation_errors[0].message;
+            this.persistCache();
+            this._openSubmitErrorDialog(bill.promo.message, _t("Promotion quantity exceeded"));
+            return false;
+        }
+        return true;
+    }
+
+    async beginBillCorrection() {
+        return this._changeBillCorrection(false);
+    }
+
+    async cancelBillCorrection() {
+        return this._changeBillCorrection(true);
+    }
+
+    async _changeBillCorrection(cancel) {
+        const bill = this.currentBill;
+        if (!bill || this.state.submitting || this.state.correctionBusy || this.state.submissionPreparing) return;
+        const scope = this._draftRequestScope();
+        this.state.correctionBusy = true;
+        this._promoRequestId += 1;
+        try {
+            await this._flushDraftSaves();
+            if (scope !== this._draftRequestScope()) return;
+            const result = await this.orm.call("ab_sales_pos_api",
+                cancel ? "pos_cancel_bill_correction" : "pos_begin_bill_correction", [], {
+                    token: bill.header.pos_client_token, draft_revision: bill.draft_revision,
+                    pos_hr_session_token: this._posDraftSessionToken(),
+                    ...(cancel ? {correction_id: bill.correction.id} : {}),
+                });
+            if (scope !== this._draftRequestScope()) return;
+            const remote = result.bills?.find(item => item.id === bill.id);
+            if (!remote) throw new Error(_t("The bill could not be refreshed."));
+            const index = this.state.bills.findIndex(item => item.id === bill.id);
+            if (index < 0) return;
+            this.state.bills.splice(index, 1, this._normalizeBill(remote));
+            this._acknowledgedDrafts.delete(bill.id);
+            this._assignLocalDraftSlots();
+            this._writeLocalCache();
+        } catch (error) {
+            this._openSubmitErrorDialog(this._getRpcErrorMessage(error), _t("Cannot correct bill"));
+        } finally {
+            this.state.correctionBusy = false;
+            if (this.currentBill?.correction) this.refreshPromotions(this.currentBill);
+        }
+    }
+
     submissionStatusLabel(bill) {
         if (bill.submission?.in_progress) return _t("Submitting...");
+        if (bill.correction) return _t("Correcting rejected bill");
         if (bill.submission?.unresolved) return _t("Checking submission...");
         const labels = {prepending: _t("PrePending"), unknown: _t("Unknown"),
             rejected: _t("Rejected"), pending: _t("Pending"), saved: _t("Saved")};
@@ -4616,7 +4697,7 @@ class AbSalesPosAction extends Component {
             return;
         }
         if (bill.submission?.checking || ["pending", "saved"].includes(bill.submission?.status)) return;
-        if (this._slotBillLocked(bill)) {
+        if (bill.correction || this._slotBillLocked(bill)) {
             await this._submitBillInternal(bill);
             return;
         }
@@ -4629,6 +4710,19 @@ class AbSalesPosAction extends Component {
         }
         if (this.state.submitting || this.state.draftManaging || this.state.draftDeleting || this.state.branchEditInFlight) {
             return;
+        }
+        if (this.state.submissionPreparing || this.state.correctionBusy) return;
+        const correcting = bill.correction ? {...bill.correction} : null;
+        if (correcting || !this._slotBillLocked(bill)) {
+            this.state.submissionPreparing = true;
+            this._promoRequestId += 1;
+            try {
+                if (!await this._checkPromotionBeforeSubmission(bill)) return;
+                if (correcting) await this._flushDraftSaves();
+            } catch (error) {
+                this._openSubmitErrorDialog(this._getRpcErrorMessage(error), _t("Cannot submit bill"));
+                return;
+            } finally { this.state.submissionPreparing = false; }
         }
         this.state.submitting = true;
         this._promoRequestId += 1;
@@ -4651,6 +4745,7 @@ class AbSalesPosAction extends Component {
                 on_existing_token: "warn",
                 pos_hr_session_token: this._posDraftSessionToken() || false,
                 submission_guard_version: 1,
+                ...(correcting ? {correction: {...correcting, draft_revision: bill.draft_revision}} : {}),
             });
             if (result?.submission_guard_version === 1) {
                 if (!this.applyBranchSubmission(bill, result)) {
@@ -4716,7 +4811,7 @@ class AbSalesPosAction extends Component {
             const original = this[name];
             if (!original) continue;
             this[name] = async (...args) => {
-                if (!this.branchBillEditable(this.currentBill) ||
+                if (!this.billEditable(this.currentBill) ||
                     (name === "onStoreM2OUpdate" && this.currentBill?.submission?.attempted)) return;
                 this.state.branchEditInFlight = (this.state.branchEditInFlight || 0) + 1;
                 try { return await original.apply(this, args); }
@@ -4775,7 +4870,7 @@ class AbSalesPosAction extends Component {
     }
 
     branchBillEditable(bill) {
-        return !!bill && !this.state.draftManaging && !this.state.draftDeleting && !this.state.draftCacheAccessBlocked && !bill.submission?.checking && !this._slotBillLocked(bill);
+        return !!bill && !this.state.submissionPreparing && !this.state.correctionBusy && !this.state.draftManaging && !this.state.draftDeleting && !this.state.draftCacheAccessBlocked && !bill.submission?.checking && !this._slotBillLocked(bill);
     }
 
     applyBranchSubmission(bill, result) {
@@ -4794,6 +4889,10 @@ class AbSalesPosAction extends Component {
             local_header_id: result.local_header_id, revision: result.request_revision,
             branch_header_id: result.branch_header_id, unresolved: false,
             in_progress: !!result.submission_in_progress};
+        if (!result.correction || result.correction.id !== bill.correction?.id) {
+            if (bill.correction) this._correctionRefreshTokens = new Set([...(this._correctionRefreshTokens || []), bill.id]);
+            delete bill.correction;
+        }
         bill.eplus_serial = result.eplus_serial;
         this._syncBranchDisplay(bill);
         return true;
@@ -4819,7 +4918,7 @@ class AbSalesPosAction extends Component {
                         pos_hr_session_token: this._posDraftSessionToken(),
                     });
                     if (scope !== this._draftRequestScope()) return;
-                    if (!Array.isArray(results)) throw new Error("Invalid submission states");
+                    if (!Array.isArray(results)) throw new Error(_t("Invalid submission states"));
                     for (const result of results) {
                         const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
                         if (snap) found.push(result.token);
@@ -4827,6 +4926,20 @@ class AbSalesPosAction extends Component {
                             this.applyBranchSubmission(snap.bill, result);
                         }
                     }
+                }
+                if (this._correctionRefreshTokens?.size) {
+                    const tokens = [...this._correctionRefreshTokens];
+                    const workspace = await this.orm.call("ab_sales_pos_api", "pos_draft_workspace", [], {
+                        ...this._draftScopeArgs(), tokens,
+                    });
+                    if (scope !== this._draftRequestScope()) return;
+                    for (const remote of workspace.bills || []) {
+                        const index = this.state.bills.findIndex(bill => bill.id === remote.id);
+                        if (index >= 0 && !this.state.bills[index].submission?.in_progress) {
+                            this.state.bills.splice(index, 1, this._normalizeBill(remote));
+                        }
+                    }
+                    this._correctionRefreshTokens = new Set();
                 }
                 if (snapshots.some(({bill}) => ["pending", "saved"].includes(bill.submission?.status))) {
                     await this._syncCompletedDrafts();
@@ -4985,7 +5098,7 @@ class AbSalesPosAction extends Component {
                 await document.exitFullscreen();
             }
         } catch {
-            this.notification.add("Fullscreen not available.", {type: "warning"});
+            this.notification.add(_t("Fullscreen not available."), {type: "warning"});
         }
     }
 

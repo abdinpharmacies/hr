@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import { patch } from "@web/core/utils/patch";
 import { FormController } from "@web/views/form/form_controller";
 import { useChildRef, useService } from "@web/core/utils/hooks";
@@ -131,7 +133,7 @@ class AbSalesBarcodeQtyDialog extends Component {
         }
         this.dialog.add(FormViewDialog, {
             resModel: "ab_product_balance_wizard",
-            title: "Store Balances",
+            title: _t("Store Balances"),
             context: {
                 default_product_id: product.id,
             },
@@ -216,19 +218,19 @@ patch(FormController.prototype, {
             }
             const status = this.model?.root?.data?.status;
             if (status && status !== "prepending") {
-                this.abSalesBarcodeNotification.add("Invoice is not editable.", { type: "warning" });
+                this.abSalesBarcodeNotification.add(_t("Invoice is not editable."), { type: "warning" });
                 return;
             }
 
             const headerId = await this._abSalesBarcodeEnsureSavedHeader();
             if (!headerId) {
-                this.abSalesBarcodeNotification.add("Please save the invoice before scanning.", { type: "warning" });
+                this.abSalesBarcodeNotification.add(_t("Please save the invoice before scanning."), { type: "warning" });
                 return;
             }
 
             const products = await this._abSalesBarcodeFetchProducts(barcode);
             if (!products.length) {
-                this.abSalesBarcodeNotification.add(`No product found for barcode ${barcode}.`, { type: "warning" });
+                this.abSalesBarcodeNotification.add(_t("No product found for barcode %(barcode)s.", {barcode}), { type: "warning" });
                 return;
             }
             if (products.length === 1) {
@@ -249,7 +251,7 @@ patch(FormController.prototype, {
                 },
             });
         } catch (err) {
-            this.abSalesBarcodeNotification.add(err?.message || "Barcode scan failed.", { type: "danger" });
+            this.abSalesBarcodeNotification.add(err?.message || _t("Barcode scan failed."), { type: "danger" });
         }
     },
 

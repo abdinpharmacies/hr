@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {Component, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {AbSalesBillWizardPrintDialog} from "../bill_wizard/print_dialog";
@@ -36,7 +38,7 @@ const firstText = (...values) => {
     return "";
 };
 
-const getRpcErrorMessage = (err, fallback = "Failed to print receipt.") => {
+const getRpcErrorMessage = (err, fallback = _t("Failed to print receipt.")) => {
     const data = err?.data || err?.response?.data || {};
     const args = data?.arguments;
     return data?.message || (Array.isArray(args) && args[0]) || err?.message || fallback;
@@ -216,12 +218,12 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
             ctx.state.printerId = selected ? selected.id : 0;
             ctx.state.printerName = selected?.label || String(result?.printer_name || "").trim();
             ctx.state.defaultPrintFormat = selected?.paper_size || (result?.print_format === "pos_80mm" ? "pos_80mm" : "a4");
-            ctx.state.receiptHeader = result?.receipt_header || "Sales Receipt";
-            ctx.state.receiptFooter = result?.receipt_footer || "Thank you.";
+            ctx.state.receiptHeader = result?.receipt_header || _t("Sales Receipt");
+            ctx.state.receiptFooter = result?.receipt_footer || _t("Thank you.");
             return printerRecords;
         } catch (err) {
             if (!silent) {
-                ctx.notification.add(getRpcErrorMessage(err, "Failed to load printer options."), {type: "warning"});
+                ctx.notification.add(getRpcErrorMessage(err, _t("Failed to load printer options.")), {type: "warning"});
             }
             return ctx.state.availablePrinters || [];
         }
@@ -231,7 +233,7 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
         const startText = String(startIp || "").trim();
         const endText = String(endIp || "").trim();
         if (!startText || !endText) {
-            ctx.notification.add("Start IP and End IP are required.", {type: "warning"});
+            ctx.notification.add(_t("Start IP and End IP are required."), {type: "warning"});
             return ctx.state.availablePrinters || [];
         }
         try {
@@ -251,12 +253,12 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
             const installedCount = parseInt(result?.installed_count || 0, 10) || 0;
             const discoveredCount = parseInt(result?.discovered_count || 0, 10) || 0;
             ctx.notification.add(
-                `Discovery completed. Discovered ${discoveredCount}, installed ${installedCount}.`,
+                _t("Discovery completed. Discovered %(discovered)s, installed %(installed)s.", {discovered: discoveredCount, installed: installedCount}),
                 {type: "success"}
             );
             return ctx.state.availablePrinters || [];
         } catch (err) {
-            ctx.notification.add(getRpcErrorMessage(err, "Printer discovery failed."), {type: "danger"});
+            ctx.notification.add(getRpcErrorMessage(err, _t("Printer discovery failed.")), {type: "danger"});
             return ctx.state.availablePrinters || [];
         }
     };
@@ -293,7 +295,7 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
     ctx._previewCurrentBillReceipt = async (payload = {}) => {
         const bill = ctx.currentBill;
         if (!bill || !bill.lines?.length) {
-            ctx.notification.add("No lines to preview.", {type: "warning"});
+            ctx.notification.add(_t("No lines to preview."), {type: "warning"});
             return;
         }
         await ctx._loadPrintOptions({silent: true});
@@ -321,15 +323,15 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
             });
             const content = String(result?.content || "").trim();
             if (!content) {
-                ctx.notification.add("Nothing to preview.", {type: "warning"});
+                ctx.notification.add(_t("Nothing to preview."), {type: "warning"});
                 return;
             }
             const win = openBillWizardPrintWindow(content, format, {focus: true});
             if (!win) {
-                ctx.notification.add("Popup blocked. Allow popups to print.", {type: "warning"});
+                ctx.notification.add(_t("Popup blocked. Allow popups to print."), {type: "warning"});
             }
         } catch (err) {
-            ctx.notification.add(getRpcErrorMessage(err, "Preview failed."), {type: "danger"});
+            ctx.notification.add(getRpcErrorMessage(err, _t("Preview failed.")), {type: "danger"});
         }
     };
 
@@ -355,7 +357,7 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
                 printer: selectedRecord,
             });
         } catch (err) {
-            ctx.notification.add(getRpcErrorMessage(err, "Failed to save print preferences."), {type: "danger"});
+            ctx.notification.add(getRpcErrorMessage(err, _t("Failed to save print preferences.")), {type: "danger"});
             return;
         }
         try {
@@ -370,23 +372,23 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
             ctx.state.printerId = Number.parseInt(result?.printer_id || ctx.state.printerId || 0, 10) || 0;
             ctx.notification.add(
                 finalPrinter
-                    ? `Print command sent to '${finalPrinter}'.`
-                    : "Print command sent to default system printer.",
+                    ? _t("Print command sent to '%(printer)s'.", {printer: finalPrinter})
+                    : _t("Print command sent to default system printer."),
                 {type: "success"}
             );
         } catch (err) {
-            ctx.notification.add(getRpcErrorMessage(err, "Direct print failed."), {type: "danger"});
+            ctx.notification.add(getRpcErrorMessage(err, _t("Direct print failed.")), {type: "danger"});
         }
     };
 
     ctx.openPrintDialog = async () => {
         const bill = ctx.currentBill;
         if (!bill) {
-            ctx.notification.add("Select a bill to print.", {type: "warning"});
+            ctx.notification.add(_t("Select a bill to print."), {type: "warning"});
             return;
         }
         if (!bill.lines || !bill.lines.length) {
-            ctx.notification.add("Add products before printing.", {type: "warning"});
+            ctx.notification.add(_t("Add products before printing."), {type: "warning"});
             return;
         }
         await ctx._loadPrintOptions({silent: true});
@@ -437,9 +439,9 @@ export const bindPrinterActions = (ctx, {parseQtyExpression}) => {
             ctx.state.printerName = result?.printer_name || "";
             ctx.state.receiptHeader = result?.receipt_header || "";
             ctx.state.receiptFooter = result?.receipt_footer || "";
-            ctx.notification.add("Default printer saved.", {type: "success"});
+            ctx.notification.add(_t("Default printer saved."), {type: "success"});
         } catch (err) {
-            ctx.notification.add(err?.message || "Failed to save printer.", {type: "danger"});
+            ctx.notification.add(err?.message || _t("Failed to save printer."), {type: "danger"});
         }
     };
 };

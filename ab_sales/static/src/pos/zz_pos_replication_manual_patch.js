@@ -1,11 +1,13 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {Component, onWillStart, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
 
-function getRpcErrorMessage(err, fallback = "Failed to trigger cron.") {
+function getRpcErrorMessage(err, fallback = _t("Failed to trigger cron.")) {
     if (!err) {
         return fallback;
     }
@@ -79,7 +81,7 @@ class AbSalesPosReplicationDialog extends Component {
             await this.props.runCron(this.state.selectedCronId);
             this.props.close();
         } catch (err) {
-            this.state.message = getRpcErrorMessage(err, "Failed to trigger cron.");
+            this.state.message = getRpcErrorMessage(err, _t("Failed to trigger cron."));
         } finally {
             this.state.running = false;
         }
@@ -109,7 +111,7 @@ if (PosAction) {
             const result = await this.orm.call("ab_sales_ui_api", "pos_replication_run_cron", [], {
                 cron_id: cronId,
             });
-            this.notification.add(result?.message || "Cron has been triggered.", {type: "success"});
+            this.notification.add(result?.message || _t("Cron has been triggered."), {type: "success"});
             return result;
         },
 

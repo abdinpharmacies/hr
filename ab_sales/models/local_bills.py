@@ -61,7 +61,8 @@ class LocalSales(models.Model):
             return
         self.check_access('write')
         names = ['status', 'pos_client_token', 'store_id', 'branch_submission_started',
-                 'branch_submission_payload', 'branch_request_revision', 'eplus_serial', 'branch_header_id']
+                 'branch_submission_payload', 'branch_request_revision', 'eplus_serial', 'branch_header_id',
+                 'branch_correction', 'branch_submission_history']
         self.flush_recordset(names)
         try:
             with self.env.cr.savepoint():
@@ -92,7 +93,8 @@ class LocalSales(models.Model):
         if not self._branch_internal():
             for vals in vals_list:
                 if (vals.get('status', 'prepending') != 'prepending' or any(vals.get(name) for name in
-                        ('eplus_serial', 'branch_header_id', 'branch_submission_started', 'branch_submission_payload'))
+                        ('eplus_serial', 'branch_header_id', 'branch_submission_started', 'branch_submission_payload',
+                         'branch_correction', 'branch_submission_history'))
                         or vals.get('branch_request_revision', 1) != 1):
                     raise UserError(_('Callcenter bills must start in PrePending status.'))
         return super().create(vals_list)
@@ -101,7 +103,8 @@ class LocalSales(models.Model):
         if not self._branch_internal():
             self._lock_branch_bill()
             protected = {'status', 'eplus_serial', 'branch_submission_payload', 'branch_submission_started',
-                         'branch_header_id', 'branch_request_revision', 'push_state', 'push_message'}
+                         'branch_header_id', 'branch_request_revision', 'push_state', 'push_message',
+                         'branch_correction', 'branch_submission_history'}
             for record in self:
                 if any(record[name] != value for name, value in vals.items() if name in protected):
                     raise AccessError(_('Branch submission metadata is read-only.'))
@@ -323,6 +326,9 @@ class LocalSubmission(models.TransientModel):
                     'branch_header_id', 'eplus_serial', 'push_state', 'push_message'):
             values.pop(key, None)
         values['status'] = 'prepending'
+        existing = self.env['ab_sales_header'].search(fields.Domain('pos_client_token', '=', token), limit=1)
+        if not existing or not existing.branch_submission_started:
+            self._validate_submission_promotion(payload)
         header, duplicate, _policy = self._pos_create_prepending_header_from_payload(payload)
         if header.store_id.id != int(values.get('store_id') or 0):
             raise AccessError(_('This store is not allowed.'))
@@ -339,6 +345,10 @@ class LocalSubmission(models.TransientModel):
                       '_branch_rpc_db': config.rpc_db, '_branch_store_serial': int(config.store_id.eplus_serial)}
             if stored and any(stored.get(name) != value for name, value in target.items()):
                 raise UserError(_('The branch database changed. Reconcile the original request before retrying.'))
+            if stored and payload.get('correction'):
+                stored = self._prepare_bill_correction(header, payload)
+            elif header._correction_marker():
+                raise UserError(_('Cancel the correction before retrying the original bill.'))
             if stored:
                 # Every retry replays the original request, including rejected bills.
                 # Never rebuild identifiers/prices or advance its revision from UI data.

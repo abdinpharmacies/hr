@@ -512,8 +512,9 @@
   display: flex;
   align-items: flex-start;
   gap: clamp(24px, 5vw, 120px);
-  flex: 1;
+  flex: 1 1 640px;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .o_ab_sales_pos_meta_column {

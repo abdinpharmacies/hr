@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ab_sales.BarcodeSelectDialog">
-        <Dialog title="'Select Product'" size="'md'" modalRef="modalRef">
+        <Dialog title.translate="Select Product" size="'md'" modalRef="modalRef">
             <div class="o_barcode_select_list d-flex flex-column gap-2">
                 <t t-if="!props.products || !props.products.length">
                     <div class="text-muted">No matching products.</div>
@@ -20,7 +20,7 @@
     </t>
 
     <t t-name="ab_sales.BarcodeQtyDialog">
-        <Dialog title="'Quantity'" size="'sm'" modalRef="modalRef">
+        <Dialog title.translate="Quantity" size="'sm'" modalRef="modalRef">
             <div class="o_ab_sales_barcode_qty_dialog d-flex flex-column gap-2">
                 <t t-if="props.product">
                     <div class="row g-2">

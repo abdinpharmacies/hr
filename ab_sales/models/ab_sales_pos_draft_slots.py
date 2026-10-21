@@ -70,7 +70,11 @@ class AbSalesPosDraftSlots(models.TransientModel):
                     attempted=header.branch_submission_started, local_header_id=header.id,
                     branch_header_id=header.branch_header_id, revision=header.branch_request_revision,
                     message=result['message'], unresolved=False, in_progress=busy)
-                bill['slot_locked'] = busy or not result['can_edit']
+                marker = result.get('correction')
+                correcting = bool(marker and bill.get('correction') == marker)
+                if not correcting:
+                    bill.pop('correction', None)
+                bill['slot_locked'] = busy or not (result['can_edit'] or correcting)
                 bill['slot_protected'] = True
                 bill['eplus_serial'] = header.eplus_serial
             else:
@@ -269,6 +273,10 @@ class AbSalesPosDraftSlots(models.TransientModel):
             record.invalidate_recordset()
             if record.state != "active":
                 return {"token": token, "status": record.state, "revision": record.revision}
+        if invoice and invoice._correction_marker():
+            self._validate_correction_bill(invoice, bill)
+        elif bill.get('correction'):
+            raise UserError(_('This correction is no longer active. Refresh the bill.'))
         prepared, completed = self._draft_authoritative_states([bill])
         if completed:
             if record:
@@ -314,7 +322,7 @@ class AbSalesPosDraftSlots(models.TransientModel):
                                   & fields.Domain("state", "=", "active"))
             active_bills, _completed = self._draft_authoritative_states([
                 deepcopy(row.bill_json) for row in active if row.store_id.id in stores])
-            occupied = sum(not value.get("slot_locked") for value in active_bills)
+            occupied = sum(not value.get("slot_locked") or bool(value.get("correction")) for value in active_bills)
             # Drafts in no-longer-permitted branches still consume shared capacity.
             occupied += len(active.filtered(lambda row: row.store_id.id not in stores))
             if not bill["slot_locked"] and occupied >= self._pos_draft_limit():

@@ -148,14 +148,14 @@
                                                     relation="'ab_store'"
                                                     value="storeValue()"
                                                     update="onStoreM2OUpdate"
-                                                    placeholder="'Store...'"
+                                                    placeholder.translate="Store..."
                                                     domain="() => storeDomain()"
                                                     canCreate="false"
                                                     canCreateEdit="false"
                                                     canQuickCreate="false"
                                                     canOpen="false"
                                                     canWrite="true"
-                                                    string="'Store'"
+                                                    string.translate="Store"
                                             />
                                             </fieldset>
                                             <span class="o_ab_sales_pos_inline_label ab_pos_store_code_label">Code</span>
@@ -204,25 +204,25 @@
                                              t-ref="customerM2O"
                                              t-on-input="onCustomerInput"
                                              t-on-pointerdown="onCustomerPointerDown">
-                                            <fieldset t-att-disabled="!branchBillEditable(currentBill)">
+                                            <fieldset t-att-disabled="!billEditable(currentBill)">
                                                 <ABMany2one
                                                     relation="'ab_customer'"
                                                     value="customerValue()"
                                                     update="onCustomerM2OUpdate"
-                                                    placeholder="'Customer...'"
+                                                    placeholder.translate="Customer..."
                                                     domain="() => []"
                                                     canCreate="false"
                                                     canCreateEdit="false"
                                                     canQuickCreate="false"
                                                     canOpen="false"
                                                     canWrite="true"
-                                                    string="'Customer'"
+                                                    string.translate="Customer"
                                             />
                                             </fieldset>
                                             <button class="btn btn-outline-primary btn-sm o_ab_sales_pos_customer_add ab_pos_customer_btn_add"
                                                     type="button"
                                                     t-on-pointerdown="captureCustomerInput"
-                                                    t-att-disabled="!branchBillEditable(currentBill)" t-on-click="openCustomerLookup">
+                                                    t-att-disabled="!billEditable(currentBill)" t-on-click="openCustomerLookup">
                                                 Add
                                             </button>
                                             <button class="btn btn-outline-secondary btn-sm ab_pos_customer_btn_invoices"
@@ -282,15 +282,22 @@
                             <button class="btn btn-success ab_pos_btn_submit_bill"
                                     type="button"
                                     t-on-click="submitCurrentBill"
-                                    t-att-disabled="state.submitting || state.branchEditInFlight || currentBill?.submission?.checking">
+                                    t-att-disabled="state.submitting || state.submissionPreparing || state.correctionBusy || state.branchEditInFlight || currentBill?.submission?.checking || (promotionEditable(currentBill) &amp;&amp; (currentBill.promo?.validation_pending || currentBill.promo?.validation_errors?.length))">
                                 <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
                                 <span class="ab_pos_btn_submit_bill_text">
-                                    <t t-if="state.submitting">Submitting...</t><t t-elif="currentBill?.submission?.attempted">Retry</t>
+                                    <t t-if="state.submitting || state.submissionPreparing">Submitting...</t><t t-elif="currentBill?.correction">Submit correction</t><t t-elif="currentBill?.submission?.attempted">Retry</t><t t-else="">Submit</t>
                                 </span>
                             </button>
                             <button class="btn btn-warning" type="button"
-                                    t-if="currentBill.submission_attempted or currentBill.submission_checking"
+                                    t-if="!currentBill.correction &amp;&amp; (currentBill.submission_attempted || currentBill.submission_checking)"
                                     t-att-disabled="state.submitting || state.draftDeleting" t-on-click="retryCurrentBill">Retry</button>
+                            <button class="btn btn-primary ab_pos_btn_correct_bill" type="button"
+                                    t-if="currentBill.submission?.status === 'rejected' &amp;&amp; !currentBill.correction"
+                                    t-att-disabled="state.submitting || state.correctionBusy || currentBill.submission?.in_progress"
+                                    t-on-click="beginBillCorrection">Correct bill</button>
+                            <button class="btn btn-outline-secondary ab_pos_btn_cancel_correction" type="button"
+                                    t-if="currentBill.correction" t-att-disabled="state.submitting || state.correctionBusy || state.submissionPreparing"
+                                    t-on-click="cancelBillCorrection">Cancel correction</button>
                             <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button"
                                     t-on-click="removeCurrentBill" t-att-disabled="!billRemovable(currentBill)">
                                 <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
@@ -315,9 +322,10 @@
                             <div class="alert alert-warning mb-0 ab_pos_submission_notice" role="status"
                                  t-if="currentBill.submission_attempted or currentBill.submission_checking">
                                 <strong class="d-block" t-esc="submissionStatusLabel(currentBill)"/>
-                                <span class="d-block" t-if="currentBill.submission_checking">Checking the submission result. Editing is temporarily disabled.</span>
+                                <span class="d-block" t-if="currentBill.correction">Adjust quantities or change the promotion, then submit the correction. The previous attempt is preserved.</span>
+                                <span class="d-block" t-elif="currentBill.submission_checking">Checking the submission result. Editing is temporarily disabled.</span>
                                 <span class="d-block" t-elif="currentBill.submission_in_progress">Submission is in progress. Editing is temporarily disabled.</span>
-                                <span class="d-block" t-elif="currentBill.submission_status === 'unknown'">This invoice is locked until its E-Plus submission is resolved. Use Retry.</span>
+                                <span class="d-block" t-elif="currentBill.submission_status === 'unknown'">This bill is locked until its branch submission is resolved. Check its status or retry.</span>
                             </div>
 
                             <div class="o_ab_sales_pos_layout ab_pos_layout_main">
@@ -396,8 +404,7 @@
                                     <span class="badge text-bg-light ab_pos_product_hint_badge_search">Search Results</span>
                                 </t>
                                         <t t-if="state.productQuery.trim() and pinnedResultsCount()">
-                                    <span class="badge text-bg-warning ab_pos_product_hint_badge_pinned"
-                                          t-esc="'Pinned: ' + pinnedResultsCount()"/>
+                                    <span class="badge text-bg-warning ab_pos_product_hint_badge_pinned"><span>Pinned:</span> <t t-esc="pinnedResultsCount()"/></span>
                                 </t>
                             </div>
                                     <t t-if="state.productResults.length">
@@ -468,10 +475,10 @@
                                                     <input class="form-control form-control-sm ab_pos_line_qty_input"
                                                             data-field="qty_str"
                                                            t-att-value="line.qty_str"
-                                                           t-att-disabled="!billEditable(currentBill)" t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
+                                                           t-att-disabled="!promotionEditable(currentBill)" t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
                                                 </td>
                                                 <td class="ab_pos_line_cell_uom">
-                                                    <fieldset t-att-disabled="!branchBillEditable(currentBill)">
+                                                    <fieldset t-att-disabled="!billEditable(currentBill)">
                                                 <ABMany2one
                                                             relation="'ab_product_uom'"
                                                             value="lineUomValue(line)"
@@ -482,7 +489,7 @@
                                                             canQuickCreate="false"
                                                             canOpen="false"
                                                             canWrite="true"
-                                                            string="'UoM'"
+                                                            string.translate="UoM"
                                                     />
                                             </fieldset>
                                                 </td>
@@ -501,7 +508,7 @@
                                                                 <button type="button"
                                                                         class="btn btn-outline-secondary o_ab_sales_pos_price_badge ab_pos_line_price_badge_btn"
                                                                         t-attf-class="#{p.is_default ? 'btn-outline-primary' : 'btn-outline-secondary'}"
-                                                                        t-att-disabled="!branchBillEditable(currentBill)" t-on-click="() => onAvailablePriceSelect(line, p.price)">
+                                                                        t-att-disabled="!billEditable(currentBill)" t-on-click="() => onAvailablePriceSelect(line, p.price)">
                                                                     <span class="o_ab_sales_pos_badge_price ab_pos_line_price_badge_value"
                                                                           t-esc="formatMoney2(p.price)"/>
                                                                     <span class="o_ab_sales_pos_badge_sep ab_pos_line_price_badge_sep">:</span>
@@ -520,7 +527,7 @@
                                                 <td class="text-end ab_pos_line_cell_actions">
                                                     <button class="btn btn-sm btn-outline-danger ab_pos_line_btn_remove"
                                                             type="button"
-                                                            t-att-disabled="!branchBillEditable(currentBill)" t-on-click="() => removeLine(line)">
+                                                            t-att-disabled="!billEditable(currentBill)" t-on-click="() => removeLine(line)">
                                                         <i class="fa fa-trash ab_pos_line_btn_remove_icon"
                                                            aria-hidden="true"/>
                                                     </button>
@@ -560,8 +567,8 @@
                 <div t-if="state.tab === 'new'">
                     <label class="form-label">Store</label>
                     <ABMany2one relation="'ab_store'" value="state.store" update="onStoreUpdate"
-                        domain="storeDomain" placeholder="'Select store...'" canCreate="false"
-                        canCreateEdit="false" canQuickCreate="false" canOpen="false" canWrite="true" string="'Store'"/>
+                        domain="storeDomain" placeholder.translate="Select store..." canCreate="false"
+                        canCreateEdit="false" canQuickCreate="false" canOpen="false" canWrite="true" string.translate="Store"/>
                     <button class="btn btn-primary mt-3" type="button" t-on-click="confirm"
                             t-att-disabled="!state.store || state.busy">Create</button>
                 </div>
@@ -603,7 +610,7 @@
     </t>
 
     <t t-name="ab_sales.PosCustomerLookupDialog">
-        <Dialog title="'Customer Lookup'" size="'md'">
+        <Dialog title.translate="Customer Lookup" size="'md'">
             <div class="o_ab_sales_pos_customer_dialog">
                 <div>
                     <label class="form-label">Branch</label>
@@ -612,13 +619,13 @@
                             value="state.branch"
                             update="onBranchUpdate"
                             domain="branchDomain"
-                            placeholder="'Select branch...'"
+                            placeholder.translate="Select branch..."
                             canCreate="false"
                             canCreateEdit="false"
                             canQuickCreate="false"
                             canOpen="false"
                             canWrite="true"
-                            string="'Branch'"
+                            string.translate="Branch"
                     />
                     <t t-if="state.errors.branch">
                         <div class="text-danger small">Branch is required.</div>
@@ -713,7 +720,7 @@
     </t>
 
     <t t-name="ab_sales.PosAllInvoicesDialog">
-        <Dialog title="'All Invoices'" size="'xl'">
+        <Dialog title.translate="All Invoices" size="'xl'">
             <div class="o_ab_sales_pos_last_invoice_dialog">
                 <div class="o_ab_sales_pos_all_invoices_tools">
                     <div class="input-group">
@@ -815,10 +822,10 @@
     </t>
 
     <t t-name="ab_sales.PosValidationDialog">
-        <Dialog title="props.title || 'Validation Error'" size="'md'">
+        <Dialog title="dialogTitle" size="'md'">
             <div class="o_ab_sales_pos_validation_dialog">
                 <div class="alert alert-danger d-flex flex-column gap-1 mb-0">
-                    <strong t-esc="props.title || 'Validation Error'"/>
+                    <strong><t t-if="props.title" t-esc="props.title"/><t t-else="">Validation Error</t></strong>
                     <span class="ab_pos_submission_message" dir="auto" t-esc="props.message || ''"/>
                     <details t-if="props.branchResponse" class="mt-2">
                         <summary>Branch response</summary>
@@ -834,7 +841,7 @@
     </t>
 
     <t t-name="ab_sales.PosSubmitDialog">
-        <Dialog title="'Before Submit ...'" size="'lg'">
+        <Dialog title.translate="Before Submit ..." size="'lg'">
             <div class="o_ab_sales_pos_submit_dialog">
                 <t t-if="state.hasCustomer or (props.bill and props.bill.header and props.bill.header.customer_id)">
                     <div class="o_ab_sales_pos_submit_section">
@@ -927,13 +934,13 @@
                             value="state.eplus_employee"
                             update="onEmployeeUpdate"
                             domain="()=> [['internal_working_employee', '=', true ], ['costcenter_id.eplus_serial','!=',false]]"
-                            placeholder="'Select employee...'"
+                            placeholder.translate="Select employee..."
                             canCreate="false"
                             canCreateEdit="false"
                             canQuickCreate="false"
                             canOpen="false"
                             canWrite="true"
-                            string="'ePlus Employee'"
+                            string.translate="ePlus Employee"
                     />
                 </div>
 
@@ -954,13 +961,13 @@
                                 value="state.employee_delivery"
                                 update="onEmployeeDeliveryUpdate"
                                 domain="()=> [['internal_working_employee', '=', true ]]"
-                                placeholder="'Select delivery employee (optional)...'"
+                                placeholder.translate="Select delivery employee (optional)..."
                                 canCreate="false"
                                 canCreateEdit="false"
                                 canQuickCreate="false"
                                 canOpen="false"
                                 canWrite="true"
-                                string="'Delivery Employee'"
+                                string.translate="Delivery Employee"
                         />
                     </div>
                 </t>
@@ -1068,8 +1075,7 @@
                                 </div>
                                 <div class="o_ab_sales_pos_list_row o_ab_sales_pos_list_desc ab_pos_bill_item_row_description">
                                     <span class="label ab_pos_bill_item_label_description">Description</span>
-                                    <span class="ab_pos_bill_item_value_description"
-                                          t-esc="bill.header.description or 'No description'"/>
+                                    <span class="ab_pos_bill_item_value_description"><t t-if="bill.header.description" t-esc="bill.header.description"/><t t-else="">No description</t></span>
                                 </div>
                             </div>
                         </div>

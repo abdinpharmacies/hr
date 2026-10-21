@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
@@ -33,7 +35,7 @@ class InvoiceExclusionTextField extends Component {
 
     async _updateExclusions(method) {
         if (!this.state.pasteText.trim()) {
-            this.notification.add("Paste at least one invoice number first.", { type: "warning" });
+            this.notification.add(_t("Paste at least one invoice number first."), { type: "warning" });
             return;
         }
         this.state.loading = true;
@@ -57,13 +59,13 @@ class InvoiceExclusionTextField extends Component {
     _notifyResult(method, result) {
         if (method === "btn_add_invoices") {
             this.notification.add(
-                `Added ${result.added || 0} invoice(s). ${result.existing || 0} were already listed.`,
+                _t("Added %(added)s invoice(s). %(existing)s were already listed.", {added: result.added || 0, existing: result.existing || 0}),
                 { type: "success" }
             );
             return;
         }
         this.notification.add(
-            `Removed ${result.removed || 0} invoice(s). ${result.not_listed || 0} were not listed.`,
+            _t("Removed %(removed)s invoice(s). %(missing)s were not listed.", {removed: result.removed || 0, missing: result.not_listed || 0}),
             { type: "success" }
         );
     }
@@ -85,7 +87,7 @@ class InvoiceExclusionTextField extends Component {
         return (
             error?.data?.message ||
             error?.message ||
-            "Failed to update excluded invoices."
+            _t("Failed to update excluded invoices.")
         );
     }
 }

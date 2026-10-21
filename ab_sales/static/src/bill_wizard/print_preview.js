@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 const escapeHtml = (raw) =>
     String(raw || "")
         .replaceAll("&", "&amp;")
@@ -23,7 +25,7 @@ export const openBillWizardPrintWindow = (html, format = "a4", {focus = true} = 
     return win;
 };
 
-export const buildBillWizardTextPreviewHtml = (receiptText, format = "a4", title = "Sales Receipt") => {
+export const buildBillWizardTextPreviewHtml = (receiptText, format = "a4", title = _t("Sales Receipt")) => {
     const isPos = format === "pos_80mm";
     const widthStyle = isPos ? "width:74mm;" : "width:210mm;";
     const pageSize = isPos ? "80mm auto" : "A4 portrait";
@@ -145,7 +147,7 @@ export const buildBillWizardTextPreviewHtml = (receiptText, format = "a4", title
     }
     .text-lines {
         overflow-x: visible;
-        font-family: "Courier New", monospace;
+        font-family: _t("Courier New"), monospace;
         font-size: ${fontSize};
         line-height: 1.35;
         font-weight: 700;

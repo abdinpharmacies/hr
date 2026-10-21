@@ -8,13 +8,13 @@
                 <button class="btn btn-success ab_pos_btn_submit_bill"
                         type="button"
                         t-on-click="submitCurrentBill"
-                        t-att-disabled="state.submitting">
+                        t-att-disabled="state.submitting || state.submissionPreparing || state.correctionBusy || state.branchEditInFlight || currentBill?.submission?.checking || (promotionEditable(currentBill) &amp;&amp; (currentBill.promo?.validation_pending || currentBill.promo?.validation_errors?.length))">
                     <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
                     <span class="ab_pos_btn_submit_bill_text">
-                        <t t-if="state.submitting">Submitting...</t>
+                        <t t-if="state.submitting || state.submissionPreparing">Submitting...</t><t t-elif="currentBill?.correction">Submit correction</t><t t-elif="currentBill?.submission?.attempted">Retry</t><t t-else="">Submit</t>
                     </span>
                 </button>
-                <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" t-on-click="removeCurrentBill">
+                <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" t-on-click="removeCurrentBill" t-att-disabled="!billRemovable(currentBill)">
                     <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
                 </button>
             </div>
@@ -41,7 +41,7 @@
     </t>
 
     <t t-name="ab_sales.PosReplicationDialog">
-        <Dialog title="'Replication Popup'" size="'lg'">
+        <Dialog title.translate="Replication Popup" size="'lg'">
             <div class="o_ab_sales_pos_submit_dialog">
                 <div class="o_ab_sales_pos_submit_section">
                     <div class="o_ab_sales_pos_section_title">Active ab_odoo_replication Crons</div>

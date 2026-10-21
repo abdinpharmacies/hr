@@ -6,7 +6,7 @@
                 <div class="d-flex align-items-center gap-2">
                     <h3 class="m-0">Add Products</h3>
                     <t t-if="state.storeName">
-                        <span class="badge rounded-pill text-bg-light" t-att-title="'Current store: ' + state.storeName">
+                        <span class="badge rounded-pill text-bg-light" t-att-title="currentStoreTitle()">
                             <i class="fa fa-shopping-cart me-1" aria-hidden="true"/>
                             <t t-esc="state.storeName"/>
                         </span>

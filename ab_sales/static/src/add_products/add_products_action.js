@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
@@ -12,6 +14,10 @@ const ADD_PRODUCTS_FILTER_PREFS_KEY = "ab_sales_add_products_filters_v1";
 class AbSalesAddProductsAction extends Component {
     static template = "ab_sales.AddProductsAction";
     static target = "new";
+
+    currentStoreTitle() {
+        return _t("Current store: %(store)s", {store: this.state.storeName});
+    }
 
     setup() {
         this.orm = useService("orm");
@@ -409,7 +415,7 @@ class AbSalesAddProductsAction extends Component {
         }
         this.dialog.add(FormViewDialog, {
             resModel: "ab_product_balance_wizard",
-            title: "Store Balances",
+            title: _t("Store Balances"),
             context: {
                 default_product_id: product.id,
             },
@@ -441,7 +447,7 @@ class AbSalesAddProductsAction extends Component {
             this.state.qtyBufferProductId = null;
         } catch (e) {
             if (isCurrent()) {
-                this.notification.add(e?.message || "Failed to load products.", { type: "danger" });
+                this.notification.add(e?.message || _t("Failed to load products."), { type: "danger" });
             }
         } finally {
             if (isCurrent()) this.state.loading = false;
@@ -528,12 +534,12 @@ class AbSalesAddProductsAction extends Component {
 
     async apply() {
         if (!this.state.headerId) {
-            this.notification.add("No active sales header.", { type: "danger" });
+            this.notification.add(_t("No active sales header."), { type: "danger" });
             return;
         }
         const items = this.selectedItems.map((i) => ({ product_id: i.product.id, qty: i.qty }));
         if (!items.length) {
-            this.notification.add("Select at least one product.", { type: "warning" });
+            this.notification.add(_t("Select at least one product."), { type: "warning" });
             return;
         }
 
@@ -543,7 +549,7 @@ class AbSalesAddProductsAction extends Component {
                 header_id: this.state.headerId,
                 items,
             });
-            this.notification.add(`Added lines: ${res.created}, updated: ${res.updated}`, { type: "success" });
+            this.notification.add(_t("Added lines: %(created)s, updated: %(updated)s", {created: res.created, updated: res.updated}), { type: "success" });
             this.state.selected.clear();
             if (this.env.dialogData?.close) {
                 await this.env.dialogData.close({ ab_sales_refresh: true });
@@ -551,7 +557,7 @@ class AbSalesAddProductsAction extends Component {
                 await this.action.doAction({ type: "ir.actions.act_window_close" });
             }
         } catch (e) {
-            this.notification.add(e?.message || "Failed to apply products.", { type: "danger" });
+            this.notification.add(e?.message || _t("Failed to apply products."), { type: "danger" });
         } finally {
             this.state.applying = false;
         }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
     <t t-name="ab_sales.PosPrinterDialog">
-        <Dialog title="'Printer Settings'" size="'md'">
+        <Dialog title.translate="Printer Settings" size="'md'">
             <div class="d-flex flex-column gap-3">
                 <div>
                     <label class="form-label">Default Printer</label>

@@ -15,7 +15,7 @@
     </t>
 
     <t t-name="ab_sales.PosSettingsDialog">
-        <Dialog title="'POS Settings'" size="'md'">
+        <Dialog title.translate="POS Settings" size="'md'">
             <div class="o_ab_sales_pos_submit_dialog">
                 <div class="o_ab_sales_pos_submit_section">
                     <div class="o_ab_sales_pos_section_title">Product Search</div>

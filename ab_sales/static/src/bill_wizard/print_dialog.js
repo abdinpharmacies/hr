@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {Component, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 
@@ -115,11 +117,11 @@ export class AbSalesBillWizardPrintDialog extends Component {
         if (!this.props.onDiscoverPrinters || this.state.loadingPrinters) {
             return;
         }
-        const startIp = String(window.prompt("Start IP", "") || "").trim();
+        const startIp = String(window.prompt(_t("Start IP"), "") || "").trim();
         if (!startIp) {
             return;
         }
-        const endIp = String(window.prompt("End IP", startIp) || "").trim();
+        const endIp = String(window.prompt(_t("End IP"), startIp) || "").trim();
         if (!endIp) {
             return;
         }
