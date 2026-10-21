@@ -45,7 +45,7 @@ class ResUsers(models.Model):
         mobile = partner.mobile if "mobile" in partner._fields else False
         return 25 * sum((
             bool(partner.name),
-            bool(partner.phone or mobile or self.login),
+            bool(partner.phone or mobile),
             bool(partner.ab_storefront_avatar_completed or (partner.ab_storefront_avatar or "avatar_none") != "avatar_none"),
             bool(partner.street or partner.city or partner.country_id),
         ))

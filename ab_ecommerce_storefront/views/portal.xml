@@ -501,7 +501,11 @@
                                 <div class="ab-account-hero-copy">
                                     <span>Welcome back</span>
                                     <h1 t-out="partner.name or account_user.name"/>
-                                    <p t-out="account_phone"/>
+                                    <p>
+                                        <t t-if="account_phone" t-out="account_phone"/>
+                                        <t t-elif="account_email" t-out="account_email"/>
+                                        <t t-else="">Not provided</t>
+                                    </p>
                                     <strong>Your Abdin Pharmacies account</strong>
                                 </div>
                                 <button type="button" class="btn ab-account-hero-button" data-ab-avatar-open="">Change avatar</button>
@@ -544,7 +548,17 @@
                                         </div>
                                         <div>
                                             <dt>Phone number</dt>
-                                            <dd dir="ltr" t-out="account_phone"/>
+                                            <dd dir="ltr">
+                                                <t t-if="account_phone" t-out="account_phone"/>
+                                                <t t-else="">Not provided</t>
+                                            </dd>
+                                        </div>
+                                        <div>
+                                            <dt>Email</dt>
+                                            <dd dir="ltr">
+                                                <t t-if="account_email" t-out="account_email"/>
+                                                <t t-else="">Not provided</t>
+                                            </dd>
                                         </div>
                                         <div>
                                             <dt>Password</dt>
@@ -1037,7 +1051,9 @@
                     <span>Your profile photo</span>
                     <h2 t-out="user_id.name"/>
                     <p>
-                        <t t-out="user_id.partner_id.phone or user_id.login"/>
+                        <t t-if="user_id.partner_id.phone" t-out="user_id.partner_id.phone"/>
+                        <t t-elif="user_id.email" t-out="user_id.email"/>
+                        <t t-else="">Not provided</t>
                     </p>
                     <button type="button" class="btn ab-account-avatar-button" data-ab-avatar-open="">
                         Change avatar

@@ -2142,6 +2142,7 @@ msgstr "تعديل عنوان التوصيل والفاتورة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.prescription_order_page
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_auth_identity__kind__email
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_account_security
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 msgid "Email"
 msgstr "البريد الإلكتروني"
@@ -4630,6 +4631,12 @@ msgstr "لم يبدأ"
 #: code:addons/ab_ecommerce_storefront/models/sale_order.py:0
 msgid "Not available"
 msgstr "غير متوفر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_details_avatar
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
+msgid "Not provided"
+msgstr "لا يوجد"
 
 #. module: ab_ecommerce_storefront
 #. odoo-javascript

@@ -63,6 +63,36 @@ class TestStorefrontAuthHTTP(HttpCase):
         denied = self.url_open("/my/authentication", data={"csrf_token": self._csrf(page), "email": self.user.email, "current_password": "incorrect"})
         self.assertIn("The current password is incorrect", denied.text)
 
+    def test_google_account_dashboard_does_not_show_oauth_login_as_phone(self):
+        email = "google.customer@example.test"
+        login = "google_oauth_108573294113610888782"
+        user = self.env["res.users"].with_context(no_reset_password=True).create({
+            "name": "Google customer",
+            "login": login,
+            "email": email,
+            "password": "Original9!Pass",
+            "group_ids": [(6, 0, [self.env.ref("base.group_portal").id])],
+        })
+        user.partner_id.write({
+            "phone": False,
+            "street": False,
+            "city": False,
+            "country_id": False,
+            "ab_storefront_avatar": "avatar_none",
+            "ab_storefront_avatar_completed": False,
+        })
+
+        self.assertEqual(user._ab_storefront_profile_completion(), 25)
+
+        with patch.object(type(user), "_client_ip", return_value="127.0.0.1"):
+            self.authenticate(login, "Original9!Pass")
+        page = self.url_open("/my/home")
+
+        self.assertEqual(page.status_code, 200)
+        self.assertNotIn(login, page.text)
+        self.assertIn(email, page.text)
+        self.assertIn("Not provided", page.text)
+
     def test_email_reset_http_round_trip(self):
         page = self.url_open("/ab_storefront/auth/recover")
         service = self.env["ab_storefront_auth_service"].sudo()

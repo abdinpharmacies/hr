@@ -4,11 +4,21 @@
 
 - Hide the header navigation scrollbar at every screen size while preserving touch scrolling.
 - Show the homepage banner carousel indicators as compact dots on mobile instead of bars.
+- Keep Google OAuth login identifiers out of the account phone field.
+- Show a clear missing-value message when no phone is saved and add the customer email to personal information.
+- Cover Google account contact rendering with an HTTP regression test.
 
 Files changed:
 
 - `ab_ecommerce_storefront/static/src/scss/scroll_region.scss`
 - `ab_ecommerce_storefront/static/src/scss/storefront.scss`
+- `ab_ecommerce_storefront/controllers/portal.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/models/res_users.py`
+- `ab_ecommerce_storefront/tests/test_auth_http.py`
+- `ab_ecommerce_storefront/views/portal.xml`
 - `ab_ecommerce_storefront/changelog.d/current.md`
 
 ## Recent commits
