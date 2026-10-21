@@ -11,6 +11,7 @@
                             <button type="button"
                                     class="o_ab_sales_pos_promo_chip"
                                     t-attf-class="#{chipClass(promo)}"
+                                    t-att-disabled="props.disabled"
                                     t-att-title="promo.rule_text or promo.display_name or promo.name"
                                     t-on-click="() => props.onSelect and props.onSelect(promo)">
                                 <span class="name" t-esc="promo.display_name or promo.name"/>
@@ -33,7 +34,7 @@
                     </div>
                 </div>
                 <t t-if="props.promo.message">
-                    <div class="o_ab_sales_pos_promo_hint">
+                    <div class="o_ab_sales_pos_promo_hint" role="status">
                         <i class="fa fa-info-circle" aria-hidden="true"/>
                         <span t-esc="props.promo.message"/>
                     </div>

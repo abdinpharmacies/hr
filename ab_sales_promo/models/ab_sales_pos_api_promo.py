@@ -220,6 +220,12 @@ class AbSalesPosApi(models.TransientModel):
         if not applied_program and not manual_clear:
             applied_program = _auto_apply_single_program(header, available_programs)
 
+        validation_errors = []
+        if applied_program:
+            issue = header._promotion_quantity_issue(applied_program)
+            if issue:
+                validation_errors.append(issue)
+
         header._compute_amounts()
         amount_total = float(header.amount_total or 0.0)
         promo_discount = 0.0
@@ -242,7 +248,7 @@ class AbSalesPosApi(models.TransientModel):
                 'company_pay': header.company_pay,
             }
 
-        if not selected_program and len(available_programs) == 1:
+        if not manual_clear and not selected_program and len(available_programs) == 1:
             selected_program = available_programs[:1]
 
         promo_message = ""
@@ -277,7 +283,8 @@ class AbSalesPosApi(models.TransientModel):
             "applied_program_name": applied.display_name if applied else "",
             "selected_program_id": _safe_program_id(selected_program) if selected_program else False,
             "selected_program_name": selected_program.display_name if selected_program else "",
-            "promo_message": promo_message or "",
+            "promo_message": validation_errors[0]["message"] if validation_errors else (promo_message or ""),
+            "validation_errors": validation_errors,
             "promo_discount_amount": float(promo_discount or 0.0),
             "amount_total_after_promo": float(amount_total_after_promo or 0.0),
             "total_net_amount": header.cust_pay if contract_id else total_net_amount,
@@ -291,7 +298,23 @@ class AbSalesPosApi(models.TransientModel):
             "applied_program_id": False,
             "applied_program_name": "",
             "promo_message": "",
+            "validation_errors": [],
             "promo_discount_amount": 0.0,
             "amount_total_after_promo": 0.0,
             "total_net_amount": 0.0,
         }
+
+    def _validate_submission_promotion(self, payload):
+        result = super()._validate_submission_promotion(payload)
+        program = payload.get('applied_program_id')
+        if program:
+            header = payload.get('header') or {}
+            preview = self.pos_promotions(
+                store_id=header.get('store_id'), lines=payload.get('lines'),
+                applied_program_id=program, manual_clear=False,
+                customer_id=header.get('customer_id'), contract_id=header.get('contract_id'),
+                total_invoice_discount=header.get('total_invoice_discount', 0),
+            )
+            if preview.get('validation_errors'):
+                raise UserError(preview['validation_errors'][0]['message'])
+        return result

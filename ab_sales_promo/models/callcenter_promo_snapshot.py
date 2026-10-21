@@ -10,7 +10,7 @@ class PromotionSnapshot(models.Model):
     def _write_branch_state(self, vals):
         if vals.get('branch_submission_started'):
             for header in self:
-                if not header.branch_submission_started:
+                if not header.branch_submission_started or vals.get('branch_request_revision', 0) > header.branch_request_revision:
                     header._branch_records().write({'callcenter_promo_snapshot': {
                         'program_ids': header.applied_program_ids.ids,
                         'discount': header.promo_discount_amount,

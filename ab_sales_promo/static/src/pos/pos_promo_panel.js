@@ -1,11 +1,14 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import { Component } from "@odoo/owl";
 
 export class AbSalesPosPromoPanel extends Component {
     static template = "ab_sales_promo.PosPromoPanel";
     static props = {
         promo: Object,
+        disabled: {type: Boolean, optional: true},
         onSelect: Function,
         onClear: Function,
     };
@@ -37,16 +40,16 @@ export class AbSalesPosPromoPanel extends Component {
 
     statusLabel() {
         if (this.props.promo?.applied_id) {
-            return "Applied";
+            return _t("Applied");
         }
         if (this.props.promo?.selected_id) {
-            return "Needs Qty";
+            return _t("Needs Qty");
         }
-        return "None";
+        return _t("None");
     }
 
     clearDisabled() {
-        return !this.props.promo?.applied_id && !this.props.promo?.selected_id;
+        return this.props.disabled || (!this.props.promo?.applied_id && !this.props.promo?.selected_id);
     }
 
     formatQty(value) {

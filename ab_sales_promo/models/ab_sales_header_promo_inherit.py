@@ -413,29 +413,29 @@ class AbSalesHeaderPromo(models.Model):
                         "Select an allowed customer or remove the promotion.",
                         promotion=prog.display_name,
                     ))
-                prog_products = rec._program_discount_products(prog)
-                prog_products_set = set(prog_products.ids)
+                issue = rec._promotion_quantity_issue(prog)
+                if issue:
+                    raise ValidationError(issue['message'])
 
-                invoice_products_set = set(rec.line_ids.product_id.ids)
-                out_prog_products_set = invoice_products_set - prog_products_set
-                # if out_prog_products_set:
-                #     out_prog_products = self.env['ab_product'].browse(list(out_prog_products_set))
-                #     out_prod_msg = "\n".join(
-                #         f"{_get_code_with_padding(prod.code)} || {prod.name}" for prod in out_prog_products)
-                #     out_prod_msg += _("\n\nProducts out promotions!")
-                #     raise ValidationError(out_prod_msg)
-
-                total_promo_qty = sum(
-                    rec._line_qty_in_program_uom(line, prog)
-                    for line in rec.line_ids
-                    if line.product_id.id in prog_products_set
-                )
-                max_repetition_per_invoice = prog.max_repetition_per_invoice
-                rule_min_qty = prog.rule_min_qty
-                max_promo_qty = max_repetition_per_invoice * rule_min_qty
-
-                if total_promo_qty > max_promo_qty:
-                    raise ValidationError(_("Invoice qty(%s) - must not exceed %s") % (total_promo_qty, max_promo_qty))
+    def _promotion_quantity_issue(self, program):
+        self.ensure_one()
+        products = self._program_discount_products(program)
+        lines = self.line_ids.filtered(lambda line: line.product_id in products)
+        quantity = sum(self._line_qty_in_program_uom(line, program) for line in lines)
+        maximum = program.max_repetition_per_invoice * program.rule_min_qty
+        if quantity <= maximum:
+            return False
+        return {
+            'code': 'promotion_quantity_exceeded',
+            'promotion_id': program.id,
+            'quantity': quantity,
+            'maximum': maximum,
+            'product_ids': lines.product_id.ids,
+            'message': _(
+                'Promotion %(promotion)s allows %(maximum)s unit(s); you selected %(quantity)s. Reduce the quantity or remove the promotion.',
+                promotion=program.display_name, maximum=maximum, quantity=quantity,
+            ),
+        }
 
     def _product_lines(self, product):
         """All lines for a specific ab_product on this header."""

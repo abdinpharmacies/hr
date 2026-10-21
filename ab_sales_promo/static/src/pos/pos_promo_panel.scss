@@ -101,11 +101,17 @@
 }
 
 .o_ab_sales_pos_promo_hint {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: #dc3545;
+  color: #fff;
   font-size: 12px;
-  color: #92400e;
+  overflow-wrap: anywhere;
 }
 
 .o_ab_sales_pos_promo_missing {

@@ -7,6 +7,7 @@
             <t t-if="currentBill and currentBill.promo and currentBill.promo.available.length">
                 <AbSalesPosPromoPanel
                     promo="currentBill.promo"
+                    disabled="!promotionEditable(currentBill)"
                     onSelect="selectPromotion"
                     onClear="clearPromotion"
                 />

@@ -105,7 +105,7 @@ if (PosAction) {
                 });
                 const currentCustomerId = target.header?.customer_mode === "new"
                     ? false : target.header?.customer_id || false;
-                if (requestId !== this._promoRequestId || !this.billEditable(target)
+                if (requestId !== this._promoRequestId || !this.promotionEditable(target)
                     || target.header?.contract_id || customerId !== currentCustomerId) {
                     return;
                 }
@@ -119,6 +119,8 @@ if (PosAction) {
                 target.promo.selected_name =
                     result?.selected_program_name || this._findPromoName(target.promo.available, target.promo.selected_id);
                 target.promo.message = result?.promo_message || "";
+                target.promo.validation_errors = result?.validation_errors || [];
+                target.promo.validation_pending = false;
                 target.promo.discount_amount = parseFloat(result?.promo_discount_amount || 0) || 0;
                 target.promo.total_after = parseFloat(result?.amount_total_after_promo || 0) || 0;
                 const totalNetAmount = parseFloat(result?.total_net_amount);
@@ -140,6 +142,7 @@ if (PosAction) {
             } finally {
                 if (requestId === this._promoRequestId) {
                     target.promo.loading = false;
+                    target.promo.validation_pending = false;
                     this.persistCache();
                 }
             }

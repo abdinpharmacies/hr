@@ -89,10 +89,13 @@ Files changed:
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
 
-Current changes before commit:
-- Port promotion eligibility and contract-aware totals.
-- Record promotion IDs and financial totals on first submission for local reporting; block later edits.
-- Retain immutable callcenter submission behavior and both Arabic catalogs.
+Commit: 5a1781ba92a9519d347def4ab2cf3ad23110eb08
+Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+Date: 2026-10-20T15:34:01+03:00
+Subject: ab_sales_promo/feat: update promotion eligibility and freeze totals on callcenter submission
+
+User-facing changes:
+- Port customer/contract promotion eligibility and freeze submitted promotion totals.
 
 Files changed:
 - ab_sales_promo/__manifest__.py
@@ -105,3 +108,63 @@ Files changed:
 - ab_sales_promo/models/ab_sales_return_promo.py
 - ab_sales_promo/models/callcenter_promo_snapshot.py
 - ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+
+Current changes before commit:
+- Display the promotion hint as a rounded red tag with white text.
+- Reuse the submission quantity rule in POS previews, including product scope and unit conversion; return structured inline validation errors.
+- Validate new submissions before creating a locked attempt; support changing or removing a promotion during rejected-bill correction.
+- Record corrected promotion totals when a new revision is frozen; preserve manual contract promotion selection.
+- Add the quantity-limit explanation to both Arabic catalogs.
+
+Files changed:
+- ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/models/callcenter_promo_snapshot.py
+- ab_sales_promo/static/src/pos/pos_action_promo_inherit.xml
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+- ab_sales_promo/static/src/pos/pos_promo_panel.js
+- ab_sales_promo/static/src/pos/pos_promo_panel.scss
+- ab_sales_promo/static/src/pos/pos_promo_panel.xml
+
+Commit: 5a1781ba92a9519d347def4ab2cf3ad23110eb08
+Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+Date: 2026-10-20T15:34:01+03:00
+Subject: ab_sales_promo/feat: update promotion eligibility and freeze totals on callcenter submission
+
+User-facing changes:
+- Add promotion eligibility checks and freeze financial totals on callcenter submission.
+
+Files changed:
+- ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/__init__.py
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/models/ab_sales_return_promo.py
+- ab_sales_promo/models/callcenter_promo_snapshot.py
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+
+Current changes before commit:
+- Complete missing Arabic labels and messages using Odoo-exported terms; preserve existing translations and keep ar/ar_001 coverage aligned.
+- Translate dynamic screen labels, component properties and notifications at runtime, including interpolated values where applicable.
+- Retain the current rejected-bill correction and promotion validation changes; show the promotion warning once as a rounded red tag.
+
+Files changed:
+- ab_sales_promo/__manifest__.py
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/models/callcenter_promo_snapshot.py
+- ab_sales_promo/static/src/pos/pos_action_promo_inherit.xml
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+- ab_sales_promo/static/src/pos/pos_promo_panel.js
+- ab_sales_promo/static/src/pos/pos_promo_panel.scss
+- ab_sales_promo/static/src/pos/pos_promo_panel.xml

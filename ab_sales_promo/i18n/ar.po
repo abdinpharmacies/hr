@@ -250,3 +250,31 @@ msgstr "ab_sales_header"
 #: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
 msgid "unit(s)"
 msgstr "وحدة"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid ""
+"Promotion %(promotion)s allows %(maximum)s unit(s); you selected "
+"%(quantity)s. Reduce the quantity or remove the promotion."
+msgstr ""
+"يسمح العرض %(promotion)s بكمية %(maximum)s وحدة؛ الكمية المختارة "
+"%(quantity)s. قلّل الكمية أو أزل العرض."
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.js:0
+msgid "Applied"
+msgstr "تم التطبيق"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.js:0
+msgid "Needs Qty"
+msgstr "تحتاج كمية إضافية"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.js:0
+msgid "None"
+msgstr "لا شيء"
