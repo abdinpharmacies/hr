@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="product_all_products_breadcrumb" inherit_id="website_sale.all_products_link_name">
-        <xpath expr="//span[@placeholder='All products']" position="replace">
+        <xpath expr="//span" position="replace">
             <span>All products</span>
         </xpath>
     </template>
