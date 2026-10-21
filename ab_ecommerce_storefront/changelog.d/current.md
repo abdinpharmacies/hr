@@ -2,6 +2,23 @@
 
 ## Recent commits
 
+Commit: `f688467e`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/I18N: translate product breadcrumb in Arabic`
+
+User-facing changes:
+
+- Translate the product breadcrumb's All products link for Arabic visitors.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/views/product.xml`
+
 Commit: `71fa2aee`
 Author: Mohamed Fawzy
 Date: 2026-10-21
@@ -156,15 +173,3 @@ Files changed:
 ## Commits reviewed on 2026-10-05
 
 See [the commit review](2026-10-05-commit-review.md) for commit hashes, authors, subjects, affected files, and validation. Detailed feature records remain in this folder.
-
-## Current changes before commit:
-
-- Translate the product breadcrumb's All products link in Arabic while retaining its English label for English visitors.
-
-Files changed:
-
-- `ab_ecommerce_storefront/changelog.d/current.md`
-- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
-- `ab_ecommerce_storefront/i18n/ar.po`
-- `ab_ecommerce_storefront/i18n/ar_001.po`
-- `ab_ecommerce_storefront/views/product.xml`
