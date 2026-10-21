@@ -586,6 +586,17 @@ class AbdinSalesHeader(models.Model):
                 rec.invoice_address = ''
 
     # ---------------------- compute_totals (اللي سألت عليها) ---------------------- #
+    def _price_ref_from_line(self, line, ratio):
+        """Normalize selected-unit prices using the branch pricing convention."""
+        price = float(line.sell_price or 0.0)
+        if not ratio or abs(ratio - 1.0) <= 1e-6:
+            return price
+        default_price = float(line.product_id.default_price or 0.0)
+        expected_selected = default_price * float(ratio)
+        if expected_selected and price <= (expected_selected * 1.2 + 0.01):
+            return price / float(ratio or 1.0)
+        return price
+
     @api.depends('line_ids', 'store_id', 'line_ids.product_id', 'line_ids.qty')
     def compute_totals(self):
         for header in self:
