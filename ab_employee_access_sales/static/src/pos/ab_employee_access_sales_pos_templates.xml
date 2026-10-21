@@ -23,7 +23,7 @@
                         <div class="ab_pos_hr_identity_name o_ab_sales_pos_window_title"
                              t-esc="state.abSalesHr.session.employee.name || '-'"/>
                         <div class="ab_pos_hr_identity_meta">
-                            <span t-esc="state.abSalesHr.session.employee.role_name || 'No role'"/>
+                            <span t-if="state.abSalesHr.session.employee.role_name" t-esc="state.abSalesHr.session.employee.role_name"/><span t-else="">No role</span>
                             <span>&#8226;</span>
                             <span t-esc="state.abSalesHr.session.store.code || '-'"/>
                         </div>
@@ -37,12 +37,12 @@
             <div class="ab_pos_hr_overlay"
                  t-if="state.abSalesHr &amp;&amp; (state.abSalesHr.loading || !state.abSalesHr.session || state.abSalesHr.session.state === 'locked')">
                 <AbEmployeeAccessLoginPanel
-                        title="'Employee Login'"
+                        title.translate="Employee Login"
                         subtitle="abSalesHrLoginPanelSubtitle()"
                         showClose="true"
                         onClose.bind="abSalesHrClosePopup"
                         showScreen="!state.abSalesHr.loading"
-                        loadingMessage="'Loading POS HR...'"
+                        loadingMessage.translate="Loading POS HR..."
                         employee="abSalesHrLoginPanelEmployeeValue()"
                         employeeRelation="'ab_employee_access'"
                         employeeDomain="abSalesHrEmployeeDomain()"
@@ -54,10 +54,10 @@
                         required="true"
                         submitLabel="abSalesHrLoginPanelSubmitLabel()"
                         loadingLabel="abSalesHrLoginPanelLoadingLabel()"
-                        employeeLabel="'Employee'"
-                        pinLabel="'PIN'"
-                        employeePlaceholder="'Select employee...'"
-                        pinPlaceholder="'Enter PIN'"
+                        employeeLabel.translate="Employee"
+                        pinLabel.translate="PIN"
+                        employeePlaceholder.translate="Select employee..."
+                        pinPlaceholder.translate="Enter PIN"
                         pinInputName="abSalesHrLoginPanelInputName()"
                         onSubmit.bind="abSalesHrLoginPanelSubmit"
                         onEmployeeUpdate.bind="onAbSalesHrEmployeeUpdate"

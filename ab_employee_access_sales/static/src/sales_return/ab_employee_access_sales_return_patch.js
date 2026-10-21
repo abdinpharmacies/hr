@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {onWillDestroy, onWillStart} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
@@ -176,7 +178,7 @@ if (ReturnAction) {
                     this._abReturnApplySession(sessionPayload);
                     const loaded = await this.load({reportError: false});
                     if (!loaded) {
-                        this.state.abReturnAccess.error = this._abReturnLastLoadError || "Employee login is required.";
+                        this.state.abReturnAccess.error = this._abReturnLastLoadError || _t("Employee login is required.");
                         await this._abReturnLogout({silent: true, preserveError: true});
                     }
                 } else {
@@ -186,7 +188,7 @@ if (ReturnAction) {
             } catch (error) {
                 this._abReturnClearCachedSession();
                 this._abReturnClearSessionState();
-                this.state.abReturnAccess.error = this._messageFromError(error, "Failed to start employee login.");
+                this.state.abReturnAccess.error = this._messageFromError(error, _t("Failed to start employee login."));
             } finally {
                 this.state.abReturnAccess.loading = false;
                 this.state.loading = false;
@@ -210,7 +212,7 @@ if (ReturnAction) {
                 return true;
             } catch (error) {
                 this.state.record = null;
-                this._abReturnLastLoadError = this._messageFromError(error, "Failed to load sales return.");
+                this._abReturnLastLoadError = this._messageFromError(error, _t("Failed to load sales return."));
                 if (reportError) {
                     this.notification.add(this._abReturnLastLoadError, {type: "danger"});
                 }
@@ -222,9 +224,9 @@ if (ReturnAction) {
 
         returnLoginPanelSubtitle() {
             if (this.state.abReturnAccess.loading) {
-                return "Loading employee access...";
+                return _t("Loading employee access...");
             }
-            return "Select employee and enter PIN to access sales return screen.";
+            return _t("Select employee and enter PIN to access sales return screen.");
         },
 
         returnLoginPanelEmployeeValue() {
@@ -265,7 +267,7 @@ if (ReturnAction) {
             const employeeAccessId = Number.parseInt(this.state.abReturnAccess.employee?.id || 0, 10) || 0;
             const pin = String(this.state.abReturnAccess.pin || "").trim();
             if (!employeeAccessId || !pin) {
-                this.state.abReturnAccess.error = "Employee and PIN are required.";
+                this.state.abReturnAccess.error = _t("Employee and PIN are required.");
                 return false;
             }
             this.state.abReturnAccess.loginLoading = true;
@@ -283,19 +285,19 @@ if (ReturnAction) {
                             session_token: sessionPayload.token,
                         });
                     }
-                    this.state.abReturnAccess.error = "Employee role does not allow sales return screen access.";
+                    this.state.abReturnAccess.error = _t("Employee role does not allow sales return screen access.");
                     return false;
                 }
                 this._abReturnApplySession(sessionPayload);
                 const loaded = await this.load({reportError: false});
                 if (!loaded) {
-                    this.state.abReturnAccess.error = this._abReturnLastLoadError || "Employee login is required.";
+                    this.state.abReturnAccess.error = this._abReturnLastLoadError || _t("Employee login is required.");
                     await this._abReturnLogout({silent: true, preserveError: true});
                     return false;
                 }
                 return true;
             } catch (error) {
-                this.state.abReturnAccess.error = this._messageFromError(error, "Employee login failed.");
+                this.state.abReturnAccess.error = this._messageFromError(error, _t("Employee login failed."));
                 return false;
             } finally {
                 this.state.abReturnAccess.loginLoading = false;
@@ -316,7 +318,7 @@ if (ReturnAction) {
                 }
             } catch (error) {
                 if (!silent) {
-                    this.notification.add(this._messageFromError(error, "Failed to close employee session."), {
+                    this.notification.add(this._messageFromError(error, _t("Failed to close employee session.")), {
                         type: "warning",
                     });
                 }

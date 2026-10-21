@@ -116,9 +116,13 @@ msgid "Display Name"
 msgstr "اسم العرض"
 
 #. module: ab_employee_access_sales
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_operation_log__employee_id
 #: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_pos_session__employee_id
 #: model:ir.model.fields,field_description:ab_employee_access_sales.field_ab_employee_access_sales_shift__employee_id
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
 msgid "Employee"
 msgstr "الموظف"
 
@@ -154,7 +158,10 @@ msgstr "جلسة نقطة بيع الموظف مطلوبة."
 
 #. module: ab_employee_access_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
 msgid "Employee and PIN are required."
 msgstr "الموظف والرمز السري مطلوبان."
 
@@ -173,7 +180,10 @@ msgstr "الموظف غير مسموح له بالعمل في الفرع %s."
 
 #. module: ab_employee_access_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
 msgid "Employee login is required."
 msgstr "يلزم تسجيل دخول الموظف."
 
@@ -191,7 +201,9 @@ msgstr "دور الموظف لا يسمح بفتح شاشة الكاشير."
 
 #. module: ab_employee_access_sales
 #. odoo-python
+#. odoo-javascript
 #: code:addons/ab_employee_access_sales/models/ab_sales_return_ui_api_inherit.py:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
 msgid "Employee role does not allow sales return screen access."
 msgstr "دور الموظف لا يسمح بفتح شاشة مرتجع المبيعات."
 
@@ -673,3 +685,137 @@ msgstr "عدد مرات فتح القفل"
 #: model:ir.model,name:ab_employee_access_sales.model_ab_sales_header
 msgid "ab_sales_header"
 msgstr "ab_sales_header"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "Employee Login"
+msgstr "تسجيل دخول الموظف"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+msgid "Employee login failed."
+msgstr "تعذر تسجيل دخول الموظف."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "Enter PIN"
+msgstr "أدخل رمز PIN"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+msgid "Failed to close employee session."
+msgstr "تعذر إغلاق جلسة الموظف."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Failed to initialize POS HR."
+msgstr "تعذرت تهيئة صلاحيات موظف نقطة البيع."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+msgid "Failed to load sales return."
+msgstr "تعذر تحميل مرتجع المبيعات."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+msgid "Failed to start employee login."
+msgstr "تعذر بدء تسجيل دخول الموظف."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+msgid "Loading POS HR..."
+msgstr "جارٍ تحميل صلاحيات موظف نقطة البيع..."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "Loading employee access..."
+msgstr "جارٍ تحميل صلاحيات الموظف..."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Logged in as %(employee)s."
+msgstr "تم تسجيل الدخول باسم %(employee)s."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Login failed."
+msgstr "تعذر تسجيل الدخول."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+msgid "No role"
+msgstr "بلا دور"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "PIN"
+msgstr "رمز PIN"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Sales Return"
+msgstr "مرتجع المبيعات"
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Select employee and enter PIN on the branch service user session."
+msgstr "اختر الموظف وأدخل رمز PIN في جلسة مستخدم خدمة الفرع."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_patch.js:0
+msgid "Select employee and enter PIN to access sales return screen."
+msgstr "اختر الموظف وأدخل رمز PIN للوصول إلى شاشة مرتجعات المبيعات."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_templates.xml:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "Select employee..."
+msgstr "اختر الموظف..."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+#: code:addons/ab_employee_access_sales/static/src/sales_return/ab_employee_access_sales_return_templates.xml:0
+msgid "Signing in..."
+msgstr "جارٍ تسجيل الدخول..."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Store change failed."
+msgstr "تعذر تغيير المخزن."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "This employee cannot access return screen."
+msgstr "لا يملك هذا الموظف صلاحية الوصول إلى شاشة المرتجعات."
+
+#. module: ab_employee_access_sales
+#. odoo-javascript
+#: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
+msgid "Unlock failed."
+msgstr "تعذر إلغاء القفل."

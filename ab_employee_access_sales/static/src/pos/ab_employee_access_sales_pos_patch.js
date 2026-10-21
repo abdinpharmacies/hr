@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {onMounted, onWillStart, onWillUnmount} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
@@ -227,9 +229,9 @@ if (PosAction) {
 
         abSalesHrLoginPanelSubtitle() {
             if (this.state.abSalesHr.loading) {
-                return "Loading POS HR...";
+                return _t("Loading POS HR...");
             }
-            return "Select employee and enter PIN on the branch service user session.";
+            return _t("Select employee and enter PIN on the branch service user session.");
         },
 
         abSalesHrLoginPanelEmployeeValue() {
@@ -245,11 +247,11 @@ if (PosAction) {
         },
 
         abSalesHrLoginPanelSubmitLabel() {
-            return "Employee Login";
+            return _t("Employee Login");
         },
 
         abSalesHrLoginPanelLoadingLabel() {
-            return "Signing in...";
+            return _t("Signing in...");
         },
 
         abSalesHrLoginPanelInputName() {
@@ -304,7 +306,7 @@ if (PosAction) {
             } catch (err) {
                 this.state.abSalesHr.session = false;
                 this.state.abSalesHr.requireLogin = true;
-                this.state.abSalesHr.error = err?.message || "Failed to initialize POS HR.";
+                this.state.abSalesHr.error = err?.message || _t("Failed to initialize POS HR.");
             } finally {
                 this.state.abSalesHr.loading = false;
                 this._abSalesHrScheduleTimers();
@@ -409,7 +411,7 @@ if (PosAction) {
                 return currentSession;
             }
             if (notify) {
-                this.notification.add("Employee login is required.", {type: "warning"});
+                this.notification.add(_t("Employee login is required."), {type: "warning"});
             }
             return false;
         },
@@ -468,7 +470,7 @@ if (PosAction) {
                     10
                 ) || 0;
                 if (!employeeAccessId || !String(this.state.abSalesHr.pin || "").trim()) {
-                    this.state.abSalesHr.error = "Employee and PIN are required.";
+                    this.state.abSalesHr.error = _t("Employee and PIN are required.");
                     return;
                 }
                 const payload = await this.orm.call("ab_employee_access_sales_pos_api", "employee_login", [], {
@@ -482,11 +484,11 @@ if (PosAction) {
                 this.state.abSalesHr.unlockPin = "";
                 this.state.abSalesHr.error = "";
                 await this._abSalesHrApplySession(payload);
-                this.notification.add(`Logged in as ${payload?.employee?.name || "employee"}.`, {type: "success"});
+                this.notification.add(_t("Logged in as %(employee)s.", {employee: payload?.employee?.name || _t("Employee")}), {type: "success"});
             } catch (err) {
                 const data = err?.data || err?.response?.data || {};
                 const rpcArgs = data?.["arguments"];
-                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || "Login failed.";
+                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || _t("Login failed.");
             }
         },
 
@@ -499,7 +501,7 @@ if (PosAction) {
                 ) || 0;
                 const storeId = parseInt(currentSession?.store?.id || this.state.abSalesHr.selectedStoreId || 0, 10) || 0;
                 if (!employeeAccessId || !String(this.state.abSalesHr.unlockPin || "").trim()) {
-                    this.state.abSalesHr.error = "Employee and PIN are required.";
+                    this.state.abSalesHr.error = _t("Employee and PIN are required.");
                     return;
                 }
                 const payload = await this.orm.call("ab_employee_access_sales_pos_api", "employee_login", [], {
@@ -513,11 +515,11 @@ if (PosAction) {
                 this.state.abSalesHr.unlockPin = "";
                 this.state.abSalesHr.error = "";
                 await this._abSalesHrApplySession(payload);
-                this.notification.add(`Logged in as ${payload?.employee?.name || "employee"}.`, {type: "success"});
+                this.notification.add(_t("Logged in as %(employee)s.", {employee: payload?.employee?.name || _t("Employee")}), {type: "success"});
             } catch (err) {
                 const data = err?.data || err?.response?.data || {};
                 const rpcArgs = data?.["arguments"];
-                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || "Login failed.";
+                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || _t("Login failed.");
             }
         },
 
@@ -533,7 +535,7 @@ if (PosAction) {
             } catch (err) {
                 const data = err?.data || err?.response?.data || {};
                 const rpcArgs = data?.["arguments"];
-                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || "Unlock failed.";
+                this.state.abSalesHr.error = (Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || _t("Unlock failed.");
             }
         },
 
@@ -606,7 +608,7 @@ if (PosAction) {
                 return;
             }
             if (!this.canOpenReturnScreen()) {
-                this.notification.add("This employee cannot access return screen.", {type: "warning"});
+                this.notification.add(_t("This employee cannot access return screen."), {type: "warning"});
                 return;
             }
             const storeId = parseInt(
@@ -619,7 +621,7 @@ if (PosAction) {
             });
             this.action.doAction({
                 type: "ir.actions.act_window",
-                name: "Sales Return",
+                name: _t("Sales Return"),
                 res_model: "ab_sales_return_header",
                 view_mode: "form",
                 views: [[false, "form"]],
@@ -656,7 +658,7 @@ if (PosAction) {
                 } catch (err) {
                     const data = err?.data || err?.response?.data || {};
                     const rpcArgs = data?.["arguments"];
-                    this.notification.add((Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || "Store change failed.", {type: "warning"});
+                    this.notification.add((Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || _t("Store change failed."), {type: "warning"});
                     return;
                 }
             }
@@ -675,7 +677,7 @@ if (PosAction) {
                 } catch (err) {
                     const data = err?.data || err?.response?.data || {};
                     const rpcArgs = data?.["arguments"];
-                    this.notification.add((Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || "Store change failed.", {type: "warning"});
+                    this.notification.add((Array.isArray(rpcArgs) && rpcArgs[0]) || data?.message || err?.message || _t("Store change failed."), {type: "warning"});
                     return;
                 }
             }
