@@ -52,9 +52,11 @@ msgid "Contact Data"
 msgstr "بيانات الاتصال"
 
 #. module: ab_sales_contract
+#. odoo-javascript
 #: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__contract_id
 #: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_id
 #: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_sales_header_view_tree_inherit_contract_total_after_discount
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_inherit.xml:0
 msgid "Contract"
 msgstr "العقد"
 
@@ -436,7 +438,9 @@ msgid "Contract %(contract)s is not allowed for store %(store)s."
 msgstr "العقد %(contract)s غير مسموح به في الفرع %(store)s."
 
 #. module: ab_sales_contract
+#. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_contract__total_invoice_discount_source__contract_company
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_inherit.xml:0
 msgid "Contract Company"
 msgstr "شركة التعاقد"
 
@@ -463,7 +467,9 @@ msgid "Invoice discount"
 msgstr "خصم الفاتورة"
 
 #. module: ab_sales_contract
+#. odoo-javascript
 #: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_contract__total_invoice_discount_source__our_company
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_inherit.xml:0
 msgid "Our Company"
 msgstr "شركتنا"
 
@@ -505,3 +511,9 @@ msgstr "خصم إجمالي الفاتورة"
 #: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_total_invoice_discount_source
 msgid "Total Invoice Discount Source"
 msgstr "مصدر خصم إجمالي الفاتورة"
+
+#. module: ab_sales_contract
+#. odoo-javascript
+#: code:addons/ab_sales_contract/static/src/pos/pos_action_contract_inherit.xml:0
+msgid "Contract..."
+msgstr "التعاقد..."

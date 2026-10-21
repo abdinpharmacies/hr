@@ -17,14 +17,14 @@
                             relation="'ab_contract'"
                             value="contractValue()"
                             update="(value) => this.onContractM2OUpdate(value)"
-                            placeholder="'Contract...'"
+                            placeholder.translate="Contract..."
                             domain="() => [['active', '=', true]]"
                             canCreate="false"
                             canCreateEdit="false"
                             canQuickCreate="false"
                             canOpen="false"
                             canWrite="true"
-                            string="'Contract'"
+                            string.translate="Contract"
                     />
                     <t t-if="currentBill.header.contract_allow_total_invoice_discount">
                         <input class="form-control form-control-sm o_ab_sales_pos_total_invoice_discount"
@@ -33,7 +33,7 @@
                                t-att-value="currentBill.header.total_invoice_discount || 0"
                                t-on-input="(ev) => onTotalInvoiceDiscountInput(ev.target.value)"/>
                         <span class="badge text-bg-secondary o_ab_sales_pos_total_invoice_discount_source"
-                              t-esc="currentBill.header.contract_total_invoice_discount_source === 'contract_company' ? 'Contract Company' : 'Our Company'"/>
+                              ><t t-if="currentBill.header.contract_total_invoice_discount_source === 'contract_company'">Contract Company</t><t t-else="">Our Company</t></span>
                     </t>
                 </div>
             </div>
