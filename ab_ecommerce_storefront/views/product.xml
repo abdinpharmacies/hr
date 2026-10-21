@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <template id="product_all_products_breadcrumb" inherit_id="website_sale.all_products_link_name">
+        <xpath expr="//span[@placeholder='All products']" position="replace">
+            <span>All products</span>
+        </xpath>
+    </template>
+
     <template id="product" name="Abdin eCommerce Product" inherit_id="website_sale.product" priority="90">
         <xpath expr="//t[@t-call='website_sale.product_terms_and_conditions']" position="attributes">
             <attribute name="t-call">ab_ecommerce_storefront.product_policy_links</attribute>

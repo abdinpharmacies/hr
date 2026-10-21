@@ -324,6 +324,7 @@ msgstr "تسوق حسب القسم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_all_products_breadcrumb
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "All products"

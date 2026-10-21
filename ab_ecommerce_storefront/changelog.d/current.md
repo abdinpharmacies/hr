@@ -2,6 +2,21 @@
 
 ## Recent commits
 
+Commit: `71fa2aee`
+Author: Mohamed Fawzy
+Date: 2026-10-21
+Original subject: `ab_ecommerce_storefront/FIX: limit shop navigation to approved categories`
+
+User-facing changes:
+
+- Show approved, published categories in shop and header navigation without deleting imported catalog records.
+
+Files changed:
+
+- `ab_ecommerce_storefront/changelog.d/current.md`
+- `ab_ecommerce_storefront/models/catalog_cache.py`
+- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
+
 Commit: `4ef5ea41`
 Author: Mohamed Fawzy
 Date: 2026-10-20
@@ -144,12 +159,12 @@ See [the commit review](2026-10-05-commit-review.md) for commit hashes, authors,
 
 ## Current changes before commit:
 
-- Show approved product categories in the shop and header navigation, excluding unrelated imported categories without changing the catalog records.
-- Keep the initial storefront categories available before the approved taxonomy is prepared.
-- Verify that a published imported category does not appear in the shop navigation.
+- Translate the product breadcrumb's All products link in Arabic while retaining its English label for English visitors.
 
 Files changed:
 
 - `ab_ecommerce_storefront/changelog.d/current.md`
-- `ab_ecommerce_storefront/models/catalog_cache.py`
-- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
+- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
+- `ab_ecommerce_storefront/i18n/ar.po`
+- `ab_ecommerce_storefront/i18n/ar_001.po`
+- `ab_ecommerce_storefront/views/product.xml`
