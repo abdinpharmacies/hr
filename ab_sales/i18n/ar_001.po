@@ -3034,7 +3034,7 @@ msgstr "تفاصيل المبيعات"
 #: model:ir.actions.act_window,name:ab_sales.ab_sales_line_action
 #: model:ir.ui.menu,name:ab_sales.ab_sales_reports_sales_details_menu
 msgid "Sales Details"
-msgstr "ab_sales_line"
+msgstr "تفاصيل المبيعات"
 
 #. module: ab_sales
 #. odoo-python
