@@ -9,7 +9,6 @@
                     <field name="sequence" optional="show"/>
                     <field name="name"/>
                     <field name="allow_pos_screen" optional="show"/>
-                    <field name="allow_cashier_screen" optional="show"/>
                     <field name="allow_return_screen" optional="show"/>
                     <field name="pin_rotation_days" optional="show"/>
                     <field name="active" optional="show"/>
@@ -37,7 +36,6 @@
                             <page string="Screens">
                                 <group>
                                     <field name="allow_pos_screen"/>
-                                    <field name="allow_cashier_screen"/>
                                     <field name="allow_return_screen"/>
                                 </group>
                             </page>

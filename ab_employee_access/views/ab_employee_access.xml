@@ -56,7 +56,6 @@
                         <group invisible="pos_use_custom_permissions == False">
                             <group string="Custom Screens">
                                 <field name="pos_allow_pos_screen"/>
-                                <field name="pos_allow_cashier_screen"/>
                                 <field name="pos_allow_return_screen"/>
                             </group>
                         </group>

@@ -32,7 +32,6 @@ class AbEmployeeAccess(models.Model):
         help="When enabled, this employee uses custom permissions instead of the role defaults.",
     )
     pos_allow_pos_screen = fields.Boolean(default=True)
-    pos_allow_cashier_screen = fields.Boolean(default=False)
     pos_allow_return_screen = fields.Boolean(default=False)
     pos_allow_sale = fields.Boolean(default=True)
     pos_allow_return = fields.Boolean(default=False)
@@ -127,7 +126,6 @@ class AbEmployeeAccess(models.Model):
         if self.pos_use_custom_permissions:
             return {
                 "allow_pos_screen": bool(self.pos_allow_pos_screen),
-                "allow_cashier_screen": bool(self.pos_allow_cashier_screen),
                 "allow_return_screen": bool(self.pos_allow_return_screen),
                 "allow_sale": bool(self.pos_allow_sale),
                 "allow_return": bool(self.pos_allow_return),
@@ -144,7 +142,6 @@ class AbEmployeeAccess(models.Model):
             }
         return {
             "allow_pos_screen": True,
-            "allow_cashier_screen": False,
             "allow_return_screen": False,
             "allow_sale": True,
             "allow_return": False,
