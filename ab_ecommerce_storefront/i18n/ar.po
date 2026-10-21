@@ -324,7 +324,6 @@ msgstr "تسوق حسب القسم"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_all_products_breadcrumb
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "All products"
@@ -7975,6 +7974,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
 msgid "<span>All orders</span>"
 msgstr "<span>كل الطلبات</span>"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product_all_products_breadcrumb
+msgid "<span>All products</span>"
+msgstr "<span>كل المنتجات</span>"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_orders_include_prescriptions
