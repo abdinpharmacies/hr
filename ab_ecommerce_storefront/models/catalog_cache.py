@@ -1,4 +1,4 @@
-from odoo import api, models, tools
+from odoo import api, fields, models, tools
 
 
 def _invalidate_catalog(env):
@@ -18,6 +18,23 @@ def _invalidate_catalog(env):
 
 class Website(models.Model):
     _inherit = "website"
+
+    def _ab_storefront_navigation_category_ids(self):
+        self.ensure_one()
+        taxonomy = self.env["ab_product_classification_taxonomy"].sudo().search(
+            fields.Domain("category_id", "!=", False)
+        )
+        if taxonomy:
+            return set(taxonomy.category_id.ids)
+        return {
+            category.id
+            for xmlid in (
+                "category_medications", "category_vitamins", "category_personal_care",
+                "category_first_aid", "category_health_devices", "category_beauty",
+                "category_baby_care", "category_wellness",
+            )
+            if (category := self.env.ref(f"ab_ecommerce_storefront.{xmlid}", raise_if_not_found=False))
+        }
 
     def _ab_storefront_category_rows(self):
         if self.env.cr.cache.get("ab_storefront_catalog_dirty"):
@@ -50,9 +67,10 @@ class Website(models.Model):
         return tuple(rows)
 
     def _ab_storefront_category_tree(self, root_ids):
+        navigation_ids = self._ab_storefront_navigation_category_ids()
         nodes = {
             row[0]: dict(zip(("id", "parent", "published", "label", "href", "icon", "tone"), row), children=[])
-            for row in self._ab_storefront_category_rows()
+            for row in self._ab_storefront_category_rows() if row[0] in navigation_ids and row[2]
         }
         for node in nodes.values():
             if node["parent"] in nodes and node["published"]:
@@ -60,9 +78,11 @@ class Website(models.Model):
         return [nodes[root_id] for root_id in root_ids if root_id in nodes]
 
     def _ab_storefront_header_category_menu(self):
+        navigation_ids = self._ab_storefront_navigation_category_ids()
         return [
             dict(zip(("label", "href", "icon", "tone"), row[3:]))
-            for row in self._ab_storefront_category_rows() if not row[1] and row[2]
+            for row in self._ab_storefront_category_rows()
+            if row[0] in navigation_ids and not row[1] and row[2]
         ][:8]
 
 

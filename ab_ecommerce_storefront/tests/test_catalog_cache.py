@@ -48,6 +48,20 @@ class TestStorefrontCatalogCache(TransactionCase):
         product.is_published = False
         self.assertNotIn(category.id, [row[0] for row in self.public._ab_storefront_category_rows()])
 
+    def test_imported_category_does_not_expand_shop_navigation(self):
+        category = self.env["product.public.category"].create({
+            "name": "Imported brand category", "website_id": self.website.id,
+        })
+        self.env["product.template"].create({
+            "name": "Imported brand product", "sale_ok": True, "is_published": True,
+            "website_id": self.website.id, "public_categ_ids": [fields.Command.set(category.ids)],
+        })
+        rows = self.public._ab_storefront_category_rows()
+        self.assertIn(category.id, [row[0] for row in rows])
+        roots = [row[0] for row in rows if not row[1]]
+        self.assertNotIn(category.id, [node["id"] for node in self.public._ab_storefront_category_tree(roots)])
+        self.assertNotIn("Imported brand category", [item["label"] for item in self.public._ab_storefront_header_category_menu()])
+
     def test_website_and_user_isolation(self):
         other = self.env["website"].create({"name": "Catalog other website", "company_id": self.website.company_id.id})
         category = self.env["product.public.category"].create({"name": "Other website category", "website_id": other.id})

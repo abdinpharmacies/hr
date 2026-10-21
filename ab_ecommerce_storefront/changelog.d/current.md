@@ -2,6 +2,32 @@
 
 ## Recent commits
 
+Commit: `4ef5ea41`
+Author: Mohamed Fawzy
+Date: 2026-10-20
+Original subject: `ab_ecommerce_storefront/PERF: cache catalog navigation and page fragments`
+
+User-facing changes:
+
+- Cache category navigation and catalog page fragments to speed up storefront browsing.
+
+Files changed:
+
+- `ab_ecommerce_storefront/__manifest__.py`
+- `ab_ecommerce_storefront/changelog.d/2026-10-18-catalog-cache.md`
+- `ab_ecommerce_storefront/changelog.d/2026-10-19-catalog-loading-lifecycle.md`
+- `ab_ecommerce_storefront/controllers/__init__.py`
+- `ab_ecommerce_storefront/controllers/catalog.py`
+- `ab_ecommerce_storefront/models/__init__.py`
+- `ab_ecommerce_storefront/models/catalog_cache.py`
+- `ab_ecommerce_storefront/static/src/js/catalog_cache.js`
+- `ab_ecommerce_storefront/static/src/js/catalog_navigation.js`
+- `ab_ecommerce_storefront/tests/__init__.py`
+- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
+- `ab_ecommerce_storefront/views/catalog.xml`
+- `ab_ecommerce_storefront/views/homepage.xml`
+- `ab_ecommerce_storefront/views/shop.xml`
+
 Commit: `deea566`
 Author: Mohamed Fawzy
 Date: 2026-09-29
@@ -118,26 +144,12 @@ See [the commit review](2026-10-05-commit-review.md) for commit hashes, authors,
 
 ## Current changes before commit:
 
-- Keep the Shop by Category and Shop by Need buttons unchanged when the active Home link is hovered.
-- Add brand, discount, coupon, current deal, and availability filters beneath shop categories on desktop and mobile.
-- Limit coupon results to products targeted by active website coupon discounts, and translate the new filter labels in both Arabic catalogs.
-- Batch storefront availability checks for E-Plus snapshots and warehouse stock, and map new shop labels to their view translations.
-- Show discount options as checkboxes and allow shoppers to combine multiple deal filters.
-- Let shoppers stage mobile shop filters and apply them together with Save at widths below 992 px.
-- Open the filtered product catalog from the offers links, replace selected deal choices with a translated Clear control, and render checkmarks correctly in RTL.
-- Align the Remove button at the bottom of recently viewed product cards regardless of title length.
+- Show approved product categories in the shop and header navigation, excluding unrelated imported categories without changing the catalog records.
+- Keep the initial storefront categories available before the approved taxonomy is prepared.
+- Verify that a published imported category does not appear in the shop navigation.
 
 Files changed:
 
-- `ab_ecommerce_storefront/__manifest__.py`
 - `ab_ecommerce_storefront/changelog.d/current.md`
-- `ab_ecommerce_storefront/controllers/shop.py`
-- `ab_ecommerce_storefront/i18n/ab_ecommerce_storefront.pot`
-- `ab_ecommerce_storefront/i18n/ar.po`
-- `ab_ecommerce_storefront/i18n/ar_001.po`
-- `ab_ecommerce_storefront/models/product_template.py`
-- `ab_ecommerce_storefront/models/website.py`
-- `ab_ecommerce_storefront/static/src/js/shop_filter_draft.js`
-- `ab_ecommerce_storefront/static/src/js/product_image_zoom.js`
-- `ab_ecommerce_storefront/static/src/scss/storefront.scss`
-- `ab_ecommerce_storefront/views/shop.xml`
+- `ab_ecommerce_storefront/models/catalog_cache.py`
+- `ab_ecommerce_storefront/tests/test_catalog_cache.py`
