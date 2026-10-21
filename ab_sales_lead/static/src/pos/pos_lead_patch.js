@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
+
 import {Component, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
 import {registry} from "@web/core/registry";
@@ -18,6 +20,11 @@ class AbSalesLeadPosDialog extends Component {
         onSaved: {type: Function, optional: true},
         close: Function,
     };
+
+    get dialogTitle() {
+        return this.state.leadType === "item_report" ? _t("Item Report")
+            : this.state.leadType === "special_order" ? _t("Special Order") : _t("Lost Sale");
+    }
 
     setup() {
         this.orm = useService("orm");
@@ -115,7 +122,7 @@ class AbSalesLeadPosDialog extends Component {
             this.state.reportMessage = result?.message || "";
             this.state.reportLoaded = true;
         } catch (err) {
-            this.state.reportMessage = err?.message || "Item report failed to load.";
+            this.state.reportMessage = err?.message || _t("Item report failed to load.");
             this.notification.add(this.state.reportMessage, {type: "danger"});
         } finally {
             this.state.reportLoading = false;
@@ -126,17 +133,17 @@ class AbSalesLeadPosDialog extends Component {
         const errors = {};
         const quantity = parseFloat(this.state.quantity || 0);
         if (!Number.isFinite(quantity) || quantity <= 0) {
-            errors.quantity = "Quantity is required.";
+            errors.quantity = _t("Quantity is required.");
         }
         if (this.state.leadType === "special_order" && !(this.state.customerPhone || "").trim()) {
-            errors.customerPhone = "Customer phone is required.";
+            errors.customerPhone = _t("Customer phone is required.");
         }
         if (
             this.state.leadType === "lost_sales" &&
             !(this.state.lostReason || "").trim() &&
             !(this.state.notes || "").trim()
         ) {
-            errors.lostReason = "Select a lost reason or add a note.";
+            errors.lostReason = _t("Select a lost reason or add a note.");
         }
         this.state.errors = errors;
         return !Object.values(errors).some(Boolean);
@@ -177,13 +184,13 @@ class AbSalesLeadPosDialog extends Component {
             const result = await this.orm.call("ab_sales_lead", "pos_create_lead", [], {
                 payload: this._payload(),
             });
-            this.notification.add(result?.message || "Sales lead saved.", {type: "success"});
+            this.notification.add(result?.message || _t("Sales lead saved."), {type: "success"});
             if (this.props.onSaved) {
                 this.props.onSaved(result);
             }
             this.props.close();
         } catch (err) {
-            this.notification.add(err?.message || "Failed to save sales lead.", {type: "danger"});
+            this.notification.add(err?.message || _t("Failed to save sales lead."), {type: "danger"});
         } finally {
             this.state.saving = false;
         }

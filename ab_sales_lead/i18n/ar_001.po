@@ -18,3 +18,510 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
 msgid "User"
 msgstr "المستخدم"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Balance:"
+msgstr "الرصيد:"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__state__cancelled
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__state__closed
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Company Action"
+msgstr "إجراء الشركة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__company_action_note
+msgid "Company Action Note"
+msgstr "ملاحظة إجراء الشركة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__contact_preference
+msgid "Contact Preference"
+msgstr "وسيلة التواصل المفضلة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__state__contacted
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Contacted"
+msgstr "تم التواصل"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__customer_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__customer_address
+msgid "Customer Address"
+msgstr "عنوان العميل"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__customer_name
+msgid "Customer Name"
+msgstr "اسم العميل"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__customer_phone
+msgid "Customer Phone"
+msgstr "هاتف العميل"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__customer_found_alternative
+msgid "Customer found alternative"
+msgstr "وجد العميل بديلًا"
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "Customer phone is required for special orders."
+msgstr "رقم هاتف العميل مطلوب للطلبات الخاصة."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Customer phone is required."
+msgstr "رقم هاتف العميل مطلوب."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__customer_refused_wait
+msgid "Customer refused to wait"
+msgstr "رفض العميل الانتظار"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Customer request, complaint, or missing product details..."
+msgstr "تفاصيل طلب العميل أو شكواه أو الصنف الناقص..."
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__default_price
+msgid "Default Price"
+msgstr "السعر الافتراضي"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Failed to save sales lead."
+msgstr "تعذر حفظ متابعة المبيعات."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Filter store"
+msgstr "تصفية المخازن"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Follow-up result or action taken..."
+msgstr "نتيجة المتابعة أو الإجراء المتخذ..."
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__state__in_review
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "In Review"
+msgstr "قيد المراجعة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__contact_preference__in_store
+msgid "In Store"
+msgstr "في المخزن"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__insufficient_quantity
+msgid "Insufficient quantity"
+msgstr "الكمية غير كافية"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Item Report"
+msgstr "تقرير الصنف"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Item report failed to load."
+msgstr "تعذر تحميل تقرير الصنف."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Last 30 Days Sales"
+msgstr "مبيعات آخر 30 يومًا"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Lead"
+msgstr "متابعة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__lead_type
+msgid "Lead Type"
+msgstr "نوع المتابعة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Lead&Report"
+msgstr "متابعة وتقرير"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Loading report"
+msgstr "جارٍ تحميل التقرير"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__lost_reason
+msgid "Lost Reason"
+msgstr "سبب فقدان البيع"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lead_type__lost_sales
+msgid "Lost Sale"
+msgstr "بيع مفقود"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Lost Sales"
+msgstr "المبيعات المفقودة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Lost sale, special order, and item report"
+msgstr "المبيعات المفقودة والطلبات الخاصة وتقارير الأصناف"
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "Lost sales require a reason or note."
+msgstr "يجب تحديد سبب أو كتابة ملاحظة للمبيعات المفقودة."
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__source__manual
+msgid "Manual"
+msgstr "يدوي"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__missing_product_info
+msgid "Missing product information"
+msgstr "معلومات الصنف ناقصة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__needed_date
+msgid "Needed Date"
+msgstr "التاريخ المطلوب"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__state__new
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "No stores found"
+msgstr "لا توجد مخازن"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__notes
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__other
+msgid "Other"
+msgstr "أخري"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__pos_balance
+msgid "POS Store Balance"
+msgstr "رصيد مخزن نقطة البيع"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__contact_preference__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__pos_client_token
+msgid "Pos Client Token"
+msgstr "رمز عميل نقطة البيع"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__pos_search_query
+msgid "Pos Search Query"
+msgstr "عبارة البحث في نقطة البيع"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__price_too_high
+msgid "Price too high"
+msgstr "السعر مرتفع جدًا"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__product_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__product_code
+msgid "Product Code"
+msgstr "كود الصنف"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__product_name
+msgid "Product Name"
+msgstr "اسم الصنف"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lost_reason__not_available
+msgid "Product not available"
+msgstr "الصنف غير متوفر"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Quantity is required."
+msgstr "الكمية مطلوبة."
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "Quantity must be greater than zero."
+msgstr "يجب أن تكون الكمية أكبر من صفر."
+
+#. module: ab_sales_lead
+#: model:ir.model,name:ab_sales_lead.model_ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Sales Lead"
+msgstr "متابعة مبيعات"
+
+#. module: ab_sales_lead
+#: model:ir.actions.act_window,name:ab_sales_lead.ab_sales_lead_action
+#: model:ir.ui.menu,name:ab_sales_lead.ab_sales_lead_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Sales Leads"
+msgstr "متابعات المبيعات"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Sales lead saved."
+msgstr "تم حفظ متابعة المبيعات."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Scenario"
+msgstr "الحالة"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_form
+msgid "Scenario Details"
+msgstr "تفاصيل الحالة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+msgid "Select a lost reason or add a note."
+msgstr "اختر سبب فقدان البيع أو أضف ملاحظة."
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "Select a valid lead type."
+msgstr "اختر نوع متابعة صالحًا."
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "Select a valid product."
+msgstr "اختر صنفًا صالحًا."
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_patch.js:0
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__lead_type__special_order
+msgid "Special Order"
+msgstr "طلب خاص"
+
+#. module: ab_sales_lead
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Special Orders"
+msgstr "طلبات خاصة"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__state
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__store_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_lead.ab_sales_lead_view_search
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+msgid "Store:"
+msgstr "المخزن:"
+
+#. module: ab_sales_lead
+#. odoo-python
+#: code:addons/ab_sales_lead/models/ab_sales_lead.py:0
+msgid "This product has no ePlus serial."
+msgstr "هذا الصنف ليس له معرّف في ePlus."
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__total_balance
+msgid "Total Balance"
+msgstr "إجمالي الرصيد"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields,field_description:ab_sales_lead.field_ab_sales_lead__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales_lead
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__source__pos
+msgid "POS"
+msgstr "نقطة البيع"
+
+#. module: ab_sales_lead
+#. odoo-javascript
+#: code:addons/ab_sales_lead/static/src/pos/pos_lead_templates.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_lead.selection__ab_sales_lead__contact_preference__whatsapp
+msgid "WhatsApp"
+msgstr "واتساب"

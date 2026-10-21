@@ -43,16 +43,16 @@
     </t>
 
     <t t-name="ab_sales_lead.PosLeadDialog">
-        <Dialog title="state.leadType === 'item_report' ? 'Item Report' : state.leadType === 'special_order' ? 'Special Order' : 'Lost Sale'" size="'lg'">
+        <Dialog title="dialogTitle" size="'lg'">
             <div class="ab_sales_lead_pos_dialog">
                 <div class="ab_sales_lead_product_summary">
                     <div class="ab_sales_lead_product_name" t-esc="productTitle()"/>
                     <div class="ab_sales_lead_product_meta">
                         <span t-esc="props.product.code || '-'"/>
                         <span>|</span>
-                        <span t-esc="'Balance: ' + props.formatQty(props.product.balance || 0)"/>
+                        <span><t>Balance:</t> <t t-esc="props.formatQty(props.product.balance || 0)"/></span>
                         <span>|</span>
-                        <span t-esc="'Store: ' + props.formatQty(props.product.pos_balance || 0)"/>
+                        <span><t>Store:</t> <t t-esc="props.formatQty(props.product.pos_balance || 0)"/></span>
                     </div>
                 </div>
 
