@@ -1,6 +1,6 @@
 {
     "name": "Ab Employee Access",
-    "version": "19.0.1.0.1",
+    "version": "19.0.1.0.2",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "summary": "Employee access profiles used by POS HR flows.",
