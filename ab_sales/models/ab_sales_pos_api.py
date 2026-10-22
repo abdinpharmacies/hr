@@ -702,13 +702,33 @@ class AbSalesPosApi(models.TransientModel):
         return result
 
     @api.model
+    def _pos_allowed_header_fields(self):
+        """POS-editable invoice inputs; addons extend their own fields."""
+        return {
+            "store_id", "description", "customer_id", "invoice_address",
+            "new_customer_name", "new_customer_phone", "new_customer_address",
+            "bill_customer_name", "bill_customer_phone", "bill_customer_address",
+            "customer_insurance_name", "customer_insurance_number",
+            "is_delivery", "employee_delivery_id", "employee_id",
+        }
+
+    @api.model
+    def _pos_allowed_line_fields(self):
+        """POS-editable line inputs, shared by initial submission and retries."""
+        return {
+            "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
+            "unavailable_reason", "unavailable_reason_other",
+        }
+
+    @api.model
     def _pos_editable_header_vals(self, values):
         fields_map = self.env["ab_sales_header"]._fields
+        allowed = self._pos_allowed_header_fields()
         excluded = {"id", "status", "eplus_serial", "pos_client_token", "push_state", "push_message", "submission_phase",
                     "active", "create_uid", "create_date", "write_uid", "write_date"}
         return {
             name: value for name, value in (values or {}).items()
-            if name in fields_map and name not in excluded and not name.startswith("pos_hr_")
+            if name in allowed and name in fields_map and name not in excluded and not name.startswith("pos_hr_")
             and not fields_map[name].readonly
         }
 
@@ -753,11 +773,9 @@ class AbSalesPosApi(models.TransientModel):
         })).exists()
         by_id = {product.id: product for product in products}
         vals_list = []
+        allowed_line_fields = self._pos_allowed_line_fields()
         for line in lines:
-            vals = {name: value for name, value in line.items() if name in {
-                "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
-                "unavailable_reason", "unavailable_reason_other",
-            }}
+            vals = {name: value for name, value in line.items() if name in allowed_line_fields}
             product_id = int(vals.get("product_id") or 0)
             if product_id not in by_id:
                 raise UserError(_("Line with missing product E-Plus serial."))
@@ -955,11 +973,9 @@ class AbSalesPosApi(models.TransientModel):
         product_by_id = {product.id: product for product in products}
 
         lines_to_create = []
+        allowed_line_fields = self._pos_allowed_line_fields()
         for line in line_vals:
-            vals = {name: value for name, value in (line or {}).items() if name in {
-                "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
-                "unavailable_reason", "unavailable_reason_other",
-            }}
+            vals = {name: value for name, value in (line or {}).items() if name in allowed_line_fields}
             if not vals.get("product_id"):
                 continue
             product_id = int(vals.get("product_id"))
