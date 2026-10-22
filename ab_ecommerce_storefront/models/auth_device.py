@@ -217,7 +217,16 @@ class ResUsers(models.Model):
 
     def _ab_device_protected(self):
         self.ensure_one()
-        return bool(self.share and not self._is_public() and self.env["ab_storefront_auth_identity"].sudo().search_count(fields.Domain("user_id", "=", self.id) & fields.Domain("kind", "=", "telegram"), limit=1))
+        user = self.sudo()
+        return bool(
+            user.share
+            and not user._is_public()
+            and user.env["ab_storefront_auth_identity"].search_count(
+                fields.Domain("user_id", "=", user.id)
+                & fields.Domain("kind", "=", "telegram"),
+                limit=1,
+            )
+        )
 
     def _rpc_api_keys_only(self):
         return self._ab_device_protected() or super()._rpc_api_keys_only()
