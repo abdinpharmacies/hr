@@ -878,6 +878,17 @@ class AbdinSalesHeader(models.Model):
                         employee.with_context(replication=True).sudo().costcenter_id.eplus_serial = eplus_emp_id
         return eplus_emp_id
 
+    def _get_eplus_salesperson_code(self):
+        """Use the selected salesperson for B-Connect invoice attribution."""
+        self.ensure_one()
+        salesperson = self.employee_id
+        if not salesperson and "pos_hr_employee_id" in self._fields:
+            salesperson = self.pos_hr_employee_id
+        emp_code = self._get_eplus_emp_id(employee=salesperson)
+        if not emp_code:
+            raise UserError(_("Employee has no E-Plus serial. Contact support."))
+        return emp_code
+
     @api.model
     def _get_employee_delivery_id(self, employee=False):
         employee_delivery_id = None
@@ -1218,12 +1229,7 @@ class AbdinSalesHeader(models.Model):
             rec._validate_before_push()
             if rec._validate_new_customer():
                 rec.customer_id = False
-            eplus_employee = rec.employee_id
-            if "pos_hr_employee_id" in rec._fields and rec.pos_hr_employee_id:
-                eplus_employee = rec.pos_hr_employee_id
-            emp_code = rec._get_eplus_emp_id(employee=eplus_employee)
-            if not emp_code:
-                raise UserError(_("Employee has no E-Plus serial. Contact support."))
+            emp_code = rec._get_eplus_salesperson_code()
             totals = rec._compute_header_numbers(cur=cur)
             # A worker crash from this point must require reconciliation.
             rec.write({"submission_phase": "pushing"})
