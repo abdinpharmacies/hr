@@ -270,43 +270,11 @@ if (PosAction) {
             return super.submitCurrentBill(...arguments);
         },
 
-        async _submitBillInternal(bill) {
-            if (!bill) {
-                return super._submitBillInternal(...arguments);
-            }
-            const originalOrm = this.orm;
-            const wrappedOrm = Object.create(originalOrm);
-            wrappedOrm.call = (model, method, args = [], kwargs = {}) => {
-                let nextKwargs = kwargs || {};
-                if (model === "ab_sales_pos_api" && method === "pos_submit") {
-                    const sourceLines = Array.isArray(bill.lines) ? bill.lines : [];
-                    const flagsByProduct = new Map();
-                    for (const line of sourceLines) {
-                        const productId = parseInt(line?.product_id || 0, 10) || 0;
-                        if (productId) {
-                            flagsByProduct.set(productId, !!line.is_doctor_prescription_product);
-                        }
-                    }
-                    nextKwargs = {...nextKwargs};
-                    if (Array.isArray(nextKwargs.lines)) {
-                        nextKwargs.lines = nextKwargs.lines.map((line) => {
-                            const productId = parseInt(line?.product_id || 0, 10) || 0;
-                            return {
-                                ...line,
-                                is_doctor_prescription_product: !!flagsByProduct.get(productId),
-                            };
-                        });
-                    }
-                }
-                return originalOrm.call.call(originalOrm, model, method, args, nextKwargs);
+        _buildSubmitLine(line) {
+            return {
+                ...super._buildSubmitLine(...arguments),
+                is_doctor_prescription_product: !!line.is_doctor_prescription_product,
             };
-
-            this.orm = wrappedOrm;
-            try {
-                return await super._submitBillInternal(...arguments);
-            } finally {
-                this.orm = originalOrm;
-            }
         },
 
         async searchProducts(query) {
