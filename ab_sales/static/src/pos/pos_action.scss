@@ -1256,3 +1256,123 @@
     .ab_pos_locked_bills .ab_pos_bill_branch_badge, .ab_pos_bill_lock_badge > span { display: none; }
   }
 }
+
+// Callcenter feedback stays compact; only unresolved states need a notice.
+.o_ab_sales_pos_app {
+  .ab_pos_notice {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 13px;
+    line-height: 1.5;
+
+    .ab_pos_notice_text { flex: 1; min-width: 180px; overflow-wrap: anywhere; }
+  }
+
+  .ab_pos_draft_backup {
+    border-color: #fecaca;
+    background: #fff7f7;
+    color: #991b1b;
+  }
+
+  .ab_pos_btn_retry_backup {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border: 1px solid #fca5a5;
+    border-radius: 8px;
+    color: #991b1b;
+    background: transparent;
+    font-size: 12px;
+    &:hover:not(:disabled) { background: #fee2e2; }
+  }
+
+  .ab_pos_top_actions {
+    .btn { min-height: 32px; border-radius: 8px; justify-content: center; }
+    .ab_pos_btn_submit_bill {
+      background: #0f766e;
+      border-color: #0f766e;
+      color: #fff;
+      &:hover:not(:disabled) { background: #115e59; border-color: #115e59; }
+    }
+    .ab_pos_submission_badge {
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      color: #1e40af;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 4px 10px;
+      &[data-state="saved"] { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+      &[data-state="unknown"], &[data-state="rejected"] {
+        background: #fff1f2; border-color: #fecdd3; color: #9f1239;
+      }
+    }
+  }
+
+  .ab_pos_btn_remove_bill, .ab_pos_sidebar_btn_remove_all,
+  .ab_pos_line_btn_remove, .ab_pos_bill_item_btn_remove {
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    color: #be123c;
+    &:hover:not(:disabled) { background: #ffe4e6; border-color: #fda4af; color: #9f1239; }
+    &:disabled { background: #f1f5f9; border-color: #e2e8f0; color: #94a3b8; opacity: 1; }
+  }
+
+  .ab_pos_notice .btn:focus-visible, .ab_pos_top_actions .btn:focus-visible,
+  .ab_pos_sidebar_btn_remove_all:focus-visible, .ab_pos_line_btn_remove:focus-visible,
+  .ab_pos_bill_item_btn_remove:focus-visible {
+    outline: 2px solid #0f766e;
+    outline-offset: 2px;
+  }
+}
+
+// Keep correction decisions beside their explanation, outside the bill header.
+.o_ab_sales_pos_app {
+  .ab_pos_submission_notice {
+    column-gap: 12px;
+    .ab_pos_notice_text { flex: 1 1 360px; }
+  }
+  .ab_pos_correction_status {
+    padding: 0;
+    border: 0;
+    color: #334155;
+    font-size: inherit;
+    font-weight: 700;
+    text-align: start;
+    &:hover:not(:disabled) { color: #0f766e; text-decoration: underline; }
+  }
+  .ab_pos_correction_actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-inline-start: auto;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 34px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .ab_pos_btn_submit_correction {
+      color: #fff;
+      background: #0f766e;
+      border-color: #0f766e;
+      &:hover:not(:disabled) { background: #115e59; border-color: #115e59; }
+    }
+  }
+  .ab_pos_topbar_main { gap: 20px; }
+  .ab_pos_topbar_fields { flex: 1 1 600px; }
+  .ab_pos_topbar_row { grid-template-columns: minmax(220px, 1fr) minmax(360px, 1.2fr); }
+  .o_ab_sales_pos_top_stack--right { min-width: 0; }
+}

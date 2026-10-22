@@ -1282,6 +1282,7 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
                 if header.create_uid
                 else ""
             ),
+            "has_returns": bool(header.has_returns) if doc_type == "sale" else False,
             "can_return": can_return,
             "document_type": doc_type,
         }

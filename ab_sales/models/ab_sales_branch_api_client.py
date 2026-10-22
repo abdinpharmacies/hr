@@ -288,6 +288,18 @@ class BranchReturn(models.Model):
             log.write({'state': 'error', 'error_message': str(error)})
             self.env.cr.commit()
             raise
+        if self.status == 'saved':
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': _('Sales Return'),
+                    'message': _('Return committed.'),
+                    'type': 'success',
+                    'sticky': False,
+                    'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+                },
+            }
         return True
 
 

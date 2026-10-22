@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.HasReturnsBadge">
+        <span t-if="props.record.data[props.name]" class="badge rounded-pill text-bg-info">Has Returns</span>
+    </t>
+</templates>

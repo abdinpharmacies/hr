@@ -976,6 +976,7 @@ class AbSalesPosAction extends Component {
             draftSlotBranches: {},
             draftCacheReady: false,
             draftBackupMessage: "",
+            draftBackupMessages: {},
             draftConflicts: {},
             draftCreating: false,
             draftManaging: false,
@@ -1209,7 +1210,6 @@ class AbSalesPosAction extends Component {
                         for (const bill of this.state.bills.filter((item) => ids.has(item.id))) {
                             this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
                         }
-                        this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
                     }
                 } catch { /* Invalid signals cannot alter the workspace. */ }
                 return;
@@ -1432,6 +1432,28 @@ class AbSalesPosAction extends Component {
         return `${this._localCacheKey()}:${this._posDraftSessionToken()}`;
     }
 
+    _draftBackupOutcomeMessage(outcome) {
+        if (outcome.status === "capacity") return _t("Not backed up: saved draft limit reached.");
+        if (outcome.status === "error") return outcome.message;
+        if (outcome.status === "conflict") return _t("Draft conflicts need review. Local edits are retained.");
+        if (outcome.status === "busy") return _t("Draft backup is busy. Local edits are retained.");
+        return "";
+    }
+
+    get currentDraftConflictTokens() {
+        const token = this.currentBill?.id;
+        return token && this.state.draftConflicts[token] ? [token] : [];
+    }
+
+    get currentDraftBackupMessage() {
+        const token = this.currentBill?.id;
+        if (!token) return this.state.draftBackupMessage;
+        if (this.state.draftConflicts[token]) {
+            return _t("Draft conflicts need review. Local edits are retained.");
+        }
+        return this.state.draftBackupMessages[token] || this.state.draftBackupMessage;
+    }
+
     retryDraftBackup() {
         this._draftRetryCount = 0;
         this._scheduleCacheSaveToServer(0);
@@ -1634,17 +1656,18 @@ class AbSalesPosAction extends Component {
                 this.state.draftConflicts[bill.id] = {status: "retired", token: bill.id};
             }
         }
-        if (outcomes.some((o) => o.status === "capacity")) {
-            this.state.draftBackupMessage = _t("Not backed up: saved draft limit reached.");
-        } else if (outcomes.some((o) => o.status === "error")) {
-            this.state.draftBackupMessage = outcomes.find((o) => o.status === "error").message;
-        } else if (Object.keys(this.state.draftConflicts).length) {
-            this.state.draftBackupMessage = _t("Draft conflicts need review. Local edits are retained.");
-        } else if (outcomes.some((o) => o.status === "busy")) {
-            this.state.draftBackupMessage = _t("Draft backup is busy. Local edits are retained.");
-        } else {
-            this.state.draftBackupMessage = "";
+        // A batch can contain bills other than the one currently displayed.
+        // Retain each failure on its token until that bill succeeds or leaves.
+        for (const outcome of outcomes) {
+            const message = this._draftBackupOutcomeMessage(outcome);
+            if (message && outcome.status !== "conflict") this.state.draftBackupMessages[outcome.token] = message;
+            else delete this.state.draftBackupMessages[outcome.token];
         }
+        const present = new Set(this.state.bills.map((bill) => bill.id));
+        for (const token of Object.keys(this.state.draftBackupMessages)) {
+            if (!present.has(token)) delete this.state.draftBackupMessages[token];
+        }
+        this.state.draftBackupMessage = "";
         this._assignLocalDraftSlots();
         this._writeLocalCache();
     }
@@ -1663,6 +1686,8 @@ class AbSalesPosAction extends Component {
         this._acknowledgedDrafts = new Map();
         this._removedDraftIds = new Set();
         this.state.draftConflicts = {};
+        this.state.draftBackupMessages = {};
+        this.state.draftBackupMessage = "";
         this.state.draftDiscardEligibility = {};
         this.state.bills = this._readLocalCache().map((bill) => this._normalizeBill(bill));
         let selected;
@@ -1962,16 +1987,28 @@ class AbSalesPosAction extends Component {
             this._applyDraftCacheResult(result, snapshot);
             transient = (result.outcomes || []).some((o) => o.status === "busy");
             const rejected = (result.outcomes || []).some((o) => !["saved", "unchanged", "ready", "retired", "completed", "skipped"].includes(o.status));
-            if (throwOnError && rejected) throw new Error(this.state.draftBackupMessage);
+            if (throwOnError && rejected) {
+                const outcome = result.outcomes.find((item) => this._draftBackupOutcomeMessage(item));
+                const error = new Error(outcome ? this._draftBackupOutcomeMessage(outcome) :
+                    _t("Draft backup is unavailable. Your local edits are retained. Retry when connected."));
+                error.draftBackupRejected = true;
+                throw error;
+            }
             if (!rejected && this._cachePayloadSnapshot().payload.bills.length) this._cacheSaveQueued = true;
             if (!rejected) this._draftRetryCount = 0;
             return result;
         } catch (error) {
             if (scope !== this._draftRequestScope()) return;
-            this.state.draftBackupMessage = error?.data ? this._getRpcErrorMessage(error) :
-                _t("Draft backup is unavailable. Your local edits are retained. Retry when connected.");
+            if (!error.draftBackupRejected) {
+                const message = error?.data ? this._getRpcErrorMessage(error) :
+                    _t("Draft backup is unavailable. Your local edits are retained. Retry when connected.");
+                const present = new Set(this.state.bills.map((bill) => bill.id));
+                for (const bill of snapshot.payload.bills) {
+                    if (present.has(bill.id)) this.state.draftBackupMessages[bill.id] = message;
+                }
+            }
             // RPC business errors require user action; transport errors may recover.
-            transient = !error?.data;
+            transient = !error?.data && !error.draftBackupRejected;
             if (throwOnError) throw error;
         } finally {
             this._cacheSaveInFlight = false;

@@ -261,8 +261,12 @@ class AbSalesPosDraftSlots(models.TransientModel):
         token = self._draft_id(bill)
         Header = self.env["ab_sales_header"].sudo()
         invoice = Header.search(fields.Domain("pos_client_token", "=", token), limit=1)
+        # Remote submission omits service-user relations. The local creator
+        # still owns the callcenter invoice; employee, cache ownership and
+        # branch checks remain mandatory.
         if invoice and "pos_hr_employee_id" in Header._fields and invoice.pos_hr_employee_id and (
-                invoice.pos_hr_employee_id != employee or invoice.pos_hr_service_user_id.id != self.env.uid):
+                invoice.pos_hr_employee_id != employee
+                or (invoice.pos_hr_service_user_id or invoice.create_uid).id != self.env.uid):
             raise AccessError(_("You cannot access this draft bill."))
         Cache = self.env["ab_sales_pos_draft_cache"].sudo()
         record = Cache.search(fields.Domain("pos_client_token", "=", token), limit=1)

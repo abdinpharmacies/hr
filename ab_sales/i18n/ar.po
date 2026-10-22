@@ -2333,6 +2333,7 @@ msgstr "إنشاء"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
 msgid "Delete Draft"
 msgstr "حذف المسودة"
 
@@ -5442,6 +5443,7 @@ msgstr "كمية المبيعات"
 #. module: ab_sales
 #. odoo-javascript
 #. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
 #: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
 #: model:ir.actions.act_window,name:ab_sales.ab_sales_return_header_action
@@ -6488,6 +6490,8 @@ msgstr "تعذر اعتماد المرتجع."
 
 #. module: ab_sales
 #. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
 msgid "Return committed."
 msgstr "تم اعتماد المرتجع."
@@ -7234,3 +7238,16 @@ msgstr "موظف التوصيل"
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 msgid "ePlus Employee"
 msgstr "موظف ePlus"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/bill_wizard/has_returns_badge.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__has_returns
+msgid "Has Returns"
+msgstr "بها مرتجعات"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__has_returns
+msgid "Whether this bill has a confirmed return recorded in the callcenter."
+msgstr "ما إذا كانت لهذه الفاتورة مرتجعات مؤكدة مسجلة في مركز الاتصال."

@@ -4,8 +4,9 @@
        t-inherit="ab_sales.PosAction"
        t-inherit-mode="extension">
         <xpath expr="//div[contains(@class, 'o_ab_sales_pos_top_actions')]/button[i[contains(@class, 'fa-paper-plane')]]" position="replace">
-            <div class="o_ab_sales_pos_action_stack o_ab_sales_pos_action_stack--submit ab_pos_action_stack_submit">
+            <div class="o_ab_sales_pos_action_stack o_ab_sales_pos_action_stack--submit ab_pos_action_stack_submit" t-if="!currentBill.correction">
                 <button class="btn btn-success ab_pos_btn_submit_bill"
+                        t-if="!['pending', 'saved'].includes(currentBill?.submission?.status)"
                         type="button"
                         t-on-click="submitCurrentBill"
                         t-att-disabled="state.submitting || state.submissionPreparing || state.correctionBusy || state.branchEditInFlight || currentBill?.submission?.checking || (promotionEditable(currentBill) &amp;&amp; (currentBill.promo?.validation_pending || currentBill.promo?.validation_errors?.length))">
@@ -14,7 +15,7 @@
                         <t t-if="state.submitting || state.submissionPreparing">Submitting...</t><t t-elif="currentBill?.correction">Submit correction</t><t t-elif="currentBill?.submission?.attempted">Retry</t><t t-else="">Submit</t>
                     </span>
                 </button>
-                <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" t-on-click="removeCurrentBill" t-att-disabled="!billRemovable(currentBill)">
+                <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" title="Delete Draft" aria-label="Delete Draft" t-on-click="removeCurrentBill" t-att-disabled="!billRemovable(currentBill)">
                     <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
                 </button>
             </div>

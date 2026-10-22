@@ -206,7 +206,8 @@
                                         t-on-click="() => selectBill(bill.id)">
                                     <div class="o_ab_sales_bill_wizard_list_row">
                                         <strong>#<t t-esc="bill.eplus_serial || bill.id"/></strong>
-                                        <div class="d-flex gap-1 align-items-center">
+                                        <div class="d-flex flex-wrap gap-1 align-items-center">
+                                            <span t-if="bill.has_returns" class="badge rounded-pill text-bg-info">Has Returns</span>
                                             <span class="badge"
                                                   t-att-class="bill.document_type === 'return' ? 'text-bg-danger' : 'text-bg-secondary'">
                                                 <t t-if="bill.document_type === 'return'">Return</t><t t-else="">Sales</t>
@@ -274,6 +275,7 @@
                                             <t t-if="state.details.document_type === 'return'">Return</t><t t-else="">Sales</t>
                                         </span>
                                     </span>
+                                    <span t-if="state.details.has_returns" class="badge rounded-pill text-bg-info">Has Returns</span>
                                     <span><i class="fa fa-flag" aria-hidden="true"/> <t t-esc="billStatusLabel(state.details.status)"/></span>
                                 </div>
                                 <div class="o_ab_sales_bill_wizard_bill_meta_line"
