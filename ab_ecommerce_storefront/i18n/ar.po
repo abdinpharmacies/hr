@@ -12469,12 +12469,12 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
 msgid ""
-"<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
-"                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+"<span data-ab-cart-hold-active=\"\">Note: These items have been reserved, and the quantity will be available in the store again after</span>\n"
+"                <strong class=\"o_force_ltr\" dir=\"ltr\" data-ab-cart-hold-countdown=\"\"/>\n"
 "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
 msgstr ""
-"<span data-ab-cart-hold-active=\"\">الوقت المتبقي لحجز الموقع:</span>\n"
-"                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+"<span data-ab-cart-hold-active=\"\">ملحوظة: تم حجز هذه الأصناف وسوف تظهر الكمية في المتجر مرة أخرى بعد</span>\n"
+"                <strong class=\"o_force_ltr\" dir=\"ltr\" data-ab-cart-hold-countdown=\"\"/>\n"
 "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">انتهت مهلة الحجز على الموقع. تظل الأصناف في سلتك وسيتم التحقق من توافرها مرة أخرى عند إتمام الطلب.</span>"
 
 #. module: ab_ecommerce_storefront
@@ -12522,15 +12522,6 @@ msgstr "بصمة صاحب العملية"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__payload_hash
 msgid "Payload Hash"
 msgstr "بصمة بيانات العملية"
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
-msgid ""
-"Removing an item releases its website hold. Final stock availability is "
-"checked at checkout."
-msgstr ""
-"حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
-"إتمام الطلب."
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__result_partner_id
@@ -13212,3 +13203,19 @@ msgstr "فئة منتجات الموقع الإلكتروني"
 #: model:ir.ui.view,website_meta_keywords:ab_ecommerce_storefront.about_us_page
 msgid "about Abdin Pharmacies, Egyptian pharmacy chain, Abdin Sohag"
 msgstr "عن صيدليات عابدين، سلسلة صيدليات مصرية، عابدين سوهاج"
+
+#~ msgid ""
+#~ "<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
+#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
+#~ msgstr ""
+#~ "<span data-ab-cart-hold-active=\"\">الوقت المتبقي لحجز الموقع:</span>\n"
+#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">انتهت مهلة الحجز على الموقع. تظل الأصناف في سلتك وسيتم التحقق من توافرها مرة أخرى عند إتمام الطلب.</span>"
+
+#~ msgid ""
+#~ "Removing an item releases its website hold. Final stock availability is "
+#~ "checked at checkout."
+#~ msgstr ""
+#~ "حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
+#~ "إتمام الطلب."

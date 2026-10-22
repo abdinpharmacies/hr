@@ -5,10 +5,9 @@
             <div t-if="website_sale_order and website_sale_order.ab_cart_hold_expires_at"
                  class="alert alert-info" role="status" data-ab-cart-hold=""
                  t-att-data-expires-at="website_sale_order.ab_cart_hold_expires_at.isoformat() + 'Z'">
-                <span data-ab-cart-hold-active="">Website hold remaining:</span>
-                <strong data-ab-cart-hold-countdown=""/>
+                <span data-ab-cart-hold-active="">Note: These items have been reserved, and the quantity will be available in the store again after</span>
+                <strong class="o_force_ltr" dir="ltr" data-ab-cart-hold-countdown=""/>
                 <span class="d-none" data-ab-cart-hold-expired="">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>
-                <div data-ab-cart-hold-active="">Removing an item releases its website hold. Final stock availability is checked at checkout.</div>
             </div>
         </xpath>
     </template>

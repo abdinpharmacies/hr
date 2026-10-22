@@ -48,8 +48,14 @@ export class StorefrontCartHold extends Interaction {
         const active = Number.isFinite(seconds) && seconds > 0;
         this.el.querySelectorAll("[data-ab-cart-hold-active]").forEach((node) => node.classList.toggle("d-none", !active));
         this.el.querySelector("[data-ab-cart-hold-expired]").classList.toggle("d-none", active);
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+        const formattedTime = [hours, minutes, remainingSeconds]
+            .map((value) => String(value).padStart(2, "0"))
+            .join(":");
         this.el.querySelector("[data-ab-cart-hold-countdown]").textContent = active
-            ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`
+            ? formattedTime
             : "";
     }
 }

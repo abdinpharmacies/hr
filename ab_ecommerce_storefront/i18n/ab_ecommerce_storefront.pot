@@ -11701,8 +11701,8 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
 msgid ""
-"<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
-"                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+"<span data-ab-cart-hold-active=\"\">Note: These items have been reserved, and the quantity will be available in the store again after</span>\n"
+"                <strong class=\"o_force_ltr\" dir=\"ltr\" data-ab-cart-hold-countdown=\"\"/>\n"
 "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
 msgstr ""
 
@@ -11750,13 +11750,6 @@ msgstr ""
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__payload_hash
 msgid "Payload Hash"
-msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
-msgid ""
-"Removing an item releases its website hold. Final stock availability is "
-"checked at checkout."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
