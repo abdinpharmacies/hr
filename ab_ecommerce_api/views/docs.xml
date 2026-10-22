@@ -1,0 +1,40 @@
+<odoo>
+    <template id="docs_page" name="Storefront API Documentation">
+        <t t-call="web.layout">
+            <t t-set="title">Storefront API Documentation</t>
+            <t t-set="head">
+                <link rel="stylesheet" href="/ab_ecommerce_api/static/lib/swagger-ui/swagger-ui.css"/>
+                <script src="/ab_ecommerce_api/static/lib/swagger-ui/swagger-ui-bundle.js"></script>
+                <script src="/ab_ecommerce_api/static/lib/swagger-ui/docs-init.js"></script>
+            </t>
+            <main class="ab-ecommerce-api-docs">
+                <div t-if="not embedded" style="max-width:1460px;margin:24px auto;padding:0 20px;font-family:sans-serif">
+                    <h1>Storefront API Documentation</h1>
+                    <p>Sign in with a customer account using the login endpoint. Copy the access token into Authorize to try protected requests.</p>
+                    <p>Interactive requests change the selected database. Use a development environment for testing.</p>
+                    <a href="/api/v1/openapi.json" download="ab-ecommerce-openapi.json">Download OpenAPI specification</a>
+                </div>
+                <div id="ab-ecommerce-api-swagger" dir="ltr"/>
+            </main>
+        </t>
+    </template>
+    <template id="browser_authorization" name="Authorize Storefront Application">
+        <t t-call="web.layout">
+            <t t-set="title">Authorize Storefront Application</t>
+            <main style="max-width:600px;margin:64px auto;padding:24px;font-family:sans-serif">
+                <h1>Authorize Storefront Application</h1>
+                <t t-if="approved">
+                    <p>Authorization complete. Return to the application to continue.</p>
+                </t>
+                <t t-else="">
+                    <p>Approve only if you started this sign-in from your application.</p>
+                    <p><t t-esc="request.env.user.name"/></p>
+                    <form method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit">Authorize application</button>
+                    </form>
+                </t>
+            </main>
+        </t>
+    </template>
+</odoo>

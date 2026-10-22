@@ -1,0 +1,22 @@
+<odoo>
+    <record id="api_session_company_rule" model="ir.rule">
+        <field name="name">API sessions by company</field>
+        <field name="model_id" ref="model_ab_ecommerce_api_session"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="api_browser_grant_company_rule" model="ir.rule">
+        <field name="name">API browser authorizations by company</field>
+        <field name="model_id" ref="model_ab_ecommerce_api_browser_grant"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="api_refresh_token_company_rule" model="ir.rule">
+        <field name="name">API used refresh tokens by company</field>
+        <field name="model_id" ref="model_ab_ecommerce_api_refresh_token"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="api_idempotency_company_rule" model="ir.rule">
+        <field name="name">API idempotency records by company</field>
+        <field name="model_id" ref="model_ab_ecommerce_api_idempotency"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

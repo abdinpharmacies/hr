@@ -1,0 +1,174 @@
+.ab_api_workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    background: var(--body-bg, #f8f9fa);
+    color: var(--body-color, #212529);
+
+    &_header,
+    &_toolbar,
+    &_statusbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--border-color, #dee2e6);
+    }
+
+    &_header {
+        background: var(--view-bg, #fff);
+    }
+
+    &_heading,
+    &_actions,
+    &_navigation {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    &_heading h1 {
+        margin: 0 0 4px;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    &_heading p {
+        margin: 0;
+    }
+
+    &_icon {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        margin-inline-end: 4px;
+        border-radius: 10px;
+        background: #e6f4ed;
+        color: #006644;
+        font-size: 24px;
+    }
+
+    &_base {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+        min-width: 0;
+    }
+
+    code {
+        overflow-wrap: anywhere;
+        color: inherit;
+        background: var(--view-bg, #fff);
+        border: 1px solid var(--border-color, #dee2e6);
+        border-radius: 4px;
+        padding: 4px 8px;
+    }
+
+    &_warning {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 12px 24px;
+        background: #fff4d6;
+        color: #654b00;
+    }
+
+    &_documentation {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+        min-height: 360px;
+    }
+
+    &_statusbar {
+        padding-block: 4px;
+    }
+
+    &_frame {
+        position: relative;
+        flex: 1;
+        min-height: 300px;
+    }
+
+    iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #fff;
+    }
+
+    &_overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        background: var(--view-bg, #fff);
+        text-align: center;
+    }
+
+    &_guide {
+        overflow-y: auto;
+        padding: 28px;
+        line-height: 1.6;
+    }
+
+    &_guide h2 {
+        font-size: 22px;
+    }
+
+    &_guide h3 {
+        font-size: 17px;
+    }
+
+    &_steps {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-block: 24px;
+        padding-inline-start: 24px;
+    }
+
+    &_steps li {
+        padding-inline-start: 4px;
+    }
+
+    &_steps code {
+        display: inline-block;
+        margin: 4px;
+    }
+
+    &_notes {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border-color, #dee2e6);
+    }
+
+    @media (max-width: 767px) {
+        &_header,
+        &_toolbar,
+        &_statusbar,
+        &_warning,
+        &_guide {
+            padding-inline: 12px;
+        }
+
+        &_steps,
+        &_notes {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}

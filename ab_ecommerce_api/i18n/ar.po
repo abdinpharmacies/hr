@@ -1,0 +1,619 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_ecommerce_api
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-22 06:21+0000\n"
+"PO-Revision-Date: 2026-10-21 12:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "API Docs"
+msgstr "توثيق API"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "API workspace sections"
+msgstr "أقسام مساحة عمل واجهة برمجة التطبيقات"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__access_hash
+msgid "Access Hash"
+msgstr "بصمة رمز الوصول"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Access tokens last 15 minutes. Refresh tokens expire 30 days after sign-in. "
+"Each refresh replaces both tokens without extending that deadline."
+msgstr ""
+"تستمر صلاحية رموز الوصول 15 دقيقة. تنتهي صلاحية رموز التجديد بعد 30 يومًا "
+"من تسجيل الدخول. يستبدل كل تجديد الرمزين دون تمديد هذا الموعد النهائي."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.constraint,message:ab_ecommerce_api.constraint_ab_ecommerce_api_session_access_unique
+msgid "Access tokens must be unique."
+msgstr "يجب أن تكون رموز الوصول فريدة."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Additional account verification is required."
+msgstr "يلزم تحقق إضافي من الحساب."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "An unexpected error occurred. Please try again."
+msgstr "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.browser_authorization
+msgid "Approve only if you started this sign-in from your application."
+msgstr "وافق فقط إذا كنت قد بدأت تسجيل الدخول من تطبيقك."
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.browser_authorization
+msgid "Authorization complete. Return to the application to continue."
+msgstr "تم التفويض. ارجع إلى التطبيق للمتابعة."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.constraint,message:ab_ecommerce_api.constraint_ab_ecommerce_api_browser_grant_token_unique
+msgid "Authorization tokens must be unique."
+msgstr "يجب أن تكون رموز التفويض فريدة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Authorize API requests"
+msgstr "تفويض طلبات واجهة برمجة التطبيقات"
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.browser_authorization
+msgid "Authorize Storefront Application"
+msgstr "تفويض تطبيق المتجر"
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.browser_authorization
+msgid "Authorize application"
+msgstr "تفويض التطبيق"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Authorize with a customer access token, then choose Try it out and Execute."
+msgstr "فوّض باستخدام رمز وصول خاص بالعميل، ثم اختر Try it out وExecute."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Base URL"
+msgstr "عنوان URL الأساسي"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__cart_id
+msgid "Cart"
+msgstr "السلة"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Check the request fields and try again."
+msgstr "راجع حقول الطلب وحاول مرة أخرى."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__code_challenge
+msgid "Code Challenge"
+msgstr "تحدي التحقق"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Connect Flutter"
+msgstr "ربط Flutter"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Copy data.access_token from the response. Choose Authorize and paste only "
+"the token, without the Bearer prefix."
+msgstr ""
+"انسخ data.access_token من الاستجابة. اختر Authorize والصق الرمز فقط دون "
+"بادئة Bearer."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__create_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__create_date
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__credential_stamp
+msgid "Credential Stamp"
+msgstr "بصمة بيانات الدخول"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Customer endpoints reject administrator credentials and browser cookies. "
+"HTTPS is required outside loopback development, even when backend login is "
+"allowed over HTTP."
+msgstr ""
+"ترفض نقاط نهاية العملاء بيانات اعتماد المسؤول وملفات تعريف ارتباط المتصفح. "
+"يلزم HTTPS خارج بيئة تطوير loopback، حتى عند السماح بتسجيل دخول الواجهة "
+"الخلفية عبر HTTP."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__device_name
+msgid "Device Name"
+msgstr "اسم الجهاز"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__display_name
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Documentation and request playground"
+msgstr "التوثيق وتجربة الطلبات"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.js:0
+msgid ""
+"Documentation is unavailable. Sign in as a System Administrator and retry."
+msgstr "التوثيق غير متاح. سجّل الدخول كمسؤول نظام ثم أعد المحاولة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.js:0
+msgid "Documentation took too long to load. Check your connection and retry."
+msgstr "استغرق تحميل التوثيق وقتًا طويلًا. تحقق من اتصالك وأعد المحاولة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Download OpenAPI"
+msgstr "تنزيل OpenAPI"
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.docs_page
+msgid "Download OpenAPI specification"
+msgstr "تنزيل مواصفات OpenAPI"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "English and Arabic"
+msgstr "العربية والإنجليزية"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__expires_at
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__expires_at
+msgid "Expires At"
+msgstr "تاريخ انتهاء الصلاحية"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "From sign-in to your first request"
+msgstr "من تسجيل الدخول إلى أول طلب"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__id
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Interactive API documentation"
+msgstr "توثيق تفاعلي لواجهة برمجة التطبيقات"
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.docs_page
+msgid ""
+"Interactive requests change the selected database. Use a development "
+"environment for testing."
+msgstr ""
+"الطلبات التفاعلية تغيّر قاعدة البيانات المحددة. استخدم بيئة تطوير للاختبار."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__write_uid
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__write_date
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Loading documentation..."
+msgstr "جارٍ تحميل التوثيق..."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Open Authentication, expand the login operation and choose Try it out. Enter "
+"a customer login and password, then Execute."
+msgstr ""
+"افتح Authentication ووسّع عملية login ثم اختر Try it out. أدخل اسم دخول "
+"العميل وكلمة المرور ثم اختر Execute."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Open standalone"
+msgstr "فتح في صفحة مستقلة"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Quick start"
+msgstr "البدء السريع"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__refresh_expires_at
+msgid "Refresh Expires At"
+msgstr "انتهاء صلاحية رمز التجديد"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__refresh_hash
+msgid "Refresh Hash"
+msgstr "بصمة رمز التجديد"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.constraint,message:ab_ecommerce_api.constraint_ab_ecommerce_api_session_refresh_unique
+msgid "Refresh tokens must be unique."
+msgstr "يجب أن تكون رموز التجديد فريدة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Reload docs"
+msgstr "إعادة تحميل التوثيق"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Reloading clears the customer token from this page."
+msgstr "تؤدي إعادة التحميل إلى إزالة رمز العميل من هذه الصفحة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Requests run against this database and can change real records. Use test "
+"customer credentials."
+msgstr ""
+"تُنفذ الطلبات على قاعدة البيانات هذه وقد تغيّر سجلات فعلية. استخدم بيانات "
+"دخول عميل مخصص للاختبار."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__revoked
+msgid "Revoked"
+msgstr "ملغى"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Security and transport"
+msgstr "الأمان والاتصال"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Send the request as JSON."
+msgstr "أرسل الطلب بتنسيق JSON."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Set lang to ar in an operation for Arabic responses. Swagger controls and "
+"the technical specification are in English."
+msgstr ""
+"اضبط lang على ar داخل العملية للحصول على استجابات عربية. عناصر تحكم Swagger "
+"والمواصفات التقنية باللغة الإنجليزية."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Sign in again to continue."
+msgstr "سجّل الدخول مرة أخرى للمتابعة."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Sign in as a customer"
+msgstr "تسجيل الدخول كعميل"
+
+#. module: ab_ecommerce_api
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.docs_page
+msgid ""
+"Sign in with a customer account using the login endpoint. Copy the access "
+"token into Authorize to try protected requests."
+msgstr ""
+"سجّل الدخول بحساب عميل باستخدام مسار تسجيل الدخول. انسخ رمز الوصول إلى "
+"Authorize لتجربة الطلبات المحمية."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Start with your profile or the product catalog. Expand an operation to "
+"inspect its parameters, request body, status code and JSON response."
+msgstr ""
+"ابدأ بملفك الشخصي أو كتالوج المنتجات. وسّع أي عملية لمراجعة المعاملات ونص "
+"الطلب ورمز الحالة واستجابة JSON."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+#: model:ir.actions.client,name:ab_ecommerce_api.action_api_workspace
+#: model:ir.ui.menu,name:ab_ecommerce_api.menu_api_docs
+msgid "Storefront API"
+msgstr "واجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#: model:ir.model,name:ab_ecommerce_api.model_ab_ecommerce_api_browser_grant
+msgid "Storefront API Browser Authorization"
+msgstr "تفويض المتصفح لواجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#: model:ir.actions.act_url,name:ab_ecommerce_api.action_api_docs
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_api.docs_page
+msgid "Storefront API Documentation"
+msgstr "توثيق واجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#: model:ir.model,name:ab_ecommerce_api.model_ab_ecommerce_api_session
+msgid "Storefront API Session"
+msgstr "جلسة واجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid ""
+"The operation could not be completed. Review your details and availability."
+msgstr "تعذر إتمام العملية. راجع بياناتك ومدى توفر المنتجات والخدمات."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "The requested resource was not found."
+msgstr "لم يتم العثور على المورد المطلوب."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "The uploaded data is too large."
+msgstr "حجم البيانات المرفوعة أكبر من المسموح."
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "This operation conflicts with the current record state."
+msgstr "تتعارض هذه العملية مع الحالة الحالية للسجل."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__token_hash
+msgid "Token Hash"
+msgstr "بصمة الرمز"
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Token lifetime"
+msgstr "مدة صلاحية الرموز"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Too many requests. Please try again later."
+msgstr "طلبات كثيرة جدًا. يرجى المحاولة لاحقًا."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid "Try an endpoint"
+msgstr "تجربة نقطة نهاية"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "Use HTTPS to access the API."
+msgstr "استخدم HTTPS للوصول إلى واجهة برمجة التطبيقات."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Use the base URL above and send the access token in the Authorization "
+"header. Keep credentials in device secure storage, never in source code."
+msgstr ""
+"استخدم عنوان URL الأساسي أعلاه وأرسل رمز الوصول في ترويسة Authorization. "
+"احتفظ ببيانات الدخول في التخزين الآمن للجهاز، ولا تضعها أبدًا في الكود "
+"المصدري."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__used
+msgid "Used"
+msgstr "مستخدم"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__user_id
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_browser_grant__website_id
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__website_id
+msgid "Website"
+msgstr "الموقع الإلكتروني"
+
+#. module: ab_ecommerce_api
+#. odoo-python
+#: code:addons/ab_ecommerce_api/controllers/common.py:0
+msgid "You cannot access this resource."
+msgstr "ليس لديك صلاحية الوصول إلى هذا المورد."
+
+#. module: ab_ecommerce_api
+#. odoo-javascript
+#: code:addons/ab_ecommerce_api/static/src/workspace.xml:0
+msgid ""
+"Your Odoo administrator session opens these docs. API requests use a "
+"separate customer token."
+msgstr ""
+"تفتح جلسة مسؤول Odoo هذا التوثيق. تستخدم طلبات واجهة برمجة التطبيقات رمز "
+"عميل منفصلًا."
+#. module: ab_ecommerce_api
+#: model:ir.model.constraint,message:ab_ecommerce_api.constraint_ab_ecommerce_api_idempotency_request_unique
+msgid "An idempotency key can be used once per operation and session."
+msgstr "يمكن استخدام مفتاح منع التكرار مرة واحدة لكل عملية وجلسة."
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__credentials_changed
+msgid "Credentials Changed"
+msgstr "تم تغيير بيانات الاعتماد"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__device_revoked
+msgid "Device Revoked"
+msgstr "تم إلغاء الجهاز"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__expired
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__generation
+msgid "Generation"
+msgstr "الجيل"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_idempotency__key_hash
+msgid "Key Hash"
+msgstr "تجزئة المفتاح"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__last_refreshed_at
+msgid "Last Refreshed At"
+msgstr "آخر تحديث في"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__last_used_at
+msgid "Last Used At"
+msgstr "آخر استخدام في"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__logout
+msgid "Logout"
+msgstr "تسجيل الخروج"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__logout_all
+msgid "Logout All"
+msgstr "تسجيل الخروج من الكل"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_idempotency__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields.selection,name:ab_ecommerce_api.selection__ab_ecommerce_api_session__revocation_reason__refresh_reuse
+msgid "Refresh Token Reuse"
+msgstr "إعادة استخدام رمز التحديث"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_idempotency__request_hash
+msgid "Request Hash"
+msgstr "تجزئة الطلب"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_idempotency__response_json
+msgid "Response Json"
+msgstr "استجابة JSON"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__revocation_reason
+msgid "Revocation Reason"
+msgstr "سبب الإلغاء"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_session__revoked_at
+msgid "Revoked At"
+msgstr "تم الإلغاء في"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_refresh_token__session_id
+msgid "Session"
+msgstr "الجلسة"
+
+#. module: ab_ecommerce_api
+#: model:ir.model,name:ab_ecommerce_api.model_ab_ecommerce_api_idempotency
+msgid "Storefront API Idempotency Record"
+msgstr "سجل منع التكرار لواجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#: model:ir.model,name:ab_ecommerce_api.model_ab_ecommerce_api_refresh_token
+msgid "Storefront API Used Refresh Token"
+msgstr "رمز تحديث مستخدم لواجهة برمجة تطبيقات المتجر"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.fields,field_description:ab_ecommerce_api.field_ab_ecommerce_api_refresh_token__used_at
+msgid "Used At"
+msgstr "استُخدم في"
+
+#. module: ab_ecommerce_api
+#: model:ir.model.constraint,message:ab_ecommerce_api.constraint_ab_ecommerce_api_refresh_token_token_hash_unique
+msgid "Used refresh tokens must be unique."
+msgstr "يجب أن تكون رموز التحديث المستخدمة فريدة."

@@ -1,0 +1,69 @@
+<templates xml:space="preserve">
+    <t t-name="ab_ecommerce_api.Workspace">
+        <section class="ab_api_workspace">
+            <header class="ab_api_workspace_header">
+                <div class="ab_api_workspace_heading">
+                    <span class="ab_api_workspace_icon" aria-hidden="true"><i class="fa fa-code"/></span>
+                    <div>
+                        <h1>Storefront API</h1>
+                        <p>Documentation and request playground</p>
+                    </div>
+                    <span class="badge text-bg-light border" dir="ltr" t-translation="off">v1</span>
+                </div>
+                <div class="ab_api_workspace_actions">
+                    <a class="btn btn-outline-secondary" href="/api/v1/openapi.json" download="ab-ecommerce-openapi.json">
+                        <i class="fa fa-download me-1" aria-hidden="true"/>Download OpenAPI
+                    </a>
+                    <a class="btn btn-outline-secondary" href="/api/v1/docs" target="_blank" rel="noopener noreferrer">
+                        <i class="fa fa-external-link me-1" aria-hidden="true"/>Open standalone
+                    </a>
+                </div>
+            </header>
+            <div class="ab_api_workspace_toolbar">
+                <nav aria-label="API workspace sections" class="ab_api_workspace_navigation">
+                    <button type="button" class="btn" t-att-class="{ 'btn-primary': state.tab === 'docs', 'btn-outline-secondary': state.tab !== 'docs' }" t-att-aria-pressed="state.tab === 'docs'" t-on-click="showDocs" data-api-tab="docs">API Docs</button>
+                    <button type="button" class="btn" t-att-class="{ 'btn-primary': state.tab === 'guide', 'btn-outline-secondary': state.tab !== 'guide' }" t-att-aria-pressed="state.tab === 'guide'" t-on-click="showGuide" data-api-tab="guide">Quick start</button>
+                </nav>
+                <div class="ab_api_workspace_base">
+                    <span>Base URL</span>
+                    <code dir="ltr" t-esc="baseUrl"/>
+                </div>
+            </div>
+            <div class="ab_api_workspace_warning" role="note">
+                <i class="fa fa-info-circle" aria-hidden="true"/>
+                <span>Requests run against this database and can change real records. Use test customer credentials.</span>
+            </div>
+            <div class="ab_api_workspace_documentation" t-att-class="{ 'd-none': state.tab !== 'docs' }">
+                <div class="ab_api_workspace_statusbar">
+                    <span>Authorize with a customer access token, then choose Try it out and Execute.</span>
+                    <button type="button" class="btn btn-link" t-on-click="reloadDocs" t-att-disabled="state.loading" title="Reloading clears the customer token from this page.">
+                        <i class="fa fa-refresh me-1" aria-hidden="true"/>Reload docs
+                    </button>
+                </div>
+                <div class="ab_api_workspace_frame">
+                    <div t-if="state.loading" class="ab_api_workspace_overlay" role="status">Loading documentation...</div>
+                    <div t-if="state.error" class="ab_api_workspace_overlay" role="alert">
+                        <p t-esc="state.error"/>
+                        <button type="button" class="btn btn-primary" t-on-click="reloadDocs">Retry</button>
+                    </div>
+                    <iframe t-key="state.revision" t-ref="documentation" t-att-src="docsUrl" title="Interactive API documentation" t-on-load="onFrameLoaded" referrerpolicy="no-referrer"/>
+                </div>
+            </div>
+            <article class="ab_api_workspace_guide" t-att-class="{ 'd-none': state.tab !== 'guide' }">
+                <h2>From sign-in to your first request</h2>
+                <p>Your Odoo administrator session opens these docs. API requests use a separate customer token.</p>
+                <ol class="ab_api_workspace_steps">
+                    <li><h3>Sign in as a customer</h3><p>Open Authentication, expand the login operation and choose Try it out. Enter a customer login and password, then Execute.</p><code dir="ltr" t-translation="off">POST /auth/login</code></li>
+                    <li><h3>Authorize API requests</h3><p>Copy data.access_token from the response. Choose Authorize and paste only the token, without the Bearer prefix.</p></li>
+                    <li><h3>Try an endpoint</h3><p>Start with your profile or the product catalog. Expand an operation to inspect its parameters, request body, status code and JSON response.</p><code dir="ltr" t-translation="off">GET /me</code><code dir="ltr" t-translation="off">GET /products</code></li>
+                    <li><h3>Connect Flutter</h3><p>Use the base URL above and send the access token in the Authorization header. Keep credentials in device secure storage, never in source code.</p><code dir="ltr" t-translation="off">Authorization: Bearer &lt;access_token&gt;</code></li>
+                </ol>
+                <div class="ab_api_workspace_notes">
+                    <section><h3>Token lifetime</h3><p>Access tokens last 15 minutes. Refresh tokens expire 30 days after sign-in. Each refresh replaces both tokens without extending that deadline.</p></section>
+                    <section><h3>Security and transport</h3><p>Customer endpoints reject administrator credentials and browser cookies. HTTPS is required outside loopback development, even when backend login is allowed over HTTP.</p></section>
+                    <section><h3>English and Arabic</h3><p>Set lang to ar in an operation for Arabic responses. Swagger controls and the technical specification are in English.</p></section>
+                </div>
+            </article>
+        </section>
+    </t>
+</templates>
