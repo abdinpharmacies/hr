@@ -8,6 +8,10 @@ class AbSalesPosApiContract(models.TransientModel):
     _inherit = "ab_sales_pos_api"
 
     @api.model
+    def _pos_allowed_header_fields(self):
+        return super()._pos_allowed_header_fields() | {"contract_id", "total_invoice_discount"}
+
+    @api.model
     def pos_contract_totals(self, contract_id=None, lines=None, total_invoice_discount=0.0,
                             store_id=None, applied_program_id=None, manual_clear=False, customer_id=None):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_contract")
