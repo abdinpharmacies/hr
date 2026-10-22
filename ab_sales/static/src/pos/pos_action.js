@@ -4665,6 +4665,18 @@ class AbSalesPosAction extends Component {
         return this._sendBillSubmission(bill);
     }
 
+    _buildSubmitLine(line) {
+        return {
+            product_id: line.product_id,
+            qty_str: line.qty_str || DEFAULT_QTY,
+            sell_price: line.sell_price,
+            target_sell_price: line.target_sell_price,
+            uom_id: line.uom_id || false,
+            unavailable_reason: line.unavailable_reason || false,
+            unavailable_reason_other: line.unavailable_reason_other || false,
+        };
+    }
+
     async _sendBillSubmission(bill) {
         if (!bill || this.state.submitting || this.state.draftManaging || this.state.draftDeleting) return;
         if (!bill.lines.length && !bill.submission_attempted && !bill.odoo_header_id) {
@@ -4675,13 +4687,7 @@ class AbSalesPosAction extends Component {
         const wasUnknown = bill.submission_status === "unknown";
         const payload = wasUnknown && bill.submission_payload ? bill.submission_payload : {
             header: this._buildSubmitHeader(bill),
-            lines: bill.lines.map((line) => ({
-                product_id: line.product_id, qty_str: line.qty_str || DEFAULT_QTY,
-                sell_price: line.sell_price, target_sell_price: line.target_sell_price,
-                uom_id: line.uom_id || false,
-                unavailable_reason: line.unavailable_reason || false,
-                unavailable_reason_other: line.unavailable_reason_other || false,
-            })),
+            lines: bill.lines.map((line) => this._buildSubmitLine(line)),
             applied_program_id: bill.promo?.applied_id || false,
         };
         payload.submission_ui_version = "1";
