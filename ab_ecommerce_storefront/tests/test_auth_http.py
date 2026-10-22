@@ -46,13 +46,15 @@ class TestStorefrontAuthHTTP(HttpCase):
     def test_webhook_authentication_and_deduplication(self):
         secret = secrets.token_urlsafe(32)
         service_class = type(self.env["ab_storefront_auth_telegram"])
-        with patch("odoo.addons.ab_ecommerce_storefront.controllers.auth_security.deployment_secret", return_value=secret), patch.object(service_class, "_enabled", return_value=True):
+        auth_service_class = type(self.env["ab_storefront_auth_service"])
+        with patch("odoo.addons.ab_ecommerce_storefront.controllers.auth_security.deployment_secret", return_value=secret), patch.object(service_class, "_enabled", return_value=True), patch.object(auth_service_class, "_wake_delivery") as wake_delivery:
             invalid = self.url_open("/ab_storefront/auth/telegram/webhook", json={"update_id": 7770001})
             self.assertEqual(invalid.status_code, 403)
             headers = {"X-Telegram-Bot-Api-Secret-Token": secret}
             for index in range(2):
                 result = self.url_open("/ab_storefront/auth/telegram/webhook", json={"update_id": 7770001, "message": {"from": {"id": 910003}, "chat": {"id": 910003, "type": "private"}, "text": "/help"}}, headers=headers)
                 self.assertEqual(result.status_code, 200)
+            wake_delivery.assert_called_once()
             self.assertEqual(self.env["ab_storefront_auth_event"].sudo().search_count([("update_key", "=", "7770001")]), 1)
 
     def test_authenticated_identity_page_and_existing_password_page(self):

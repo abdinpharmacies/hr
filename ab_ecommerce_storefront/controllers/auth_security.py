@@ -265,7 +265,7 @@ class StorefrontAuthSecurity(http.Controller):
             return request.make_json_response({"ok": False}, status=413)
         try:
             update = json.loads(request.httprequest.get_data())
-            if not isinstance(update, dict) or not self._service()._ingest_update(update):
+            if not isinstance(update, dict) or not self._service()._ingest_update(update, wake_delivery=True):
                 raise ValueError
         except (ValueError, TypeError):
             return request.make_json_response({"ok": False}, status=400)

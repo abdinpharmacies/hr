@@ -98,7 +98,7 @@ The webhook is HTTPS-only in production and authenticates the `X-Telegram-Bot-Ap
 
 Telegram supports one webhook per bot. Do not register this bot with the existing employee Telegram webhook or run a second polling consumer for it. This addon deliberately does not depend on the employee bot modules, whose persistent PIN and credential-in-chat behavior is unsuitable for customer recovery.
 
-Keep at least one production cron worker active. `Storefront authentication delivery` runs every minute, processes up to 100 events within a 30-second budget, and commits progress per event when invoked by cron. Webhook HTTP requests only validate and enqueue; they do not call Telegram. Linking replies and OTP delivery normally arrive in the next cron cycle at low load. Email jobs enter Odoo's mail queue, so its mail-delivery cron must also be active. Monitor pending/failed `ab_storefront_auth_event` records as an administrator; diagnostics contain event IDs, channel names and attempt counts, never credentials or codes.
+Keep at least one production cron worker active. `Storefront authentication delivery` runs every minute, processes up to 100 events within a 30-second budget, and commits progress per event when invoked by cron. Webhook HTTP requests validate and enqueue without calling Telegram, then wake the delivery cron so linking replies normally arrive within seconds. The one-minute schedule remains the fallback if an immediate trigger is delayed. Email jobs enter Odoo's mail queue, so its mail-delivery cron must also be active. Monitor pending/failed `ab_storefront_auth_event` records as an administrator; diagnostics contain event IDs, channel names and attempt counts, never credentials or codes.
 
 ## Development and live delivery testing
 

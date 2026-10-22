@@ -254,11 +254,32 @@ class TestStorefrontAuthentication(TransactionCase):
 
     def test_duplicate_update(self):
         update = {"update_id": 1000001, "message": {"from": {"id": 910001}, "chat": {"id": 910001, "type": "private"}, "text": "/start"}}
-        self.assertTrue(self.service._ingest_update(update))
-        self.assertTrue(self.service._ingest_update(update))
+        with patch.object(type(self.service), "_wake_delivery") as wake_delivery:
+            self.assertTrue(self.service._ingest_update(update, wake_delivery=True))
+            self.assertTrue(self.service._ingest_update(update, wake_delivery=True))
+        wake_delivery.assert_called_once()
         self.assertEqual(self.Event.search_count([("update_key", "=", "1000001")]), 1)
-        self.service._process_queue()
+        with patch.object(type(self.env["ab_storefront_auth_telegram"]), "_deliver"):
+            self.service._process_queue()
         self.assertFalse(self.Event.search([("update_key", "=", "1000001")]).payload)
+
+    def test_wake_delivery_schedules_cron(self):
+        cron = self.env.ref("ab_ecommerce_storefront.cron_auth_delivery")
+        triggers = self.service._wake_delivery()
+        self.assertEqual(triggers.cron_id, cron)
+
+    def test_repeated_start_resends_contact_button(self):
+        token = self.service._request_link(self.user, "01012345678", self.browser, "test-ip")[0]
+        self._telegram("/start " + token)
+        self._telegram("/start " + token)
+        challenge = self.service._find(token, ["link"], self.browser)
+        deliveries = self.Event.search([("channel", "=", "telegram")], order="id desc", limit=2)
+        payloads = deliveries.mapped(self._decode)
+        self.assertEqual(challenge.telegram_user_id, "910001")
+        self.assertEqual(len(payloads), 2)
+        for payload in payloads:
+            button = payload["reply_markup"]["keyboard"][0][0]
+            self.assertTrue(button["request_contact"])
 
     def test_combined_account_and_channels(self):
         token, url = self._link()

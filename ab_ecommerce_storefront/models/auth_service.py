@@ -321,7 +321,10 @@ class AuthService(models.AbstractModel):
         self.env["ab_storefront_auth_challenge"].sudo().search([("user_id", "=", user.id), ("used_at", "=", False)]).write({"used_at": fields.Datetime.now(), "code_hash": False})
         return True
 
-    def _ingest_update(self, update):
+    def _wake_delivery(self):
+        return self.env.ref("ab_ecommerce_storefront.cron_auth_delivery").sudo()._trigger()
+
+    def _ingest_update(self, update, wake_delivery=False):
         update_id = update.get("update_id")
         if type(update_id) is not int or update_id < 0:
             return False
@@ -335,12 +338,16 @@ class AuthService(models.AbstractModel):
             if not isinstance(callback, dict):
                 return False
             self._queue("telegram_update", {"update_id": update_id, "callback_query": {key: callback[key] for key in ("id", "from", "message", "data") if key in callback}}, update_key=key)
+            if wake_delivery:
+                self._wake_delivery()
             return True
         message = update.get("message", {})
         if not isinstance(message, dict):
             return False
         minimal = {"update_id": update_id, "message": {key: message[key] for key in ("chat", "from", "text", "contact", "date", "forward_origin") if key in message}}
         self._queue("telegram_update", minimal, update_key=key)
+        if wake_delivery:
+            self._wake_delivery()
         return True
 
     def _process_telegram_update(self, update):
@@ -373,7 +380,15 @@ class AuthService(models.AbstractModel):
         elif command == "/start" and " " in text:
             token = text.split(" ", 1)[1].strip()
             challenge = self._find(token, ["link", "phone_signup"])
-            if challenge and not challenge.telegram_user_id:
+            if not challenge or (challenge.telegram_user_id and challenge.telegram_user_id != telegram_id):
+                reply = translated._("This linking request is invalid or expired. Start again from the website.")
+            elif challenge.telegram_user_id == telegram_id:
+                if challenge.phone_verified:
+                    reply = translated._("Phone verified. Return to the pharmacy website and confirm the Telegram connection.")
+                else:
+                    reply = translated._("Press the “Share my phone number” button below to verify the phone entered on the website. Do not type the number or send another contact. Then return to the website and confirm the connection.")
+                    markup = {"keyboard": [[{"text": translated._("Share my phone number"), "request_contact": True}]], "resize_keyboard": True, "one_time_keyboard": True}
+            else:
                 self._lock("telegram-claim:" + telegram_id)
                 existing = self.env["ab_storefront_auth_identity"].sudo().search([("kind", "=", "telegram"), ("value", "=", telegram_id)], limit=1)
                 if existing and existing.user_id != challenge.user_id:
@@ -383,8 +398,6 @@ class AuthService(models.AbstractModel):
                     challenge.write({"telegram_user_id": telegram_id, "telegram_chat_id": telegram_id})
                     reply = translated._("Press the “Share my phone number” button below to verify the phone entered on the website. Do not type the number or send another contact. Then return to the website and confirm the connection.")
                     markup = {"keyboard": [[{"text": translated._("Share my phone number"), "request_contact": True}]], "resize_keyboard": True, "one_time_keyboard": True}
-            else:
-                reply = translated._("This linking request is invalid or expired. Start again from the website.")
         elif isinstance(message.get("contact"), dict):
             contact = message["contact"]
             self._lock("telegram-claim:" + telegram_id)
