@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="layout" name="Abdin eCommerce Layout" inherit_id="website.layout" priority="120">
+        <xpath expr="//link[@rel='shortcut icon']" position="replace">
+            <link type="image/png" rel="shortcut icon" t-att-href="website.image_url(website, 'logo')"/>
+        </xpath>
+
         <xpath expr="//body" position="attributes">
             <attribute name="t-att-class">((body_classname + ' ') if body_classname else '') + 'ab-storefront'</attribute>
         </xpath>
