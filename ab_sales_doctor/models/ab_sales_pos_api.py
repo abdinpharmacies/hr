@@ -7,6 +7,14 @@ class AbSalesPosApi(models.TransientModel):
     _inherit = "ab_sales_pos_api"
 
     @api.model
+    def _pos_allowed_header_fields(self):
+        return super()._pos_allowed_header_fields() | {"is_doctor_prescription", "doctor_id"}
+
+    @api.model
+    def _pos_allowed_line_fields(self):
+        return super()._pos_allowed_line_fields() | {"is_doctor_prescription_product"}
+
+    @api.model
     def _doctor_connection_unavailable_error(self):
         return UserError(_("No connection available."))
 
