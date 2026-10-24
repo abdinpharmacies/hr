@@ -65,7 +65,8 @@ Files changed:
 - ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
 - ab_tax_eta_archive/views/eta_views.xml
 
-Current changes before commit:
+38ed2546 — yahyazakaria22 — 2026-10-25
+fix: avoid mixed-unit Sass function in ETA dashboard
 
 - Fix dashboard stylesheet compilation by replacing a mixed-unit Sass min() call with CSS width and max-width properties.
 
