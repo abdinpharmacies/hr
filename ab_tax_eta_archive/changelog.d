@@ -17,6 +17,7 @@ Files changed:
 - ab_tax_eta_archive/security/security_groups.xml
 - ab_tax_eta_archive/security/ir.model.access.csv
 - ab_tax_eta_archive/views/eta_views.xml
+
 - ab_tax_eta_archive/data/cron.xml
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
@@ -91,3 +92,13 @@ Files changed:
 - ab_tax_eta_archive/models/eta_config.py
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/views/eta_views.xml
+
+Current changes before commit:
+
+- Keep recent receipt retrieval on ETA Search Receipts; use receipt packages only for dates outside the search window.
+- Include ETA error code, message, target, and correlation ID in retrieval errors when returned.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/models/eta_sync.py
