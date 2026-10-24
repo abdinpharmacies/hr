@@ -109,9 +109,12 @@ class EtaExport(models.Model):
         sheet = workbook.active
         sheet.title = 'Invoices' if kind == 'invoice' else 'Receipts'
         identifier = 'Internal ID' if kind == 'invoice' else 'Receipt Number'
-        sheet.append(['UUID', identifier, 'Submission UUID', 'Type', 'Status',
-                      'Issuer ID', 'Issuer Name', 'Receiver ID', 'Receiver Name',
-                      'Issued At (UTC)', 'Received At (UTC)', 'Total', 'Currency'])
+        headers = ['UUID', identifier, 'Submission UUID', 'Type', 'Status',
+                   'Issuer ID', 'Issuer Name', 'Receiver ID', 'Receiver Name',
+                   'Issued At (UTC)', 'Received At (UTC)', 'Total', 'Currency']
+        if kind == 'receipt':
+            headers.append(_('POS Serial'))
+        sheet.append(headers)
         for cell in sheet[1]:
             cell.font = Font(bold=True, color='FFFFFF')
             cell.fill = PatternFill('solid', fgColor='17426B')
@@ -128,6 +131,8 @@ class EtaExport(models.Model):
             cells = ([_excel_cell(value) for value in row] +
                      [record.issued_at or None, record.received_at,
                       record.total, _excel_cell(record.currency)])
+            if kind == 'receipt':
+                cells.append(_excel_cell(record.pos_serial_number))
             sheet.append(cells)
             source_rows.append(cells)
         source_digest = hashlib.sha256(
@@ -138,8 +143,10 @@ class EtaExport(models.Model):
         for row in sheet.iter_rows(min_row=2, min_col=10, max_col=11):
             for cell in row:
                 cell.number_format = 'yyyy-mm-dd hh:mm:ss'
-        for column, width in enumerate((67, 25, 35, 18, 18, 22, 36, 22, 36,
-                                        23, 23, 18, 12), start=1):
+        widths = (67, 25, 35, 18, 18, 22, 36, 22, 36, 23, 23, 18, 12)
+        if kind == 'receipt':
+            widths += (24,)
+        for column, width in enumerate(widths, start=1):
             sheet.column_dimensions[get_column_letter(column)].width = width
         sheet.auto_filter.ref = sheet.dimensions
         output = io.BytesIO()

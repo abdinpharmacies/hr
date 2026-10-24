@@ -28,9 +28,12 @@
                         <field name="invoice_client_id"/>
                         <field name="invoice_client_secret" password="True"/>
                     </group>
-                    <group string="Receipt API and POS" groups="ab_tax_eta_archive.group_eta_manager">
+                    <group string="Receipt API" groups="ab_tax_eta_archive.group_eta_manager">
+                        <field name="receipt_auth_mode"/>
                         <field name="receipt_client_id"/>
                         <field name="receipt_client_secret" password="True"/>
+                    </group>
+                    <group string="POS Device Authentication" groups="ab_tax_eta_archive.group_eta_manager" invisible="receipt_auth_mode != 'pos'">
                         <field name="pos_serial"/>
                         <field name="pos_os_version"/>
                         <field name="pos_model_framework"/>
@@ -73,6 +76,7 @@
                 <field name="report_date"/>
                 <field name="direction"/>
                 <field name="receipt_number"/>
+                <field name="pos_serial_number"/>
                 <field name="uuid"/>
                 <field name="issuer_name"/>
                 <field name="receiver_name"/>

@@ -118,9 +118,14 @@
 .ab_eta_empty { padding: 30px 10px; color: #8191a1; font-size: 13px; text-align: center; }
 
 .ab_eta_link { border: 0; background: transparent; color: #2179a5; cursor: pointer; font-size: 12px; font-weight: 700; &:hover { text-decoration: underline; } }
-.ab_eta_health_row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: #f5f8fb; color: #596f83; font-size: 12px; strong { font-size: 17px; } &--done strong { color: #16816b; } &--pending strong { color: #b27c22; } &--error strong { color: #bd4f4d; } }
+.ab_eta_health_row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding: 10px 12px; border-radius: 8px; background: #f5f8fb; color: #596f83; font-size: 12px; strong { font-size: 17px; } &--done strong { color: #16816b; } &--pending strong, &--not-started strong { color: #b27c22; } &--error strong { color: #bd4f4d; } }
 .ab_eta_last_success { display: flex; justify-content: space-between; gap: 12px; margin-top: 15px; color: #8191a1; font-size: 11px; strong { color: #536c80; font-weight: 700; text-align: right; } }
 .ab_eta_file_stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 13px; text-align: center; div { display: flex; flex-direction: column; gap: 3px; } strong { font-size: 21px; } span { color: #8392a0; font-size: 10px; } }
+
+.ab_eta_pos { margin-bottom: 16px; }
+.ab_eta_pos__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 30px; }
+.ab_eta_pos__row { display: grid; grid-template-columns: minmax(90px, 1fr) minmax(80px, 2fr) 50px; align-items: center; gap: 13px; padding: 9px 0; border-top: 1px solid #edf1f5; color: #526b80; font-size: 12px; span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } strong { text-align: right; } }
+.ab_eta_pos__track { height: 7px; overflow: hidden; border-radius: 10px; background: #e9f1f5; div { height: 100%; border-radius: inherit; background: #35b6aa; } }
 
 .ab_eta_errors { margin-bottom: 16px; }
 .ab_eta_error_row { display: grid; grid-template-columns: 95px 130px 140px minmax(0, 1fr) 12px; align-items: center; gap: 12px; width: 100%; padding: 11px 0; border: 0; border-top: 1px solid #edf1f5; background: transparent; color: #5c7083; cursor: pointer; font-size: 12px; text-align: left; &:hover { color: #174e72; background: #f9fbfd; } &:focus-visible { outline: 2px solid #79bce0; } }
@@ -142,4 +147,5 @@
     .ab_eta_error_row__connection, .ab_eta_error_row__message { display: none; }
     .ab_eta_chart { gap: 2px; }
     .ab_eta_chart__day { font-size: 8px; }
+    .ab_eta_pos__list { grid-template-columns: 1fr; }
 }

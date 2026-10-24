@@ -47,11 +47,16 @@ class EtaDashboard extends Component {
             noneYet: _t("None yet"),
             done: _t("Done"),
             pending: _t("Pending"),
+            notStarted: _t("Not started"),
             errors: _t("Errors"),
             files: _t("Daily Excel files"),
             generated: _t("Generated"),
             sent: _t("Sent to Telegram"),
             corrections: _t("Corrections"),
+            posDevices: _t("Receipts by POS"),
+            posNote: _t("Distinct receipt UUIDs for each POS serial"),
+            unknownPos: _t("Unidentified POS"),
+            noPos: _t("No POS receipts in this period."),
             recentErrors: _t("Recent retrieval errors"),
             noErrors: _t("No retrieval errors in this period."),
             attention: _t("Retrievals need attention"),
@@ -88,6 +93,16 @@ class EtaDashboard extends Component {
 
     get documentCount() {
         return this.cards.reduce((sum, card) => sum + card.count, 0);
+    }
+
+    get posDevices() {
+        const devices = this.state.data?.pos_devices || [];
+        const maximum = Math.max(1, ...devices.map((device) => device.count));
+        return devices.map((device) => ({
+            ...device,
+            label: device.serial || this.labels.unknownPos,
+            width: Math.max(3, Math.round(device.count / maximum * 100)),
+        }));
     }
 
     formatCount(value) {

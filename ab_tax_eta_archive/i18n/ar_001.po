@@ -72,6 +72,30 @@ msgid "Receipt API and POS"
 msgstr "واجهة الإيصالات ونقطة البيع"
 
 #. module: ab_tax_eta_archive
+msgid "Receipt API"
+msgstr "واجهة الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "POS Device Authentication"
+msgstr "مصادقة جهاز نقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt Authentication"
+msgstr "مصادقة الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Taxpayer ERP"
+msgstr "نظام المكلف الضريبي"
+
+#. module: ab_tax_eta_archive
+msgid "POS Device"
+msgstr "جهاز نقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Use Taxpayer ERP credentials to search receipts across authorized POS devices. Select POS Device for device credentials."
+msgstr "استخدم بيانات اعتماد نظام المكلف للبحث عن الإيصالات عبر أجهزة نقاط البيع المصرح بها. اختر جهاز نقطة البيع لبيانات اعتماد الجهاز."
+
+#. module: ab_tax_eta_archive
 msgid "Telegram Delivery"
 msgstr "إرسال تيليجرام"
 
@@ -138,6 +162,14 @@ msgstr "لا يمكن أن يكون تاريخ بدء الاسترجاع في ا
 #. module: ab_tax_eta_archive
 msgid "Configure ETA credentials before retrieval."
 msgstr "اضبط بيانات اعتماد مصلحة الضرائب قبل الاسترجاع."
+
+#. module: ab_tax_eta_archive
+msgid "Configure the ETA invoice client ID and secret before retrieval."
+msgstr "اضبط معرّف عميل فواتير الضرائب والسر الخاص به قبل الاسترجاع."
+
+#. module: ab_tax_eta_archive
+msgid "Configure the ETA receipt client ID and secret before retrieval."
+msgstr "اضبط معرّف عميل إيصالات الضرائب والسر الخاص به قبل الاسترجاع."
 
 #. module: ab_tax_eta_archive
 msgid "Configure all ETA POS authentication headers."
@@ -428,6 +460,14 @@ msgid "Receipt Number"
 msgstr "رقم الإيصال"
 
 #. module: ab_tax_eta_archive
+msgid "Pos Serial Number"
+msgstr "الرقم التسلسلي لنقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "POS Serial"
+msgstr "رقم نقطة البيع التسلسلي"
+
+#. module: ab_tax_eta_archive
 msgid "Uuid"
 msgstr "المعرّف الفريد"
 
@@ -604,6 +644,10 @@ msgid "Errors"
 msgstr "الأخطاء"
 
 #. module: ab_tax_eta_archive
+msgid "Not started"
+msgstr "لم يبدأ"
+
+#. module: ab_tax_eta_archive
 msgid "Daily Excel files"
 msgstr "ملفات إكسل اليومية"
 
@@ -618,6 +662,22 @@ msgstr "أُرسلت إلى تيليجرام"
 #. module: ab_tax_eta_archive
 msgid "Corrections"
 msgstr "التصحيحات"
+
+#. module: ab_tax_eta_archive
+msgid "Receipts by POS"
+msgstr "الإيصالات حسب نقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Distinct receipt UUIDs for each POS serial"
+msgstr "معرّفات الإيصالات الفريدة لكل رقم تسلسلي لنقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Unidentified POS"
+msgstr "نقطة بيع غير معروفة"
+
+#. module: ab_tax_eta_archive
+msgid "No POS receipts in this period."
+msgstr "لا توجد إيصالات لنقاط البيع في هذه الفترة."
 
 #. module: ab_tax_eta_archive
 msgid "Recent retrieval errors"

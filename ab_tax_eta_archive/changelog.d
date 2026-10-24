@@ -41,3 +41,25 @@ Files changed:
 - ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
 - ab_tax_eta_archive/views/eta_views.xml
+
+Current changes before commit:
+
+- Continue the daily backfill after a failed retrieval, retry incomplete days, and progress pending receipt packages.
+- Add taxpayer ERP receipt authentication for authorized POS devices while retaining optional POS-device authentication.
+- Store receipt POS serials, include them in Excel files, and show per-POS receipt coverage and not-started days on the dashboard.
+- Clarify missing invoice and receipt credentials in retrieval errors and update both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_dashboard.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/static/src/js/eta_dashboard.js
+- ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
+- ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
+- ab_tax_eta_archive/views/eta_views.xml

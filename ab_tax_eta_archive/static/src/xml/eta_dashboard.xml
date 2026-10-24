@@ -108,6 +108,7 @@
                             </div>
                             <div class="ab_eta_health_row ab_eta_health_row--done"><span t-esc="labels.done"/><strong t-esc="formatCount(state.data.retrievals.done)"/></div>
                             <div class="ab_eta_health_row ab_eta_health_row--pending"><span t-esc="labels.pending"/><strong t-esc="formatCount(state.data.retrievals.pending)"/></div>
+                            <div class="ab_eta_health_row ab_eta_health_row--not-started"><span t-esc="labels.notStarted"/><strong t-esc="formatCount(state.data.retrievals.not_started)"/></div>
                             <div class="ab_eta_health_row ab_eta_health_row--error"><span t-esc="labels.errors"/><strong t-esc="formatCount(state.data.retrievals.error)"/></div>
                             <div class="ab_eta_last_success"><span t-esc="labels.lastSuccess"/><strong t-esc="formatServerDateTime(state.data.last_success)"/></div>
                             <div class="ab_eta_panel__divider"/>
@@ -119,6 +120,25 @@
                             </div>
                         </section>
                     </div>
+
+                    <section class="ab_eta_panel ab_eta_pos">
+                        <div class="ab_eta_panel__head">
+                            <div>
+                                <h2 t-esc="labels.posDevices"/>
+                                <p t-esc="labels.posNote"/>
+                            </div>
+                        </div>
+                        <div t-if="!posDevices.length" class="ab_eta_empty" t-esc="labels.noPos"/>
+                        <div t-else="" class="ab_eta_pos__list">
+                            <t t-foreach="posDevices" t-as="device" t-key="device.label">
+                                <div class="ab_eta_pos__row">
+                                    <span t-esc="device.label"/>
+                                    <div class="ab_eta_pos__track"><div t-att-style="'width: ' + device.width + '%'"/></div>
+                                    <strong t-esc="formatCount(device.count)"/>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
 
                     <section class="ab_eta_panel ab_eta_errors">
                         <div class="ab_eta_panel__head">

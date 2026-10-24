@@ -63,15 +63,52 @@ class EtaSync(models.Model):
                                       tzinfo=timezone.utc).astimezone(cairo).date() < today))):
                             priority_run._attempt()
                             attempted.add(priority_day)
-                    overlap_start = max(config.start_date, today - timedelta(days=14))
-                    overlap_runs = self.search([
+                    stream_domain = [
                         ('config_id', '=', config.id), ('kind', '=', kind),
-                        ('direction', '=', direction), ('state', '=', 'done'),
+                        ('direction', '=', direction),
+                        ('report_date', '>=', config.start_date),
+                        ('report_date', '<', today),
+                    ]
+                    pending_packages = self.search(stream_domain + [('state', '=', 'pending')]).filtered(
+                        lambda run: run.package_ids and run.report_date not in attempted)
+                    if pending_packages:
+                        oldest_package = min(
+                            pending_packages,
+                            key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
+                            if run.last_run_at else datetime.min,
+                        )
+                        oldest_package._attempt()
+                        attempted.add(oldest_package.report_date)
+
+                    attempted_days = set(self.search(stream_domain).mapped('report_date'))
+                    day = config.start_date
+                    while day in attempted_days:
+                        day += timedelta(days=1)
+                    if day < today:
+                        run = self.create({
+                            'config_id': config.id, 'kind': kind,
+                            'direction': direction, 'report_date': day,
+                        })
+                        run._attempt()
+                        continue
+
+                    unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
+                        lambda run: run.report_date not in attempted)
+                    if unfinished:
+                        oldest_unfinished = min(
+                            unfinished,
+                            key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
+                            if run.last_run_at else datetime.min,
+                        )
+                        oldest_unfinished._attempt()
+                        continue
+
+                    overlap_start = max(config.start_date, today - timedelta(days=14))
+                    overlap_runs = self.search(stream_domain + [
+                        ('state', '=', 'done'),
                         ('report_date', '>=', overlap_start),
                         ('report_date', '<', today - timedelta(days=1)),
-                    ])
-                    overlap_runs = overlap_runs.filtered(
-                        lambda run: run.report_date not in attempted)
+                    ]).filtered(lambda run: run.report_date not in attempted)
                     if overlap_runs:
                         oldest_check = min(
                             overlap_runs,
@@ -79,26 +116,6 @@ class EtaSync(models.Model):
                             if run.last_run_at else datetime.min,
                         )
                         oldest_check._attempt()
-                        attempted.add(oldest_check.report_date)
-                    completed_days = set(self.search([
-                        ('config_id', '=', config.id), ('kind', '=', kind),
-                        ('direction', '=', direction), ('state', '=', 'done'),
-                        ('report_date', '>=', config.start_date),
-                        ('report_date', '<', today),
-                    ]).mapped('report_date'))
-                    day = config.start_date
-                    while day in completed_days:
-                        day += timedelta(days=1)
-                    if day >= today or day in attempted:
-                        continue
-                    run = self.search([
-                        ('config_id', '=', config.id), ('kind', '=', kind),
-                        ('direction', '=', direction), ('report_date', '=', day),
-                    ], limit=1) or self.create({
-                        'config_id': config.id, 'kind': kind,
-                        'direction': direction, 'report_date': day,
-                    })
-                    run._attempt()
 
     def action_retry(self):
         for run in self:
@@ -138,18 +155,26 @@ class EtaSync(models.Model):
         client_id = config.invoice_client_id if self.kind == 'invoice' else config.receipt_client_id
         client_secret = config.invoice_client_secret if self.kind == 'invoice' else config.receipt_client_secret
         if not client_id or not client_secret:
-            raise UserError(_('Configure ETA credentials before retrieval.'))
+            if self.kind == 'invoice':
+                raise UserError(_('Configure the ETA invoice client ID and secret before retrieval.'))
+            raise UserError(_('Configure the ETA receipt client ID and secret before retrieval.'))
         identity_url, api_url = config._base_urls()
         headers = {}
-        if self.kind == 'receipt':
+        receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
+        if self.kind == 'receipt' and receipt_auth_mode == 'pos':
             required = (config.pos_serial, config.pos_os_version,
                         config.pos_model_framework, config.pos_preshared_key)
             if not all(required):
                 raise UserError(_('Configure all ETA POS authentication headers.'))
             headers = dict(zip(('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
-        token_response = self._request('POST', f'{identity_url}/connect/token', headers=headers,
-                                       data={'grant_type': 'client_credentials', 'client_id': client_id,
-                                             'client_secret': client_secret})
+        token_data = {'grant_type': 'client_credentials'}
+        token_options = {'headers': headers}
+        if self.kind == 'receipt' and receipt_auth_mode == 'taxpayer':
+            token_options['auth'] = (client_id, client_secret)
+        else:
+            token_data.update({'client_id': client_id, 'client_secret': client_secret})
+        token_response = self._request('POST', f'{identity_url}/connect/token',
+                                       data=token_data, **token_options)
         token = token_response.get('access_token')
         if not token:
             raise ValidationError(_('ETA authentication returned no access token.'))

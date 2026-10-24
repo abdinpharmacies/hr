@@ -20,6 +20,11 @@ class EtaConfig(models.Model):
     invoice_client_secret = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     receipt_client_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     receipt_client_secret = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
+    receipt_auth_mode = fields.Selection(
+        [('taxpayer', 'Taxpayer ERP'), ('pos', 'POS Device')],
+        string='Receipt Authentication', required=True, default='taxpayer',
+        help='Use Taxpayer ERP credentials to search receipts across authorized POS devices. Select POS Device for device credentials.',
+        groups='ab_tax_eta_archive.group_eta_manager')
     pos_serial = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     pos_os_version = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     pos_model_framework = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')

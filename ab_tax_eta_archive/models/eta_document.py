@@ -77,6 +77,7 @@ class EtaReceipt(models.Model):
     config_id = fields.Many2one('ab_tax_eta_archive_config', required=True, ondelete='restrict', readonly=True)
     uuid = fields.Char(required=True, index=True, readonly=True)
     receipt_number = fields.Char(readonly=True)
+    pos_serial_number = fields.Char(readonly=True, index=True)
     submission_uuid = fields.Char(readonly=True)
     direction = fields.Selection([('sent', 'Sent'), ('received', 'Received')], required=True, index=True, readonly=True)
     document_type = fields.Char(readonly=True)
@@ -100,6 +101,7 @@ class EtaReceipt(models.Model):
             raise ValidationError(_('ETA returned a receipt without a UUID, issue timestamp, or received timestamp.'))
         return {
             'config_id': config.id, 'uuid': item['uuid'], 'receipt_number': item.get('receiptNumber'),
+            'pos_serial_number': item.get('posSerialNumber') or item.get('deviceSerialNumber'),
             'submission_uuid': item.get('submissionUuid'), 'direction': direction,
             'document_type': item.get('typeName'), 'status': item.get('status'),
             'issuer_id': item.get('issuerId'), 'issuer_name': item.get('issuerName'),
