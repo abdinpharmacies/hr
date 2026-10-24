@@ -14,9 +14,9 @@ from odoo.exceptions import UserError, ValidationError
 from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
-ETA_MAX_RECEIPTS_PER_SEARCH = 1000
+ETA_MAX_RECEIPTS_PER_SEARCH = 3000
 ETA_RECEIPT_PAGE_SIZE = 10
-ETA_MAX_RECEIPT_PAGE_NO = 100
+ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
 ETA_MAX_INVOICE_PAGES = 1000
 
 

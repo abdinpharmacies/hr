@@ -138,3 +138,12 @@ Files changed:
 
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
+
+Current changes before commit:
+
+- Align the split threshold and PageNo ceiling with ETA's documented 3,000-result cap at PageSize 10.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/models/eta_sync.py
