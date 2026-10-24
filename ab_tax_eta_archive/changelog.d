@@ -149,7 +149,8 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+57e97808 — yahyazakaria22 — 2026-10-25
+fix: include ETA response body in retrieval errors
 
 - Include up to 1,000 characters of ETA's raw error response when its standard error fields are absent.
 
