@@ -93,7 +93,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/views/eta_views.xml
 
-Current changes before commit:
+1837dcc2 — yahyazakaria22 — 2026-10-25
+fix: keep recent ETA receipts on search API
 
 - Keep recent receipt retrieval on ETA Search Receipts; use receipt packages only for dates outside the search window.
 - Include ETA error code, message, target, and correlation ID in retrieval errors when returned.
