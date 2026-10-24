@@ -104,7 +104,8 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+4e3caac7 — yahyazakaria22 — 2026-10-25
+fix: bound ETA pagination and read receipts to empty page
 
 - Page receipt searches until an empty page with a bounded PageNo and verify collected UUIDs against ETA's reported total.
 - Retain 100 receipts per page, split windows at the 3,000-result limit, and add a safety cap for invoice continuation-token pages.
