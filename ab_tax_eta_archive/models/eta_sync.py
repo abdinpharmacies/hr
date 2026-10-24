@@ -4,6 +4,7 @@ import json
 import time
 import zipfile
 from datetime import datetime, time as day_time, timedelta, timezone
+from urllib.parse import urlsplit
 import pytz
 
 import requests
@@ -13,6 +14,10 @@ from odoo.exceptions import UserError, ValidationError
 from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
+
+
+class EtaReceiptSearchUnavailable(Exception):
+    """The search route is unavailable; use receipt packages instead."""
 
 
 class EtaSync(models.Model):
@@ -152,15 +157,19 @@ class EtaSync(models.Model):
     def _retrieve(self):
         self.ensure_one()
         config = self.config_id
-        client_id = config.invoice_client_id if self.kind == 'invoice' else config.receipt_client_id
-        client_secret = config.invoice_client_secret if self.kind == 'invoice' else config.receipt_client_secret
+        receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
+        if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
+            client_id = config.invoice_client_id
+            client_secret = config.invoice_client_secret
+        else:
+            client_id = config.receipt_client_id
+            client_secret = config.receipt_client_secret
         if not client_id or not client_secret:
-            if self.kind == 'invoice':
+            if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
                 raise UserError(_('Configure the ETA invoice client ID and secret before retrieval.'))
             raise UserError(_('Configure the ETA receipt client ID and secret before retrieval.'))
         identity_url, api_url = config._base_urls()
         headers = {}
-        receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
         if self.kind == 'receipt' and receipt_auth_mode == 'pos':
             required = (config.pos_serial, config.pos_os_version,
                         config.pos_model_framework, config.pos_preshared_key)
@@ -169,7 +178,7 @@ class EtaSync(models.Model):
             headers = dict(zip(('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
         token_data = {'grant_type': 'client_credentials'}
         token_options = {'headers': headers}
-        if self.kind == 'receipt' and receipt_auth_mode == 'taxpayer':
+        if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
             token_options['auth'] = (client_id, client_secret)
         else:
             token_data.update({'client_id': client_id, 'client_secret': client_secret})
@@ -189,10 +198,15 @@ class EtaSync(models.Model):
         else:
             if self.report_date < datetime.now(cairo).date() - timedelta(days=29):
                 items = self._receipt_package_pages(api_url, auth, start, end)
-                if items is None:
-                    return None
             else:
-                items = self._receipt_pages(api_url, auth, start, end)
+                try:
+                    items = self._receipt_pages(api_url, auth, start, end)
+                except EtaReceiptSearchUnavailable:
+                    _logger.warning('ETA receipt search returned HTTP 404; requesting a receipt package for %s.',
+                                    self.report_date)
+                    items = self._receipt_package_pages(api_url, auth, start, end)
+            if items is None:
+                return None
             model = self.env['ab_tax_eta_archive_receipt']
         unique = {}
         for item in items:
@@ -349,7 +363,8 @@ class EtaSync(models.Model):
             'PageSize': 100,
         }
         first = self._request('GET', f'{api_url}/api/v1/receipts/search',
-                              headers=headers, params={**params, 'PageNo': 1})
+                              headers=headers, params={**params, 'PageNo': 1},
+                              receipt_search=True)
         metadata = first.get('metadata')
         if not isinstance(first.get('receipts'), list) or not isinstance(metadata, dict):
             raise ValidationError(_('ETA receipt search returned an invalid page.'))
@@ -367,7 +382,8 @@ class EtaSync(models.Model):
         items = list(first['receipts'])
         for page_no in range(2, pages + 1):
             payload = self._request('GET', f'{api_url}/api/v1/receipts/search',
-                                    headers=headers, params={**params, 'PageNo': page_no})
+                                    headers=headers, params={**params, 'PageNo': page_no},
+                                    receipt_search=True)
             if not isinstance(payload.get('receipts'), list):
                 raise ValidationError(_('ETA receipt search returned an invalid page.'))
             items.extend(payload['receipts'])
@@ -375,7 +391,7 @@ class EtaSync(models.Model):
             raise ValidationError(_('ETA receipt page count does not match the reported total.'))
         return items
 
-    def _request(self, method, url, allow_package_limit=False, **kwargs):
+    def _request(self, method, url, allow_package_limit=False, receipt_search=False, **kwargs):
         for attempt in range(4):
             try:
                 response = requests.request(method, url, timeout=40, **kwargs)
@@ -399,12 +415,19 @@ class EtaSync(models.Model):
                     error.get('code') == 'OperationExceedsLimit'
                 ):
                     return {'__limit__': True}
+            if response.status_code == 404 and receipt_search:
+                raise EtaReceiptSearchUnavailable()
             try:
                 response.raise_for_status()
                 payload = response.json()
             except (requests.RequestException, ValueError) as exc:
-                raise UserError(_('ETA request failed (HTTP %(status)s).',
-                                  status=response.status_code)) from exc
+                endpoint = urlsplit(response.url)
+                request_target = f'{method} {endpoint.netloc}{endpoint.path}'
+                _logger.warning('ETA HTTP %s at %s', response.status_code, request_target)
+                raise UserError('%s %s' % (
+                    _('ETA request failed (HTTP %(status)s).', status=response.status_code),
+                    request_target,
+                )) from exc
             if not isinstance(payload, dict):
                 raise ValidationError(_('ETA returned an invalid JSON response.'))
             return payload

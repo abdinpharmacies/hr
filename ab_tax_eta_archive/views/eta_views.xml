@@ -30,8 +30,8 @@
                     </group>
                     <group string="Receipt API" groups="ab_tax_eta_archive.group_eta_manager">
                         <field name="receipt_auth_mode"/>
-                        <field name="receipt_client_id"/>
-                        <field name="receipt_client_secret" password="True"/>
+                        <field name="receipt_client_id" invisible="receipt_auth_mode != 'pos'"/>
+                        <field name="receipt_client_secret" password="True" invisible="receipt_auth_mode != 'pos'"/>
                     </group>
                     <group string="POS Device Authentication" groups="ab_tax_eta_archive.group_eta_manager" invisible="receipt_auth_mode != 'pos'">
                         <field name="pos_serial"/>

@@ -74,3 +74,19 @@ Files changed:
 
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
+
+Current changes before commit:
+
+- Use the taxpayer ERP invoice client credentials and Basic authentication for both invoice and receipt retrievals.
+- Retry a receipt day through ETA receipt packages when the search route returns HTTP 404.
+- Show the failed ETA method and endpoint without exposing credentials or query values.
+- Clarify POS-only credentials in the connection form and update both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/views/eta_views.xml

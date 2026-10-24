@@ -96,6 +96,10 @@ msgid "Use Taxpayer ERP credentials to search receipts across authorized POS dev
 msgstr "استخدم بيانات اعتماد نظام المكلف للبحث عن الإيصالات عبر أجهزة نقاط البيع المصرح بها. اختر جهاز نقطة البيع لبيانات اعتماد الجهاز."
 
 #. module: ab_tax_eta_archive
+msgid "Taxpayer ERP uses the Invoice API credentials for invoices and receipts across authorized POS devices. Select POS Device to use separate device credentials."
+msgstr "يستخدم نظام المكلف بيانات اعتماد واجهة الفواتير للفواتير والإيصالات عبر أجهزة نقاط البيع المصرح بها. اختر جهاز نقطة البيع لاستخدام بيانات اعتماد منفصلة للجهاز."
+
+#. module: ab_tax_eta_archive
 msgid "Telegram Delivery"
 msgstr "إرسال تيليجرام"
 
