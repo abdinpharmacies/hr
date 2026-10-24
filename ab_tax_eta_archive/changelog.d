@@ -139,9 +139,10 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+37f97a32 — yahyazakaria22 — 2026-10-25
+fix: honor ETA 3000 receipt search result cap
 
-- Align the split threshold and PageNo ceiling with ETA's documented 3,000-result cap at PageSize 10.
+- Set receipt search to PageSize 10 and allow up to 300 pages, splitting date ranges at 3,000 matches.
 
 Files changed:
 
