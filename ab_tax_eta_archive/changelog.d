@@ -159,7 +159,8 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+2d3b04f2 — yahyazakaria22 — 2026-10-25
+fix: mark ETA no-result receipt searches complete
 
 - Treat ETA's explicit 404 NotFound/NoResult search response as a successful empty receipt result; preserve other 404s as errors.
 
