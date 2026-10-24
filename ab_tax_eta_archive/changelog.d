@@ -129,9 +129,10 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+2fb75c51 — yahyazakaria22 — 2026-10-25
+fix: use ETA receipt page size and page limit
 
-- Set ETA receipt search to PageSize 10 and cap PageNo at 100, splitting result windows at 1,000 receipts.
+- Set receipt search to PageSize 10 and PageNo up to 100, splitting result windows at 1,000 receipts.
 
 Files changed:
 
