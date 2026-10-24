@@ -22,7 +22,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+39ff9b4d — yahyazakaria22 — 2026-10-24
+feat: add ETA archive OWL dashboard
 
 - Add an OWL dashboard with issue-date document cards and chart, submission-day retrieval health, file delivery counts, and a prominent warning for failed streams.
 - Add date and connection filters, latest successful retrieval time, and navigation to the matching archive lists.
