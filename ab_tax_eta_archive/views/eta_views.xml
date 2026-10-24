@@ -198,7 +198,12 @@
         <field name="res_model">ab_tax_eta_archive_sync</field>
         <field name="view_mode">list,form</field>
     </record>
+    <record id="action_eta_dashboard" model="ir.actions.client">
+        <field name="name">ETA Dashboard</field>
+        <field name="tag">ab_tax_eta_archive.dashboard</field>
+    </record>
     <menuitem id="menu_eta_root" name="ETA Archive" sequence="60" groups="ab_tax_eta_archive.group_eta_user"/>
+    <menuitem id="menu_eta_dashboard" name="Dashboard" parent="menu_eta_root" action="action_eta_dashboard" sequence="1"/>
     <menuitem id="menu_eta_files" name="Daily Files" parent="menu_eta_root" action="action_eta_export" sequence="10"/>
     <menuitem id="menu_eta_invoices" name="Invoices" parent="menu_eta_root" action="action_eta_invoice" sequence="20"/>
     <menuitem id="menu_eta_receipts" name="Receipts" parent="menu_eta_root" action="action_eta_receipt" sequence="30"/>

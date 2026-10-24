@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_tax_eta_archive.Dashboard" owl="1">
+        <div class="ab_eta_dashboard">
+            <div class="ab_eta_dashboard__inner">
+                <header class="ab_eta_header">
+                    <div>
+                        <span class="ab_eta_eyebrow" t-esc="labels.eyebrow"/>
+                        <h1 t-esc="labels.title"/>
+                        <p t-esc="labels.subtitle"/>
+                    </div>
+                    <button type="button" class="ab_eta_refresh" t-on-click="load" t-att-disabled="state.loading">
+                        <i class="fa fa-refresh" aria-hidden="true"/>
+                        <span t-esc="labels.refresh"/>
+                    </button>
+                </header>
+
+                <section class="ab_eta_filters" t-att-aria-label="labels.filters">
+                    <label>
+                        <span t-esc="labels.from"/>
+                        <input type="date" t-att-value="state.dateFrom" t-on-change="onDateFromChange"/>
+                    </label>
+                    <label>
+                        <span t-esc="labels.to"/>
+                        <input type="date" t-att-value="state.dateTo" t-on-change="onDateToChange"/>
+                    </label>
+                    <label>
+                        <span t-esc="labels.connection"/>
+                        <select t-att-value="state.configId" t-on-change="onConfigChange">
+                            <option value="" t-esc="labels.allConnections"/>
+                            <t t-foreach="state.data ? state.data.connections : []" t-as="connection" t-key="connection.id">
+                                <option t-att-value="connection.id" t-esc="connection.name"/>
+                            </t>
+                        </select>
+                    </label>
+                    <button type="button" class="ab_eta_apply" t-on-click="load" t-att-disabled="state.loading">
+                        <span t-esc="labels.apply"/>
+                    </button>
+                </section>
+
+                <div t-if="state.loading &amp;&amp; !state.data" class="ab_eta_notice" t-esc="labels.loading"/>
+                <div t-if="state.error" class="ab_eta_notice ab_eta_notice--error" role="alert">
+                    <span t-esc="state.error"/>
+                    <button type="button" t-on-click="load" t-esc="labels.retry"/>
+                </div>
+
+                <t t-if="state.data">
+                    <div t-if="state.data.retrievals.error" class="ab_eta_attention" role="alert">
+                        <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
+                        <div>
+                            <strong t-esc="labels.attention"/>
+                            <p t-esc="labels.attentionBody"/>
+                        </div>
+                        <button type="button" t-on-click="openRetrievals" t-esc="labels.viewAll"/>
+                    </div>
+                    <section class="ab_eta_section">
+                        <div class="ab_eta_section__head">
+                            <div>
+                                <h2 t-esc="labels.documents"/>
+                                <span class="ab_eta_period" t-esc="state.data.period.from + ' – ' + state.data.period.to"/>
+                            </div>
+                            <span class="ab_eta_total" t-esc="formatCount(documentCount) + ' ' + labels.records"/>
+                        </div>
+                        <div class="ab_eta_kpis">
+                            <t t-foreach="cards" t-as="card" t-key="card.key">
+                                <div t-att-class="'ab_eta_kpi ab_eta_kpi--' + card.tone">
+                                    <span class="ab_eta_kpi__label" t-esc="card.label"/>
+                                    <strong t-esc="formatCount(card.count)"/>
+                                    <span class="ab_eta_kpi__unit" t-esc="labels.records"/>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+
+                    <div class="ab_eta_grid">
+                        <section class="ab_eta_panel ab_eta_panel--chart">
+                            <div class="ab_eta_panel__head">
+                                <div>
+                                    <h2 t-esc="labels.trend"/>
+                                    <p t-esc="labels.trendNote"/>
+                                </div>
+                                <div class="ab_eta_legend">
+                                    <span><i class="ab_eta_dot ab_eta_dot--invoice"/><t t-esc="labels.invoices"/></span>
+                                    <span><i class="ab_eta_dot ab_eta_dot--receipt"/><t t-esc="labels.receipts"/></span>
+                                </div>
+                            </div>
+                            <div t-if="documentCount" class="ab_eta_chart">
+                                <t t-foreach="bars" t-as="bar" t-key="bar.date">
+                                    <div class="ab_eta_chart__day" t-att-title="bar.date + ' | ' + labels.invoices + ': ' + bar.invoices + ' | ' + labels.receipts + ': ' + bar.receipts">
+                                        <div class="ab_eta_chart__columns">
+                                            <div class="ab_eta_chart__bar ab_eta_chart__bar--invoice" t-att-style="'height: ' + bar.invoiceHeight + '%'"/>
+                                            <div class="ab_eta_chart__bar ab_eta_chart__bar--receipt" t-att-style="'height: ' + bar.receiptHeight + '%'"/>
+                                        </div>
+                                        <span t-esc="bar.label"/>
+                                    </div>
+                                </t>
+                            </div>
+                            <div t-else="" class="ab_eta_empty" t-esc="labels.empty"/>
+                        </section>
+
+                        <section class="ab_eta_panel ab_eta_panel--health">
+                            <div class="ab_eta_panel__head">
+                                <div>
+                                    <h2 t-esc="labels.retrievals"/>
+                                    <p t-esc="state.data.period.from + ' – ' + state.data.period.to"/>
+                                </div>
+                                <button type="button" class="ab_eta_link" t-on-click="openRetrievals" t-esc="labels.viewAll"/>
+                            </div>
+                            <div class="ab_eta_health_row ab_eta_health_row--done"><span t-esc="labels.done"/><strong t-esc="formatCount(state.data.retrievals.done)"/></div>
+                            <div class="ab_eta_health_row ab_eta_health_row--pending"><span t-esc="labels.pending"/><strong t-esc="formatCount(state.data.retrievals.pending)"/></div>
+                            <div class="ab_eta_health_row ab_eta_health_row--error"><span t-esc="labels.errors"/><strong t-esc="formatCount(state.data.retrievals.error)"/></div>
+                            <div class="ab_eta_last_success"><span t-esc="labels.lastSuccess"/><strong t-esc="formatServerDateTime(state.data.last_success)"/></div>
+                            <div class="ab_eta_panel__divider"/>
+                            <h3 t-esc="labels.files"/>
+                            <div class="ab_eta_file_stats">
+                                <div><strong t-esc="formatCount(state.data.files.generated)"/><span t-esc="labels.generated"/></div>
+                                <div><strong t-esc="formatCount(state.data.files.sent)"/><span t-esc="labels.sent"/></div>
+                                <div><strong t-esc="formatCount(state.data.files.corrections)"/><span t-esc="labels.corrections"/></div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="ab_eta_panel ab_eta_errors">
+                        <div class="ab_eta_panel__head">
+                            <h2 t-esc="labels.recentErrors"/>
+                            <button type="button" class="ab_eta_link" t-on-click="openRetrievals" t-esc="labels.viewAll"/>
+                        </div>
+                        <div t-if="!state.data.errors.length" class="ab_eta_empty" t-esc="labels.noErrors"/>
+                        <t t-foreach="state.data.errors" t-as="error" t-key="error.id">
+                            <button type="button" class="ab_eta_error_row" t-on-click="() => this.openError(error)">
+                                <span class="ab_eta_error_row__date" t-esc="error.date"/>
+                                <span class="ab_eta_error_row__stream" t-esc="streamLabel(error)"/>
+                                <span class="ab_eta_error_row__connection" t-esc="error.connection"/>
+                                <span class="ab_eta_error_row__message" t-esc="error.message"/>
+                                <i class="fa fa-angle-right" aria-hidden="true"/>
+                            </button>
+                        </t>
+                    </section>
+
+                    <nav class="ab_eta_shortcuts" t-att-aria-label="labels.archiveLists">
+                        <button type="button" t-on-click="openInvoices" t-esc="labels.viewInvoices"/>
+                        <button type="button" t-on-click="openReceipts" t-esc="labels.viewReceipts"/>
+                        <button type="button" t-on-click="openFiles" t-esc="labels.viewFiles"/>
+                    </nav>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

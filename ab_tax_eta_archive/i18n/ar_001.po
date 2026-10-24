@@ -502,3 +502,163 @@ msgstr "حزم الإيصالات"
 #. module: ab_tax_eta_archive
 msgid "Payload Json"
 msgstr "بيانات الحزمة"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Dashboard"
+msgstr "لوحة معلومات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Dashboard"
+msgstr "لوحة المعلومات"
+
+#. module: ab_tax_eta_archive
+msgid "You are not allowed to view the ETA dashboard."
+msgstr "ليس لديك صلاحية عرض لوحة معلومات الضرائب."
+
+#. module: ab_tax_eta_archive
+msgid "Choose a valid dashboard period of up to 366 days."
+msgstr "اختر فترة صالحة للوحة المعلومات لا تتجاوز 366 يومًا."
+
+#. module: ab_tax_eta_archive
+msgid "Choose a valid ETA connection."
+msgstr "اختر اتصالًا صالحًا بمصلحة الضرائب."
+
+#. module: ab_tax_eta_archive
+msgid "ETA archive overview"
+msgstr "نظرة عامة على أرشيف الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Tax archive dashboard"
+msgstr "لوحة معلومات الأرشيف الضريبي"
+
+#. module: ab_tax_eta_archive
+msgid "Issue-date reports and submission-day retrieval health"
+msgstr "تقارير حسب تاريخ الإصدار وحالة الاسترجاع حسب يوم التقديم"
+
+#. module: ab_tax_eta_archive
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_tax_eta_archive
+msgid "Apply filters"
+msgstr "تطبيق المرشحات"
+
+#. module: ab_tax_eta_archive
+msgid "Issue date from"
+msgstr "تاريخ الإصدار من"
+
+#. module: ab_tax_eta_archive
+msgid "Issue date to"
+msgstr "تاريخ الإصدار إلى"
+
+#. module: ab_tax_eta_archive
+msgid "Connection"
+msgstr "الاتصال"
+
+#. module: ab_tax_eta_archive
+msgid "All connections"
+msgstr "جميع الاتصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Dashboard filters"
+msgstr "مرشحات لوحة المعلومات"
+
+#. module: ab_tax_eta_archive
+msgid "Archive lists"
+msgstr "قوائم الأرشيف"
+
+#. module: ab_tax_eta_archive
+msgid "Loading archive data…"
+msgstr "جارٍ تحميل بيانات الأرشيف…"
+
+#. module: ab_tax_eta_archive
+msgid "Try again"
+msgstr "حاول مرة أخرى"
+
+#. module: ab_tax_eta_archive
+msgid "Archived documents"
+msgstr "المستندات المؤرشفة"
+
+#. module: ab_tax_eta_archive
+msgid "Documents by issue date"
+msgstr "المستندات حسب تاريخ الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Last 14 days of the selected period"
+msgstr "آخر 14 يومًا من الفترة المحددة"
+
+#. module: ab_tax_eta_archive
+msgid "Submission-day retrievals"
+msgstr "عمليات الاسترجاع حسب يوم التقديم"
+
+#. module: ab_tax_eta_archive
+msgid "Last successful retrieval"
+msgstr "آخر استرجاع ناجح"
+
+#. module: ab_tax_eta_archive
+msgid "None yet"
+msgstr "لا يوجد بعد"
+
+#. module: ab_tax_eta_archive
+msgid "Errors"
+msgstr "الأخطاء"
+
+#. module: ab_tax_eta_archive
+msgid "Daily Excel files"
+msgstr "ملفات إكسل اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "Generated"
+msgstr "الملفات المنشأة"
+
+#. module: ab_tax_eta_archive
+msgid "Sent to Telegram"
+msgstr "أُرسلت إلى تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Corrections"
+msgstr "التصحيحات"
+
+#. module: ab_tax_eta_archive
+msgid "Recent retrieval errors"
+msgstr "أحدث أخطاء الاسترجاع"
+
+#. module: ab_tax_eta_archive
+msgid "No retrieval errors in this period."
+msgstr "لا توجد أخطاء استرجاع في هذه الفترة."
+
+#. module: ab_tax_eta_archive
+msgid "Retrievals need attention"
+msgstr "عمليات الاسترجاع تحتاج إلى متابعة"
+
+#. module: ab_tax_eta_archive
+msgid "Some ETA streams failed. Reports may be incomplete until those retrievals succeed."
+msgstr "فشلت بعض مسارات الاسترجاع من مصلحة الضرائب. قد تكون التقارير غير مكتملة حتى تنجح هذه العمليات."
+
+#. module: ab_tax_eta_archive
+msgid "View all"
+msgstr "عرض الكل"
+
+#. module: ab_tax_eta_archive
+msgid "View invoices"
+msgstr "عرض الفواتير"
+
+#. module: ab_tax_eta_archive
+msgid "View receipts"
+msgstr "عرض الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "View daily files"
+msgstr "عرض الملفات اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "No archived documents in this period."
+msgstr "لا توجد مستندات مؤرشفة في هذه الفترة."
+
+#. module: ab_tax_eta_archive
+msgid "records"
+msgstr "سجل"
+
+#. module: ab_tax_eta_archive
+msgid "The dashboard could not load."
+msgstr "تعذر تحميل لوحة المعلومات."
