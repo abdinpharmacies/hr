@@ -13,6 +13,7 @@ Files changed:
 - ab_tax_eta_archive/models/eta_config.py
 - ab_tax_eta_archive/models/eta_document.py
 - ab_tax_eta_archive/models/eta_sync.py
+
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/security/security_groups.xml
 - ab_tax_eta_archive/security/ir.model.access.csv
@@ -116,4 +117,13 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_sync.py
+
+Current changes before commit:
+
+- Increase receipt search page size from 100 to 1,000 so each request retrieves more receipts before advancing to the next page.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py

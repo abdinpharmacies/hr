@@ -15,7 +15,7 @@ from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
 ETA_MAX_RECEIPTS_PER_SEARCH = 3000
-ETA_RECEIPT_PAGE_SIZE = 100
+ETA_RECEIPT_PAGE_SIZE = 1000
 ETA_MAX_INVOICE_PAGES = 1000
 
 
