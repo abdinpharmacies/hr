@@ -64,3 +64,12 @@ Files changed:
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
 - ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
 - ab_tax_eta_archive/views/eta_views.xml
+
+Current changes before commit:
+
+- Fix dashboard stylesheet compilation by replacing a mixed-unit Sass min() call with CSS width and max-width properties.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
