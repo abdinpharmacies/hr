@@ -14,8 +14,9 @@ from odoo.exceptions import UserError, ValidationError
 from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
-ETA_MAX_RECEIPTS_PER_SEARCH = 3000
-ETA_RECEIPT_PAGE_SIZE = 1000
+ETA_MAX_RECEIPTS_PER_SEARCH = 1000
+ETA_RECEIPT_PAGE_SIZE = 10
+ETA_MAX_RECEIPT_PAGE_NO = 100
 ETA_MAX_INVOICE_PAGES = 1000
 
 
@@ -361,8 +362,7 @@ class EtaSync(models.Model):
         }
         items = []
         total = None
-        max_pages = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE + 1
-        for page_no in range(1, max_pages + 1):
+        for page_no in range(1, ETA_MAX_RECEIPT_PAGE_NO + 1):
             if page_no > 1:
                 time.sleep(0.5)
             payload = self._request('GET', f'{api_url}/api/v1/receipts/search',
@@ -382,6 +382,8 @@ class EtaSync(models.Model):
             if not page:
                 break
             items.extend(page)
+            if len(items) >= total:
+                break
         else:
             raise ValidationError(_('ETA receipt search exceeded the safe page limit.'))
 
