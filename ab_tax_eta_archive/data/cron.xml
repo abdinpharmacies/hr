@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="cron_eta_sync" model="ir.cron">
+        <field name="name">ETA: Retrieve Daily Documents</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_sync"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+    </record>
+    <record id="cron_eta_delivery" model="ir.cron">
+        <field name="name">ETA: Send Four-Day Files</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_export_and_send()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+    </record>
+</odoo>

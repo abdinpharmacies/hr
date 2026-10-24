@@ -1,0 +1,504 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ar\n"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Archive"
+msgstr "أرشيف مصلحة الضرائب المصرية"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Reader"
+msgstr "مستخدم أرشيف الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Manager"
+msgstr "مدير أرشيف الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Connections"
+msgstr "اتصالات مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Connection"
+msgstr "اتصال مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Invoices"
+msgstr "الفواتير الضريبية"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Receipts"
+msgstr "الإيصالات الضريبية"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Daily Files"
+msgstr "ملفات الضرائب اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Daily File"
+msgstr "ملف الضرائب اليومي"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Retrievals"
+msgstr "عمليات استرجاع الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Daily Files"
+msgstr "الملفات اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: ab_tax_eta_archive
+msgid "Receipts"
+msgstr "الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Retrievals"
+msgstr "عمليات الاسترجاع"
+
+#. module: ab_tax_eta_archive
+msgid "Connections"
+msgstr "الاتصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Invoice API"
+msgstr "واجهة الفواتير"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt API and POS"
+msgstr "واجهة الإيصالات ونقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Delivery"
+msgstr "إرسال تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Sent invoices"
+msgstr "الفواتير الصادرة"
+
+#. module: ab_tax_eta_archive
+msgid "Sent receipts"
+msgstr "الإيصالات الصادرة"
+
+#. module: ab_tax_eta_archive
+msgid "Purchase invoices"
+msgstr "فواتير المشتريات"
+
+#. module: ab_tax_eta_archive
+msgid "Purchase receipts"
+msgstr "إيصالات المشتريات"
+
+#. module: ab_tax_eta_archive
+msgid "Sent"
+msgstr "صادر"
+
+#. module: ab_tax_eta_archive
+msgid "Received"
+msgstr "وارد"
+
+#. module: ab_tax_eta_archive
+msgid "Invoice"
+msgstr "فاتورة"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt"
+msgstr "إيصال"
+
+#. module: ab_tax_eta_archive
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_tax_eta_archive
+msgid "Done"
+msgstr "مكتمل"
+
+#. module: ab_tax_eta_archive
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_tax_eta_archive
+msgid "Production"
+msgstr "الإنتاج"
+
+#. module: ab_tax_eta_archive
+msgid "Preproduction"
+msgstr "بيئة الاختبار"
+
+#. module: ab_tax_eta_archive
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#. module: ab_tax_eta_archive
+msgid "The ETA start date cannot be in the future."
+msgstr "لا يمكن أن يكون تاريخ بدء الاسترجاع في المستقبل."
+
+#. module: ab_tax_eta_archive
+msgid "Configure ETA credentials before retrieval."
+msgstr "اضبط بيانات اعتماد مصلحة الضرائب قبل الاسترجاع."
+
+#. module: ab_tax_eta_archive
+msgid "Configure all ETA POS authentication headers."
+msgstr "اضبط جميع بيانات مصادقة نقطة البيع الضريبية."
+
+#. module: ab_tax_eta_archive
+msgid "ETA authentication returned no access token."
+msgstr "لم تُرجع مصادقة مصلحة الضرائب رمز وصول."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned an invalid document timestamp."
+msgstr "أعادت مصلحة الضرائب وقتًا غير صالح للمستند."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned a timestamp without a time zone."
+msgstr "أعادت مصلحة الضرائب وقتًا دون منطقة زمنية."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned an invoice without a UUID, issue timestamp, or received timestamp."
+msgstr "أعادت مصلحة الضرائب فاتورة دون معرّف أو وقت إصدار أو وقت استلام."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned a receipt without a UUID, issue timestamp, or received timestamp."
+msgstr "أعادت مصلحة الضرائب إيصالًا دون معرّف أو وقت إصدار أو وقت استلام."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned a document outside the requested Cairo date."
+msgstr "أعادت مصلحة الضرائب مستندًا خارج تاريخ القاهرة المطلوب."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned duplicate document UUIDs for one retrieval."
+msgstr "أعادت مصلحة الضرائب معرّفات مستندات مكررة في عملية استرجاع واحدة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt package limit reached for a one-millisecond window."
+msgstr "تم بلوغ حد حزمة الإيصالات خلال فترة مللي ثانية واحدة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt package request returned no package ID."
+msgstr "لم يُرجع طلب حزمة الإيصالات معرّف الحزمة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt package retrieval completed without data or a valid empty package."
+msgstr "اكتمل استرجاع حزمة الإيصالات دون بيانات أو حزمة فارغة صالحة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt package download is invalid or incomplete."
+msgstr "تنزيل حزمة الإيصالات غير صالح أو غير مكتمل."
+
+#. module: ab_tax_eta_archive
+msgid "ETA Receipt Package Request"
+msgstr "طلب حزمة إيصالات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Retrieval"
+msgstr "استرجاع الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt Packages"
+msgstr "حزم الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Split"
+msgstr "مجزأ"
+
+#. module: ab_tax_eta_archive
+msgid "Only one ETA package request is allowed per time window."
+msgstr "يُسمح بطلب حزمة ضريبية واحد فقط لكل فترة زمنية."
+
+#. module: ab_tax_eta_archive
+msgid "Only one ETA file revision is allowed per day and category."
+msgstr "يُسمح بإصدار واحد فقط من الملف الضريبي لكل يوم وتصنيف."
+
+#. module: ab_tax_eta_archive
+msgid "ETA invoice UUID must be unique per connection and direction."
+msgstr "يجب أن يكون معرّف الفاتورة فريدًا لكل اتصال واتجاه."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt UUID must be unique per connection and direction."
+msgstr "يجب أن يكون معرّف الإيصال فريدًا لكل اتصال واتجاه."
+
+#. module: ab_tax_eta_archive
+msgid "ETA invoice search returned an invalid page."
+msgstr "أعاد بحث الفواتير الضريبية صفحة غير صالحة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA invoice pagination stopped before the final page."
+msgstr "توقف ترقيم صفحات الفواتير الضريبية قبل الصفحة الأخيرة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt search returned an invalid page."
+msgstr "أعاد بحث الإيصالات الضريبية صفحة غير صالحة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt search returned invalid pagination metadata."
+msgstr "أعاد بحث الإيصالات بيانات ترقيم صفحات غير صالحة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt result limit reached for a one-millisecond window."
+msgstr "تم بلوغ حد نتائج الإيصالات خلال فترة مللي ثانية واحدة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt page count does not match the reported total."
+msgstr "عدد الإيصالات في الصفحات لا يطابق الإجمالي المعلن."
+
+#. module: ab_tax_eta_archive
+msgid "ETA request failed (HTTP %(status)s)."
+msgstr "فشل طلب مصلحة الضرائب (HTTP %(status)s)."
+
+#. module: ab_tax_eta_archive
+msgid "ETA returned an invalid JSON response."
+msgstr "أعادت مصلحة الضرائب استجابة JSON غير صالحة."
+
+#. module: ab_tax_eta_archive
+msgid "ETA request exhausted its retries."
+msgstr "استنفد طلب مصلحة الضرائب محاولات إعادة الإرسال."
+
+#. module: ab_tax_eta_archive
+msgid "Configure the Telegram bot token and group chat ID."
+msgstr "اضبط رمز بوت تيليجرام ومعرّف المجموعة."
+
+#. module: ab_tax_eta_archive
+msgid "Telegram rejected the ETA file."
+msgstr "رفض تيليجرام ملف الضرائب."
+
+#. module: ab_tax_eta_archive
+msgid "Telegram delivery failed; this file will be retried."
+msgstr "فشل إرسال تيليجرام؛ ستُعاد محاولة إرسال الملف."
+
+#. module: ab_tax_eta_archive
+msgid "ETA: Retrieve Daily Documents"
+msgstr "الضرائب: استرجاع المستندات اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "ETA: Send Four-Day Files"
+msgstr "الضرائب: إرسال ملفات قبل أربعة أيام"
+
+#. module: ab_tax_eta_archive
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_tax_eta_archive
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_tax_eta_archive
+msgid "Environment"
+msgstr "البيئة"
+
+#. module: ab_tax_eta_archive
+msgid "Start Date"
+msgstr "تاريخ البدء"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Start Date"
+msgstr "تاريخ بدء إرسال تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Invoice Client Id"
+msgstr "معرّف عميل الفواتير"
+
+#. module: ab_tax_eta_archive
+msgid "Invoice Client Secret"
+msgstr "سر عميل الفواتير"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt Client Id"
+msgstr "معرّف عميل الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt Client Secret"
+msgstr "سر عميل الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Pos Serial"
+msgstr "الرقم التسلسلي لنقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Pos Os Version"
+msgstr "إصدار نظام نقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Pos Model Framework"
+msgstr "إطار طراز نقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Pos Preshared Key"
+msgstr "المفتاح المشترك لنقطة البيع"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Chat Id"
+msgstr "معرّف مجموعة تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Bot Token"
+msgstr "رمز بوت تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Report Date"
+msgstr "تاريخ التقرير"
+
+#. module: ab_tax_eta_archive
+msgid "Issue Date"
+msgstr "تاريخ الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Submission Date"
+msgstr "تاريخ التقديم"
+
+#. module: ab_tax_eta_archive
+msgid "Direction"
+msgstr "الاتجاه"
+
+#. module: ab_tax_eta_archive
+msgid "Category"
+msgstr "التصنيف"
+
+#. module: ab_tax_eta_archive
+msgid "Filename"
+msgstr "اسم الملف"
+
+#. module: ab_tax_eta_archive
+msgid "File Data"
+msgstr "بيانات الملف"
+
+#. module: ab_tax_eta_archive
+msgid "Record Count"
+msgstr "عدد السجلات"
+
+#. module: ab_tax_eta_archive
+msgid "Submission Days Checked Through"
+msgstr "أيام التقديم المفحوصة حتى"
+
+#. module: ab_tax_eta_archive
+msgid "Revision"
+msgstr "الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Supersedes"
+msgstr "يحل محل الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Source Digest"
+msgstr "بصمة البيانات"
+
+#. module: ab_tax_eta_archive
+msgid "Revision %(number)s"
+msgstr "الإصدار %(number)s"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Sent At"
+msgstr "وقت الإرسال إلى تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Message Id"
+msgstr "معرّف رسالة تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Error"
+msgstr "خطأ تيليجرام"
+
+#. module: ab_tax_eta_archive
+msgid "Kind"
+msgstr "النوع"
+
+#. module: ab_tax_eta_archive
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_tax_eta_archive
+msgid "Item Count"
+msgstr "عدد العناصر"
+
+#. module: ab_tax_eta_archive
+msgid "Last Run At"
+msgstr "وقت آخر تشغيل"
+
+#. module: ab_tax_eta_archive
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: ab_tax_eta_archive
+msgid "Internal Id"
+msgstr "المعرّف الداخلي"
+
+#. module: ab_tax_eta_archive
+msgid "Receipt Number"
+msgstr "رقم الإيصال"
+
+#. module: ab_tax_eta_archive
+msgid "Uuid"
+msgstr "المعرّف الفريد"
+
+#. module: ab_tax_eta_archive
+msgid "Issuer Name"
+msgstr "اسم المُصدر"
+
+#. module: ab_tax_eta_archive
+msgid "Receiver Name"
+msgstr "اسم المستلم"
+
+#. module: ab_tax_eta_archive
+msgid "Received At"
+msgstr "وقت الاستلام"
+
+#. module: ab_tax_eta_archive
+msgid "Issued At"
+msgstr "وقت الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_tax_eta_archive
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_tax_eta_archive
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_tax_eta_archive
+msgid "Submission Uuid"
+msgstr "معرّف التقديم"
+
+#. module: ab_tax_eta_archive
+msgid "Document Type"
+msgstr "نوع المستند"
+
+#. module: ab_tax_eta_archive
+msgid "Issuer Id"
+msgstr "معرّف المُصدر"
+
+#. module: ab_tax_eta_archive
+msgid "Receiver Id"
+msgstr "معرّف المستلم"
+
+#. module: ab_tax_eta_archive
+msgid "Config"
+msgstr "الإعداد"
+
+#. module: ab_tax_eta_archive
+msgid "Config Id"
+msgstr "إعداد الاتصال"
+
+#. module: ab_tax_eta_archive
+msgid "Package Id"
+msgstr "معرّف الحزمة"
+
+#. module: ab_tax_eta_archive
+msgid "Start At"
+msgstr "بداية الفترة"
+
+#. module: ab_tax_eta_archive
+msgid "End At"
+msgstr "نهاية الفترة"
+
+#. module: ab_tax_eta_archive
+msgid "Package Ids"
+msgstr "حزم الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Payload Json"
+msgstr "بيانات الحزمة"

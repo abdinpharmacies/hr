@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_eta_config_list" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_config.list</field>
+        <field name="model">ab_tax_eta_archive_config</field>
+        <field name="arch" type="xml">
+            <list string="ETA Connections">
+                <field name="name"/>
+                <field name="environment"/>
+                <field name="start_date"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_eta_config_form" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_config.form</field>
+        <field name="model">ab_tax_eta_archive_config</field>
+        <field name="arch" type="xml">
+            <form string="ETA Connection">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="environment"/>
+                        <field name="start_date"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Invoice API" groups="ab_tax_eta_archive.group_eta_manager">
+                        <field name="invoice_client_id"/>
+                        <field name="invoice_client_secret" password="True"/>
+                    </group>
+                    <group string="Receipt API and POS" groups="ab_tax_eta_archive.group_eta_manager">
+                        <field name="receipt_client_id"/>
+                        <field name="receipt_client_secret" password="True"/>
+                        <field name="pos_serial"/>
+                        <field name="pos_os_version"/>
+                        <field name="pos_model_framework"/>
+                        <field name="pos_preshared_key" password="True"/>
+                    </group>
+                    <group string="Telegram Delivery" groups="ab_tax_eta_archive.group_eta_manager">
+                        <field name="telegram_chat_id"/>
+                        <field name="telegram_bot_token" password="True"/>
+                        <field name="telegram_start_date"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_eta_invoice_list" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_invoice.list</field>
+        <field name="model">ab_tax_eta_archive_invoice</field>
+        <field name="arch" type="xml">
+            <list string="ETA Invoices" create="0" delete="0" edit="0">
+                <field name="config_id"/>
+                <field name="report_date"/>
+                <field name="direction"/>
+                <field name="internal_id"/>
+                <field name="uuid"/>
+                <field name="issuer_name"/>
+                <field name="receiver_name"/>
+                <field name="received_at"/>
+                <field name="total"/>
+                <field name="currency"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_eta_receipt_list" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_receipt.list</field>
+        <field name="model">ab_tax_eta_archive_receipt</field>
+        <field name="arch" type="xml">
+            <list string="ETA Receipts" create="0" delete="0" edit="0">
+                <field name="config_id"/>
+                <field name="report_date"/>
+                <field name="direction"/>
+                <field name="receipt_number"/>
+                <field name="uuid"/>
+                <field name="issuer_name"/>
+                <field name="receiver_name"/>
+                <field name="received_at"/>
+                <field name="total"/>
+                <field name="currency"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_eta_export_list" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_export.list</field>
+        <field name="model">ab_tax_eta_archive_export</field>
+        <field name="arch" type="xml">
+            <list string="ETA Daily Files" create="0" delete="0" edit="0">
+                <field name="config_id"/>
+                <field name="report_date"/>
+                <field name="category"/>
+                <field name="revision"/>
+                <field name="record_count"/>
+                <field name="checked_through"/>
+                <field name="filename"/>
+                <field name="file_data" filename="filename" widget="binary"/>
+                <field name="telegram_sent_at"/>
+                <field name="telegram_error"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_eta_export_form" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_export.form</field>
+        <field name="model">ab_tax_eta_archive_export</field>
+        <field name="arch" type="xml">
+            <form string="ETA Daily File" create="0" delete="0" edit="0">
+                <sheet>
+                    <group>
+                        <field name="report_date"/>
+                        <field name="category"/>
+                        <field name="revision"/>
+                        <field name="supersedes_id"/>
+                        <field name="record_count"/>
+                        <field name="checked_through"/>
+                        <field name="filename"/>
+                        <field name="file_data" filename="filename" widget="binary"/>
+                        <field name="telegram_sent_at"/>
+                        <field name="telegram_message_id"/>
+                        <field name="telegram_error"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_eta_sync_list" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_sync.list</field>
+        <field name="model">ab_tax_eta_archive_sync</field>
+        <field name="arch" type="xml">
+            <list string="ETA Retrievals" create="0" delete="0" edit="0">
+                <field name="config_id"/>
+                <field name="report_date"/>
+                <field name="kind"/>
+                <field name="direction"/>
+                <field name="state"/>
+                <field name="item_count"/>
+                <field name="last_run_at"/>
+                <field name="error_message"/>
+                <button name="action_retry" type="object" string="Retry" groups="ab_tax_eta_archive.group_eta_manager"/>
+            </list>
+        </field>
+    </record>
+    <record id="view_eta_sync_form" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_sync.form</field>
+        <field name="model">ab_tax_eta_archive_sync</field>
+        <field name="arch" type="xml">
+            <form string="ETA Retrieval" create="0" delete="0" edit="0">
+                <header>
+                    <button name="action_retry" type="object" string="Retry" groups="ab_tax_eta_archive.group_eta_manager"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="config_id"/>
+                        <field name="report_date"/>
+                        <field name="kind"/>
+                        <field name="direction"/>
+                        <field name="state"/>
+                        <field name="item_count"/>
+                        <field name="last_run_at"/>
+                        <field name="error_message"/>
+                    </group>
+                    <field name="package_ids" readonly="1">
+                        <list string="Receipt Packages" create="0" delete="0" edit="0">
+                            <field name="start_at"/>
+                            <field name="end_at"/>
+                            <field name="package_id"/>
+                            <field name="state"/>
+                            <field name="item_count"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_eta_config" model="ir.actions.act_window">
+        <field name="name">ETA Connections</field>
+        <field name="res_model">ab_tax_eta_archive_config</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_eta_invoice" model="ir.actions.act_window">
+        <field name="name">ETA Invoices</field>
+        <field name="res_model">ab_tax_eta_archive_invoice</field>
+        <field name="view_mode">list</field>
+    </record>
+    <record id="action_eta_receipt" model="ir.actions.act_window">
+        <field name="name">ETA Receipts</field>
+        <field name="res_model">ab_tax_eta_archive_receipt</field>
+        <field name="view_mode">list</field>
+    </record>
+    <record id="action_eta_export" model="ir.actions.act_window">
+        <field name="name">ETA Daily Files</field>
+        <field name="res_model">ab_tax_eta_archive_export</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="action_eta_sync" model="ir.actions.act_window">
+        <field name="name">ETA Retrievals</field>
+        <field name="res_model">ab_tax_eta_archive_sync</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <menuitem id="menu_eta_root" name="ETA Archive" sequence="60" groups="ab_tax_eta_archive.group_eta_user"/>
+    <menuitem id="menu_eta_files" name="Daily Files" parent="menu_eta_root" action="action_eta_export" sequence="10"/>
+    <menuitem id="menu_eta_invoices" name="Invoices" parent="menu_eta_root" action="action_eta_invoice" sequence="20"/>
+    <menuitem id="menu_eta_receipts" name="Receipts" parent="menu_eta_root" action="action_eta_receipt" sequence="30"/>
+    <menuitem id="menu_eta_sync" name="Retrievals" parent="menu_eta_root" action="action_eta_sync" sequence="40"/>
+    <menuitem id="menu_eta_config" name="Connections" parent="menu_eta_root" action="action_eta_config" sequence="50" groups="ab_tax_eta_archive.group_eta_manager"/>
+</odoo>
