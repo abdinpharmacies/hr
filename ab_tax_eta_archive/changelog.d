@@ -42,7 +42,8 @@ Files changed:
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
 - ab_tax_eta_archive/views/eta_views.xml
 
-Current changes before commit:
+ffada7d4 — yahyazakaria22 — 2026-10-24
+fix: continue ETA backfill and support taxpayer receipt access
 
 - Continue the daily backfill after a failed retrieval, retry incomplete days, and progress pending receipt packages.
 - Add taxpayer ERP receipt authentication for authorized POS devices while retaining optional POS-device authentication.
