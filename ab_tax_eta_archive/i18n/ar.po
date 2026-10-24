@@ -280,6 +280,18 @@ msgid "ETA receipt page count does not match the reported total."
 msgstr "عدد الإيصالات في الصفحات لا يطابق الإجمالي المعلن."
 
 #. module: ab_tax_eta_archive
+msgid "ETA invoice search exceeded the safe page limit."
+msgstr "تجاوز بحث الفواتير الحد الآمن لعدد الصفحات."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt count changed while reading the result pages."
+msgstr "تغير عدد الإيصالات أثناء قراءة صفحات النتائج."
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt search exceeded the safe page limit."
+msgstr "تجاوز بحث الإيصالات الحد الآمن لعدد الصفحات."
+
+#. module: ab_tax_eta_archive
 msgid "ETA request failed (HTTP %(status)s)."
 msgstr "فشل طلب مصلحة الضرائب (HTTP %(status)s)."
 

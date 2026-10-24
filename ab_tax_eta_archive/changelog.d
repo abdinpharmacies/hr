@@ -103,3 +103,16 @@ Files changed:
 
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
+
+Current changes before commit:
+
+- Page receipt searches until an empty page with a bounded PageNo and verify collected UUIDs against ETA's reported total.
+- Retain 100 receipts per page, split windows at the 3,000-result limit, and add a safety cap for invoice continuation-token pages.
+- Wait between pages to respect ETA's published request rate limit.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/models/eta_sync.py

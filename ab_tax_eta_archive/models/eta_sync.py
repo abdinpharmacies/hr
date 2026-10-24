@@ -14,6 +14,9 @@ from odoo.exceptions import UserError, ValidationError
 from .eta_document import eta_report_date
 
 _logger = logging.getLogger(__name__)
+ETA_MAX_RECEIPTS_PER_SEARCH = 3000
+ETA_RECEIPT_PAGE_SIZE = 100
+ETA_MAX_INVOICE_PAGES = 1000
 
 
 class EtaSync(models.Model):
@@ -328,6 +331,8 @@ class EtaSync(models.Model):
         }
         items, token, seen = [], None, set()
         while True:
+            if len(seen) >= ETA_MAX_INVOICE_PAGES:
+                raise ValidationError(_('ETA invoice search exceeded the safe page limit.'))
             current = dict(params)
             if token:
                 current['continuationToken'] = token
@@ -345,37 +350,50 @@ class EtaSync(models.Model):
                 raise ValidationError(_('ETA invoice pagination stopped before the final page.'))
             seen.add(next_token)
             token = next_token
+            time.sleep(0.5)
 
     def _receipt_pages(self, api_url, headers, start, end):
         params = {
             'Direction': 'Submitted' if self.direction == 'sent' else 'Received',
             'DateTimeReceivedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
             'DateTimeReceivedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'PageSize': 100,
+            'PageSize': ETA_RECEIPT_PAGE_SIZE,
         }
-        first = self._request('GET', f'{api_url}/api/v1/receipts/search',
-                              headers=headers, params={**params, 'PageNo': 1})
-        metadata = first.get('metadata')
-        if not isinstance(first.get('receipts'), list) or not isinstance(metadata, dict):
-            raise ValidationError(_('ETA receipt search returned an invalid page.'))
-        total = metadata.get('totalCount')
-        pages = metadata.get('totalPages')
-        if not isinstance(total, int) or not isinstance(pages, int) or total < 0 or pages < 0:
+        items = []
+        total = None
+        max_pages = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE + 1
+        for page_no in range(1, max_pages + 1):
+            if page_no > 1:
+                time.sleep(0.5)
+            payload = self._request('GET', f'{api_url}/api/v1/receipts/search',
+                                    headers=headers, params={**params, 'PageNo': page_no})
+            page = payload.get('receipts')
+            metadata = payload.get('metadata')
+            if not isinstance(page, list) or not isinstance(metadata, dict):
+                raise ValidationError(_('ETA receipt search returned an invalid page.'))
+            page_total = metadata.get('totalCount')
+            if not isinstance(page_total, int) or page_total < 0:
+                raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
+            if total is not None and page_total != total:
+                raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
+            total = page_total
+            if total >= ETA_MAX_RECEIPTS_PER_SEARCH:
+                break
+            if not page:
+                break
+            items.extend(page)
+        else:
+            raise ValidationError(_('ETA receipt search exceeded the safe page limit.'))
+
+        if total is None:
             raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-        if total >= 3000:
+        if total >= ETA_MAX_RECEIPTS_PER_SEARCH:
             if end - start <= timedelta(milliseconds=1):
                 raise ValidationError(_('ETA receipt result limit reached for a one-millisecond window.'))
             midpoint = start + (end - start) / 2
             midpoint = midpoint.replace(microsecond=(midpoint.microsecond // 1000) * 1000)
             return (self._receipt_pages(api_url, headers, start, midpoint) +
                     self._receipt_pages(api_url, headers, midpoint + timedelta(milliseconds=1), end))
-        items = list(first['receipts'])
-        for page_no in range(2, pages + 1):
-            payload = self._request('GET', f'{api_url}/api/v1/receipts/search',
-                                    headers=headers, params={**params, 'PageNo': page_no})
-            if not isinstance(payload.get('receipts'), list):
-                raise ValidationError(_('ETA receipt search returned an invalid page.'))
-            items.extend(payload['receipts'])
         if len({item.get('uuid') for item in items}) != total:
             raise ValidationError(_('ETA receipt page count does not match the reported total.'))
         return items
