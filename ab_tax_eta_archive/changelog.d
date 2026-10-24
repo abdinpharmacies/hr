@@ -119,7 +119,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/models/eta_sync.py
 
-Current changes before commit:
+394a20f2 — yahyazakaria22 — 2026-10-25
+fix: request 1000 ETA receipts per search page
 
 - Increase receipt search page size from 100 to 1,000 so each request retrieves more receipts before advancing to the next page.
 
