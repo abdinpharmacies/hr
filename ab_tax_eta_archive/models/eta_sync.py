@@ -441,6 +441,8 @@ class EtaSync(models.Model):
                         detail = ': '.join(str(error.get(key, '')).strip()
                                            for key in ('code', 'message', 'target')
                                            if error.get(key))
+                if not detail and response.text:
+                    detail = ' '.join(response.text.split())[:1000]
                 correlation_id = response.headers.get('correlationId')
                 if correlation_id:
                     detail = f'{detail} (correlationId: {correlation_id})'.strip()

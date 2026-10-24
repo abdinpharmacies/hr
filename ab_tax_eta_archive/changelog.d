@@ -148,3 +148,12 @@ Files changed:
 
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
+
+Current changes before commit:
+
+- Include up to 1,000 characters of ETA's raw error response when its standard error fields are absent.
+
+Files changed:
+
+- ab_tax_eta_archive/changelog.d
+- ab_tax_eta_archive/models/eta_sync.py
