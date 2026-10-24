@@ -20,6 +20,10 @@ ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
 ETA_MAX_INVOICE_PAGES = 1000
 
 
+class EtaSearchNoResult(Exception):
+    """ETA found no documents for the requested receipt search criteria."""
+
+
 class EtaSync(models.Model):
     _name = 'ab_tax_eta_archive_sync'
     _description = 'ETA Daily Retrieval'
@@ -365,8 +369,16 @@ class EtaSync(models.Model):
         for page_no in range(1, ETA_MAX_RECEIPT_PAGE_NO + 1):
             if page_no > 1:
                 time.sleep(0.5)
-            payload = self._request('GET', f'{api_url}/api/v1/receipts/search',
-                                    headers=headers, params={**params, 'PageNo': page_no})
+            try:
+                payload = self._request(
+                    'GET', f'{api_url}/api/v1/receipts/search',
+                    headers=headers, params={**params, 'PageNo': page_no},
+                    allow_no_result=True,
+                )
+            except EtaSearchNoResult:
+                if page_no == 1:
+                    return []
+                break
             page = payload.get('receipts')
             metadata = payload.get('metadata')
             if not isinstance(page, list) or not isinstance(metadata, dict):
@@ -400,7 +412,7 @@ class EtaSync(models.Model):
             raise ValidationError(_('ETA receipt page count does not match the reported total.'))
         return items
 
-    def _request(self, method, url, allow_package_limit=False, **kwargs):
+    def _request(self, method, url, allow_package_limit=False, allow_no_result=False, **kwargs):
         for attempt in range(4):
             try:
                 response = requests.request(method, url, timeout=40, **kwargs)
@@ -424,6 +436,14 @@ class EtaSync(models.Model):
                     error.get('code') == 'OperationExceedsLimit'
                 ):
                     return {'__limit__': True}
+            if response.status_code == 404 and allow_no_result:
+                try:
+                    error = response.json()
+                except ValueError:
+                    error = {}
+                if (isinstance(error, dict) and error.get('code') == 'NotFound'
+                        and error.get('target') == 'NoResult'):
+                    raise EtaSearchNoResult()
             try:
                 response.raise_for_status()
                 payload = response.json()
