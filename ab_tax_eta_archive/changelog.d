@@ -75,7 +75,8 @@ Files changed:
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
 
-Current changes before commit:
+5f804a0a — yahyazakaria22 — 2026-10-25
+fix: share ERP authentication and recover receipt search 404
 
 - Use the taxpayer ERP invoice client credentials and Basic authentication for both invoice and receipt retrievals.
 - Retry a receipt day through ETA receipt packages when the search route returns HTTP 404.
