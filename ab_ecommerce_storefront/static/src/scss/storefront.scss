@@ -15569,6 +15569,51 @@ html.ab-avatar-picker-open body {
     }
 }
 
+@media (max-width: 414px) {
+    body.ab-storefront .ab-storefront-header .ab-storefront-category-nav .ab-storefront-primary-nav {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        align-items: stretch;
+        gap: .25rem;
+        padding: .35rem .45rem;
+        overflow: hidden;
+        overscroll-behavior-x: auto;
+    }
+
+    body.ab-storefront .ab-storefront-header .ab-storefront-primary-nav > :is(
+        .ab-storefront-home-link,
+        .ab-storefront-offers-link,
+        .ab-storefront-prescription-link,
+        .ab-storefront-track-link
+    ) {
+        display: flex !important;
+        width: 100%;
+        min-width: 0;
+        min-height: 58px;
+        flex: 0 1 auto;
+        flex-direction: column;
+        justify-content: center;
+        gap: .2rem !important;
+        padding: .35rem .2rem;
+        border-radius: .8rem;
+        font-size: var(--ab-font-size-075);
+        line-height: var(--ab-line-height-115);
+        text-align: center;
+        white-space: normal !important;
+    }
+
+    body.ab-storefront .ab-storefront-header .ab-storefront-primary-nav > :is(
+        .ab-storefront-home-link,
+        .ab-storefront-offers-link,
+        .ab-storefront-prescription-link,
+        .ab-storefront-track-link
+    ) > .ab-storefront-nav-icon {
+        width: 18px;
+        height: 18px;
+        flex-basis: 18px;
+    }
+}
+
 .ab-storefront-primary-nav.ab-storefront-nav-dragging {
     cursor: grabbing;
     user-select: none;

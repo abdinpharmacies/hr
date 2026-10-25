@@ -87,7 +87,7 @@
     }
 }
 
-body.ab-storefront :is(
+body.ab-storefront :where(
     .ab-storefront-scroll-region,
     .ab-storefront-history-rail-track,
     .ab-storefront-product-rail,
