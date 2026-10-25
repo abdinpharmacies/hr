@@ -9,6 +9,10 @@ class AbSalesPosApi(models.TransientModel):
     _inherit = "ab_sales_pos_api"
 
     @api.model
+    def _pos_allowed_header_fields(self):
+        return super()._pos_allowed_header_fields() | {"delivery_notify", "delivery_instructions"}
+
+    @api.model
     def pos_submit(self, payload=None, **kwargs):
         incoming = payload if payload is not None else kwargs
         if not isinstance(incoming, dict):
