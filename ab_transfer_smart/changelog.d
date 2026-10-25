@@ -1,9 +1,52 @@
 Current changes before commit:
 
-- Acquire the base transfer operation lock before Smart Transfer stage transitions and final submission.
-- Prevent pre-submit and backward-stage line changes from racing with an active B-Connect submission.
-- Use the exact E-Plus serial saved by `ab_transfer` and remove the unsafe latest-notes-match lookup.
-- Update Smart Transfer regression coverage for the shared locked, idempotent submission flow.
+- Import a complete destination stock snapshot from XLSX with exact product-code validation, replacement confirmation, import attribution, and Cairo-midnight expiry.
+- Preserve current imported stock during normal and forced refreshes; include pending quantities once and recognize valid zero-stock and zero-sales snapshots.
+- Replace stock and destination sales atomically under ordered branch locks, retaining previous data when fetches or replacement fail.
+- Require verified current-day destination sales for offline planning; provide an explicit destination-sales refresh action.
+- Use complete managed snapshots for fair-share branches and record protected calculation dependencies on every generated or split transfer.
+- Reject expired or replaced calculations before forward actions and direct stage writes; retain backward recovery and existing source-stock checks.
+- Roll back incomplete multi-destination generation and expose snapshot status, import controls, and English/Arabic messages.
+- Add workbook, rollback, permission, freshness, calculation, generation, and independent-transaction regression coverage.
+
+Validation:
+
+- Fresh targeted installation and targeted upgrade succeeded on isolated database codex_smart_offline_20261025, HTTP disabled; configured alternate ports 5069/5072. The user-requested abdin_replica_branch19 database was subsequently upgraded successfully without restarting its running Odoo process.
+- Replica validation: 21 offline tests passed, one ambiguous-master fixture test skipped because replica policy forbids master creation. Fixtures reused existing masters inside Odoo TransactionCase with commit disabled; no snapshot state or calculated test headers persisted. English/ar_001 import action and view verified at runtime.
+- New offline suite on isolated database: 22 tests passed. Independent-transaction harness: import versus forced refresh, calculation, and progression all passed.
+- Final broader selection: 182 cases, 113 passed and 69 skipped for unavailable existing-data fixtures. Five existing failures were excluded only after reproducing them with the unchanged module in codex_smart_baseline_20261025: line source classification, two reservation expectations, quantity zero, and split ordering. No remaining selected failures/errors.
+- Both Arabic catalogs pass msgfmt --check-format. Runtime ar_001 action and view text differ from en_US; existing translations are preserved.
+- Concurrency harness: load tests/check_snapshot_concurrency.py in an Odoo shell on a disposable database and call run_snapshot_concurrency(env). It uses committed test fixtures and archives its business records after success. Exclude tests and Python caches from production packages.
+
+Files changed:
+
+- ab_transfer_smart/__manifest__.py
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/models/__init__.py
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/models/ab_transfer_smart_cache_state.py
+- ab_transfer_smart/models/ab_transfer_smart_stock_import.py
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+- ab_transfer_smart/security/ir.model.access.csv
+- ab_transfer_smart/security/record_rules.xml
+- ab_transfer_smart/tests/check_snapshot_concurrency.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_header_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_stock_import_views.xml
+
+
+commit f3bd63df1d96c88e58c809dd28cdbc184880bf10
+Author: Emadedeen-ctrl <emadco88@gmail.com>
+Date:   Wed Sep 23 06:04:16 2026 +0000
+
+    ab_transfer_smart/ UPD Minor FIX: prevent duplicate B-Connect transfer submissions
+
+- Acquire the shared transfer operation lock before Smart Transfer stage transitions and submission.
+- Use the exact E-Plus serial saved by the base transfer submission flow.
 
 Files changed:
 

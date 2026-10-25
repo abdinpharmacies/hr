@@ -355,5 +355,15 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="False"/>
         </record>
+        <record id="rule_smart_stock_import_owner" model="ir.rule">
+            <field name="name">Smart stock import: own wizard</field>
+            <field name="model_id" ref="model_ab_transfer_smart_stock_import"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        </record>
+        <record id="rule_smart_snapshot_visible_stores" model="ir.rule">
+            <field name="name">Smart snapshots: accessible branches</field>
+            <field name="model_id" ref="model_ab_transfer_smart_cache_state"/>
+            <field name="domain_force">[('store_id', 'in', user.env['ab_store'].search([]).ids)]</field>
+        </record>
     </data>
 </odoo>

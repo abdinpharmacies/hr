@@ -264,5 +264,18 @@
                   action="ab_product.ab_product_action"
                   sequence="50"
                   groups="base.group_system,ab_transfer_smart.group_transfer_smart_purchase,ab_transfer_smart.group_trnasfer_smart_store_preparation,ab_transfer_smart.group_trnasfer_smart_store_revision"/>
+        <record id="ab_transfer_smart_stock_cache_import_list" model="ir.ui.view">
+            <field name="name">Smart stock import launcher</field>
+            <field name="model">ab_transfer_smart_stock_cache</field>
+            <field name="inherit_id" ref="ab_transfer_smart_stock_cache_view_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="inside">
+                    <header>
+                        <button name="%(ab_transfer_smart_stock_import_action)d" type="action" string="Import Excel" display="always" groups="ab_transfer_smart.group_transfer_smart_purchase,base.group_system"/>
+                        <button name="%(ab_transfer_smart_cache_state_action)d" type="action" string="Snapshot Status" display="always"/>
+                    </header>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

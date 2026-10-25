@@ -520,7 +520,7 @@ class AbTransferSmartWizard(models.Model):
             raise UserError(_("Done wizards cannot refresh smart cache."))
         if not self.to_stores_id:
             raise UserError(_("Please select at least one destination store."))
-        result = self.env["ab_transfer_smart_stock_cache"].sudo().refresh_stores_cache(
+        result = self.env["ab_transfer_smart_stock_cache"].refresh_stores_cache(
             self.to_stores_id,
             force=True,
         )
@@ -531,10 +531,10 @@ class AbTransferSmartWizard(models.Model):
                 "title": _("Smart Transfer Cache"),
                 "message": _(
                     "Smart cache refreshed. Stores: %(stores)s, Stock rows: %(stock_rows)s, "
-                    "Sales rows: %(sales_rows)s."
+                    "Sales rows: %(sales_rows)s. Preserved imports: %(preserved_imports)s. Unavailable destination sales: %(unavailable_sales)s."
                 )
                            % result,
-                "type": "success",
+                "type": "warning" if result["unavailable_sales"] else "success",
                 "sticky": False,
             },
         }
@@ -587,7 +587,12 @@ class AbTransferSmartWizard(models.Model):
 
     def _ensure_smart_destination_caches(self):
         self.ensure_one()
-        return self.env["ab_transfer_smart_stock_cache"].sudo().refresh_stores_cache(
+        stores = self.to_stores_id
+        for destination in self.to_stores_id:
+            probe = self.env["ab_transfer_header"].new(self._prepare_header_probe_vals(destination))
+            stores |= probe._smart_snapshot_stores()
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(stores, initialize=True)
+        return self.env["ab_transfer_smart_stock_cache"].refresh_stores_cache(
             self.to_stores_id,
             force=False,
         )
@@ -713,6 +718,18 @@ class AbTransferSmartWizard(models.Model):
         return context
 
     def _action_generate_batch_transfers(self):
+        try:
+            with self.env.cr.savepoint():
+                stores = self.to_stores_id
+                for destination in self.to_stores_id:
+                    probe = self.env["ab_transfer_header"].new(self._prepare_header_probe_vals(destination))
+                    stores |= probe._smart_snapshot_stores()
+                self.env["ab_transfer_smart_cache_state"]._lock_branches(stores, initialize=True)
+                return self._generate_batch_transfers_atomic()
+        except UserError as error:
+            return self._smart_notification(_("Smart Transfer Calculation"), str(error), "danger")
+
+    def _generate_batch_transfers_atomic(self):
         self.ensure_one()
         Header = self.env["ab_transfer_header"]
         created_headers = Header.browse()
@@ -722,7 +739,9 @@ class AbTransferSmartWizard(models.Model):
                 **self._get_calculation_context()
             ).action_smart_transfer_calculation()
             if self._is_danger_notification(calculation_action):
-                return calculation_action
+                raise UserError(calculation_action["params"]["message"])
+            if not header.smart_snapshot_dependencies:
+                raise UserError(_("Complete the calculation warnings for branch %s and retry generation.") % destination.display_name)
             created_headers |= self._split_generated_header_by_items(header)
 
         self.write({
@@ -756,6 +775,7 @@ class AbTransferSmartWizard(models.Model):
                 self._prepare_chunk_header_create_vals(header.to_store_id, chunk)
             )
             chunk.write({"header_id": chunk_header.id})
+            chunk_header._publish_smart_snapshot_dependencies(header.smart_snapshot_dependencies)
             created_headers |= chunk_header
         return created_headers
 

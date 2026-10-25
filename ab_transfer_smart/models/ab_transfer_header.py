@@ -79,6 +79,77 @@ class AbTransferHeader(models.Model):
         index=True,
     )
 
+    smart_snapshot_dependencies = fields.Json(string="Calculation Snapshot", readonly=True, copy=False)
+    smart_snapshot_status = fields.Char(string="Snapshot Status", compute="_compute_smart_snapshot_status")
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        if any("smart_snapshot_dependencies" in vals for vals in vals_list):
+            raise AccessError(_("Calculation snapshot metadata cannot be supplied manually."))
+        return super().create(vals_list)
+
+    def _publish_smart_snapshot_dependencies(self, dependencies):
+        self.ensure_one()
+        super(AbTransferHeader, self).write({"smart_snapshot_dependencies": dependencies})
+
+    def _smart_snapshot_stores(self):
+        self.ensure_one()
+        other = self._get_smart_cache_store_by_sql_id(self._get_smart_other_branch_store_sql_ids())
+        return self.to_store_id | self.env["ab_store"].browse([store.id for store in other.values()])
+
+    def _capture_smart_snapshot_dependencies(self):
+        self.ensure_one()
+        State = self.env["ab_transfer_smart_cache_state"]
+        stores = self._smart_snapshot_stores()
+        State._lock_branches(stores)
+        dependencies = {"source": self.from_store_id.id, "destination": self.to_store_id.id,
+                        "date": str(State._business_date()), "branches": {}}
+        for store in stores:
+            state = State._state(store)
+            managed = bool(state.imported_workflow)
+            required = store == self.to_store_id or managed
+            if required and (not state or state.stock_date != State._business_date()):
+                raise UserError(_("Refresh or import current-day Smart Stock for branch %s.") % store.display_name)
+            dependencies["branches"][str(store.id)] = {
+                "managed": managed, "revision": state.stock_revision if required else 0,
+            }
+        return dependencies
+
+    def _validate_smart_snapshot_dependencies(self):
+        self.ensure_one()
+        self.check_access("write")
+        if self.is_submitted:
+            return
+        self._lock_transfer_operation()
+        self.invalidate_recordset(["smart_snapshot_dependencies", "from_store_id", "to_store_id", "fair_store_ids"])
+        dependencies = self.smart_snapshot_dependencies
+        previous_ids = [int(key) for key in (dependencies or {}).get("branches", {})]
+        stores = self._smart_snapshot_stores() | self.env["ab_store"].browse(previous_ids)
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(stores)
+        if not dependencies or dependencies != self._capture_smart_snapshot_dependencies():
+            raise UserError(_("The calculation snapshot is missing, expired, or replaced. Return to Purchase Preparation and recalculate."))
+
+    def _compute_smart_snapshot_status(self):
+        State = self.env["ab_transfer_smart_cache_state"]
+        for header in self:
+            dependencies = header.smart_snapshot_dependencies
+            stale = not dependencies or dependencies.get("date") != str(State._business_date())
+            if not stale:
+                stale = (dependencies.get("source") != header.from_store_id.id or
+                         dependencies.get("destination") != header.to_store_id.id)
+                for key, expected in dependencies.get("branches", {}).items():
+                    state = State._state(self.env["ab_store"].browse(int(key)))
+                    required = int(key) == header.to_store_id.id or state.imported_workflow
+                    if bool(state.imported_workflow) != expected["managed"] or (required and (
+                        state.stock_revision != expected["revision"] or state.stock_date != State._business_date()
+                    )):
+                        stale = True
+            header.smart_snapshot_status = (
+                _("Submitted") if header.is_submitted else
+                _("Recalculation required: snapshot missing, expired, or replaced.") if stale else
+                _("Snapshot current; expires at the next Cairo midnight.")
+            )
+
     smart_stage = fields.Selection(
         selection=[
             (SMART_STAGE_PURCHASE_PREPARATION, "Purchase Preparation"),
@@ -220,6 +291,17 @@ class AbTransferHeader(models.Model):
 
     def write(self, vals):
         vals = dict(vals or {})
+        if "smart_snapshot_dependencies" in vals:
+            raise AccessError(_("Calculation snapshot metadata cannot be supplied manually."))
+        stages = [SMART_STAGE_PURCHASE_PREPARATION, SMART_STAGE_STORE_PREPARATION,
+                  SMART_STAGE_STORE_REVISION, SMART_STAGE_PRE_SUBMIT, SMART_STAGE_SUBMIT]
+        for header in self.sorted("id"):
+            if (vals.get("is_submitted") and not header.is_submitted) or (vals.get("smart_stage") in stages and stages.index(vals["smart_stage"]) > stages.index(header.smart_stage)):
+                if header.smart_line_ids or header.smart_wizard_id or header.smart_snapshot_dependencies or not header.line_ids:
+                    header._validate_smart_snapshot_dependencies()
+            if {"from_store_id", "to_store_id", "fair_store_ids"}.intersection(vals) and header.smart_stage != SMART_STAGE_PURCHASE_PREPARATION:
+                if header.smart_line_ids or header.smart_snapshot_dependencies:
+                    raise UserError(_("Return to Purchase Preparation before changing calculation branches."))
         duplicate_check_fields = {"smart_stage", "from_store_id", "to_store_id"}
         previous_stage_by_id = {}
         if duplicate_check_fields.intersection(vals):
@@ -338,6 +420,7 @@ class AbTransferHeader(models.Model):
             skip_smart_sales_cache_coverage=bool(allow_incomplete_sales_cache),
             smart_export_source_rows_by_product=source_rows_by_product,
         )
+        probe.env["ab_transfer_smart_cache_state"]._lock_branches(probe._smart_snapshot_stores())
         probe._validate_smart_transfer_header()
 
         missing_dates = []
@@ -439,45 +522,51 @@ class AbTransferHeader(models.Model):
             _("Smart Transfer Cache"),
             _(
                 "Smart cache refreshed. Stores: %(stores)s, Stock rows: %(stock_rows)s, "
-                "Sales rows: %(sales_rows)s."
+                "Sales rows: %(sales_rows)s. Preserved imports: %(preserved_imports)s. Unavailable destination sales: %(unavailable_sales)s."
             )
             % result,
-            "success",
+            "warning" if result["unavailable_sales"] else "success",
         )
 
     def action_smart_transfer_calculation(self):
+        try:
+            with self.env.cr.savepoint():
+                return self._action_smart_transfer_calculation()
+        except UserError as error:
+            return self._smart_notification(_("Smart Transfer Calculation"), str(error), "danger")
+
+    def _action_smart_transfer_calculation(self):
         self.ensure_one()
         self._check_smart_group(SMART_GROUP_PURCHASE)
+        self.check_access("write")
         self._check_smart_stage(SMART_STAGE_PURCHASE_PREPARATION)
+        self._check_smart_not_submitted()
+        self._lock_transfer_operation()
+        stores = self._smart_snapshot_stores()
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(stores, initialize=True)
         self._ensure_smart_destination_cache()
-        try:
-            self._validate_smart_transfer_header()
-            warning_action = self._get_smart_sales_cache_warning_action_if_needed()
-            if warning_action:
-                return warning_action
+        self._validate_smart_transfer_header()
+        warning_action = self._get_smart_sales_cache_warning_action_if_needed()
+        if warning_action:
+            return warning_action
 
-            self._ensure_smart_source_cache()
-            source_stock_context = self._get_smart_candidate_source_stock_context()
-            if not self.env.context.get(
-                    SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY
-            ):
-                zero_stock_action = self._get_smart_zero_source_stock_warning_action(
-                    source_stock_context
-                )
-                if zero_stock_action:
-                    return zero_stock_action
+        self._ensure_smart_source_cache()
+        source_stock_context = self._get_smart_candidate_source_stock_context()
+        if not self.env.context.get(
+                SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY
+        ):
+            zero_stock_action = self._get_smart_zero_source_stock_warning_action(
+                source_stock_context
+            )
+            if zero_stock_action:
+                return zero_stock_action
 
-            destination_rows = self._fetch_destination_smart_rows(
-                source_stock_context=source_stock_context
-            )
-        except UserError as error:
-            return self._smart_notification(
-                _("Smart Transfer Calculation"),
-                str(error),
-                "danger",
-            )
+        destination_rows = self._fetch_destination_smart_rows(
+            source_stock_context=source_stock_context
+        )
 
         result = self._apply_smart_transfer_rows(destination_rows)
+        self._publish_smart_snapshot_dependencies(self._capture_smart_snapshot_dependencies())
 
         if not result["created"] and not result["updated"]:
             return self._smart_notification(
@@ -524,6 +613,7 @@ class AbTransferHeader(models.Model):
         self._check_smart_group(SMART_GROUP_PURCHASE)
         self._check_smart_stage(SMART_STAGE_PURCHASE_PREPARATION)
         self._check_smart_not_submitted()
+        self._validate_smart_snapshot_dependencies()
         eligible_lines = self.smart_line_ids.filtered(
             lambda line: not line.exclusion_reason
         )
@@ -543,6 +633,7 @@ class AbTransferHeader(models.Model):
         self._check_smart_group(SMART_GROUP_STORE_PREPARATION)
         self._check_smart_stage(SMART_STAGE_STORE_PREPARATION)
         self._check_smart_not_submitted()
+        self._validate_smart_snapshot_dependencies()
         self.write({"smart_stage": SMART_STAGE_STORE_REVISION})
         return self._smart_notification(
             _("Smart Transfer Stage"),
@@ -557,6 +648,7 @@ class AbTransferHeader(models.Model):
         self._check_smart_group(SMART_GROUP_STORE_REVISION)
         self._check_smart_stage(SMART_STAGE_STORE_REVISION)
         self._check_smart_not_submitted()
+        self._validate_smart_snapshot_dependencies()
         result = self._copy_smart_lines_to_transfer_lines()
         self.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
         return self._smart_notification(
@@ -626,6 +718,8 @@ class AbTransferHeader(models.Model):
             self._check_smart_group(SMART_GROUP_STORE_REVISION)
             self._check_smart_stage(SMART_STAGE_PRE_SUBMIT)
 
+        if not self.is_submitted and (self.smart_line_ids or self.smart_wizard_id or self.smart_snapshot_dependencies):
+            self._validate_smart_snapshot_dependencies()
         previous_stage = self.smart_stage
         if (
                 not self.is_submitted
@@ -1033,83 +1127,23 @@ class AbTransferHeader(models.Model):
         )
 
     def _fetch_destination_smart_rows_readonly(self):
-        """Read today's cache when present and fall back to live SELECTs without caching."""
         self.ensure_one()
-        destination_store_sql_id = self._get_smart_destination_store_sql_id()
-        product_serials = sorted({
-            int(serial)
-            for serial in self._get_smart_target_product_serials_with_source_stock()
-            if serial
-        })
-        if not product_serials:
-            return []
-
-        cache_date = fields.Date.context_today(self)
-        StockCache = self.env["ab_transfer_smart_stock_cache"].sudo()
-        SalesCache = self.env["ab_transfer_smart_sales_cache"].sudo()
-        stock_cache_domain = [
-            ("store_id", "=", self.to_store_id.id),
-            ("cache_date", "=", cache_date),
-        ]
-        sales_cache_domain = [
-            ("store_id", "=", self.to_store_id.id),
-            ("cache_date", "=", cache_date),
-        ]
-
-        if StockCache.search_count(stock_cache_domain):
-            stock_by_serial = {
-                int(line.product_eplus_serial): float(line.stock_qty or 0.0)
-                for line in StockCache.search([
-                    *stock_cache_domain,
-                    ("product_eplus_serial", "in", product_serials),
-                ])
-            }
-        else:
-            stock_by_serial = StockCache._fetch_store_stock_rows(self.to_store_id)
-
-        if SalesCache.search_count(sales_cache_domain):
-            sales_by_serial = {
-                int(line.product_eplus_serial): {
-                    "month1_sales": float(line.month1_sales or 0.0),
-                    "month2_sales": float(line.month2_sales or 0.0),
-                    "month3_sales": float(line.month3_sales or 0.0),
-                }
-                for line in SalesCache.search([
-                    *sales_cache_domain,
-                    ("product_eplus_serial", "in", product_serials),
-                ])
-            }
-        else:
-            sales_by_serial = SalesCache._fetch_store_sales_rows(self.to_store_id)
-
-        rows = []
-        for product_serial in product_serials:
-            sales = sales_by_serial.get(product_serial, {})
-            month1_sales = float(sales.get("month1_sales", 0.0) or 0.0)
-            month2_sales = float(sales.get("month2_sales", 0.0) or 0.0)
-            month3_sales = float(sales.get("month3_sales", 0.0) or 0.0)
-            rows.append((
-                product_serial,
-                "",
-                "",
-                destination_store_sql_id,
-                float(stock_by_serial.get(product_serial, 0.0) or 0.0),
-                month1_sales,
-                month2_sales,
-                month3_sales,
-                month1_sales + month2_sales + month3_sales,
-            ))
-        return rows
+        serials = self._get_smart_target_product_serials_with_source_stock()
+        return self._read_smart_destination_cache_rows(
+            serials, self._get_smart_destination_store_sql_id(), readonly=True,
+        )
 
     def _ensure_smart_destination_cache(self):
         self.ensure_one()
-        return self._refresh_smart_destination_cache(force=False)
+        result = self._refresh_smart_destination_cache(force=False)
+        self._read_smart_destination_cache_rows([], self._get_smart_destination_store_sql_id())
+        return result
 
     def _refresh_smart_destination_cache(self, force=False):
         self.ensure_one()
         if not self.to_store_id:
             raise UserError(_("Destination store is required."))
-        return self.env["ab_transfer_smart_stock_cache"].sudo().refresh_stores_cache(
+        return self.env["ab_transfer_smart_stock_cache"].refresh_stores_cache(
             self.to_store_id,
             force=force,
         )
@@ -1127,49 +1161,28 @@ class AbTransferHeader(models.Model):
             force=force,
         )
 
-    def _read_smart_destination_cache_rows(self, product_serials, destination_store_sql_id):
+    def _read_smart_destination_cache_rows(self, product_serials, destination_store_sql_id, readonly=False):
         self.ensure_one()
-        cache_date = fields.Date.context_today(self)
-        serials = sorted({int(serial) for serial in product_serials if serial})
-        if not serials:
-            return []
-
-        StockCache = self.env["ab_transfer_smart_stock_cache"].sudo()
-        SalesCache = self.env["ab_transfer_smart_sales_cache"].sudo()
-        stock_by_serial = {
-            int(line.product_eplus_serial): float(line.stock_qty or 0.0)
-            for line in StockCache.search([
-                ("store_id", "=", self.to_store_id.id),
-                ("cache_date", "=", cache_date),
-                ("product_eplus_serial", "in", serials),
-            ])
-        }
-        sales_by_serial = {
-            int(line.product_eplus_serial): line
-            for line in SalesCache.search([
-                ("store_id", "=", self.to_store_id.id),
-                ("cache_date", "=", cache_date),
-                ("product_eplus_serial", "in", serials),
-            ])
-        }
-
+        Stock = self.env["ab_transfer_smart_stock_cache"]
+        Sales = self.env["ab_transfer_smart_sales_cache"]
+        stock = Stock.read_store_stock_context(self.to_store_id, product_serials)
+        sales = Sales.read_store_sales_context(self.to_store_id, product_serials)
+        if not stock["has_cache"]:
+            if stock["managed"] or not readonly:
+                raise UserError(_("Refresh or import current-day Smart Stock for branch %s.") % self.to_store_id.display_name)
+            onhand = Stock._fetch_store_stock_rows(self.to_store_id)
+            pending = Stock._fetch_store_pending_stock_rows(self.to_store_id)
+            stock["stock_by_serial"] = {key: onhand.get(key, 0.0) + pending.get(key, 0.0) for key in set(onhand) | set(pending)}
+        if not sales["complete"]:
+            if stock["origin"] == "excel" or not readonly:
+                raise UserError(_("Branch %s requires a verified current-day destination sales refresh before calculation.") % self.to_store_id.display_name)
+            sales["sales_by_serial"] = Sales._fetch_store_sales_rows(self.to_store_id)
         rows = []
-        for product_serial in serials:
-            sales_line = sales_by_serial.get(product_serial)
-            month1_sales = float(sales_line.month1_sales or 0.0) if sales_line else 0.0
-            month2_sales = float(sales_line.month2_sales or 0.0) if sales_line else 0.0
-            month3_sales = float(sales_line.month3_sales or 0.0) if sales_line else 0.0
-            rows.append((
-                product_serial,
-                "",
-                "",
-                destination_store_sql_id,
-                stock_by_serial.get(product_serial, 0.0),
-                month1_sales,
-                month2_sales,
-                month3_sales,
-                month1_sales + month2_sales + month3_sales,
-            ))
+        for serial in sorted(set(product_serials)):
+            values = sales["sales_by_serial"].get(serial, {})
+            months = [float(values.get(key, 0.0)) for key in ("month1_sales", "month2_sales", "month3_sales")]
+            rows.append((serial, "", "", destination_store_sql_id,
+                         stock["stock_by_serial"].get(serial, 0.0), *months, sum(months)))
         return rows
 
     def _get_smart_candidate_source_stock_context(self):
@@ -1791,7 +1804,7 @@ class AbTransferHeader(models.Model):
 
     def _get_smart_sales_cache_periods(self):
         self.ensure_one()
-        today = fields.Date.context_today(self)
+        today = self.env["ab_transfer_smart_cache_state"]._business_date()
         month1_end = today - timedelta(days=1)
         month1_start = month1_end - timedelta(days=29)
         month2_end = month1_start - timedelta(days=1)
@@ -1929,6 +1942,21 @@ class AbTransferHeader(models.Model):
             store_id = self._group_many2one_id(group.get("store_id"))
             if product_serial and store_id:
                 result[(product_serial, store_id)] = float(group.get("balance", 0.0) or 0.0)
+        Stock = self.env["ab_transfer_smart_stock_cache"]
+        stores = self.env["ab_store"].browse(store_ids)
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(stores)
+        for store in stores:
+            context = Stock.read_store_stock_context(store, product_serials)
+            if not context["managed"]:
+                continue
+            if not context["has_cache"]:
+                if not self.env.context.get("smart_export_readonly"):
+                    Stock.refresh_store_cache(store)
+                    context = Stock.read_store_stock_context(store, product_serials)
+                if not context["has_cache"]:
+                    raise UserError(_("Refresh or import current-day Smart Stock for branch %s.") % store.display_name)
+            for serial in product_serials:
+                result[(serial, store.id)] = context["stock_by_serial"].get(serial, 0.0)
         return result
 
     def _get_smart_other_branch_store_sql_ids(self):

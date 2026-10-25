@@ -6,6 +6,11 @@
             <field name="model">ab_transfer_header</field>
             <field name="inherit_id" ref="ab_transfer.ab_transfer_header_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//sheet" position="inside">
+                    <group string="Calculation Snapshot" invisible="is_submitted">
+                        <field name="smart_snapshot_status" readonly="1"/>
+                    </group>
+                </xpath>
                 <xpath expr="//form/header/button[@name='action_submit']" position="attributes">
                     <attribute name="groups">ab_transfer_smart.group_trnasfer_smart_store_revision</attribute>
                     <attribute name="invisible">is_submitted or smart_stage != 'pre_submit'</attribute>

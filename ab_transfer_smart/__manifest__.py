@@ -19,10 +19,12 @@
         "views/ab_product_views.xml",
         "views/ab_transfer_header_views.xml",
         "views/ab_transfer_smart_wizard_views.xml",
+        "views/ab_transfer_smart_stock_import_views.xml",
         "views/ab_transfer_smart_cache_views.xml",
         "report/ab_transfer_line_reports.xml",
         "report/ab_transfer_smart_xlsx_report.xml",
     ],
+    "external_dependencies": {"python": ["openpyxl"]},
     "assets": {
         "web.assets_backend": [
             "ab_transfer_smart/static/src/scss/smart_header.scss",

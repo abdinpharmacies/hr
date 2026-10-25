@@ -8,3 +8,6 @@ from . import ab_transfer_smart_product_line
 from . import ab_transfer_smart_line
 from . import ab_transfer_smart_wizard
 from . import ab_transfer_header
+
+from . import ab_transfer_smart_cache_state
+from . import ab_transfer_smart_stock_import

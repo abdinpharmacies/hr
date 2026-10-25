@@ -574,6 +574,53 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
         """)
 
     @api.model
+    def _get_cache_date(self):
+        return self.env["ab_transfer_smart_cache_state"]._business_date()
+
+    @api.model
+    def _lock_destination_cache_branches(self, stores, initialize=False):
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(stores, initialize=initialize)
+
+    @api.model
+    def _replace_store_stock_snapshot(self, store, vals_list, origin="live", filename=False, actor_id=False):
+        self._lock_destination_cache_branches(store, initialize=True)
+        State = self.env["ab_transfer_smart_cache_state"]
+        state = State._state(store)
+        if any(values["store_id"] != store.id or values["cache_date"] != self._get_cache_date() for values in vals_list):
+            raise UserError(_("The snapshot date changed during refresh. Retry with current-day data."))
+        with self.env.cr.savepoint():
+            self.sudo().search([("store_id", "=", store.id)]).unlink()
+            if vals_list:
+                self.sudo().create(vals_list)
+            values = {
+                "stock_revision": (state.stock_revision or 0) + 1,
+                "stock_date": self._get_cache_date(), "origin": origin,
+            }
+            if origin == "excel":
+                values.update(imported_workflow=True, import_filename=filename,
+                              import_user_id=actor_id, import_time=fields.Datetime.now())
+            State._publish(store, values)
+        return len(vals_list)
+
+    @api.model
+    def read_store_stock_context(self, store, product_serials=None):
+        store = self._ensure_store_record(store)
+        State = self.env["ab_transfer_smart_cache_state"]
+        State._check_branch_access(store)
+        self._lock_destination_cache_branches(store)
+        state = State._state(store)
+        valid = bool(state and state.stock_date == self._get_cache_date())
+        domain = [("store_id", "=", store.id), ("cache_date", "=", self._get_cache_date())]
+        if product_serials is not None:
+            domain.append(("product_eplus_serial", "in", list(product_serials)))
+        return {
+            "has_cache": valid, "origin": state.origin, "revision": state.stock_revision,
+            "managed": state.imported_workflow,
+            "stock_by_serial": {line.product_eplus_serial: line.stock_qty
+                                for line in self.sudo().search(domain)} if valid else {},
+        }
+
+    @api.model
     def cron_refresh_smart_transfer_cache(self):
         stores = self.env["ab_store"].sudo().search([
             ("allow_sale", "=", True),
@@ -584,26 +631,31 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
     @api.model
     def refresh_stores_cache(self, stores, force=False):
         stores = self.env["ab_store"].browse(stores.ids if hasattr(stores, "ids") else stores).exists()
-        result = {
-            "stores": len(stores),
-            "stock_rows": 0,
-            "sales_rows": 0,
-        }
-        SalesCache = self.env["ab_transfer_smart_sales_cache"].sudo()
-        for store in stores:
-            result["stock_rows"] += self.sudo().refresh_store_cache(store, force=force)
-            result["sales_rows"] += SalesCache.refresh_store_cache(store, force=force)
+        self._lock_destination_cache_branches(stores, initialize=True)
+        result = {"stores": len(stores), "stock_rows": 0, "sales_rows": 0,
+                  "preserved_imports": 0, "unavailable_sales": 0}
+        SalesCache = self.env["ab_transfer_smart_sales_cache"]
+        for store in stores.sorted("id"):
+            result["stock_rows"] += self.refresh_store_cache(store, force=force)
+            context = self.read_store_stock_context(store, [])
+            if context["has_cache"] and context["origin"] == "excel":
+                result["preserved_imports"] += 1
+                if not SalesCache.read_store_sales_context(store, [])["complete"]:
+                    result["unavailable_sales"] += 1
+            else:
+                result["sales_rows"] += SalesCache.refresh_store_cache(store, force=force)
         return result
 
     @api.model
     def refresh_store_cache(self, store, force=False):
         store = self._ensure_store_record(store)
+        self.env["ab_transfer_smart_cache_state"]._check_branch_access(store, importing=True)
         cache_date = self._get_cache_date()
-        self._delete_stale_cache(store, cache_date)
-        if not force and self._has_today_cache(store, cache_date):
+        self._lock_destination_cache_branches(store, initialize=True)
+        context = self.read_store_stock_context(store, [])
+        if context["has_cache"] and (context["origin"] == "excel" or not force):
             return 0
 
-        self.search([("store_id", "=", store.id)]).unlink()
         onhand_by_product = self._fetch_store_stock_rows(store)
         pending_by_product = self._fetch_store_pending_stock_rows(store)
         product_serials = sorted(set(onhand_by_product) | set(pending_by_product))
@@ -626,23 +678,18 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
                 + float(pending_by_product.get(product_serial, 0.0) or 0.0)
             ) != 0.0
         ]
-        if vals_list:
-            self.create(vals_list)
-        return len(vals_list)
+        if cache_date != self._get_cache_date():
+            raise UserError(_("The snapshot date changed during refresh. Retry with current-day data."))
+        return self._replace_store_stock_snapshot(store, vals_list)
 
     @api.model
     def _delete_stale_cache(self, store, cache_date):
-        self.search([
-            ("store_id", "=", store.id),
-            ("cache_date", "!=", cache_date),
-        ]).unlink()
+        return None
 
     @api.model
     def _has_today_cache(self, store, cache_date):
-        return bool(self.search_count([
-            ("store_id", "=", store.id),
-            ("cache_date", "=", cache_date),
-        ]))
+        state = self.env["ab_transfer_smart_cache_state"]._state(store)
+        return bool(state and state.stock_date == cache_date)
 
     @api.model
     def _fetch_store_stock_rows(self, store):
@@ -786,14 +833,35 @@ class AbTransferSmartSalesCache(AbTransferSmartCacheTools, models.Model):
         """)
 
     @api.model
+    def _get_cache_date(self):
+        return self.env["ab_transfer_smart_cache_state"]._business_date()
+
+    @api.model
+    def read_store_sales_context(self, store, product_serials=None):
+        store = self._ensure_store_record(store)
+        State = self.env["ab_transfer_smart_cache_state"]
+        State._lock_branches(store)
+        state = State._state(store)
+        complete = bool(state and state.sales_date == self._get_cache_date())
+        domain = [("store_id", "=", store.id), ("cache_date", "=", self._get_cache_date())]
+        if product_serials is not None:
+            domain.append(("product_eplus_serial", "in", list(product_serials)))
+        return {"complete": complete, "sales_by_serial": {
+            line.product_eplus_serial: {
+                "month1_sales": line.month1_sales, "month2_sales": line.month2_sales,
+                "month3_sales": line.month3_sales,
+            } for line in self.sudo().search(domain)
+        } if complete else {}}
+
+    @api.model
     def refresh_store_cache(self, store, force=False):
         store = self._ensure_store_record(store)
+        self.env["ab_transfer_smart_cache_state"]._check_branch_access(store, importing=True)
         cache_date = self._get_cache_date()
-        self._delete_stale_cache(store, cache_date)
+        self.env["ab_transfer_smart_cache_state"]._lock_branches(store, initialize=True)
         if not force and self._has_today_cache(store, cache_date):
             return 0
 
-        self.search([("store_id", "=", store.id)]).unlink()
         rows = self._fetch_store_sales_rows(store)
         vals_list = [
             {
@@ -808,23 +876,25 @@ class AbTransferSmartSalesCache(AbTransferSmartCacheTools, models.Model):
             for product_serial, values in rows.items()
             if product_serial
         ]
-        if vals_list:
-            self.create(vals_list)
+        if cache_date != self._get_cache_date():
+            raise UserError(_("The snapshot date changed during refresh. Retry with current-day data."))
+        with self.env.cr.savepoint():
+            self.sudo().search([("store_id", "=", store.id)]).unlink()
+            if vals_list:
+                self.sudo().create(vals_list)
+            self.env["ab_transfer_smart_cache_state"]._publish(store, {
+                "sales_date": cache_date, "sales_refreshed_at": fields.Datetime.now(),
+            })
         return len(vals_list)
 
     @api.model
     def _delete_stale_cache(self, store, cache_date):
-        self.search([
-            ("store_id", "=", store.id),
-            ("cache_date", "!=", cache_date),
-        ]).unlink()
+        return None
 
     @api.model
     def _has_today_cache(self, store, cache_date):
-        return bool(self.search_count([
-            ("store_id", "=", store.id),
-            ("cache_date", "=", cache_date),
-        ]))
+        state = self.env["ab_transfer_smart_cache_state"]._state(store)
+        return bool(state and state.sales_date == cache_date)
 
     @api.model
     def _fetch_store_sales_rows(self, store):

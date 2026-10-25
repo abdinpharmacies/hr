@@ -228,6 +228,8 @@ msgstr "يوم الإنشاء"
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__create_uid
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__create_uid
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__create_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
@@ -237,6 +239,8 @@ msgstr "أنشئ بواسطة"
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__create_date
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__create_date
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__create_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__create_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__create_date
 msgid "Created on"
 msgstr "أنشئ في"
 
@@ -288,6 +292,8 @@ msgstr "المخزن الهدف مطلوب."
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_product_line__display_name
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__display_name
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -477,6 +483,8 @@ msgstr "التحويلات المنشأة"
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__id
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__id
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__id
 msgid "ID"
 msgstr "المعرف"
 
@@ -523,6 +531,8 @@ msgstr "يجب أن يكون عدد الأصناف لكل رأس 1 على الأ
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__write_uid
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__write_uid
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__write_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
@@ -532,6 +542,8 @@ msgstr "آخر تحديث بواسطة"
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__write_date
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__write_date
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__write_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__write_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__write_date
 msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
@@ -1385,6 +1397,7 @@ msgstr "طريقة حساب المخزون مطلوبة."
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__store_id
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__store_id
 msgid "Store"
 msgstr "المخزن"
 
@@ -1959,3 +1972,404 @@ msgstr ""
 msgid ""
 "Smart transfer source stock cache refresh failed for %(store)s: %(error)s"
 msgstr "فشل تحديث كاش رصيد المصدر للتحويل الذكي للمخزن %(store)s: %(error)s"
+
+#. module: ab_transfer_smart
+#: model:ir.model.constraint,message:ab_transfer_smart.constraint_ab_transfer_smart_cache_state_unique_store
+msgid "A branch has only one snapshot state."
+msgstr "لكل فرع حالة واحدة فقط للقطة المخزون."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Branch %s requires a verified current-day destination sales refresh before "
+"calculation."
+msgstr ""
+"يجب تحديث مبيعات فرع الوجهة %s والتحقق من اكتمالها لليوم الحالي قبل الحساب."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_snapshot_dependencies
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Calculation Snapshot"
+msgstr "لقطة بيانات الحساب"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Calculation snapshot metadata cannot be supplied manually."
+msgstr "لا يمكن إدخال بيانات لقطة الحساب يدوياً."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Confirm replacement of the entire destination stock snapshot."
+msgstr "أكد استبدال لقطة مخزون الوجهة بالكامل."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__store_id
+msgid "Destination Branch"
+msgstr "فرع الوجهة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid ""
+"Destination sales refreshed successfully for the current Cairo business "
+"date."
+msgstr "تم تحديث مبيعات الوجهة بنجاح لتاريخ العمل الحالي بتوقيت القاهرة."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Download Template"
+msgstr "تنزيل النموذج"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_cache_state__origin__excel
+msgid "Excel"
+msgstr "إكسل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__file_data
+msgid "Excel File"
+msgstr "ملف إكسل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__filename
+msgid "Filename"
+msgstr "اسم الملف"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_stock_import_action
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_stock_import
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Import Destination Stock"
+msgstr "استيراد مخزون الوجهة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_import_list
+msgid "Import Excel"
+msgstr "استيراد إكسل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__import_filename
+msgid "Import Filename"
+msgstr "اسم ملف الاستيراد"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Import Stock"
+msgstr "استيراد المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__import_time
+msgid "Import Time"
+msgstr "وقت الاستيراد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__import_user_id
+msgid "Import User"
+msgstr "مستخدم الاستيراد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__imported_workflow
+msgid "Imported Workflow"
+msgstr "استخدم استيراد المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_cache_state__origin__live
+msgid "Live"
+msgstr "مباشر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Multiple rows resolve to E-Plus ID %s."
+msgstr "تشير عدة صفوف إلى معرف إي بلس نفسه %s."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__origin
+msgid "Origin"
+msgstr "المصدر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Product code %s is missing or ambiguous."
+msgstr "كود الصنف %s غير موجود أو يطابق أكثر من صنف."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Product code %s needs a valid E-Plus ID."
+msgstr "يحتاج كود الصنف %s إلى معرف إي بلس صالح."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Recalculation required: snapshot missing, expired, or replaced."
+msgstr ""
+"يلزم إعادة الحساب: اللقطة غير موجودة أو منتهية الصلاحية أو تم استبدالها."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Refresh Destination Sales"
+msgstr "تحديث مبيعات الوجهة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Refresh or import current-day Smart Stock for branch %s."
+msgstr "حدّث أو استورد مخزون التحويل الذكي لفرع %s لليوم الحالي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__confirm_replace
+msgid "Replace the entire destination stock snapshot"
+msgstr "استبدال لقطة مخزون الوجهة بالكامل"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid ""
+"Required columns: Product Code, On-hand Quantity; optional: Pending "
+"Quantity."
+msgstr ""
+"الأعمدة المطلوبة: Product Code وOn-hand Quantity؛ والعمود الاختياري: Pending"
+" Quantity."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Return to Purchase Preparation before changing calculation branches."
+msgstr "ارجع إلى تجهيز المشتريات قبل تغيير فروع الحساب."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Row %s contains a formula or Excel error."
+msgstr "يحتوي الصف %s على معادلة أو خطأ إكسل."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Row %s has an empty or duplicate product code."
+msgstr "كود الصنف في الصف %s فارغ أو مكرر."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Row %s has an invalid quantity."
+msgstr "يحتوي الصف %s على كمية غير صالحة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__sales_date
+msgid "Sales Date"
+msgstr "تاريخ المبيعات"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__sales_refreshed_at
+msgid "Sales Refreshed At"
+msgstr "وقت تحديث المبيعات"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Select one destination branch."
+msgstr "اختر فرع وجهة واحداً."
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_cache_state
+msgid "Smart Transfer Snapshot State"
+msgstr "حالة لقطة التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid ""
+"Smart cache refreshed. Stores: %(stores)s, Stock rows: %(stock_rows)s, Sales"
+" rows: %(sales_rows)s. Preserved imports: %(preserved_imports)s. Unavailable"
+" destination sales: %(unavailable_sales)s."
+msgstr ""
+"تم تحديث بيانات التحويل الذكي. الفروع: %(stores)s، صفوف المخزون: "
+"%(stock_rows)s، صفوف المبيعات: %(sales_rows)s. الاستيرادات المحفوظة: "
+"%(preserved_imports)s. الفروع التي لا تتوفر لها مبيعات وجهة موثقة: "
+"%(unavailable_sales)s."
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_cache_state_action
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_snapshot_status
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_import_list
+msgid "Snapshot Status"
+msgstr "حالة اللقطة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Snapshot current; expires at the next Cairo midnight."
+msgstr "اللقطة سارية؛ تنتهي عند منتصف الليل القادم بتوقيت القاهرة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache_state.py:0
+msgid ""
+"Snapshot state can only be published by a successful refresh or import."
+msgstr "لا يمكن تسجيل حالة اللقطة إلا بعد نجاح التحديث أو الاستيراد."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache_state.py:0
+msgid "Snapshot state cannot be deleted."
+msgstr "لا يمكن حذف حالة اللقطة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__stock_date
+msgid "Stock Date"
+msgstr "تاريخ المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_cache_state__stock_revision
+msgid "Stock Revision"
+msgstr "إصدار المخزون"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid ""
+"Stock imported. Calculation is blocked until this branch has a verified "
+"current-day destination sales refresh."
+msgstr ""
+"تم استيراد المخزون. الحساب متوقف حتى يتم تحديث مبيعات وجهة هذا الفرع لليوم "
+"الحالي والتحقق من اكتمالها."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid ""
+"Stock imported. Valid until the next Cairo midnight. Destination sales are "
+"ready."
+msgstr ""
+"تم استيراد المخزون. يسري حتى منتصف الليل القادم بتوقيت القاهرة. مبيعات "
+"الوجهة جاهزة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__template_data
+msgid "Template Data"
+msgstr "بيانات النموذج"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__template_filename
+msgid "Template Filename"
+msgstr "اسم ملف النموذج"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache_state.py:0
+msgid "The branch is outside your allowed companies."
+msgstr "الفرع خارج الشركات المسموح لك بالوصول إليها."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"The calculation snapshot is missing, expired, or replaced. Return to "
+"Purchase Preparation and recalculate."
+msgstr ""
+"لقطة الحساب غير موجودة أو منتهية الصلاحية أو تم استبدالها. ارجع إلى تجهيز "
+"المشتريات وأعد الحساب."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "The destination branch needs a valid E-Plus ID."
+msgstr "يحتاج فرع الوجهة إلى معرف إي بلس صالح."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "The imported E-Plus IDs are ambiguous in the product master."
+msgstr "معرفات إي بلس المستوردة تطابق أكثر من صنف في البيانات الأساسية."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "The snapshot date changed during refresh. Retry with current-day data."
+msgstr ""
+"تغير تاريخ اللقطة أثناء التحديث. أعد المحاولة باستخدام بيانات اليوم الحالي."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "The workbook contains no product rows."
+msgstr "لا يحتوي المصنف على صفوف أصناف."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "The workbook exceeds the supported row or column limit."
+msgstr "يتجاوز المصنف الحد المسموح لعدد الصفوف أو الأعمدة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "The workbook must contain exactly one worksheet."
+msgstr "يجب أن يحتوي المصنف على ورقة عمل واحدة فقط."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid ""
+"This replaces the entire branch snapshot. Omitted products count as zero. "
+"Quantities use the existing cache unit. The import expires at the next Cairo"
+" midnight."
+msgstr ""
+"سيتم استبدال لقطة الفرع بالكامل. تُحسب الأصناف غير المدرجة برصيد صفر. تستخدم"
+" الكميات وحدة المخزون الحالية. تنتهي صلاحية الاستيراد عند منتصف الليل القادم"
+" بتوقيت القاهرة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Upload a valid XLSX workbook smaller than 10 MB."
+msgstr "ارفع مصنف XLSX صالحاً بحجم أقل من 10 ميجابايت."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid "Upload an XLSX workbook first."
+msgstr "ارفع مصنف XLSX أولاً."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_import_view_form
+msgid "Validate File"
+msgstr "التحقق من الملف"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_stock_import.py:0
+msgid ""
+"Validated %s products. Omitted products will have zero stock. Pending is "
+"included once."
+msgstr ""
+"تم التحقق من %s صنفاً. سيكون رصيد الأصناف غير المدرجة صفراً. تُحتسب الكمية "
+"المعلقة مرة واحدة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_import__validation_summary
+msgid "Validation Summary"
+msgstr "ملخص التحقق"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache_state.py:0
+msgid "You are not allowed to manage Smart Transfer snapshots."
+msgstr "غير مسموح لك بإدارة لقطات التحويل الذكي."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Complete the calculation warnings for branch %s and retry generation."
+msgstr "أكمل معالجة تحذيرات الحساب لفرع %s ثم أعد محاولة إنشاء التحويلات."

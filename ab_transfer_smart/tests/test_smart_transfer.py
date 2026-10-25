@@ -290,6 +290,16 @@ class TestSmartTransfer(TransactionCase):
             vals["location"] = location
         return self.env["ab_product"].create(vals)
 
+    def _publish_snapshot_fixture(self, header):
+        State = self.env["ab_transfer_smart_cache_state"]
+        State._publish(header.to_store_id, {
+            "stock_date": State._business_date(), "stock_revision": 1,
+            "origin": "live", "sales_date": State._business_date(),
+        })
+        for record in self.env["ab_transfer_header"].search([("is_submitted", "=", False)]):
+            if State._state(record.to_store_id):
+                record._publish_smart_snapshot_dependencies(record._capture_smart_snapshot_dependencies())
+
     def _create_smart_header(self):
         source = self._create_store_or_skip({
             "name": "Smart Copy Source",
@@ -308,11 +318,13 @@ class TestSmartTransfer(TransactionCase):
             "code": "SMARTUSR",
             "eplus_serial": 9101,
         })
-        return self.env["ab_transfer_header"].create({
+        header = self.env["ab_transfer_header"].create({
             "from_store_id": source.id,
             "to_store_id": destination.id,
             "user_id": user.id,
         })
+        self._publish_snapshot_fixture(header)
+        return header
 
     def _create_smart_header_for_source(
             self,
@@ -326,11 +338,13 @@ class TestSmartTransfer(TransactionCase):
             "eplus_serial": destination_serial,
             "allow_sale": True,
         })
-        return self.env["ab_transfer_header"].create({
+        header = self.env["ab_transfer_header"].create({
             "from_store_id": source_header.from_store_id.id,
             "to_store_id": destination.id,
             "user_id": source_header.user_id.id,
         })
+        self._publish_snapshot_fixture(header)
+        return header
 
     def _create_smart_header_from_existing_records_or_skip(self):
         Header = self.env["ab_transfer_header"]
@@ -354,11 +368,13 @@ class TestSmartTransfer(TransactionCase):
         if not user:
             self.skipTest("No costcenter is available for smart archive tests.")
 
-        return Header.create({
+        header = Header.create({
             "from_store_id": source.id,
             "to_store_id": destination.id,
             "user_id": user.id,
         })
+        self._publish_snapshot_fixture(header)
+        return header
 
     def _create_smart_security_user(self, login, group_xmlids):
         group_ids = [self.env.ref("base.group_user").id]
@@ -3243,6 +3259,7 @@ class TestSmartTransfer(TransactionCase):
             "to_store_id": header.to_store_id.id,
             "user_id": header.user_id.id,
         })
+        self._publish_snapshot_fixture(duplicate_header)
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-DUP-STAGE", 99181, uom)
         self._create_smart_line(header, product, uom, qty=10)
@@ -3276,6 +3293,7 @@ class TestSmartTransfer(TransactionCase):
             "to_store_id": header.to_store_id.id,
             "user_id": header.user_id.id,
         })
+        self._publish_snapshot_fixture(duplicate_header)
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-DUP-SOURCE", 99182, uom)
         self._create_smart_line(
@@ -3305,6 +3323,7 @@ class TestSmartTransfer(TransactionCase):
             "to_store_id": header.to_store_id.id,
             "user_id": header.user_id.id,
         })
+        self._publish_snapshot_fixture(duplicate_header)
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-DUP-EXCLUDED", 99183, uom)
         excluded_line = self._create_smart_line(
@@ -3772,7 +3791,7 @@ class TestSmartTransfer(TransactionCase):
         with patch.object(
                 type(StockCache),
                 "refresh_stores_cache",
-                return_value={"stores": 1, "stock_rows": 2, "sales_rows": 3},
+                return_value={"stores": 1, "stock_rows": 2, "sales_rows": 3, "preserved_imports": 0, "unavailable_sales": 0},
         ) as refresh:
             action = header.action_smart_refresh_destination_cache()
 
@@ -3902,9 +3921,7 @@ class TestSmartTransfer(TransactionCase):
             stage_submit_header.action_smart_back_to_store_revision()
 
     def test_header_calculation_returns_danger_after_cache_when_validation_fails(self):
-        header = self.env["ab_transfer_header"].new({
-            "smart_stage": SMART_STAGE_PURCHASE_PREPARATION,
-        })
+        header = self._create_smart_header()
         calls = []
 
         def refresh_cache(force=False):
@@ -3965,7 +3982,7 @@ class TestSmartTransfer(TransactionCase):
         with patch.object(
                 type(StockCache),
                 "refresh_stores_cache",
-                return_value={"stores": 2, "stock_rows": 4, "sales_rows": 5},
+                return_value={"stores": 2, "stock_rows": 4, "sales_rows": 5, "preserved_imports": 0, "unavailable_sales": 0},
         ) as refresh:
             action = wizard.action_refresh_smart_cache()
 
@@ -4333,6 +4350,7 @@ class TestSmartTransfer(TransactionCase):
         Header = self.env["ab_transfer_header"]
 
         def fake_calculation(header):
+            self._publish_snapshot_fixture(header)
             for product in products:
                 self.env["ab_transfer_smart_line"].create({
                     "header_id": header.id,
@@ -5242,3 +5260,393 @@ class TestSmartTransfer(TransactionCase):
         )
         self.assertGreater(warning_view.priority, view.priority)
         self.assertEqual(default_view_id, view.id)
+
+
+@tagged("post_install", "-at_install")
+class TestSmartOfflineDestination(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.replica_fixtures = False
+        try:
+            with cls.env.cr.savepoint():
+                cls.stores = cls.env["ab_store"].create([
+                    {"name": "Offline Source", "code": "OFFSRC", "eplus_serial": 91001},
+                    {"name": "Offline Destination", "code": "OFFDST", "eplus_serial": 91002},
+                    {"name": "Offline Fair", "code": "OFFFAIR", "eplus_serial": 91003},
+                ])
+                cls.products = cls.env["ab_product"].create([
+                    {"product_card_name": "Offline One", "code": "00123", "eplus_serial": 92001},
+                    {"product_card_name": "Offline Two", "code": "00456", "eplus_serial": 92002},
+                ])
+                category = cls.env["ab_product_uom_category"].create({"name": "Offline UOM"})
+                cls.uom = cls.env["ab_product_uom"].create({"name": "Offline Unit", "category_id": category.id, "factor": 1})
+                cls.products.write({"uom_id": cls.uom.id, "uom_category_id": category.id})
+                cls.employee = cls.env["ab_costcenter"].create({"name": "Offline Operator", "code": "OFFUSER"})
+        except AccessError as error:
+            if "replication database" not in str(error).lower():
+                raise
+            cls.replica_fixtures = True
+            Store = cls.env["ab_store"]
+            domain = [("allow_sale", "=", True), ("eplus_serial", ">", 0)]
+            allowed = cls.env["ab_transfer_header"]._get_allowed_source_store_ids()
+            source = Store.search(domain + ([("id", "in", allowed)] if allowed else []), limit=1)
+            cls.stores = source | Store.search(domain + [("id", "not in", source.ids)], limit=2)
+            Product = cls.env["ab_product"].with_context(active_test=False)
+            cls.products = Product.browse()
+            for product in Product.search([("active", "=", True), ("code", "!=", False), ("eplus_serial", ">", 0), ("uom_id", "!=", False)], limit=1000):
+                if cls.products and product.uom_id != cls.products[0].uom_id:
+                    continue
+                if Product.search_count([("code", "=", product.code)]) == 1 and Product.search_count([("eplus_serial", "=", product.eplus_serial)]) == 1:
+                    cls.products |= product
+                if len(cls.products) == 2:
+                    break
+            cls.employee = cls.env["ab_costcenter"].search([], limit=1)
+            if len(cls.stores) != 3 or len(cls.products) != 2 or not cls.employee:
+                raise AssertionError("Replica needs three branches, two unique products sharing a unit, and an operator")
+            cls.uom = cls.products[0].uom_id
+        cls.code_one, cls.code_two = cls.products.mapped("code")
+        cls.serial_one, cls.serial_two = cls.products.mapped("eplus_serial")
+        cls.destination_serial = cls.stores[1].eplus_serial
+        cls.Stock = cls.env["ab_transfer_smart_stock_cache"]
+        cls.Sales = cls.env["ab_transfer_smart_sales_cache"]
+        cls.State = cls.env["ab_transfer_smart_cache_state"]
+        if cls.replica_fixtures:
+            cls.State._lock_branches(cls.stores, initialize=True)
+            cls.Stock.search([("store_id", "in", cls.stores.ids)]).unlink()
+            cls.Sales.search([("store_id", "in", cls.stores.ids)]).unlink()
+            for store in cls.stores:
+                cls.State._publish(store, {"stock_revision": 0, "stock_date": False, "origin": False, "imported_workflow": False, "sales_date": False})
+
+    def _wizard(self, rows, store=None):
+        import base64
+        from openpyxl import Workbook
+        book = Workbook()
+        sheet = book.active
+        sheet.append(["Product Code", "On-hand Quantity", "Pending Quantity"])
+        for row in rows:
+            sheet.append(row)
+        stream = io.BytesIO()
+        book.save(stream)
+        return self.env["ab_transfer_smart_stock_import"].create({
+            "store_id": (store or self.stores[1]).id, "filename": "stock.xlsx",
+            "file_data": base64.b64encode(stream.getvalue()), "confirm_replace": True,
+        })
+
+    def _import(self, rows, store=None):
+        self._wizard(rows, store).action_import()
+
+    def _sales_ready(self, store=None, rows=None):
+        with patch.object(type(self.Sales), "_fetch_store_sales_rows", return_value=rows or {}):
+            self.Sales.refresh_store_cache(store or self.stores[1], force=True)
+
+    def _header(self):
+        return self.env["ab_transfer_header"].create({
+            "from_store_id": self.stores[0].id, "to_store_id": self.stores[1].id,
+            "user_id": self.employee.id, "fair_store_ids": [(6, 0, self.stores[2].ids)],
+        })
+
+    def test_replacement_pending_once_and_omitted_products(self):
+        self._import([(self.code_one, 10, 5), (self.code_two, 8, 0)])
+        self._import([(self.code_one, 7, 2)], self.stores[2])
+        self._sales_ready()
+        header = self._header()
+        rows = header._read_smart_destination_cache_rows([self.serial_one, self.serial_two], self.destination_serial)
+        self.assertEqual(rows[0][4], 15)
+        self._import([(self.code_one, 2, None)])
+        context = self.Stock.read_store_stock_context(self.stores[1])
+        self.assertEqual(context["stock_by_serial"], {self.serial_one: 2})
+        self.assertEqual(context["revision"], 2)
+        self.assertEqual(self.Stock.read_store_stock_context(self.stores[2])["stock_by_serial"], {self.serial_one: 9})
+        rows = header._read_smart_destination_cache_rows([self.serial_two], self.destination_serial, readonly=True)
+        self.assertEqual(rows[0][4], 0)
+
+    def test_invalid_workbooks_preserve_snapshot(self):
+        self._import([(self.code_one, 10, 0)])
+        for rows in [[], [(self.code_one, 1, -1)], [(self.code_one, "=2+2", 0)],
+                     [(self.code_one, "bad", 0)], [("unknown", 3, 0)],
+                     [(self.code_one, 1, 0), (self.code_one, 2, 0)]]:
+            with self.subTest(rows=rows), self.assertRaises(UserError):
+                self._import(rows)
+            self.assertEqual(self.Stock.read_store_stock_context(self.stores[1])["revision"], 1)
+            self.assertEqual(self.Stock.read_store_stock_context(self.stores[1])["stock_by_serial"], {self.serial_one: 10})
+
+    def test_creation_and_publication_failure_roll_back(self):
+        self._import([(self.code_one, 10, 0)])
+        def fail(*args, **kwargs):
+            raise UserError("Injected failure")
+        for model, method in [(self.Stock, "create"), (self.State, "_publish")]:
+            with patch.object(type(model), method, new=fail):
+                with self.assertRaises(UserError):
+                    self._import([(self.code_one, 99, 0)])
+            self.assertEqual(self.Stock.read_store_stock_context(self.stores[1])["revision"], 1)
+            self.assertEqual(self.Stock.read_store_stock_context(self.stores[1])["stock_by_serial"], {self.serial_one: 10})
+
+    def test_zero_snapshots_and_forced_refresh_stay_offline(self):
+        self._import([(self.code_one, 0, 0)])
+        self._sales_ready()
+        with patch.object(type(self.Stock), "_fetch_store_stock_rows", side_effect=AssertionError("Live stock")), patch.object(
+            type(self.Sales), "_fetch_store_sales_rows", side_effect=AssertionError("Live sales")
+        ):
+            for force in [False, True]:
+                result = self.Stock.refresh_stores_cache(self.stores[1], force=force)
+                self.assertEqual(result["preserved_imports"], 1)
+                self.assertEqual(result["unavailable_sales"], 0)
+                self._header()._ensure_smart_destination_cache()
+        self.assertTrue(self.Sales.read_store_sales_context(self.stores[1])["complete"])
+
+    def test_missing_legacy_or_expired_sales_block_imported_calculation(self):
+        self._import([(self.code_one, 1, 0)])
+        self.Sales.create({"store_id": self.stores[1].id, "product_eplus_serial": self.serial_one,
+                           "cache_date": self.State._business_date(), "month1_sales": 3})
+        header = self._header().with_context(skip_smart_sales_cache_coverage=True)
+        with self.assertRaisesRegex(UserError, "verified current-day"):
+            header._read_smart_destination_cache_rows([self.serial_one], self.destination_serial)
+        self._sales_ready()
+        self.State._state(self.stores[1]).write({"sales_date": self.State._business_date() - timedelta(days=1)})
+        with self.assertRaisesRegex(UserError, "verified current-day"):
+            header._read_smart_destination_cache_rows([self.serial_one], self.destination_serial, readonly=True)
+
+    def test_failed_live_refresh_preserves_previous_rows_and_state(self):
+        self._import([(self.code_one, 6, 2)])
+        state = self.State._state(self.stores[1])
+        state.write({"stock_date": self.State._business_date() - timedelta(days=1)})
+        for failing in ["_fetch_store_stock_rows", "_fetch_store_pending_stock_rows"]:
+            with patch.object(type(self.Stock), "_fetch_store_stock_rows", return_value={self.serial_one: 99}), patch.object(
+                type(self.Stock), "_fetch_store_pending_stock_rows", return_value={}
+            ), patch.object(type(self.Stock), failing, side_effect=UserError("Unavailable")):
+                with self.assertRaises(UserError):
+                    self.Stock.refresh_store_cache(self.stores[1], force=True)
+            self.assertEqual(state.stock_revision, 1)
+            self.assertEqual(self.Stock.search([("store_id", "=", self.stores[1].id)]).stock_qty, 8)
+        self._sales_ready(rows={self.serial_one: {"month1_sales": 4, "month2_sales": 0, "month3_sales": 0, "total_3_months_sales": 4}})
+        with patch.object(type(self.Sales), "_fetch_store_sales_rows", side_effect=UserError("Unavailable")):
+            with self.assertRaises(UserError):
+                self.Sales.refresh_store_cache(self.stores[1], force=True)
+        self.assertEqual(self.Sales.read_store_sales_context(self.stores[1])["sales_by_serial"][self.serial_one]["month1_sales"], 4)
+
+    def test_fair_share_replaces_entire_legacy_contribution(self):
+        header = self._header()
+        self._import([(self.code_one, 3, 1)], self.stores[2])
+        with patch.object(type(self.env["ab_sales_inventory"]), "read_group", return_value=[
+            {"product_eplus_serial": self.serial_two, "store_id": (self.stores[2].id, "Fair"), "balance": 999},
+            {"product_eplus_serial": self.serial_two, "store_id": (self.stores[0].id, "Source"), "balance": 7},
+        ]):
+            stock = header._read_smart_cached_stock((self.stores[0] | self.stores[2]).ids, [self.serial_one, self.serial_two])
+        self.assertEqual(stock[(self.serial_one, self.stores[2].id)], 4)
+        self.assertEqual(stock[(self.serial_two, self.stores[2].id)], 0)
+        self.assertEqual(stock[(self.serial_two, self.stores[0].id)], 7)
+
+    def test_snapshot_freshness_and_metadata_protection(self):
+        self._import([(self.code_one, 1, 0)])
+        header = self._header()
+        with self.assertRaises(UserError):
+            header._validate_smart_snapshot_dependencies()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        header._validate_smart_snapshot_dependencies()
+        with self.assertRaises(AccessError):
+            header.write({"smart_snapshot_dependencies": {}})
+        with self.assertRaises(AccessError):
+            header.copy({"smart_snapshot_dependencies": {}})
+        self._import([(self.code_one, 2, 0)], self.stores[2])
+        with self.assertRaises(UserError):
+            header._validate_smart_snapshot_dependencies()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        self._import([(self.code_one, 3, 0)])
+        with self.assertRaises(UserError):
+            header.write({"smart_stage": "store_preparation"})
+
+    def test_midnight_expiry_uses_cairo_not_user_timezone(self):
+        self._import([(self.code_one, 1, 0)])
+        header = self._header()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        today = self.State._business_date()
+        self.assertEqual(self.Stock.with_context(tz="Pacific/Honolulu")._get_cache_date(), today)
+        with patch.object(type(self.State), "_business_date", return_value=today + timedelta(days=1)):
+            self.assertFalse(self.Stock.read_store_stock_context(self.stores[1])["has_cache"])
+            with self.assertRaises(UserError):
+                header._validate_smart_snapshot_dependencies()
+
+    def test_unauthorized_import_and_state_writes(self):
+        user = self.env["res.users"].with_context(no_reset_password=True).create({
+            "name": "Offline denied", "login": "offline_denied",
+            "group_ids": [(6, 0, self.env.ref("base.group_user").ids)],
+        })
+        with self.assertRaises(AccessError):
+            self.env["ab_transfer_smart_stock_import"].with_user(user).create({"store_id": self.stores[1].id})
+        with self.assertRaises(AccessError):
+            self.Stock.with_user(user).refresh_store_cache(self.stores[1])
+        with self.assertRaises(AccessError):
+            self.State.with_user(user).create({"store_id": self.stores[1].id})
+
+    def test_calculation_failure_rolls_back_lines_and_dependencies(self):
+        header = self._header()
+        with patch.object(type(header), "_action_smart_transfer_calculation", autospec=True) as calculation:
+            def fail(record):
+                record._publish_smart_snapshot_dependencies({"invalid": True})
+                raise UserError("Injected calculation failure")
+            calculation.side_effect = fail
+            result = header.action_smart_transfer_calculation()
+        self.assertEqual(result["params"]["type"], "danger")
+        self.assertFalse(header.smart_snapshot_dependencies)
+
+    def test_purchase_import_and_branch_rule_are_enforced(self):
+        user = self.env["res.users"].with_context(no_reset_password=True).create({
+            "name": "Offline purchaser", "login": "offline_purchaser",
+            "group_ids": [(6, 0, (self.env.ref("base.group_user") |
+                                   self.env.ref("ab_transfer_smart.group_transfer_smart_purchase")).ids)],
+        })
+        wizard = self._wizard([(self.code_one, 5, 2)])
+        values = {name: wizard[name] for name in ["file_data", "filename", "confirm_replace"]}
+        values["store_id"] = self.stores[1].id
+        purchase_wizard = self.env["ab_transfer_smart_stock_import"].with_user(user).create(values)
+        purchase_wizard.action_import()
+        self.assertEqual(self.State._state(self.stores[1]).import_user_id, user)
+        with self.assertRaises(AccessError):
+            self.State._state(self.stores[1]).with_user(user).write({"stock_revision": 999})
+        self.env["ir.rule"].create({
+            "name": "Offline branch test isolation", "model_id": self.env["ir.model"]._get_id("ab_store"),
+            "domain_force": "[('id', '!=', %d)]" % self.stores[1].id,
+        })
+        with self.assertRaises(AccessError):
+            purchase_wizard.action_import()
+        self.assertEqual(self.State._state(self.stores[1]).stock_revision, 1)
+
+    def test_all_forward_actions_reject_superseded_snapshot(self):
+        self._import([(self.code_one, 1, 0)])
+        for stage, action in [("purchase_preparation", "action_smart_to_store_preparation"),
+                              ("store_preparation", "action_smart_to_store_revision"),
+                              ("store_revision", "action_smart_pre_submit"),
+                              ("pre_submit", "action_submit")]:
+            with self.subTest(stage=stage):
+                header = self._header()
+                header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+                header.write({"smart_stage": stage})
+                self._import([(self.code_one, 2, 0)])
+                with self.assertRaisesRegex(UserError, "snapshot"):
+                    getattr(header, action)()
+                self.assertEqual(header.smart_stage, stage)
+
+    def test_backward_recovery_and_recalculation_metadata(self):
+        self.env.user.group_ids |= self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_manager")
+        self._import([(self.code_one, 1, 0)])
+        header = self._header()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        header.write({"smart_stage": "store_preparation"})
+        self._import([(self.code_one, 2, 0)])
+        header.action_smart_back_to_purchase_preparation()
+        self.assertEqual(header.smart_stage, "purchase_preparation")
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        header._validate_smart_snapshot_dependencies()
+
+    def test_live_replacement_keeps_managed_fair_share_and_invalidates(self):
+        self._import([(self.code_one, 1, 0)])
+        header = self._header()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        state = self.State._state(self.stores[1])
+        state.write({"stock_date": self.State._business_date() - timedelta(days=1)})
+        with patch.object(type(self.Stock), "_fetch_store_stock_rows", return_value={self.serial_two: 4}), patch.object(
+            type(self.Stock), "_fetch_store_pending_stock_rows", return_value={}
+        ):
+            self.Stock.refresh_store_cache(self.stores[1], force=True)
+        self.assertTrue(state.imported_workflow)
+        self.assertEqual(state.origin, "live")
+        self.assertEqual(state.stock_revision, 2)
+        with self.assertRaises(UserError):
+            header._validate_smart_snapshot_dependencies()
+
+    def test_generation_failure_rolls_back_all_headers(self):
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": self.stores[0].id, "to_stores_id": [(6, 0, self.stores[1:].ids)],
+            "user_id": self.employee.id,
+        })
+        Header = self.env["ab_transfer_header"]
+        before = Header.search_count([])
+        calls = []
+        def calculate(record):
+            calls.append(record.to_store_id.id)
+            record._publish_smart_snapshot_dependencies({"fixture": True})
+            return {"type": "ir.actions.client", "tag": "display_notification",
+                    "params": {"type": "success" if len(calls) == 1 else "danger", "message": "Failed destination"}}
+        with patch.object(type(Header), "action_smart_transfer_calculation", new=calculate):
+            result = wizard._action_generate_batch_transfers()
+        self.assertEqual(result["params"]["type"], "danger")
+        self.assertEqual(Header.search_count([]), before)
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(wizard.state, "draft")
+
+    def test_split_headers_preserve_snapshot_dependencies(self):
+        self._import([(self.code_one, 2, 0)])
+        header = self._header()
+        header._publish_smart_snapshot_dependencies(header._capture_smart_snapshot_dependencies())
+        self.env["ab_transfer_smart_line"].create([
+            {"header_id": header.id, "product_id": product.id, "qty": 1, "uom_id": self.uom.id}
+            for product in self.products
+        ])
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": self.stores[0].id, "to_stores_id": [(6, 0, self.stores[1].ids)],
+            "user_id": self.employee.id, "items_per_header": 1,
+            "fair_store_ids": [(6, 0, self.stores[2].ids)],
+        })
+        headers = wizard._split_generated_header_by_items(header)
+        self.assertEqual(len(headers), 2)
+        for split in headers:
+            self.assertEqual(split.smart_snapshot_dependencies, header.smart_snapshot_dependencies)
+            split._validate_smart_snapshot_dependencies()
+
+    def test_negative_onhand_and_leading_zero_codes(self):
+        self._import([(self.code_one, -5, 2)])
+        self.assertEqual(self.Stock.read_store_stock_context(self.stores[1])["stock_by_serial"], {self.serial_one: -3})
+        self.assertEqual(self.Stock.search([("store_id", "=", self.stores[1].id)]).product_code, self.code_one)
+
+    def test_preview_does_not_authorize_modified_upload(self):
+        wizard = self._wizard([(self.code_one, 3, 0)])
+        wizard.action_validate_file()
+        bad = self._wizard([(self.code_one, 3, -2)])
+        wizard.file_data = bad.file_data
+        with self.assertRaises(UserError):
+            wizard.action_import()
+        self.assertFalse(self.State._state(self.stores[1]).stock_revision)
+
+    def test_ambiguous_product_and_duplicate_external_id_are_rejected(self):
+        if self.replica_fixtures:
+            self.skipTest("Replica policy forbids deliberately ambiguous product master fixtures")
+        self.env["ab_product"].create({"product_card_name": "Duplicate code", "code": self.code_one, "eplus_serial": 92003})
+        with self.assertRaisesRegex(UserError, "ambiguous"):
+            self._import([(self.code_one, 1, 0)])
+        self.env["ab_product"].create({"product_card_name": "Duplicate external ID", "code": "00789", "eplus_serial": self.serial_two})
+        with self.assertRaisesRegex(UserError, "Multiple rows"):
+            self._import([(self.code_two, 1, 0), ("00789", 1, 0)])
+        with self.assertRaisesRegex(UserError, "ambiguous"):
+            self._import([(self.code_two, 1, 0)])
+
+    def test_empty_live_stock_and_sales_are_verified_snapshots(self):
+        with patch.object(type(self.Stock), "_fetch_store_stock_rows", return_value={}), patch.object(
+            type(self.Stock), "_fetch_store_pending_stock_rows", return_value={}
+        ), patch.object(type(self.Sales), "_fetch_store_sales_rows", return_value={}):
+            self.Stock.refresh_stores_cache(self.stores[1])
+        self.assertFalse(self.Stock.search([("store_id", "=", self.stores[1].id)]))
+        self.assertTrue(self.Stock.read_store_stock_context(self.stores[1])["has_cache"])
+        self.assertTrue(self.Sales.read_store_sales_context(self.stores[1])["complete"])
+        with patch.object(type(self.Stock), "_fetch_store_stock_rows", side_effect=AssertionError("Unexpected fetch")):
+            self._header()._ensure_smart_destination_cache()
+
+    def test_complete_offline_calculation_publishes_dependencies(self):
+        self._import([(self.code_one, 10, 5)])
+        self._sales_ready(rows={self.serial_one: {"month1_sales": 30, "month2_sales": 30, "month3_sales": 30, "total_3_months_sales": 90}})
+        header = self._header().with_context(skip_smart_zero_source_stock_warning=True)
+        header.write({"smart_product_domain": "[('code', '!=', False)]", "smart_stock_method": "normal", "smart_days": 30, "fair_store_ids": [(6, 0, self.stores[0].ids)]})
+        result = {"created": 1, "updated": 0, "dropout_excluded": 0, "missing": 0, "no_stock": 0}
+        with patch.object(type(header), "_validate_smart_source_connection"), patch.object(
+            type(header), "_ensure_smart_source_cache"
+        ), patch.object(type(header), "_get_smart_candidate_source_stock_context", return_value={}), patch.object(
+            type(header), "_get_smart_target_product_serials_with_source_stock", return_value=[self.serial_one]
+        ), patch.object(type(header), "_apply_smart_transfer_rows", return_value=result) as apply_rows, patch.object(
+            type(self.Stock), "_fetch_store_stock_rows", side_effect=AssertionError("Destination is offline")
+        ):
+            action = header.action_smart_transfer_calculation()
+        self.assertEqual(action["params"]["type"], "success")
+        row = apply_rows.call_args.args[0][0]
+        self.assertEqual(row[4], 15)
+        self.assertEqual(header._calculate_smart_required_qty(row[8], row[4], 30, method="normal"), 15)
+        self.assertEqual(header.smart_snapshot_dependencies["branches"][str(self.stores[1].id)]["revision"], 1)
