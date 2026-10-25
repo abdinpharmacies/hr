@@ -51,7 +51,8 @@ export class StorefrontCartHold extends Interaction {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const remainingSeconds = seconds % 60;
-        const formattedTime = [hours, minutes, remainingSeconds]
+        const timeParts = hours > 0 ? [hours, minutes, remainingSeconds] : [minutes, remainingSeconds];
+        const formattedTime = timeParts
             .map((value) => String(value).padStart(2, "0"))
             .join(":");
         this.el.querySelector("[data-ab-cart-hold-countdown]").textContent = active

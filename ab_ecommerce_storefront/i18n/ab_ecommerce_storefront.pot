@@ -16,6 +16,34 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: ab_ecommerce_storefront
+# Cart reservation notice
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Items in your cart are temporarily reserved"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Complete your order before the reservation expires."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Time remaining:"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "The temporary reservation has expired"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "We will check product availability again at checkout."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_root
 msgid "Abdin Management"
 msgstr ""

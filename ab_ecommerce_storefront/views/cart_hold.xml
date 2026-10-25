@@ -3,11 +3,21 @@
     <template id="cart_hold_notice" inherit_id="website_sale.cart" name="Cart Hold Notice">
         <xpath expr="//t[@t-call='website_sale.cart_lines']" position="before">
             <div t-if="website_sale_order and website_sale_order.ab_cart_hold_expires_at"
-                 class="alert alert-info" role="status" data-ab-cart-hold=""
+                 class="alert alert-info" data-ab-cart-hold=""
                  t-att-data-expires-at="website_sale_order.ab_cart_hold_expires_at.isoformat() + 'Z'">
-                <span data-ab-cart-hold-active="">Note: These items have been reserved, and the quantity will be available in the store again after</span>
-                <strong class="o_force_ltr" dir="ltr" data-ab-cart-hold-countdown=""/>
-                <span class="d-none" data-ab-cart-hold-expired="">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>
+                <div data-ab-cart-hold-active="">
+                    <div class="fw-bold mb-1">Items in your cart are temporarily reserved</div>
+                    <div>Complete your order before the reservation expires.</div>
+                    <div class="d-inline-flex align-items-center gap-2 rounded-pill bg-white px-3 py-1 mt-2">
+                        <i class="fa fa-clock-o" aria-hidden="true"/>
+                        <div class="visually-hidden">Time remaining:</div>
+                        <strong class="o_force_ltr" dir="ltr" role="timer" aria-live="off" data-ab-cart-hold-countdown=""/>
+                    </div>
+                </div>
+                <div class="d-none" role="status" data-ab-cart-hold-expired="">
+                    <div class="fw-bold mb-1">The temporary reservation has expired</div>
+                    <div>We will check product availability again at checkout.</div>
+                </div>
             </div>
         </xpath>
     </template>

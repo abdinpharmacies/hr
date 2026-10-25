@@ -210,8 +210,8 @@ class TestStorefrontReservations(TransactionCase):
         view = self.env.ref("ab_ecommerce_storefront.cart_hold_notice")
         english = view.with_context(lang="en_US").arch_db
         arabic = view.with_context(lang="ar_001").arch_db
-        self.assertIn("Website hold remaining:", english)
-        self.assertIn("الوقت المتبقي لحجز الموقع:", arabic)
+        self.assertIn("Items in your cart are temporarily reserved", english)
+        self.assertIn("تم حجز الكمية في سلتك مؤقتًا", arabic)
         self.assertNotEqual(english, arabic)
 
     def test_prescription_retry_creates_one_request_and_order(self):
@@ -313,7 +313,7 @@ class TestStorefrontCartHoldHTTP(HttpCase):
                     await new Promise(resolve => setTimeout(resolve, 100));
                 }
                 const text = document.querySelector('[data-ab-cart-hold-countdown]').textContent;
-                if (!/^\\d+:\\d{2}$/.test(text)) throw new Error('Invalid cart countdown');
+                if (!/^\\d{2}:\\d{2}$/.test(text)) throw new Error('Invalid cart countdown');
                 console.log('test successful');
             })();
         """, cookies=session_cookies, timeout=45)

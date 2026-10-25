@@ -17,6 +17,34 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_ecommerce_storefront
+# Cart reservation notice
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Items in your cart are temporarily reserved"
+msgstr "تم حجز الكمية في سلتك مؤقتًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Complete your order before the reservation expires."
+msgstr "أكمل طلبك قبل انتهاء الحجز."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "Time remaining:"
+msgstr "الوقت المتبقي:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "The temporary reservation has expired"
+msgstr "انتهى الحجز المؤقت"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.cart_hold_notice
+msgid "We will check product availability again at checkout."
+msgstr "سنعيد التحقق من توفر المنتجات عند إتمام الطلب."
+
+#. module: ab_ecommerce_storefront
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_abdin_management_root
 msgid "Abdin Management"
 msgstr "إدارة عابدين"
