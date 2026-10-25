@@ -61,6 +61,70 @@ class AbSalesPosApi(models.TransientModel):
         return {key: value for key, value in (vals or {}).items() if key in model_fields}
 
     @api.model
+    def _pos_allowed_header_fields(self):
+        """POS-editable invoice inputs; addons extend their own fields."""
+        return {
+            "store_id", "description", "customer_id", "invoice_address",
+            "new_customer_name", "new_customer_phone", "new_customer_address",
+            "bill_customer_name", "bill_customer_phone", "bill_customer_address",
+            "customer_insurance_name", "customer_insurance_number",
+            "is_delivery", "employee_delivery_id", "employee_id",
+        }
+
+    @api.model
+    def _pos_allowed_line_fields(self):
+        """POS-editable line inputs shared by local records and branch requests."""
+        return {
+            "product_id", "qty_str", "sell_price", "target_sell_price", "uom_id",
+            "unavailable_reason", "unavailable_reason_other",
+        }
+
+    @api.model
+    def _pos_editable_header_vals(self, values):
+        if (values or {}).get("is_callcenter_order"):
+            raise UserError(_("The call-center origin cannot be changed."))
+        fields_map = self.env["ab_sales_header"]._fields
+        allowed = self._pos_allowed_header_fields()
+        excluded = {"id", "status", "eplus_serial", "pos_client_token", "push_state", "push_message",
+                    "active", "create_uid", "create_date", "write_uid", "write_date", "is_callcenter_order"}
+        return {
+            name: value for name, value in (values or {}).items()
+            if name in allowed and name in fields_map and name not in excluded
+            and not name.startswith(("pos_hr_", "branch_")) and not fields_map[name].readonly
+        }
+
+    @api.model
+    def _pos_editable_line_vals(self, values):
+        fields_map = self.env["ab_sales_line"]._fields
+        allowed = self._pos_allowed_line_fields()
+        return {
+            name: value for name, value in (values or {}).items()
+            if name in allowed and name in fields_map and not fields_map[name].readonly
+        }
+
+    @api.model
+    def _pos_submission_header_vals(self, payload):
+        """Separate editable values from identity rebuilt from the active session."""
+        incoming = payload.get("header") or {}
+        values = self._pos_editable_header_vals(incoming)
+        session = self._pos_require_sales_session(payload.get("pos_hr_session_token"))
+        if session:
+            employee = self.env["ab_hr_employee"]
+            try:
+                employee_id = int(values.get("employee_id") or 0)
+            except (TypeError, ValueError):
+                employee_id = 0
+            if employee_id:
+                employee = employee.sudo().browse(employee_id).exists()[:1]
+            values.update(self._pos_hr_header_metadata(
+                session=session,
+                selected_employee=employee or session.employee_id,
+                profile=session._get_pos_profile(),
+                include_local_relations=not self._pos_hr_is_remote_branch_submit(),
+            ))
+        return values
+
+    @api.model
     def _pos_draft_cache_key(self, cache_key=None):
         key = str(cache_key or "").strip()
         return key or "ab_sales_pos_cache_v1_%s" % self.env.uid
@@ -810,13 +874,11 @@ class AbSalesPosApi(models.TransientModel):
     def _pos_create_prepending_header_from_payload(self, payload):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_product")
 
-        if (payload.get("header") or {}).get('is_callcenter_order'):
+        incoming = payload.get("header") or {}
+        if incoming.get("is_callcenter_order"):
             raise UserError(_("The call-center origin cannot be changed."))
-        header_vals = self._filter_vals("ab_sales_header", payload.get("header") or {})
-        if not header_vals.get("employee_id"):
-            header_vals.pop("employee_id", None)
         line_vals = payload.get("lines") or []
-        token = (header_vals.get("pos_client_token") or "").strip()
+        token = str(incoming.get("pos_client_token") or "").strip()
         on_existing_token = (payload.get("on_existing_token") or "").strip().lower()
         if token:
             existing = self.env["ab_sales_header"].with_context(active_test=False).search([("pos_client_token", "=", token)], limit=1)
@@ -824,9 +886,13 @@ class AbSalesPosApi(models.TransientModel):
                 if not existing.active:
                     raise UserError(_("This invoice is archived. Create a new draft instead of resubmitting it."))
                 return existing, True, on_existing_token
+        # Existing attempts replay their frozen identity even after the session expires.
+        header_vals = self._pos_submission_header_vals(payload)
+        header_vals["status"] = "prepending"
+        if not header_vals.get("employee_id"):
+            header_vals.pop("employee_id", None)
+        if token:
             header_vals["pos_client_token"] = token
-        else:
-            header_vals.pop("pos_client_token", None)
         if not header_vals.get("store_id"):
             raise UserError(_("Store is required."))
         allowed_store_ids = self.env["ab_sales_header"]._get_allowed_store_ids()
@@ -864,7 +930,7 @@ class AbSalesPosApi(models.TransientModel):
 
         lines_to_create = []
         for line in line_vals:
-            vals = self._filter_vals("ab_sales_line", line or {})
+            vals = self._pos_editable_line_vals(line)
             if not vals.get("product_id"):
                 continue
             product_id = int(vals.get("product_id"))

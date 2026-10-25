@@ -68,8 +68,9 @@ class BranchClient(models.AbstractModel):
 
     @api.model
     def _sale_payload(self, payload):
-        values = payload.get('header') or {}
-        draft = self.env['ab_sales_header'].new(self.env['ab_sales_pos_api']._filter_vals('ab_sales_header', values))
+        pos_api = self.env['ab_sales_pos_api']
+        values = pos_api._pos_submission_header_vals(payload)
+        draft = self.env['ab_sales_header'].new(values)
         if values.get('contract_id') and hasattr(draft, '_ab_contract_validate_store_allowed'):
             draft._ab_contract_validate()
             draft._ab_contract_validate_store_allowed(check_status=False)
@@ -91,8 +92,9 @@ class BranchClient(models.AbstractModel):
                 elif field.type not in ('one2many', 'many2many'):
                     result[key] = value
             return result
-        result = {'header': encode(self.env['ab_sales_header'], payload.get('header') or {}, ignored), 'lines': []}
+        result = {'header': encode(self.env['ab_sales_header'], values, ignored), 'lines': []}
         for source in payload.get('lines') or []:
+            source = pos_api._pos_editable_line_vals(source)
             line = encode(self.env['ab_sales_line'], source, {'uom_id', 'header_id', 'inventory_json', 'balance', 'cost'})
             product = self.env['ab_product'].browse(int(source.get('product_id') or 0)).exists()
             uom = self.env['ab_product_uom'].browse(int(source.get('uom_id') or product.uom_id.id)).exists()

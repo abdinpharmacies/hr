@@ -296,7 +296,7 @@ class LocalSubmission(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
 
     def _replace_branch_bill(self, header, payload):
-        values = self._filter_vals('ab_sales_header', payload.get('header') or {})
+        values = self._pos_submission_header_vals(payload)
         for name in ('status', 'eplus_serial', 'pos_client_token', 'store_id', 'branch_submission_payload',
                      'branch_submission_started', 'branch_request_revision', 'branch_header_id', 'push_state', 'push_message'):
             values.pop(name, None)
@@ -306,7 +306,7 @@ class LocalSubmission(models.TransientModel):
             header._branch_records().write({'applied_program_ids': [fields.Command.clear()]})
         line_values = []
         for source in payload.get('lines') or []:
-            vals = self._filter_vals('ab_sales_line', source)
+            vals = self._pos_editable_line_vals(source)
             product = self.env['ab_product'].browse(int(vals.get('product_id') or 0)).exists()
             vals.update(header_id=header.id, uom_id=self._pos_line_uom_id(product, vals.get('uom_id')),
                         qty_str=vals.get('qty_str') or '1')
@@ -319,13 +319,11 @@ class LocalSubmission(models.TransientModel):
         if payload.get('submission_guard_version') != 1:
             raise UserError(_('Reload the POS to use protected branch submission.'))
         payload = {k: deepcopy(v) for k, v in payload.items() if not k.startswith('_branch_')}
-        values = payload.setdefault('header', {})
-        token = str(values.get('pos_client_token') or uuid4()).strip()
+        token = str((payload.get('header') or {}).get('pos_client_token') or uuid4()).strip()
+        values = self._pos_editable_header_vals(payload.get('header') or {})
         values['pos_client_token'] = token
-        for key in ('branch_submission_payload', 'branch_submission_started', 'branch_request_revision',
-                    'branch_header_id', 'eplus_serial', 'push_state', 'push_message'):
-            values.pop(key, None)
-        values['status'] = 'prepending'
+        payload['header'] = values
+        payload['lines'] = [self._pos_editable_line_vals(line) for line in payload.get('lines') or []]
         existing = self.env['ab_sales_header'].search(fields.Domain('pos_client_token', '=', token), limit=1)
         if not existing or not existing.branch_submission_started:
             self._validate_submission_promotion(payload)
@@ -359,6 +357,8 @@ class LocalSubmission(models.TransientModel):
                 config._validate_identity(capabilities)
                 if capabilities.get('sales_submission_guard') != 1:
                     raise UserError(_('Upgrade the branch API before submitting this bill.'))
+                # Audit metadata is server-derived only for a newly frozen attempt.
+                values.update(self._pos_submission_header_vals(payload))
                 wire = client._sale_payload(payload)
                 if duplicate:
                     with self.env.cr.savepoint():

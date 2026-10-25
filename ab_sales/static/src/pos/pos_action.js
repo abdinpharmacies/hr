@@ -4768,13 +4768,7 @@ class AbSalesPosAction extends Component {
         this.persistCache();
         try {
             const header = this._buildSubmitHeader(bill);
-            const lines = bill.lines.map((line) => ({
-                product_id: line.product_id,
-                qty_str: line.qty_str || DEFAULT_QTY,
-                sell_price: line.sell_price,
-                target_sell_price: line.target_sell_price,
-                uom_id: line.uom_id || false,
-            }));
+            const lines = bill.lines.map((line) => this._buildSubmitLine(line));
             const result = await this.orm.call("ab_sales_pos_api", "pos_submit", [], {
                 header,
                 lines,
@@ -4824,6 +4818,18 @@ class AbSalesPosAction extends Component {
             this.state.submitting = false;
             this.persistCache();
         }
+    }
+
+    _buildSubmitLine(line) {
+        return {
+            product_id: line.product_id,
+            qty_str: line.qty_str || DEFAULT_QTY,
+            sell_price: line.sell_price,
+            target_sell_price: line.target_sell_price,
+            uom_id: line.uom_id || false,
+            unavailable_reason: line.unavailable_reason || false,
+            unavailable_reason_other: (line.unavailable_reason_other || "").trim(),
+        };
     }
 
     async _sendBillSubmission(bill) {
