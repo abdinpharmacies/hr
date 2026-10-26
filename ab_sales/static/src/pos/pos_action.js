@@ -1602,6 +1602,31 @@ class AbSalesPosAction extends Component {
     _applyDraftCacheResult(result, snapshot = null) {
         this.state.draftLimit = Number.isInteger(result?.draft_limit) && result.draft_limit > 0 ? result.draft_limit : this.state.draftLimit;
         const server = new Map((result.bills || []).map((bill) => [bill.id, bill]));
+        // Replacement identities come only from the authenticated draft API.
+        // Replace in place so the current slot/selection survives validation failure.
+        for (const [oldToken, newToken] of Object.entries(result.replacements || {})) {
+            const oldBill = this.state.bills.find((bill) => bill.id === oldToken);
+            if (!oldBill) continue;
+            const index = this.state.bills.indexOf(oldBill);
+            const existing = this.state.bills.find((bill) => bill.id === newToken);
+            const remote = server.get(newToken);
+            if (!existing && remote) {
+                const restored = this._normalizeBill({...remote,
+                    slot_number: oldBill.slot_number || oldBill.previous_slot_number});
+                this.state.bills.splice(index, 1, restored);
+            } else {
+                this.state.bills.splice(index, 1);
+            }
+            if (this.state.selectedId === oldToken) {
+                this.state.selectedId = (existing || remote) ? newToken : (this.state.bills[0]?.id || null);
+                this._syncInputsForBill(this.currentBill);
+            }
+            this._acknowledgedDrafts.delete(oldToken);
+            this._skippedDrafts?.delete(oldToken);
+            this._correctionRefreshTokens?.delete(oldToken);
+            delete this.state.draftConflicts[oldToken];
+            delete this.state.draftBackupMessages[oldToken];
+        }
         const outcomes = result.outcomes || [];
         this._lastDraftOutcomes = outcomes;
         for (const outcome of outcomes) {
@@ -1968,7 +1993,7 @@ class AbSalesPosAction extends Component {
     }
 
     async _performCacheSave({allowRetry = true, throwOnError = false, force = false} = {}) {
-        if (!force && (this.state.draftDeleting || this.state.draftManaging)) {
+        if (this._draftRecoveryPromises?.size || (!force && (this.state.draftDeleting || this.state.draftManaging))) {
             this._cacheSaveQueued = true;
             return;
         }
@@ -4804,7 +4829,10 @@ class AbSalesPosAction extends Component {
                     throw new Error(_t("The branch submission response could not be confirmed. Use Retry."));
                 }
                 if (!["pending", "saved"].includes(result.status)) {
-                    if (result.status === "rejected") this.scheduleLinePosBalanceRefresh(bill);
+                    if (result.status === "rejected") {
+                        await this._recoverRejectedDraft(bill, result);
+                        this.scheduleLinePosBalanceRefresh(this.currentBill);
+                    }
                     this.showSubmissionFeedback(bill);
                     return;
                 }
@@ -4937,6 +4965,40 @@ class AbSalesPosAction extends Component {
         return !!bill && !this.state.submissionPreparing && !this.state.correctionBusy && !this.state.draftManaging && !this.state.draftDeleting && !this.state.draftCacheAccessBlocked && !bill.submission?.checking && !this._slotBillLocked(bill);
     }
 
+    async _recoverRejectedDraft(bill, result) {
+        if (result?.status !== "rejected" || result.submission_in_progress ||
+            (!result.can_restore_draft && !result.replacement_token)) return false;
+        this._draftRecoveryPromises ||= new Map();
+        const token = bill.header.pos_client_token;
+        if (this._draftRecoveryPromises.has(token)) return this._draftRecoveryPromises.get(token);
+        const scope = this._draftRequestScope();
+        clearTimeout(this._cacheSaveTimer);
+        this._cacheSaveTimer = null;
+        const recovery = (async () => {
+            bill.submission.checking = true;
+            try {
+                // Let an outstanding backup deliver its revision before recovery.
+                if (this._cacheSavePromise) await this._cacheSavePromise;
+                if (scope !== this._draftRequestScope() || !this.state.bills.includes(bill)) return false;
+                const workspace = await this.orm.call("ab_sales_pos_api", "pos_recover_rejected_draft", [], {
+                    token, bill: JSON.parse(JSON.stringify(bill)),
+                    pos_hr_session_token: this._posDraftSessionToken(),
+                });
+                if (scope !== this._draftRequestScope()) return false;
+                this._applyDraftCacheResult(workspace);
+                return !!workspace.replacements?.[token];
+            } finally {
+                bill.submission.checking = false;
+            }
+        })();
+        this._draftRecoveryPromises.set(token, recovery);
+        try { return await recovery; }
+        finally {
+            this._draftRecoveryPromises.delete(token);
+            if (this._cacheSaveQueued && !this._draftRecoveryPromises.size) this._scheduleCacheSaveToServer();
+        }
+    }
+
     applyBranchSubmission(bill, result) {
         if (result?.token !== bill.header?.pos_client_token || result?.submission_guard_version !== 1 ||
             !["prepending", "unknown", "rejected", "pending", "saved"].includes(result.status) ||
@@ -4987,7 +5049,9 @@ class AbSalesPosAction extends Component {
                         const snap = batch.find(({bill}) => bill.header.pos_client_token === result.token);
                         if (snap) found.push(result.token);
                         if (snap && (snap.bill.submission?.version || 0) === snap.version) {
-                            this.applyBranchSubmission(snap.bill, result);
+                            if (this.applyBranchSubmission(snap.bill, result) && !this.state.submitting) {
+                                await this._recoverRejectedDraft(snap.bill, result);
+                            }
                         }
                     }
                 }

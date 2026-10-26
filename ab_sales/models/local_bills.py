@@ -40,6 +40,10 @@ class LocalSales(models.Model):
                                            groups='base.group_system')
     branch_header_id = fields.Integer(string='Branch Bill ID', readonly=True, copy=False)
     branch_request_revision = fields.Integer(string='Request Revision', default=1, readonly=True, copy=False)
+    branch_replacement_token = fields.Char(string='Replacement Draft Token', readonly=True, copy=False,
+                                           groups='base.group_system')
+    branch_rejection_editable = fields.Boolean(string='Confirmed Editable Rejection', readonly=True, copy=False,
+                                               groups='base.group_system')
     local_bill_storage = fields.Boolean(compute='_compute_local_bill_storage')
     branch_submission_started = fields.Boolean(string='Branch Submission Started', readonly=True, copy=False)
 
@@ -62,7 +66,7 @@ class LocalSales(models.Model):
         self.check_access('write')
         names = ['status', 'pos_client_token', 'store_id', 'branch_submission_started',
                  'branch_submission_payload', 'branch_request_revision', 'eplus_serial', 'branch_header_id',
-                 'branch_correction', 'branch_submission_history']
+                 'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable']
         self.flush_recordset(names)
         try:
             with self.env.cr.savepoint():
@@ -94,7 +98,7 @@ class LocalSales(models.Model):
             for vals in vals_list:
                 if (vals.get('status', 'prepending') != 'prepending' or any(vals.get(name) for name in
                         ('eplus_serial', 'branch_header_id', 'branch_submission_started', 'branch_submission_payload',
-                         'branch_correction', 'branch_submission_history'))
+                         'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable'))
                         or vals.get('branch_request_revision', 1) != 1):
                     raise UserError(_('Callcenter bills must start in PrePending status.'))
         return super().create(vals_list)
@@ -104,7 +108,7 @@ class LocalSales(models.Model):
             self._lock_branch_bill()
             protected = {'status', 'eplus_serial', 'branch_submission_payload', 'branch_submission_started',
                          'branch_header_id', 'branch_request_revision', 'push_state', 'push_message',
-                         'branch_correction', 'branch_submission_history'}
+                         'branch_correction', 'branch_submission_history', 'branch_replacement_token', 'branch_rejection_editable'}
             for record in self:
                 if any(record[name] != value for name, value in vals.items() if name in protected):
                     raise AccessError(_('Branch submission metadata is read-only.'))
@@ -148,7 +152,10 @@ class LocalSales(models.Model):
                 'token': self.pos_client_token, 'request_revision': self.branch_request_revision,
                 'status': self.status, 'eplus_serial': self.eplus_serial,
                 'message': self.push_message or '', 'submission_attempted': self.branch_submission_started, 'can_edit': not self.branch_submission_started and self.status == 'prepending',
-                'can_retry': self.status in ('unknown', 'rejected'), 'duplicate_token': False}
+                'can_retry': self.status in ('unknown', 'rejected') and not self.sudo().branch_replacement_token,
+                'replacement_token': self.sudo().branch_replacement_token or False,
+                'can_restore_draft': self.status == 'rejected' and not self.eplus_serial
+                    and self.sudo().branch_rejection_editable, 'duplicate_token': False}
 
     def _apply_branch_response(self, response, config):
         self.ensure_one()
@@ -169,6 +176,7 @@ class LocalSales(models.Model):
                 or (self.status == 'saved' and status != 'saved')):
             raise UserError(_('The branch returned invalid invoice status.'))
         self.sudo()._write_branch_state({'branch_header_id': remote_id, 'eplus_serial': serial,
+            'branch_rejection_editable': status == 'rejected' and response.get('can_edit') is True,
             'status': status, 'push_state': 'success' if status in ('pending', 'saved') else 'error',
             'push_message': str(response.get('message') or '')})
 
@@ -198,6 +206,7 @@ class LocalSales(models.Model):
         client = self.env['ab_sales_branch_client']
         for store in self.store_id:
             bills = self.filtered(lambda h: h.store_id == store and h.branch_submission_started
+                                  and not h.sudo().branch_replacement_token
                                   and h.status in ('prepending', 'unknown', 'rejected', 'pending'))
             if not bills:
                 continue
@@ -334,6 +343,8 @@ class LocalSubmission(models.TransientModel):
             header.check_access('read')
             return header._branch_result()
         with header._branch_attempt():
+            if header.sudo().branch_replacement_token:
+                raise UserError(_('This rejected attempt was restored as a draft. Refresh the POS to continue.'))
             if header.status in ('pending', 'saved'):
                 return header._branch_result()
             stored = header.sudo().branch_submission_payload or {}
@@ -370,7 +381,8 @@ class LocalSubmission(models.TransientModel):
                 'store_id': header.store_id.id, 'payload_token': token, 'request_revision': header.branch_request_revision,
                 'push_to_eplus_requested': True, 'state': 'started', 'submitted_by_id': self.env.uid,
                 'submitted_at': fields.Datetime.now()})
-            header.sudo()._write_branch_state({'status': 'unknown', 'push_state': 'none', 'push_message': ''})
+            header.sudo()._write_branch_state({'status': 'unknown', 'push_state': 'none', 'push_message': '',
+                                                'branch_rejection_editable': False})
             self.env.cr.commit()
             header._lock_branch_bill()
             try:

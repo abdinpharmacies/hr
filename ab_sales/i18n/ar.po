@@ -7276,3 +7276,27 @@ msgstr "العلاقة المرجعية في المصدر غير صالحة لل
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 msgid "Unsupported source field type for branch submission: %s"
 msgstr "نوع حقل المصدر غير مدعوم للإرسال إلى الفرع: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_replacement_token
+msgid "Replacement Draft Token"
+msgstr "رمز المسودة البديلة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__branch_rejection_editable
+msgid "Confirmed Editable Rejection"
+msgstr "رفض مؤكد يسمح بالتعديل"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/local_bills.py:0
+msgid ""
+"This rejected attempt was restored as a draft. Refresh the POS to continue."
+msgstr ""
+"تمت استعادة هذه المحاولة المرفوضة كمسودة. حدّث شاشة نقاط البيع للمتابعة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
+msgid "Only a confirmed rejected bill can be restored as a draft."
+msgstr "يمكن استعادة الفاتورة المرفوضة المؤكدة فقط كمسودة."

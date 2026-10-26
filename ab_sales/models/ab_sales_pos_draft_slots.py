@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Employee draft slots and cache reconciliation without invoice deletion."""
 from copy import deepcopy
+from uuid import uuid4
 from psycopg2.errors import UniqueViolation
 
 from odoo import api, fields, models, _
@@ -205,6 +206,119 @@ class AbSalesPosDraftSlots(models.TransientModel):
                 "outcomes": list(outcomes), "replacements": {}, "slot_branches": {}, "count": len(bills),
                 "completed_ids": [row.pos_client_token for row in records if row.state == "completed"]}
 
+    def _draft_add_replacements(self, result, employee, stores, records):
+        """Follow server-owned replacement links, including after a lost response."""
+        Header = self.env['ab_sales_header'].sudo().with_context(active_test=False)
+        by_token = {record.pos_client_token: record for record in records}
+        frontier, visited, links = set(by_token), set(), {}
+        # Resolve a batch at each generation instead of querying every normal draft.
+        while frontier:
+            visited.update(frontier)
+            headers = Header.search(fields.Domain('pos_client_token', 'in', list(frontier)))
+            replacements = {header.pos_client_token: header.branch_replacement_token for header in headers
+                            if header.create_uid == self.env.user and header.branch_replacement_token}
+            if not replacements:
+                break
+            successors = self._draft_records(employee, stores, tokens=list(set(replacements.values())))
+            by_token.update({record.pos_client_token: record for record in successors})
+            links.update({token: target for token, target in replacements.items() if target in by_token})
+            frontier = set(successors.mapped('pos_client_token')) - visited
+        for record in records:
+            token, seen = record.pos_client_token, set()
+            while token in links and token not in seen:
+                seen.add(token)
+                token = links[token]
+            current = by_token[token]
+            if token == record.pos_client_token:
+                continue
+            result['replacements'][record.pos_client_token] = token
+            if record.pos_client_token not in result['removed_ids']:
+                result['removed_ids'].append(record.pos_client_token)
+            replacement_result = self._draft_result(employee, current)
+            result['revision'].update(replacement_result['revision'])
+            result['removed_ids'] += replacement_result['removed_ids']
+            if current.state == 'active' and not any(b['id'] == token for b in result['bills']):
+                result['bills'] += replacement_result['bills']
+        result['bills'], completed = self._draft_authoritative_states(result['bills'])
+        result['removed_ids'] += list(completed)
+        result['completed_ids'] += list(completed)
+        result['count'] = len(result['bills'])
+        return result
+
+    @api.model
+    def pos_recover_rejected_draft(self, token, bill=None, pos_hr_session_token=None):
+        """Retire an attempted identity, retaining its audit and one editable successor."""
+        self._pos_require_sales_session(pos_hr_session_token)
+        employee, stores = self._draft_scope(pos_hr_session_token=pos_hr_session_token)
+        if bill is not None and not isinstance(bill, dict):
+            raise UserError(_('Invalid draft cache payload.'))
+        if not employee:
+            raise AccessError(_('A valid employee session is required for draft bills.'))
+        header = self.env['ab_sales_header'].with_context(active_test=False).search(
+            fields.Domain('pos_client_token', '=', str(token or '')), limit=1)
+        if (not header or header.create_uid != self.env.user or header.store_id.id not in stores
+                or ('pos_hr_employee_id' in header._fields and header.pos_hr_employee_id
+                    and header.pos_hr_employee_id != employee)):
+            raise AccessError(_('You cannot access this draft bill.'))
+        header.check_access('write')
+        with header._branch_attempt():
+            records = self._draft_records(employee, stores, tokens=[token])
+            if header.sudo().branch_replacement_token:
+                return self._draft_add_replacements(self._draft_result(employee, records), employee, stores, records)
+            if header.status != 'rejected' or header.eplus_serial:
+                raise UserError(_('Only a confirmed rejected bill can be restored as a draft.'))
+            # Fresh submit/status responses already verified identity, revision and can_edit.
+            # Older installed records need that evidence from the branch first.
+            if not header.sudo().branch_rejection_editable:
+                self._confirm_correction_rejection(header)
+            if not header.sudo().branch_rejection_editable:
+                raise UserError(_('Only a confirmed rejected bill can be restored as a draft.'))
+            record = records[:1]
+            if record:
+                if not record.try_lock_for_update():
+                    raise UserError(_('This draft is being edited. Refresh and try again.'))
+                record.invalidate_recordset()
+                if record.state != 'active':
+                    raise UserError(_('This draft is no longer available. Refresh the draft list.'))
+                if bill is not None and bill.get('draft_revision') != record.revision:
+                    return self._draft_result(employee, record, outcomes=[{
+                        'token': token, 'status': 'conflict', 'revision': record.revision,
+                        'bill': deepcopy(record.bill_json)}])
+            source = bill if bill is not None else record.bill_json if record else None
+            if not source:
+                raise UserError(_('Invalid draft cache payload.'))
+            restored = self._draft_payload(source, stores)
+            if self._draft_id(restored) != token or restored['header']['store_id'] != header.store_id.id:
+                raise AccessError(_('Invalid draft identity or branch.'))
+            # A replacement consumes the original draft's place, not a second admission.
+            # No invoice or invoice line is deleted or modified.
+            Cache = self.env['ab_sales_pos_draft_cache'].sudo()
+            if not record:
+                record = Cache.create({'pos_client_token': token, 'user_id': self.env.uid,
+                    'employee_id': employee.id, 'store_id': header.store_id.id,
+                    'bill_json': deepcopy(restored)})
+            replacement = str(uuid4())
+            restored.update(id=replacement, submission={'status': 'prepending', 'attempted': False,
+                'unresolved': False, 'in_progress': False}, submission_status='prepending',
+                submission_attempted=False, submission_checking=False, submission_in_progress=False,
+                submission_can_edit=True, submission_message='', slot_locked=False, slot_protected=False,
+                odoo_header_id=False, eplus_serial=0)
+            restored['header']['pos_client_token'] = replacement
+            restored.pop('correction', None)
+            new_record = Cache.create({'pos_client_token': replacement, 'user_id': self.env.uid,
+                'employee_id': employee.id, 'store_id': header.store_id.id, 'bill_json': restored,
+                'last_synced_at': fields.Datetime.now()})
+            history = list(header.sudo().branch_submission_history or [])
+            history.append({'event': 'restored_as_draft', 'replacement_token': replacement,
+                'revision': header.branch_request_revision, 'restored_by': self.env.uid,
+                'restored_at': fields.Datetime.to_string(fields.Datetime.now())})
+            header.sudo()._write_branch_state({'branch_replacement_token': replacement,
+                'branch_submission_history': history, 'branch_correction': False})
+            record.write({'state': 'retired', 'revision': record.revision + 1})
+            result = self._draft_result(employee, record | new_record, selected_id=replacement)
+            result['replacements'] = {token: replacement}
+            return result
+
     @api.model
     def pos_load_draft_cache(self, cache_key=None, employee_id=None, pos_hr_session_token=None):
         employee, stores = self._draft_scope(employee_id, pos_hr_session_token)
@@ -228,7 +342,7 @@ class AbSalesPosDraftSlots(models.TransientModel):
             & fields.Domain("employee_id", "=", employee.id or False)
             & fields.Domain("store_id", "in", list(stores))
             & fields.Domain("pos_client_token", "in", tokens))
-        result = self._draft_result(employee, records)
+        result = self._draft_add_replacements(self._draft_result(employee, records), employee, stores, records)
         result["bills"], completed = self._draft_authoritative_states(result["bills"])
         result["completed_ids"] += list(completed)
         result["removed_ids"] += list(completed)
@@ -361,7 +475,8 @@ class AbSalesPosDraftSlots(models.TransientModel):
                                  "status": "error", "message": str(error)})
         tokens = [item["token"] for item in outcomes if item["status"] in ("saved", "unchanged", "retired", "completed")]
         records = self._draft_records(employee, stores, tokens=tokens)
-        return self._draft_result(employee, records, outcomes, selected_id)
+        return self._draft_add_replacements(
+            self._draft_result(employee, records, outcomes, selected_id), employee, stores, records)
 
     @api.model
     def pos_remove_draft_cache(self, bill_ids=None, cache_key=None, employee_id=None,
