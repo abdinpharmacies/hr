@@ -1001,61 +1001,17 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         }
 
     @api.model
+    def _inventory_balance_store_ids(self, store_id=None):
+        """Use the same readable, configured branch scope as Store Balances."""
+        store_ids = self.env['ab_sales_branch_client']._stores().ids
+        if store_id and int(store_id) not in store_ids:
+            raise AccessError(_('This store is not allowed.'))
+        return store_ids
+
+    @api.model
     def _inventory_balance_by_serial(self, product_serials, store_id=None):
-        """
-        Return dict: {product_eplus_serial: balance}
-
-        Prefers store-specific balances when present, otherwise falls back to
-        store_id IS NULL (global) balances.
-        """
-        if not product_serials:
-            return {}
-
-        if "ab_sales_inventory" not in self.env.registry:
-            return {}
-
-        product_serials = [int(s) for s in product_serials if s]
-        if not product_serials:
-            return {}
-
-        store_id = int(store_id) if store_id else None
-
-        if store_id:
-            self.env.cr.execute(
-                """
-                SELECT product_eplus_serial, balance, store_id
-                FROM ab_sales_inventory
-                WHERE product_eplus_serial = ANY (%s)
-                  AND (store_id = %s OR store_id IS NULL)
-                """,
-                (product_serials, store_id),
-            )
-        else:
-            self.env.cr.execute(
-                """
-                SELECT product_eplus_serial, balance, store_id
-                FROM ab_sales_inventory
-                WHERE product_eplus_serial = ANY (%s)
-                  AND store_id IS NULL
-                """,
-                (product_serials,),
-            )
-
-        by_serial_global = {}
-        by_serial_store = {}
-        for serial, balance, inv_store_id in self.env.cr.fetchall():
-            serial = int(serial or 0)
-            if not serial:
-                continue
-            bal = float(balance or 0.0)
-            if inv_store_id:
-                by_serial_store[serial] = max(by_serial_store.get(serial, 0.0), bal)
-            else:
-                by_serial_global[serial] = max(by_serial_global.get(serial, 0.0), bal)
-
-        out = dict(by_serial_global)
-        out.update(by_serial_store)
-        return out
+        total, selected = self._inventory_total_and_pos_balances_by_serial(product_serials, store_id)
+        return selected if store_id else total
 
     @api.model
     def _attach_pos_sync_metadata(self, rows, store_id):
@@ -1089,69 +1045,29 @@ for ($i = $startInt; $i -le $endInt; $i++) {
 
     @api.model
     def _inventory_total_and_pos_balances_by_serial(self, product_serials, store_id=None):
-        """
-        Return tuple:
-          - total_balance_by_serial: sum of store-specific rows
-          - pos_balance_by_serial: selected store balance only (no fallback)
-        """
-        if not product_serials:
+        """Retained API balances for the branches visible in Store Balances."""
+        store_ids = self._inventory_balance_store_ids(store_id)
+        serials = sorted({int(serial) for serial in product_serials or [] if serial})
+        if not serials or not store_ids:
             return {}, {}
-
-        if "ab_sales_inventory" not in self.env.registry:
-            return {}, {}
-
-        product_serials = [int(s) for s in product_serials if s]
-        if not product_serials:
-            return {}, {}
-
-        store_id = int(store_id) if store_id else None
-
-        if store_id:
-            self.env.cr.execute(
-                """
-                SELECT product_eplus_serial,
-                       SUM(CASE WHEN store_id = %s THEN balance ELSE 0 END) AS pos_balance,
-                       SUM(balance) AS total_balance
-                FROM ab_sales_inventory
-                WHERE product_eplus_serial = ANY (%s)
-                  AND store_id IS NOT NULL
-                  AND balance != 0
-                GROUP BY product_eplus_serial
-                HAVING SUM(balance) > 0
-                """,
-                (store_id, product_serials),
-            )
-
-            total_balance_by_serial = {}
-            pos_balance_by_serial = {}
-            for serial, pos_balance, total_balance in self.env.cr.fetchall():
-                serial = int(serial or 0)
-                if not serial:
-                    continue
-                pos_val = float(pos_balance or 0.0)
-                total_val = float(total_balance or 0.0)
-                if pos_val > 0:
-                    pos_balance_by_serial[serial] = max(pos_balance_by_serial.get(serial, 0.0), pos_val)
-                if total_val > 0:
-                    total_balance_by_serial[serial] = max(total_balance_by_serial.get(serial, 0.0), total_val)
-            return total_balance_by_serial, pos_balance_by_serial
-
-        # No selected store: return the all-stores aggregate only.
+        self.env['ab_sales_inventory'].flush_model(['product_eplus_serial', 'store_id', 'balance'])
         self.env.cr.execute(
             """
-            SELECT product_eplus_serial, SUM(balance) AS balance
+            SELECT product_eplus_serial,
+                   SUM(CASE WHEN store_id = %s THEN balance ELSE 0 END),
+                   SUM(balance)
             FROM ab_sales_inventory
-            WHERE product_eplus_serial = ANY (%s)
-              AND store_id IS NOT NULL
-              AND balance != 0
+            WHERE product_eplus_serial = ANY (%s) AND store_id = ANY (%s)
             GROUP BY product_eplus_serial
-            HAVING SUM(balance) > 0
             """,
-            (product_serials,),
+            (int(store_id) if store_id else None, serials, store_ids),
         )
-        total_balance_by_serial = {int(serial): float(balance or 0.0) for serial, balance in self.env.cr.fetchall() if
-                                   serial}
-        return total_balance_by_serial, {}
+        totals, selected = {}, {}
+        for serial, pos_balance, total_balance in self.env.cr.fetchall():
+            totals[int(serial)] = float(total_balance or 0.0)
+            if store_id:
+                selected[int(serial)] = float(pos_balance or 0.0)
+        return totals, selected
 
     @api.model
     def _store_id_from_header(self, header_id):
@@ -1805,7 +1721,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             search_domain = self._safe_domain("ab_product", search_domain)
 
             if item_type == "all" and want_pos_balance_only and store_id and not raw_query:
-                params = [store_id]
+                params = [store_id, self._inventory_balance_store_ids(store_id)]
                 extra_where = ""
                 if sql_filter:
                     extra_where = f" AND {sql_filter['where']}"
@@ -1820,6 +1736,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                     extra_where += " AND g.balance > 0"
                 params.append(limit)
 
+                self.env['ab_sales_inventory'].flush_model(['product_eplus_serial', 'store_id', 'balance'])
                 self.env.cr.execute(
                     f"""
                     SELECT
@@ -1838,9 +1755,8 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                         SELECT SUM(g.balance) AS balance
                         FROM ab_sales_inventory g
                         WHERE g.product_eplus_serial = p.eplus_serial
-                          AND g.store_id IS NOT NULL
+                          AND g.store_id = ANY (%s)
                           AND g.balance != 0
-                        HAVING SUM(g.balance) > 0
                     ) g ON TRUE
                     WHERE p.active = TRUE
                       {extra_where}

@@ -426,7 +426,7 @@
                             </div>
                                     <t t-if="state.productResults.length">
                                 <div class="o_ab_sales_pos_product_results row row-cols-1 g-2 ab_pos_product_cards"
-                                     t-ref="cardsContainer" t-att-inert="!billEditable(currentBill)">
+                                     t-ref="cardsContainer" t-on-click.capture="onProductCardClick">
                                     <t t-foreach="state.productResults" t-as="p" t-key="p.id" t-foreach-index="idx">
                                         <t t-call="ab_sales.ProductCard">
                                             <t t-set="showPosBalanceAge" t-value="true"/>

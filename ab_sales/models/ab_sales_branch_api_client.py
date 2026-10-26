@@ -1,6 +1,7 @@
 """Callcenter adapters for the versioned ab_branch_api provider."""
 import math
-from uuid import uuid4
+from datetime import timezone
+from uuid import UUID, uuid4
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
@@ -67,6 +68,53 @@ class BranchClient(models.AbstractModel):
         raise UserError(_('A stable branch reference is missing for %s.') % record.display_name)
 
     @api.model
+    def _sale_relation_ids(self, field, value):
+        """Normalize a new submission snapshot without executing ORM commands."""
+        error = _('Invalid source relation for branch submission.')
+        if field.type == 'many2one':
+            if isinstance(value, (list, tuple)):
+                value = value[0] if value else False
+            ids = [value] if value else []
+        elif not value:
+            ids = []
+        elif isinstance(value, (list, tuple)) and all(type(item) is int for item in value):
+            ids = list(value)
+        else:
+            ids = []
+            # Snapshot starts empty. Creation, updates and deletion are never allowed.
+            for command in value if isinstance(value, (list, tuple)) else [None]:
+                if not isinstance(command, (list, tuple)) or len(command) != 3:
+                    raise UserError(error)
+                op, record_id, data = command
+                if type(op) is not int:
+                    raise UserError(error)
+                if op == 6 and record_id == 0 and isinstance(data, (list, tuple)):
+                    ids = list(data)
+                elif op == 5 and record_id == 0 and data == 0:
+                    ids = []
+                elif op in (3, 4) and type(record_id) is int and record_id > 0 and data == 0:
+                    ids = [i for i in ids if i != record_id]
+                    if op == 4:
+                        ids.append(record_id)
+                else:
+                    raise UserError(error)
+        if any(type(item) is not int or item <= 0 for item in ids):
+            raise UserError(error)
+        ids = list(dict.fromkeys(ids))
+        records = self.env[field.comodel_name].browse(ids).exists()
+        if len(records) != len(ids):
+            raise UserError(error)
+        records.check_access('read')
+        if 'active' in records._fields and any(not record.active for record in records):
+            raise UserError(error)
+        return ids
+
+    @api.model
+    def _sale_correction_payload(self, wire):
+        """Extension point for a copied wire payload in a confirmed rejected revision."""
+        return wire
+
+    @api.model
     def _sale_payload(self, payload):
         pos_api = self.env['ab_sales_pos_api']
         values = pos_api._pos_submission_header_vals(payload)
@@ -79,23 +127,56 @@ class BranchClient(models.AbstractModel):
                    'pos_hr_shift_id', 'pos_hr_session_id', 'pos_hr_service_user_id',
                    # Contract POS display values; branch business logic computes totals.
                    'contract_name', 'company_pay', 'cust_pay'}
+        source_uuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+        try:
+            UUID(source_uuid)
+        except (ValueError, TypeError, AttributeError):
+            raise UserError(_('A valid callcenter database UUID is required for branch submission.')) from None
+        context = {'schema_version': 1, 'source': source_uuid, 'header': {}, 'lines': []}
+
         def encode(model, values, omit):
-            result = {}
+            result, descriptors = {}, {}
             for key, value in values.items():
                 if key in omit or key not in model._fields:
                     continue
                 field = model._fields[key]
-                if field.type == 'many2one':
-                    if isinstance(value, (list, tuple)):
-                        value = value[0] if value else False
-                    result[key] = self._reference(self.env[field.comodel_name].browse(int(value))) if value else False
-                elif field.type not in ('one2many', 'many2many'):
-                    result[key] = value
-            return result
-        result = {'header': encode(self.env['ab_sales_header'], values, ignored), 'lines': []}
+                descriptor = {'type': field.type}
+                if field.type in ('many2one', 'many2many'):
+                    ids = self._sale_relation_ids(field, value)
+                    descriptor.update(model=field.comodel_name, ids=ids)
+                    refs = [self._reference(self.env[field.comodel_name].browse(i)) for i in ids]
+                    value = (refs[0] if refs else False) if field.type == 'many2one' else refs
+                elif field.type in ('date', 'datetime'):
+                    if not value:
+                        value = None
+                    elif field.type == 'date':
+                        value = fields.Date.to_date(value).isoformat()
+                    else:
+                        stamp = fields.Datetime.to_datetime(value)
+                        stamp = stamp.replace(tzinfo=timezone.utc) if stamp.tzinfo is None else stamp.astimezone(timezone.utc)
+                        value = stamp.isoformat().replace('+00:00', 'Z')
+                elif field.type in ('float', 'monetary', 'integer'):
+                    if type(value) not in (int, float) or not math.isfinite(value):
+                        raise UserError(_('Invalid scalar value for branch submission: %s') % key)
+                    if field.type == 'integer' and type(value) is not int:
+                        raise UserError(_('Invalid scalar value for branch submission: %s') % key)
+                elif field.type == 'boolean':
+                    if type(value) is not bool:
+                        raise UserError(_('Invalid scalar value for branch submission: %s') % key)
+                elif field.type in ('char', 'text', 'selection'):
+                    if not (isinstance(value, str) or value is False or value is None):
+                        raise UserError(_('Invalid scalar value for branch submission: %s') % key)
+                else:
+                    raise UserError(_('Unsupported source field type for branch submission: %s') % key)
+                result[key] = value
+                descriptors[key] = descriptor
+            return result, descriptors
+        header, context['header'] = encode(self.env['ab_sales_header'], values, ignored)
+        result = {'header': header, 'lines': [], 'metadata_context': context}
         for source in payload.get('lines') or []:
             source = pos_api._pos_editable_line_vals(source)
-            line = encode(self.env['ab_sales_line'], source, {'uom_id', 'header_id', 'inventory_json', 'balance', 'cost'})
+            line, descriptors = encode(self.env['ab_sales_line'], source, {'uom_id', 'header_id', 'inventory_json', 'balance', 'cost'})
+            context['lines'].append(descriptors)
             product = self.env['ab_product'].browse(int(source.get('product_id') or 0)).exists()
             uom = self.env['ab_product_uom'].browse(int(source.get('uom_id') or product.uom_id.id)).exists()
             if (not product or not uom or uom.category_id != product.uom_category_id
@@ -147,6 +228,7 @@ class BranchPos(models.TransientModel):
         balances = self.pos_refresh_pos_balances(store_id=store_id, product_ids=[product_id])
         response['pos_balance'] = balances.get(int(product_id), 0.0)
         response['balance'] = response['pos_balance']
+        response['total_balance'] = self.pos_cached_balance_totals([product_id], store_id).get(int(product_id), 0.0)
         product = self.env['ab_product'].browse(int(product_id))
         response['sell_price'] = self._store_default_price(int(store_id), product)
         response['default_price'] = response['sell_price']

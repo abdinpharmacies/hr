@@ -182,6 +182,8 @@ class BillCorrectionApi(models.TransientModel):
                 wire['promotion'] = self.env['ab_sales_branch_client']._reference(
                     self.env['ab_promo_program'].browse(int(promotion)).exists())
         payload['applied_program_id'] = promotion
+        wire = self.env['ab_sales_branch_client']._sale_correction_payload(wire)
+        payload['_branch_wire_payload'] = wire
         if wire == stored['_branch_wire_payload']:
             raise UserError(_('Change a quantity or promotion before submitting the correction.'))
         self._validate_submission_promotion(payload)

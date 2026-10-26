@@ -6,6 +6,42 @@ import {deserializeDateTime} from "@web/core/l10n/dates";
 // Tokens protect display updates; requests are not queued or automatically retried.
 const latestRefresh = new WeakMap();
 const refreshContext = new WeakMap();
+const latestTotalRefresh = new WeakMap();
+
+function applyTotalBalance(row, total, productKey) {
+    if (!Number.isFinite(total)) return;
+    row.balance_total = total;
+    if (productKey === "id") {
+        row.balance = total;
+        row.has_balance = total > 0;
+    }
+}
+
+// The dialog already fetched branch balances. Reuse its scoped cache on close.
+export async function refreshCachedTotalBalances(orm, products, lines, storeId, isCurrent) {
+    const targets = [
+        ...products.map((row) => ({row, productKey: "id", id: row.id})),
+        ...lines.map((row) => ({row, productKey: "product_id", id: row.product_id})),
+    ].filter(({id}) => Number.isInteger(id) && id > 0);
+    if (!targets.length || !isCurrent()) return;
+    const token = {};
+    for (const {row} of targets) latestTotalRefresh.set(row, token);
+    let totals;
+    try {
+        totals = await orm.call("ab_sales_pos_api", "pos_cached_balance_totals", [], {
+            product_ids: [...new Set(targets.map(({id}) => id))],
+            store_id: storeId || false,
+        });
+    } catch {
+        return; // Retain the last displayed total if this read fails.
+    }
+    if (!isCurrent()) return;
+    for (const {row, productKey, id} of targets) {
+        if (latestTotalRefresh.get(row) === token && row[productKey] === id) {
+            applyTotalBalance(row, totals?.[id], productKey);
+        }
+    }
+}
 
 export function balanceAgeLabel(timestamp, now = Date.now()) {
     if (!timestamp) return "";
@@ -22,7 +58,7 @@ export function balanceAgeLabel(timestamp, now = Date.now()) {
     return days === 1 ? _t("since 1 day") : _t("since %s days", days);
 }
 
-export async function refreshPosBalances(orm, rows, storeId, productKey, isCurrent, {showAge = false, manual = false} = {}) {
+export async function refreshPosBalances(orm, rows, storeId, productKey, isCurrent, {showAge = false, manual = false, allStores = false} = {}) {
     const targets = rows.filter((row) => Number.isInteger(row[productKey]) && row[productKey] > 0);
     if (!storeId || !targets.length || !isCurrent()) {
         return;
@@ -42,14 +78,15 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
             refreshContext.set(row, context);
         }
         latestRefresh.set(row, token);
+        latestTotalRefresh.set(row, token);
         row.pos_balance_refreshing = true;
     }
     let balances;
     try {
-        balances = await orm.call("ab_sales_pos_api", "pos_refresh_pos_balances", [], {
+        balances = await orm.call("ab_sales_pos_api", allStores ? "pos_refresh_search_balances" : "pos_refresh_pos_balances", [], {
             store_id: storeId,
             product_ids: [...new Set(productIds.values())],
-            include_sync_metadata: true,
+            ...(allStores ? {} : {include_sync_metadata: true}),
         });
     } catch {
         // Network/RPC failures have the same display meaning as unavailable SQL.
@@ -72,6 +109,10 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
         if (Number.isFinite(metadata?.balance)) {
             row.pos_balance = metadata.balance;
             row.pos_balance_last_sync_at = metadata.last_sync_at || false;
+        }
+        if (latestTotalRefresh.get(row) === token) {
+            applyTotalBalance(row, metadata?.total_balance, productKey);
+            if (allStores) row.total_balance_unavailable = metadata?.total_refresh_success !== true;
         }
         row.pos_balance_unavailable = !(metadata?.refresh_success === true && Number.isFinite(metadata.balance));
         if (!row.pos_balance_unavailable) {

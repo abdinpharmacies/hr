@@ -198,17 +198,56 @@ class ApiPosServices(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
 
     @api.model
+    def pos_cached_balance_totals(self, product_ids=None, store_id=None):
+        """Read totals after the balance dialog has refreshed the branch cache."""
+        products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
+        products.check_access('read')
+        totals, _selected = self.env['ab_sales_ui_api']._inventory_total_and_pos_balances_by_serial(
+            products.mapped('eplus_serial'), store_id)
+        return {product.id: totals.get(product.eplus_serial, 0.0) for product in products}
+
+    @api.model
+    def pos_refresh_search_balances(self, store_id=None, product_ids=None):
+        """Refresh the returned search products across the dialog's branch scope."""
+        client = self.env['ab_sales_branch_client']
+        store_ids = self.env['ab_sales_ui_api']._inventory_balance_store_ids(store_id)
+        store = self.env['ab_store'].browse(int(store_id or 0)).exists()
+        products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
+        products.check_access('read')
+        if not products or not store:
+            return {}
+        serials = products.mapped('eplus_serial')
+        refreshed = set()
+        for branch in self.env['ab_store'].browse(store_ids):
+            try:
+                with self.env.cr.savepoint():
+                    client._balances(branch, serials)
+                refreshed.add(branch.id)
+            except (UserError, AccessError):
+                # Keep that branch's last snapshot; continue refreshing the others.
+                _logger.info('Search balance refresh unavailable for store=%s', branch.id)
+        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
+        totals = self.pos_cached_balance_totals(products.ids, store.id)
+        return {p.id: dict(metadata.get(p.eplus_serial, {}),
+                           refresh_success=store.id in refreshed,
+                           total_balance=totals[p.id],
+                           total_refresh_success=len(refreshed) == len(store_ids))
+                for p in products}
+
+    @api.model
     def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         client = self.env['ab_sales_branch_client']
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
         products.check_access('read')
+        self.env['ab_sales_ui_api']._inventory_balance_store_ids(store.id)
         rows = client._balances(store, products.mapped('eplus_serial'))
         by_serial = {r['product_eplus_serial']: r['balance'] for r in rows}
         result = {p.id: by_serial[p.eplus_serial] for p in products if p.eplus_serial in by_serial}
         if include_sync_metadata:
             metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
-            return {p.id: dict(metadata[p.eplus_serial], refresh_success=True)
+            totals = self.pos_cached_balance_totals(products.ids, store.id)
+            return {p.id: dict(metadata[p.eplus_serial], refresh_success=True, total_balance=totals[p.id])
                     for p in products if p.eplus_serial in metadata}
         result['_refreshed_at'] = fields.Datetime.to_string(fields.Datetime.now())
         return result

@@ -1413,6 +1413,7 @@ msgstr "الرصيد"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/add_products/product_card.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_search_product_card.xml:0
 msgid "Balance refresh failed; cached value shown"
 msgstr "تعذر تحديث الرصيد؛ تظهر القيمة المحفوظة"
 
@@ -7251,3 +7252,27 @@ msgstr "بها مرتجعات"
 #: model:ir.model.fields,help:ab_sales.field_ab_sales_header__has_returns
 msgid "Whether this bill has a confirmed return recorded in the callcenter."
 msgstr "ما إذا كانت لهذه الفاتورة مرتجعات مؤكدة مسجلة في مركز الاتصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A valid callcenter database UUID is required for branch submission."
+msgstr "يلزم معرّف UUID صالح لقاعدة بيانات مركز الاتصال للإرسال إلى الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Invalid scalar value for branch submission: %s"
+msgstr "قيمة الحقل غير صالحة للإرسال إلى الفرع: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Invalid source relation for branch submission."
+msgstr "العلاقة المرجعية في المصدر غير صالحة للإرسال إلى الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "Unsupported source field type for branch submission: %s"
+msgstr "نوع حقل المصدر غير مدعوم للإرسال إلى الفرع: %s"

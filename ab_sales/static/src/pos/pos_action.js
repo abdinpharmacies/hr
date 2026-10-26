@@ -12,7 +12,7 @@ import {user} from "@web/core/user";
 import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {bindPrinterActions, printerStateDefaults} from "./pos_printer";
 import {AbSalesPosBarcodeLinkDialog} from "./pos_barcode_link";
-import {refreshPosBalances} from "./pos_balance_refresh";
+import {refreshCachedTotalBalances, refreshPosBalances} from "./pos_balance_refresh";
 
 const CACHE_PREFIX = "ab_sales_pos_cache_v1";
 const DEFAULT_QTY = "1";
@@ -3312,8 +3312,10 @@ class AbSalesPosAction extends Component {
             clearTimeout(this._posBalanceTimer);
         }
         const requestId = ++this._posBalanceRequestId;
+        const searchId = this._productSearchRequestId;
         this._posBalanceTimer = setTimeout(() => {
             this._posBalanceTimer = null;
+            if (searchId !== this._productSearchRequestId) return;
             this._refreshPosBalancesForResults(results, storeId, requestId);
         }, 400);
     }
@@ -3325,7 +3327,7 @@ class AbSalesPosAction extends Component {
             !this._balanceRefreshUnmounted && requestId === this._posBalanceRequestId &&
             searchId === this._productSearchRequestId && this.currentBill === bill &&
             bill?.header?.store_id === storeId && this.state.productResults === results,
-            {showAge: true, manual});
+            {showAge: true, manual, allStores: true});
     }
 
     refreshProductPosBalance(product) {
@@ -4543,10 +4545,21 @@ class AbSalesPosAction extends Component {
         return product.name || product.product_card_name || `${product.code || ""}`.trim() || `#${product.id}`;
     }
 
+    onProductCardClick(ev) {
+        // Locked bills still allow the same read-only balance lookup as added lines.
+        if (!this.billEditable(this.currentBill) && !ev.target.closest(".o_ab_sales_balance_btn")) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
+    }
+
     openStoresBalance(product) {
         if (!product?.id) {
             return;
         }
+        const bill = this.currentBill;
+        const storeId = bill?.header?.store_id;
+        const results = this.state.productResults;
         this.dialog.add(FormViewDialog, {
             resModel: "ab_product_balance_wizard",
             title: _t("Store Balances"),
@@ -4555,6 +4568,14 @@ class AbSalesPosAction extends Component {
             },
             readonly: true,
             size: "lg",
+        }, {
+            onClose: () => refreshCachedTotalBalances(
+                this.orm,
+                (results || []).filter((row) => row.id === product.id),
+                (bill?.lines || []).filter((row) => row.product_id === product.id),
+                storeId,
+                () => !this._balanceRefreshUnmounted && this.currentBill === bill &&
+                    bill?.header?.store_id === storeId && this.state.productResults === results),
         });
     }
 
