@@ -24,7 +24,19 @@ class DeliveryClient(models.AbstractModel):
             # Ordinary sales remain compatible with providers without this extension.
             header.pop('delivery_notify', None)
             header.pop('delivery_instructions', None)
-        return result
+        return self._remove_omitted_delivery_descriptors(result)
+
+    def _remove_omitted_delivery_descriptors(self, wire):
+        header = wire.get('header', {})
+        descriptors = (wire.get('metadata_context') or {}).get('header', {})
+        for name in ('delivery_notify', 'delivery_instructions'):
+            if name not in header:
+                descriptors.pop(name, None)
+        return wire
+
+    def _sale_correction_payload(self, wire):
+        # Only the new, authorized revision is repaired; frozen retries stay intact.
+        return self._remove_omitted_delivery_descriptors(super()._sale_correction_payload(wire))
 
 
 class DeliveryCapabilities(models.TransientModel):
