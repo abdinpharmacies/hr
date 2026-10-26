@@ -1061,6 +1061,72 @@ class TestSupplierClaimCycle(TransactionCase):
             'type_of_invoice', 'payment_nature', 'tax_classification', 'section',
         )))
 
+    def test_supplier_and_section_permissions_in_every_stage(self):
+        self.claim(True)
+        self.claim()
+        editors = (self.users['user'], self.users['admin'], self.system)
+        restricted = [user for role, user in self.users.items() if role not in ('user', 'admin')]
+        for state, _label in self.Claim._fields['state'].selection:
+            claim = self.claim()
+            claim._workflow_write({'state': state})
+            if state == 'closed':
+                for user in editors:
+                    for values in ({'supplier_id': self.cash.id}, {'section': 'cosmo'}):
+                        with self.assertRaises(UserError), self.env.cr.savepoint():
+                            claim.with_user(user).write(values)
+                continue
+            preserved = {name: claim[name] for name in (
+                'type_of_invoice', 'payment_nature', 'tax_classification', 'area')}
+            history_ids = claim.history_ids.ids
+            for index, user in enumerate(editors):
+                supplier = self.cash if index % 2 == 0 else self.supplier
+                claim.with_user(user).write({'supplier_id': supplier.id, 'section': 'cosmo'})
+                self.assertEqual(claim.supplier_id, supplier)
+                self.assertEqual(claim.section, 'cosmo')
+                self.assertEqual(claim.state, state)
+                self.assertEqual(claim.history_ids.ids, history_ids)
+                if state != 'draft':
+                    self.assertEqual({name: claim[name] for name in preserved}, preserved)
+            for user in (*restricted, self.outsider):
+                for values in ({'supplier_id': self.supplier.id}, {'section': 'other'}):
+                    with self.assertRaises(AccessError), self.env.cr.savepoint():
+                        claim.with_user(user).write(values)
+            claim.with_user(self.users['admin']).write({'active': False})
+            for user in editors:
+                for values in ({'supplier_id': self.supplier.id}, {'section': 'other'}):
+                    with self.assertRaises(UserError), self.env.cr.savepoint():
+                        claim.with_user(user).write(values)
+
+    def test_supplier_change_defaults_only_drafts_in_mixed_recordset(self):
+        previous_cash = self.claim(True)
+        previous_cash.write({
+            'type_of_invoice': 'copy', 'tax_classification': 'through_supplier',
+            'section': 'cosmo', 'area': 'south',
+        })
+        draft = self.claim()
+        submitted = self.claim()
+        submitted.action_submit()
+        preserved = {name: submitted[name] for name in (
+            'type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area')}
+        (draft | submitted).write({'supplier_id': self.cash.id})
+        self.assertEqual(draft.supplier_id, self.cash)
+        self.assertEqual(submitted.supplier_id, self.cash)
+        for name, value in preserved.items():
+            self.assertEqual(submitted[name], value)
+            self.assertEqual(draft[name], previous_cash[name])
+        with Form(submitted) as form:
+            form.supplier_id = self.supplier
+            form.section = 'other'
+        self.assertEqual(submitted.supplier_id, self.supplier)
+        self.assertEqual(submitted.section, 'other')
+        for name in preserved.keys() - {'section'}:
+            self.assertEqual(submitted[name], preserved[name])
+        submitted._workflow_write({'state': 'closed'})
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            (draft | submitted).write({'supplier_id': self.supplier.id, 'section': 'medical'})
+        self.assertEqual(draft.supplier_id, self.cash)
+        self.assertEqual(draft.section, 'cosmo')
+
     def test_draft_form_uses_latest_claim_values(self):
         previous = self.claim()
         previous.write({
@@ -1078,14 +1144,16 @@ class TestSupplierClaimCycle(TransactionCase):
             form.amount_of_check = '100'
         self.assertEqual(form.record.supplier_id, self.supplier)
 
-    def test_classification_form_is_editable_only_for_secretarial_drafts(self):
+    def test_supplier_classification_form_permissions(self):
         for role in self.roles:
             arch = etree.fromstring(self.Claim.with_user(self.users[role]).get_view(
                 view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-            for name in ('tax_classification', 'section'):
+            for name in ('tax_classification', 'section', 'supplier_id'):
                 nodes = arch.xpath('//group[@name="supplier_classification"]/field[@name="%s"]' % name)
                 self.assertTrue(nodes)
-                expected = "state != 'draft' or not active" if role in ('user', 'admin') else 'True'
+                expected = 'True'
+                if role in ('user', 'admin'):
+                    expected = "state != 'draft' or not active" if name == 'tax_classification' else 'not can_edit_supplier_section'
                 self.assertTrue(all(node.get('readonly') == expected for node in nodes))
         previous = self.claim()
         with Form(self.Claim.with_user(self.users['user'])) as form:
@@ -1097,6 +1165,29 @@ class TestSupplierClaimCycle(TransactionCase):
             form.type_of_invoice = 'original'
         self.assertEqual(form.record.supplier_id, self.supplier)
 
+    def test_preserved_tax_values_have_selection_labels(self):
+        claim = self.Claim.with_user(self.users['user']).create({
+            **self.values(), 'tax_classification': 'withholding_tax',
+        })
+        with Form(claim) as form:
+            self.assertEqual(form.tax_classification, 'withholding_tax')
+        claim_fields = self.Claim.fields_get(['tax_classification', 'state'])
+        self.assertIn(claim.tax_classification, dict(claim_fields['tax_classification']['selection']))
+        self.assertNotIn('tax_accounts', dict(claim_fields['state']['selection']))
+        history = self.env['ab_supplier_claim_cycle.history']._append([{
+            'claim_id': claim.id, 'event': 'tax_finished',
+            'from_state': 'tax_accounts', 'to_state': 'tax_accounts',
+            'department': 'tax_accounts', 'tax_classification': 'withholding_tax',
+            'review_round': 1, 'user_id': self.users['admin'].id,
+            'occurred_at': fields.Datetime.now(),
+        }])
+        names = ['event', 'from_state', 'to_state', 'department', 'tax_classification']
+        descriptions = history.fields_get(names)
+        for name in names:
+            self.assertIn(history[name], dict(descriptions[name]['selection']))
+        with self.assertRaises(AccessError):
+            history.with_user(self.users['admin']).write({'department': 'secretarial'})
+
     def test_fresh_model_contract(self):
         self.assertEqual(set(dict(self.Claim._fields['state'].selection)), {
             'draft', 'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts',
@@ -1107,7 +1198,7 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertNotIn('bracket_id', self.Claim._fields)
         self.assertNotIn('bracket_snapshot', self.env['ab_supplier_claim_cycle.history']._fields)
         self.assertEqual(set(dict(self.env['ab_supplier_claim_cycle.history']._fields['event'].selection)), {
-            'resubmitted', 'decision', 'closed', 'archived', 'restored', 'secretarial_note',
+            'resubmitted', 'decision', 'closed', 'archived', 'restored', 'secretarial_note', 'tax_finished',
         })
         self.supplier.active = False
         with self.assertRaises(ValidationError), self.env.cr.savepoint():
@@ -1412,7 +1503,7 @@ class TestSupplierClaimCycle(TransactionCase):
         claim.action_submit()
         admins = (self.users['admin'], self.system)
         protected = {
-            'supplier_id': self.cash.id, 'tax_classification': 'non_tax_payment', 'section': 'other',
+            'tax_classification': 'non_tax_payment',
             'state': 'closed', 'review_round': 99, 'user_id': self.users['admin'].id,
             'resume_stage': 'bank_accounts', 'rejection_department': 'inventory',
             'rejection_reason': 'Forged', 'history_ids': [(5, 0, 0)],
@@ -1556,6 +1647,12 @@ class TestSupplierClaimCycle(TransactionCase):
                         can_pay = active and ((role in ('user', 'admin') and state == 'draft') or (
                             role in ('supplier_accounts', 'admin') and state == 'supplier_accounts'
                             and decision in ('pending', 'deferred')))
+                        can_edit_supplier_section = active and state != 'closed' and role in ('user', 'admin')
+                        self.assertEqual(record.can_edit_supplier_section, can_edit_supplier_section)
+                        for name in ('supplier_id', 'section'):
+                            node, = arch.xpath('//group[@name="supplier_classification"]/field[@name="%s"]' % name)
+                            self.assertEqual(bool(safe_eval(node.get('readonly', 'False'), {
+                                'can_edit_supplier_section': can_edit_supplier_section})), not can_edit_supplier_section)
                         self.assertEqual(record.can_edit_correction_fields, can_correct)
                         self.assertEqual(record.can_edit_payment_nature, can_pay)
                         values = dict(can_edit_correction_fields=can_correct, can_edit_payment_nature=can_pay)

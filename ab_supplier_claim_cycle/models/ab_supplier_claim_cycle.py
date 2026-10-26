@@ -9,6 +9,7 @@ PAYMENT_NATURE = [
 TAX_CLASSIFICATION = [
     ('through_supplier', 'Advance Payments'),
     ('tax_payment', 'Tax Payment'),
+    ('withholding_tax', 'Withholding Tax'),
     ('non_tax_payment', 'Non-tax Payment'),
 ]
 
@@ -60,7 +61,7 @@ class SupplierClaimCycle(models.Model):
         help='Defaults from the latest claim for this cost center and remains editable in Draft.')
     section = fields.Selection(
         SUPPLIER_SECTION, copy=False, tracking=True,
-        help='Defaults from the latest claim for this cost center and remains editable in Draft.')
+        help='Defaults from the latest claim for this cost center. Administrators and Secretarial can edit it in any open stage.')
     review_round = fields.Integer(default=0, readonly=True, copy=False)
     resume_stage = fields.Selection(STATES, readonly=True, copy=False)
     rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True,
@@ -90,6 +91,7 @@ class SupplierClaimCycle(models.Model):
     supplier_accounts_followup_date = fields.Date(copy=False)
     bank_accounts_followup_date = fields.Date(copy=False)
 
+    can_edit_supplier_section = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_correction_fields = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_payment_nature = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_upload_secretarial_cheque = fields.Boolean(compute='_compute_can_upload_secretarial_cheque')
@@ -121,6 +123,8 @@ class SupplierClaimCycle(models.Model):
         is_secretarial = is_admin or self.env.user.has_group(GROUP_PREFIX + 'user')
         is_supplier_accounts = is_admin or self.env.user.has_group(GROUP_PREFIX + 'supplier_accounts')
         for claim in self:
+            claim.can_edit_supplier_section = bool(
+                claim.active and claim.state != 'closed' and is_secretarial)
             claim.can_edit_correction_fields = bool(
                 claim.active and claim.state != 'closed'
                 and (is_admin or (is_secretarial and claim.state in ('draft', 'returned_secretarial'))))
@@ -359,13 +363,17 @@ class SupplierClaimCycle(models.Model):
                 # must never replace the first Supplier Accounts/Secretarial file.
                 if claim.can_upload_secretarial_cheque and vals.get('cheque_attachment'):
                     allowed |= {'cheque_attachment', 'cheque_filename'}
+            if claim.can_edit_supplier_section:
+                allowed |= {'supplier_id', 'section'}
             if set(vals) - allowed:
                 raise AccessError(_('You may only edit the fields assigned to your current stage.'))
             if claim.state == 'supplier_accounts' and 'payment_nature' in vals and not vals['payment_nature']:
                 raise ValidationError(_('Select a payment nature before submitting the claim.'))
         if 'claim_reference' in vals:
             vals = {**vals, 'claim_reference': self._normalize_claim_reference(vals['claim_reference'])}
-        if 'supplier_id' in vals:
+        draft_claims = self.filtered(lambda claim: claim.state == 'draft') if 'supplier_id' in vals else self.browse()
+        draft_values = vals
+        if draft_claims:
             values_by_supplier = self._last_claim_values_by_supplier(
                 [vals['supplier_id']],
                 exclude_ids=self.ids,
@@ -374,10 +382,15 @@ class SupplierClaimCycle(models.Model):
                 vals['supplier_id'],
                 {name: False for name in CLAIM_DEFAULT_FIELDS},
             )
-            vals = {**previous_values, **vals}
+            draft_values = {**previous_values, **vals}
         previous_notes = ({claim.id: (claim.secretarial_notes or '').strip() for claim in self}
                           if 'secretarial_notes' in vals else {})
-        result = super().write(vals)
+        result = True
+        if draft_claims:
+            result = super(SupplierClaimCycle, draft_claims).write(draft_values)
+        other_claims = self - draft_claims
+        if other_claims:
+            result = super(SupplierClaimCycle, other_claims).write(vals) and result
         if 'secretarial_notes' in vals:
             self.filtered(lambda claim: (claim.secretarial_notes or '').strip() != previous_notes[
                 claim.id])._record_secretarial_notes()

@@ -4,6 +4,8 @@ from .ab_supplier_claim_cycle import (
     STATES, DECISIONS, DEPARTMENTS, TAX_CLASSIFICATION, SUPPLIER_SECTION,
 )
 
+HISTORY_STATES = STATES + [('tax_accounts', 'Taxes')]
+
 
 class SupplierClaimHistory(models.Model):
     _name = 'ab_supplier_claim_cycle.history'
@@ -11,10 +13,10 @@ class SupplierClaimHistory(models.Model):
     _order = 'id desc'
 
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True, ondelete='restrict', index=True)
-    event = fields.Selection([(e, e.title()) for e in ('resubmitted', 'decision', 'closed', 'archived', 'restored')] + [('secretarial_note', 'Secretarial Note')], required=True)
-    from_state = fields.Selection(STATES)
-    to_state = fields.Selection(STATES, required=True)
-    department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS] + [('secretarial', 'Secretarial')])
+    event = fields.Selection([(e, e.title()) for e in ('resubmitted', 'decision', 'closed', 'archived', 'restored')] + [('secretarial_note', 'Secretarial Note'), ('tax_finished', 'Taxes Finished')], required=True)
+    from_state = fields.Selection(HISTORY_STATES)
+    to_state = fields.Selection(HISTORY_STATES, required=True)
+    department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS] + [('secretarial', 'Secretarial'), ('tax_accounts', 'Taxes')])
     decision = fields.Selection(DECISIONS)
     inventory_decision = fields.Selection(DECISIONS)
     purchasing_decision = fields.Selection(DECISIONS)
