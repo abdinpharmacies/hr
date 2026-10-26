@@ -1140,3 +1140,43 @@ msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلا
 #: model:ir.module.module,description:base.module_ab_branch_api
 msgid "Authenticated branch API for sales, returns, stock and customer operations."
 msgstr "واجهة برمجة تطبيقات الفرع مع المصادقة لعمليات المبيعات والمرتجعات والمخزون والعملاء."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Invalid sale field descriptor."
+msgstr "وصف حقل المبيعات غير صالح."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Invalid sale metadata context."
+msgstr "سياق البيانات الوصفية للمبيعات غير صالح."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_branch_sale_metadata__metadata
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_header__metadata
+#: model:ir.model.fields,field_description:ab_branch_api.field_ab_sales_line__metadata
+msgid "Metadata"
+msgstr "البيانات الوصفية"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid ""
+"Missing source metadata for %s. Correct and resubmit the rejected bill from "
+"the updated callcenter."
+msgstr ""
+"البيانات الوصفية للمصدر مفقودة للحقل %s. صحح الفاتورة المرفوضة وأعد إرسالها "
+"من مركز الاتصال بعد تحديثه."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/sale_metadata.py:0
+msgid "Sale metadata is server-managed."
+msgstr "تتم إدارة البيانات الوصفية للمبيعات بواسطة الخادم."
+
+#. module: ab_branch_api
+#: model:ir.model,name:ab_branch_api.model_ab_branch_sale_metadata
+msgid "Technical Sale Metadata"
+msgstr "البيانات الوصفية الفنية للمبيعات"

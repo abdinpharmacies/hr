@@ -8,6 +8,72 @@ administrators, access administrators and an active superuser. Inactive and
 portal/public users cannot connect.
 Business ACLs and record rules remain in force; no users or mappings are created.
 
+## Technical metadata from callcenter
+
+Optional descriptive fields do not require their addons on the receiving branch.
+Only allowlisted submitted fields missing from `ab_sales_header` or `ab_sales_line`
+are stored in that record's `metadata` JSON field. Existing fields retain their
+normal business validation and stable-reference resolution. Missing nonempty
+`contract_id` or nonzero `total_invoice_discount` still rejects the invoice.
+
+Metadata is server-managed, excluded from business views and restricted to
+Settings administrators (`base.group_system`), including ORM reads and exports.
+It cannot be supplied in invoice values or context defaults. It is a reporting
+snapshot, never a set of branch foreign keys. No historical backfill is performed.
+
+The callcenter sender adds this context alongside the usual header and lines:
+
+```json
+{
+  "metadata_context": {
+    "schema_version": 1,
+    "source": "f88c35c8-b3d9-42b8-b36f-c45e5f65a823",
+    "header": {
+      "sales_channel_id": {"type": "many2one", "model": "ab_sales_channel", "ids": [15]}
+    },
+    "lines": []
+  }
+}
+```
+
+The example represents a header containing only `sales_channel_id`. Each actual
+context has one descriptor per submitted field, and one descriptor object per
+line in the same order. `uom_factor` remains separate transport data. Scalar
+descriptors contain only `type`; relation descriptors also contain `model` and
+`ids`. Normal header/line values continue carrying stable relation references.
+Many2many references are arrays; relation commands are never sent over the wire.
+
+A branch without the sales-channel addon stores:
+
+```json
+{
+  "schema_version": 1,
+  "source": "f88c35c8-b3d9-42b8-b36f-c45e5f65a823",
+  "relation_models": {"sales_channel_id": "ab_sales_channel"},
+  "values": {"sales_channel_id": [15]}
+}
+```
+
+Many2one uses zero or one source ID; Many2many uses unique source IDs. Empty
+relations use `[]`. Booleans, numbers and strings retain their JSON types and
+explicit empty values. Selections use technical keys, dates ISO strings and
+datetimes UTC ISO strings; unset dates use `null`. Omitted fields remain omitted.
+The source is callcenter's `database.uuid`; test copies must not be registered as
+independent reporting sources under the same UUID.
+
+Deploy/upgrade `ab_branch_api` on the branch first, then `ab_sales` on callcenter,
+and restart their workers. Installing `ab_sales_channel` on the branch is optional.
+If installed, channel codes must match and native resolution still rejects missing,
+inactive, ambiguous or inaccessible references.
+
+The context is part of the immutable request hash. Existing frozen requests are
+never rewritten. A legacy request that needs missing-field metadata must be
+corrected and resubmitted through the existing rejected-bill revision workflow;
+the receiver cannot reconstruct source IDs from codes. Legacy requests needing
+no fallback retain existing behavior. Corrections replace metadata rather than
+merge stale values. Historical metadata is not remapped if an addon is installed
+later. No live invoice is automatically retried by this upgrade.
+
 ## Store selection and contract
 
 All methods accept optional keyword `store_eplus_serial`. An explicit value
