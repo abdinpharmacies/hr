@@ -404,14 +404,17 @@ class BranchApi(models.AbstractModel):
         token = operation.token
         Pos = self.env['ab_sales_pos_api']
         header_model = self.env['ab_sales_header']
-        allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id',
+        allowed = {'customer_id', 'employee_id', 'employee_delivery_id', 'contract_id', 'doctor_id', 'sales_channel_id',
                    'is_delivery', 'delivery_notify', 'delivery_instructions',
                    'description', 'invoice_address', 'new_customer_name',
                    'new_customer_phone', 'new_customer_address', 'customer_insurance_name',
                    'customer_insurance_number', 'total_invoice_discount', 'is_doctor_prescription',
                    'bill_customer_name', 'bill_customer_phone', 'bill_customer_address',
                    'pos_hr_employee_id', 'pos_hr_device_uid', 'pos_hr_device_name', 'pos_hr_device_ip'}
-        values = self._sale_values(header_model, payload.get('header', {}), allowed)
+        context = self._sale_metadata_context(payload)
+        values, metadata = self._sale_values_with_metadata(
+            header_model, payload.get('header', {}), allowed, context,
+            context['header'] if context is not None else None)
         values.update({'store_id': store.id, 'pos_client_token': token, 'status': 'prepending'})
         draft = header_model.new(values)
         draft._validate_new_customer()
@@ -435,11 +438,16 @@ class BranchApi(models.AbstractModel):
             header = header_model._create_callcenter_order(values)
             operation.record_id = header.id
         Line = self.env['ab_sales_line']
-        line_values = []
-        for source in payload.get('lines', []):
+        header._write_sale_metadata(metadata)
+        line_values, line_metadata = [], []
+        for index, source in enumerate(payload.get('lines', [])):
+            if not isinstance(source, dict):
+                raise UserError(_('Invalid sale payload.'))
             line_source = {key: value for key, value in source.items() if key != 'uom_factor'}
-            vals = self._sale_values(Line, line_source, {'product_id', 'qty_str', 'sell_price',
-                'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product', 'uom_factor'})
+            vals, metadata = self._sale_values_with_metadata(Line, line_source, {'product_id', 'qty_str', 'sell_price',
+                'unavailable_reason', 'unavailable_reason_other', 'target_sell_price', 'is_doctor_prescription_product'},
+                context, context['lines'][index] if context is not None else None)
+            line_metadata.append(metadata)
             product = self.env['ab_product'].browse(vals.get('product_id')).exists()
             if not product:
                 raise UserError(_('Product is required.'))
@@ -456,7 +464,9 @@ class BranchApi(models.AbstractModel):
             vals.update({'uom_id': Pos._pos_line_uom_id(product, uom.id), 'header_id': header.id})
             Pos._pos_fill_inventory_json_for_price_validation(header, vals)
             line_values.append(vals)
-        Line.create(line_values)
+        lines = Line.create(line_values)
+        for line, metadata in zip(lines, line_metadata):
+            line._write_sale_metadata(metadata)
         if payload.get('promotion'):
             program = self._resolve('ab_promo_program', payload['promotion'])
             header.applied_program_ids = [fields.Command.set(program.ids)]
@@ -466,19 +476,7 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     def _sale_values(self, model, source, allowed):
-        values = {}
-        for key, value in source.items():
-            if key not in allowed:
-                raise UserError(_('Unsupported sale field: %s') % key)
-            if key not in model._fields:
-                if value:
-                    raise UserError(_('Branch module does not support field: %s') % key)
-                continue
-            field = model._fields[key]
-            if field.type == 'many2one':
-                values[key] = self._resolve(field.comodel_name, value).id if value else False
-            else:
-                values[key] = value
+        values, _metadata = self._sale_values_with_metadata(model, source, allowed)
         return values
 
 

@@ -12,3 +12,5 @@ from . import guarded_sales
 from . import sale_validation
 
 from . import customer_sync
+
+from . import sale_metadata
