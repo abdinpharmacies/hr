@@ -5,7 +5,7 @@ from odoo.tools.translate import _
 
 class AbOdooSyncUploadFieldOverride(models.Model):
     _name = "ab_odoo_sync_upload_field_override"
-    _inherit = "ab_odoo_sync_passive_mirror_mixin"
+    _inherit = ["ab_odoo_sync_passive_mirror_mixin", "ab_odoo_sync_mapping_toggle_mixin"]
     _log_access = False
     _description = "AB Odoo Sync Upload Field Override"
     _order = "sequence, source_field_name"
@@ -18,7 +18,10 @@ class AbOdooSyncUploadFieldOverride(models.Model):
         ondelete="cascade",
     )
     sequence = fields.Integer(default=10)
-    sync_enabled = fields.Boolean(string="Sync Enabled", default=True, index=True)
+    sync_enabled = fields.Boolean(
+        string="Sync Enabled", default=True, index=True,
+        help="Turn off to ignore this field without partial status. Turn on to select a compatible mapping type automatically.",
+    )
     active = fields.Boolean(default=True, index=True)
     source_field_name = fields.Char(string="Source Field")
     target_field_name = fields.Char(string="Target Field")
@@ -74,6 +77,8 @@ class AbOdooSyncUploadFieldOverride(models.Model):
             "stable_many2many": "many2many",
         }
         for override in self:
+            if override.mapping_type == "ignore" and override.required:
+                raise ValidationError(_("Ignored fields cannot be required."))
             if not override.sync_enabled:
                 continue
             upload = override.upload_record_id
@@ -84,8 +89,6 @@ class AbOdooSyncUploadFieldOverride(models.Model):
                     % {"field": override.source_field_name}
                 )
             if override.mapping_type == "ignore":
-                if override.required:
-                    raise ValidationError(_("Ignored fields cannot be required."))
                 continue
             if upload.target_model_name not in self.env:
                 raise ValidationError(

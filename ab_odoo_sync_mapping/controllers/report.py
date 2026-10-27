@@ -160,7 +160,7 @@ class AbOdooSyncMappingController(http.Controller):
             return _json_response({"ok": False, "error": str(ex)}, status=400)
         except Exception:
             request.env.cr.rollback()
-            _logger.error("AB sync receipt storage failed branch=%s", branch.db_serial)
+            _logger.error("AB sync upload storage failed branch=%s", branch.db_serial)
             return _json_response({"ok": False, "error": _("Upload storage is unavailable; retry delivery.")}, status=503)
         result["ok"] = True
         _logger.info("AB sync upload branch=%s records=%s accepted=%s failed=%s duration_ms=%.2f", payload.get("db_serial"), len(payload.get("records", [])), result.get("accepted"), result.get("failed"), (time.monotonic() - started) * 1000)

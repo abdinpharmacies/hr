@@ -4,6 +4,7 @@ from odoo.tools.translate import _
 
 
 _APPLY_CAPABLE_MODES = {"mirror_sync", "business_model"}
+_SOURCE_AUDIT_FIELDS = {"create_uid", "create_date", "write_uid", "write_date"}
 _AUTO_FEEDER_PROFILE_FIELDS = {
     "active",
     "allow_placeholder_creation",
@@ -64,7 +65,8 @@ class AbOdooSyncApplyProfile(models.Model):
     auto_apply = fields.Boolean(
         string="Automatically Queue Apply",
         default=False,
-        help="Keep disabled while inspecting raw payloads and selecting mappings.",
+        help="Store all valid uploads directly. Automatically create apply jobs only while enabled. "
+             "Reapply Mapping runs immediately even when this switch is disabled.",
     )
     auto_generated = fields.Boolean(
         string="Automatically Generated",
@@ -222,6 +224,9 @@ class AbOdooSyncApplyProfile(models.Model):
         return any(set(row[0] or []) == {"db_serial", "rec_id"} for row in self.env.cr.fetchall())
 
     def _queue_auto_upload_apply_feeders(self):
+        if self.env.context.get("skip_sync_apply_feeders"):
+            return 0
+        self = self.filtered(lambda profile: profile.active and profile.auto_apply)
         service = self.env["ab_odoo_sync_service"].sudo()
         partial_uploads = self.env["ab_odoo_sync_upload_record"].sudo().search(
             [
@@ -345,11 +350,23 @@ class AbOdooSyncApplyProfile(models.Model):
         return self._is_writable_sync_target_field(target_field)
 
     @api.model
+    def _is_passive_audit_field(self, target_field):
+        if not target_field or target_field.name not in _SOURCE_AUDIT_FIELDS:
+            return False
+        target_model = self.env[target_field.model_name]
+        return (
+            not target_model._log_access
+            and target_model._name in self.env.registry.descendants(
+                ["ab_odoo_sync_passive_mirror_mixin"], "_inherit"
+            )
+        )
+
+    @api.model
     def _is_writable_sync_target_field(self, target_field):
         return bool(
             target_field
             and target_field.store
-            and not target_field.readonly
+            and (not target_field.readonly or self._is_passive_audit_field(target_field))
             and not (target_field.compute and not target_field.inverse)
             and not (target_field.related and not target_field.inverse)
         )
@@ -439,7 +456,7 @@ class AbOdooSyncApplyProfile(models.Model):
             }
             vals_list = []
             for field_name, target_field in sorted(target_model._fields.items()):
-                if field_name in _TARGET_META_FIELDS or field_name not in source_fields:
+                if (field_name in _TARGET_META_FIELDS and not self._is_passive_audit_field(target_field)) or field_name not in source_fields:
                     continue
                 pair = (field_name, field_name)
                 if pair in existing_pairs:
@@ -524,6 +541,7 @@ class AbOdooSyncApplyProfile(models.Model):
 
 class AbOdooSyncFieldMapping(models.Model):
     _name = "ab_odoo_sync_field_mapping"
+    _inherit = "ab_odoo_sync_mapping_toggle_mixin"
     _description = "AB Odoo Sync Field Mapping"
     _order = "sequence, source_field_name"
 
@@ -559,7 +577,10 @@ class AbOdooSyncFieldMapping(models.Model):
     required = fields.Boolean(
         help="Fail the whole apply operation when this relation or value cannot be resolved.",
     )
-    sync_enabled = fields.Boolean(string="Sync Enabled", default=False, index=True)
+    sync_enabled = fields.Boolean(
+        string="Sync Enabled", default=False, index=True,
+        help="Turn off to ignore this field without partial status. Turn on to select a compatible mapping type automatically.",
+    )
     auto_generated = fields.Boolean(
         string="Automatically Generated",
         default=False,
@@ -665,10 +686,13 @@ class AbOdooSyncFieldMapping(models.Model):
         "relation_source_key",
         "relation_target_key",
         "sync_enabled",
+        "required",
     )
     def _check_mapping(self):
         stable_types = {"stable_many2one", "stable_many2many"}
         for mapping in self:
+            if mapping.mapping_type == "ignore" and mapping.required:
+                raise ValidationError(_("Ignored fields cannot be required."))
             profile = mapping.profile_id
             if profile.apply_mode not in {"mirror_sync", "business_model"}:
                 continue

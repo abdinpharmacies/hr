@@ -2,9 +2,9 @@ from . import ab_odoo_sync_branch_registry
 from . import ab_odoo_sync_branch_audit
 from . import ab_odoo_sync_branch_hardware_wizard
 from . import ab_odoo_sync_identity
+from . import ab_odoo_sync_mapping_toggle_mixin
 from . import ab_odoo_sync_apply_profile
 from . import ab_odoo_sync_upload_record
 from . import ab_odoo_sync_upload_override
 from . import ab_odoo_sync_mapping_service
 from . import ab_odoo_sync_token
-from . import ab_odoo_sync_upload_receipt

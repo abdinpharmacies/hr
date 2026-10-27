@@ -1,5 +1,7 @@
 import logging
 
+from psycopg2 import Error as DatabaseError
+
 from odoo import api, fields, models
 from odoo.tools.translate import _
 
@@ -90,16 +92,56 @@ class AbOdooSyncMappingService(models.AbstractModel):
         records = payload.get("records")
         if not isinstance(records, list):
             raise ValueError(_("records must be a JSON array."))
-        Receipts = self.env["ab_odoo_sync_upload_receipt"].sudo()
+        Uploads = self.env["ab_odoo_sync_upload_record"].sudo()
         result = {"accepted": 0, "queued": 0, "ignored": 0, "failed": 0, "errors": []}
-        for row in records:
-            receipt, created = Receipts._store(branch, row)
+        for index, row in enumerate(records):
+            try:
+                with self.env.cr.savepoint():
+                    if not isinstance(row, dict):
+                        raise ValueError(_("Each upload row must be a JSON object."))
+                    if "db_serial" in row and (
+                        isinstance(row["db_serial"], (bool, float))
+                        or self.parse_positive_int(row["db_serial"], "db_serial") != branch.db_serial
+                    ):
+                        raise ValueError(_("Row branch identity does not match the authenticated branch."))
+                    upload, changed = Uploads.upsert_from_upload(
+                        db_serial=branch.db_serial,
+                        model_name=row.get("model_name"),
+                        rec_id=row.get("rec_id"),
+                        payload=row.get("payload"),
+                        event_uuid=row.get("event_uuid"),
+                        source_revision=row.get("source_revision", 1),
+                        source_operation=row.get("operation", "upsert"),
+                        source_write_date=row.get("source_write_date"),
+                    )
+            except ValueError as ex:
+                result["failed"] += 1
+                result["errors"].append({"index": index, "error": str(ex)})
+                continue
             result["accepted"] += 1
-            if not created:
+            if not changed:
                 result["ignored"] += 1
-            result["queued"] += receipt._queue_processing()
+                continue
+            profile = upload.apply_profile_id
+            if profile.active and profile.auto_apply and profile.apply_mode in _APPLY_CAPABLE_MODES:
+                try:
+                    with self.env.cr.savepoint():
+                        result["queued"] += upload._queue_apply_records()
+                except DatabaseError:
+                    raise
+                except Exception:
+                    _logger.exception("Could not queue stored sync upload id=%s", upload.id)
+                    upload.write({"error_message": _("Upload is stored. Application could not be queued; retry application.")})
         branch._touch_last_upload()
         return result
+
+    @api.model
+    def _can_queue_upload_model(self, model_name):
+        """Valid uploads are stored unconditionally; application requires opt-in."""
+        if not isinstance(model_name, str) or not model_name:
+            return False
+        profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(model_name.strip())
+        return bool(profile and profile.auto_apply)
 
     @api.model
     def _upload_source_security_error(self, model_name):
@@ -145,7 +187,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
             "source_model_name": model_name,
             "target_model_name": model_name,
             "apply_mode": "mirror_sync",
-            "auto_apply": True,
+            "auto_apply": False,
             "allow_placeholder_creation": True,
             "auto_generated": True,
             "active": True,
@@ -247,7 +289,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
         return (
             profile.active
             and profile.apply_mode in _APPLY_CAPABLE_MODES
-            and (manual or profile.auto_apply)
+            and profile.auto_apply
         )
 
     @api.model

@@ -1,8 +1,10 @@
 import logging
+import json
 import re
 import uuid
 
 from odoo import api, fields, models
+from psycopg2 import OperationalError
 from odoo.addons.queue_job.exception import RetryableJobError
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
@@ -144,22 +146,39 @@ class AbOdooSyncUploadRecord(models.Model):
         source_write_date=None,
     ):
         model_name = self.validate_source_model_name(model_name)
-        rec_id = int(rec_id or 0)
-        if rec_id <= 0:
-            raise ValueError(_("rec_id must be a positive integer."))
+        service = self.env["ab_odoo_sync_service"].sudo()
+        security_error = service._upload_source_security_error(model_name)
+        if security_error:
+            raise ValueError(security_error)
+        identifiers = {"db_serial": db_serial, "rec_id": rec_id, "source_revision": source_revision}
+        for name, value in identifiers.items():
+            if isinstance(value, (bool, float)):
+                raise ValueError(_("Upload identifiers and revisions must be positive integers."))
+            identifiers[name] = service.parse_positive_int(value, name)
+            if identifiers[name] > 2147483647:
+                raise ValueError(_("Upload identifiers and revisions exceed the supported integer range."))
+        db_serial, rec_id, source_revision = (identifiers[name] for name in ("db_serial", "rec_id", "source_revision"))
         if not isinstance(payload, dict):
             raise ValueError(_("payload must be a JSON object."))
-
-        event_uuid = str(event_uuid or uuid.uuid4())
         try:
-            uuid.UUID(event_uuid)
+            json.dumps(payload, allow_nan=False)
+        except (TypeError, ValueError) as ex:
+            raise ValueError(_("payload must contain valid JSON values.")) from ex
+        supplied_event = event_uuid is not None and event_uuid is not False
+        event_uuid = str(event_uuid if supplied_event else uuid.uuid5(
+            uuid.NAMESPACE_URL, f"ab-sync:{db_serial}:{model_name}:{rec_id}:{source_revision}"))
+        try:
+            event_uuid = str(uuid.UUID(event_uuid))
         except (TypeError, ValueError, AttributeError) as ex:
             raise ValueError(_("event_uuid must be a valid UUID.")) from ex
-        source_revision = int(source_revision or 0)
-        if source_revision <= 0:
-            raise ValueError(_("source_revision must be a positive integer."))
-        if source_operation not in {"upsert", "archive"}:
+        if source_operation not in ("upsert", "archive"):
             raise ValueError(_("source_operation must be upsert or archive."))
+        try:
+            if source_write_date is not None and source_write_date is not False and not isinstance(source_write_date, str):
+                raise ValueError()
+            source_write_date = fields.Datetime.to_datetime(source_write_date) or False
+        except (ValueError, TypeError, OverflowError) as ex:
+            raise ValueError(_("source_write_date must be a valid datetime.")) from ex
 
         profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(model_name)
         target_model_name = (
@@ -199,8 +218,28 @@ class AbOdooSyncUploadRecord(models.Model):
             limit=1,
         )
         if record:
-            if source_revision <= record.source_revision:
+            if not record.try_lock_for_update(allow_referencing=True, limit=1):
+                raise OperationalError("Concurrent upload update; retry delivery")
+            record.invalidate_recordset()
+        event_record = self.sudo().with_context(active_test=False).search([("event_uuid", "=", event_uuid)], limit=1)
+        if event_record and (event_record != record or any((
+            event_record.source_revision != source_revision,
+            event_record.payload_json != payload,
+            event_record.source_operation != source_operation,
+            event_record.source_write_date != source_write_date,
+        ))):
+            raise ValueError(_("Event ID was reused with different content or identity."))
+        if record:
+            if source_revision == record.source_revision:
+                if any((record.payload_json != payload,
+                        record.source_operation != source_operation,
+                        record.source_write_date != source_write_date,
+                        supplied_event and record.event_uuid != event_uuid)):
+                    raise ValueError(_("Source revision was reused with different content."))
                 return record, False
+            if source_revision < record.source_revision:
+                return record, False
+            vals.update({"apply_generation": record.apply_generation + 1, "attempt_count": 0})
             record.write(vals)
             return record, True
 
@@ -243,6 +282,8 @@ class AbOdooSyncUploadRecord(models.Model):
         queued_count = 0
         now = fields.Datetime.now()
         for record in self.sudo().exists():
+            if not self.env["ab_odoo_sync_service"].sudo()._can_queue_upload_model(record.model_name):
+                continue
             profile = record.apply_profile_id
             if not profile:
                 profile, pending_error = (
@@ -325,38 +366,17 @@ class AbOdooSyncUploadRecord(models.Model):
         )
 
     def action_reapply_with_current_mapping(self):
+        self.check_access("write")
         records = self.sudo().exists()
+        counts = {"applied": 0, "partially_applied": 0, "failed": 0, "skipped": 0}
         for record in records:
-            profile = record.apply_profile_id
-            if not profile:
-                profile, pending_error = (
-                    self.env["ab_odoo_sync_service"]
-                    .sudo()
-                    ._ensure_same_name_passive_profile(
-                        record.model_name,
-                        payload=record.payload_json,
-                    )
-                )
-                if profile:
-                    record._set_profile_handling(profile)
-                else:
-                    raise UserError(
-                        pending_error
-                        or _("No active apply profile exists for this upload.")
-                    )
-            if record.apply_profile_id.apply_mode in {"raw_only", "ignore"}:
-                raise UserError(
-                    _(
-                        "Change apply profile %(profile)s to Mirror Sync Model or Business Model before reapplying."
-                    )
-                    % {"profile": record.apply_profile_id.display_name}
-                )
-        queued_count = records._queue_apply_records(force=True)
+            outcome = record._apply_to_target(manual=True)
+            counts[outcome or "skipped"] += 1
         return self._notification(
             _("Odoo Sync Upload"),
-            _("Queued %(count)s upload record(s) for reapplication.")
-            % {"count": queued_count},
-            "success" if queued_count else "warning",
+            _("Reapplication finished: %(applied)s applied, %(partially_applied)s partially applied, "
+              "%(failed)s failed, %(skipped)s skipped (busy).") % counts,
+            "success" if counts["applied"] and not any(counts[key] for key in ("partially_applied", "failed", "skipped")) else "warning",
         )
 
     def action_reset_mapping_overrides(self):
@@ -728,6 +748,13 @@ class AbOdooSyncUploadRecord(models.Model):
             if profile.apply_mode == "mirror_sync" and field_name in target_model._fields:
                 vals[field_name] = value
 
+        effective_mappings = self._effective_mappings()
+        enabled_mappings = [mapping for mapping in effective_mappings if mapping.sync_enabled]
+        ignored_source_fields = {
+            mapping.source_field_name for mapping in effective_mappings
+            if not mapping.sync_enabled or mapping.mapping_type == "ignore"
+        }
+
         if self.source_operation == "archive":
             if "active" not in target_model._fields:
                 raise ValueError(
@@ -735,19 +762,12 @@ class AbOdooSyncUploadRecord(models.Model):
                     % {"model": self.target_model_name}
                 )
             vals["active"] = False
-            return vals, sorted(set(payload_fields) - {"id", "active"})
-
-        effective_mappings = self._effective_mappings()
-        enabled_mappings = [
-            mapping for mapping in effective_mappings if mapping.sync_enabled
-        ]
+            return vals, sorted(set(payload_fields) - {"id", "active"} - ignored_source_fields)
         active_mappings = [
             mapping for mapping in enabled_mappings if mapping.mapping_type != "ignore"
         ]
 
-        handled_source_fields = {
-            mapping.source_field_name for mapping in enabled_mappings
-        }
+        handled_source_fields = set(ignored_source_fields)
         for mapping in active_mappings:
             if mapping.source_field_name not in payload_fields:
                 if mapping.required:
@@ -785,6 +805,9 @@ class AbOdooSyncUploadRecord(models.Model):
                     for reference in value
                 ]
                 vals[mapping.target_field_name] = [(6, 0, relation_ids)]
+            else:
+                continue
+            handled_source_fields.add(mapping.source_field_name)
 
         skipped_fields = sorted(
             set(payload_fields) - handled_source_fields - {"id"}
@@ -868,24 +891,41 @@ class AbOdooSyncUploadRecord(models.Model):
         for record in self.sudo().exists():
             record._apply_to_target(apply_generation=apply_generation)
 
-    def _apply_to_target(self, apply_generation=False):
+    def _apply_to_target(self, apply_generation=False, manual=False):
         self.ensure_one()
         locked = self.try_lock_for_update(allow_referencing=True, limit=1)
         if not locked:
-            return
+            return "skipped"
         self = locked
         self.invalidate_recordset(["apply_generation", "status"])
         if apply_generation and self.apply_generation != apply_generation:
             return
-        if self.status == "not_sync":
+        if not manual and self.status == "not_sync":
             return
+        if not manual and not self.env["ab_odoo_sync_service"].sudo()._can_queue_upload_model(self.model_name):
+            if self.status == "queued":
+                self.write({"status": "pending", "queued_at": False})
+            return
+        if manual:
+            # Invalidate older queued jobs before attempting the manual application.
+            self.write({"apply_generation": self.apply_generation + 1, "queued_at": False})
         sync_user = self._sync_apply_user()
         if sync_user and self.env.uid != sync_user.id:
             self = self.with_user(sync_user)
 
         try:
-            with self.env.cr.savepoint(flush=False):
+            with self.env.cr.savepoint():
                 profile = self.apply_profile_id
+                if manual:
+                    profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(self.model_name)
+                    if not profile:
+                        raise UserError(_("No active apply profile exists for this upload."))
+                    if profile.apply_mode not in {"mirror_sync", "business_model"}:
+                        raise UserError(
+                            _("Change apply profile %(profile)s to Mirror Sync Model or Business Model before reapplying.")
+                            % {"profile": profile.display_name}
+                        )
+                    self._set_profile_handling(profile)
                 if not profile:
                     self.write({"status": "pending_mapping", "error_message": False})
                     return
@@ -913,9 +953,9 @@ class AbOdooSyncUploadRecord(models.Model):
                     "applied_at": fields.Datetime.now(),
                 }
             )
-            if self.env.context.get("job_uuid"):
+            if not manual and self.env.context.get("job_uuid"):
                 raise RetryableJobError(str(ex)) from ex
-            return
+            return "failed"
 
         self.write(
             {
@@ -926,6 +966,7 @@ class AbOdooSyncUploadRecord(models.Model):
                 "applied_at": fields.Datetime.now(),
             }
         )
+        return self.status
 
     def unlink(self):
         raise UserError(_("Sync upload records are audit records and cannot be deleted."))
