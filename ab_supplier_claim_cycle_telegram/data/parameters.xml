@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="telegram_notifications_enabled" model="ir.config_parameter">
+        <field name="key">supplier_claim_cycle.telegram_notifications_enabled</field>
+        <field name="value">True</field>
+    </record>
+</odoo>
