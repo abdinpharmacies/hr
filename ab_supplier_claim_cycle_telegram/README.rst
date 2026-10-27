@@ -2,7 +2,7 @@ Supplier Claim Cycle Telegram Notifications
 ===========================================
 
 This addon extends validated claim actions and stores delivery jobs in the same
-transaction. It adds no fields or models. Claim actions never call Telegram.
+transaction. It adds no fields or database models. Claim actions never call Telegram.
 
 Routing
 -------
@@ -24,8 +24,22 @@ applicable, and the Odoo link. Attachments are not sent.
 Configuration
 -------------
 
-``supplier_claim_cycle.telegram_notifications_enabled`` defaults to ``True``.
+The existing ``telegram.notifications.enabled`` setting controls supplier
+notifications. If it is absent, notifications default to enabled without
+creating a system parameter.
 Setting it to ``False`` prevents new jobs and skips pending deliveries.
+
+Supplier delivery reads the existing shared ``telegram.bot.token`` under
+Settings / Technical / Parameters / System Parameters. It does not create any
+token or enable/disable parameters. There is no fallback to a different token
+parameter; other modules retain their existing token lookup behavior.
+Do not put the token in repository files. Recipients must start the shared bot
+before it can message them, even if their Chat IDs are already linked.
+
+When notifications are enabled but this token is missing or blank, transitions
+still enqueue delivery jobs for connected recipients. Those jobs retry with a
+configuration error until the token is supplied or notifications are disabled.
+The token is read when the job runs and is never stored in job arguments.
 
 Load ``web,queue_job`` in ``server_wide_modules`` and configure::
 

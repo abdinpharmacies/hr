@@ -5,10 +5,12 @@ from urllib.error import URLError
 from odoo import api, fields, models
 from odoo.addons.queue_job.exception import RetryableJobError
 
+from .telegram_service import SUPPLIER_CONTEXT, TOKEN_PARAMETER
+
 _logger = logging.getLogger(__name__)
 
 CHANNEL = 'root.supplier_claim_cycle_telegram'
-PARAMETER = 'supplier_claim_cycle.telegram_notifications_enabled'
+PARAMETER = 'telegram.notifications.enabled'
 STAGE_ROLES = {
     'inventory': 'inventory',
     'purchasing': 'purchasing',
@@ -109,11 +111,14 @@ class SupplierClaimCycle(models.Model):
         self.ensure_one()
         if not self.exists() or not self._cycle_telegram_enabled():
             return
+        telegram_service = self.env['ab_telegram_bot'].sudo().with_context(**{SUPPLIER_CONTEXT: True})
+        if not telegram_service._get_bot_token():
+            raise RetryableJobError(f'Configure system parameter {TOKEN_PARAMETER} for supplier Telegram delivery.')
         try:
-            result = self.env['ab_telegram_bot'].sudo().send_message(
+            result = telegram_service.send_message(
                 chat_id, message, disable_web_page_preview=True)
-        except (OSError, URLError) as exc:
+        except (OSError, URLError):
             _logger.warning('Supplier claim Telegram delivery failed; scheduling retry.')
-            raise RetryableJobError('Telegram communication failed.') from exc
+            raise RetryableJobError('Telegram communication failed.') from None
         if not isinstance(result, dict) or not result.get('sent'):
             raise RetryableJobError('Telegram did not confirm message delivery.')

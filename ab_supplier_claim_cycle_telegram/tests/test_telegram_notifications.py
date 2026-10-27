@@ -8,6 +8,8 @@ from odoo.addons.queue_job.exception import RetryableJobError
 from odoo.addons.queue_job.job import Job
 from odoo.addons.queue_job.tests.common import trap_jobs
 
+from ..models.telegram_service import SUPPLIER_CONTEXT, TOKEN_PARAMETER
+
 
 @tagged('post_install', '-at_install')
 class TestCycleTelegramNotifications(TransactionCase):
@@ -39,7 +41,8 @@ class TestCycleTelegramNotifications(TransactionCase):
         cls.supplier = cls.env['ab_costcenter'].create({
             'name': 'Telegram Supplier <Test>', 'code': '1-TG-TEST'})
         cls.env['ir.config_parameter'].sudo().set_param(
-            'supplier_claim_cycle.telegram_notifications_enabled', 'True')
+            'telegram.notifications.enabled', 'True')
+        cls.env['ir.config_parameter'].sudo().set_param(TOKEN_PARAMETER, 'shared-test-token')
 
     def claim(self, cash=False):
         return self.claim_model.with_user(self.users['user']).create({
@@ -167,7 +170,7 @@ class TestCycleTelegramNotifications(TransactionCase):
 
     def test_disabled_parameter_and_access_control(self):
         self.env['ir.config_parameter'].sudo().set_param(
-            'supplier_claim_cycle.telegram_notifications_enabled', 'False')
+            'telegram.notifications.enabled', 'False')
         claim = self.claim()
         with trap_jobs() as trap:
             claim.action_submit()
@@ -188,3 +191,64 @@ class TestCycleTelegramNotifications(TransactionCase):
             expected = sum(len(claim._cycle_telegram_chat_ids()) for claim in claims)
             trap.assert_jobs_count(expected)
         self.assertEqual(claims.mapped('state'), ['inventory', 'supplier_accounts'])
+
+    def test_missing_enable_setting_does_not_create_parameter(self):
+        parameters = self.env['ir.config_parameter'].sudo()
+        parameters.set_param('telegram.notifications.enabled', False)
+        self.assertTrue(self.claim_model._cycle_telegram_enabled())
+        self.assertFalse(parameters.search(fields.Domain('key', '=', 'telegram.notifications.enabled')))
+
+    def test_supplier_delivery_reads_only_existing_shared_token(self):
+        claim = self.claim(cash=True)
+        self.transition(claim, claim.action_submit, 'supplier_accounts')
+        parameters = self.env['ir.config_parameter'].sudo()
+        parameters.set_param(TOKEN_PARAMETER, '  shared-primary-token  ')
+        parameters.set_param('telebot_api_key', 'shared-fallback-token')
+        parameter_class = type(parameters)
+        get_param = parameter_class.get_param
+        with patch.object(parameter_class, 'get_param', autospec=True, side_effect=get_param) as lookup:
+            with patch('odoo.addons.ab_telegram_bot.models.telegram_service.urllib.request.urlopen') as request:
+                request.return_value.__enter__.return_value.read.return_value = (
+                    b'{"ok": true, "result": {"message_id": 1}}')
+                claim.sudo()._deliver_cycle_telegram_notification(self.chats['supplier_accounts'], 'Message')
+                request.assert_called_once()
+                self.assertEqual(request.call_args.args[0].full_url,
+                                 'https://api.telegram.org/botshared-primary-token/sendMessage')
+            keys = {call.args[1] for call in lookup.call_args_list}
+            self.assertEqual(keys, {'telegram.notifications.enabled', TOKEN_PARAMETER})
+
+    def test_missing_shared_token_retries_without_alternate_token(self):
+        parameters = self.env['ir.config_parameter'].sudo()
+        parameters.set_param('telebot_api_key', 'shared-fallback-token')
+        parameters.set_param(TOKEN_PARAMETER, False)
+        claim = self.claim(cash=True)
+        self.transition(claim, claim.action_submit, 'supplier_accounts')
+        parameter_class = type(parameters)
+        get_param = parameter_class.get_param
+        for token in (False, '   '):
+            parameters.set_param(TOKEN_PARAMETER, token)
+            with patch.object(parameter_class, 'get_param', autospec=True, side_effect=get_param) as lookup:
+                with patch.object(self.bot_class, 'send_message') as send:
+                    with self.assertRaisesRegex(RetryableJobError, TOKEN_PARAMETER):
+                        claim.sudo()._deliver_cycle_telegram_notification(
+                            self.chats['supplier_accounts'], 'Message')
+                    send.assert_not_called()
+                keys = {call.args[1] for call in lookup.call_args_list}
+                self.assertEqual(keys, {'telegram.notifications.enabled', TOKEN_PARAMETER})
+            self.assertEqual(claim.state, 'supplier_accounts')
+        parameters.set_param(TOKEN_PARAMETER, 'shared-restored-token')
+        with patch.object(self.bot_class, 'send_message', return_value={'sent': True}) as send:
+            claim.sudo()._deliver_cycle_telegram_notification(self.chats['supplier_accounts'], 'Message')
+            send.assert_called_once()
+
+    def test_other_telegram_consumers_keep_shared_tokens(self):
+        parameters = self.env['ir.config_parameter'].sudo()
+        parameters.set_param('telegram.bot.token', 'shared-primary-token')
+        parameters.set_param('telebot_api_key', 'shared-fallback-token')
+        service = self.env['ab_telegram_bot'].sudo()
+        supplier_service = service.with_context(**{SUPPLIER_CONTEXT: True})
+        self.assertEqual(service._get_bot_token(), 'shared-primary-token')
+        self.assertEqual(supplier_service._get_bot_token(), 'shared-primary-token')
+        parameters.set_param('telegram.bot.token', False)
+        self.assertEqual(service._get_bot_token(), 'shared-fallback-token')
+        self.assertFalse(supplier_service._get_bot_token())
