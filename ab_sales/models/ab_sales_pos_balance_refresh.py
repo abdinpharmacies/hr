@@ -66,7 +66,9 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
         if not prod_ids:
             return {}
 
-        products = self.env["ab_product"].browse(prod_ids).read(["id", "eplus_serial"])
+        product_records = self.env["ab_product"].browse(prod_ids)
+        products = product_records.read(["id", "eplus_serial"])
+        inventory_details = {}
         serials = []
         for row in products:
             serial = row.get("eplus_serial")
@@ -96,6 +98,9 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                         'last_sync_at': fields.Datetime.to_string(line.last_sync_at) if line and line.last_sync_at else False,
                         'refresh_success': bool(success and line),
                     }
+                    # Never attach an older live snapshot to a newer cached balance.
+                    if success and line and line.last_sync_at == sync_at:
+                        result[product['id']].update(inventory_details.get(product['id'], {}))
                 elif line:
                     result[product['id']] = line.balance
             return result
@@ -162,6 +167,24 @@ class AbSalesPosBalanceRefresh(models.TransientModel):
                             raise ValueError("Invalid E-Plus stock result")
                         seen.add(prod_serial)
                         balances_by_serial[prod_serial] = balance
+                    if include_sync_metadata:
+                        # Committed, branch-filtered batch reads on the same bounded
+                        # connection; no NOLOCK or per-product connection/replay.
+                        stock_rows = self.env['ab_sales_header']._backend_stock_lines(
+                            store, serials, crx=crx)
+                        by_serial = {}
+                        for stock_row in stock_rows:
+                            by_serial.setdefault(stock_row['product_eplus_serial'], []).append(stock_row)
+                        for product in product_records:
+                            payload = {'data': [
+                                dict(row, store_id=store.id, product_id=product.id)
+                                for row in by_serial.get(product.eplus_serial, [])
+                            ]}
+                            inventory_details[product.id] = {
+                                'inventory_json': payload,
+                                'available_prices': self._available_prices_from_inventory(product, payload),
+                                'is_priced': bool(product.is_priced),
+                            }
             rows = [(serial, store_eplus_serial, balance) for serial, balance in balances_by_serial.items()]
             Inventory._apply_store_balance_rows(
                 store, store_eplus_serial, rows, sync_at, product_serials=serials, prices=prices_by_serial)
