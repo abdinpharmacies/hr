@@ -1,26 +1,33 @@
+# Optional currency on passive sales headers
+
+Recent relevant commit: `2468a38e7ce5aec2d20f6d855a58b9d9e12efe1a`
+Author: emadco88
+Date: 2026-10-01
+Original subject: ab_sales_promo/ FIX made a passive module
+
 Current changes before commit:
 
-- Fix sales promotion invoice and line markers so incentive programs do not write `§§§`.
-- Use promotion marker products as the shared source for sales header notice and sales detail marker eligibility.
-- Add UI-only required promotion ownership, compensation timing, and compensation type fields to the promotion compensation details form.
-- Add Arabic translations for the new promotion ownership field and options.
-- Add focused marker scope tests for specific products, normal promotions, incentives, and header marker behavior.
-- Rename the compensation timing field label to `Compensation Way`.
-- Replace compensation timing choices `Advance` and `Subsequent` with `Before` and `Later`.
-- Replace compensation type choice `Goods` with `Products`, keeping `Cash` unchanged.
-- Add Arabic translations for the changed compensation field label and selection options.
+- Make ab_sales_header.currency_id optional so the passive mirror passes mapping validation and Load Matching Fields can generate currency and monetary mappings.
+- Preserve the currency relation, existing company-currency default, stored currency values, and monetary fields.
+- Keep required-value enforcement available on individual sync mappings and retain readonly target protections.
+- Bump the module version to 19.0.1.0.1.
+
+Validation and deployment:
+
+- 14 focused checks passed on an isolated database, covering matching-field loading, currency defaults and optional values, totals, readonly protections, and public access restrictions.
+- Isolated installation and targeted module upgrade passed. Test records and generated mappings were rolled back; script: /opt/odoo19/validation/sales_currency/test_currency.py.
+- Backed up configuration under /opt/odoo19/resource-tuning-backups/20261026-sales-currency and upgraded only ab_sales_promo on report19 to installed version 19.0.1.0.1.
+- Verified production mirror validation succeeds without generating mappings or reapplying uploads.
+- Before/after snapshots of profiles, mappings, header counts/currency counts/totals, queue count, and upload 32685 match exactly.
+- Restarted Odoo and the already-running queue runner, preserving their running states.
 
 Files changed:
 
-- ab_sales_promo/changelog.d
-- ab_sales_promo/i18n/ar.po
-- ab_sales_promo/i18n/ar_001.po
-- ab_sales_promo/models/ab_promo_program_compensation.py
-- ab_sales_promo/models/ab_sales_header_promo_inherit.py
-- ab_sales_promo/tests/__init__.py
-- ab_sales_promo/tests/test_ab_sales_promo_marker.py
-- ab_sales_promo/views/ab_promo_program_compensation.xml
+- `__manifest__.py`
+- `models/ab_promo_program_compensation.py`
+- `changelog.d`
 
+Historical references:
 
 commit affa283
 Author: ahmedzenhom2610
@@ -54,25 +61,3 @@ Files changed:
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/tests/test_ab_sales_specific_promo.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml
-
-Recent relevant commit:
-
-- Commit: `f9ebc42b2b9c050ddde3f8a44bd3bcff364fb1d3`
-- Author: hager yasser
-- Date: 2026-08-16
-- Original subject: ab_sales_promo/fix: update promo compensation terminology for #1860
-- User-facing changes:
-  - Established the previous baseline for this module before the report-server passive cleanup.
-- Files changed:
-  - ab_sales_promo/changelog.d
-  - ab_sales_promo/i18n/ar.po
-  - ab_sales_promo/i18n/ar_001.po
-  - ab_sales_promo/models/ab_promo_program_compensation.py
-
-Current changes before commit:
-
-- User-facing changes:
-  - Removed `required=True` from model field declarations so report sync loads can accept incomplete branch payloads.
-- Files changed:
-  - ab_sales_promo/changelog.d
-  - ab_sales_promo/models/ab_sales_header_promo_inherit.py

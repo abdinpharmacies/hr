@@ -45,7 +45,7 @@ class AbSalesHeader(models.Model):
     _inherit = 'ab_sales_header'
 
     # Totals (untaxed math)
-    currency_id = fields.Many2one('res.currency', default=lambda s: s.env.company.currency_id.id, required=True)
+    currency_id = fields.Many2one('res.currency', default=lambda s: s.env.company.currency_id.id, required=False)
     amount_untaxed = fields.Monetary(store=True)
     amount_tax = fields.Monetary(store=True)
     amount_total = fields.Monetary(store=True)
