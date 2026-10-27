@@ -7,7 +7,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase, tagged
 
 from ..services.providers import ProviderFailure
-from ..services.seo_templates import deterministic, fingerprints, literal_identity, polish_generated_copy, validate
+from ..services.seo_templates import core_product_name, deterministic, fingerprints, literal_identity, polish_generated_copy, validate
 
 
 @tagged('post_install', '-at_install')
@@ -21,6 +21,7 @@ class TestSeoTemplates(TransactionCase):
         card = cls.env['ab_product_card'].create({'name': 'CATALOG TABLET 500 MG TAB 20 TAB', 'is_medicine': True})
         product = cls.env['ab_product'].create({'product_card_id': card.id, 'code': 'TEMPLATE-001', 'effective_material': 'CATALOG INGREDIENT'})
         cls.product = cls.env['product.template'].create({'name': 'CATALOG TABLET 500 MG TAB 20 TAB', 'ab_product_id': product.id, 'is_published': True, 'sale_ok': True})
+        cls.product.with_context(lang='ar_001').name = 'أقراص CATALOG TABLET 500 MG TAB 20 TAB'
         cls.pipeline = cls.env['ab_seo_pipeline'].create({'name': 'Template test', 'domain': 'drug', 'ai_mode': 'off'})
 
     def job(self, **values):
@@ -83,30 +84,30 @@ class TestSeoTemplates(TransactionCase):
         self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
 
     def test_general_about_includes_package_without_generic_copy(self):
-        facts = {'name': '0 خيط حرير بأبرة GMS 1 ONE UNIT', 'product_code': '78234', 'package': '1 ONE UNIT'}
+        facts = {'name': '0 SILK SUTURE WITH NEEDLE GMS 1 ONE UNIT', 'product_code': '78234', 'package': '1 ONE UNIT'}
         contract = self.general._contract()
         content = deterministic(contract, facts, 'en_US', lambda value: value)
         about = next(section for section in content['sections'] if section['key'] == 'about_product')
         self.assertEqual(about['fact_keys'], ['name', 'package'])
-        self.assertEqual(about['content'], '0 خيط حرير بأبرة GMS is packaged in 1 ONE UNIT.')
-        self.assertEqual(content['meta_description'], '0 خيط حرير بأبرة GMS — package: 1 ONE UNIT.')
+        self.assertEqual(about['content'], '0 SILK SUTURE WITH NEEDLE GMS is packaged in 1 ONE UNIT.')
+        self.assertEqual(content['meta_description'], '0 SILK SUTURE WITH NEEDLE GMS — package: 1 ONE UNIT.')
         details = next(section for section in content['sections'] if section['key'] == 'product_information')
         self.assertEqual(details['content'], 'Product code: 78234\nPackage: 1 ONE UNIT')
         self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
 
     def test_gauze_dimensions_create_distinct_grounded_sections(self):
-        name = '10 CM*10 CM شاش فازلين 1 BOX'
+        name = '10 CM*10 CM VASELINE GAUZE 1 BOX'
         facts = {'name': name, 'product_code': '72249', **literal_identity(name)}
         self.assertEqual(facts['specifications'], '10 CM*10 CM')
         contract = self.general._contract()
         content = deterministic(contract, facts, 'en_US', lambda value: value)
         self.assertEqual([section['key'] for section in content['sections']], ['about_product', 'specifications', 'product_information'])
-        self.assertEqual(content['short_description'], 'شاش فازلين — size 10 CM*10 CM.')
-        self.assertEqual(content['meta_description'], 'شاش فازلين — size 10 CM*10 CM, package 1 BOX.')
-        self.assertEqual(content['sections'][0]['content'], 'شاش فازلين measures 10 CM*10 CM and comes in 1 BOX.')
+        self.assertEqual(content['short_description'], 'VASELINE GAUZE — size 10 CM*10 CM.')
+        self.assertEqual(content['meta_description'], 'VASELINE GAUZE — size 10 CM*10 CM, package 1 BOX.')
+        self.assertEqual(content['sections'][0]['content'], 'VASELINE GAUZE measures 10 CM*10 CM and comes in 1 BOX.')
         self.assertEqual(content['sections'][1]['content'], '10 CM*10 CM')
-        self.assertEqual(content['seo_name'], '10 CM*10 CM شاش فازلين')
-        self.assertEqual(content['search_phrases'], [name, '10 CM*10 CM شاش فازلين'])
+        self.assertEqual(content['seo_name'], '10 CM*10 CM VASELINE GAUZE')
+        self.assertEqual(content['search_phrases'], [name, '10 CM*10 CM VASELINE GAUZE'])
         self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
 
     def test_english_name_suggestion_is_drafted_and_flagged_for_review(self):
@@ -378,3 +379,306 @@ class TestSeoTemplates(TransactionCase):
         with self.assertRaises(UserError):
             legacy._optimize_template(self.product)
         self.assertFalse(self.product.website_meta_title)
+
+
+@tagged('post_install', '-at_install')
+class TestSeoLanguages(TransactionCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.general = cls.env.ref('ab_website_seo_optimization.seo_template_general')
+        card = cls.env['ab_product_card'].create({'name': 'ABOU YOUSEF سنفره قدم خشب COD 975 1 BOX'})
+        product = cls.env['ab_product'].create({'product_card_id': card.id, 'code': 'SEO-LANGUAGE-TEST'})
+        cls.product = cls.env['product.template'].create({'name': card.name, 'ab_product_id': product.id, 'is_published': True, 'sale_ok': True})
+        cls.seo = cls.env['ab.product.seo'].create({'product_template_id': cls.product.id})
+
+    def test_original_mixed_name_requires_english_translation(self):
+        facts = {'name': self.product.name, 'package': '1 BOX'}
+        content = deterministic(self.general._contract(), facts, 'en_US', lambda value: value)
+        self.assertFalse(content['meta_title'])
+        report = validate(content, self.general._contract(), facts, 'en_US')
+        self.assertEqual(report['status'], 'rejected')
+        self.assertIn('product_name_translation_required:en_US', report['errors'])
+
+    def test_arabic_requires_localized_identity(self):
+        facts = {'name': 'Example Wooden Foot File 1 BOX', 'package': '1 BOX'}
+        content = deterministic(self.general._contract(), facts, 'ar_001', lambda value: value)
+        self.assertFalse(content['meta_title'])
+        self.assertIn('product_name_translation_required:ar_001', validate(content, self.general._contract(), facts, 'ar_001')['errors'])
+
+    def test_localized_names_preserve_brand_and_codes(self):
+        from ..services.seo_templates import language_name
+        facts = {'name': self.product.name, 'name_en': 'ABOU YOUSEF Wooden Foot File COD 975 1 BOX', 'name_ar': 'ABOU YOUSEF مبرد قدم خشبي COD 975 1 BOX'}
+        self.assertEqual(language_name(facts, 'en_US'), facts['name_en'])
+        self.assertEqual(language_name(facts, 'ar_001'), facts['name_ar'])
+
+    def test_language_checks_allow_units_and_arabic_punctuation(self):
+        from ..services.seo_templates import language_errors
+        self.assertFalse(language_errors({'meta_description': 'Example، 20 ML.'}, 'en_US'))
+        self.assertFalse(language_errors({'meta_title': 'عبوة Example 20 ML', 'seo_name': 'example-20-ml'}, 'ar_001'))
+
+    def test_arabic_sections_cannot_hide_english_body(self):
+        from ..services.seo_templates import language_errors
+        content = {'meta_title': 'منتج Example', 'sections': [{'key': 'about_product', 'content': 'This product comes in one box.'}]}
+        self.assertIn('language_mismatch:section:about_product', language_errors(content, 'ar_001'))
+
+    def test_invalid_sections_return_validation_error(self):
+        report = validate({'sections': 3}, self.general._contract(), {'name': 'Example'}, 'en_US')
+        self.assertIn('invalid_sections', report['errors'])
+
+    def test_manual_english_draft_cannot_be_approved_with_arabic(self):
+        translation = self.seo.translation_ids.filtered(lambda row: row.lang_code == 'en_US')
+        translation.write({'meta_title': self.product.name, 'meta_description': 'Example description.'})
+        with self.assertRaises(UserError):
+            translation._create_version()
+
+    def test_manual_arabic_draft_cannot_be_approved_with_english(self):
+        translation = self.seo.translation_ids.filtered(lambda row: row.lang_code == 'ar_001')
+        translation.write({'meta_title': 'Example Product', 'meta_description': 'Example description.'})
+        with self.assertRaises(UserError):
+            translation._create_version()
+
+    def test_old_invalid_version_cannot_publish(self):
+        version = self.env['ab.product.seo.version'].sudo().create({'seo_id': self.seo.id, 'lang_code': 'en_US', 'version_number': 1,
+            'meta_title': self.product.name, 'meta_description': 'Example description.'})
+        with self.assertRaises(UserError):
+            version._get_publish_field_values()
+
+    def test_valid_bilingual_versions_keep_separate_values(self):
+        values = {'en_US': ('Example Wooden Foot File', 'Wooden foot file, one box.'),
+                  'ar_001': ('مبرد قدم خشبي Example', 'مبرد قدم خشبي في عبوة واحدة.')}
+        for translation in self.seo.translation_ids:
+            title, description = values[translation.lang_code]
+            translation.write({'meta_title': title, 'meta_description': description})
+            version = translation._create_version()
+            self.assertEqual(version._get_publish_field_values()['website_meta_title'], title)
+
+    def test_generation_prompt_requires_localized_descriptive_copy(self):
+        from ..services.seo_templates import contract_prompt
+        for language in ('en_US', 'ar_001'):
+            prompt = contract_prompt(self.general._contract(), {'name': self.product.name}, [], language, {})
+            self.assertIn('never copy Arabic generic product words into English output', prompt)
+            self.assertIn('write natural Arabic sentences', prompt)
+            self.assertIn('not a Google ranking signal', prompt)
+            self.assertIn('Do not pad text to a character count', prompt)
+
+    def test_english_supplier_text_is_rejected_for_arabic_section(self):
+        facts = {'name': 'مبرد قدم خشبي Example', 'supplier_description': 'Wooden foot file supplied in one box.'}
+        content = deterministic(self.general._contract(), facts, 'ar_001', lambda value: value)
+        report = validate(content, self.general._contract(), facts, 'ar_001')
+        self.assertIn('language_mismatch:section:about_product', report['errors'])
+
+    def assistant(self):
+        return self.env['ab.seo.assistant'].create({'name': 'Language test model', 'provider': 'local_ai',
+            'model_name': 'test-model', 'assistant_type': 'ai', 'base_url': 'http://localhost:8000/v1',
+            'endpoint_path': '/chat/completions', 'license_reviewed': True, 'license_review_note': 'Test fixture'})
+
+    def test_non_groq_assistant_translates_english_product_terms(self):
+        assistant = self.assistant()
+        response = {'choices': [{'message': {'content': 'Wooden Foot File'}}]}
+        with patch.object(type(assistant), '_request', return_value=response) as request:
+            suggestion = assistant._suggest_english_product_name(self.product)
+        self.assertEqual(suggestion, 'ABOU YOUSEF Wooden Foot File COD 975 1 BOX')
+        self.assertIn('Do not transliterate', request.call_args.kwargs['payload']['messages'][-1]['content'])
+
+    def test_assistant_translates_arabic_identity_preserving_numbers(self):
+        assistant = self.assistant()
+        self.product.with_context(lang='ar_001').name = 'Example Wooden Foot File COD 975 1 BOX'
+        response = {'choices': [{'message': {'content': 'Example مبرد قدم خشبي COD 975 1 BOX'}}]}
+        with patch.object(type(assistant), '_request', return_value=response):
+            suggestion = assistant._suggest_arabic_product_name(self.product)
+        self.assertEqual(suggestion, 'Example مبرد قدم خشبي COD 975 1 BOX')
+
+    def test_arabic_name_suggestion_cannot_change_package_quantity(self):
+        assistant = self.assistant()
+        self.product.with_context(lang='ar_001').name = 'Example Wooden Foot File COD 975 1 BOX'
+        response = {'choices': [{'message': {'content': 'Example مبرد قدم خشبي COD 975 2 BOX'}}]}
+        with patch.object(type(assistant), '_request', return_value=response):
+            self.assertFalse(assistant._suggest_arabic_product_name(self.product))
+
+    def test_pipeline_provider_can_supply_localized_identity(self):
+        assistant = self.assistant()
+        pipeline = self.env['ab_seo_pipeline'].create({'name': 'Language pipeline', 'domain': 'general', 'ai_mode': 'always',
+            'line_ids': [(0, 0, {'provider_id': assistant.id})]})
+        job = self.env['ab.product.seo.bulk.optimization'].create({'name': 'Language run', 'generation_mode': 'ai',
+            'pipeline_id': pipeline.id, 'lang_mode': 'en_US'})
+        item = self.env['ab_seo_work_item'].create({'job_id': job.id, 'product_id': self.product.id})
+        with patch.object(type(assistant), '_suggest_english_product_name', return_value='ABOU YOUSEF Wooden Foot File COD 975 1 BOX'):
+            facts, provenance = item._collect_facts(item._identity(), pipeline)
+        self.assertEqual(facts['name_en'], 'ABOU YOUSEF Wooden Foot File COD 975 1 BOX')
+        evidence = self.env['ab_seo_enrichment_fact'].browse(provenance).filtered(lambda row: row.field_name == 'name_en')
+        self.assertEqual(evidence.content_kind, 'UNVERIFIED_TEXT')
+        self.assertEqual(evidence.lang_code, 'en_US')
+
+    def arabic_copy(self):
+        facts = {'name': 'ACCU CHEK PERFORMA جهاز قياس سكر 1 BOX', 'package': '1 BOX'}
+        contract = self.general._contract('ar_001')
+        content = deterministic(contract, facts, 'ar_001', lambda value: self.env['ab.product.seo'].with_context(lang='ar_001').env._(value))
+        content.update(meta_title='جهاز قياس السكر ACCU CHEK PERFORMA 1 BOX',
+            meta_description='جهاز ACCU CHEK PERFORMA لقياس السكر، يأتي في عبوة 1 BOX.',
+            short_description='جهاز لقياس السكر من ACCU CHEK PERFORMA.',
+            keywords=['جهاز قياس السكر', 'ACCU CHEK PERFORMA'], content_kind='GENERATED_TEXT')
+        for section in content['sections']:
+            if section['key'] == 'about_product':
+                section['content'] = 'ACCU CHEK PERFORMA جهاز قياس السكر، بعبوة 1 BOX.'
+        return facts, contract, content
+
+    def test_natural_arabic_reordering_and_prefixes_pass_validation(self):
+        facts, contract, content = self.arabic_copy()
+        self.assertFalse(validate(content, contract, facts, 'ar_001')['errors'])
+
+    def test_arabic_prefix_support_does_not_allow_invented_claims(self):
+        facts, contract, content = self.arabic_copy()
+        content['meta_description'] += ' يعالج المرض بدقة مضمونة.'
+        self.assertTrue(validate(content, contract, facts, 'ar_001')['errors'])
+
+    def test_package_variants_are_not_distinct_keywords(self):
+        facts, contract, content = self.arabic_copy()
+        content['keywords'] = [facts['name'], core_product_name(facts['name'], facts['package'])]
+        self.assertIn('duplicate_keyword_identity', validate(content, contract, facts, 'ar_001')['errors'])
+
+    def test_arabic_model_retries_copied_template_with_natural_wording(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        safe = deterministic(contract, facts, 'ar_001', lambda value: assistant.with_context(lang='ar_001').env._(value))
+        def response(value):
+            payload = {key: value[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections')}
+            payload['keywords'] = value.get('keywords', value.get('search_phrases'))
+            return {'choices': [{'message': {'content': json.dumps(payload)}}]}
+        with patch.object(type(assistant), '_request', side_effect=[response(safe), response(content)]) as request:
+            result = assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(request.call_count, 2)
+        self.assertEqual(result['meta_description'], content['meta_description'])
+        self.assertEqual(result['search_phrases'], content['keywords'])
+        self.assertIn('Do not copy safe_reference wording', request.call_args.kwargs['payload']['messages'][-1]['content'])
+
+    def test_arabic_wording_changes_preserve_english_prompt_and_keywords(self):
+        from ..services.seo_templates import contract_prompt
+        facts = {'name': 'Example glucose meter 1 BOX', 'package': '1 BOX'}
+        contract = self.general._contract('en_US')
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        self.assertEqual(content['search_phrases'], [facts['name'], 'Example glucose meter'])
+        self.assertFalse(validate(content, contract, facts, 'en_US')['errors'])
+        prompt = contract_prompt(contract, facts, [], 'en_US', {})
+        self.assertIn('use safe_reference as the content ceiling', prompt)
+        self.assertIn('return at least two distinct grounded keywords', prompt)
+        self.assertNotIn('One useful phrase is enough', prompt)
+        self.assertNotIn('not wording to copy', prompt)
+        content['search_phrases'] = ['Example glucose meter']
+        self.assertIn('non_descriptive:keywords', validate(content, contract, facts, 'en_US')['errors'])
+
+    def test_repeated_arabic_copy_remains_reviewable_after_retry(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        safe = deterministic(contract, facts, 'ar_001', lambda value: assistant.with_context(lang='ar_001').env._(value))
+        content['meta_description'] = safe['meta_description']
+        payload = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections', 'keywords')}
+        response = {'choices': [{'message': {'content': json.dumps(payload)}}]}
+        with patch.object(type(assistant), '_request', return_value=response) as request:
+            result = assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(request.call_count, 2)
+        self.assertEqual(result['meta_description'], safe['meta_description'])
+        self.assertFalse(result['validation']['errors'])
+        self.assertEqual(result['validation']['status'], 'review')
+        self.assertIn('repetitive_template_copy', result['validation']['warnings'])
+        self.assertTrue(result['review_required'])
+
+    def test_malformed_rewrite_retains_only_previous_valid_arabic_copy(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        safe = deterministic(contract, facts, 'ar_001', lambda value: assistant.with_context(lang='ar_001').env._(value))
+        content['meta_description'] = safe['meta_description']
+        payload = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections', 'keywords')}
+        responses = [{'choices': [{'message': {'content': text}}]} for text in (json.dumps(payload), '{broken')]
+        with patch.object(type(assistant), '_request', side_effect=responses):
+            result = assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(result['meta_description'], safe['meta_description'])
+        self.assertFalse(result['validation']['errors'])
+        self.assertIn('rewrite_failed:malformed_response', result['validation']['warnings'])
+        self.assertTrue(result['review_required'])
+
+    def test_invalid_copy_then_malformed_response_does_not_reuse_old_errors(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        content['meta_title'] += ' يعالج المرض بدقة مضمونة'
+        payload = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections', 'keywords')}
+        responses = [{'choices': [{'message': {'content': text}}]} for text in (json.dumps(payload), '{broken')]
+        with patch.object(type(assistant), '_request', side_effect=responses):
+            with self.assertRaises(ProviderFailure) as failure:
+                assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(failure.exception.code, 'malformed_response')
+        self.assertFalse(failure.exception.validation_report)
+
+    def test_repeated_copy_does_not_override_unsupported_claims(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        safe = deterministic(contract, facts, 'ar_001', lambda value: assistant.with_context(lang='ar_001').env._(value))
+        content['meta_description'] = safe['meta_description']
+        content['meta_title'] += ' يعالج المرض بدقة مضمونة'
+        payload = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections', 'keywords')}
+        response = {'choices': [{'message': {'content': json.dumps(payload)}}]}
+        with patch.object(type(assistant), '_request', return_value=response):
+            with self.assertRaises(ProviderFailure) as failure:
+                assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(failure.exception.code, 'template_validation_failed')
+        self.assertTrue(failure.exception.validation_report['errors'])
+        self.assertNotIn('repetitive_template_copy', failure.exception.validation_report['errors'])
+
+    def test_arabic_review_warnings_survive_pipeline_validation(self):
+        facts, contract, content = self.arabic_copy()
+        warnings = ['repetitive_template_copy', 'rewrite_failed:malformed_response']
+        content['validation'] = {'warnings': warnings}
+        job = self.env['ab.product.seo.bulk.optimization'].create({'name': 'Warning validation'})
+        item = self.env['ab_seo_work_item'].sudo().create({'job_id': job.id, 'product_id': self.product.id,
+            'template_id': self.general.id, 'template_snapshot': {'ar_001': contract},
+            'trusted_facts': facts, 'category_context': {'conflicts': []}})
+        report = item._validate_template_output(content, 'ar_001')
+        self.assertFalse(report['errors'])
+        self.assertEqual(report['status'], 'review')
+        for warning in warnings:
+            self.assertIn(warning, content['validation']['warnings'])
+
+    def test_arabic_duplicate_sections_are_review_warnings(self):
+        facts, contract, content = self.arabic_copy()
+        content['short_description'] = content['meta_description']
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        about['content'] = content['meta_description']
+        report = validate(content, contract, facts, 'ar_001')
+        self.assertFalse(report['errors'])
+        self.assertIn('duplicate_copy:about_product', report['warnings'])
+        self.assertIn('duplicate_copy:meta_short', report['warnings'])
+        self.assertEqual(report['status'], 'review')
+
+    def test_arabic_duplicate_sections_retry_then_keep_valid_draft(self):
+        facts, contract, content = self.arabic_copy()
+        assistant = self.assistant()
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        about['content'] = content['meta_description']
+        payload = {key: content[key] for key in ('meta_title', 'meta_description', 'short_description', 'sections', 'keywords')}
+        response = {'choices': [{'message': {'content': json.dumps(payload)}}]}
+        with patch.object(type(assistant), '_request', return_value=response) as request:
+            result = assistant._generate_grounded(facts['name'], 'ar_001', facts, [], contract['prompt_version'], contract=contract)
+        self.assertEqual(request.call_count, 2)
+        self.assertFalse(result['validation']['errors'])
+        self.assertIn('duplicate_copy:about_product', result['validation']['warnings'])
+        self.assertTrue(result['review_required'])
+
+    def test_english_duplicate_sections_still_fail_validation(self):
+        facts = {'name': 'Example glucose meter 1 BOX', 'package': '1 BOX'}
+        contract = self.general._contract('en_US')
+        content = deterministic(contract, facts, 'en_US', lambda value: value)
+        content['short_description'] = content['meta_description']
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        about['content'] = content['meta_description']
+        report = validate(content, contract, facts, 'en_US')
+        self.assertIn('duplicate_copy:about_product', report['errors'])
+        self.assertIn('duplicate_copy:meta_short', report['errors'])
+
+    def test_arabic_duplicate_sections_do_not_allow_unsupported_claims(self):
+        facts, contract, content = self.arabic_copy()
+        about = next(section for section in content['sections'] if section['key'] == 'about_product')
+        about['content'] = content['meta_description']
+        content['meta_title'] += ' يعالج المرض بدقة مضمونة'
+        report = validate(content, contract, facts, 'ar_001')
+        self.assertTrue(report['errors'])
+        self.assertEqual(report['status'], 'rejected')

@@ -3,6 +3,7 @@ from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
 from .product_seo import SEO_LANGUAGES
+from ..services.seo_templates import language_errors
 
 
 class AbProductSeoVersion(models.Model):
@@ -68,6 +69,11 @@ class AbProductSeoVersion(models.Model):
 
     def _get_publish_field_values(self, include_description=True):
         self.ensure_one()
+        content = {field: self[field] for field in ('meta_title', 'meta_description', 'keyword_text', 'seo_name')}
+        if include_description:
+            content['public_description'] = self.public_description
+        if language_errors(content, self.lang_code):
+            raise UserError(_("Translate the SEO content into the selected language before approval or publication: %s") % self.lang_code)
         values = {
             "website_meta_title": self.meta_title or False,
             "website_meta_description": self.meta_description or False,

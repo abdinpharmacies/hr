@@ -2,6 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from .product_seo import SEO_LANGUAGES
+from ..services.seo_templates import language_errors
 
 
 class AbProductSeoTranslation(models.Model):
@@ -101,6 +102,11 @@ class AbProductSeoTranslation(models.Model):
 
     def _create_version(self):
         self.ensure_one()
+        content = {field: self[field] for field in (
+            'meta_title', 'meta_description', 'keyword_text', 'seo_name', 'short_description',
+            'public_description', 'active_ingredient', 'warnings', 'contraindications', 'storage')}
+        if language_errors(content, self.lang_code):
+            raise UserError(_("Translate the SEO content into the selected language before approval or publication: %s") % self.lang_code)
         version_number = self.env["ab.product.seo.version"].search_count([
             ("seo_id", "=", self.seo_id.id),
             ("lang_code", "=", self.lang_code),

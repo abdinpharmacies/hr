@@ -122,6 +122,10 @@ class TemplateWorkItem(models.Model):
     def _validate_template_output(self, content, language):
         contract = self.template_snapshot[language]
         report = validate(content, contract, self.trusted_facts, language)
+        if language.startswith('ar'):
+            review_warnings = {'repetitive_template_copy', 'rewrite_failed:malformed_response', 'safe_copy_repair'}
+            report['warnings'] += [warning for warning in content.get('validation', {}).get('warnings', [])
+                                   if warning in review_warnings and warning not in report['warnings']]
         report['warnings'] += self.category_context.get('conflicts', [])
         if not report['errors'] and report['warnings']:
             report['status'] = 'review'
@@ -212,6 +216,7 @@ class TemplateTranslation(models.Model):
 
     def _validation_content(self):
         return {'meta_title': self.meta_title or '', 'meta_description': self.meta_description or '',
+                'keyword_text': self.keyword_text or '', 'seo_name': self.seo_name or '',
                 'short_description': self.short_description or '', 'public_description': self.public_description or '',
                 'sections': self.structured_sections or [], 'search_phrases': self.search_phrases or [],
                 'content_kind': 'GENERATED_TEXT' if self.generation_model and self.generation_model != 'deterministic' else 'SOURCE_FACT'}

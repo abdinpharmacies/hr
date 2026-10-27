@@ -6008,3 +6008,13 @@ msgstr "تم الاستيراد: %(count)s. لم يتم الاستيراد: 0."
 #: model:ir.ui.menu,name:ab_website_seo_optimization.ab_website_seo_optimization_menu_all_records
 msgid "All Records"
 msgstr "كل السجلات"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/product_seo_translation.py:0
+#: code:addons/ab_website_seo_optimization/models/product_seo_version.py:0
+msgid ""
+"Translate the SEO content into the selected language before approval or "
+"publication: %s"
+msgstr ""
+"ترجم محتوى تحسين محركات البحث إلى اللغة المحددة قبل الاعتماد أو النشر: %s"
