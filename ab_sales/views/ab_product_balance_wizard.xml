@@ -12,9 +12,8 @@
                     </group>
                     <notebook>
                         <page name="balance_html" string="Balance">
-                            <group>
-                                <field name="balance_html" nolabel="1" readonly="1"/>
-                            </group>
+                            <field name="balance_data" widget="ab_sales_store_balance_rows"
+                                   nolabel="1" readonly="1"/>
                         </page>
                     </notebook>
                     <footer>

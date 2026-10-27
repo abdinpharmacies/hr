@@ -40,8 +40,9 @@ cannot regress a newer attempt. Only confirmed Pending/Saved clears the cached
 bill and reports success. Existing list/search status refresh can observe the
 same records and never repost them.
 
-Callcenter communicates only with branch Odoo through `ab_branch_api`. It has
-no new B-Connect dependency or SQL connection. Promotions and contracts keep
+Business operations communicate with branch Odoo through `ab_branch_api`.
+The all-store balance read exception added in 19.0.4.1.13 is documented below;
+it uses the existing central B-Connect connector. Promotions and contracts keep
 their existing pricing logic; their modules are unchanged. Returns and customer
 creation keep the older recovery adapter described below; sales now use this
 guarded protocol instead of automatic replay after RPC errors.
@@ -320,8 +321,10 @@ no automatic provisioning.
 
 ## API-only callcenter (19.0.3.5.0)
 
-This checkout always uses the branch API. It contains no SQL connector inheritance,
-external SQL posting or fallback, connection probes, or transport-role selection.
+Business operations use the branch API. Starting with 19.0.4.1.13, the
+all-store balance display is the sole direct E-Plus read exception, described below.
+There is no direct external SQL posting, business-operation SQL fallback, or
+transport-role selection.
 The branch provider retains its E-Plus connection and owns automatic sale posting.
 Response identifiers retain their branch API meaning; this release does not make
 the branch backend independent of E-Plus.
@@ -408,8 +411,8 @@ do not upgrade `base`. Translation updates support both `ar` and `ar_001`. No
 migration hooks or historical imports are installed.
 
 Stock lookup, customer operations, return eligibility checks and submission
-continue through the existing branch API. Direct E-Plus access remains disabled
-on callcenter. This change does not make new branch operations available offline.
+continue through the existing branch API. The only direct E-Plus exception is
+all-store balance display (19.0.4.1.13); branch operations are not available offline.
 
 
 ### Automatic submission recovery (19.0.3.4.0)
@@ -465,3 +468,89 @@ saved local callcenter invoices and totals recorded on first submission.
 
 See [implementation and verification](doc/CALLCENTER_PARITY_2026_10_20.md) for the
 feature mapping, paired API change, and rollout checks.
+
+
+## All-store balance cache and refresh (19.0.4.1.17)
+
+All-store totals, availability filters, product details, POS search results,
+invoice-line totals and the Store Balances popup read `ab_sales_inventory`.
+Opening or searching the popup and the delayed POS search refresh do not query
+central E-Plus. The selected POS branch still refreshes through its branch API;
+that result is saved to the same cache and reflected in aggregate totals.
+
+The informational scope is every `ab_store` with `allow_transfer=True` (the
+existing field corresponding to “can_transfer”), including archived stores while
+that flag remains enabled. Branch registration, sales permission and employee
+assignment do not narrow the informational aggregate. This does not grant access
+to branch transactions. Missing/nonpositive E-Plus IDs remain visible as
+unavailable and are excluded from source queries and totals without blocking
+mapped stores. A missing cache entry is unavailable, not confirmed zero.
+
+The existing `ir_cron_update_balance_per_pos` is explicitly enabled every four
+hours on targeted module upgrade. Its `btn_update_balance_per_pos()` method reads
+a consolidated E-Plus snapshot through the existing connector and persists known
+product balances, replacing the former branch API fanout. The popup's **Refresh
+all balances** action explicitly queries E-Plus for only its selected product
+and persists the returned balances, including confirmed zeros for mapped stores.
+No other automatic display path performs a central read.
+
+Central SELECTs are parameterized and branch-filtered, with at most 500 store
+IDs per batch (and 200 product IDs per explicit product batch), on one connection.
+The full cron snapshot avoids materializing a product/store Cartesian product:
+it creates returned rows for known products and zeros previously cached rows
+missing from a successful complete snapshot. Returned rows are checked for scope,
+duplicates, invalid units and non-finite quantities before any cache write.
+SQL Server `decimal(18,0)` product/store IDs are normalized to integers only
+after verifying an exact positive whole number. Validation runs after leaving
+the connector context so invalid data produces an Odoo validation error, not
+the connector's generic database-error wrapper.
+Committed reads without NOLOCK describe the central replica; the branch API
+remains authoritative for branch operations. No external database writes occur.
+
+Each cache entry has `balance_refreshed_at` (local save time) and `balance_source`
+(E-Plus or Branch API). Existing `branch_refreshed_at` is a fallback for older
+entries until refreshed; it continues to record the provider timestamp. The
+popup displays the saved source and last refresh time. Normal cached data is not
+labelled as a failed refresh. Legacy duplicate snapshots are read once per
+product/store, choosing the newest, rather than added together.
+
+Scheduled writers skip entries saved less than one hour ago, rechecking while
+holding the existing store lock. Foreground refreshes bypass this age rule.
+Both sources reject a response if the cache was saved after the local request
+started. A no-value-change PostgreSQL row update on the locked store supplies an
+MVCC serialization barrier: an older repeatable-read transaction must retry,
+including when the inventory cache was initially empty. This changes no branch
+business value. Cache quantities are custom informational values, not Odoo's
+system-managed stock fields. Central writes preserve API prices; branch API
+writes retain existing price audit logging. Failed or incomplete snapshots
+retain prior balances and freshness timestamps. Only complete successful
+snapshots can zero existing rows missing from the response.
+
+The existing default-store scheduled refresh remains branch API only and skips
+when no default store is configured. It also observes one-hour protection; it
+never falls back to all branches.
+
+### Popup controls and scope
+
+The module-owned `ab_sales_store_balance_rows` widget searches loaded branch names
+and codes, including Arabic, without network requests. Search state survives a
+refresh. Each row's Refresh button calls only that branch's fixed
+`get_product_balances` API for the selected product and persists the validated
+response. Reopening the popup and closing it to return to product cards reuse
+the saved values. The Refresh all action and branch requests cannot overlap in
+the same popup. Failures retain values and allow retry; superseded/closed popup
+responses are ignored.
+
+The fixed popup API operation may read a transfer-enabled branch outside the
+employee's sales assignment. Product access and wizard ACLs are required.
+Every request rechecks transfer eligibility, a verified active API configuration,
+branch/database/product identity, quantities and timestamp. General branch-client
+and transaction permissions are unchanged. Unavailable API connections remain
+visible with disabled buttons and explanations. Both Arabic catalogs contain
+translations; no shared frontend component is patched.
+
+Deployment requires a callcenter service restart and a targeted `ab_sales`
+upgrade, then browser asset refresh. No provider change, hook or migration is
+required. Verify the existing central connection credentials separately: QA uses
+mocked E-Plus/API responses and does not establish live connectivity. The saved
+four-hour schedule takes effect when the target module is upgraded.

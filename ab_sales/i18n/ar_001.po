@@ -357,6 +357,7 @@ msgstr "رجوع"
 #: code:addons/ab_sales/static/src/add_products/product_card.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product__balance
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory_report__balance
@@ -446,6 +447,7 @@ msgstr "الفواتير"
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__branch
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
@@ -2814,6 +2816,7 @@ msgstr "الأحدث"
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: code:addons/ab_sales/static/src/dashboard/sales_dashboard.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 #: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
 msgid "Refresh"
 msgstr "تحديث"
@@ -3419,6 +3422,8 @@ msgid "Some products exceed available stock in this store."
 msgstr "بعض المنتجات تتجاوز المخزون المتاح في هذا المتجر."
 
 #. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
 msgid "Source"
 msgstr "المصدر"
@@ -3524,6 +3529,7 @@ msgstr "المخزن %s غير مسموح به للمبيعات."
 #: code:addons/ab_sales/static/src/add_products/add_products_action.js:0
 #: code:addons/ab_sales/static/src/add_products/barcode_scan_form.js:0
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__balance_data
 msgid "Store Balances"
 msgstr "أرصدة المخازن"
 
@@ -4471,9 +4477,13 @@ msgid "The branch API version or store does not match."
 msgstr "إصدار واجهة برمجة الفرع أو الفرع غير مطابق."
 
 #. module: ab_sales
+#. odoo-javascript
 #. odoo-python
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
 #: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
 #: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
 msgid "The branch returned invalid stock data."
 msgstr "أرسل الفرع بيانات مخزون غير صالحة."
 
@@ -4489,6 +4499,7 @@ msgstr "أرسل الفرع بنوداً تخص فاتورة أو فرعاً آ�
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 #: code:addons/ab_sales/models/ab_sales_ui_api.py:0
 #: code:addons/ab_sales/models/local_bills.py:0
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
 msgid "This store is not allowed."
 msgstr "هذا الفرع غير مسموح به."
 
@@ -5039,9 +5050,7 @@ msgstr "جميع الفروع المصرح بها"
 
 #. module: ab_sales
 #. odoo-javascript
-#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
-#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
-#: code:addons/ab_sales/static/src/pos/pos_search_product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
 msgid "Balance refresh failed; cached value shown"
 msgstr "تعذر تحديث الرصيد؛ تظهر القيمة المحفوظة"
 
@@ -5135,6 +5144,7 @@ msgstr "المعلقة والمحفوظة"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 #: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
 msgid "Retry"
 msgstr "إعادة المحاولة"
@@ -5154,6 +5164,8 @@ msgstr "المبيعات والمرتجعات"
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
 msgid "Some products are unavailable at the branch."
 msgstr "بعض الأصناف غير متاحة في الفرع."
 
@@ -6530,6 +6542,7 @@ msgstr "تحديث الأيام المكتملة"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/add_products/product_card.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "Refresh balance from branch"
 msgstr "تحديث الرصيد من الفرع"
 
@@ -7740,3 +7753,184 @@ msgstr ""
 #: code:addons/ab_sales/models/ab_sales_pos_draft_slots.py:0
 msgid "Only a confirmed rejected bill can be restored as a draft."
 msgstr "يمكن استعادة الفاتورة المرفوضة المؤكدة فقط كمسودة."
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_all_store_balance
+msgid "All Store Balance Reader"
+msgstr "قارئ أرصدة جميع الفروع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__balance_unavailable
+msgid "Balance Unavailable"
+msgstr "الرصيد غير متاح"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
+msgid "A valid product and branch are required."
+msgstr "يجب تحديد صنف وفرع صالحين."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid ""
+"Balances initially come from E-Plus. Refresh a branch to check its balance "
+"through the branch API."
+msgstr ""
+"تُعرض الأرصدة أولاً من إي بلس. حدّث الفرع للتحقق من رصيده عبر واجهة الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_inventory__balance_source__branch_api
+msgid "Branch API"
+msgstr "واجهة الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
+msgid "Branch API connection is not ready."
+msgstr "اتصال واجهة الفرع غير جاهز."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
+msgid "Branch API is not configured."
+msgstr "لم يتم إعداد واجهة الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Branch balance refresh failed."
+msgstr "تعذر تحديث رصيد الفرع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Cached balance (stale)"
+msgstr "رصيد محفوظ (غير محدث)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Clear search"
+msgstr "مسح البحث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_inventory__balance_source__eplus
+msgid "E-Plus"
+msgstr "إي بلس"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Last refreshed"
+msgstr "آخر تحديث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "No branches match your search."
+msgstr "لا توجد فروع مطابقة للبحث."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "No transfer-enabled branches found."
+msgstr "لا توجد فروع مسموح بالتحويل إليها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Refresh failed. Previous balance retained."
+msgstr "تعذر التحديث. تم الاحتفاظ بالرصيد السابق."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Refreshing..."
+msgstr "جارٍ التحديث..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Search branches by name or code"
+msgstr "البحث عن الفروع بالاسم أو الكود"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Search branches by name or code..."
+msgstr "ابحث عن الفرع بالاسم أو الكود..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Showing %(visible)s of %(total)s branches"
+msgstr "عرض %(visible)s من %(total)s فرعاً"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_balance_wizard.py:0
+#: code:addons/ab_sales/models/branch_services.py:0
+msgid "This branch has no E-Plus ID."
+msgstr "هذا الفرع غير مرتبط بمعرّف إي بلس."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid ""
+"Branches without an E-Plus ID are unavailable and excluded from totals."
+msgstr ""
+"أرصدة الفروع غير المرتبطة بمعرّف إي بلس غير متاحة ولا تُحتسب ضمن الإجمالي."
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Unavailable"
+msgstr "غير متاح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance_refreshed_at
+msgid "Balance Refreshed At"
+msgstr "وقت تحديث الرصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance_source
+msgid "Balance Source"
+msgstr "مصدر الرصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid ""
+"Balances are cached. Refresh all balances from E-Plus, or refresh one branch"
+" through its API."
+msgstr ""
+"الأرصدة محفوظة مؤقتاً. حدّث جميع الأرصدة من E-Plus، أو حدّث فرعاً واحداً من "
+"خلال واجهته البرمجية."
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/branch_services.py:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Cached balance"
+msgstr "الرصيد المحفوظ مؤقتاً"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_search_product_card.xml:0
+msgid "Cached balance unavailable"
+msgstr "الرصيد المحفوظ مؤقتاً غير متاح"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Refresh all balances"
+msgstr "تحديث جميع الأرصدة"

@@ -7,9 +7,9 @@
                    t-esc="p.pos_balance_age_label"/>
         </xpath>
         <xpath expr="//button[hasclass('o_ab_sales_balance_btn')]" position="inside">
-            <i t-if="showPosBalanceAge and p.total_balance_unavailable"
+            <i t-if="p.total_balance_unavailable"
                class="fa fa-exclamation-triangle text-warning"
-               title="Balance refresh failed; cached value shown"/>
+               title="Cached balance unavailable"/>
         </xpath>
     </t>
 </templates>

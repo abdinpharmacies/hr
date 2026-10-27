@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.StoreBalanceRows">
+        <div class="o_ab_sales_store_balance_rows table-responsive">
+            <p class="text-muted small mb-2">Balances are cached. Refresh all balances from E-Plus, or refresh one branch through its API.</p>
+            <button type="button" class="btn btn-outline-primary mb-2"
+                    t-att-disabled="refreshAllDisabled" t-on-click="refreshAll">
+                <i class="fa fa-refresh me-1" t-att-class="{'fa-spin': state.refreshingAll}" aria-hidden="true"/>
+                <span t-if="state.refreshingAll">Refreshing...</span>
+                <span t-else="">Refresh all balances</span>
+            </button>
+            <div t-if="state.allError" class="text-danger small mb-2" role="alert">
+                <span>Refresh failed. Previous balance retained.</span>
+                <span class="d-block" t-esc="state.allError"/>
+            </div>
+            <p t-if="state.unmappedStoreCount" class="text-warning small mb-2">
+                Branches without an E-Plus ID are unavailable and excluded from totals.
+            </p>
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <input type="search" class="form-control" t-model="state.search"
+                       placeholder="Search branches by name or code..." aria-label="Search branches by name or code"/>
+                <button t-if="state.search" type="button" class="btn btn-outline-secondary text-nowrap"
+                        t-on-click="() => { this.state.search = ''; }">Clear search</button>
+            </div>
+            <p class="text-muted small mb-2" t-esc="countLabel"/>
+            <table class="table table-sm align-middle">
+                <thead>
+                    <tr><th>Branch</th><th>Balance</th><th>Source</th><th>Last refreshed</th></tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="visibleRows" t-as="row" t-key="row.store_id">
+                        <td>
+                            <div t-esc="row.store_name"/>
+                            <small t-if="row.store_code" class="text-muted" t-esc="row.store_code"/>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span t-esc="formatBalance(row.balance)"/>
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                        t-att-disabled="state.refreshingAll || row.loading || !row.can_refresh"
+                                        t-on-click="() => this.refreshBranch(row)"
+                                        t-att-title="row.unavailable_reason || ''"
+                                        aria-label="Refresh balance from branch">
+                                    <i class="fa fa-refresh" t-att-class="{'fa-spin': row.loading}" aria-hidden="true"/>
+                                    <span t-if="row.loading">Refreshing...</span>
+                                    <span t-elif="row.error">Retry</span>
+                                    <span t-else="">Refresh</span>
+                                </button>
+                            </div>
+                            <small t-if="row.unavailable_reason" class="text-muted d-block" t-esc="row.unavailable_reason"/>
+                            <div t-if="row.error" class="text-danger small mt-1" role="alert">
+                                <span>Refresh failed. Previous balance retained.</span>
+                                <span class="d-block" t-esc="row.error"/>
+                            </div>
+                        </td>
+                        <td t-att-class="{'text-warning': row.source === 'unavailable'}" t-esc="sourceLabel(row)"/>
+                        <td class="text-muted small" t-esc="formattedTime(row) || '—'"/>
+                    </tr>
+                    <tr t-if="!visibleRows.length">
+                        <td t-if="state.rows.length" colspan="4" class="text-muted">No branches match your search.</td>
+                        <td t-else="" colspan="4" class="text-muted">No transfer-enabled branches found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

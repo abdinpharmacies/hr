@@ -478,7 +478,9 @@ class AbSalesPosApi(models.TransientModel):
                 serials, store_id
             )
 
+        aggregate = self.env['ab_sales_all_store_balance']._read(serials)
         for product in products:
+            product['total_balance_unavailable'] = int(product.get('eplus_serial') or 0) not in aggregate['available_serials']
             serial = int(product.get("eplus_serial") or 0)
             product["balance"] = float(total_by_serial.get(serial, 0.0) or 0.0)
             product["pos_balance"] = float(pos_by_serial.get(serial, 0.0) or 0.0)
@@ -645,7 +647,7 @@ class AbSalesPosApi(models.TransientModel):
         if not serials:
             return
 
-        _total, pos_balances = self.env["ab_sales_ui_api"]._inventory_total_and_pos_balances_by_serial(
+        pos_balances = self.env["ab_sales_ui_api"]._inventory_selected_balances_by_serial(
             serials, header.store_id.id
         )
         for line in header.line_ids:

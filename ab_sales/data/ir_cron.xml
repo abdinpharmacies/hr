@@ -62,6 +62,11 @@
             <field name="code">model.cron_refresh_rankings()</field>
         </record>
     </data>
+    <!-- Explicitly apply the approved schedule to this existing noupdate cron. -->
+    <function model="ir.cron" name="write">
+        <value eval="[ref('ab_sales.ir_cron_update_balance_per_pos')]"/>
+        <value eval="{'active': True, 'interval_number': 4, 'interval_type': 'hours'}"/>
+    </function>
     <!-- This release explicitly enables the existing status poller on upgrade. -->
     <function model="ir.cron" name="write">
         <value eval="[ref('ab_sales.ir_cron_sync_sales_status_from_store')]"/>

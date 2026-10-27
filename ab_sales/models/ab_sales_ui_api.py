@@ -1002,7 +1002,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
 
     @api.model
     def _inventory_balance_store_ids(self, store_id=None):
-        """Use the same readable, configured branch scope as Store Balances."""
+        """Validate the selected branch API scope, independently of aggregate scope."""
         store_ids = self.env['ab_sales_branch_client']._stores().ids
         if store_id and int(store_id) not in store_ids:
             raise AccessError(_('This store is not allowed.'))
@@ -1010,8 +1010,9 @@ for ($i = $startInt; $i -le $endInt; $i++) {
 
     @api.model
     def _inventory_balance_by_serial(self, product_serials, store_id=None):
-        total, selected = self._inventory_total_and_pos_balances_by_serial(product_serials, store_id)
-        return selected if store_id else total
+        if store_id:
+            return self._inventory_selected_balances_by_serial(product_serials, store_id)
+        return self.env['ab_sales_all_store_balance']._read(product_serials)['totals']
 
     @api.model
     def _attach_pos_sync_metadata(self, rows, store_id):
@@ -1022,7 +1023,10 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             if store:
                 serials = {int(row.get('eplus_serial') or 0) for row in rows}
                 metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
+        aggregate = self.env['ab_sales_all_store_balance']._read(
+            [row.get('eplus_serial') for row in rows])
         for row in rows:
+            row['total_balance_unavailable'] = row.get('eplus_serial') not in aggregate['available_serials']
             cached = metadata.get(int(row.get('eplus_serial') or 0))
             row['pos_balance_last_sync_at'] = cached['last_sync_at'] if cached else False
             # The timestamp and balance must describe the same retained row.
@@ -1044,30 +1048,20 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         return {serial: values['last_sync_at'] for serial, values in metadata.items()}
 
     @api.model
+    def _inventory_selected_balances_by_serial(self, product_serials, store_id):
+        selected = {}
+        if store_id:
+            self._inventory_balance_store_ids(store_id)
+            store = self.env['ab_store'].browse(int(store_id))
+            metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, product_serials or [])
+            selected = {serial: row['balance'] for serial, row in metadata.items()}
+        return selected
+
+    @api.model
     def _inventory_total_and_pos_balances_by_serial(self, product_serials, store_id=None):
-        """Retained API balances for the branches visible in Store Balances."""
-        store_ids = self._inventory_balance_store_ids(store_id)
-        serials = sorted({int(serial) for serial in product_serials or [] if serial})
-        if not serials or not store_ids:
-            return {}, {}
-        self.env['ab_sales_inventory'].flush_model(['product_eplus_serial', 'store_id', 'balance'])
-        self.env.cr.execute(
-            """
-            SELECT product_eplus_serial,
-                   SUM(CASE WHEN store_id = %s THEN balance ELSE 0 END),
-                   SUM(balance)
-            FROM ab_sales_inventory
-            WHERE product_eplus_serial = ANY (%s) AND store_id = ANY (%s)
-            GROUP BY product_eplus_serial
-            """,
-            (int(store_id) if store_id else None, serials, store_ids),
-        )
-        totals, selected = {}, {}
-        for serial, pos_balance, total_balance in self.env.cr.fetchall():
-            totals[int(serial)] = float(total_balance or 0.0)
-            if store_id:
-                selected[int(serial)] = float(pos_balance or 0.0)
-        return totals, selected
+        """Cached transfer-store totals and the authorized selected branch cache."""
+        selected = self._inventory_selected_balances_by_serial(product_serials, store_id)
+        return self.env['ab_sales_all_store_balance']._read(product_serials)['totals'], selected
 
     @api.model
     def _store_id_from_header(self, header_id):
@@ -1717,85 +1711,12 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 r["default_uom_factor"] = factor
             return rows
 
-        def _run_search(search_domain, sql_filter=None):
-            search_domain = self._safe_domain("ab_product", search_domain)
-
-            if item_type == "all" and want_pos_balance_only and store_id and not raw_query:
-                params = [store_id, self._inventory_balance_store_ids(store_id)]
-                extra_where = ""
-                if sql_filter:
-                    extra_where = f" AND {sql_filter['where']}"
-                    params.extend(sql_filter["params"])
-                if price_bounds is not None:
-                    lower, upper = price_bounds
-                    lower_operator = ">" if lower == 0 else ">="
-                    extra_where += f" AND p.default_price {lower_operator} %s AND p.default_price < %s"
-                    extra_where += " AND ROUND(p.default_price::numeric, 2) BETWEEN %s AND %s"
-                    params.extend([lower - Decimal("0.005"), upper + Decimal("0.005"), lower, upper])
-                if want_balance_only:
-                    extra_where += " AND g.balance > 0"
-                params.append(limit)
-
-                self.env['ab_sales_inventory'].flush_model(['product_eplus_serial', 'store_id', 'balance'])
-                self.env.cr.execute(
-                    f"""
-                    SELECT
-                        p.id,
-                        i.balance AS pos_balance,
-                        COALESCE(g.balance, 0) AS total_balance
-                    FROM ab_product p
-                    JOIN (
-                        SELECT product_eplus_serial, SUM(balance) AS balance
-                        FROM ab_sales_inventory
-                        WHERE store_id = %s
-                          AND balance > 0
-                        GROUP BY product_eplus_serial
-                    ) i ON i.product_eplus_serial = p.eplus_serial
-                    LEFT JOIN LATERAL (
-                        SELECT SUM(g.balance) AS balance
-                        FROM ab_sales_inventory g
-                        WHERE g.product_eplus_serial = p.eplus_serial
-                          AND g.store_id = ANY (%s)
-                          AND g.balance != 0
-                    ) g ON TRUE
-                    WHERE p.active = TRUE
-                      {extra_where}
-                    ORDER BY p.name
-                    LIMIT %s
-                    """,
-                    tuple(params),
-                )
-                rows = self.env.cr.fetchall()
-                if not rows:
-                    return []
-
-                pos_balance_by_product_id = {
-                    int(pid): float(pos_bal or 0.0) for pid, pos_bal, _total_bal in rows if pid
-                }
-                total_balance_by_product_id = {
-                    int(pid): float(total_bal or 0.0) for pid, _pos_bal, total_bal in rows if pid
-                }
-                product_ids = [int(pid) for pid, _pos_bal, _total_bal in rows if pid]
-                products = Product.browse(product_ids).read(fields_list)
-                _attach_uom_factors(products)
-                sync_by_serial = self._inventory_pos_sync_by_serial(
-                    [int(product.get('eplus_serial') or 0) for product in products], store_id)
-                by_id = {p["id"]: p for p in products}
-                out = []
-                for pid in product_ids:
-
-                    row = by_id.get(pid)
-                    if not row:
-                        continue
-                    pos_balance = float(pos_balance_by_product_id.get(pid, 0.0) or 0.0)
-                    total_balance = float(total_balance_by_product_id.get(pid, 0.0) or 0.0)
-                    row["pos_balance"] = pos_balance
-                    row["pos_balance_last_sync_at"] = sync_by_serial.get(int(row.get('eplus_serial') or 0), False)
-                    row["has_pos_balance"] = bool(pos_balance > 0)
-                    row["balance"] = total_balance
-                    row["has_balance"] = bool(total_balance > 0)
-                    out.append(row)
-                return out[:limit]
+        def _run_search(search_domain):
+            search_domain = fields.Domain(self._safe_domain("ab_product", search_domain))
+            if want_pos_balance_only and store_id:
+                self._inventory_balance_store_ids(store_id)
+                product_env = Product.with_context(pos_store_id=store_id)
+                search_domain &= fields.Domain(product_env._search_has_pos_balance('=', True))
 
             offset = 0
             out = []
@@ -1875,11 +1796,11 @@ for ($i = $startInt; $i -le $endInt; $i++) {
 
         if raw_query:
             code_domain = [("code", "=ilike", query_code)] + base_domain
-            code_results = _run_search(code_domain, sql_filter={"where": "p.code ILIKE %s", "params": [query_code]})
+            code_results = _run_search(code_domain)
             rows = code_results
             if not rows:
                 name_domain = [("name", "=ilike", query_like)] + base_domain
-                rows = _run_search(name_domain, sql_filter={"where": "p.name ILIKE %s", "params": [query_like]})
+                rows = _run_search(name_domain)
             if len(rows) < 5:
                 barcode_rows = self._search_products_by_partial_barcode(
                     barcode_query=raw_query,
@@ -1953,7 +1874,6 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             if blended_ids:
                 blended_rows = _run_search(
                     [("id", "in", blended_ids)] + base_domain,
-                    sql_filter={"where": "p.id = ANY(%s)", "params": [blended_ids]},
                 )
                 by_id = {int(row["id"]): row for row in blended_rows if row.get("id")}
                 ordered = [by_id[pid] for pid in blended_ids if pid in by_id]

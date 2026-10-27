@@ -8,7 +8,8 @@
             <field name="mode">extension</field>
             <field name="arch" type="xml">
                 <xpath expr="//field[last()]" position="after">
-                    <field name="balance"/>
+                    <field name="balance" decoration-warning="balance_unavailable"/>
+                    <field name="balance_unavailable"/>
                     <field name="has_balance" optional="hide"/>
                     <button name="btn_get_stores_balance" type="object" icon="fa-anchor" class="btn-primary"
                             title="Get Store Balances"/>

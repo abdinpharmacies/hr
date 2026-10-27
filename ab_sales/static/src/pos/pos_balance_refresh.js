@@ -17,7 +17,7 @@ function applyTotalBalance(row, total, productKey) {
     }
 }
 
-// The dialog already fetched branch balances. Reuse its scoped cache on close.
+// Re-read cached totals after closing the branch breakdown.
 export async function refreshCachedTotalBalances(orm, products, lines, storeId, isCurrent) {
     const targets = [
         ...products.map((row) => ({row, productKey: "id", id: row.id})),
@@ -31,14 +31,20 @@ export async function refreshCachedTotalBalances(orm, products, lines, storeId, 
         totals = await orm.call("ab_sales_pos_api", "pos_cached_balance_totals", [], {
             product_ids: [...new Set(targets.map(({id}) => id))],
             store_id: storeId || false,
+            include_sync_metadata: true,
         });
     } catch {
-        return; // Retain the last displayed total if this read fails.
+        totals = null; // Retain the displayed total and mark it unavailable.
     }
     if (!isCurrent()) return;
     for (const {row, productKey, id} of targets) {
         if (latestTotalRefresh.get(row) === token && row[productKey] === id) {
-            applyTotalBalance(row, totals?.[id], productKey);
+            const metadata = totals?.[id];
+            const current = productKey === "id" ? row.balance : row.balance_total;
+            if (metadata?.total_refresh_success || !Number.isFinite(current)) {
+                applyTotalBalance(row, metadata?.total_balance, productKey);
+            }
+            row.total_balance_unavailable = metadata?.total_refresh_success !== true;
         }
     }
 }
@@ -111,8 +117,11 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
             row.pos_balance_last_sync_at = metadata.last_sync_at || false;
         }
         if (latestTotalRefresh.get(row) === token) {
-            applyTotalBalance(row, metadata?.total_balance, productKey);
-            if (allStores) row.total_balance_unavailable = metadata?.total_refresh_success !== true;
+            const current = productKey === "id" ? row.balance : row.balance_total;
+            if (metadata?.total_refresh_success || !Number.isFinite(current)) {
+                applyTotalBalance(row, metadata?.total_balance, productKey);
+            }
+            row.total_balance_unavailable = metadata?.total_refresh_success !== true;
         }
         row.pos_balance_unavailable = !(metadata?.refresh_success === true && Number.isFinite(metadata.balance));
         if (!row.pos_balance_unavailable) {

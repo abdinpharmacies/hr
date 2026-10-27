@@ -137,6 +137,7 @@ class Product(models.Model):
     _inherit = ['abdin_et.extra_tools', 'ab_product']
 
     balance = fields.Float(compute='_compute_balance')
+    balance_unavailable = fields.Boolean(string='Balance Unavailable', compute='_compute_balance')
     has_balance = fields.Boolean(compute='_compute_has_balance', search='_search_has_balance')
     has_pos_balance = fields.Boolean(compute='_compute_has_pos_balance', search='_search_has_pos_balance')
     only_default_sales_uom = fields.Boolean(default=False)
@@ -185,42 +186,14 @@ class Product(models.Model):
         return [('eplus_serial', 'in', eplus_serials)]
 
     def _compute_balance(self):
-        product_serials = []
-        for serial in self.mapped('eplus_serial'):
-            try:
-                serial_int = int(serial or 0)
-            except Exception:
-                serial_int = 0
-            if serial_int:
-                product_serials.append(serial_int)
-
-        balance_by_serial = {}
-        if product_serials:
-            self.env.cr.execute("""
-                                select product_eplus_serial, sum(balance) as balance
-                                from ab_sales_inventory
-                                where product_eplus_serial = any (%s)
-                                  and store_id is not null
-                                  and balance != 0
-                                group by product_eplus_serial
-                                having sum(balance) > 0
-                                """, (product_serials,))
-            balance_by_serial = {
-                int(serial): float(balance or 0.0)
-                for serial, balance in self.env.cr.fetchall()
-                if serial
-            }
-
+        snapshot = self.env['ab_sales_all_store_balance']._read(self.mapped('eplus_serial'))
         for rec in self:
-            try:
-                rec_serial = int(rec.eplus_serial or 0)
-            except Exception:
-                rec_serial = 0
-            rec.balance = balance_by_serial.get(rec_serial, 0.0)
+            rec.balance = snapshot['totals'].get(rec.eplus_serial, 0.0)
+            rec.balance_unavailable = rec.eplus_serial not in snapshot['available_serials']
 
     def _compute_has_balance(self):
         for rec in self:
-            rec.has_balance = bool(rec.balance)
+            rec.has_balance = rec.balance > 0
 
     def _compute_has_pos_balance(self):
         store_id = self._context_pos_store_id()
@@ -264,15 +237,9 @@ class Product(models.Model):
         if operator not in ['=', '!='] or not isinstance(val, bool):
             raise UserError(_('Operation not supported'))
 
-        self.env.cr.execute("""
-                            select product_eplus_serial
-                            from ab_sales_inventory
-                            where store_id is not null
-                              and balance != 0
-                            group by product_eplus_serial
-                            having sum(balance) > 0
-                            """)
-        eplus_serials = [row[0] for row in self.env.cr.fetchall()]
+        products = self.search(fields.Domain('eplus_serial', '>', 0))
+        snapshot = self.env['ab_sales_all_store_balance']._read(products.mapped('eplus_serial'))
+        eplus_serials = [serial for serial, balance in snapshot['totals'].items() if balance > 0]
 
         if operator != '=':  # that means it is '!='
             val = not val

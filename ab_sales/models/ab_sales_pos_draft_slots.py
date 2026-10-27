@@ -177,7 +177,7 @@ class AbSalesPosDraftSlots(models.TransientModel):
                      "submission_can_edit", "submission_in_progress", "submission_status",
                      "draft_revision", "backup_status", "slot_number", "slot_waiting", "previous_slot_number",
                      "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html", "inventory_json",
-                     "show_details", "loading_details", "balance", "balance_total", "available", "loading"}
+                     "show_details", "loading_details", "balance", "balance_total", "total_balance_unavailable", "available", "loading"}
 
         def content(value):
             if isinstance(value, dict):

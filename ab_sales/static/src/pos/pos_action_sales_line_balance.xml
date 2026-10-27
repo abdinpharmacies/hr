@@ -16,6 +16,8 @@
                           class="ab_pos_line_btn_open_store_balance_text"
                           t-attf-class="#{(((line.balance_total !== undefined &amp;&amp; line.balance_total !== null) ? line.balance_total : line.balance) || 0) > 0 ? 'fw-semibold text-success' : 'text-muted'}"
                           t-esc="formatQty(((line.balance_total !== undefined &amp;&amp; line.balance_total !== null) ? line.balance_total : line.balance) || 0)"/>
+                    <i t-if="line.total_balance_unavailable" class="fa fa-exclamation-triangle text-warning"
+                       title="Cached balance unavailable"/>
                 </button>
                 <span class="ab_pos_line_cell_code small text-muted text-center flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1">
                     <i class="fa fa-barcode" aria-hidden="true"/>

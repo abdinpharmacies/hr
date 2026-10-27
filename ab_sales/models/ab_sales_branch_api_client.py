@@ -228,7 +228,8 @@ class BranchPos(models.TransientModel):
         balances = self.pos_refresh_pos_balances(store_id=store_id, product_ids=[product_id])
         response['pos_balance'] = balances.get(int(product_id), 0.0)
         response['balance'] = response['pos_balance']
-        response['total_balance'] = self.pos_cached_balance_totals([product_id], store_id).get(int(product_id), 0.0)
+        response.update(self.pos_cached_balance_totals([product_id], store_id, include_sync_metadata=True).get(int(product_id), {}))
+        response['total_balance_unavailable'] = not response.get('total_refresh_success', False)
         product = self.env['ab_product'].browse(int(product_id))
         response['sell_price'] = self._store_default_price(int(store_id), product)
         response['default_price'] = response['sell_price']

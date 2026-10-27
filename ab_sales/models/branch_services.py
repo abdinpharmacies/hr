@@ -1,8 +1,9 @@
-"""API-only stock, customers and background synchronization."""
+"""Branch API operations with a read-only central aggregate balance exception."""
 import hashlib
 import json
 import math
 import logging
+from datetime import datetime, timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
@@ -40,6 +41,7 @@ class BranchServices(models.AbstractModel):
             offset = next_offset
 
     def _balances(self, store, serials):
+        started = datetime.utcnow()
         serials = sorted({int(s) for s in serials if s})
         result, fetched = [], False
         for offset in range(0, len(serials), 200):
@@ -51,8 +53,9 @@ class BranchServices(models.AbstractModel):
                 raise UserError(_('Some products are unavailable at the branch.'))
             result.extend(rows)
             fetched = response['fetched_at']
-        self.env['ab_sales_inventory']._apply_api_balances(store, result, fetched)
-        return result
+        self.env['ab_sales_inventory']._apply_api_balances(store, result, fetched, started=started)
+        saved = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
+        return [dict(row, balance=saved[row['product_eplus_serial']]['balance']) for row in result]
 
     def _validate_balance_rows(self, store, rows):
         serials = set()
@@ -74,69 +77,105 @@ class ApiInventory(models.Model):
         store.check_access('read')
         rows = self.search(fields.Domain('store_id', '=', store.id)
                            & fields.Domain('product_eplus_serial', 'in', list(serials)))
+        rows = rows.sorted(lambda r: (r.balance_refreshed_at or r.branch_refreshed_at or datetime.min, r.id))
         return {row.product_eplus_serial: {'balance': row.balance,
-                'last_sync_at': fields.Datetime.to_string(row.branch_refreshed_at) if row.branch_refreshed_at else False}
+                'last_sync_at': fields.Datetime.to_string(row.balance_refreshed_at or row.branch_refreshed_at) if (row.balance_refreshed_at or row.branch_refreshed_at) else False}
                 for row in rows}
 
-    def _apply_api_balances(self, store, rows, fetched, complete=False):
+    balance_refreshed_at = fields.Datetime(string='Balance Refreshed At', readonly=True)
+    balance_source = fields.Selection([('eplus', 'E-Plus'), ('branch_api', 'Branch API')],
+                                      string='Balance Source', readonly=True)
+
+    def _apply_api_balances(self, store, rows, fetched, complete=False, *, started=None, scheduled=False):
         client = self.env['ab_sales_branch_client']
-        client._config(store)  # Validate before scoped elevation, even for cron callers.
+        client._config(store)
         client._validate_balance_rows(store, rows)
         fetched = fields.Datetime.to_datetime(fetched)
         if not fetched:
             raise UserError(_('The branch returned invalid stock data.'))
-        # Serialize snapshots per store, including the initial empty cache.
+        self._apply_balance_cache(store, rows, 'branch_api', started or fetched,
+                                  fetched=fetched, complete=complete, scheduled=scheduled)
+
+    def _apply_balance_cache(self, store, rows, source, started, *, fetched=False,
+                             complete=False, scheduled=False):
+        """Private writer: callers must authorize and validate the complete response first.
+
+        Local receipt time controls freshness; local request start orders responses.
+        Provider timestamps remain diagnostic and cannot override a newer local save.
+        """
         if not store.sudo().try_lock_for_update():
             raise UserError(_('A stock refresh is already running. Please retry.'))
+        # A lock alone cannot prevent phantom inserts with Odoo's REPEATABLE READ.
+        # Touch the row version without changing any branch/business value. A writer
+        # with an older DB snapshot must then retry the entire transaction.
+        self.env.cr.execute('UPDATE ab_store SET id = id WHERE id = %s', [store.id])
+        now = datetime.utcnow()
+        cutoff = now - timedelta(hours=1)
         Inventory = self.sudo()
-        serials = [r['product_eplus_serial'] for r in rows]
-        existing = Inventory.search([('store_id', '=', store.id)])
-        by_serial = {r.product_eplus_serial: r for r in existing}
+        domain = fields.Domain('store_id', '=', store.id)
+        serials = {r['product_eplus_serial'] for r in rows}
+        if not complete:
+            domain &= fields.Domain('product_eplus_serial', 'in', list(serials))
+        existing = Inventory.search(domain)
+        existing.invalidate_recordset(['balance_refreshed_at', 'branch_refreshed_at', 'balance', 'default_price'])
+        by_serial = {}
+        for record in existing:
+            by_serial.setdefault(record.product_eplus_serial, Inventory.browse())
+            by_serial[record.product_eplus_serial] |= record
         products = Inventory._product_lookup_by_eplus_serial(serials)
+        updates = {r['product_eplus_serial']: r for r in rows}
+        if complete:
+            updates.update({serial: {'balance': 0.0} for serial in by_serial if serial not in updates})
         creates = []
-        for row in rows:
-            serial = row['product_eplus_serial']
-            values = {**Inventory._product_sync_vals(serial, products), 'balance': row['balance'],
-                      'default_price': row['default_price'], 'branch_refreshed_at': fetched}
-            if serial in by_serial:
-                if by_serial[serial].branch_refreshed_at and by_serial[serial].branch_refreshed_at > fetched:
-                    continue
-                old_price = by_serial[serial].default_price
-                if old_price != values['default_price']:
-                    _logger.info('Branch price cache store=%s product=%s old_price=%s new_price=%s changed_by=%s change_date=%s',
-                                 store.id, serial, old_price, values['default_price'], self.env.uid, fetched)
-                existing.filtered(lambda r: r.product_eplus_serial == serial).write(values)
-            else:
+        for serial, row in updates.items():
+            records = by_serial.get(serial, Inventory.browse())
+            timestamps = [r.balance_refreshed_at or r.branch_refreshed_at for r in records]
+            latest = max((t for t in timestamps if t), default=False)
+            if latest and (latest > started or (scheduled and latest > cutoff)):
+                continue
+            values = {'balance': row['balance'], 'balance_refreshed_at': now, 'balance_source': source}
+            if serial in products:
+                values.update(Inventory._product_sync_vals(serial, products))
+            if source == 'branch_api':
+                values['branch_refreshed_at'] = fetched
+                if 'default_price' in row:
+                    values['default_price'] = row['default_price']
+                    for record in records:
+                        if record.default_price != row['default_price']:
+                            _logger.info('Branch price cache store=%s product=%s old_price=%s new_price=%s changed_by=%s change_date=%s',
+                                         store.id, serial, record.default_price, row['default_price'], self.env.uid, now)
+            if records:
+                records.write(values)
+            elif serial in products:
                 creates.append(dict(values, store_id=store.id, product_eplus_serial=serial))
         if creates:
             Inventory.create(creates)
-        if complete:
-            missing = existing.filtered(lambda r: r.product_eplus_serial not in set(serials)
-                and (not r.branch_refreshed_at or r.branch_refreshed_at <= fetched))
-            missing.write({'balance': 0, 'branch_refreshed_at': fetched})
 
-    def _api_refresh_stores(self, stores):
+    def _api_refresh_stores(self, stores, *, scheduled=False):
         client = self.env['ab_sales_branch_client']
         if not stores:
             raise UserError(_('No authorized branches are configured.'))
         snapshots = []
         for store in stores:
+            started = datetime.utcnow()
             rows, fetched = client._pages(store, 'get_inventory_snapshot')
             client._validate_balance_rows(store, rows)
-            snapshots.append((store, rows, fetched))
-        for store, rows, fetched in snapshots:
-            self._apply_api_balances(store, rows, fetched, complete=True)
+            snapshots.append((store, rows, fetched, started))
+        for store, rows, fetched, started in snapshots:
+            self._apply_api_balances(store, rows, fetched, complete=True, started=started, scheduled=scheduled)
         return True
 
     def btn_update_balance_total(self):
         return self._api_refresh_stores(self.env['ab_sales_branch_client']._stores())
 
     def btn_update_balance_per_pos(self):
-        return self._api_refresh_stores(self.env['ab_sales_branch_client']._stores())
+        return self.env['ab_sales_all_store_balance']._refresh(scheduled=True)
 
     def btn_update_balance_default_sales_store(self):
         store = self._get_default_sales_store()
-        return self._api_refresh_stores(store or self.env['ab_sales_branch_client']._stores())
+        if not store:
+            return True
+        return self._api_refresh_stores(store, scheduled=True)
 
 
 class ApiSalesDay(models.Model):
@@ -198,44 +237,56 @@ class ApiPosServices(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
 
     @api.model
-    def pos_cached_balance_totals(self, product_ids=None, store_id=None):
-        """Read totals after the balance dialog has refreshed the branch cache."""
+    def pos_cached_balance_totals(self, product_ids=None, store_id=None, include_sync_metadata=False):
+        """All-store display totals come exclusively from the persistent inventory cache."""
         products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
         products.check_access('read')
-        totals, _selected = self.env['ab_sales_ui_api']._inventory_total_and_pos_balances_by_serial(
-            products.mapped('eplus_serial'), store_id)
-        return {product.id: totals.get(product.eplus_serial, 0.0) for product in products}
+        snapshot = self.env['ab_sales_all_store_balance']._read(products.mapped('eplus_serial'))
+        if include_sync_metadata:
+            return {p.id: {'total_balance': snapshot['totals'].get(p.eplus_serial, 0.0),
+                           'total_refresh_success': p.eplus_serial in snapshot['available_serials'],
+                           'total_refreshed_at': snapshot['fetched_at']} for p in products}
+        return {p.id: snapshot['totals'].get(p.eplus_serial, 0.0) for p in products}
 
     @api.model
     def pos_refresh_search_balances(self, store_id=None, product_ids=None):
-        """Refresh the returned search products across the dialog's branch scope."""
-        client = self.env['ab_sales_branch_client']
-        store_ids = self.env['ab_sales_ui_api']._inventory_balance_store_ids(store_id)
+        totals = self.pos_cached_balance_totals(product_ids, store_id, include_sync_metadata=True)
+        products = self.env['ab_product'].browse(list(totals))
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
-        products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
-        products.check_access('read')
-        if not products or not store:
-            return {}
-        serials = products.mapped('eplus_serial')
-        refreshed = set()
-        for branch in self.env['ab_store'].browse(store_ids):
-            try:
-                with self.env.cr.savepoint():
-                    client._balances(branch, serials)
-                refreshed.add(branch.id)
-            except (UserError, AccessError):
-                # Keep that branch's last snapshot; continue refreshing the others.
-                _logger.info('Search balance refresh unavailable for store=%s', branch.id)
-        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, serials)
-        totals = self.pos_cached_balance_totals(products.ids, store.id)
-        return {p.id: dict(metadata.get(p.eplus_serial, {}),
-                           refresh_success=store.id in refreshed,
-                           total_balance=totals[p.id],
-                           total_refresh_success=len(refreshed) == len(store_ids))
-                for p in products}
+        if not store:
+            return totals
+        self.env['ab_sales_ui_api']._inventory_balance_store_ids(store.id)
+        client = self.env['ab_sales_branch_client']
+        success = False
+        try:
+            with self.env.cr.savepoint():
+                client._balances(store, products.mapped('eplus_serial'))
+            success = True
+        except (UserError, AccessError):
+            _logger.info('Selected branch balance refresh unavailable for store=%s', store.id)
+        totals = self.pos_cached_balance_totals(product_ids, store_id, include_sync_metadata=True)
+        metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
+        return {p.id: dict(metadata.get(p.eplus_serial, {}), refresh_success=success,
+                           **totals[p.id]) for p in products}
 
     @api.model
     def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
+        self.env['ab_sales_ui_api']._inventory_balance_store_ids(store_id)
+        if not include_sync_metadata:
+            return self._refresh_selected_balances(store_id, product_ids, False)
+        totals = self.pos_cached_balance_totals(product_ids, store_id, include_sync_metadata=True)
+        try:
+            with self.env.cr.savepoint():
+                return self._refresh_selected_balances(store_id, product_ids, True)
+        except (UserError, AccessError):
+            products = self.env['ab_product'].browse(list(totals))
+            store = self.env['ab_store'].browse(int(store_id or 0)).exists()
+            metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
+            return {p.id: dict(metadata.get(p.eplus_serial, {}), refresh_success=False,
+                               **totals[p.id]) for p in products}
+
+    @api.model
+    def _refresh_selected_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         client = self.env['ab_sales_branch_client']
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         products = self.env['ab_product'].browse([int(p) for p in product_ids or []]).exists()
@@ -255,13 +306,13 @@ class ApiPosServices(models.TransientModel):
             for row in stock_rows:
                 stock_by_serial.setdefault(row['product_eplus_serial'], []).append(row)
             metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
-            totals = self.pos_cached_balance_totals(products.ids, store.id)
+            totals = self.pos_cached_balance_totals(products.ids, store.id, include_sync_metadata=True)
             result = {}
             for product in products:
                 serial = product.eplus_serial
                 if serial not in metadata:
                     continue
-                details = dict(metadata[serial], refresh_success=True, total_balance=totals[product.id])
+                details = dict(metadata[serial], refresh_success=True, **totals[product.id])
                 result[product.id] = details
                 # The stock API has no snapshot timestamp. Keep the badges if
                 # the cache changed while the live stock request was in flight.
@@ -347,20 +398,15 @@ class ApiProductBalances(models.Model):
     _inherit = 'ab_product'
 
     def _get_all_stores_balance_html(self, product_serials=None):
-        client = self.env['ab_sales_branch_client']
+        snapshot = self.env['ab_sales_all_store_balance']._read(product_serials)
         rows = []
-        for store in client._stores():
-            try:
-                data = client._balances(store, product_serials or [])
-                for row in data:
-                    rows.append((store.display_name, str(row['product_eplus_serial']), str(row['balance']), _('Current')))
-            except (UserError, AccessError):
-                cached = self.env['ab_sales_inventory'].search([('store_id', '=', store.id),
-                            ('product_eplus_serial', 'in', product_serials or [])])
-                for serial in product_serials or []:
-                    line = cached.filtered(lambda r: r.product_eplus_serial == serial)[:1]
-                    rows.append((store.display_name, str(serial), str(line.balance) if line else '—',
-                                 _('Unavailable; last refresh: %s') % (line.branch_refreshed_at or '—')))
+        unmapped_ids = set(snapshot.get('unmapped_store_ids', []))
+        for store in self.env['ab_sales_all_store_balance']._stores():
+            for serial in sorted(snapshot['totals']):
+                balance = snapshot['balances'].get((store.id, serial))
+                rows.append((store.display_name, str(serial), str(balance) if balance is not None else '—',
+                             _('This branch has no E-Plus ID.') if store.id in unmapped_ids else
+                             _('Cached balance') if balance is not None else _('Unavailable')))
         return self.env['ir.qweb']._render('ab_sales.callcenter_product_store_balance_html', {'rows': rows})
 
 

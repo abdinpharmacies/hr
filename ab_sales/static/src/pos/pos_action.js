@@ -1352,7 +1352,7 @@ class AbSalesPosAction extends Component {
         // with another window's quantity/customer changes.
         const transient = new Set(["submission_checking", "draft_revision", "backup_status", "updated_at",
             "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html", "inventory_json",
-            "show_details", "loading_details", "balance", "balance_total", "available", "loading",
+            "show_details", "loading_details", "balance", "balance_total", "total_balance_unavailable", "available", "loading",
             "slot_locked", "slot_protected", "slot_number", "slot_waiting", "previous_slot_number"]);
         return JSON.stringify(bill, (key, value) => transient.has(key) || key.startsWith("pos_balance_") || key === "pos_balance"
             ? undefined : value);
@@ -3543,6 +3543,7 @@ class AbSalesPosAction extends Component {
                 sell_price_str: String(defaultPrice),
                 balance: product.balance || 0,
                 balance_total: product.balance || 0,
+                total_balance_unavailable: !!product.total_balance_unavailable,
                 pos_balance: product.pos_balance || 0,
                 pos_balance_unavailable: !!product.pos_balance_unavailable,
                 cost: 0,
@@ -4424,7 +4425,8 @@ class AbSalesPosAction extends Component {
             const totalBalance = Number.isFinite(details?.total_balance)
                 ? details.total_balance
                 : parseFloat(details?.total_balance || NaN);
-            if (Number.isFinite(totalBalance)) {
+            line.total_balance_unavailable = details.total_balance_unavailable || details.total_refresh_success === false;
+            if (Number.isFinite(totalBalance) && (!line.total_balance_unavailable || !Number.isFinite(line.balance_total))) {
                 line.balance_total = totalBalance;
             } else if (!Number.isFinite(line.balance_total)) {
                 line.balance_total = line.balance;
