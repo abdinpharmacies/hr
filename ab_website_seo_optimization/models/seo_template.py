@@ -195,3 +195,58 @@ class SeoTemplateProduct(models.Model):
     _inherit = 'product.template'
 
     ab_seo_template_id = fields.Many2one('ab_seo_template', string='Explicit SEO Template', ondelete='restrict', groups=MANAGER)
+    ab_seo_record_ids = fields.One2many('ab.product.seo', 'product_template_id', string='SEO Records',
+        groups='ab_website_seo_optimization.group_ab_website_seo_optimization_user')
+    ab_has_seo_content = fields.Boolean(string='Has SEO Content', compute='_compute_ab_has_seo_content',
+        search='_search_ab_has_seo_content', compute_sudo=False,
+        groups='ab_website_seo_optimization.group_ab_website_seo_optimization_user',
+        help='An active SEO record already has a title and description in at least one language for the current company and selected website.')
+    ab_seo_content_status = fields.Selection([('prepared', 'SEO Prepared'), ('missing', 'Not Prepared')],
+        string='SEO Status', compute='_compute_ab_has_seo_content', compute_sudo=False,
+        groups='ab_website_seo_optimization.group_ab_website_seo_optimization_user')
+
+    def _seo_content_domain(self):
+        domain = fields.Domain('active', '=', True) & fields.Domain('company_id', 'in', [False, self.env.company.id])
+        website_id = self.env.context.get('ab_seo_website_id')
+        if website_id:
+            domain &= fields.Domain('website_id', 'in', [False, website_id])
+        return domain & fields.Domain('translation_ids', 'any',
+            fields.Domain('meta_title', '!=', False) & fields.Domain('meta_description', '!=', False))
+
+    @api.depends('ab_seo_record_ids.active', 'ab_seo_record_ids.company_id', 'ab_seo_record_ids.website_id',
+                 'ab_seo_record_ids.translation_ids.meta_title', 'ab_seo_record_ids.translation_ids.meta_description')
+    @api.depends_context('uid', 'company', 'ab_seo_website_id')
+    def _compute_ab_has_seo_content(self):
+        domain = self._seo_content_domain() & fields.Domain('product_template_id', 'in', self.ids)
+        existing = {product.id for product, in self.env['ab.product.seo']._read_group(domain, ['product_template_id'])}
+        for product in self:
+            product.ab_has_seo_content = product.id in existing
+            product.ab_seo_content_status = 'prepared' if product.id in existing else 'missing'
+
+    def action_open_existing_seo(self):
+        self.ensure_one()
+        if not self.env.user.has_group('ab_website_seo_optimization.group_ab_website_seo_optimization_user'):
+            raise AccessError(_('Only SEO users can open existing SEO records.'))
+        self.check_access('read')
+        domain = (fields.Domain('active', '=', True)
+                  & fields.Domain('company_id', 'in', [False, self.env.company.id])
+                  & fields.Domain('website_id', '=', self.env.context.get('ab_seo_website_id') or False)
+                  & fields.Domain('ab_product_id', '=', self.ab_product_id.id))
+        seo = self.env['ab.product.seo'].search(domain, limit=1) if self.ab_product_id else self.env['ab.product.seo']
+        if not seo:
+            return False
+        return {'type': 'ir.actions.act_window', 'name': seo.display_name, 'res_model': 'ab.product.seo',
+                'res_id': seo.id, 'view_mode': 'form', 'views': [(False, 'form')], 'target': 'current'}
+
+    def _search_ab_has_seo_content(self, operator, value):
+        if operator in ('=', '!='):
+            value = [value]
+            operator = 'in' if operator == '=' else 'not in'
+        if operator not in ('in', 'not in'):
+            return NotImplemented
+        domain = fields.Domain('ab_seo_record_ids', 'any', self._seo_content_domain())
+        if True in value and False in value:
+            return fields.Domain.TRUE if operator == 'in' else fields.Domain.FALSE
+        if not value:
+            return fields.Domain.FALSE if operator == 'in' else fields.Domain.TRUE
+        return domain if (True in value) == (operator == 'in') else ~domain

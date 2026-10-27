@@ -6018,3 +6018,93 @@ msgid ""
 "publication: %s"
 msgstr ""
 "ترجم محتوى تحسين محركات البحث إلى اللغة المحددة قبل الاعتماد أو النشر: %s"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_product__ab_has_seo_content
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__ab_has_seo_content
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_seo_product_selection_search
+msgid "Has SEO Content"
+msgstr "تم إعداد محتوى SEO"
+
+#. module: ab_website_seo_optimization
+#: model_terms:ir.ui.view,arch_db:ab_website_seo_optimization.view_seo_product_selection_search
+msgid "Without SEO Content"
+msgstr "لم يُعد له محتوى SEO"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,help:ab_website_seo_optimization.field_product_product__ab_has_seo_content
+#: model:ir.model.fields,help:ab_website_seo_optimization.field_product_template__ab_has_seo_content
+msgid ""
+"An active SEO record already has a title and description in at least one "
+"language for the current company and selected website."
+msgstr ""
+"يوجد سجل SEO نشط يحتوي على عنوان ووصف بلغة واحدة على الأقل للشركة الحالية "
+"والموقع المحدد."
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_product__ab_seo_content_status
+#: model:ir.model.fields,field_description:ab_website_seo_optimization.field_product_template__ab_seo_content_status
+msgid "SEO Status"
+msgstr "حالة SEO"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_seo_content_status__prepared
+msgid "SEO Prepared"
+msgstr "تم إعداد SEO"
+
+#. module: ab_website_seo_optimization
+#: model:ir.model.fields.selection,name:ab_website_seo_optimization.selection__product_template__ab_seo_content_status__missing
+msgid "Not Prepared"
+msgstr "لم يُعد بعد"
+
+#. module: ab_website_seo_optimization
+#. odoo-python
+#: code:addons/ab_website_seo_optimization/models/seo_template.py:0
+msgid "Only SEO users can open existing SEO records."
+msgstr "يمكن لمستخدمي SEO فقط فتح سجلات SEO الموجودة."
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "SEO Already Prepared"
+msgstr "تم إعداد SEO لهذا المنتج مسبقًا"
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid ""
+"This product already has SEO content. Choose another product, or open its "
+"existing SEO record to edit it."
+msgstr ""
+"تم إعداد محتوى SEO لهذا المنتج مسبقًا. اختر منتجًا آخر، أو افتح سجل SEO "
+"الموجود لتعديله."
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "Open Product SEO"
+msgstr "فتح SEO المنتج"
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "Back to Product List"
+msgstr "العودة إلى قائمة المنتجات"
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "Select a Product"
+msgstr "اختيار منتج"
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "SEO Record Already Exists"
+msgstr "يوجد سجل SEO لهذا المنتج بالفعل"
+
+#. module: ab_website_seo_optimization
+#. odoo-javascript
+#: code:addons/ab_website_seo_optimization/static/src/js/seo_product_selector.js:0
+msgid "This product already has an SEO record, which may still be a draft. Choose another product, or open the existing record to continue."
+msgstr "يوجد سجل SEO لهذا المنتج بالفعل، وقد يكون مسودة لم تكتمل. اختر منتجًا آخر، أو افتح السجل الموجود لاستكماله."

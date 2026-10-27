@@ -4,3 +4,5 @@ from . import test_enrichment
 
 from . import test_seo_templates
 from . import test_seo_queue
+
+from . import test_seo_selection

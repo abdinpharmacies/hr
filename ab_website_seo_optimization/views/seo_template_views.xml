@@ -35,7 +35,8 @@
             </xpath>
             <xpath expr="//field[@name='pipeline_id']" position="after">
                 <field name="generation_mode" readonly="state != 'draft'"/><field name="regeneration_mode" readonly="state != 'draft'"/>
-                <field name="product_selection_ids" widget="many2many_tags" readonly="state != 'draft'"/><field name="category_filter_id" readonly="state != 'draft'"/>
+                <field name="product_selection_ids" widget="many2many_tags" readonly="state != 'draft'"
+                       context="{'list_view_ref': 'ab_website_seo_optimization.view_seo_product_selection_list', 'search_view_ref': 'ab_website_seo_optimization.view_seo_product_selection_search', 'ab_seo_website_id': website_id, 'search_default_ab_without_seo_content': 1}"/><field name="category_filter_id" readonly="state != 'draft'"/>
                 <field name="template_filter_id" readonly="state != 'draft'"/><field name="dry_run"/><field name="pilot_job_id"/>
             </xpath>
             <xpath expr="//field[@name='assistant_id']" position="attributes">

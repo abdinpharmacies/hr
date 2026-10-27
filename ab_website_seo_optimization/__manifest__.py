@@ -30,6 +30,7 @@
         "data/seo_template_supplier_description_upgrade.xml",
         "views/product_seo_optimize_confirm_wizard_views.xml",
         "views/product_seo_xlsx_import_wizard_views.xml",
+        "views/seo_product_selection_views.xml",
         "views/product_seo_views.xml",
         "views/product_seo_translation_views.xml",
         "views/product_seo_version_views.xml",
@@ -45,6 +46,7 @@
     ],
     "assets": {
         "web.assets_backend": [
+            "ab_website_seo_optimization/static/src/js/seo_product_selector.js",
             "ab_website_seo_optimization/static/src/scss/seo_provider_list.scss",
         ],
         "website.assets_editor": [
