@@ -17,6 +17,42 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_ecommerce_storefront
+#. odoo-python
+#: code:addons/ab_ecommerce_storefront/models/eplus_sync_guard.py:0
+msgid "Eplus inventory sync is blocked because website deliveries are not reflected in Eplus stock. Syncing now would restore sold stock."
+msgstr "توقفت مزامنة مخزون Eplus لأن الطلبات التي سُلّمت من الموقع لم تُخصم من مخزون Eplus. إعادة المزامنة الآن ستعيد الكمية المباعة إلى المخزون."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Back to checkout"
+msgstr "العودة إلى إتمام الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Not confirmed"
+msgstr "لم يتم التأكيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Order could not be confirmed"
+msgstr "تعذّر تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Waiting for order confirmation"
+msgstr "بانتظار تأكيد الطلب"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "We are checking stock before confirming your order."
+msgstr "نتحقق من توفر المخزون قبل تأكيد طلبك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.payment_status_abdin_skin
+msgid "Your order has not been confirmed. Please return to checkout or contact support."
+msgstr "لم يتم تأكيد طلبك. يُرجى العودة إلى إتمام الطلب أو التواصل مع الدعم."
+
+#. module: ab_ecommerce_storefront
 # Cart reservation notice
 
 #. module: ab_ecommerce_storefront

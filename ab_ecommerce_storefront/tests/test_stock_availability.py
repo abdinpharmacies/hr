@@ -1,6 +1,7 @@
 from unittest.mock import patch
+from datetime import timedelta
 
-from odoo import Command
+from odoo import Command, fields
 from odoo.exceptions import AccessError, UserError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
@@ -90,6 +91,33 @@ class TestStorefrontStockAvailability(TransactionCase):
         self.assertEqual(self.on_hand(), 7.0)
         self.assertEqual(self.available(), 7.0)
         self.assertEqual(self.snapshot.itm_qty, 100.0)
+
+    def test_eplus_resync_cannot_restore_delivered_website_stock(self):
+        previous_sync = self.env["ab_eplus_inventory_sync_job"].create({
+            "state": "done", "warehouse_id": self.warehouse.id,
+            "location_id": self.warehouse.lot_stock_id.id,
+            "date_done": fields.Datetime.now() - timedelta(hours=1),
+        })
+        order = self.order(quantity=1)
+        order.action_confirm()
+        self.deliver(order)
+        with patch.object(
+            type(self.snapshot), "_get_inventory_sync_warehouse", return_value=self.warehouse,
+        ), self.assertRaisesRegex(UserError, "would restore sold stock"):
+            self.snapshot._sync_to_odoo_inventory()
+        job = self.env["ab_eplus_inventory_sync_job"].create({
+            "warehouse_id": self.warehouse.id,
+            "location_id": self.warehouse.lot_stock_id.id,
+        })
+        with self.assertRaisesRegex(UserError, "would restore sold stock"):
+            job._prepare_full_sync()
+        job.state = "running"
+        self.assertFalse(job._process_next_batch())
+        self.assertEqual(job.state, "failed")
+        previous_sync.state = "failed"
+        with self.assertRaisesRegex(UserError, "would restore sold stock"):
+            self.env["ab_eplus_stock_snapshot"]._ab_require_safe_website_resync(self.warehouse)
+        self.assertEqual(self.on_hand(), 9.0)
 
     def test_cancel_releases_reserved_availability(self):
         order = self.order()

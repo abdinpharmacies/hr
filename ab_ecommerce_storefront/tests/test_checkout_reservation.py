@@ -6,9 +6,11 @@ from odoo import Command, fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import HttpCase, TransactionCase
+from odoo.addons.payment.controllers.post_processing import PaymentPostProcessing
 from odoo.addons.website_sale.tests.common import MockRequest
 
 from ..controllers.checkout_submission import StorefrontPaymentPortal
+from ..controllers.payment_status import StorefrontPaymentPostProcessing
 from ..controllers.prescription_order import AbPrescriptionOrderPortal
 from ..controllers.shop import AbEcommerceStorefrontShop
 from ..controllers.submission_security import submission_owner
@@ -46,6 +48,26 @@ class TestStorefrontReservations(TransactionCase):
 
     def available(self):
         return self.website._get_product_available_qty(self.product)
+
+    def link_eplus_stock(self):
+        source = self.env["ab_product"].create({"name": "External stock", "code": "HOLD-EXTERNAL-TEST"})
+        self.product.product_tmpl_id.write({"ab_product_id": source.id, "eplus_stock_shown_qty_value": 10})
+        self.env["ab_eplus_stock_snapshot"].create({
+            "itm_id": -15152026, "product_id": source.id, "itm_qty": 10,
+        })
+
+    def completed_eplus_sync(self, warehouse=None, state="done"):
+        warehouse = warehouse or self.warehouse
+        job = self.env["ab_eplus_inventory_sync_job"].create({
+            "state": state, "warehouse_id": warehouse.id,
+            "location_id": warehouse.lot_stock_id.id, "total_count": 1,
+            "processed_count": 1, "date_done": fields.Datetime.now(),
+        })
+        self.env["ab_eplus_inventory_sync_job_line"].create({
+            "job_id": job.id, "product_product_id": self.product.id,
+            "target_qty": 2, "state": "unchanged",
+        })
+        return job
 
     def test_other_cart_cannot_take_held_stock(self):
         cart = self.cart()
@@ -89,15 +111,50 @@ class TestStorefrontReservations(TransactionCase):
         self.assertEqual(self.available(), 2)
 
     def test_external_stock_cannot_confirm_without_reservation(self):
-        source = self.env["ab_product"].create({"name": "External stock", "code": "HOLD-EXTERNAL-TEST"})
-        self.product.product_tmpl_id.write({"ab_product_id": source.id, "eplus_stock_shown_qty_value": 10})
-        self.env["ab_eplus_stock_snapshot"].create({"itm_id": -15152026, "product_id": source.id, "itm_qty": 10})
+        self.link_eplus_stock()
         cart = self.cart()
         cart._cart_add(self.product.id, 1)
         with self.assertRaises(UserError), self.env.cr.savepoint():
             cart._check_cart_is_ready_to_be_paid()
         with self.assertRaises(UserError), self.env.cr.savepoint():
             cart.action_confirm()
+        self.assertEqual(cart.state, "draft")
+
+    def test_completed_eplus_sync_uses_odoo_stock_for_reservation(self):
+        self.link_eplus_stock()
+        self.completed_eplus_sync()
+        cart = self.cart()
+        cart._cart_add(self.product.id, 2)
+        self.assertEqual(cart._get_free_qty(self.product), 2)
+        self.assertEqual(self.available(), 0)
+        other = self.cart()
+        self.assertEqual(other._cart_add(self.product.id, 1)["quantity"], 0)
+        cart.action_confirm()
+        self.assertEqual(cart.state, "sale")
+        self.assertTrue(cart.picking_ids.move_ids)
+        self.assertTrue(all(move.state == "assigned" for move in cart.picking_ids.move_ids))
+        self.assertEqual(self.product.with_context(warehouse_id=self.warehouse.id).free_qty, 0)
+
+    def test_failed_eplus_sync_does_not_authorize_checkout(self):
+        self.link_eplus_stock()
+        self.completed_eplus_sync()
+        self.completed_eplus_sync(state="failed")
+        cart = self.cart()
+        cart._cart_add(self.product.id, 1)
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            cart._check_cart_is_ready_to_be_paid()
+        self.assertEqual(cart.state, "draft")
+
+    def test_other_warehouse_eplus_sync_does_not_authorize_checkout(self):
+        self.link_eplus_stock()
+        other = self.env["stock.warehouse"].create({
+            "name": "Other sync warehouse", "code": "RSO", "company_id": self.company.id,
+        })
+        self.completed_eplus_sync(warehouse=other)
+        cart = self.cart()
+        cart._cart_add(self.product.id, 1)
+        with self.assertRaises(UserError), self.env.cr.savepoint():
+            cart._check_cart_is_ready_to_be_paid()
         self.assertEqual(cart.state, "draft")
 
     def test_read_only_availability_does_not_renew(self):
@@ -267,6 +324,91 @@ class TestStorefrontReservations(TransactionCase):
         self.assertEqual(first, second)
         self.assertEqual(len(cart.transaction_ids), 1)
         self.assertEqual(cart.ab_checkout_submission_id.transaction_id, cart.transaction_ids)
+
+    def test_cash_on_delivery_post_processing_confirms_and_reserves_once(self):
+        cart = self.cart()
+        cart.partner_id = self.env.user.partner_id
+        cart.carrier_id = self.env.ref("delivery.free_delivery_carrier")
+        cart.carrier_id.website_published = True
+        cart._cart_add(self.product.id, 1)
+        cart._portal_ensure_token()
+        provider = self.env["payment.provider"].search([
+            ("code", "=", "custom"), ("custom_mode", "=", "cash_on_delivery"),
+            ("company_id", "=", self.company.id),
+        ], limit=1)
+        method = self.env["payment.method"].search([("code", "=", "cash_on_delivery")], limit=1)
+        provider.payment_method_ids = method
+        with MockRequest(self.env, website=self.website, sale_order_id=cart.id):
+            StorefrontPaymentPortal().shop_payment_transaction(
+                cart.id, cart.access_token,
+                provider_id=provider.id, payment_method_id=method.id,
+                token_id=None, amount=cart.amount_total, flow="redirect",
+                tokenization_requested=False, landing_route="/shop/payment/validate",
+            )
+        transaction = cart.transaction_ids
+        transaction._set_pending()
+        self.assertEqual(cart.state, "draft")
+        with MockRequest(self.env, website=self.website) as request, patch.object(
+            PaymentPostProcessing, "display_status", return_value="status page",
+        ):
+            request.session["__payment_monitored_tx_id__"] = transaction.id
+            status = StorefrontPaymentPostProcessing.display_status.original_endpoint(
+                StorefrontPaymentPostProcessing(),
+            )
+            self.assertEqual(status, "status page")
+        self.assertEqual(cart.state, "sale")
+        self.assertTrue(transaction.is_post_processed)
+        self.assertEqual(transaction.state, "pending")
+        self.assertTrue(cart.picking_ids.move_ids)
+        self.assertTrue(all(move.state == "assigned" for move in cart.picking_ids.move_ids))
+        self.assertEqual(self.product.with_context(warehouse_id=self.warehouse.id).qty_available, 2)
+        self.assertEqual(self.product.with_context(warehouse_id=self.warehouse.id).free_qty, 1)
+        transaction._post_process()
+        self.assertEqual(len(cart.picking_ids), 1)
+        self.assertEqual(self.product.with_context(warehouse_id=self.warehouse.id).free_qty, 1)
+
+    def test_cash_on_delivery_rejects_changed_amount_before_confirmation(self):
+        cart = self.cart()
+        cart.partner_id = self.env.user.partner_id
+        cart.carrier_id = self.env.ref("delivery.free_delivery_carrier")
+        cart.carrier_id.website_published = True
+        cart._cart_add(self.product.id, 1)
+        cart._portal_ensure_token()
+        provider = self.env["payment.provider"].search([
+            ("code", "=", "custom"), ("custom_mode", "=", "cash_on_delivery"),
+            ("company_id", "=", self.company.id),
+        ], limit=1)
+        method = self.env["payment.method"].search([("code", "=", "cash_on_delivery")], limit=1)
+        provider.payment_method_ids = method
+        with MockRequest(self.env, website=self.website, sale_order_id=cart.id):
+            StorefrontPaymentPortal().shop_payment_transaction(
+                cart.id, cart.access_token,
+                provider_id=provider.id, payment_method_id=method.id,
+                token_id=None, amount=cart.amount_total, flow="redirect",
+                tokenization_requested=False, landing_route="/shop/payment/validate",
+            )
+        transaction = cart.transaction_ids
+        transaction._set_pending()
+        cart.order_line.price_unit += 1
+        with MockRequest(self.env, website=self.website) as request, patch.object(
+            request, "render", return_value="failed status",
+        ) as render:
+            request.session["__payment_monitored_tx_id__"] = transaction.id
+            poll = StorefrontPaymentPostProcessing.poll_status.original_endpoint(
+                StorefrontPaymentPostProcessing(),
+            )
+            self.assertEqual(poll, {
+                "provider_code": "custom", "state": "error", "landing_route": "/payment/status",
+            })
+            status = StorefrontPaymentPostProcessing.display_status.original_endpoint(
+                StorefrontPaymentPostProcessing(),
+            )
+            self.assertEqual(status.get_data(as_text=True), "failed status")
+            self.assertEqual(render.call_args.args[0], "payment.payment_status")
+            self.assertEqual(render.call_args.args[1]["tx"], transaction)
+        self.assertEqual(cart.state, "draft")
+        self.assertFalse(cart.picking_ids)
+        self.assertEqual(transaction.state, "error")
 
 
 @tagged("post_install", "-at_install")

@@ -869,26 +869,32 @@
                         <t t-else="">
                             <t t-set="order" t-value="tx.sale_order_ids[:1]"/>
                             <t t-set="is_cod" t-value="tx.payment_method_code == 'cash_on_delivery' or tx.provider_id.custom_mode == 'cash_on_delivery'"/>
+                            <t t-set="is_cod_confirmed" t-value="is_cod and order and order.state in ('sale', 'done')"/>
                             <t t-set="is_success" t-value="tx.state == 'done'"/>
-                            <t t-set="is_pending" t-value="not is_cod and tx.state in ('draft', 'pending', 'authorized')"/>
-                            <t t-set="is_failed" t-value="tx.state in ('cancel', 'error')"/>
-                            <t t-set="status_variant" t-value="'cod' if is_cod else 'success' if is_success else 'danger' if is_failed else 'pending'"/>
-                            <t t-set="status_icon" t-value="'fa-money' if is_cod else 'fa-check' if is_success else 'fa-exclamation-triangle' if is_failed else 'fa-clock-o'"/>
+                            <t t-set="is_failed" t-value="tx.state in ('cancel', 'error') or ab_cod_error"/>
+                            <t t-set="is_pending" t-value="not is_cod_confirmed and not is_success and not is_failed"/>
+                            <t t-set="status_variant" t-value="'danger' if is_failed else 'cod' if is_cod_confirmed else 'success' if is_success else 'pending'"/>
+                            <t t-set="status_icon" t-value="'fa-exclamation-triangle' if is_failed else 'fa-money' if is_cod_confirmed else 'fa-check' if is_success else 'fa-clock-o'"/>
                             <t t-set="status_title">
-                                <t t-if="is_cod">Order confirmed, pay on delivery</t>
+                                <t t-if="is_cod and is_failed">Order could not be confirmed</t>
+                                <t t-elif="is_cod_confirmed">Order confirmed, pay on delivery</t>
                                 <t t-elif="is_success">Payment confirmed successfully</t>
                                 <t t-elif="is_failed">Payment was not completed</t>
+                                <t t-elif="is_cod">Waiting for order confirmation</t>
                                 <t t-else="">Payment is under review</t>
                             </t>
                             <t t-set="status_description">
-                                <t t-if="is_cod">Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered.</t>
+                                <t t-if="is_cod and is_failed">Your order has not been confirmed. Please return to checkout or contact support.</t>
+                                <t t-elif="is_cod_confirmed">Your order has been received successfully. No online payment has been collected; you will pay when the order is delivered.</t>
                                 <t t-elif="is_success">Your payment was processed successfully, and your order is now being prepared.</t>
                                 <t t-elif="is_failed">We could not complete the payment. You can try again or choose another payment method.</t>
+                                <t t-elif="is_cod">We are checking stock before confirming your order.</t>
                                 <t t-else="">Your payment is awaiting confirmation. Your order status will update once it is confirmed.</t>
                             </t>
-                            <t t-set="primary_href" t-value="order.get_portal_url() if order and not is_failed else order.get_portal_url(query_string='&amp;payment=True') if order and is_failed and order._has_to_be_paid() else tx.landing_route or '/shop/payment'"/>
+                            <t t-set="primary_href" t-value="'/shop/payment' if is_cod and is_failed else order.get_portal_url() if order and not is_failed else order.get_portal_url(query_string='&amp;payment=True') if order and is_failed and order._has_to_be_paid() else tx.landing_route or '/shop/payment'"/>
                             <t t-set="primary_label">
-                                <t t-if="(is_success or is_cod) and order">Track order</t>
+                                <t t-if="is_cod and is_failed">Back to checkout</t>
+                                <t t-elif="(is_success or is_cod_confirmed) and order">Track order</t>
                                 <t t-elif="is_pending and order">Track order status</t>
                                 <t t-elif="is_failed">Retry payment</t>
                                 <t t-else="">Continue to confirmation</t>
@@ -910,7 +916,8 @@
                                 <span class="ab-payment-status-kicker">Payment status</span>
                                 <h1 t-out="status_title"/>
                                 <p t-out="status_description"/>
-                                <p t-if="tx.state_message and is_failed" class="ab-payment-provider-message" t-out="tx.state_message"/>
+                                <p t-if="ab_cod_error" class="ab-payment-provider-message" t-out="ab_cod_error"/>
+                                <p t-elif="tx.state_message and is_failed" class="ab-payment-provider-message" t-out="tx.state_message"/>
 
                                 <section class="ab-payment-summary-card" aria-labelledby="ab_payment_summary_title">
                                     <h2 id="ab_payment_summary_title">Payment details</h2>
@@ -965,7 +972,8 @@
                                                 Status
                                             </dt>
                                             <dd>
-                                                <t t-if="is_cod">Pay on delivery</t>
+                                                <t t-if="is_cod_confirmed">Pay on delivery</t>
+                                                <t t-elif="is_cod and is_failed">Not confirmed</t>
                                                 <t t-elif="is_success">Confirmed</t>
                                                 <t t-elif="is_failed">Failed</t>
                                                 <t t-else="">Under review</t>
@@ -989,12 +997,12 @@
                                     </a>
                                 </div>
 
-                                <section class="ab-payment-next-steps" aria-labelledby="ab_payment_next_title">
+                                <section t-if="not is_failed" class="ab-payment-next-steps" aria-labelledby="ab_payment_next_title">
                                     <h2 id="ab_payment_next_title">What happens next?</h2>
                                     <ol>
-                                        <li t-att-class="'is-complete' if (is_success or is_cod) else 'is-current'">
+                                        <li t-att-class="'is-complete' if (is_success or is_cod_confirmed) else 'is-current'">
                                             <span><i class="fa fa-check" aria-hidden="true"/></span>
-                                            <strong><t t-if="is_cod">Order received</t><t t-else="">Payment confirmation</t></strong>
+                                            <strong><t t-if="is_cod_confirmed">Order received</t><t t-else="">Payment confirmation</t></strong>
                                         </li>
                                         <li>
                                             <span><i class="fa fa-medkit" aria-hidden="true"/></span>

@@ -177,11 +177,10 @@ class SaleOrder(models.Model):
             return super()._get_free_qty(product)
         scoped_product = product.with_context(ab_cart_hold_order_id=self.id)
         quantity = super()._get_free_qty(scoped_product)
-        if product._ab_website_uses_eplus_stock():
-            return quantity
-        quantity = product.sudo().with_company(self.company_id).with_context(
+        free_quantity = product.sudo().with_company(self.company_id).with_context(
             warehouse_id=self.warehouse_id.id,
         ).free_qty
+        quantity = min(quantity, free_quantity) if product._ab_website_uses_eplus_stock() else free_quantity
         return max(quantity - product._ab_cart_held_quantity(
             self.website_id, self.warehouse_id, self,
         ), 0.0)
@@ -204,7 +203,21 @@ class SaleOrder(models.Model):
 
     def _ab_require_authoritative_reservation(self):
         self.ensure_one()
-        if self.order_line.product_id.filtered(lambda product: product._ab_website_uses_eplus_stock()):
+        products = self._ab_cart_stock_products().filtered(
+            lambda product: product._ab_website_uses_eplus_stock()
+        )
+        if not products:
+            return
+        job = self.env["ab_eplus_inventory_sync_job"].sudo().search([
+            ("warehouse_id", "=", self.warehouse_id.id),
+            ("state", "in", ("running", "done", "failed", "cancelled")),
+        ], order="id desc", limit=1)
+        synced_products = self.env["ab_eplus_inventory_sync_job_line"].sudo().search([
+            ("job_id", "=", job.id),
+            ("product_product_id", "in", products.ids),
+            ("state", "in", ("updated", "unchanged")),
+        ]).product_product_id
+        if job.state != "done" or set(synced_products.ids) != set(products.ids):
             raise UserError(self.env._(
                 "Stock reservation is temporarily unavailable. Your order has not been confirmed. Please try again later."
             ))

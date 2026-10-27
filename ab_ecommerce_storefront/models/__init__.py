@@ -14,6 +14,7 @@ from . import mail_compose_message
 from . import account_move_send
 from . import account_move
 from . import sale_order
+from . import payment_transaction
 from . import prescription_order
 from . import contact_message
 from . import business_partnership
@@ -24,4 +25,5 @@ from . import product_public_category
 from . import catalog_cache
 from . import stock_availability
 from . import cart_hold
+from . import eplus_sync_guard
 from . import checkout_submission
