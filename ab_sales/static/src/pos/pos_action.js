@@ -1318,7 +1318,7 @@ class AbSalesPosAction extends Component {
         // Live stock/display refreshes are not cashier edits and must not compete
         // with another window's quantity/customer changes.
         const transient = new Set(["submission_checking", "draft_revision", "backup_status", "updated_at",
-            "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html",
+            "available_prices_html", "available_prices", "available_prices_base", "inventory_table_html", "inventory_json",
             "show_details", "loading_details", "balance", "balance_total", "available", "loading",
             "slot_locked", "slot_protected", "slot_number", "slot_waiting", "previous_slot_number"]);
         return JSON.stringify(bill, (key, value) => transient.has(key) || key.startsWith("pos_balance_") || key === "pos_balance"
@@ -3272,7 +3272,9 @@ class AbSalesPosAction extends Component {
         const storeId = target?.header?.store_id;
         return refreshPosBalances(this.orm, target?.lines || [], storeId, "product_id", () =>
             !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
-            this.currentBill === target && target?.header?.store_id === storeId);
+            this.currentBill === target && target?.header?.store_id === storeId,
+            {isRowCurrent: (line) => target.lines.includes(line),
+                onInventory: (line, details) => this._applyRefreshedLineInventory(line, details)});
     }
 
     refreshLinePosBalance(line) {
@@ -3282,7 +3284,16 @@ class AbSalesPosAction extends Component {
         const requestId = this._linePosBalanceRequestId;
         return refreshPosBalances(this.orm, [line], storeId, "product_id", () =>
             !this._balanceRefreshUnmounted && requestId === this._linePosBalanceRequestId &&
-            this.currentBill === bill && bill?.header?.store_id === storeId && bill.lines.includes(line));
+            this.currentBill === bill && bill?.header?.store_id === storeId && bill.lines.includes(line),
+            {onInventory: (row, details) => this._applyRefreshedLineInventory(row, details)});
+    }
+
+    _applyRefreshedLineInventory(line, details) {
+        line.inventory_json = details.inventory_json;
+        line.available_prices_base = details.available_prices;
+        line.product_is_priced = !!details.is_priced;
+        this._syncAvailablePricesForUom(line);
+        // Display refreshes must not edit the chosen selling price or bill revision.
     }
 
     refreshStoreStatus(storeId) {

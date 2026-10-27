@@ -22,7 +22,7 @@ export function balanceAgeLabel(timestamp, now = Date.now()) {
     return days === 1 ? _t("since 1 day") : _t("since %s days", days);
 }
 
-export async function refreshPosBalances(orm, rows, storeId, productKey, isCurrent, {showAge = false, manual = false} = {}) {
+export async function refreshPosBalances(orm, rows, storeId, productKey, isCurrent, {showAge = false, manual = false, isRowCurrent = () => true, onInventory = null} = {}) {
     const targets = rows.filter((row) => Number.isInteger(row[productKey]) && row[productKey] > 0);
     if (!storeId || !targets.length || !isCurrent()) {
         return;
@@ -64,7 +64,7 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
         return;
     }
     for (const row of targets) {
-        if (latestRefresh.get(row) !== token || row[productKey] !== productIds.get(row)) {
+        if (latestRefresh.get(row) !== token || row[productKey] !== productIds.get(row) || !isRowCurrent(row)) {
             continue;
         }
         const metadata = balances?.[row[productKey]];
@@ -76,6 +76,10 @@ export async function refreshPosBalances(orm, rows, storeId, productKey, isCurre
         row.pos_balance_unavailable = !(metadata?.refresh_success === true && Number.isFinite(metadata.balance));
         if (!row.pos_balance_unavailable) {
             row.pos_balance_age_label = "";
+            if (onInventory && Array.isArray(metadata.inventory_json?.data)
+                && Array.isArray(metadata.available_prices)) {
+                onInventory(row, metadata);
+            }
         } else if (showAge && (!wasUnavailable || manual)) {
             row.pos_balance_age_label = balanceAgeLabel(row.pos_balance_last_sync_at);
         }
