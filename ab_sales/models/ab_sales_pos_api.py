@@ -552,7 +552,12 @@ class AbSalesPosApi(models.TransientModel):
         if not line or not line.product_id:
             return []
 
-        payload = line.inventory_json or {}
+        return self._available_prices_from_inventory(line.product_id, line.inventory_json)
+
+    @api.model
+    def _available_prices_from_inventory(self, product, inventory_json):
+        """Build display badges without creating or modifying a sales line."""
+        payload = inventory_json or {}
         if not isinstance(payload, dict):
             payload = {}
         rows = payload.get("data") or []
@@ -574,7 +579,7 @@ class AbSalesPosApi(models.TransientModel):
                 continue
             price_qty[price] = price_qty.get(price, 0.0) + qty
 
-        default_price = float(line.product_id.default_price or 0.0)
+        default_price = float(product.default_price or 0.0)
         default_qty = price_qty.pop(default_price, 0.0) if price_qty else 0.0
 
         items = [{
@@ -592,7 +597,7 @@ class AbSalesPosApi(models.TransientModel):
                 "badge_key": "price-%s" % price,
             })
 
-        if not line.product_id.is_priced and items:
+        if not product.is_priced and items:
             highest_price = max(float(item.get("price") or 0.0) for item in items)
             for item in items:
                 item["price"] = highest_price

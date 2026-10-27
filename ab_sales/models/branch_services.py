@@ -245,10 +245,34 @@ class ApiPosServices(models.TransientModel):
         by_serial = {r['product_eplus_serial']: r['balance'] for r in rows}
         result = {p.id: by_serial[p.eplus_serial] for p in products if p.eplus_serial in by_serial}
         if include_sync_metadata:
+            # Use the existing validated branch API, including successful empty
+            # snapshots. These display reads never change the cashier's line.
+            inventory = self.env['ab_sales_inventory']
+            serials = products.mapped('eplus_serial')
+            before_stock = inventory._branch_sync_metadata(store, serials)
+            stock_rows = client._stock(store, serials)
+            stock_by_serial = {}
+            for row in stock_rows:
+                stock_by_serial.setdefault(row['product_eplus_serial'], []).append(row)
             metadata = self.env['ab_sales_inventory']._branch_sync_metadata(store, products.mapped('eplus_serial'))
             totals = self.pos_cached_balance_totals(products.ids, store.id)
-            return {p.id: dict(metadata[p.eplus_serial], refresh_success=True, total_balance=totals[p.id])
-                    for p in products if p.eplus_serial in metadata}
+            result = {}
+            for product in products:
+                serial = product.eplus_serial
+                if serial not in metadata:
+                    continue
+                details = dict(metadata[serial], refresh_success=True, total_balance=totals[product.id])
+                result[product.id] = details
+                # The stock API has no snapshot timestamp. Keep the badges if
+                # the cache changed while the live stock request was in flight.
+                if details['last_sync_at'] != before_stock.get(serial, {}).get('last_sync_at'):
+                    continue
+                payload = {'data': [dict(row, store_id=store.id, product_id=product.id)
+                                    for row in stock_by_serial.get(serial, [])]}
+                details.update(inventory_json=payload,
+                               available_prices=self._available_prices_from_inventory(product, payload),
+                               is_priced=bool(product.is_priced))
+            return result
         result['_refreshed_at'] = fields.Datetime.to_string(fields.Datetime.now())
         return result
 
