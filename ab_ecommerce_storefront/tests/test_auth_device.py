@@ -7,7 +7,7 @@ from unittest.mock import patch
 from odoo import fields
 from odoo.exceptions import AccessDenied, AccessError
 from odoo.tests import tagged
-from odoo.tests.common import ChromeBrowser, HttpCase, TransactionCase
+from odoo.tests.common import ChromeBrowser, HttpCase, TransactionCase, new_test_user
 
 from ..models.auth_device import DEVICE_COOKIE
 
@@ -139,6 +139,18 @@ class TestStorefrontAuthDevice(TransactionCase):
         self.user.with_user(self.user)._check_credentials({"type": "password", "password": "Original9!Pass"}, {"interactive": True})
         self.assertFalse(self.env.ref("base.user_admin")._ab_device_protected())
 
+    def test_pre_authentication_device_policy_preserves_user_privacy(self):
+        public = self.env.ref("base.public_user")
+        admin = self.env.ref("base.user_admin").with_user(public)
+        customer = self.user.with_user(public)
+        self.assertFalse(admin._ab_device_protected())
+        self.assertTrue(customer._ab_device_protected())
+        self.assertEqual(customer._mfa_url(), "/ab_storefront/auth/device")
+        self.assertFalse(public._ab_device_protected())
+        for target in (admin, customer):
+            with self.assertRaises(AccessError):
+                target.read(["login", "share"])
+
     def test_private_models_reject_portal_and_public_orm(self):
         for actor in [self.user, self.env.ref("base.public_user")]:
             for model in ["ab_storefront_auth_device", "ab_storefront_auth_recovery_code", "ab_storefront_auth_challenge"]:
@@ -171,6 +183,76 @@ class TestStorefrontAuthDevice(TransactionCase):
         self.assertFalse(self.service._trusted_device(self.user, remembered))
         self.assertFalse(self.service._complete_device_login(self.user, token, self.browser, code))
         self.assertFalse(self.env["ab_storefront_auth_recovery_code"].search_count([("user_id", "=", self.user.id), ("used_at", "=", False)]))
+
+
+@tagged("post_install", "-at_install")
+class TestStorefrontBackendLoginHTTP(HttpCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.password = "BackendTest9!Pass"
+        user_env = cls.env(context=dict(cls.env.context, no_reset_password=True))
+        cls.admin = new_test_user(
+            user_env, login="backend.admin@example.test",
+            groups="base.group_system", password=cls.password,
+        )
+        cls.developer = new_test_user(
+            user_env, login="backend.developer@example.test",
+            groups="base.group_user", password=cls.password,
+        )
+        cls.env["ir.config_parameter"].sudo().set_param("ab_storefront_auth.development", "False")
+
+    def _submit_login(self, user, password=None, redirect="/odoo", debug=False):
+        path = "/web/login?redirect=" + redirect + ("&debug=1" if debug else "")
+        page = self.url_open(path)
+        self.assertEqual(page.status_code, 200)
+        csrf = re.search(r'name="csrf_token"[^>]*value="([^"]+)"', page.text).group(1)
+        return self.url_open("/web/login", data={
+            "csrf_token": csrf, "login": user.login,
+            "password": password or self.password, "redirect": redirect,
+        }, allow_redirects=False)
+
+    def _assert_backend_login(self, user, redirect="/odoo", debug=False):
+        response = self._submit_login(user, redirect=redirect, debug=debug)
+        self.assertEqual(response.status_code, 303, response.text[:300])
+        self.assertEqual(response.headers["Location"], redirect)
+        info = self.url_open("/web/session/get_session_info", json={
+            "jsonrpc": "2.0", "method": "call", "params": {}, "id": 1,
+        }).json()
+        self.assertEqual(info["result"]["uid"], user.id)
+        self.assertFalse(self.env["ab_storefront_auth_challenge"].search_count([
+            ("user_id", "=", user.id), ("purpose", "=", "device_login"),
+        ]))
+
+    def test_admin_backend_login_over_http(self):
+        self._assert_backend_login(self.admin)
+
+    def test_internal_developer_backend_login_over_http(self):
+        self._assert_backend_login(self.developer, debug=True)
+
+    def test_legacy_web_backend_redirect_over_http(self):
+        self._assert_backend_login(self.admin, redirect="/web")
+
+    def test_admin_native_mfa_remains_required(self):
+        self.admin.sudo().totp_secret = "JBSWY3DPEHPK3PXP"
+        response = self._submit_login(self.admin)
+        self.assertEqual(response.status_code, 303)
+        self.assertIn("/web/login/totp", response.headers.get("Location", ""))
+        protected = self.url_open("/odoo", allow_redirects=False)
+        self.assertIn("/web/login", protected.headers.get("Location", ""))
+
+    def test_backend_wrong_password_remains_denied(self):
+        response = self._submit_login(self.admin, password="Incorrect9!Pass")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("Location", response.headers)
+        protected = self.url_open("/odoo", allow_redirects=False)
+        self.assertIn("/web/login", protected.headers.get("Location", ""))
+
+    def test_storefront_http_still_requires_https(self):
+        with patch.object(type(self.env["res.users"]), "authenticate") as authenticate:
+            response = self._submit_login(self.admin, redirect="/")
+            authenticate.assert_not_called()
+        self.assertEqual(response.status_code, 403)
 
 
 @tagged("post_install", "-at_install")
