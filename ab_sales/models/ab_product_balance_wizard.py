@@ -33,27 +33,29 @@ class AbProductBalanceWizard(models.TransientModel):
         configs = self.env['ab_sales_branch_rpc_config'].sudo().search(
             fields.Domain('active', '=', True) & fields.Domain('store_id', 'in', stores.ids))
         config_by_store = {config.store_id.id: config for config in configs}
-        snapshot = reader._read(self.product_id.mapped('eplus_serial'))
-        unmapped_ids = set(snapshot.get('unmapped_store_ids', []))
         for wizard in self:
             rows = []
             product = wizard.product_id
+            snapshot = reader._read_live(product) if product else {}
             if product:
                 for store in stores:
                     reason = self._branch_api_unavailable_reason(store, config_by_store.get(store.id))
+                    live_reason = snapshot['unavailable_reasons'].get(store.id)
+                    pair = (store.id, product.eplus_serial)
                     rows.append({
                         'store_id': store.id,
                         'store_name': store.display_name,
                         'store_code': store.code or '',
-                        'balance': snapshot['balances'].get((store.id, product.eplus_serial)),
+                        'balance': snapshot['balances'].get(pair),
+                        'cached_fallback': snapshot['cached_fallback'] and pair in snapshot['balances'],
                         'source': snapshot['metadata'].get((store.id, product.eplus_serial), {}).get('source', 'unavailable'),
                         'refreshed_at': snapshot['metadata'].get((store.id, product.eplus_serial), {}).get('refreshed_at', False),
                         'can_refresh': not reason and product.eplus_serial > 0,
-                        'unavailable_reason': reason or (False if product.eplus_serial > 0 else
+                        'unavailable_reason': live_reason or reason or (False if product.eplus_serial > 0 else
                                                         _('Some products are unavailable at the branch.')),
                     })
             wizard.balance_data = {'product_id': product.id or False, 'rows': rows,
-                                   'unmapped_store_count': len(unmapped_ids)}
+                                   'initial_error': snapshot.get('initial_error', False)}
 
     @api.model
     def refresh_branch_balance(self, product_id, store_id):
@@ -107,19 +109,6 @@ class AbProductBalanceWizard(models.TransientModel):
         pair = (store.id, product.eplus_serial)
         return {'product_id': product.id, 'store_id': store.id,
                 'balance': snapshot['balances'].get(pair), **snapshot['metadata'].get(pair, {})}
-
-    @api.model
-    def refresh_all_balances(self, product_id):
-        self.check_access('read')
-        if type(product_id) is not int or product_id <= 0:
-            raise UserError(_('Some products are unavailable at the branch.'))
-        product = self.env['ab_product'].browse(product_id).exists()
-        product.check_access('read')
-        if not product or product.eplus_serial <= 0:
-            raise UserError(_('Some products are unavailable at the branch.'))
-        self.env['ab_sales_all_store_balance']._refresh([product.eplus_serial])
-        wizard = self.new({'product_id': product.id})
-        return wizard.balance_data
 
     @api.depends('product_id')
     def _compute_balance_html(self):

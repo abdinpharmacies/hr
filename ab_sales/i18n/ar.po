@@ -7494,3 +7494,48 @@ msgstr "الرصيد المحفوظ مؤقتاً غير متاح"
 #: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "Refresh all balances"
 msgstr "تحديث جميع الأرصدة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
+msgid "A bounded B-Connect query is unavailable."
+msgstr "تعذر تنفيذ استعلام B-Connect بمهلة زمنية محددة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
+msgid "Another branch uses this E-Plus ID."
+msgstr "يستخدم فرع آخر معرّف E-Plus هذا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
+msgid ""
+"Live B-Connect balances could not be loaded. Saved balances are shown where "
+"available."
+msgstr ""
+"تعذر تحميل الأرصدة المباشرة من B-Connect. تُعرض الأرصدة المحفوظة عند توفرها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid ""
+"Opening loads live balances from main B-Connect. If unavailable, saved "
+"balances are shown. Refresh a branch through its API to save its latest "
+"balance."
+msgstr ""
+"عند الفتح، تُحمّل الأرصدة مباشرةً من خادم B-Connect الرئيسي. وإذا تعذر ذلك، "
+"تُعرض الأرصدة المحفوظة. حدّث الفرع عبر واجهة API الخاصة به لحفظ أحدث رصيد "
+"له."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "Saved balance (live read unavailable)"
+msgstr "رصيد محفوظ (تعذرت القراءة المباشرة)"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
+msgid "The main B-Connect server is not configured."
+msgstr "لم يتم إعداد خادم B-Connect الرئيسي."

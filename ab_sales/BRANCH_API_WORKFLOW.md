@@ -350,8 +350,9 @@ local Allowed Sales Stores, when present, further restrict them; normal store
 record rules still apply. A local replica/default store is not mandatory.
 
 Stock, price cache, product details, customer lookup/creation, sales and returns
-use the authenticated branch API. The all-store balance dialog queries each
-permitted connection. Read failures retain cached values and mark them stale;
+use the authenticated branch API. The all-store balance dialog now uses the
+main B-Connect read described below; individual refreshes still use branch APIs.
+Branch API read failures retain cached values and mark them stale;
 missing responses never become zero stock. Price-cache changes log old/new price,
 store/product, user and refresh time. Customer cache records are mapped by stable
 E-Plus serial and created through ORM when absent; no SQL lookup is performed.
@@ -470,13 +471,16 @@ See [implementation and verification](doc/CALLCENTER_PARITY_2026_10_20.md) for t
 feature mapping, paired API change, and rollout checks.
 
 
-## All-store balance cache and refresh (19.0.4.1.17)
+## Live all-store popup and saved balance cache (19.0.4.1.18)
 
-All-store totals, availability filters, product details, POS search results,
-invoice-line totals and the Store Balances popup read `ab_sales_inventory`.
-Opening or searching the popup and the delayed POS search refresh do not query
-central E-Plus. The selected POS branch still refreshes through its branch API;
-that result is saved to the same cache and reflected in aggregate totals.
+All-store card totals, availability filters, product details, POS search results
+and invoice-line totals continue reading `ab_sales_inventory` through unchanged
+`_read()`. The Store Balances wizard uses private `_read_live()` on every opening,
+regardless of cache age. It queries only the selected product from the main
+B-Connect server explicitly configured by `bconnect_ip1`; it does not fail over
+to `bconnect_ip2`. Opening never invokes a cache writer or changes balances,
+prices, sources or timestamps. Delayed POS search refresh remains branch API
+only and saves its selected-branch result to the cache as before.
 
 The informational scope is every `ab_store` with `allow_transfer=True` (the
 existing field corresponding to “can_transfer”), including archived stores while
@@ -489,10 +493,10 @@ mapped stores. A missing cache entry is unavailable, not confirmed zero.
 The existing `ir_cron_update_balance_per_pos` is explicitly enabled every four
 hours on targeted module upgrade. Its `btn_update_balance_per_pos()` method reads
 a consolidated E-Plus snapshot through the existing connector and persists known
-product balances, replacing the former branch API fanout. The popup's **Refresh
-all balances** action explicitly queries E-Plus for only its selected product
-and persists the returned balances, including confirmed zeros for mapped stores.
-No other automatic display path performs a central read.
+product balances, replacing the former branch API fanout. That updater and its
+schedule are unchanged by this release. The popup's former Refresh all action
+and public `refresh_all_balances` endpoint have been removed. Only individual
+branch refreshes persist results from the popup.
 
 Central SELECTs are parameterized and branch-filtered, with at most 500 store
 IDs per batch (and 200 product IDs per explicit product batch), on one connection.
@@ -510,9 +514,10 @@ remains authoritative for branch operations. No external database writes occur.
 Each cache entry has `balance_refreshed_at` (local save time) and `balance_source`
 (E-Plus or Branch API). Existing `branch_refreshed_at` is a fallback for older
 entries until refreshed; it continues to record the provider timestamp. The
-popup displays the saved source and last refresh time. Normal cached data is not
-labelled as a failed refresh. Legacy duplicate snapshots are read once per
-product/store, choosing the newest, rather than added together.
+popup initially displays E-Plus and its live fetch time; after fallback or an
+individual refresh it displays the saved source and last refresh time. Legacy
+duplicate snapshots are read once per product/store, choosing the newest, rather
+than added together.
 
 Scheduled writers skip entries saved less than one hour ago, rechecking while
 holding the existing store lock. Foreground refreshes bypass this age rule.
@@ -536,10 +541,11 @@ The module-owned `ab_sales_store_balance_rows` widget searches loaded branch nam
 and codes, including Arabic, without network requests. Search state survives a
 refresh. Each row's Refresh button calls only that branch's fixed
 `get_product_balances` API for the selected product and persists the validated
-response. Reopening the popup and closing it to return to product cards reuse
-the saved values. The Refresh all action and branch requests cannot overlap in
-the same popup. Failures retain values and allow retry; superseded/closed popup
-responses are ignored.
+response. Only that row changes, using the accepted saved result even if a newer
+concurrent save won. Reopening always queries main B-Connect again. Closing
+rereads saved card/line totals: a live read alone cannot change those totals,
+but a successful branch API refresh can. Failures retain values and allow retry;
+superseded/closed popup responses are ignored.
 
 The fixed popup API operation may read a transfer-enabled branch outside the
 employee's sales assignment. Product access and wizard ACLs are required.
@@ -549,8 +555,39 @@ and transaction permissions are unchanged. Unavailable API connections remain
 visible with disabled buttons and explanations. Both Arabic catalogs contain
 translations; no shared frontend component is patched.
 
-Deployment requires a callcenter service restart and a targeted `ab_sales`
-upgrade, then browser asset refresh. No provider change, hook or migration is
-required. Verify the existing central connection credentials separately: QA uses
-mocked E-Plus/API responses and does not establish live connectivity. The saved
-four-hour schedule takes effect when the target module is upgraded.
+### Live-read failure and timeout semantics
+
+The popup query uses a two-second SQL execution timeout on the underlying
+pymssql/ODBC connection, with two-second connection and validation settings.
+This is not an end-to-end two-second UI deadline: connection probes and rendering
+add time. The temporary query timeout is restored afterward. The live query
+bypasses automatic reconnect/retry so a replacement connection cannot silently
+lose its query deadline; a disconnect uses cached fallback. Shared connector
+settings and scheduled/API timeouts are unchanged. If a bounded query cannot be
+established, the popup falls back instead of issuing an unbounded SELECT.
+
+All live batches must succeed and validate before missing mapped stock becomes
+zero. Valid negative aggregates display as zero. Invalid/failed/incomplete reads
+show an inline error and saved inventory balances with an explicit cached marker,
+original source and saved timestamp. Missing cache is unavailable, never zero.
+Product-access errors remain authorization failures. No branch API fanout occurs;
+configured individual Refresh buttons remain usable. Negative cached values are
+clamped for display only, without changing the stored value. Invalid negative
+branch API responses retain the existing rejection behavior.
+
+Duplicate positive store E-Plus IDs keep the lowest Odoo store ID as the live
+mapping; other duplicate rows remain unavailable with an explanation. Unmapped
+rows also remain visible and do not block valid stores. No mapping means no
+external request. Archived/unregistered/unassigned stores remain in the transfer
+scope. Row explanations replace the removed unmapped-store banner.
+
+Live means freshly queried from main B-Connect, not proof that its underlying
+branch replication has caught up. The timestamp records the read, not a source
+stock-change timestamp. Reads remain committed and parameterized; branch APIs
+remain authoritative for branch operations.
+
+Validation uses an isolated database upgrade and mocked E-Plus/API responses;
+no production restart, migration, hook or external database write is part of
+this delivery. Deploy updated Python/assets through the normal release process
+and upgrade only `ab_sales` in the target environment. The existing four-hour
+cron behavior and one-hour scheduled freshness protection are unchanged.

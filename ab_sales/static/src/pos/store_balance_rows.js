@@ -17,7 +17,7 @@ export class StoreBalanceRows extends Component {
         this.alive = true;
         this.version = 0;
         this.data = this.props.record.data[this.props.name];
-        this.state = useState({productId: false, rows: [], search: "", unmappedStoreCount: 0, refreshingAll: false, allError: ""});
+        this.state = useState({productId: false, rows: [], search: "", initialError: ""});
         this.setRows(this.data);
         onWillUpdateProps((props) => {
             const data = props.record.data[props.name];
@@ -31,10 +31,8 @@ export class StoreBalanceRows extends Component {
 
     setRows(data) {
         this.version++;
-        this.state.refreshingAll = false;
-        this.state.allError = "";
+        this.state.initialError = data?.initial_error || "";
         this.state.productId = data?.product_id || false;
-        this.state.unmappedStoreCount = data?.unmapped_store_count || 0;
         this.state.rows = (data?.rows || []).map((row) => ({...row, loading: false, error: ""}));
     }
 
@@ -53,7 +51,7 @@ export class StoreBalanceRows extends Component {
     }
 
     formatBalance(value) {
-        return Number.isFinite(value) ? formatFloat(value, {digits: [16, 2]}) : "—";
+        return Number.isFinite(value) ? formatFloat(Math.max(0, value), {digits: [16, 2]}) : "—";
     }
 
     sourceLabel(row) {
@@ -69,35 +67,8 @@ export class StoreBalanceRows extends Component {
         catch { return ""; }
     }
 
-    get refreshAllDisabled() {
-        return this.state.refreshingAll || this.state.rows.some((row) => row.loading) || !this.state.productId;
-    }
-
-    async refreshAll() {
-        if (!this.alive || this.refreshAllDisabled) return;
-        const productId = this.state.productId;
-        const version = this.version;
-        const isCurrent = () => this.alive && this.version === version && this.state.productId === productId;
-        this.state.refreshingAll = true;
-        this.state.allError = "";
-        try {
-            const result = await this.orm.call("ab_product_balance_wizard", "refresh_all_balances", [], {
-                product_id: productId,
-            });
-            if (!isCurrent()) return;
-            if (result?.product_id !== productId || !Array.isArray(result.rows)) {
-                throw new Error(_t("The branch returned invalid stock data."));
-            }
-            this.setRows(result);
-        } catch (error) {
-            if (isCurrent()) this.state.allError = error?.data?.message || error?.message || _t("Balance refresh failed; cached value shown");
-        } finally {
-            if (isCurrent()) this.state.refreshingAll = false;
-        }
-    }
-
     async refreshBranch(row) {
-        if (!this.alive || this.state.refreshingAll || row.loading || !row.can_refresh || !this.state.productId) return;
+        if (!this.alive || row.loading || !row.can_refresh || !this.state.productId) return;
         const productId = this.state.productId;
         const version = this.version;
         const isCurrent = () => this.alive && this.version === version &&
@@ -114,6 +85,7 @@ export class StoreBalanceRows extends Component {
                 throw new Error(_t("The branch returned invalid stock data."));
             }
             row.balance = result.balance;
+            row.cached_fallback = false;
             row.source = result.source;
             row.refreshed_at = result.refreshed_at;
         } catch (error) {

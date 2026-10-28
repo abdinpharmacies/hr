@@ -1,10 +1,16 @@
 """The callcenter's bounded, read-only exception to branch API transport."""
 from datetime import datetime
 from decimal import Decimal
+from contextlib import contextmanager
+import logging
 import math
 
 from odoo import fields, models
 from odoo.exceptions import AccessError, UserError
+from odoo.tools import config
+
+
+_logger = logging.getLogger(__name__)
 
 
 class AllStoreBalance(models.AbstractModel):
@@ -48,8 +54,54 @@ class AllStoreBalance(models.AbstractModel):
         result['available_serials'] = list({serial for _, serial in result['balances']})
         return result
 
+    def _read_live(self, product):
+        """Popup-only read; neither a successful read nor fallback saves stock."""
+        product.ensure_one()
+        product.check_access('read')
+        serial = product.eplus_serial
+        stores = self._stores().sorted('id')
+        store_map, unavailable = {}, {}
+        for store in stores:
+            if store.eplus_serial <= 0:
+                unavailable[store.id] = self.env._('This branch has no E-Plus ID.')
+            elif store.eplus_serial in store_map:
+                unavailable[store.id] = self.env._('Another branch uses this E-Plus ID.')
+            else:
+                store_map[store.eplus_serial] = store.id
+        result = {'balances': {}, 'metadata': {}, 'initial_error': False,
+                  'cached_fallback': False, 'unavailable_reasons': unavailable}
+        if serial <= 0:
+            result['unavailable_reasons'] = {
+                store.id: self.env._('Some products are unavailable at the branch.') for store in stores}
+            return result
+        if not store_map:
+            return result
+        try:
+            balances = self._query([serial], store_map, live=True)
+        except AccessError:
+            raise
+        except Exception:
+            # The connector wraps driver failures as Exception. Do not expose
+            # connection details, or turn a failed read into confirmed zero stock.
+            _logger.warning('Live all-store balance read failed; using saved balances', exc_info=True)
+            snapshot = self._read([serial])
+            result.update(initial_error=self.env._('Live B-Connect balances could not be loaded. Saved balances are shown where available.'),
+                          cached_fallback=True)
+            for store_id in store_map.values():
+                pair = (store_id, serial)
+                if pair in snapshot['balances']:
+                    result['balances'][pair] = max(0.0, snapshot['balances'][pair])
+                    result['metadata'][pair] = snapshot['metadata'][pair]
+            return result
+        fetched = fields.Datetime.to_string(fields.Datetime.now())
+        for store_id in store_map.values():
+            pair = (store_id, serial)
+            result['balances'][pair] = max(0.0, balances.get(pair, 0.0))
+            result['metadata'][pair] = {'source': 'eplus', 'refreshed_at': fetched}
+        return result
+
     def _refresh(self, product_serials=None, scheduled=False):
-        """Only cron/manual refresh enters E-Plus; ordinary reads never connect."""
+        """Persistent refresh for existing scheduled/manual inventory operations."""
         started = datetime.utcnow()
         stores = self._stores().filtered(lambda s: s.eplus_serial > 0)
         if not stores:
@@ -77,15 +129,43 @@ class AllStoreBalance(models.AbstractModel):
                                            complete=serials is None, scheduled=scheduled)
         return True
 
-    def _query(self, serials, store_map):
+    @contextmanager
+    def _balance_cursor(self, conn, live=False):
+        if not live:
+            with conn.cursor() as cursor:
+                yield cursor
+            return
+        # Use the underlying connection so the proxy cannot retry on a new,
+        # unbounded connection. A disconnect falls back to saved balances.
+        raw = conn._cn
+        target = getattr(raw, '_conn', raw)
+        attribute = 'query_timeout' if hasattr(target, 'query_timeout') else 'timeout'
+        if not hasattr(target, attribute):
+            raise UserError(self.env._('A bounded B-Connect query is unavailable.'))
+        previous = getattr(target, attribute)
+        try:
+            setattr(target, attribute, 2)
+            if getattr(target, attribute) != 2:
+                raise UserError(self.env._('A bounded B-Connect query is unavailable.'))
+            with raw.cursor() as cursor:
+                yield cursor
+        finally:
+            setattr(target, attribute, previous)
+
+    def _query(self, serials, store_map, *, live=False):
         """Committed informational reads; branch API remains authoritative at sale time."""
         batches = []
         store_serials = sorted(store_map)
+        options = {'connect_timeout': 5, 'validation_timeout': 5}
+        if live:
+            server = config.get('bconnect_ip1')
+            if not server:
+                raise UserError(self.env._('The main B-Connect server is not configured.'))
+            options.update(server=server, connect_timeout=2, validation_timeout=2)
         # Bound both dimensions below SQL Server's parameter ceiling.
         with self.connect_eplus(param_str='%s', charset='CP1256',
-                                propagate_error=True, connect_timeout=5,
-                                validation_timeout=5) as conn:
-            with conn.cursor() as cursor:
+                                propagate_error=True, **options) as conn:
+            with self._balance_cursor(conn, live=live) as cursor:
                 for start in range(0, len(store_serials), 500):
                     store_batch = store_serials[start:start + 500]
                     for batch in ([None] if serials is None else

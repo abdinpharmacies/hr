@@ -2,20 +2,9 @@
 <templates xml:space="preserve">
     <t t-name="ab_sales.StoreBalanceRows">
         <div class="o_ab_sales_store_balance_rows table-responsive">
-            <p class="text-muted small mb-2">Balances are cached. Refresh all balances from E-Plus, or refresh one branch through its API.</p>
-            <button type="button" class="btn btn-outline-primary mb-2"
-                    t-att-disabled="refreshAllDisabled" t-on-click="refreshAll">
-                <i class="fa fa-refresh me-1" t-att-class="{'fa-spin': state.refreshingAll}" aria-hidden="true"/>
-                <span t-if="state.refreshingAll">Refreshing...</span>
-                <span t-else="">Refresh all balances</span>
-            </button>
-            <div t-if="state.allError" class="text-danger small mb-2" role="alert">
-                <span>Refresh failed. Previous balance retained.</span>
-                <span class="d-block" t-esc="state.allError"/>
-            </div>
-            <p t-if="state.unmappedStoreCount" class="text-warning small mb-2">
-                Branches without an E-Plus ID are unavailable and excluded from totals.
-            </p>
+            <p class="text-muted small mb-2">Opening loads live balances from main B-Connect. If unavailable, saved balances are shown. Refresh a branch through its API to save its latest balance.</p>
+            <div t-if="state.initialError" class="text-warning small mb-2" role="alert"
+                 t-esc="state.initialError"/>
             <div class="d-flex align-items-center gap-2 mb-2">
                 <input type="search" class="form-control" t-model="state.search"
                        placeholder="Search branches by name or code..." aria-label="Search branches by name or code"/>
@@ -37,7 +26,7 @@
                             <div class="d-flex align-items-center gap-2">
                                 <span t-esc="formatBalance(row.balance)"/>
                                 <button type="button" class="btn btn-sm btn-outline-secondary"
-                                        t-att-disabled="state.refreshingAll || row.loading || !row.can_refresh"
+                                        t-att-disabled="row.loading || !row.can_refresh"
                                         t-on-click="() => this.refreshBranch(row)"
                                         t-att-title="row.unavailable_reason || ''"
                                         aria-label="Refresh balance from branch">
@@ -53,7 +42,10 @@
                                 <span class="d-block" t-esc="row.error"/>
                             </div>
                         </td>
-                        <td t-att-class="{'text-warning': row.source === 'unavailable'}" t-esc="sourceLabel(row)"/>
+                        <td t-att-class="{'text-warning': row.source === 'unavailable'}">
+                            <span t-esc="sourceLabel(row)"/>
+                            <small t-if="row.cached_fallback" class="text-warning d-block">Saved balance (live read unavailable)</small>
+                        </td>
                         <td class="text-muted small" t-esc="formattedTime(row) || '—'"/>
                     </tr>
                     <tr t-if="!visibleRows.length">

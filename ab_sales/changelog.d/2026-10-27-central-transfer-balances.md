@@ -14,7 +14,11 @@ Files changed:
 - ab_sales/static/src/pos/pos_action.js
 - ab_sales/static/src/pos/pos_balance_refresh.js
 
-## Current changes before commit:
+## 989570f81a2812a631d1b239e4de5de8b19507d5 - Hossam Elsheikh - 2026-10-27
+
+Original commit subject: ab_sales/update stock
+
+User-facing changes:
 
 - Fix Refresh all rejecting valid E-Plus rows: normalize SQL Server decimal product/store identifiers without truncating fractional values. Validate outside the connector context to preserve clear Odoo errors and safe failure handling.
 - Use `ab_sales_inventory` for all-store product cards, search results, availability filters, product details, line totals and popup opening. Automatic search refresh calls only the selected branch API and saves its result.
@@ -69,3 +73,33 @@ Refresh validation correction (19.0.4.1.17):
 - Re-ran the 51 cache backend checks successfully and completed a targeted QA upgrade. Existing error translations remain available in both Arabic catalogs; no new user-facing strings were introduced.
 - A live read-only query for one product across 235 mapped stores returned 5 groups successfully with normalized identifiers. It called only `_query`, performed no cache write and rolled back the Odoo transaction. This verifies the correction against the real SQL driver without running a bulk synchronization.
 - Evidence: `/tmp/cc_refresh_fix_qa/`. The running callcenter service was not restarted or upgraded by the agent; reload the Python service to use the correction.
+
+## Current changes before commit:
+
+- Open Store Balances with a fresh selected-product query against configured main B-Connect (`bconnect_ip1`) without saving inventory, prices or freshness metadata. Keep card totals and scheduled updates on their existing cache paths.
+- Apply a two-second query timeout, restore the connection setting afterward and avoid automatic reconnect to an unbounded connection. Connection/validation limits are also two seconds; no fallback server or branch API fanout is used.
+- Fall back to saved balances with an inline error, saved-source marker and original timestamp. Missing cache stays unavailable. Display negative live/cached quantities as zero without changing the cache.
+- Include all transfer-enabled stores, including archived/unregistered/unassigned stores. Retain unavailable unmapped/duplicate rows; the lowest Odoo store ID wins duplicate mappings. Zero-fill only after complete successful validation.
+- Remove Refresh all balances and its public endpoint. Preserve persistent individual branch refreshes, authorization, concurrency protection, row-only updates, retry and close/product-switch guards.
+- Maintain both Arabic catalogs from an Odoo POT export, document the workflow and bump the version to 19.0.4.1.18.
+
+Files changed:
+- ab_sales/BRANCH_API_WORKFLOW.md
+- ab_sales/__manifest__.py
+- ab_sales/changelog.d/2026-10-27-central-transfer-balances.md
+- ab_sales/i18n/ar.po
+- ab_sales/i18n/ar_001.po
+- ab_sales/models/ab_product_balance_wizard.py
+- ab_sales/models/ab_sales_all_store_balance.py
+- ab_sales/static/src/pos/store_balance_rows.js
+- ab_sales/static/src/pos/store_balance_rows.xml
+
+Validation:
+- Targeted `ab_sales` upgrade passed on isolated database `codex_cc_live_balance_20261028`, including an upgrade after translation changes. Existing unrelated view/schema warnings remain.
+- Nine runtime backend scenarios passed: live/read-only opening and reopening, fallback and negative display, empty mappings, product access, query scope/Decimal validation, timeout configuration/restoration, branch persistence/permissions, concurrent-save and cron protection, Arabic runtime translations.
+- Chromium mounted the actual OWL widget and XML template with mocked ORM services. Verified local search without RPC, removed button/banner, row-only refresh, retry/value retention, cached fallback, negative display and closed/product-switched response guards.
+- Saved-total frontend check passed: closing calls only `pos_cached_balance_totals`, preserves totals after read-only opening and reflects a saved branch refresh.
+- Both Arabic catalogs pass `msgfmt --check-format`; new strings are backed by the exported POT. Runtime `ar_001` Python/web translations and translated wizard view differ from English.
+- Python/XML/JavaScript syntax and `git diff --check` pass. Cache reader, cache writer, cron definitions and card/line total reread code remain unchanged.
+- Backend harness and results: `/tmp/cc_live_balance_20261028/`. Chromium harness: `/opt/playwright/tasks/callcenter19/live-balances-20261028/`.
+- External results and timeout failures were controlled/mocked; no live production B-Connect latency or end-to-end POS session was exercised. No production restart, production upgrade or external database write was performed.
