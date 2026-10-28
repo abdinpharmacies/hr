@@ -3,8 +3,11 @@ Current changes before commit:
 - Add branch-specific drawer, treasury, clearing, revenue, inventory and difference account mappings.
 - Show balances from posted branch journal lines and retain immutable, idempotent source links.
 - Enforce Accounting Manager setup, account authorization, branch/company isolation and both Arabic catalogs.
+- Repair developer-mode loading of the branch cash account and cash accounting entry views.
 
 Validation: Targeted install/upgrade on rip_bconnect; 38 full-cycle rollback checks, 31 accounting access/bilingual view checks, and 6 Playwright checks passed. After explicit permission approval, all 38 live-cycle checks passed and 14 retained balanced journals, branch stock and waiting openings were independently verified; see scripts/stock_integration_validation/CASH_ACCOUNTING_REPORT.md.
+
+Current view repair validation: XML parsing and rollback-only `get_views` checks for both list/form action pairs passed against `rip_bconnect` with `--dev=xml`.
 
 Files changed:
 
