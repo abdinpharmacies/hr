@@ -180,7 +180,6 @@ class CallcenterServices(models.AbstractModel):
     def create_customer(self, db_serial, token, phone, name, address, *, store_eplus_serial=STORE_UNSET):
         store = request_store(self)
         self._business_permissions('sale', post=True)
-        self.env['ab_customer'].check_access('create')
         self._lock_operation('customer-registration:%s' % store.eplus_serial)
         operation = self._operation(store, token, 'customer')
         payload = {'phone': phone, 'name': name, 'address': address}
