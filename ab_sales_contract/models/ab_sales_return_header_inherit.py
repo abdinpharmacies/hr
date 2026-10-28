@@ -186,9 +186,11 @@ class AbSalesReturnHeaderContract(models.Model):
                 "net": amount_total,
             }
 
+        after_discount = virtual_header.total_after_discount
+        customer_pay = virtual_header.cust_pay
         return {
-            "after_disc": float(virtual_header.total_after_discount or amount_total or 0.0),
-            "net": float(virtual_header.cust_pay or virtual_header.total_after_discount or amount_total or 0.0),
+            "after_disc": float(after_discount if after_discount is not None else amount_total or 0.0),
+            "net": float(customer_pay if customer_pay is not None else after_discount or amount_total or 0.0),
         }
 
     def _contract_return_reprice_values(self, before_after_disc=False, before_net=False):
