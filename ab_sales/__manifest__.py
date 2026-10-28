@@ -1,8 +1,9 @@
 {
     'name': 'Abdin Sales',
-    'version': '19.0.4.1.18',
+    'version': '19.0.4.1.19',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
+    'author': 'Abdin Pharmacies',
     'application': True,
     'depends': ['base', 'ab_hr', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store',
                 'abdin_et', 'ab_widgets', 'mail', 'ab_eplus_connect'],

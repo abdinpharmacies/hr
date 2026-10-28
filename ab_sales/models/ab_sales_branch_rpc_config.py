@@ -2,8 +2,11 @@
 
 import ipaddress
 import logging
-import requests
+import warnings
 from urllib.parse import urlparse
+
+import requests
+from urllib3.exceptions import InsecureRequestWarning
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -71,15 +74,29 @@ class AbSalesBranchRpcConfig(models.Model):
             raise AccessError(_('Credentials cannot be exported.'))
         return super().export_data(fields_to_export)
 
+    @api.model
+    def _check_unique_store_targets(self, store_ids, exclude_ids=()):
+        store_ids = [int(store_id) for store_id in store_ids if store_id]
+        if len(store_ids) != len(set(store_ids)):
+            raise ValidationError(_("Only one branch RPC configuration is allowed per store."))
+        if store_ids and self.sudo().search_count([
+            ('store_id', 'in', store_ids),
+            ('id', 'not in', list(exclude_ids)),
+        ]):
+            raise ValidationError(_("Only one branch RPC configuration is allowed per store."))
+
     @api.model_create_multi
     def create(self, vals_list):
         vals_list = [dict(self._normalize_vals(vals), enrollment_state='required') for vals in vals_list]
+        self._check_unique_store_targets([vals.get('store_id') for vals in vals_list])
         records = super().create(vals_list)
         records._sync_display_name()
         return records
 
     def write(self, vals):
         vals = self._normalize_vals(dict(vals or {}))
+        if vals.get('store_id'):
+            self._check_unique_store_targets([vals['store_id']] * len(self), self.ids)
         if set(vals) & {'rpc_url', 'rpc_db', 'store_id', 'db_serial', 'api_key', 'active'}:
             vals = dict(vals, enrollment_state='required', remote_user_id=0, rpc_user=False,
                         remote_store_id=0, remote_store_name=False, can_post=False, expires_at=False,
@@ -149,11 +166,13 @@ class AbSalesBranchRpcConfig(models.Model):
         if not secret:
             raise UserError(_('Enroll a branch API credential first.'))
         try:
-            response = requests.post(
-                '%s/json/2/%s/%s' % (self.rpc_url, model, method), json=values,
-                headers={'Authorization': 'bearer ' + secret, 'X-Odoo-Database': self.rpc_db},
-                # Accept branch certificates without CA or hostname verification.
-                timeout=int(self.connection_timeout), allow_redirects=False, verify=False)
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore', InsecureRequestWarning)
+                response = requests.post(
+                    '%s/json/2/%s/%s' % (self.rpc_url, model, method), json=values,
+                    headers={'Authorization': 'bearer ' + secret, 'X-Odoo-Database': self.rpc_db},
+                    # Accept branch certificates without CA or hostname verification.
+                    timeout=int(self.connection_timeout), allow_redirects=False, verify=False)
         except requests.RequestException:
             raise UserError(_('The branch connection failed. Check its network address and availability.')) from None
         try:

@@ -96,6 +96,7 @@ class AbSalesPosStoreDialog extends Component {
         stores: Array,
         defaultStoreCode: {type: String, optional: true},
         domain: {type: Array, optional: true},
+        emptyMessage: {type: String, optional: true},
         onSelect: Function,
         draftManager: Object,
         close: Function,
@@ -112,7 +113,7 @@ class AbSalesPosStoreDialog extends Component {
         const defaultCode = (this.props.defaultStoreCode || "").trim();
         if (defaultCode) {
             const store = (this.props.stores || []).find((row) => row.code === defaultCode);
-            if (store) {
+            if (store && this.storeReady(store)) {
                 this.state.store = {
                     id: store.id,
                     display_name: store.name || store.code || "",
@@ -120,10 +121,15 @@ class AbSalesPosStoreDialog extends Component {
             }
         }
         this.storeDomain = this.storeDomain.bind(this);
+        this.selectStore = this.selectStore.bind(this);
     }
 
     get title() {
         return _t("Draft Slot");
+    }
+
+    get hasReadyStore() {
+        return (this.props.stores || []).some((store) => this.storeReady(store));
     }
 
     storeDomain() {
@@ -138,8 +144,28 @@ class AbSalesPosStoreDialog extends Component {
         }
     }
 
+    storeReady(store) {
+        return store?.connection_ready !== false;
+    }
+
+    selectStore(store) {
+        if (!this.storeReady(store) || this.state.busy) {
+            return;
+        }
+        this.state.store = {
+            id: store.id,
+            display_name: store.name || store.code || "",
+        };
+    }
+
+    connectionMessage(store) {
+        return store?.connection_message || this.props.emptyMessage || _t("Branch connection is not configured. Contact support.");
+    }
+
     async confirm() {
         if (this.state.busy || !this.state.store?.id) return;
+        const store = (this.props.stores || []).find((row) => row.id === this.state.store.id);
+        if (!this.storeReady(store)) return;
         this.state.busy = true;
         try {
             if (await this.props.onSelect(this.state.store.id)) this.props.close();
@@ -2057,9 +2083,13 @@ class AbSalesPosAction extends Component {
         const settings = await this.orm.call("ab_sales_ui_api", "get_sales_store_settings", [], {});
         const allowedCodes = settings.allowed_store_codes || [];
         const defaultCode = (settings.default_store_code || "").trim();
-        const domain = [["allow_sale", "=", true], ["id", "in", settings.available_store_ids || []]];
-        const stores = await this.orm.searchRead("ab_store", domain, ["name", "code", "ip1"]);
+        const availableIds = settings.available_store_ids || [];
+        const domain = [["allow_sale", "=", true], ["id", "in", availableIds]];
+        const stores = Array.isArray(settings.stores)
+            ? settings.stores
+            : await this.orm.searchRead("ab_store", domain, ["name", "code", "ip1"]);
         this.state.stores = stores || [];
+        this.state.draftStoreIds = availableIds;
         this.state.allowedStoreCodes = allowedCodes;
         const byId = {};
         for (const store of this.state.stores) {
@@ -2069,7 +2099,9 @@ class AbSalesPosAction extends Component {
         if (defaultCode && this.state.stores.some((store) => store.code === defaultCode)) {
             this.state.defaultStoreCode = defaultCode;
         } else {
-            this.state.defaultStoreCode = this.state.stores[0]?.code || "";
+            this.state.defaultStoreCode = this.state.stores.find(
+                (store) => availableIds.includes(store.id)
+            )?.code || "";
         }
     }
 
@@ -2089,7 +2121,10 @@ class AbSalesPosAction extends Component {
             if (scope !== this._draftRequestScope()) return;
             this.state.draftLimit = options.draft_limit || this.state.draftLimit;
             const stores = options.stores || [];
-            this.state.draftStoreIds = stores.map((store) => store.id);
+            const availableStoreIds = options.available_store_ids || stores
+                .filter((store) => store.connection_ready !== false)
+                .map((store) => store.id);
+            this.state.draftStoreIds = availableStoreIds;
             this.state.stores = stores;
             this.state.storeById = Object.fromEntries(stores.map((store) => [store.id, store]));
             if (!stores.length) {
@@ -2100,6 +2135,7 @@ class AbSalesPosAction extends Component {
                 stores,
                 defaultStoreCode: stores.find((store) => store.id === options.default_store_id)?.code || stores[0]?.code || "",
                 domain: this.storeDomain(),
+                emptyMessage: options.empty_message || "",
                 onSelect: (storeId) => scope === this._draftRequestScope() && this.createNewBill(storeId),
                 draftManager: {
                     list: () => { if (scope !== this._draftRequestScope()) throw new Error(_t("The employee session changed. Reopen the draft dialog.")); return this._listSavedDrafts(); },
@@ -2239,6 +2275,7 @@ class AbSalesPosAction extends Component {
         try {
             const result = await this.orm.call("ab_sales_ui_api", "pos_customer_insights", [], {
                 customer_phone: phone,
+                store_id: bill.header.store_id,
             });
             if (requestId !== this._customerInsightsRequestId) {
                 return;
@@ -2285,6 +2322,7 @@ class AbSalesPosAction extends Component {
         try {
             const invoices = await this.orm.call("ab_sales_ui_api", "pos_customer_invoices", [], {
                 customer_phone: phone,
+                store_id: bill.header.store_id,
                 limit: 20,
             });
             if (!Array.isArray(invoices) || !invoices.length) {
@@ -3878,6 +3916,7 @@ class AbSalesPosAction extends Component {
         this.dialog.add(AbSalesPosBarcodeLinkDialog, {
             barcode,
             allowEdit: false,
+            sessionToken: this._posDraftSessionToken() || "",
             onSave: async ({barcode: linkBarcode, productIds}) => {
                 await this._linkBarcodeProducts(linkBarcode, productIds);
             },
@@ -3888,6 +3927,7 @@ class AbSalesPosAction extends Component {
         this.dialog.add(AbSalesPosBarcodeLinkDialog, {
             barcode: "",
             allowEdit: true,
+            sessionToken: this._posDraftSessionToken() || "",
             onSave: async ({barcode: linkBarcode, productIds}) => {
                 await this._linkBarcodeProducts(linkBarcode, productIds);
             },

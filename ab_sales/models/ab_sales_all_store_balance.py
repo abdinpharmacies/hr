@@ -12,6 +12,9 @@ from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
+LIVE_QUERY_TIMEOUT = 2
+SCHEDULED_QUERY_TIMEOUT = 120
+
 
 class AllStoreBalance(models.AbstractModel):
     _name = 'ab_sales_all_store_balance'
@@ -130,13 +133,7 @@ class AllStoreBalance(models.AbstractModel):
         return True
 
     @contextmanager
-    def _balance_cursor(self, conn, live=False):
-        if not live:
-            with conn.cursor() as cursor:
-                yield cursor
-            return
-        # Use the underlying connection so the proxy cannot retry on a new,
-        # unbounded connection. A disconnect falls back to saved balances.
+    def _balance_cursor(self, conn, query_timeout):
         raw = conn._cn
         target = getattr(raw, '_conn', raw)
         attribute = 'query_timeout' if hasattr(target, 'query_timeout') else 'timeout'
@@ -144,8 +141,8 @@ class AllStoreBalance(models.AbstractModel):
             raise UserError(self.env._('A bounded B-Connect query is unavailable.'))
         previous = getattr(target, attribute)
         try:
-            setattr(target, attribute, 2)
-            if getattr(target, attribute) != 2:
+            setattr(target, attribute, query_timeout)
+            if getattr(target, attribute) != query_timeout:
                 raise UserError(self.env._('A bounded B-Connect query is unavailable.'))
             with raw.cursor() as cursor:
                 yield cursor
@@ -157,35 +154,46 @@ class AllStoreBalance(models.AbstractModel):
         batches = []
         store_serials = sorted(store_map)
         options = {'connect_timeout': 5, 'validation_timeout': 5}
+        query_timeout = SCHEDULED_QUERY_TIMEOUT
         if live:
             server = config.get('bconnect_ip1')
             if not server:
                 raise UserError(self.env._('The main B-Connect server is not configured.'))
             options.update(server=server, connect_timeout=2, validation_timeout=2)
-        # Bound both dimensions below SQL Server's parameter ceiling.
+            query_timeout = LIVE_QUERY_TIMEOUT
+        query_failed = False
         with self.connect_eplus(param_str='%s', charset='CP1256',
                                 propagate_error=True, **options) as conn:
-            with self._balance_cursor(conn, live=live) as cursor:
-                for start in range(0, len(store_serials), 500):
-                    store_batch = store_serials[start:start + 500]
-                    for batch in ([None] if serials is None else
-                                  [serials[i:i + 200] for i in range(0, len(serials), 200)]):
-                        products_sql = ','.join(['%s'] * len(batch or []))
-                        product_filter = f'stock.itm_id IN ({products_sql}) AND' if batch is not None else ''
-                        stores_sql = ','.join(['%s'] * len(store_batch))
-                        cursor.execute(f"""
-                            SELECT stock.itm_id, stock.sto_id,
-                                   SUM(CAST(stock.itm_qty / NULLIF(item.itm_unit1_unit3, 0)
-                                            AS decimal(18,2))),
-                                   SUM(CASE WHEN item.itm_unit1_unit3 IS NULL
-                                                  OR item.itm_unit1_unit3 <= 0
-                                                  OR stock.itm_qty IS NULL THEN 1 ELSE 0 END)
-                            FROM Item_Class_Store stock
-                            LEFT JOIN Item_Catalog item ON item.itm_id = stock.itm_id
-                            WHERE {product_filter} stock.sto_id IN ({stores_sql})
-                            GROUP BY stock.itm_id, stock.sto_id
-                        """, tuple((batch or []) + store_batch))
-                        batches.append((batch, store_batch, cursor.fetchall()))
+            try:
+                with self._balance_cursor(conn, query_timeout) as cursor:
+                    for start in range(0, len(store_serials), 500):
+                        store_batch = store_serials[start:start + 500]
+                        for batch in ([None] if serials is None else
+                                      [serials[i:i + 200] for i in range(0, len(serials), 200)]):
+                            products_sql = ','.join(['%s'] * len(batch or []))
+                            product_filter = f'stock.itm_id IN ({products_sql}) AND' if batch is not None else ''
+                            stores_sql = ','.join(['%s'] * len(store_batch))
+                            cursor.execute(f"""
+                                SELECT stock.itm_id, stock.sto_id,
+                                       SUM(CAST(CASE
+                                                   WHEN item.itm_unit1_unit3 IS NULL
+                                                        OR item.itm_unit1_unit3 <= 0
+                                                        OR stock.itm_qty IS NULL THEN 0
+                                                   ELSE stock.itm_qty / item.itm_unit1_unit3
+                                                END AS decimal(18,2))),
+                                       SUM(CASE WHEN item.itm_unit1_unit3 IS NULL
+                                                      OR item.itm_unit1_unit3 <= 0
+                                                      OR stock.itm_qty IS NULL THEN 1 ELSE 0 END)
+                                FROM Item_Class_Store stock
+                                LEFT JOIN Item_Catalog item ON item.itm_id = stock.itm_id
+                                WHERE {product_filter} stock.sto_id IN ({stores_sql})
+                                GROUP BY stock.itm_id, stock.sto_id
+                            """, tuple((batch or []) + store_batch))
+                            batches.append((batch, store_batch, cursor.fetchall()))
+            except Exception:
+                query_failed = True
+        if query_failed:
+            raise UserError(self.env._('The branch connection failed. Check its network address and availability.'))
         # Validate outside the connector context: it wraps any exception from its
         # caller as a database failure, even a normal Odoo validation error.
         balances = {}

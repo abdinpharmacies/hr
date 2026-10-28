@@ -7455,6 +7455,12 @@ msgid "Unavailable"
 msgstr "غير متاح"
 
 #. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Branch connection is not configured. Contact support."
+msgstr "اتصال الفرع غير مُعد. تواصل مع الدعم."
+
+#. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance_refreshed_at
 msgid "Balance Refreshed At"
 msgstr "وقت تحديث الرصيد"

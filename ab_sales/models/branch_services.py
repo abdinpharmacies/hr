@@ -169,7 +169,12 @@ class ApiInventory(models.Model):
         return self._api_refresh_stores(self.env['ab_sales_branch_client']._stores())
 
     def btn_update_balance_per_pos(self):
-        return self.env['ab_sales_all_store_balance']._refresh(scheduled=True)
+        try:
+            return self.env['ab_sales_all_store_balance']._refresh(scheduled=True)
+        except (AccessError, UserError):
+            self.env.cr.rollback()
+            _logger.warning('Scheduled all-store balance refresh unavailable; saved balances retained')
+            return True
 
     def btn_update_balance_default_sales_store(self):
         store = self._get_default_sales_store()

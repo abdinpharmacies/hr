@@ -13,7 +13,8 @@ class AbSalesPosApi(models.TransientModel):
         """Accept screen-based roles while honoring explicit custom sale denial."""
         if "ab_employee_access_sales_pos_api" not in self.env.registry:
             return False
-        session = self.env["ab_employee_access_sales_pos_api"]._get_session(
+        session_api = self.env["ab_employee_access_sales_pos_api"]
+        session = session_api._get_session(
             pos_hr_session_token, states=["active"], required=False,
         )
         if not session:
@@ -23,6 +24,7 @@ class AbSalesPosApi(models.TransientModel):
         profile = session._get_pos_profile()
         if not profile:
             raise AccessError(_("Employee POS profile is missing."))
+        session_api._require_connectable_store(session.store_id.id, profile=profile)
         permissions = profile._effective_pos_permissions()
         if not permissions.get("allow_pos_screen") or not permissions.get("allow_sale", True):
             raise AccessError(_("Employee role does not allow sales."))

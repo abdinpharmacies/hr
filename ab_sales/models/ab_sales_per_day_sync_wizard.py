@@ -33,10 +33,11 @@ class AbSalesPerDaySyncWizard(models.TransientModel):
             "date_to": date_to,
             "force_resync": True,
         })
-        return wizard.action_sync_sales_per_day()
+        return wizard.with_context(stop_on_sales_sync_failure=True).action_sync_sales_per_day()
 
     def action_sync_sales_per_day(self):
         self.ensure_one()
+        stop_on_failure = bool(self.env.context.get("stop_on_sales_sync_failure"))
         date_from = fields.Date.to_date(self.date_from)
         date_to = fields.Date.to_date(self.date_to)
         today = fields.Date.context_today(self)
@@ -62,6 +63,9 @@ class AbSalesPerDaySyncWizard(models.TransientModel):
                 synced_count += 1
             else:
                 failed_count += 1
+                if stop_on_failure:
+                    failed_count += (date_to - current).days
+                    break
             current += timedelta(days=1)
 
         if failed_count:

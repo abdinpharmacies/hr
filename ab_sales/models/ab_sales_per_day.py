@@ -3,6 +3,7 @@ import logging
 from datetime import datetime, time, timedelta
 
 from odoo import api, fields, models, _
+from odoo.exceptions import AccessError, UserError
 
 
 _logger = logging.getLogger(__name__)
@@ -111,18 +112,30 @@ class AbSalesPerDay(models.Model):
             self.env.cr.commit()
             _logger.info("Sales per day sync finished: date=%s rows=%s", state.sale_date, rows_synced)
             return True
+        except (AccessError, UserError) as error:
+            _logger.warning(
+                "Sales per day sync unavailable: state_id=%s date=%s error=%s",
+                state_id,
+                state.sale_date,
+                error,
+            )
+            return self._mark_sync_state_failed(state_id, error)
         except Exception as error:
             _logger.exception("Sales per day sync failed: state_id=%s", state_id)
-            self.env.cr.rollback()
-            failed_state = self.env["ab_sales_per_day_sync_state"].sudo().browse(state_id)
-            if failed_state.exists():
-                failed_state.write({
-                    "state": "failed",
-                    "finished_at": fields.Datetime.now(),
-                    "error_message": repr(error),
-                })
-                self.env.cr.commit()
-            return False
+            return self._mark_sync_state_failed(state_id, error)
+
+    @api.model
+    def _mark_sync_state_failed(self, state_id, error):
+        self.env.cr.rollback()
+        failed_state = self.env["ab_sales_per_day_sync_state"].sudo().browse(state_id)
+        if failed_state.exists():
+            failed_state.write({
+                "state": "failed",
+                "finished_at": fields.Datetime.now(),
+                "error_message": repr(error),
+            })
+            self.env.cr.commit()
+        return False
 
     @api.model
     def _ensure_sync_states(self, start_date, end_date):

@@ -28,7 +28,11 @@ class BillAccess(models.Model):
             domain &= fields.Domain(prefix + 'store_id', 'in', stores.ids)
         elif not self.has_group('ab_sales.group_call_center'):
             domain &= fields.Domain.FALSE
-        return list(domain)
+        own_callcenter_records = (
+            fields.Domain(prefix + 'is_callcenter_order', '=', True)
+            & fields.Domain(prefix + 'create_uid', '=', self.id)
+        )
+        return list(domain | own_callcenter_records)
 
 
 class LocalSales(models.Model):

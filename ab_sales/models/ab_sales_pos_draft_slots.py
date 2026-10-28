@@ -13,21 +13,26 @@ class AbSalesPosDraftSlots(models.TransientModel):
 
     @api.model
     def pos_draft_store_options(self, pos_hr_session_token=None):
-        """Use the same replica, employee and service-user branch permissions."""
         Header = self.env["ab_sales_header"]
-        domain = Header._get_allowed_store_domain()
-        stores = self.env["ab_store"].search(domain, order="id")
         if "ab_employee_access_sales_pos_api" in self.env.registry:
             session_api = self.env["ab_employee_access_sales_pos_api"]
             session = session_api._get_session(pos_hr_session_token, states=["active"], required=True)
-            if session.service_user_id.id != self.env.uid:
-                raise AccessError(_("A valid employee session is required for draft bills."))
             profile = session._get_pos_profile()
             if not profile:
                 raise AccessError(_("A valid employee session is required for draft bills."))
-            permitted = session_api._available_stores_for_profile(profile)
-            permitted_ids = set(permitted.ids)
-            stores = stores.filtered(lambda store: store.id in permitted_ids)
+            scope = session_api._resolve_pos_store_scope(profile=profile)
+            default_store = scope["default_store"]
+            return {
+                "stores": scope["stores"],
+                "visible_store_ids": scope["visible_store_ids"],
+                "available_store_ids": scope["available_store_ids"],
+                "default_store_id": default_store.id if default_store else False,
+                "empty_reason": scope["empty_reason"],
+                "empty_message": scope["empty_message"],
+                "draft_limit": self._pos_draft_limit(),
+            }
+        domain = Header._get_allowed_store_domain()
+        stores = self.env["ab_store"].search(domain, order="id")
         default_id = Header._get_default_store_id()
         if default_id not in stores.ids:
             default_id = stores[:1].id or False
@@ -120,9 +125,11 @@ class AbSalesPosDraftSlots(models.TransientModel):
                 raise AccessError(_("A valid employee session is required for draft bills."))
         if not employee:
             return employee, set()
-        # Reuse employee profile, replica and service-user branch validation.
         options = self.pos_draft_store_options(pos_hr_session_token=pos_hr_session_token)
-        return employee, {store["id"] for store in options["stores"]}
+        available_store_ids = options.get("available_store_ids")
+        if available_store_ids is None:
+            available_store_ids = [store["id"] for store in options["stores"]]
+        return employee, set(available_store_ids)
 
     @api.model
     def _draft_records(self, employee, stores, tokens=None, active_only=False):

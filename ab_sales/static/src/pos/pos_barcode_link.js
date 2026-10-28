@@ -11,6 +11,7 @@ export class AbSalesPosBarcodeLinkDialog extends Component {
     static props = {
         barcode: String,
         allowEdit: {type: Boolean, optional: true},
+        sessionToken: {type: String, optional: true},
         onSave: {type: Function, optional: true},
         close: Function,
     };
@@ -72,7 +73,11 @@ export class AbSalesPosBarcodeLinkDialog extends Component {
         }
         this.state.loadingLinks = true;
         try {
-            const products = await this.orm.call("ab_sales_pos_api", "pos_barcode_temp_products", [], {barcode});
+            const kwargs = {barcode};
+            if (this.props.sessionToken) {
+                kwargs.pos_hr_session_token = this.props.sessionToken;
+            }
+            const products = await this.orm.call("ab_sales_pos_api", "pos_barcode_temp_products", [], kwargs);
             this.state.selected = Array.isArray(products) ? products : [];
         } catch {
             this.state.selected = [];
