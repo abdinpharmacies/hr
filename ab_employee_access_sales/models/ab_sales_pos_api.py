@@ -67,33 +67,6 @@ class AbSalesPosApi(models.TransientModel):
         )
 
     @api.model
-    def pos_validate_new_customer(self, phone=None, name=None, address=None, pos_hr_session_token=None):
-        session = self._require_pos_operation_session(pos_hr_session_token)
-        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_validate_new_customer(
-            phone=phone,
-            name=name,
-            address=address,
-        )
-
-    @api.model
-    def pos_customer_lookup(self, phone=None, store_id=None, pos_hr_session_token=None):
-        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
-        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_customer_lookup(
-            phone=phone,
-            store_id=store_id,
-        )
-
-    @api.model
-    def pos_customer_create(self, phone=None, name=None, address=None, store_id=None, pos_hr_session_token=None):
-        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
-        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_customer_create(
-            phone=phone,
-            name=name,
-            address=address,
-            store_id=store_id,
-        )
-
-    @api.model
     def pos_cached_balance_totals(self, product_ids=None, store_id=None, include_sync_metadata=False,
                                   pos_hr_session_token=None):
         session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
