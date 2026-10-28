@@ -4,6 +4,6 @@
     <record id="ab_sales_cash_shift.drawer_menu" model="ir.ui.menu"><field name="parent_id" ref="ab_accounting_cash.cash_management_menu"/></record>
     <record id="ab_sales_cash_shift.finance_review_menu" model="ir.ui.menu"><field name="parent_id" ref="ab_accounting_cash.cash_management_menu"/></record>
     <record id="ab_sales_cash_shift.transfer_menu" model="ir.ui.menu"><field name="parent_id" ref="ab_accounting_cash.cash_management_menu"/></record>
-    <menuitem id="accounting_shift_menu" name="Shift Closing Records" parent="ab_accounting_cash.cash_management_menu" action="ab_sales_cash_shift.shift_action" sequence="30" groups="ab_sales_cash_shift.group_cash_finance,ab_sales_cash_shift.group_cash_manager,base.group_system"/>
+    <menuitem id="accounting_shift_menu" name="Cashier Wallet Records" parent="ab_accounting_cash.cash_management_menu" action="ab_sales_cash_shift.shift_action" sequence="30" groups="ab_sales_cash_shift.group_cash_finance,ab_sales_cash_shift.group_cash_manager,base.group_system"/>
     <menuitem id="accounting_tender_menu" name="Payment Breakdown" parent="ab_accounting_cash.cash_management_menu" action="ab_sales_cash_shift.tender_action" sequence="40" groups="ab_sales_cash_shift.group_cash_finance,ab_sales_cash_shift.group_cash_manager,base.group_system"/>
 </odoo>

@@ -66,9 +66,9 @@ class CashShiftAccounting(models.Model):
 class CashAccountingOperation(models.TransientModel):
     _inherit = 'ab_sales_cash_operation'
 
-    def _accept(self, session):
-        result = super()._accept(session)
-        shift = self.shift_id
+    def _prepare(self):
+        result = super()._prepare()
+        shift = self.drawer_id._current()
         config = shift._accounting_configuration()
         if config and not shift.previous_id and shift.opening_amount:
             config._post('shift-opening:%s' % shift.id, shift, _('Initial drawer funding %s') % shift.id,

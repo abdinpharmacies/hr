@@ -6,21 +6,21 @@ purchase, cumulative inventory and tax calculations remain unchanged.
 
 | Operation | Accounting effect |
 | --- | --- |
-| Accept first funded opening | Debit drawer; credit branch treasury |
-| Close shift sales batch | Debit payment-method accounts; credit sales; debit returns for refunds; post frozen stock cost |
+| Prepare first funded opening | Debit cashier-wallet control; credit branch treasury |
+| Close wallet sales batch | Debit payment-method accounts; credit sales; debit returns for refunds; post frozen stock cost |
 | Record count discrepancy | Adjust drawer against pending cash differences |
-| Send counted closing cash | Debit cash in transit; credit drawer |
+| Send counted closing cash | Debit cash in transit; credit cashier-wallet control |
 | Treasury confirms receipt | Debit treasury; credit cash in transit |
 | Finance approves discrepancy | Clear pending difference to approved shortage or surplus |
-| Accept carry-forward opening | No new journal; that cash is already in the drawer |
+| Carry forward to the next employee | No new journal; that cash remains in the cashier-wallet control account |
 
 The physical count determines treasury transfer and carry-forward float. Card,
 wallet and other payments stay in separate clearing accounts and are never added
 to physical drawer cash. Payment-provider charging, provider reconciliation and
 bank settlement are outside this adapter.
 
-Sales → Cash Management retains Shift Cashier, operational shifts and payment
-breakdown. Accounting → Cash Management contains account mappings, posted links,
+Sales retains the original Cashier screen. Sales → Cash Management contains the
+operational wallet ledger and payment breakdown. Accounting → Cash Management contains account mappings, posted links,
 treasury/drawer/payment-method setup, transfers and Finance review. Existing XML
 IDs and model ownership are preserved. Finance receives operational closing
 reports without moving POS code into Accounting.
