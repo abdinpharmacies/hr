@@ -272,7 +272,9 @@ class AbSalesPosApi(models.TransientModel):
         }
 
     @api.model
-    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False):
+    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
+                       contract_id=None, total_invoice_discount=0.0, customer_id=None,
+                       pos_hr_session_token=None):
         """
         Base fallback when `ab_sales_promo` is not installed.
         Returns a valid empty promo payload with net total equal to line total.
