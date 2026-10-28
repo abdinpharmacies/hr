@@ -310,6 +310,61 @@ class TestAbSalesHrApi(TransactionCase):
         ])
         self.assertEqual(visible, own_header)
 
+    def test_owner_opens_return_dialog_before_employee_login(self):
+        sale_header = self.env["ab_sales_header"].with_user(self.normal_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "description": "Owner return dialog",
+        })
+        sale_header.sudo()._write_branch_state({"status": "saved", "eplus_serial": 881001})
+        return_header = self.env["ab_sales_return_header"].with_user(self.normal_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "origin_header_id": 881001,
+        })
+        header_model = type(self.env["ab_sales_header"])
+        return_api = self.env["ab_sales_return_ui_api"].with_user(self.normal_user)
+
+        with patch.object(
+            header_model,
+            "action_open_sales_return",
+            autospec=True,
+            return_value={"res_id": return_header.id},
+        ):
+            action = return_api.open_from_sale_header(sale_header.id)
+
+        self.assertEqual(action["tag"], "ab_sales.return_ui")
+        self.assertEqual(action["params"]["return_header_id"], return_header.id)
+        with self.assertRaisesRegex(UserError, "Employee login is required"):
+            return_api.get_state(return_header.id)
+
+        session = self.env["ab_employee_access_sales_pos_api"].with_user(self.normal_user).employee_login(
+            employee_id=self.manager_employee.id,
+            pin="9999",
+            store_id=self.store.id,
+            device_uid="OWNER_RETURN_DEVICE",
+            device_name="Owner Return Device",
+        )
+        state = return_api.get_state(return_header.id, session_token=session["token"])
+        self.assertEqual(state["id"], return_header.id)
+
+    def test_return_dialog_rejects_invalid_supplied_session(self):
+        sale_header = self.env["ab_sales_header"].with_user(self.normal_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "description": "Invalid return token",
+        })
+        with self.assertRaisesRegex(UserError, "Employee POS session is missing or expired"):
+            self.env["ab_sales_return_ui_api"].with_user(self.normal_user).open_from_sale_header(
+                sale_header.id,
+                session_token="expired-return-session",
+            )
+
+    def test_other_user_cannot_open_owner_return_dialog(self):
+        sale_header = self.env["ab_sales_header"].with_user(self.normal_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "description": "Private owner return",
+        })
+        with self.assertRaises(AccessError):
+            self.env["ab_sales_return_ui_api"].with_user(self.service_user).open_from_sale_header(sale_header.id)
+
     def test_eplus_employee_uses_return_login_session_employee(self):
         payload = self.env["ab_employee_access_sales_pos_api"].with_user(self.service_user).employee_login(
             employee_id=self.manager_employee.id,

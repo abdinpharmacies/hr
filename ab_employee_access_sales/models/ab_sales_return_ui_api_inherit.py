@@ -9,14 +9,15 @@ class AbSalesReturnUiApi(models.TransientModel):
     def open_from_sale_header(self, sale_header_id, session_token=False, **kwargs):
         sale_header = self._get_sale_header(sale_header_id)
         token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
-        session_api = self.env["ab_employee_access_sales_pos_api"]
-        session = session_api._get_session(token, states=["active"])
-        profile = session._get_pos_profile()
-        if not profile:
-            raise UserError(_("Employee POS profile is missing."))
-        session_api._require_connectable_store(sale_header.store_id.id, profile=profile)
-        if session.store_id != sale_header.store_id:
-            session.write({"store_id": sale_header.store_id.id})
+        if token:
+            session_api = self.env["ab_employee_access_sales_pos_api"]
+            session = session_api._get_session(token, states=["active"])
+            profile = session._get_pos_profile()
+            if not profile:
+                raise UserError(_("Employee POS profile is missing."))
+            session_api._require_connectable_store(sale_header.store_id.id, profile=profile)
+            if session.store_id != sale_header.store_id:
+                session.write({"store_id": sale_header.store_id.id})
         return super().open_from_sale_header(sale_header_id, **kwargs)
 
     @api.model
