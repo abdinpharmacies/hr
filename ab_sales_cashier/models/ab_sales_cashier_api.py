@@ -12,7 +12,7 @@ PARAM_STR = "?"
 class AbSalesCashierApi(models.TransientModel):
     _name = "ab_sales_cashier_api"
     _description = "Sales Cashier API"
-    _inherit = ["ab_eplus_connect"]
+    _inherit = ["ab_sales_external_connector"]
 
     _POLL_MIN_PARAM = "ab_sales.cashier_poll_min_seconds"
     _POLL_MAX_PARAM = "ab_sales.cashier_poll_max_seconds"

@@ -94,15 +94,15 @@
                 <aside class="ab_cashier_left_panel">
                     <div class="ab_cashier_panel_head">
                         <div>
-                            <h3>فواتير معلّقة</h3>
-                            <small>إجمالي الفواتير: <t t-esc="state.pendingCount"/></small>
+                            <h3>Pending Invoices</h3>
+                            <small>Total invoices: <t t-esc="state.pendingCount"/></small>
                         </div>
                         <button class="btn btn-outline-primary btn-sm"
                                 type="button"
                                 t-on-click="refreshListNow"
                                 t-att-disabled="state.refreshing">
-                            <t t-if="state.refreshing">...جاري التحديث</t>
-                            <t t-else="">تحديث القائمة</t>
+                            <t t-if="state.refreshing">Refreshing...</t>
+                            <t t-else="">Refresh List</t>
                         </button>
                     </div>
 
@@ -111,20 +111,20 @@
                                class="form-control"
                                t-att-value="state.query"
                                t-on-input="onSearchInput"
-                               placeholder="بحث برقم الفاتورة / اسم العميل / الموبايل"/>
+                               placeholder="Search by invoice number, customer, or phone"/>
                         <select class="form-select" t-att-value="state.sortMode" t-on-change="onSortChange">
-                            <option value="all">الكل (الأحدث)</option>
-                            <option value="oldest">الأقدم أولاً</option>
-                            <option value="highest">الأعلى قيمة</option>
+                            <option value="all">All (Newest)</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="highest">Highest Amount</option>
                         </select>
                     </div>
 
                     <div class="ab_cashier_new_hint" t-if="state.newArrivalsCount &gt; 0">
-                        <span>وصلت <t t-esc="state.newArrivalsCount"/> فواتير جديدة</span>
+                        <span><t t-esc="state.newArrivalsCount"/> new invoices arrived</span>
                         <button class="btn btn-sm btn-light"
                                 type="button"
                                 t-on-click="acknowledgeNewInvoices">
-                            عرض الجديد
+                            Show New
                         </button>
                     </div>
 
@@ -135,10 +135,10 @@
                             </div>
                         </t>
                         <t t-elif="state.loadingInitial">
-                            <div class="ab_cashier_empty">جاري تحميل الفواتير...</div>
+                            <div class="ab_cashier_empty">Loading invoices...</div>
                         </t>
                         <t t-elif="!visibleInvoices.length">
-                            <div class="ab_cashier_empty">لا توجد فواتير معلّقة مطابقة للبحث الحالي.</div>
+                            <div class="ab_cashier_empty">No pending invoices match the current search.</div>
                         </t>
                         <t t-else="">
                             <t t-foreach="visibleInvoices" t-as="invoice" t-key="invoice.key">
@@ -148,19 +148,19 @@
                                         t-on-click="onInvoiceCardClick">
                                     <div class="ab_invoice_top">
                                         <strong>#<t t-esc="invoice.invoiceNumber"/></strong>
-                                        <span class="badge text-bg-warning" t-if="invoice.documentType === 'sale'">معلّقة</span>
-                                        <span class="badge text-bg-info" t-else="">مرتجع معلّق</span>
+                                        <span class="badge text-bg-warning" t-if="invoice.documentType === 'sale'">Pending</span>
+                                        <span class="badge text-bg-info" t-else="">Pending Return</span>
                                     </div>
                                     <div class="ab_invoice_meta">
                                         <span t-esc="invoice.createDateLabel"/>
-                                        <span t-if="isInvoiceNew(invoice.key)" class="badge text-bg-info">جديد</span>
+                                        <span t-if="isInvoiceNew(invoice.key)" class="badge text-bg-info">New</span>
                                     </div>
                                     <div class="ab_invoice_customer">
                                         <span t-esc="invoice.customerName"/>
                                         <small t-if="invoice.customerPhone" t-esc="invoice.customerPhone"/>
                                     </div>
                                     <div class="ab_invoice_bottom">
-                                        <span>الأصناف: <t t-esc="invoice.itemCount"/></span>
+                                        <span>Items: <t t-esc="invoice.itemCount"/></span>
                                         <strong><t t-esc="formatMoney(invoice.totalAmount)"/></strong>
                                     </div>
                                 </button>
@@ -173,18 +173,18 @@
                     <t t-if="selectedInvoice">
                         <div class="ab_cashier_invoice_header">
                             <div>
-                                <h3 t-if="selectedInvoice.documentType === 'sale'">فاتورة رقم #<t
+                                <h3 t-if="selectedInvoice.documentType === 'sale'">Invoice #<t
                                         t-esc="selectedInvoice.invoiceNumber"/></h3>
-                                <h3 t-else="">مرتجع رقم #<t t-esc="selectedInvoice.invoiceNumber"/></h3>
+                                <h3 t-else="">Return #<t t-esc="selectedInvoice.invoiceNumber"/></h3>
                                 <div class="ab_cashier_summary_meta">
-                                    <span>العميل: <t t-esc="selectedInvoice.customerName || '-'"/></span>
-                                    <span>الموبايل: <t t-esc="selectedInvoice.customerPhone || '-'"/></span>
-                                    <span>الإجمالي: <t t-esc="formatMoney(selectedInvoice.totalAmount)"/></span>
-                                    <span t-if="selectedInvoice.documentType === 'sale'">طريقة الدفع: <t
+                                    <span>Customer: <t t-esc="selectedInvoice.customerName || '-'"/></span>
+                                    <span>Phone: <t t-esc="selectedInvoice.customerPhone || '-'"/></span>
+                                    <span>Total: <t t-esc="formatMoney(selectedInvoice.totalAmount)"/></span>
+                                    <span t-if="selectedInvoice.documentType === 'sale'">Payment Method: <t
                                             t-esc="selectedInvoice.paymentMethod || '-'"/></span>
                                 </div>
                                 <p class="ab_cashier_note" t-if="selectedInvoice.note">
-                                    <strong>ملاحظة:</strong>
+                                    <strong>Note:</strong>
                                     <t t-esc="selectedInvoice.note"/>
                                 </p>
                             </div>
@@ -194,14 +194,14 @@
                                         type="button"
                                         t-on-click="refreshSelectedSnapshot"
                                         t-att-disabled="state.loadingSnapshot or state.isSaving">
-                                    تحديث التفاصيل
+                                    Refresh Details
                                 </button>
                             </div>
                         </div>
 
                         <div class="alert alert-warning ab_cashier_alert"
                              t-if="state.selectedStale">
-                            هذه الفاتورة لم تعد ضمن pending في الخلفية. يمكنك تحديث التفاصيل أو إلغاء الاختيار.
+                            This invoice is no longer pending. Refresh the details or clear the selection.
                         </div>
                         <div class="alert alert-danger ab_cashier_alert"
                              t-if="state.saveError">
@@ -212,11 +212,11 @@
                             <table class="table table-sm ab_cashier_lines_table">
                                 <thead>
                                     <tr>
-                                        <th>الصنف</th>
-                                        <th>الكمية</th>
-                                        <th>الوحدة</th>
-                                        <th>السعر</th>
-                                        <th>الإجمالي</th>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Unit</th>
+                                        <th>Price</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -235,7 +235,7 @@
                                     <t t-else="">
                                         <tr>
                                             <td colspan="5"
-                                                class="text-center text-muted">لا توجد أصناف في الفاتورة.</td>
+                                                class="text-center text-muted">This invoice has no items.</td>
                                         </tr>
                                     </t>
                                 </tbody>
@@ -247,43 +247,43 @@
                                     type="button"
                                     t-on-click="saveSelectedInvoice"
                                     t-att-disabled="state.isSaving or state.loadingSnapshot">
-                                <t t-if="state.isSaving">...جاري الحفظ</t>
-                                <t t-elif="selectedInvoice.documentType === 'return'">ترحيل المرتجع (F10)</t>
-                                <t t-else="">حفظ الفاتورة (F10)</t>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-elif="selectedInvoice.documentType === 'return'">Post Return (F10)</t>
+                                <t t-else="">Save Invoice (F10)</t>
                             </button>
                             <button class="btn btn-outline-primary btn-lg"
                                     type="button"
                                     t-on-click="printReceipt"
                                     t-att-disabled="state.isSaving or state.loadingSnapshot">
-                                طباعة Receipt (F9)
+                                Print Receipt (F9)
                             </button>
                             <button class="btn btn-outline-secondary btn-lg"
                                     type="button"
                                     t-on-click="clearSelection"
                                     t-att-disabled="state.isSaving">
-                                إلغاء الاختيار (Esc)
+                                Clear Selection (Esc)
                             </button>
                         </div>
                     </t>
 
                                 <t t-elif="lastSavedInvoice">
                         <div class="ab_cashier_saved_state">
-                            <h3 t-if="lastSavedInvoice.documentType === 'sale'">تم حفظ الفاتورة</h3>
-                            <h3 t-else="">تم ترحيل المرتجع</h3>
+                            <h3 t-if="lastSavedInvoice.documentType === 'sale'">Invoice Saved</h3>
+                            <h3 t-else="">Return Posted</h3>
                             <p>
-                                #<t t-esc="lastSavedInvoice.invoiceNumber"/> بحالة
-                                <span class="badge text-bg-success">محفوظة</span>
+                                #<t t-esc="lastSavedInvoice.invoiceNumber"/> is
+                                <span class="badge text-bg-success">Saved</span>
                             </p>
                             <div class="ab_cashier_actions">
                                 <button class="btn btn-outline-primary btn-lg"
                                         type="button"
                                         t-on-click="printReceipt">
-                                    طباعة Receipt
+                                    Print Receipt
                                 </button>
                                 <button class="btn btn-outline-secondary btn-lg"
                                         type="button"
                                         t-on-click="refreshListNow">
-                                    رجوع للقائمة
+                                    Back to List
                                 </button>
                             </div>
                         </div>
@@ -291,20 +291,20 @@
 
                                 <t t-else="">
                         <div class="ab_cashier_empty_state">
-                            <h3>اختر فاتورة من القائمة</h3>
-                            <p>الاختيار الحالي لن يتغيّر تلقائيًا عند وصول فواتير جديدة.</p>
-                            <small t-if="state.lastSyncLabel">آخر مزامنة: <t t-esc="state.lastSyncLabel"/></small>
+                            <h3>Select an Invoice</h3>
+                            <p>The current selection will not change when new invoices arrive.</p>
+                            <small t-if="state.lastSyncLabel">Last Sync: <t t-esc="state.lastSyncLabel"/></small>
                         </div>
                     </t>
                 </section>
             </div>
 
                         <footer class="ab_cashier_shortcuts">
-                <span>↑ ↓ للتنقل</span>
-                            <span>Enter للاختيار</span>
-                            <span>F10 للحفظ</span>
-                            <span>F9 أو Ctrl+P للطباعة</span>
-                            <span>Esc لإلغاء الاختيار</span>
+                <span>↑ ↓ Navigate</span>
+                            <span>Enter Select</span>
+                            <span>F10 Save</span>
+                            <span>F9 or Ctrl+P Print</span>
+                            <span>Esc Clear Selection</span>
             </footer>
                     </div>
                 </div>

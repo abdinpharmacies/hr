@@ -9,6 +9,7 @@ import {ABMany2one} from "@ab_widgets/ab_many2one";
 import {session} from "@web/session";
 import {AbSalesBillWizardPrintDialog} from "@ab_sales/bill_wizard/print_dialog";
 import {openBillWizardPrintWindow} from "@ab_sales/bill_wizard/print_preview";
+import {_t} from "@web/core/l10n/translation";
 
 const DEFAULT_POLL_MIN_SECONDS = 5;
 const DEFAULT_POLL_MAX_SECONDS = 20;
@@ -505,7 +506,7 @@ class AbSalesCashierAction extends Component {
             this._applyBootstrapPayload(payload || {});
             return true;
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Error happened."), {
+            this.notification.add(this._rpcError(err, _t("Error happened.")), {
                 type: "warning",
             });
             return false;
@@ -513,7 +514,7 @@ class AbSalesCashierAction extends Component {
     }
 
     async loginWithPin() {
-        this.notification.add("Cashier PIN login is not available in the base cashier module.", {
+        this.notification.add(_t("Cashier PIN login is not available in the base cashier module."), {
             type: "warning",
         });
         return false;
@@ -560,7 +561,7 @@ class AbSalesCashierAction extends Component {
         } catch (err) {
             this.state.stores = [];
             this.state.storeById = {};
-            this.notification.add(this._rpcError(err, "Failed to load stores."), {type: "warning"});
+            this.notification.add(this._rpcError(err, _t("Failed to load stores.")), {type: "warning"});
         }
     }
 
@@ -608,7 +609,7 @@ class AbSalesCashierAction extends Component {
     async _applyInitialStore() {
         const stores = this.state.stores || [];
         if (!stores.length) {
-            this.notification.add("No sales stores are available for this cashier.", {type: "warning"});
+            this.notification.add(_t("No sales stores are available for this cashier."), {type: "warning"});
             this.state.selectedStoreId = null;
             this.state.selectedStoreName = "";
             return;
@@ -630,7 +631,7 @@ class AbSalesCashierAction extends Component {
 
     async openStoreDialog({required = false} = {}) {
         if (!this.state.stores.length) {
-            this.notification.add("No stores available.", {type: "warning"});
+            this.notification.add(_t("No stores available."), {type: "warning"});
             return false;
         }
         return await new Promise((resolve) => {
@@ -666,11 +667,11 @@ class AbSalesCashierAction extends Component {
         }
         const store = this.state.storeById?.[parsedStoreId];
         if (!store) {
-            this.notification.add("Invalid store selection.", {type: "warning"});
+            this.notification.add(_t("Invalid store selection."), {type: "warning"});
             return;
         }
         if (this.state.requirePinLogin && !this.state.sessionToken) {
-            this.notification.add("Cashier PIN login is required.", {type: "warning"});
+            this.notification.add(_t("Cashier PIN login is required."), {type: "warning"});
             return;
         }
         if (this.state.sessionToken) {
@@ -691,7 +692,7 @@ class AbSalesCashierAction extends Component {
     async chooseWalletForSave() {
         const selectedStoreId = toNumber(this.state.selectedStoreId, 0);
         if (!selectedStoreId) {
-            this.notification.add("Select a store first.", {type: "warning"});
+            this.notification.add(_t("Select a store first."), {type: "warning"});
             return null;
         }
         try {
@@ -703,7 +704,7 @@ class AbSalesCashierAction extends Component {
                 ? payload.wallets.filter((wallet) => toNumber(wallet?.id, 0))
                 : [];
             if (!wallets.length) {
-                this.notification.add("No wallets found for this store.", {type: "warning"});
+                this.notification.add(_t("No wallets found for this store."), {type: "warning"});
                 return null;
             }
             return await new Promise((resolve) => {
@@ -722,7 +723,7 @@ class AbSalesCashierAction extends Component {
                 });
             });
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Failed to load wallets."), {
+            this.notification.add(this._rpcError(err, _t("Failed to load wallets.")), {
                 type: "danger",
             });
             return null;
@@ -731,19 +732,20 @@ class AbSalesCashierAction extends Component {
 
     openCloseCashierDialog() {
         if (this.state.requirePinLogin && !this.state.sessionToken) {
-            this.notification.add("Cashier PIN login is required.", {type: "warning"});
+            this.notification.add(_t("Cashier PIN login is required."), {type: "warning"});
             return;
         }
         const selectedStoreId = toNumber(this.state.selectedStoreId || this.state.defaultStoreId, 0);
         if (!selectedStoreId) {
-            this.notification.add("Select a store first.", {type: "warning"});
+            this.notification.add(_t("Select a store first."), {type: "warning"});
             return;
         }
         this.dialog.add(FormViewDialog, {
             resModel: "ab_sales_cashier_close_wizard",
-            title: "Close Cashier",
+            title: _t("Close Cashier"),
             context: {
                 default_store_id: selectedStoreId,
+                native_cashier_session_token: this.state.sessionToken || false,
             },
             size: "lg",
         });
@@ -792,7 +794,7 @@ class AbSalesCashierAction extends Component {
             this.state.connected = false;
             this.state.loadingInitial = false;
             if (manual || wasConnected) {
-                this.notification.add(this._rpcError(err, "Failed to refresh pending invoices."), {
+                this.notification.add(this._rpcError(err, _t("Failed to refresh pending invoices.")), {
                     type: "danger",
                 });
             }
@@ -907,7 +909,7 @@ class AbSalesCashierAction extends Component {
         }
         const selectedStoreId = toNumber(this.state.selectedStoreId, 0);
         if (!selectedStoreId) {
-            this.notification.add("Select a store first.", {type: "warning"});
+            this.notification.add(_t("Select a store first."), {type: "warning"});
             return;
         }
         let selectedRow = this.pendingInvoices.get(key);
@@ -950,7 +952,7 @@ class AbSalesCashierAction extends Component {
             if (currentSeq !== this._snapshotSeq) {
                 return;
             }
-            this.notification.add(this._rpcError(err, "Failed to load invoice details."), {
+            this.notification.add(this._rpcError(err, _t("Failed to load invoice details.")), {
                 type: "danger",
             });
         } finally {
@@ -1007,7 +1009,7 @@ class AbSalesCashierAction extends Component {
         }
         const selectedStoreId = toNumber(this.state.selectedStoreId, 0);
         if (!selectedStoreId) {
-            this.notification.add("Select a store first.", {type: "warning"});
+            this.notification.add(_t("Select a store first."), {type: "warning"});
             return;
         }
         const snapshot = this.state.selectedInvoiceSnapshot;
@@ -1047,21 +1049,21 @@ class AbSalesCashierAction extends Component {
                 this.state.newArrivalsCount = this.newInvoiceIds.size;
                 this.clearSelection();
                 this.state.listVersion += 1;
-                this.notification.add("Invoice saved successfully.", {type: "success"});
+                this.notification.add(_t("Invoice saved successfully."), {type: "success"});
                 return;
             }
 
             if (status === "invalid_status") {
                 const current = result?.current_status || "";
-                this.state.saveError = `Cannot save invoice: current status is ${current || "-"}.`;
+                this.state.saveError = _t("Cannot save invoice: current status is %s.", current || "-");
                 this.notification.add(this.state.saveError, {type: "warning"});
                 return;
             }
 
-            this.state.saveError = "Failed to save invoice due to an unexpected status.";
+            this.state.saveError = _t("Failed to save invoice due to an unexpected status.");
             this.notification.add(this.state.saveError, {type: "danger"});
         } catch (err) {
-            this.state.saveError = this._rpcError(err, "Failed to save invoice.");
+            this.state.saveError = this._rpcError(err, _t("Failed to save invoice."));
             this.notification.add(this.state.saveError, {type: "danger"});
         } finally {
             this.state.isSaving = false;
@@ -1252,7 +1254,7 @@ class AbSalesCashierAction extends Component {
                 await document.exitFullscreen();
             }
         } catch {
-            this.notification.add("Fullscreen not available.", {type: "warning"});
+            this.notification.add(_t("Fullscreen not available."), {type: "warning"});
         }
     }
 
@@ -1427,8 +1429,8 @@ class AbSalesCashierAction extends Component {
         try {
             const result = await this.orm.call("ab_sales_ui_api", "bill_wizard_get_print_options", [], {});
             this.state.printerId = Number.parseInt(result?.printer_id || 0, 10) || 0;
-            this.state.receiptHeader = result?.receipt_header || "Sales Receipt";
-            this.state.receiptFooter = result?.receipt_footer || "Thank you.";
+            this.state.receiptHeader = result?.receipt_header || _t("Sales Receipt");
+            this.state.receiptFooter = result?.receipt_footer || _t("Thank you.");
             const printers = normalizePrinterRecords(result?.available_printer_records || []);
             const selected = findPrinterById(printers, this.state.printerId);
             this.state.printerName = selected?.label || (result?.printer_name || "").trim();
@@ -1437,7 +1439,7 @@ class AbSalesCashierAction extends Component {
             return printers;
         } catch (err) {
             if (!silent) {
-                this.notification.add(this._rpcError(err, "Failed to load printer options."), {type: "warning"});
+                this.notification.add(this._rpcError(err, _t("Failed to load printer options.")), {type: "warning"});
             }
             return this.state.availablePrinters || [];
         }
@@ -1447,7 +1449,7 @@ class AbSalesCashierAction extends Component {
         const startText = String(startIp || "").trim();
         const endText = String(endIp || "").trim();
         if (!startText || !endText) {
-            this.notification.add("Start IP and End IP are required.", {type: "warning"});
+            this.notification.add(_t("Start IP and End IP are required."), {type: "warning"});
             return this.state.availablePrinters || [];
         }
         try {
@@ -1458,12 +1460,12 @@ class AbSalesCashierAction extends Component {
             const printers = await this._loadPrintOptions({silent: true});
             const installedCount = printers.length;
             this.notification.add(
-                `Discovery completed. Available printers: ${installedCount}.`,
+                _t("Discovery completed. Available printers: %s.", installedCount),
                 {type: "success"}
             );
             return printers;
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Printer discovery failed."), {type: "danger"});
+            this.notification.add(this._rpcError(err, _t("Printer discovery failed.")), {type: "danger"});
             return this.state.availablePrinters || [];
         }
     }
@@ -1549,15 +1551,15 @@ class AbSalesCashierAction extends Component {
                 });
             const content = String(result?.content || "").trim();
             if (!content) {
-                this.notification.add("Nothing to preview.", {type: "warning"});
+                this.notification.add(_t("Nothing to preview."), {type: "warning"});
                 return;
             }
             const win = openBillWizardPrintWindow(content, format, {focus: true});
             if (!win) {
-                this.notification.add("Pop-up blocked. Allow popups to print.", {type: "warning"});
+                this.notification.add(_t("Pop-up blocked. Allow popups to print."), {type: "warning"});
             }
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Preview failed."), {type: "danger"});
+            this.notification.add(this._rpcError(err, _t("Preview failed.")), {type: "danger"});
         }
     }
 
@@ -1580,7 +1582,7 @@ class AbSalesCashierAction extends Component {
                 printer: selectedRecord,
             });
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Failed to save print preferences."), {type: "danger"});
+            this.notification.add(this._rpcError(err, _t("Failed to save print preferences.")), {type: "danger"});
             return;
         }
         try {
@@ -1604,12 +1606,12 @@ class AbSalesCashierAction extends Component {
             this.state.printerId = Number.parseInt(result?.printer_id || this.state.printerId || 0, 10) || 0;
             this.notification.add(
                 finalPrinter
-                    ? `Print command sent to '${finalPrinter}'.`
-                    : "Print command sent to default system printer.",
+                    ? _t("Print command sent to '%s'.", finalPrinter)
+                    : _t("Print command sent to default system printer."),
                 {type: "success"}
             );
         } catch (err) {
-            this.notification.add(this._rpcError(err, "Direct print failed."), {type: "danger"});
+            this.notification.add(this._rpcError(err, _t("Direct print failed.")), {type: "danger"});
         }
     }
 
@@ -1633,11 +1635,11 @@ class AbSalesCashierAction extends Component {
     async printReceipt() {
         const snapshot = this.state.selectedInvoiceSnapshot || this.state.lastSavedSnapshot;
         if (!snapshot) {
-            this.notification.add("Select invoice first for printing.", {type: "warning"});
+            this.notification.add(_t("Select invoice first for printing."), {type: "warning"});
             return;
         }
         if (!snapshot.lines?.length) {
-            this.notification.add("No items to print.", {type: "warning"});
+            this.notification.add(_t("No items to print."), {type: "warning"});
             return;
         }
         await this._openSnapshotPrintDialog(snapshot);
