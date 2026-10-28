@@ -22,7 +22,7 @@
                         <span class="badge fs-6" t-att-class="state.record.status_class">
                             <t t-esc="state.record.status_label"/>
                         </span>
-                        <button class="btn btn-outline-secondary" type="button" t-on-click="close">
+                        <button class="btn btn-outline-secondary" type="button" t-on-click="close" t-att-disabled="state.busy">
                             Close
                         </button>
                     </div>

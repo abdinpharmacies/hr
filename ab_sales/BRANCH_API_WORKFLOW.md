@@ -371,7 +371,8 @@ details and printing use these records, even while a branch is unavailable.
 No historical branch bills are imported or reconstructed from RPC logs.
 
 - **Bills** opens the native sales list/form. **Sales Return** opens the separate
-  return list/form. **Bill Wizard** keeps its combined sales/returns layout.
+  review-only return list/form. **Bill Wizard** keeps its combined sales/returns layout
+  and is the only UI entry point for starting and committing a return.
 - All three states are visible: PrePending, Pending and Saved. Local browsing
   and status synchronization do not depend on `is_callcenter_order`; that field
   remains protected metadata for existing submission workflows.
@@ -591,3 +592,39 @@ no production restart, migration, hook or external database write is part of
 this delivery. Deploy updated Python/assets through the normal release process
 and upgrade only `ab_sales` in the target environment. The existing four-hour
 cron behavior and one-hour scheduled freshness protection are unchanged.
+
+
+## Bill Wizard return entry and completion (19.0.4.1.20)
+
+Start returns through **Bill Wizard → select a sales bill → Return**. The Bills
+form hides its Return button. Sales Returns and Sales Return Lines are review-only:
+no creation, editing, duplication, inline edits or processing buttons. Existing
+history remains available. The old New Return action opens review-only history,
+so saved action links cannot open a creation form. These are UI restrictions;
+existing backend employee/branch permissions and posting APIs are unchanged.
+
+The module's shared Save-to-Commit form-toolbar override has been removed. The
+Bill Wizard continues using the module-owned return client action, independent
+of the readonly standard form views.
+
+Commit closes the popup only after the returned record matches the current return,
+has status `saved`, and supplies a positive integer `sales_return_id`. The saved
+record is applied before closing and the success notification is shown once.
+Errors, malformed replies and unconfirmed results keep the popup open. Selecting
+a full return or loading lines does not close it. A UI close failure after posting
+reports that the return was saved and cannot initiate a second submission.
+
+Once submission is attempted, automatic draft abandonment is suppressed locally
+for the popup, including the installed employee-access extension's direct cleanup
+RPCs. A lost response may still represent a posted return; preserve that draft and
+its existing request token for reconciliation/retry. Unsubmitted cancellation
+keeps its existing cleanup behavior. No employee-access addon files are changed.
+
+Closing the popup schedules a Bill Wizard list/details refresh without delaying
+the close action. It preserves filters, page and the selected bill when still
+available, obtains updated return indicators/eligibility from the server, and
+ignores callbacks after destruction. List refresh failures retain the displayed
+bill context and show a separate refresh warning; they never repeat submission.
+
+Validate using mocked branch responses; never post a real return for this UI
+change. Deploy through a targeted `ab_sales` upgrade and refreshed browser assets.

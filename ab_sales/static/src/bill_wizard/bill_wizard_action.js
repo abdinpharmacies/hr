@@ -2,7 +2,7 @@
 
 import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
-import {Component, onMounted, onWillStart, useRef, useState} from "@odoo/owl";
+import {Component, onMounted, onWillDestroy, onWillStart, useRef, useState} from "@odoo/owl";
 import {useService} from "@web/core/utils/hooks";
 import {AbSalesBillWizardPrintDialog} from "./print_dialog";
 import {ABMany2many} from "@ab_widgets/ab_many2many";
@@ -140,6 +140,13 @@ class AbSalesBillWizardAction extends Component {
         this.formatMoney = this.formatMoney.bind(this);
         this.formatDateTime = this.formatDateTime.bind(this);
 
+        this._destroyed = false;
+        this._returnDialogOpen = false;
+        onWillDestroy(() => {
+            this._destroyed = true;
+            this._listRequest = (this._listRequest || 0) + 1;
+            this._detailsRequest = (this._detailsRequest || 0) + 1;
+        });
         onWillStart(async () => {
             await this.loadPrintOptions({silent: true});
             await this.loadBills();
@@ -290,7 +297,8 @@ class AbSalesBillWizardAction extends Component {
         }
     }
 
-    async loadBills({page = null, refreshStatus = false} = {}) {
+    async loadBills({page = null, refreshStatus = false, preserveOnError = false} = {}) {
+        if (this._destroyed) return;
         const request = this._listRequest = (this._listRequest || 0) + 1;
         this._detailsRequest = (this._detailsRequest || 0) + 1;
         this.state.loadingDetails = false;
@@ -329,6 +337,10 @@ class AbSalesBillWizardAction extends Component {
             await this.loadDetails(this.state.selectedId);
         } catch (err) {
             if (request !== this._listRequest) return;
+            if (preserveOnError) {
+                this.notification.add(_t("Could not refresh bills after closing the return. Reload the Bill Wizard to see the latest status."), {type: "warning"});
+                return;
+            }
             this.state.items = [];
             this.state.details = null;
             this.state.selectedId = null;
@@ -466,7 +478,7 @@ class AbSalesBillWizardAction extends Component {
     }
 
     async openReturn() {
-        if (!this.state.selectedId || this.state.openingReturn) {
+        if (this._destroyed || !this.state.selectedId || this.state.openingReturn || this._returnDialogOpen) {
             return;
         }
         this.state.openingReturn = true;
@@ -474,13 +486,23 @@ class AbSalesBillWizardAction extends Component {
             const actionDef = await this.orm.call("ab_sales_ui_api", "bill_wizard_open_return_action", [], {
                 header_id: this.state.selectedId,
             });
-            if (actionDef) {
-                await this.action.doAction(actionDef);
+            if (actionDef && !this._destroyed) {
+                this._returnDialogOpen = true;
+                await this.action.doAction(actionDef, {
+                    onClose: () => {
+                        this._returnDialogOpen = false;
+                        if (!this._destroyed) {
+                            // Do not delay closing the popup while the parent reloads.
+                            void this.loadBills({refreshStatus: true, preserveOnError: true});
+                        }
+                    },
+                });
             }
         } catch (err) {
-            this.notification.add(this._getErrorMessage(err, _t("Return action is not available.")), {type: "warning"});
+            this._returnDialogOpen = false;
+            if (!this._destroyed) this.notification.add(this._getErrorMessage(err, _t("Return action is not available.")), {type: "warning"});
         } finally {
-            this.state.openingReturn = false;
+            if (!this._destroyed) this.state.openingReturn = false;
         }
     }
 

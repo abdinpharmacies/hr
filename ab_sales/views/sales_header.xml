@@ -224,5 +224,15 @@
         <menuitem id="ab_sales_header_menu" name="Bills" parent="sales_menu_root"
                   action="ab_sales_header_action" sequence="3"
                   groups="ab_sales.group_ab_sales_manager,ab_sales.group_call_center,base.group_system"/>
+        <record id="sales_header_bill_wizard_return_only" model="ir.ui.view">
+            <field name="name">ab_sales_header.bill_wizard_return_only</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_open_sales_return']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>

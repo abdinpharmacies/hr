@@ -10,7 +10,16 @@ class AbSalesReturnUiApiAction extends Component {
     static target = "new";
 
     setup() {
-        this.orm = useService("orm");
+        // Keep the guard local to this popup, including employee-access cleanup
+        // extensions that call abandon_return directly during destruction.
+        this.orm = Object.create(useService("orm"));
+        const call = this.orm.call.bind(this.orm);
+        this.orm.call = (model, method, ...args) => {
+            if (model === "ab_sales_return_ui_api" && method === "abandon_return" && this._returnSubmissionStarted) {
+                return Promise.resolve({deleted: false});
+            }
+            return call(model, method, ...args);
+        };
         this.action = useService("action");
         this.notification = useService("notification");
 
@@ -26,6 +35,9 @@ class AbSalesReturnUiApiAction extends Component {
             record: null,
             notesDraft: "",
         });
+        this._destroyed = false;
+        this._returnSubmissionStarted = false;
+        this._returnClosing = false;
         this._abandonRequested = false;
         this._destroyCleanupStarted = false;
 
@@ -47,6 +59,7 @@ class AbSalesReturnUiApiAction extends Component {
         });
 
         onWillDestroy(() => {
+            this._destroyed = true;
             this._abandonOnDestroy();
         });
     }
@@ -92,12 +105,14 @@ class AbSalesReturnUiApiAction extends Component {
     }
 
     async close() {
+        if (this.state.busy || this._returnClosing) return;
         await this._abandonReturn();
         await this.action.doAction({ type: "ir.actions.act_window_close" });
     }
 
     _shouldAbandonReturn() {
         return Boolean(
+            !this._returnSubmissionStarted &&
             this.returnHeaderId &&
             this.state.record &&
             this.state.record.status === "prepending"
@@ -132,25 +147,29 @@ class AbSalesReturnUiApiAction extends Component {
     }
 
     async _runAction(method, fallbackMessage, params = {}, successMessage = "") {
-        if (this.state.busy) {
-            return;
-        }
+        if (this.state.busy || this._destroyed) return null;
         this.state.busy = true;
         try {
             const record = await this.orm.call("ab_sales_return_ui_api", method, [], {
                 return_header_id: this.returnHeaderId,
                 ...params,
             });
+            if (this._destroyed) return null;
+            if (!record || record.id !== this.returnHeaderId || !["prepending", "pending", "saved"].includes(record.status)) {
+                throw new Error(_t("The return response could not be verified. Reload it before retrying."));
+            }
             this._applyRecord(record);
             if (successMessage) {
                 this.notification.add(successMessage, { type: "success" });
             }
+            return record;
         } catch (error) {
-            this.notification.add(this._messageFromError(error, fallbackMessage), {
-                type: "danger",
-            });
+            if (!this._destroyed) {
+                this.notification.add(this._messageFromError(error, fallbackMessage), { type: "danger" });
+            }
+            return null;
         } finally {
-            this.state.busy = false;
+            if (!this._destroyed) this.state.busy = false;
         }
     }
 
@@ -197,7 +216,27 @@ class AbSalesReturnUiApiAction extends Component {
     }
 
     async pushToEplus() {
-        await this._runAction("push_to_eplus", _t("Failed to commit return."), {}, _t("Return committed."));
+        if (this._destroyed || this.state.busy || this._returnClosing || this.state.record?.status === "saved") return;
+        // A lost response can still mean the branch posted the return. Never
+        // abandon this draft automatically after a submission has been attempted.
+        this._returnSubmissionStarted = true;
+        const record = await this._runAction("push_to_eplus", _t("Failed to commit return."));
+        if (!record || this._destroyed) return;
+        if (record.status !== "saved" || !Number.isInteger(record.sales_return_id) || record.sales_return_id <= 0) {
+            this.notification.add(_t("The return has not been confirmed as saved. Check its status before retrying."), { type: "warning" });
+            return;
+        }
+        // _runAction applies the saved record before closing/destroy cleanup.
+        this._returnClosing = true;
+        this.notification.add(_t("Return committed."), { type: "success" });
+        try {
+            await this.action.doAction({ type: "ir.actions.act_window_close" });
+        } catch {
+            if (!this._destroyed) {
+                this._returnClosing = false;
+                this.notification.add(_t("The return was saved, but the popup could not be closed. You can close it safely."), { type: "warning" });
+            }
+        }
     }
 
     _findLine(lineId) {

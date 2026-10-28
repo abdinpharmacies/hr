@@ -7985,3 +7985,35 @@ msgstr "رصيد محفوظ (تعذرت القراءة المباشرة)"
 #: code:addons/ab_sales/models/ab_sales_all_store_balance.py:0
 msgid "The main B-Connect server is not configured."
 msgstr "لم يتم إعداد خادم B-Connect الرئيسي."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid ""
+"The return has not been confirmed as saved. Check its status before "
+"retrying."
+msgstr "لم يتم تأكيد حفظ المرتجع. تحقق من حالته قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid ""
+"The return was saved, but the popup could not be closed. You can close it "
+"safely."
+msgstr "تم حفظ المرتجع، ولكن تعذر إغلاق النافذة. يمكنك إغلاقها بأمان."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.js:0
+msgid "The return response could not be verified. Reload it before retrying."
+msgstr "تعذر التحقق من استجابة المرتجع. أعد تحميله قبل إعادة المحاولة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.js:0
+msgid ""
+"Could not refresh bills after closing the return. Reload the Bill Wizard to "
+"see the latest status."
+msgstr ""
+"تعذر تحديث الفواتير بعد إغلاق المرتجع. أعد تحميل معالج الفواتير لعرض أحدث "
+"حالة."
