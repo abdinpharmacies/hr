@@ -149,13 +149,14 @@ class NativeReturn(models.Model):
                 if line.qty < 0 or not math.isfinite(line.qty):
                     raise ValidationError(_('Native return quantities must be nonnegative.'))
             super(NativeReturn, rec._return_records()).write({'status': 'pending'})
+            rec._post_native_return()
         if self - native:
             super(NativeReturn, self - native).action_set_pending()
         return True
 
     def _post_native_return(self):
         self.ensure_one()
-        self.env['ab_sales_backend']._check_store(self.store_id.id, cashier=True)
+        self.env['ab_sales_backend']._check_store(self.store_id.id)
         self.check_access('read')
         origin = self.native_origin_id
         origin.lock_for_update(allow_referencing=True)

@@ -1,3 +1,5 @@
+import hashlib
+import json
 import uuid
 
 from odoo import api, fields, models, _
@@ -8,10 +10,67 @@ class NativeSalesPOS(models.TransientModel):
     _inherit = 'ab_sales_pos_api'
 
     @api.model
+    def _native_relational_id(self, value):
+        if isinstance(value, (list, tuple)):
+            value = value[0] if value else False
+        return int(value or 0)
+
+    @api.model
+    def _native_request_fingerprint(self, payload):
+        header = payload.get('header') or {}
+        signature = {
+            'header': {
+                'store_id': self._native_relational_id(header.get('store_id')),
+                'customer_id': self._native_relational_id(header.get('customer_id')),
+                'is_delivery': bool(header.get('is_delivery')),
+                'employee_delivery_id': self._native_relational_id(header.get('employee_delivery_id')),
+                'new_customer_name': header.get('new_customer_name') or '',
+                'new_customer_phone': header.get('new_customer_phone') or '',
+                'new_customer_address': header.get('new_customer_address') or '',
+                'description': header.get('description') or '',
+                'invoice_address': header.get('invoice_address') or '',
+            },
+            'lines': [],
+            'applied_program_ids': [],
+        }
+        for line in payload.get('lines') or []:
+            if not isinstance(line, dict) or not line.get('product_id'):
+                continue
+            product_id = self._native_relational_id(line.get('product_id'))
+            product = self.env['ab_product'].browse(product_id).exists()
+            signature['lines'].append({
+                'product_id': product_id,
+                'qty_str': str(line.get('qty_str') or '1').strip(),
+                'sell_price': round(float(line.get('sell_price') or 0), 6),
+                'target_sell_price': round(float(line.get('target_sell_price') or 0), 6),
+                'uom_id': self._pos_line_uom_id(product, line.get('uom_id')),
+                'unavailable_reason': line.get('unavailable_reason') or '',
+                'unavailable_reason_other': str(line.get('unavailable_reason_other') or '').strip(),
+            })
+        program_id = payload.get('applied_program_id')
+        if isinstance(program_id, (list, tuple)):
+            program_id = program_id[0] if program_id else False
+        if program_id:
+            signature['applied_program_ids'] = [int(program_id)]
+        value = json.dumps(signature, sort_keys=True, separators=(',', ':'), ensure_ascii=True)
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    @api.model
     def pos_submit(self, payload=None, **kwargs):
         payload = payload if payload is not None else kwargs
         if isinstance(payload, dict) and self.env['ab_sales_backend']._is_native((payload.get('header') or {}).get('store_id')):
-            self = self.with_context(native_pos_hr_token=payload.get('pos_hr_session_token'))
+            fingerprint = self._native_request_fingerprint(payload)
+            token = str((payload.get('header') or {}).get('pos_client_token') or '').strip()
+            existing = self.env['ab_sales_header'].with_context(active_test=False).search([
+                ('pos_client_token', '=', token),
+                ('native_backend', '=', True),
+            ], limit=1) if token else self.env['ab_sales_header']
+            if existing and existing.native_request_fingerprint and existing.native_request_fingerprint != fingerprint:
+                raise ValidationError(_('The request token is already assigned to different invoice content.'))
+            self = self.with_context(
+                native_pos_hr_token=payload.get('pos_hr_session_token'),
+                native_request_fingerprint=fingerprint,
+            )
         return super().pos_submit(payload=payload)
 
     @api.model
@@ -47,8 +106,9 @@ class NativeSalesPOS(models.TransientModel):
         if not header.native_backend:
             return super()._pos_submit_response(header, apply_submit=apply_submit)
         if apply_submit:
-            header.action_submit()
-        return {'id': header.id, 'status': header.status, 'eplus_serial': False, 'native_backend': True}
+            return header.action_submit(request_token=header.pos_client_token)
+        header._validate_native_approval()
+        return header._native_approval_result()
 
     @api.model
     def _fill_lines_balance_from_offline(self, header):
@@ -100,7 +160,8 @@ class NativeSalesPOS(models.TransientModel):
         products = self.env['ab_product'].browse([int(pid) for pid in (product_ids or [])]).exists()
         products.check_access('read')
         store = self.env['ab_store'].browse(int(store_id))
-        source_balances = self.env['ab_inventory_process'].get_source_balances(store.id)
+        source_balances = self.env['ab_inventory_process'].with_context(
+            ab_sales_branch_scope=True).get_source_balances(store.id)
         sources = self.env['ab_product_source'].sudo().browse([source_id for source_id, qty in source_balances.items() if qty > 0])
         today = fields.Date.context_today(self)
         requested = set(products.ids)
@@ -194,7 +255,8 @@ class NativeSalesUI(models.TransientModel):
         limit = max(1, min(120, int(limit)))
         domain = fields.Domain('active', '=', True) & self._product_price_domain(price_bounds)
         if has_balance or has_pos_balance:
-            source_balances = self.env['ab_inventory_process'].get_source_balances(sid)
+            source_balances = self.env['ab_inventory_process'].with_context(
+                ab_sales_branch_scope=True).get_source_balances(sid)
             sources = self.env['ab_product_source'].sudo().browse([source_id for source_id, qty in source_balances.items() if qty > 0])
             today = fields.Date.context_today(self)
             stocked = sources.filtered(lambda source: not source.exp_date or source.exp_date >= today).product_id

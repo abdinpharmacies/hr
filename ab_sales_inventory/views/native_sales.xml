@@ -3,7 +3,7 @@
         <field name="name">ab_sales_backend.list</field>
         <field name="model">ab_sales_backend</field>
         <field name="arch" type="xml">
-            <list editable="bottom" delete="0"><field name="store_id"/><field name="company_id"/><field name="backend"/></list>
+            <list editable="bottom" delete="0"><field name="store_id"/><field name="backend"/></list>
         </field>
     </record>
     <record id="sales_backend_action" model="ir.actions.act_window">
@@ -18,7 +18,7 @@
         <field name="model">ab_sales_native_payment</field>
         <field name="arch" type="xml">
             <list create="0" edit="0" delete="0"><field name="create_date"/><field name="operation_key"/>
-                <field name="store_id"/><field name="cashier_id"/><field name="sale_id"/><field name="return_id"/>
+                <field name="store_id"/><field name="employee_id" optional="show"/><field name="cashier_id" optional="hide"/><field name="sale_id"/><field name="return_id"/>
                 <field name="kind"/><field name="amount" sum="Total"/><field name="balance_after"/></list>
         </field>
     </record>
@@ -41,27 +41,110 @@
     </record>
     <menuitem id="native_cash_balance_menu" name="Native Cashier Balances" parent="ab_sales.ab_sales_reports_menu"
               action="native_cash_balance_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
-    <record id="native_cash_count_list" model="ir.ui.view">
-        <field name="name">ab_sales_native_cash_close.list</field><field name="model">ab_sales_native_cash_close</field>
-        <field name="arch" type="xml">
-            <list create="0" edit="0" delete="0"><field name="create_date"/><field name="store_id"/>
-            <field name="cashier_id"/><field name="expected_amount"/><field name="counted_amount"/><field name="difference"/></list></field>
-    </record>
-    <record id="native_cash_count_action" model="ir.actions.act_window">
-        <field name="name">Native Cash Counts</field><field name="res_model">ab_sales_native_cash_close</field><field name="view_mode">list</field>
-    </record>
-    <menuitem id="native_cash_count_menu" name="Native Cash Counts" parent="ab_sales.ab_sales_reports_menu"
-              action="native_cash_count_action" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager"/>
     <record id="native_sale_form" model="ir.ui.view">
         <field name="name">ab_sales_header.native.inventory</field><field name="model">ab_sales_header</field>
         <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='eplus_serial']" position="before"><field name="native_backend" invisible="1"/></xpath>
+            <xpath expr="//field[@name='eplus_serial']" position="before">
+                <field name="native_backend" invisible="1"/>
+                <field name="native_submitted" invisible="1"/>
+                <field name="native_posted" invisible="1"/>
+                <field name="native_approval_version" invisible="1"/>
+            </xpath>
+            <xpath expr="//header/field[@name='status']" position="attributes">
+                <attribute name="statusbar_visible">prepending,pending,saved,cancelled</attribute>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_open_native_cancel" type="object" string="Cancel Pending Invoice"
+                        class="btn-danger" groups="base.group_system"
+                        invisible="not native_backend or status != 'pending'"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <div class="alert alert-info" role="status" invisible="not native_backend or status != 'pending' or not native_posted">
+                    Stock has been deducted. This invoice is waiting for cashier collection.
+                </div>
+                <div class="alert alert-warning" role="status" invisible="not native_backend or status != 'pending' or native_posted">
+                    This legacy invoice has no recorded stock movement. Cancel it or use historical review before collection.
+                </div>
+                <div class="alert alert-secondary" role="status" invisible="not native_backend or status != 'cancelled'">
+                    This invoice was cancelled. Any recorded stock allocation was reversed, and no payment or refund was created.
+                </div>
+                <group invisible="not native_backend or status != 'cancelled'">
+                    <field name="native_cancel_reason"/>
+                    <field name="native_cancelled_by_id"/>
+                    <field name="native_cancelled_at"/>
+                </group>
+            </xpath>
             <xpath expr="//button[@name='action_open_sales_return']" position="attributes">
                 <attribute name="invisible">(native_backend and status != 'saved') or (not native_backend and (status not in ('saved', 'pending') or not eplus_serial))</attribute>
             </xpath>
         </field>
     </record>
+    <record id="native_sale_search" model="ir.ui.view">
+        <field name="name">ab_sales_header.native.inventory.search</field>
+        <field name="model">ab_sales_header</field>
+        <field name="inherit_id" ref="ab_sales.ab_sales_header_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='status']" position="after">
+                <separator/>
+                <filter name="native_pending" string="Pending Collection" domain="[('native_backend', '=', True), ('status', '=', 'pending')]"/>
+                <filter name="native_collected" string="Collected" domain="[('native_backend', '=', True), ('status', '=', 'saved')]"/>
+                <filter name="native_cancelled" string="Cancelled" domain="[('native_backend', '=', True), ('status', '=', 'cancelled')]"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="stock_shortage_list" model="ir.ui.view">
+        <field name="name">ab_sales_stock_shortage.list</field>
+        <field name="model">ab_sales_stock_shortage</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" delete="0" decoration-muted="state == 'cancelled'">
+                <field name="sale_id"/>
+                <field name="store_id"/>
+                <field name="employee_id"/>
+                <field name="product_id"/>
+                <field name="uom_id"/>
+                <field name="unit_price"/>
+                <field name="sold_qty" sum="Sold"/>
+                <field name="deducted_qty" sum="Deducted"/>
+                <field name="shortage_qty" sum="Shortage"/>
+                <field name="reason"/>
+                <field name="reason_details"/>
+                <field name="state" widget="badge"/>
+                <field name="create_date" optional="hide"/>
+            </list>
+        </field>
+    </record>
+    <record id="stock_shortage_search" model="ir.ui.view">
+        <field name="name">ab_sales_stock_shortage.search</field>
+        <field name="model">ab_sales_stock_shortage</field>
+        <field name="arch" type="xml">
+            <search string="Sold Without Stock">
+                <field name="sale_id"/>
+                <field name="store_id"/>
+                <field name="employee_id"/>
+                <field name="product_id"/>
+                <field name="reason"/>
+                <filter name="open" string="Open" domain="[('state', '=', 'open')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group>
+                    <filter name="group_store" string="Branch" context="{'group_by': 'store_id'}"/>
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_reason" string="Reason" context="{'group_by': 'reason'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="stock_shortage_action" model="ir.actions.act_window">
+        <field name="name">Sold Without Stock</field>
+        <field name="res_model">ab_sales_stock_shortage</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="stock_shortage_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+    <menuitem id="stock_shortage_menu" name="Sold Without Stock" parent="ab_sales.ab_sales_reports_menu"
+              action="stock_shortage_action" groups="group_native_sales_shortage_report"/>
     <record id="native_return_form" model="ir.ui.view">
         <field name="name">ab_sales_return_header.native.inventory</field><field name="model">ab_sales_return_header</field>
         <field name="inherit_id" ref="ab_sales.ab_sales_return_header_view_form"/>
@@ -70,11 +153,5 @@
             <xpath expr="//button[@name='action_push_to_eplus_return']" position="attributes"><attribute name="invisible">native_origin_id or status == 'saved'</attribute></xpath>
             <xpath expr="//header" position="inside"><button name="action_set_pending" type="object" string="Send to Cashier" class="btn-primary" invisible="not native_origin_id or status != 'prepending'"/></xpath>
         </field>
-    </record>
-    <record id="native_cash_count_form" model="ir.ui.view">
-        <field name="name">ab_sales_cashier_close_wizard.native.inventory</field><field name="model">ab_sales_cashier_close_wizard</field>
-        <field name="inherit_id" ref="ab_sales_cashier.ab_sales_cashier_close_wizard_view_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='employee_id']" position="after"><field name="native_backend" invisible="1"/><field name="native_cashier_pin" password="True" invisible="not native_backend"/></xpath></field>
     </record>
 </odoo>

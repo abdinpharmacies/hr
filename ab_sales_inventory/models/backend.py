@@ -1,5 +1,43 @@
-from odoo import api, fields, models, _
+from odoo import SUPERUSER_ID, api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
+
+
+class NativeSalesInventoryProcess(models.AbstractModel):
+    _inherit = 'ab_inventory_process'
+
+    @api.model
+    def _native_manager_scope(self):
+        return (self.env.context.get('ab_sales_branch_scope')
+                and self.env.user.has_group('ab_sales.group_ab_sales_manager'))
+
+    @api.model
+    def _check_store(self, store_id):
+        if self._native_manager_scope():
+            store = self.env['ab_store'].browse(int(store_id)).exists()
+            if not store:
+                raise ValidationError(_('Select a valid store.'))
+            return store
+        return super()._check_store(store_id)
+
+    @api.model
+    def get_balance(self, store_id, product_id=None, source_id=None, before=None):
+        if self._native_manager_scope():
+            elevated = self.with_user(SUPERUSER_ID)
+            return super(NativeSalesInventoryProcess, elevated).get_balance(
+                store_id, product_id=product_id, source_id=source_id, before=before)
+        return super().get_balance(store_id, product_id=product_id, source_id=source_id, before=before)
+
+    @api.model
+    def _source_balances(self, store_id, product_id=None, before=None,
+                         source_ids=None, include_zero=True, include_pending_outgoing=False):
+        if self._native_manager_scope():
+            elevated = self.with_user(SUPERUSER_ID)
+            return super(NativeSalesInventoryProcess, elevated)._source_balances(
+                store_id, product_id=product_id, before=before, source_ids=source_ids,
+                include_zero=include_zero, include_pending_outgoing=include_pending_outgoing)
+        return super()._source_balances(
+            store_id, product_id=product_id, before=before, source_ids=source_ids,
+            include_zero=include_zero, include_pending_outgoing=include_pending_outgoing)
 
 
 class NativeSalesBackend(models.Model):
@@ -8,7 +46,6 @@ class NativeSalesBackend(models.Model):
     _rec_name = 'store_id'
 
     store_id = fields.Many2one('ab_store', required=True, ondelete='restrict')
-    company_id = fields.Many2one(related='store_id.company_id', store=True)
     backend = fields.Selection([('legacy', 'E-Plus'), ('native', 'Native Inventory')],
                                required=True, default='legacy')
     _store_unique = models.Constraint('UNIQUE(store_id)', 'Each store has one sales backend.')
@@ -21,19 +58,25 @@ class NativeSalesBackend(models.Model):
     @api.model
     def _check_store(self, store_id, cashier=False):
         user = self.env.user
+        is_system = user.has_group('base.group_system')
+        is_sales_manager = user.has_group('ab_sales.group_ab_sales_manager')
         sales = self.env['ab_sales_header']
         if hasattr(sales, '_raise_sales_prevented'):
             sales._raise_sales_prevented()
-        if not (user.has_group('base.group_system')
-                or user.has_group('ab_sales.group_ab_sales_manager')
+        if not (is_system
+                or is_sales_manager
                 or user.has_group('ab_sales_inventory.group_native_sales_user')):
             raise AccessError(_('Native sales access is required.'))
-        if cashier and not (user.has_group('base.group_system')
-                            or user.has_group('ab_sales.group_ab_sales_manager')
+        if cashier and not (is_system
+                            or is_sales_manager
                             or user.has_group('ab_sales.group_ab_sales_cashier')):
             raise AccessError(_('Cashier access is required.'))
-        store = self.env['ab_inventory_process']._check_store(int(store_id))
-        if not store.allow_sale or store.company_id not in self.env.companies:
+        if is_system or is_sales_manager:
+            store = self.env['ab_store'].browse(int(store_id)).exists()
+        else:
+            store = self.env['ab_inventory_process'].with_context(
+                ab_sales_branch_scope=True)._check_store(int(store_id))
+        if not store or not store.allow_sale:
             raise AccessError(_('This store is unavailable for native sales.'))
         return store
 
@@ -58,8 +101,8 @@ class NativeSalesBackend(models.Model):
         if not self.env.user.has_group('base.group_system'):
             raise AccessError(_('Only system administrators can change the sales backend.'))
         stores = self.env['ab_store'].browse(store_ids).exists()
-        if len(stores) != len(set(store_ids)) or any(s.company_id not in self.env.companies for s in stores):
-            raise AccessError(_('The sales backend must belong to an allowed company.'))
+        if len(stores) != len(set(store_ids)):
+            raise AccessError(_('Select valid sales backend stores.'))
         stores._lock_stock_scope()
         for model in ('ab_sales_header', 'ab_sales_return_header'):
             domain = fields.Domain('store_id', 'in', stores.ids) & fields.Domain('status', 'in', ['prepending', 'pending'])
@@ -97,6 +140,7 @@ class NativeSalesPayment(models.Model):
     store_id = fields.Many2one('ab_store', required=True, readonly=True, ondelete='restrict')
     company_id = fields.Many2one(related='store_id.company_id', store=True)
     cashier_id = fields.Many2one('res.users', required=True, readonly=True)
+    employee_id = fields.Many2one('ab_hr_employee', readonly=True, ondelete='restrict', index=True)
     sale_id = fields.Many2one('ab_sales_header', required=True, readonly=True, ondelete='restrict')
     return_id = fields.Many2one('ab_sales_return_header', readonly=True, ondelete='restrict')
     kind = fields.Selection([('payment', 'Payment'), ('refund', 'Refund')], required=True, readonly=True)
@@ -120,8 +164,9 @@ class NativeSalesPayment(models.Model):
             return self._settle_transaction(sale, return_header)
 
     def _settle_transaction(self, sale, return_header=False):
+        self = self.with_context(ab_sales_branch_scope=True)
         store = self.env['ab_sales_backend']._check_store(sale.store_id.id, cashier=True)
-        self.env['ab_sales_backend']._check_employee_session(store, 'allow_cashier_screen')
+        session = self.env['ab_sales_backend']._check_employee_session(store, 'allow_cashier_screen')
         sale.check_access('read')
         sale.lock_for_update(allow_referencing=True)
         sale.invalidate_recordset()
@@ -136,9 +181,9 @@ class NativeSalesPayment(models.Model):
         if document.status != 'pending' or not sale.native_submitted or not sale.native_backend:
             raise ValidationError(_('Only submitted pending native documents can be settled.'))
         if not return_header:
-            sale._post_native_stock()
+            sale._validate_native_approval()
         if return_header and not return_header.native_posted:
-            return_header._post_native_return()
+            raise ValidationError(_('The pending native return has no completed stock restoration.'))
         amount = float(return_header.native_refund if return_header else sale.native_totals['total_bill_net'])
         if return_header:
             amount = -amount
@@ -151,6 +196,7 @@ class NativeSalesPayment(models.Model):
         super(NativeSalesCashBalance, balance).write({'amount': new_balance})
         payment = super(NativeSalesPayment, self.sudo()).create({
             'operation_key': key, 'store_id': store.id, 'cashier_id': self.env.uid,
+            'employee_id': session.employee_id.id if session else False,
             'sale_id': sale.id, 'return_id': return_header.id if return_header else False,
             'kind': 'refund' if return_header else 'payment', 'amount': amount, 'balance_after': new_balance,
         })
@@ -177,16 +223,3 @@ class NativeSalesCashBalance(models.Model):
 
     def unlink(self):
         raise AccessError(_('Cashier balances cannot be deleted.'))
-
-
-class NativeSalesStore(models.Model):
-    _inherit = 'ab_store'
-
-    def write(self, vals):
-        if 'company_id' in vals:
-            self.check_access('write')
-            self.lock_for_update(allow_referencing=True)
-            if self.env['ab_sales_header'].sudo().search_count([
-                    ('store_id', 'in', self.ids), ('native_posted', '=', True)]):
-                raise ValidationError(_('A store with posted native sales cannot change its company.'))
-        return super().write(vals)

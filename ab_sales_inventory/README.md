@@ -11,20 +11,22 @@ session. Cashier operations additionally require cashier permissions. Native act
 repost after cutover. Changing an active native backend is refused when it would
 strand open or posted native sales and their returns.
 
-Submitting a native sale freezes its bill totals and sends it to the cashier.
-Draft and submitted sale lines create no stock movements or reservations.
-Cashier settlement allocates available sources and calls the cumulative inventory
-API in the same transaction as payment. Insufficient stock leaves the bill pending;
-a later failure rolls back both stock and payment. Repeated settlement cannot
-consume stock twice. Cashier refunds restore the original source allocations.
-Missing historical originals require review rather than reconstructed allocations.
+Approving a native sale freezes its bill totals, allocates matching-price sources,
+deducts available stock and records any authorized shortage in one transaction.
+The invoice then remains pending for cashier collection. Cashier settlement uses
+the frozen approval snapshot and never deducts stock again. Repeated approval and
+settlement requests are idempotent, while reuse of a request token with changed
+content is rejected. Sending an approved return to the cashier restores the
+original source allocations once; refund collection creates no stock movement.
+Missing historical approvals require review rather than reconstructed allocations.
 
 Posted sales retain totals, source quantities, unit conversion and service
 classification. Local contract and promotion hooks calculate customer payments
 and refunds. Employee return permissions and required manager authorization are
-enforced on the server. Raw payment/refund/cash-balance writes are forbidden.
-Cash counts record expected, counted and difference amounts without clearing
-settlement balances; cash remittance is a later independence workflow.
+enforced on the server. Raw allocation, shortage, reversal, payment, refund and
+cash-balance writes are forbidden. System administrators may cancel pending
+native invoices, restoring only their deducted source quantities without creating
+payment or refund effects. Cash counts are supplied by the optional cashier addon.
 
 Configure the product's sales unit category, default selling unit and legacy
 smallest inventory unit. Set Sales Unit for One Stock Unit to the sales unit
@@ -38,8 +40,7 @@ fixtures are kept under repository `scripts/`, outside runtime addon packages.
 See `ab_independence_dev_plans/13_phase_1_6_execution.md` for measured validation
 and remaining business/rollout gates. Accounting adapters are deferred.
 
-Stores 29 and 140 on `rip_bconnect` were activated locally on 2026-10-19 with
-approved synthetic opening receipts of 1,000 default sales units per billed
-stock product. Create new invoices for the native cycle. Remote reporting sync,
-shared shift closing batches, treasury transfers and next-cashier handover are
-not implemented by this cutover. Existing cashier balances remain per user.
+The sold-without-stock report is read-only, independently permissioned and scoped
+by the user's authorized branches. It records the sold, deducted and shortage
+quantities with the approval reason. No scheduled or automatic shortage
+reconciliation is performed.

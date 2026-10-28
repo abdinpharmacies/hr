@@ -1,25 +1,26 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* ab_sales_inventory
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 11:49+0000\n"
-"PO-Revision-Date: 2026-10-18 12:00+0300\n"
-"Last-Translator: Abdin Pharmacies\n"
-"Language-Team: Arabic\n"
+"POT-Creation-Date: 2026-10-22 10:57+0000\n"
 "Language: ar_001\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "A cancelled invoice cannot be submitted again."
+msgstr "لا يمكن اعتماد فاتورة ملغاة مرة أخرى."
 
 #. module: ab_sales_inventory
 #: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_native_cash_balance_cashier_store_unique
 msgid "A cashier has one balance per store."
 msgstr "لكل أمين صندوق رصيد واحد لكل فرع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "A collected invoice cannot be cancelled. Use the return workflow."
+msgstr "لا يمكن إلغاء فاتورة تم تحصيلها. استخدم مسار المرتجعات."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -40,8 +41,14 @@ msgstr ""
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "A native sale requires draft lines before posting."
-msgstr "يتطلب البيع الداخلي بنوداً في مسودة قبل الترحيل."
+msgid "A native sale requires draft lines before approval."
+msgstr "يتطلب البيع المحلي بنود مسودة قبل الاعتماد."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "A stock return must reference its posted original bill."
+msgstr "يجب أن يشير مرتجع المخزون إلى فاتورته الأصلية المرحلة."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -53,10 +60,38 @@ msgstr ""
 "المرتجعات."
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__allocation_id
+msgid "Allocation"
+msgstr "التخصيص"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__promised_customer
+msgid "Already told customer we will deliver product"
+msgstr "تم إبلاغ العميل مسبقًا بتوفير الصنف"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__amount
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__amount
 msgid "Amount"
 msgstr "المبلغ"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Approved native sale lines cannot be changed."
+msgstr "لا يمكن تعديل بنود البيع المحلي المعتمدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Approved native sale lines cannot be deleted."
+msgstr "لا يمكن حذف بنود البيع المحلي المعتمدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Approved native sales are immutable."
+msgstr "لا يمكن تعديل المبيعات المحلية المعتمدة."
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__backend
@@ -69,14 +104,53 @@ msgid "Balance After"
 msgstr "الرصيد بعد العملية"
 
 #. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cancel_wizard_form
+msgid "Cancel Invoice"
+msgstr "إلغاء الفاتورة"
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_form
+msgid "Cancel Pending Invoice"
+msgstr "إلغاء الفاتورة المعلقة"
+
+#. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Cash counts are recorded through the cashier closing screen."
-msgstr "تُسجل عمليات جرد النقدية من شاشة إغلاق الصندوق."
+#: code:addons/ab_sales_inventory/models/sale.py:0
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_cancel_wizard
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cancel_wizard_form
+msgid "Cancel Pending Native Invoice"
+msgstr "إلغاء فاتورة محلية معلقة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_cancel_reason
+msgid "Cancellation Reason"
+msgstr "سبب الإلغاء"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_header__status__cancelled
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__state__cancelled
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_search
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_cancelled_at
+msgid "Cancelled At"
+msgstr "وقت الإلغاء"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_cancelled_by_id
+msgid "Cancelled By"
+msgstr "ألغيت بواسطة"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__cashier_id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__cashier_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__cashier_id
 msgid "Cashier"
 msgstr "أمين الصندوق"
@@ -101,20 +175,22 @@ msgstr "لا يمكن حذف أرصدة الصندوق."
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Cashier counts must use the current user and store wallet."
-msgstr "يجب تسجيل جرد النقدية للمستخدم الحالي وخزينة الفرع."
-
-#. module: ab_sales_inventory
-#. odoo-python
 #: code:addons/ab_sales_inventory/models/backend.py:0
 msgid "Change the backend setting instead of deleting it."
 msgstr "غيّر إعداد نظام التشغيل بدلاً من حذفه."
 
 #. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__company_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cancel_wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_search
+msgid "Collected"
+msgstr "محصلة"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__company_id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__company_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__company_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__company_id
 msgid "Company"
@@ -127,47 +203,65 @@ msgid "Complete open sales and returns before changing the backend."
 msgstr "أكمل المبيعات والمرتجعات المفتوحة قبل تغيير نظام التشغيل."
 
 #. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__counted_amount
-msgid "Counted Amount"
-msgstr "المبلغ المجرد"
-
-#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__create_uid
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__create_uid
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__create_uid
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__create_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__create_uid
 msgid "Created by"
 msgstr "أنشئ بواسطة"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__create_date
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__create_date
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__create_date
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__create_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__create_date
 msgid "Created on"
 msgstr "تاريخ الإنشاء"
 
 #. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__difference
-msgid "Difference"
-msgstr "الفرق"
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_list
+msgid "Deducted"
+msgstr "المخصوم"
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__deducted_qty
+msgid "Deducted Qty"
+msgstr "الكمية المخصومة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__deducted_qty_smallest
+msgid "Deducted Qty Smallest"
+msgstr "الكمية المخصومة بأصغر وحدة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_stock_qty
+msgid "Deducted Stock Quantity"
+msgstr "كمية المخزون المخصومة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory_process__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_product_uom__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__display_name
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_api__display_name
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__display_name
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_pos_api__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__display_name
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__display_name
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_ui_api__display_name
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_store__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -187,20 +281,54 @@ msgid "E-Plus Sales Return Line"
 msgstr "بند مرتجع مبيعات إي بلس"
 
 #. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_return_line_native_original_unique
+msgid "Each native original line can occur only once per return."
+msgstr "يمكن إدراج كل بند من الفاتورة الأصلية مرة واحدة فقط في المرتجع."
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_stock_shortage_sale_line_unique
+msgid "Each sale line can have only one stock shortage."
+msgstr "يمكن أن يكون لكل بند بيع سجل نقص مخزون واحد فقط."
+
+#. module: ab_sales_inventory
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_stock_reversal_allocation_unique
+msgid "Each stock allocation can be reversed only once."
+msgstr "يمكن عكس كل تخصيص مخزون مرة واحدة فقط."
+
+#. module: ab_sales_inventory
 #: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_backend_store_unique
 msgid "Each store has one sales backend."
 msgstr "لكل فرع نظام تشغيل مبيعات واحد."
 
 #. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Enter a finite counted cash amount."
-msgstr "أدخل مبلغ جرد نقدية صالحاً ومحدوداً."
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__employee_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Employee"
+msgstr "الموظف"
 
 #. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__expected_amount
-msgid "Expected Amount"
-msgstr "المبلغ المتوقع"
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cancel_wizard.py:0
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Enter a cancellation reason."
+msgstr "أدخل سبب الإلغاء."
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cancel_wizard_form
+msgid "Explain why this pending invoice must be cancelled..."
+msgstr "وضّح سبب إلغاء هذه الفاتورة المعلقة..."
+
+#. module: ab_sales_inventory
+#. odoo-javascript
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
+msgid "Failed to send the return to cashier."
+msgstr "تعذر إرسال المرتجع إلى الخزينة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__sale_id
+msgid "Header"
+msgstr "القيد"
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -209,23 +337,37 @@ msgid "Historical returns require a reviewed original transaction import."
 msgstr "تتطلب المرتجعات التاريخية استيراد المعاملة الأصلية ومراجعتها."
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory_process__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_product_uom__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_api__id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_pos_api__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_ui_api__id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_store__id
 msgid "ID"
 msgstr "المعرف"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_inventory_process
+msgid "Inventory Integration Helper"
+msgstr "مساعد تكامل المخزون"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__inventory_movement_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__inventory_movement_id
+msgid "Inventory Movement"
+msgstr "حركة مخزون"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__kind
@@ -234,17 +376,23 @@ msgstr "النوع"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__write_uid
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__write_uid
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__write_uid
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__write_uid
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__write_date
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__write_date
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__write_date
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__write_date
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__write_date
 msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
@@ -254,20 +402,12 @@ msgstr "تاريخ آخر تحديث"
 msgid ""
 "Legacy invoices require their original backend; use the historical review "
 "process."
-msgstr ""
-"تتطلب الفواتير القديمة نظامها الأصلي؛ استخدم إجراء المراجعة التاريخية."
+msgstr "تتطلب الفواتير القديمة نظامها الأصلي؛ استخدم إجراء المراجعة التاريخية."
 
 #. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Native Cash"
-msgstr "النقدية الداخلية"
-
-#. module: ab_sales_inventory
-#: model:ir.actions.act_window,name:ab_sales_inventory.native_cash_count_action
-#: model:ir.ui.menu,name:ab_sales_inventory.native_cash_count_menu
-msgid "Native Cash Counts"
-msgstr "جرد النقدية الداخلي"
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_approval_version
+msgid "Native Approval Version"
+msgstr "إصدار اعتماد البيع المحلي"
 
 #. module: ab_sales_inventory
 #: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_cash_balance
@@ -281,9 +421,9 @@ msgid "Native Cashier Balances"
 msgstr "أرصدة الصناديق الداخلية"
 
 #. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_cash_close
-msgid "Native Cashier Count"
-msgstr "جرد الصندوق الداخلي"
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_content_fingerprint
+msgid "Native Content Fingerprint"
+msgstr "بصمة محتوى البيع المحلي"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_backend
@@ -301,6 +441,11 @@ msgstr "المدفوعات والمبالغ المرتجعة الداخلية"
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__native_refund
 msgid "Native Refund Amount"
 msgstr "مبلغ الرد الداخلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_request_fingerprint
+msgid "Native Request Fingerprint"
+msgstr "بصمة طلب البيع المحلي"
 
 #. module: ab_sales_inventory
 #: model:ir.model,name:ab_sales_inventory.model_ab_sales_native_payment
@@ -372,8 +517,7 @@ msgstr "يجب إنشاء المرتجعات الداخلية كمسودات."
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/sale.py:0
-msgid ""
-"Native sale lines require a product, positive quantity and valid price."
+msgid "Native sale lines require a product, positive quantity and valid price."
 msgstr "تتطلب بنود البيع الداخلي صنفاً وكمية موجبة وسعراً صالحاً."
 
 #. module: ab_sales_inventory
@@ -407,10 +551,26 @@ msgid "Native sales must start as unposted documents."
 msgstr "يجب إنشاء المبيعات الداخلية كمستندات غير مرحلة."
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__not_entered
+msgid "Not entered by data entry yet"
+msgstr "لم يُدخل بواسطة مسؤول إدخال البيانات بعد"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__not_transferred
+msgid "Not transferred yet from main store"
+msgstr "لم يُحوّل من المخزن الرئيسي بعد"
+
+#. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/returns.py:0
 msgid "Only draft native returns can reload lines."
 msgstr "يمكن إعادة تحميل بنود مسودات المرتجعات الداخلية فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Only pending native invoices can be cancelled."
+msgstr "يمكن إلغاء الفواتير المحلية المعلقة فقط."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -421,8 +581,15 @@ msgstr "يمكن ترحيل المرتجعات الداخلية المعلقة �
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "Only posted pending native documents can be settled."
-msgstr "يمكن تسوية المستندات الداخلية المعلقة التي رُحّل مخزونها فقط."
+msgid "Only submitted pending native documents can be settled."
+msgstr "يمكن تسوية المستندات المحلية المقدمة وقيد الانتظار فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/cancel_wizard.py:0
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Only system administrators can cancel pending native invoices."
+msgstr "يمكن لمسؤولي النظام فقط إلغاء الفواتير المحلية المعلقة."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -438,9 +605,26 @@ msgid ""
 msgstr "يمكن تغيير الكمية ووحدة العرض المتوافقة فقط في المرتجع الداخلي."
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__state__open
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__operation_key
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__operation_key
 msgid "Operation Key"
 msgstr "مفتاح العملية"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__original_id
+msgid "Original"
+msgstr "الأصل"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__original_movement_id
+msgid "Original Movement"
+msgstr "حركة المخزون الأصلية"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_header__native_origin_id
@@ -451,6 +635,11 @@ msgstr "الفاتورة الداخلية الأصلية"
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__native_origin_line_id
 msgid "Original Native Sale Line"
 msgstr "بند البيع الداخلي الأصلي"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__other
+msgid "Other (please explain)"
+msgstr "سبب آخر (يرجى التوضيح)"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_native_payment__kind__payment
@@ -469,14 +658,14 @@ msgid "Payments are created only by cashier settlement."
 msgstr "تُنشأ المدفوعات من خلال تسوية أمين الصندوق فقط."
 
 #. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_search
+msgid "Pending Collection"
+msgstr "بانتظار التحصيل"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_allocations
 msgid "Posted Stock Allocations"
 msgstr "تخصيصات المخزون المرحلة"
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_stock_qty
-msgid "Posted Stock Quantity"
-msgstr "كمية المخزون المرحلة"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_unit_factor
@@ -485,33 +674,61 @@ msgstr "معامل الوحدة عند الترحيل"
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "Posted native sale lines cannot be changed."
-msgstr "لا يمكن تغيير بنود المبيعات الداخلية المرحلة."
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Posted stock allocations cannot be changed."
+msgstr "لا يمكن تعديل تخصيصات المخزون المرحلة."
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "Posted native sale lines cannot be deleted."
-msgstr "لا يمكن حذف بنود المبيعات الداخلية المرحلة."
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Posted stock allocations cannot be deleted."
+msgstr "لا يمكن حذف تخصيصات المخزون المرحلة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__product_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_product_uom
+msgid "Product UoM"
+msgstr "وحدة قياس المنتج"
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "Posted native sales are immutable; use a return."
-msgstr "المبيعات الداخلية المرحلة غير قابلة للتغيير؛ استخدم مرتجعاً."
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid ""
+"Products sold without matching stock require a reason. If reason is 'Other', "
+"details are required:\n"
+"%s"
+msgstr ""
+"تتطلب الأصناف المباعة دون مخزون مطابق سببًا. إذا كان السبب «سبب آخر»، "
+"فالتفاصيل مطلوبة:\n"
+"%s"
 
 #. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Recorded cash counts cannot be changed."
-msgstr "لا يمكن تغيير عمليات جرد النقدية المسجلة."
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__qty
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__qty
+msgid "Qty"
+msgstr "الكمية"
 
 #. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Recorded cash counts cannot be deleted."
-msgstr "لا يمكن حذف عمليات جرد النقدية المسجلة."
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__qty_smallest
+msgid "Qty Smallest"
+msgstr "الكمية بأصغر وحدة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__reason
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__reason
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__reason_details
+msgid "Reason Details"
+msgstr "تفاصيل السبب"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_native_payment__kind__refund
@@ -519,15 +736,31 @@ msgid "Refund"
 msgstr "رد مبلغ"
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_requested_stock_qty
+msgid "Requested Stock Quantity"
+msgstr "كمية المخزون المطلوبة"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__return_id
 msgid "Return"
 msgstr "مرتجع"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__return_line_id
+msgid "Return Line"
+msgstr "بند المرتجع"
 
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/returns.py:0
 msgid "Return lines must retain the original product and unit."
 msgstr "يجب أن تحتفظ بنود المرتجع بالصنف ووحدة القياس الأصلية."
+
+#. module: ab_sales_inventory
+#. odoo-javascript
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
+msgid "Return sent to cashier."
+msgstr "تم إرسال المرتجع إلى الخزينة."
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_return_line__native_stock_qty
@@ -541,19 +774,37 @@ msgid "Returned stock quantities are maintained by posting."
 msgstr "تُحدّث كميات المخزون المرتجعة من خلال الترحيل."
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__reversed_at
+msgid "Reversed At"
+msgstr "وقت العكس"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__reversed_by_id
+msgid "Reversed By"
+msgstr "عكست بواسطة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cancel_wizard__sale_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__sale_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__sale_id
 msgid "Sale"
 msgstr "بيع"
 
 #. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_cashier_api
-msgid "Sales Cashier API"
-msgstr "واجهة أمين صندوق المبيعات"
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__sale_line_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__sale_line_id
+msgid "Sale Line"
+msgstr "بند البيع"
 
 #. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_cashier_close_wizard
-msgid "Sales Cashier Close Wizard"
-msgstr "معالج إغلاق صندوق المبيعات"
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__sale_qty
+msgid "Sale Qty"
+msgstr "كمية البيع"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__sale_uom_id
+msgid "Sale Uom"
+msgstr "وحدة البيع"
 
 #. module: ab_sales_inventory
 #: model:ir.model,name:ab_sales_inventory.model_ab_sales_backend
@@ -577,6 +828,18 @@ msgid "Sales Return UI API"
 msgstr "واجهة مرتجع المبيعات"
 
 #. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_stock_allocation
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_inventory__model_ref__ab_sales_stock_allocation
+msgid "Sales Stock Allocation"
+msgstr "تخصيص مخزون المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_stock_reversal
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_inventory__model_ref__ab_sales_stock_reversal
+msgid "Sales Stock Reversal"
+msgstr "عكس مخزون المبيعات"
+
+#. module: ab_sales_inventory
 #: model:ir.model,name:ab_sales_inventory.model_ab_sales_ui_api
 msgid "Sales UI API"
 msgstr "واجهة المبيعات"
@@ -586,6 +849,12 @@ msgstr "واجهة المبيعات"
 #: code:addons/ab_sales_inventory/models/returns.py:0
 msgid "Select a unit from the original product category."
 msgstr "اختر وحدة من فئة وحدات الصنف الأصلي."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Select a valid store."
+msgstr "اختر فرعاً صالحاً."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -601,9 +870,16 @@ msgstr "حدد كميات موجبة في مسودة المرتجع الداخل
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Select this store's native cash wallet."
-msgstr "اختر خزينة النقدية الداخلية لهذا الفرع."
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "Select valid sales backend stores."
+msgstr "اختر فروعًا صالحة لنظام المبيعات."
+
+#. module: ab_sales_inventory
+#. odoo-javascript
+#: code:addons/ab_sales_inventory/static/src/returns/native_return.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_return_form
+msgid "Send to Cashier"
+msgstr "إرسال إلى الخزينة"
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -624,32 +900,164 @@ msgid "Settled payments and refunds cannot be deleted."
 msgstr "لا يمكن حذف المدفوعات والمبالغ المرتجعة المسددة."
 
 #. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_list
+msgid "Shortage"
+msgstr "النقص"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__shortage_qty
+msgid "Shortage Qty"
+msgstr "كمية النقص"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__shortage_qty_smallest
+msgid "Shortage Qty Smallest"
+msgstr "كمية النقص بأصغر وحدة"
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_list
+msgid "Sold"
+msgstr "المباع"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__sold_qty
+msgid "Sold Qty"
+msgstr "الكمية المباعة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__sold_qty_smallest
+msgid "Sold Qty Smallest"
+msgstr "الكمية المباعة بأصغر وحدة"
+
+#. module: ab_sales_inventory
+#: model:ir.actions.act_window,name:ab_sales_inventory.stock_shortage_action
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_stock_shortage
+#: model:ir.ui.menu,name:ab_sales_inventory.stock_shortage_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Sold Without Stock"
+msgstr "أصناف مباعة دون رصيد"
+
+#. module: ab_sales_inventory
+#: model:res.groups,name:ab_sales_inventory.group_native_sales_shortage_report
+msgid "Sold Without Stock Report"
+msgstr "تقرير الأصناف المباعة دون رصيد"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__source_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__source_id
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory__model_ref
+msgid "Source Type"
+msgstr "نوع المصدر"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__source_unit_price
+msgid "Source Unit Price"
+msgstr "سعر وحدة المصدر"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__status
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.stock_shortage_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_operation_key
 msgid "Stock Operation Key"
 msgstr "مفتاح عملية المخزون"
 
 #. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "Stock allocations are managed by native posting."
-msgstr "تُدار تخصيصات المخزون من خلال الترحيل الداخلي."
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_line__native_shortage_qty
+msgid "Stock Shortage Quantity"
+msgstr "كمية نقص المخزون"
 
 #. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_store
+#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_stock_allocation_operation_unique
+msgid "Stock allocation operation keys must be unique."
+msgstr "يجب أن تكون مفاتيح عمليات تخصيص المخزون فريدة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock allocations are created only by sale approval."
+msgstr "تُنشأ تخصيصات المخزون من خلال اعتماد البيع فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "Stock allocations are managed by native approval."
+msgstr "تُدار تخصيصات المخزون من خلال اعتماد البيع المحلي."
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_form
+msgid ""
+"Stock has been deducted. This invoice is waiting for cashier collection."
+msgstr "خُصم المخزون. هذه الفاتورة بانتظار تحصيل أمين الصندوق."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock reversals are created only by invoice cancellation."
+msgstr "تُنشأ عكوس المخزون من خلال إلغاء الفاتورة فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock reversals cannot be changed."
+msgstr "لا يمكن تعديل عكوس المخزون."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock reversals cannot be deleted."
+msgstr "لا يمكن حذف عكوس المخزون."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock shortages are created only by sale approval."
+msgstr "تُنشأ نواقص المخزون من خلال اعتماد البيع فقط."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock shortages cannot be changed directly."
+msgstr "لا يمكن تعديل نواقص المخزون مباشرة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/allocation.py:0
+msgid "Stock shortages cannot be deleted."
+msgstr "لا يمكن حذف نواقص المخزون."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__stocktaking_error
+msgid "Stocktaking error"
+msgstr "خطأ في الجرد"
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_backend__store_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_balance__store_id
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_cash_close__store_id
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_native_payment__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__store_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__store_id
 msgid "Store"
 msgstr "الفرع"
 
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/returns.py:0
-msgid ""
-"Submitted native return lines and original economics cannot be changed."
-msgstr ""
-"لا يمكن تغيير بنود المرتجعات الداخلية المعتمدة وقيمها المالية الأصلية."
+msgid "Submitted native return lines and original economics cannot be changed."
+msgstr "لا يمكن تغيير بنود المرتجعات الداخلية المعتمدة وقيمها المالية الأصلية."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -668,6 +1076,18 @@ msgstr "لا يمكن حذف بنود المرتجعات الداخلية الم
 #: code:addons/ab_sales_inventory/models/returns.py:0
 msgid "Submitted native returns cannot be changed."
 msgstr "لا يمكن تغيير المرتجعات الداخلية المعتمدة."
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_submitted
+msgid "Submitted to Cashier"
+msgstr "تم التقديم للكاشير"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"The approved native invoice content no longer matches its approval snapshot."
+msgstr "لم يعد محتوى الفاتورة المحلية المعتمدة مطابقًا للقطة اعتمادها."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -695,214 +1115,81 @@ msgstr "يجب أن يتبع بند البيع الأصلي فاتورة هذا 
 
 #. module: ab_sales_inventory
 #. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "The pending native invoice has incomplete inventory movements."
+msgstr "تحتوي الفاتورة المحلية المعلقة على حركات مخزون غير مكتملة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "The pending native invoice has incomplete line approval data."
+msgstr "تحتوي الفاتورة المحلية المعلقة على بيانات اعتماد بنود غير مكتملة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "The pending native invoice has incomplete stock allocations."
+msgstr "تحتوي الفاتورة المحلية المعلقة على تخصيصات مخزون غير مكتملة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid "The pending native invoice has no completed stock approval snapshot."
+msgstr "لا تحتوي الفاتورة المحلية المعلقة على لقطة اعتماد مخزون مكتملة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"The pending native invoice predates local stock approval and must use the "
+"legacy resolution process."
+msgstr ""
+"تسبق الفاتورة المحلية المعلقة اعتماد المخزون المحلي ويجب تسويتها بالمسار "
+"القديم."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"The pending native invoice stock approval does not match its sold quantity."
+msgstr "اعتماد مخزون الفاتورة المحلية المعلقة لا يطابق الكمية المباعة."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "The pending native return has no completed stock restoration."
+msgstr "لم يكتمل إرجاع مخزون المرتجع المحلي المعلق."
+
+#. module: ab_sales_inventory
+#. odoo-python
 #: code:addons/ab_sales_inventory/models/backend.py:0
 msgid "The refund and original invoice must belong to the same store."
 msgstr "يجب أن يتبع رد المبلغ والفاتورة الأصلية الفرع نفسه."
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/returns.py:0
-msgid "The return exceeds the original sold quantity."
-msgstr "يتجاوز المرتجع الكمية المبيعة الأصلية."
-
-#. module: ab_sales_inventory
-#. odoo-python
 #: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "The sale and store must belong to the same company."
-msgstr "يجب أن يتبع البيع والفرع الشركة نفسها."
+msgid "The request token does not match this invoice."
+msgstr "رمز الطلب لا يطابق هذه الفاتورة."
 
 #. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "The sales backend must belong to an allowed company."
-msgstr "يجب أن يتبع نظام المبيعات شركة مسموحاً بها."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "This store is unavailable for native sales."
-msgstr "هذا الفرع غير متاح للمبيعات الداخلية."
-
-#. module: ab_sales_inventory
-#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cash_balance_list
-#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_payments_list
-msgid "Total"
-msgstr "الإجمالي"
-
-#. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_header
-msgid "ab_sales_header"
-msgstr "فاتورة المبيعات"
-
-#. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_line
-msgid "ab_sales_line"
-msgstr "بند المبيعات"
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "A store with posted native sales cannot change its company."
-msgstr "لا يمكن تغيير شركة فرع له مبيعات أصلية مرحّلة."
-
-#. module: ab_sales_inventory
-#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_return_line_native_original_unique
-msgid "Each native original line can occur only once per return."
-msgstr "يمكن إدراج كل بند من الفاتورة الأصلية مرة واحدة فقط في المرتجع."
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__native_cashier_pin
-msgid "Employee PIN"
-msgstr "الرقم السري للموظف"
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/models/cashier.py:0
-msgid "Enter the active cashier employee PIN to record the cash count."
-msgstr "أدخل الرقم السري لموظف الخزينة صاحب الجلسة النشطة لتسجيل جرد النقدية."
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
-msgid "Failed to send the return to cashier."
-msgstr "تعذر إرسال المرتجع إلى الخزينة."
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_cashier_close_wizard__native_backend
-msgid "Native Backend"
-msgstr "نظام المخزون المحلي"
-
-#. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_product_uom
-msgid "Product UoM"
-msgstr "وحدة قياس المنتج"
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/static/src/returns/native_return.js:0
-msgid "Return sent to cashier."
-msgstr "تم إرسال المرتجع إلى الخزينة."
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/static/src/returns/native_return.xml:0
-#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_return_form
-msgid "Send to Cashier"
-msgstr "إرسال إلى الخزينة"
-
-#. module: ab_sales_inventory
-#: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "This return requires an employee authorized to approve returns."
-msgstr "يتطلب هذا المرتجع موظفًا مخولًا بالموافقة على المرتجعات."
-
-#. module: ab_sales_inventory
+#: code:addons/ab_sales_inventory/models/pos.py:0
 #: code:addons/ab_sales_inventory/models/sale.py:0
-msgid ""
-"Units used by posted native sales cannot change their factors or categories."
-msgstr ""
-"لا يمكن تغيير معاملات التحويل أو فئات الوحدات المستخدمة في المبيعات المحلية "
-"المرحّلة."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "A stock return must reference its posted original bill."
-msgstr "يجب أن يشير مرتجع المخزون إلى فاتورته الأصلية المرحلة."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "Insufficient stock at cashier posting. The bill remains pending."
-msgstr "المخزون غير كافٍ عند الترحيل بالكاشير. تظل الفاتورة قيد الانتظار."
-
-#. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_inventory
-msgid "Inventory Movement"
-msgstr "حركة مخزون"
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-#: code:addons/ab_sales_inventory/models/sale.py:0
-msgid "Only submitted native bills can post stock at the cashier."
-msgstr "يمكن ترحيل مخزون الفواتير المحلية المقدمة فقط لدى الكاشير."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/backend.py:0
-msgid "Only submitted pending native documents can be settled."
-msgstr "يمكن تسوية المستندات المحلية المقدمة وقيد الانتظار فقط."
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__original_id
-msgid "Original"
-msgstr "الأصل"
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "Posted stock allocations cannot be changed."
-msgstr "لا يمكن تعديل تخصيصات المخزون المرحلة."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "Posted stock allocations cannot be deleted."
-msgstr "لا يمكن حذف تخصيصات المخزون المرحلة."
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__qty
-msgid "Qty"
-msgstr "الكمية"
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__return_line_id
-msgid "Return Line"
-msgstr "بند المرتجع"
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__sale_line_id
-msgid "Sale Line"
-msgstr "بند البيع"
-
-#. module: ab_sales_inventory
-#: model:ir.model,name:ab_sales_inventory.model_ab_sales_stock_allocation
-#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_inventory__model_ref__ab_sales_stock_allocation
-msgid "Sales Stock Allocation"
-msgstr "تخصيص مخزون المبيعات"
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__source_id
-msgid "Source"
-msgstr "المصدر"
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_inventory__model_ref
-msgid "Source Type"
-msgstr "نوع المصدر"
-
-#. module: ab_sales_inventory
-#: model:ir.model.constraint,message:ab_sales_inventory.constraint_ab_sales_stock_allocation_operation_unique
-msgid "Stock allocation operation keys must be unique."
-msgstr "يجب أن تكون مفاتيح عمليات تخصيص المخزون فريدة."
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "Stock allocations are created only by cashier posting."
-msgstr "تُنشأ تخصيصات المخزون فقط عند الترحيل بالكاشير."
-
-#. module: ab_sales_inventory
-#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_header__native_submitted
-msgid "Submitted to Cashier"
-msgstr "تم التقديم للكاشير"
-
-#. module: ab_sales_inventory
-#. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "The bill already has different stock allocations."
-msgstr "توجد بالفعل تخصيصات مخزون مختلفة لهذه الفاتورة."
+msgid "The request token is already assigned to different invoice content."
+msgstr "رمز الطلب مستخدم بالفعل لمحتوى فاتورة مختلف."
 
 #. module: ab_sales_inventory
 #. odoo-python
 #: code:addons/ab_sales_inventory/models/allocation.py:0
 msgid "The return already has different stock allocations."
 msgstr "توجد بالفعل تخصيصات مخزون مختلفة لهذا المرتجع."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/returns.py:0
+msgid "The return exceeds the original sold quantity."
+msgstr "يتجاوز المرتجع الكمية المبيعة الأصلية."
 
 #. module: ab_sales_inventory
 #. odoo-python
@@ -917,10 +1204,49 @@ msgid "The stock source has invalid unit or price values."
 msgstr "يحتوي مصدر المخزون على قيم غير صالحة للوحدة أو السعر."
 
 #. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_form
+msgid ""
+"This invoice was cancelled. Any recorded stock allocation was reversed, and "
+"no payment or refund was created."
+msgstr ""
+"أُلغيت هذه الفاتورة. عُكس أي تخصيص مخزون مسجل، ولم تُنشأ أي دفعة أو عملية رد."
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_sale_form
+msgid ""
+"This legacy invoice has no recorded stock movement. Cancel it or use "
+"historical review before collection."
+msgstr ""
+"لا تحتوي هذه الفاتورة القديمة على حركة مخزون مسجلة. ألغها أو استخدم المراجعة "
+"التاريخية قبل التحصيل."
+
+#. module: ab_sales_inventory
 #. odoo-python
-#: code:addons/ab_sales_inventory/models/allocation.py:0
-msgid "The stock unit mapping changed after bill submission."
-msgstr "تغير ربط وحدة المخزون بعد تقديم الفاتورة."
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"This legacy invoice has stock activity that cannot be safely reversed "
+"automatically. Use historical review."
+msgstr ""
+"تحتوي هذه الفاتورة القديمة على حركة مخزون لا يمكن عكسها تلقائياً بأمان. "
+"استخدم المراجعة التاريخية."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "This return requires an employee authorized to approve returns."
+msgstr "يتطلب هذا المرتجع موظفًا مخولًا بالموافقة على المرتجعات."
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/backend.py:0
+msgid "This store is unavailable for native sales."
+msgstr "هذا الفرع غير متاح للمبيعات الداخلية."
+
+#. module: ab_sales_inventory
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_cash_balance_list
+#: model_terms:ir.ui.view,arch_db:ab_sales_inventory.native_payments_list
+msgid "Total"
+msgstr "الإجمالي"
 
 #. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__unit_cost
@@ -928,6 +1254,148 @@ msgid "Unit Cost"
 msgstr "تكلفة الوحدة"
 
 #. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__unit_factor
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__unit_factor
+msgid "Unit Factor"
+msgstr "معامل الوحدة"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__unit_price
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: ab_sales_inventory
+#. odoo-python
+#: code:addons/ab_sales_inventory/models/sale.py:0
+msgid ""
+"Units used by approved native sales cannot change their factors or "
+"categories."
+msgstr ""
+"لا يمكن تغيير معاملات أو فئات الوحدات المستخدمة في المبيعات المحلية المعتمدة."
+
+#. module: ab_sales_inventory
 #: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_allocation__uom_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_reversal__uom_id
+#: model:ir.model.fields,field_description:ab_sales_inventory.field_ab_sales_stock_shortage__uom_id
 msgid "Uom"
 msgstr "وحدة القياس"
+
+#. module: ab_sales_inventory
+#: model:ir.model.fields.selection,name:ab_sales_inventory.selection__ab_sales_stock_shortage__reason__wrong_price
+msgid "Wrong price in system"
+msgstr "سعر خاطئ في النظام"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "فاتورة المبيعات"
+
+#. module: ab_sales_inventory
+#: model:ir.model,name:ab_sales_inventory.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "بند المبيعات"
+
+#~ msgid "A native sale requires draft lines before posting."
+#~ msgstr "يتطلب البيع الداخلي بنوداً في مسودة قبل الترحيل."
+
+#~ msgid "Cash counts are recorded through the cashier closing screen."
+#~ msgstr "تُسجل عمليات جرد النقدية من شاشة إغلاق الصندوق."
+
+#~ msgid "Cashier counts must use the current user and store wallet."
+#~ msgstr "يجب تسجيل جرد النقدية للمستخدم الحالي وخزينة الفرع."
+
+#~ msgid "Counted Amount"
+#~ msgstr "المبلغ المجرد"
+
+#~ msgid "Difference"
+#~ msgstr "الفرق"
+
+#~ msgid "Enter a finite counted cash amount."
+#~ msgstr "أدخل مبلغ جرد نقدية صالحاً ومحدوداً."
+
+#~ msgid "Expected Amount"
+#~ msgstr "المبلغ المتوقع"
+
+#~ msgid "Native Cash"
+#~ msgstr "النقدية الداخلية"
+
+#~ msgid "Native Cash Counts"
+#~ msgstr "جرد النقدية الداخلي"
+
+#~ msgid "Native Cashier Count"
+#~ msgstr "جرد الصندوق الداخلي"
+
+#~ msgid "Only posted pending native documents can be settled."
+#~ msgstr "يمكن تسوية المستندات الداخلية المعلقة التي رُحّل مخزونها فقط."
+
+#~ msgid "Posted Stock Quantity"
+#~ msgstr "كمية المخزون المرحلة"
+
+#~ msgid "Posted native sale lines cannot be changed."
+#~ msgstr "لا يمكن تغيير بنود المبيعات الداخلية المرحلة."
+
+#~ msgid "Posted native sale lines cannot be deleted."
+#~ msgstr "لا يمكن حذف بنود المبيعات الداخلية المرحلة."
+
+#~ msgid "Posted native sales are immutable; use a return."
+#~ msgstr "المبيعات الداخلية المرحلة غير قابلة للتغيير؛ استخدم مرتجعاً."
+
+#~ msgid "Recorded cash counts cannot be changed."
+#~ msgstr "لا يمكن تغيير عمليات جرد النقدية المسجلة."
+
+#~ msgid "Recorded cash counts cannot be deleted."
+#~ msgstr "لا يمكن حذف عمليات جرد النقدية المسجلة."
+
+#~ msgid "Sales Cashier API"
+#~ msgstr "واجهة أمين صندوق المبيعات"
+
+#~ msgid "Sales Cashier Close Wizard"
+#~ msgstr "معالج إغلاق صندوق المبيعات"
+
+#~ msgid "Select this store's native cash wallet."
+#~ msgstr "اختر خزينة النقدية الداخلية لهذا الفرع."
+
+#~ msgid "Stock allocations are managed by native posting."
+#~ msgstr "تُدار تخصيصات المخزون من خلال الترحيل الداخلي."
+
+#~ msgid "The sale and store must belong to the same company."
+#~ msgstr "يجب أن يتبع البيع والفرع الشركة نفسها."
+
+#~ msgid "The sales backend must belong to an allowed company."
+#~ msgstr "يجب أن يتبع نظام المبيعات شركة مسموحاً بها."
+
+#~ msgid "A store with posted native sales cannot change its company."
+#~ msgstr "لا يمكن تغيير شركة فرع له مبيعات أصلية مرحّلة."
+
+#~ msgid "Employee PIN"
+#~ msgstr "الرقم السري للموظف"
+
+#~ msgid "Enter the active cashier employee PIN to record the cash count."
+#~ msgstr ""
+#~ "أدخل الرقم السري لموظف الخزينة صاحب الجلسة النشطة لتسجيل جرد النقدية."
+
+#~ msgid "Native Backend"
+#~ msgstr "نظام المخزون المحلي"
+
+#~ msgid ""
+#~ "Units used by posted native sales cannot change their factors or "
+#~ "categories."
+#~ msgstr ""
+#~ "لا يمكن تغيير معاملات التحويل أو فئات الوحدات المستخدمة في المبيعات "
+#~ "المحلية المرحّلة."
+
+#~ msgid "Insufficient stock at cashier posting. The bill remains pending."
+#~ msgstr "المخزون غير كافٍ عند الترحيل بالكاشير. تظل الفاتورة قيد الانتظار."
+
+#~ msgid "Only submitted native bills can post stock at the cashier."
+#~ msgstr "يمكن ترحيل مخزون الفواتير المحلية المقدمة فقط لدى الكاشير."
+
+#~ msgid "Stock allocations are created only by cashier posting."
+#~ msgstr "تُنشأ تخصيصات المخزون فقط عند الترحيل بالكاشير."
+
+#~ msgid "The bill already has different stock allocations."
+#~ msgstr "توجد بالفعل تخصيصات مخزون مختلفة لهذه الفاتورة."
+
+#~ msgid "The stock unit mapping changed after bill submission."
+#~ msgstr "تغير ربط وحدة المخزون بعد تقديم الفاتورة."
