@@ -20,13 +20,44 @@ class ShiftSettlement(models.Model):
         key = 'refund:%s' % return_header.id if return_header else 'payment:%s' % sale.id
         if self.sudo().search_count([('operation_key', '=', key)], limit=1):
             return super()._settle_transaction(sale, return_header)
-        shift = drawer._require_open(token)
+        shift = drawer._require_open(token, create=True)
         amount = drawer.currency_id.round(return_header._native_refund_amount() if return_header else sale.native_totals['total_bill_net'])
         rows = self.env.context.get('cash_shift_tenders')
-        if not isinstance(rows, list) or len(rows) > 20:
-            raise ValidationError(_('Use the Shift Cashier screen and enter the payment breakdown.'))
+        original = self.env['ab_sales_cash_event']
+        previous = self.env['ab_sales_cash_tender']
+        if return_header:
+            original = self.env['ab_sales_cash_event'].search([
+                ('payment_id.sale_id', '=', sale.id), ('payment_id.kind', '=', 'payment')], limit=1)
+            if not original:
+                raise ValidationError(_('This sale predates cash shifts; its refund requires historical review.'))
+            previous = self.env['ab_sales_cash_tender'].search([
+                ('event_id.payment_id.sale_id', '=', sale.id), ('event_id.payment_id.kind', '=', 'refund')])
         drawer.method_ids.lock_for_update(allow_referencing=True)
         drawer.method_ids.invalidate_recordset()
+        if rows is None or rows == []:
+            if return_header:
+                rows = []
+                remaining = amount
+                for tender in original.tender_ids.sorted('id'):
+                    refunded = -sum(previous.filtered(
+                        lambda item: item.method_id == tender.method_id).mapped('amount'))
+                    available = drawer.currency_id.round(tender.amount - refunded)
+                    value = min(remaining, available)
+                    if drawer.currency_id.compare_amounts(value, 0) > 0:
+                        rows.append({'method_id': tender.method_id.id, 'amount': value,
+                                     'reference': tender.reference})
+                        remaining = drawer.currency_id.round(remaining - value)
+                    if drawer.currency_id.is_zero(remaining):
+                        break
+                if not drawer.currency_id.is_zero(remaining):
+                    raise ValidationError(_('Refund each payment method only up to its remaining original amount.'))
+            else:
+                cash_method = drawer.method_ids.filtered(lambda item: item.active and item.kind == 'cash').sorted('id')[:1]
+                if not cash_method:
+                    raise ValidationError(_('Choose a valid payment method.'))
+                rows = [{'method_id': cash_method.id, 'amount': amount, 'reference': ''}]
+        elif not isinstance(rows, list) or len(rows) > 20:
+            raise ValidationError(_('Use the Shift Cashier screen and enter the payment breakdown.'))
         prepared = []
         seen = set()
         for row in rows:
@@ -43,14 +74,21 @@ class ShiftSettlement(models.Model):
             if len(reference) > 120:
                 raise ValidationError(_('Transaction references must not exceed 120 characters.'))
             prepared.append({'method_id': method.id, 'amount': value, 'reference': reference, 'cash': method.kind == 'cash'})
-        if not drawer.currency_id.is_zero(sum(row['amount'] for row in prepared) - amount):
-            raise ValidationError(_('The payment breakdown must equal the amount due.'))
+        difference = drawer.currency_id.round(amount - sum(row['amount'] for row in prepared))
+        if drawer.currency_id.compare_amounts(difference, 0) > 0:
+            cash_row = next((row for row in prepared if row['cash']), False)
+            if cash_row:
+                cash_row['amount'] = drawer.currency_id.round(cash_row['amount'] + difference)
+            else:
+                cash_method = drawer.method_ids.filtered(
+                    lambda item: item.active and item.kind == 'cash' and item.id not in seen).sorted('id')[:1]
+                if not cash_method:
+                    raise ValidationError(_('Choose a valid payment method.'))
+                prepared.append({'method_id': cash_method.id, 'amount': difference,
+                                 'reference': '', 'cash': True})
+        elif drawer.currency_id.compare_amounts(difference, 0) < 0:
+            raise ValidationError(_('Payment amounts cannot exceed the amount due.'))
         if return_header:
-            original = self.env['ab_sales_cash_event'].search([('payment_id.sale_id', '=', sale.id), ('payment_id.kind', '=', 'payment')], limit=1)
-            if not original:
-                raise ValidationError(_('This sale predates cash shifts; its refund requires historical review.'))
-            previous = self.env['ab_sales_cash_tender'].search([
-                ('event_id.payment_id.sale_id', '=', sale.id), ('event_id.payment_id.kind', '=', 'refund')])
             for row in prepared:
                 collected = sum(original.tender_ids.filtered(lambda item: item.method_id.id == row['method_id']).mapped('amount'))
                 refunded = -sum(previous.filtered(lambda item: item.method_id.id == row['method_id']).mapped('amount'))
@@ -73,18 +111,6 @@ class ShiftSettlement(models.Model):
         return payment_id, created
 
 
-class ShiftSale(models.Model):
-    _inherit = 'ab_sales_header'
-
-    def action_push_to_eplus(self):
-        for sale in self.filtered(lambda record: record.native_backend and not record.native_submitted):
-            store = self.env['ab_sales_backend']._check_store(sale.store_id.id)
-            drawer = self.env['ab_sales_cash_drawer']._for_store(store)
-            if drawer:
-                drawer._require_open(responsible=False)
-        return super().action_push_to_eplus()
-
-
 class ShiftCashier(models.TransientModel):
     _inherit = 'ab_sales_cashier_api'
 
@@ -101,22 +127,16 @@ class ShiftCashier(models.TransientModel):
         session, profile, store = self._resolve_cashier_context(session_token=session_token, store_id=store_id)
         drawer = self.env['ab_sales_cash_drawer']._for_store(store)
         if not drawer:
-            raise ValidationError(_('Configure and enable this branch cash drawer first.'))
-        context = {'default_drawer_id': drawer.id, 'default_session_token': session_token}
+            return False
         if invoice_id:
-            drawer._require_open(session_token)
-            model = 'ab_sales_return_header' if document_type == 'return' else 'ab_sales_header'
-            document = self.env[model].browse(int(invoice_id)).exists()
-            document.check_access('read')
-            if not document or document.store_id != store:
-                raise AccessError(_('The document must belong to this branch.'))
-            context.update(default_operation='settle', **{
-                'default_return_id' if document_type == 'return' else 'default_sale_id': document.id})
-        else:
-            shift = drawer._current()
-            if not shift:
-                raise ValidationError(_('A cash manager must prepare the first opening float.'))
-            context.update(default_operation='accept' if shift.state == 'waiting' else 'close', default_shift_id=shift.id)
+            return False
+        context = {'default_drawer_id': drawer.id, 'default_session_token': session_token}
+        shift = drawer._current()
+        if not shift:
+            raise ValidationError(_('The first collection will open a zero-balance wallet. There is no active wallet to hand over yet.'))
+        if session.employee_id != shift.employee_id:
+            raise AccessError(_('This branch wallet belongs to another cashier. Complete the formal handover first.'))
+        context.update(default_operation='accept' if not shift.accepted_at else 'close', default_shift_id=shift.id)
         return {'type': 'ir.actions.act_window', 'res_model': 'ab_sales_cash_operation',
                 'view_mode': 'form', 'views': [(False, 'form')], 'target': 'new', 'context': context}
 
@@ -124,11 +144,48 @@ class ShiftCashier(models.TransientModel):
 class ShiftOldClose(models.TransientModel):
     _inherit = 'ab_sales_cashier_close_wizard'
 
+    @api.model
+    def default_get(self, fields_list):
+        result = super().default_get(fields_list)
+        store = self.env['ab_store'].browse(result.get('store_id')).exists()
+        drawer = self.env['ab_sales_cash_drawer']._for_store(store) if store else False
+        token = self.env.context.get('native_cashier_session_token')
+        if drawer and token:
+            result['employee_id'] = drawer._session(token).employee_id.id
+        return result
+
     def action_confirm_close(self):
-        for wizard in self:
-            if self.env['ab_sales_cash_drawer']._for_store(wizard.store_id):
-                raise ValidationError(_('Use Shift Cashier to close the shared drawer and record the handover.'))
-        return super().action_confirm_close()
+        self.ensure_one()
+        drawer = self.env['ab_sales_cash_drawer']._for_store(self.store_id)
+        if not drawer:
+            return super().action_confirm_close()
+        self.check_access('write')
+        drawer.check_access('read')
+        if drawer.company_id not in self.env.companies:
+            raise AccessError(_('The drawer must belong to an allowed company.'))
+        drawer._lock()
+        if not drawer.enabled or not drawer.active:
+            raise ValidationError(_('Enable the drawer before performing cash operations.'))
+        session = drawer._session(self.env.context.get('native_cashier_session_token'))
+        shift = drawer._current()
+        if not shift or shift.state != 'open':
+            raise ValidationError(_('This is not the active cashier wallet. Refresh the screen.'))
+        if session.employee_id != shift.employee_id or self.employee_id != shift.employee_id:
+            raise AccessError(_('Only the responsible cashier can close this drawer shift.'))
+        if self.user_id != self.env.user or len(self.line_ids) != 1 or self.line_ids.wallet_id != self.store_id.id:
+            raise AccessError(_('This is not the active cashier wallet. Refresh the screen.'))
+        amount = money(self.line_ids.net_balance, drawer.currency_id)
+        variance = drawer.currency_id.round(amount - shift.cash_amount)
+        shift._update({
+            'state': 'closed',
+            'closed_at': fields.Datetime.now(),
+            'closed_user_id': self.env.uid,
+            'counted_amount': amount,
+            'carry_amount': 0,
+            'variance': variance,
+            'review_state': 'pending' if variance else 'none',
+        })
+        return {'type': 'ir.actions.act_window_close'}
 
 
 class CashShiftStore(models.Model):

@@ -2,7 +2,7 @@
     <record id="cash_operation_form" model="ir.ui.view">
         <field name="name">ab_sales_cash_operation.form</field><field name="model">ab_sales_cash_operation</field>
         <field name="arch" type="xml">
-            <form string="Cash Shift Operation"><group><field name="operation"/><field name="drawer_id"/>
+            <form string="Cashier Wallet Operation"><group><field name="operation"/><field name="drawer_id"/>
                 <field name="store_id" invisible="1"/><field name="currency_id" invisible="1"/>
                 <field name="shift_id" invisible="not shift_id"/><field name="transfer_id" invisible="not transfer_id"/>
                 <field name="sale_id" invisible="not sale_id"/><field name="return_id" invisible="not return_id"/>

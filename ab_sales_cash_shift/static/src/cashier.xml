@@ -1,7 +1,9 @@
 <templates xml:space="preserve">
-    <t t-name="ab_sales_cash_shift.Cashier" t-inherit="ab_sales.CashierAction" t-inherit-mode="primary">
-        <xpath expr="//div[hasclass('ab_pos_hr_header_actions')]" position="inside">
-            <button type="button" class="btn btn-primary btn-sm" t-att-disabled="!state.isAuthenticated" t-on-click="() => this.openDrawerOperation()">Drawer Handover</button>
+    <t t-name="ab_sales_cash_shift.CashierExtension" t-inherit="ab_sales.CashierAction" t-inherit-mode="extension">
+        <xpath expr="//button[@t-on-click='openCloseCashierDialog']" position="replace">
+            <button class="btn btn-outline-light btn-sm" type="button" t-on-click="openCloseCashierDialog">
+                Hand Over and Close Wallet
+            </button>
         </xpath>
     </t>
 </templates>

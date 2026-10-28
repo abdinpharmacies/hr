@@ -7,7 +7,7 @@
   <record id="drawer_branch" model="ir.rule">
     <field name="name">ab_sales_cash_drawer branch</field>
     <field name="model_id" ref="model_ab_sales_cash_drawer"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
   <record id="treasury_company" model="ir.rule">
     <field name="name">ab_sales_cash_treasury company</field>
@@ -17,7 +17,7 @@
   <record id="treasury_branch" model="ir.rule">
     <field name="name">ab_sales_cash_treasury branch</field>
     <field name="model_id" ref="model_ab_sales_cash_treasury"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
   <record id="method_company" model="ir.rule">
     <field name="name">ab_sales_cash_method company</field>
@@ -32,7 +32,7 @@
   <record id="shift_branch" model="ir.rule">
     <field name="name">ab_sales_cash_shift branch</field>
     <field name="model_id" ref="model_ab_sales_cash_shift"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
   <record id="event_company" model="ir.rule">
     <field name="name">ab_sales_cash_event company</field>
@@ -42,7 +42,7 @@
   <record id="event_branch" model="ir.rule">
     <field name="name">ab_sales_cash_event branch</field>
     <field name="model_id" ref="model_ab_sales_cash_event"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
   <record id="tender_company" model="ir.rule">
     <field name="name">ab_sales_cash_tender company</field>
@@ -52,7 +52,7 @@
   <record id="tender_branch" model="ir.rule">
     <field name="name">ab_sales_cash_tender branch</field>
     <field name="model_id" ref="model_ab_sales_cash_tender"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
   <record id="transfer_company" model="ir.rule">
     <field name="name">ab_sales_cash_transfer company</field>
@@ -62,7 +62,7 @@
   <record id="transfer_branch" model="ir.rule">
     <field name="name">ab_sales_cash_transfer branch</field>
     <field name="model_id" ref="model_ab_sales_cash_transfer"/>
-    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') or user.has_group('ab_sales.group_ab_sales_manager') or user.has_group('ab_sales_cash_shift.group_cash_manager') or user.has_group('ab_sales_cash_shift.group_cash_finance') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
   </record>
     <record id="legacy_balance_scope" model="ir.rule">
         <field name="name">Use shared drawer balances for enabled cash shifts</field>

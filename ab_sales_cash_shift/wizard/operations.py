@@ -1,16 +1,16 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
 
-from ..models.cash_shift import money, shift_bounds
+from ..models.cash_shift import money
 
 
 class CashOperation(models.TransientModel):
     _name = 'ab_sales_cash_operation'
     _description = 'Cash Shift Operation'
 
-    operation = fields.Selection([('prepare', 'Prepare First Opening'), ('accept', 'Accept Drawer'),
-        ('close', 'Close Shift'), ('settle', 'Record Payment'), ('receive', 'Receive Treasury Transfer'),
-        ('review', 'Finance Review'), ('reschedule', 'Reassign Unaccepted Opening')], required=True, readonly=True)
+    operation = fields.Selection([('prepare', 'Prepare First Opening'), ('accept', 'Confirm Wallet Receipt'),
+        ('close', 'Hand Over and Close Wallet'), ('settle', 'Record Payment'), ('receive', 'Receive Treasury Transfer'),
+        ('review', 'Finance Review'), ('reschedule', 'Reassign Unconfirmed Opening')], required=True, readonly=True)
     drawer_id = fields.Many2one('ab_sales_cash_drawer', required=True, readonly=True)
     store_id = fields.Many2one(related='drawer_id.store_id')
     currency_id = fields.Many2one(related='drawer_id.currency_id')
@@ -24,8 +24,8 @@ class CashOperation(models.TransientModel):
     counted_amount = fields.Monetary(string='Physically Counted Cash')
     count_confirmed = fields.Boolean(string='I physically counted this cash')
     opening_amount = fields.Monetary(string='First Opening Float')
-    carry_amount = fields.Monetary(string='Retain for Next Shift')
-    next_employee_id = fields.Many2one('ab_hr_employee', string='Next Responsible Cashier')
+    carry_amount = fields.Monetary(string='Next Employee Opening Balance')
+    next_employee_id = fields.Many2one('ab_hr_employee', string='Next Cashier')
     treasury_id = fields.Many2one('ab_sales_cash_treasury', string='Destination Treasury')
     note = fields.Text(string='Explanation / Review Note')
     expected_amount = fields.Monetary(related='shift_id.cash_amount', string='Expected Cash')
@@ -100,16 +100,16 @@ class CashOperation(models.TransientModel):
     def _prepare(self):
         drawer = self.drawer_id
         drawer._check_manager()
-        if self.env['ab_sales_cash_shift'].sudo().search_count([('drawer_id', '=', drawer.id)], limit=1):
-            raise ValidationError(_('The first opening has already been prepared.'))
+        if drawer._current():
+            raise ValidationError(_('This branch already has an active cashier wallet.'))
         if not self.next_employee_id:
             raise ValidationError(_('Select the responsible cashier for the opening.'))
         drawer._check_cashier(self.next_employee_id)
         amount = money(self.opening_amount, self.currency_id)
-        start, end, slot = shift_bounds(fields.Datetime.now())
         shift = self.env['ab_sales_cash_shift']._insert({
-            'drawer_id': drawer.id, 'employee_id': self.next_employee_id.id, 'start_at': start,
-            'end_at': end, 'slot': slot, 'opening_amount': amount, 'cash_amount': amount})
+            'drawer_id': drawer.id, 'employee_id': self.next_employee_id.id,
+            'start_at': drawer._next_opening_time(), 'state': 'open',
+            'opening_amount': amount, 'cash_amount': amount})
         if amount:
             self.env['ab_sales_cash_transfer']._insert({'shift_id': shift.id, 'treasury_id': drawer.treasury_id.id,
                 'direction': 'opening', 'amount': amount, 'receiver_id': self.next_employee_id.id})
@@ -117,16 +117,17 @@ class CashOperation(models.TransientModel):
     def _checked_shift(self, state):
         shift = self.shift_id
         shift.check_access('read')
-        if not shift or shift.drawer_id != self.drawer_id or shift.state != state or self.drawer_id._current() != shift:
-            raise ValidationError(_('This is not the current drawer shift. Refresh the screen.'))
+        states = [state] if isinstance(state, str) else state
+        if not shift or shift.drawer_id != self.drawer_id or shift.state not in states or self.drawer_id._current() != shift:
+            raise ValidationError(_('This is not the active cashier wallet. Refresh the screen.'))
         return shift
 
     def _accept(self, session):
-        shift = self._checked_shift('waiting')
+        shift = self._checked_shift(['waiting', 'open'])
         if session.employee_id != shift.employee_id:
-            raise AccessError(_('Only the incoming responsible cashier can accept this drawer.'))
-        if fields.Datetime.now() >= shift.end_at:
-            raise ValidationError(_('This opening period has expired; a cash manager must review it.'))
+            raise AccessError(_('Only the incoming cashier can confirm receipt of this wallet.'))
+        if shift.accepted_at:
+            return
         amount = self._count()
         if not self.currency_id.is_zero(amount - shift.opening_amount):
             raise ValidationError(_('The received amount must match the recorded opening float.'))
@@ -140,39 +141,44 @@ class CashOperation(models.TransientModel):
             raise AccessError(_('Only the responsible cashier can close this drawer shift.'))
         amount = self._count()
         carry = money(self.carry_amount, self.currency_id)
-        if carry > amount or not self.next_employee_id:
-            raise ValidationError(_('Choose the next cashier and retain no more than the counted cash.'))
-        self.drawer_id._check_cashier(self.next_employee_id)
+        if carry > amount:
+            raise ValidationError(_('The next opening balance cannot exceed the counted cash.'))
+        if carry and not self.next_employee_id:
+            raise ValidationError(_('Choose the next cashier when retaining an opening balance.'))
+        if carry:
+            self.drawer_id._check_cashier(self.next_employee_id)
         treasury = self.treasury_id
-        treasury.check_access('read')
-        if not treasury or not treasury.active or treasury.store_id != shift.store_id:
+        treasury_amount = self.currency_id.round(amount - carry)
+        if treasury_amount:
+            treasury.check_access('read')
+        if treasury_amount and (not treasury or not treasury.active or treasury.store_id != shift.store_id):
             raise ValidationError(_('Choose an active treasury in the drawer branch.'))
         variance = self.currency_id.round(amount - shift.cash_amount)
-        if variance and not (self.note or '').strip():
-            raise ValidationError(_('Explain the cash difference for Finance review.'))
-        start, end, slot = shift_bounds(max(fields.Datetime.now(), shift.end_at))
         shift._update({'state': 'closed', 'closed_at': fields.Datetime.now(), 'closed_user_id': self.env.uid,
             'counted_amount': amount, 'carry_amount': carry, 'variance': variance,
             'variance_note': self.note, 'review_state': 'pending' if variance else 'none'})
-        self.env['ab_sales_cash_shift']._insert({'drawer_id': self.drawer_id.id,
-            'employee_id': self.next_employee_id.id, 'start_at': start, 'end_at': end, 'slot': slot,
-            'opening_amount': carry, 'cash_amount': carry, 'previous_id': shift.id})
-        if amount > carry:
+        shift.flush_recordset(['state', 'active_drawer_id'])
+        if carry:
+            self.env['ab_sales_cash_shift']._insert({'drawer_id': self.drawer_id.id,
+                'employee_id': self.next_employee_id.id, 'start_at': self.drawer_id._next_opening_time(), 'state': 'open',
+                'opening_amount': carry, 'cash_amount': carry, 'previous_id': shift.id})
+        if treasury_amount:
             self.env['ab_sales_cash_transfer']._insert({'shift_id': shift.id, 'treasury_id': treasury.id,
-                'direction': 'closing', 'amount': self.currency_id.round(amount - carry), 'receiver_id': treasury.receiver_id.id})
+                'direction': 'closing', 'amount': treasury_amount, 'receiver_id': treasury.receiver_id.id})
 
     def _reschedule(self):
         self.drawer_id._check_manager()
-        shift = self._checked_shift('waiting')
+        shift = self._checked_shift(['waiting', 'open'])
+        if shift.accepted_at:
+            raise ValidationError(_('A confirmed wallet assignment cannot be changed.'))
         self.drawer_id._check_cashier(self.next_employee_id)
         if not (self.note or '').strip():
             raise ValidationError(_('Explain why the unaccepted opening is being reassigned.'))
-        start, end, slot = shift_bounds(max(fields.Datetime.now(), shift.start_at))
-        audit = _('%(time)s — %(user)s: %(old)s → %(new)s; %(before)s → %(after)s; %(reason)s',
+        audit = _('%(time)s — %(user)s: %(old)s → %(new)s; %(reason)s',
             time=fields.Datetime.now(), user=self.env.user.display_name,
             old=shift.employee_id.display_name, new=self.next_employee_id.display_name,
-            before=shift.start_at, after=start, reason=self.note)
-        shift._update({'employee_id': self.next_employee_id.id, 'start_at': start, 'end_at': end, 'slot': slot,
+            reason=self.note)
+        shift._update({'employee_id': self.next_employee_id.id,
             'assignment_history': '\n'.join(filter(None, [shift.assignment_history, audit]))})
         shift.transfer_ids.filtered(lambda item: item.direction == 'opening' and item.state == 'pending')._update({
             'receiver_id': self.next_employee_id.id})

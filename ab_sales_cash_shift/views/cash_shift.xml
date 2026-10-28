@@ -8,8 +8,8 @@
     <record id="drawer_form" model="ir.ui.view">
         <field name="name">ab_sales_cash_drawer.form</field><field name="model">ab_sales_cash_drawer</field>
         <field name="arch" type="xml">
-            <form delete="0"><header><button name="action_prepare_opening" type="object" string="Prepare First Opening" invisible="not enabled" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/></header>
-                <sheet><div class="alert alert-info" role="alert">Set up the treasury and payment methods first. Enabling this drawer requires an accepted cash shift before submitting sales.</div>
+            <form delete="0"><header><button name="action_prepare_opening" type="object" string="Prepare Funded Opening" invisible="not enabled" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/></header>
+                <sheet><div class="alert alert-info" role="alert">The first collection opens a zero-balance employee wallet automatically. Use a funded opening only when cash is issued from the branch treasury.</div>
                 <group><field name="store_id"/><field name="company_id"/><field name="active"/><field name="enabled"/>
                     <field name="treasury_id" domain="[('store_id', '=', store_id)]"/>
                     <field name="method_ids" widget="many2many_tags" domain="[('company_id', '=', company_id)]"/>
@@ -38,7 +38,7 @@
     <record id="shift_list" model="ir.ui.view">
         <field name="name">ab_sales_cash_shift.list</field><field name="model">ab_sales_cash_shift</field>
         <field name="arch" type="xml">
-            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="slot"/><field name="start_at"/><field name="end_at"/>
+            <list create="0" edit="0" delete="0"><field name="store_id"/><field name="start_at"/><field name="closed_at"/>
                 <field name="employee_id"/><field name="state"/><field name="currency_id" column_invisible="True"/>
                 <field name="opening_amount"/><field name="cash_amount"/><field name="counted_amount"/><field name="carry_amount"/>
                 <field name="variance"/><field name="review_state"/></list>
@@ -48,10 +48,11 @@
         <field name="name">ab_sales_cash_shift.form</field><field name="model">ab_sales_cash_shift</field>
         <field name="arch" type="xml">
             <form create="0" edit="0" delete="0"><header>
-                <button name="action_reschedule" type="object" string="Reassign Unaccepted Opening" invisible="state != 'waiting'" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
+                <button name="action_reschedule" type="object" string="Reassign Unconfirmed Opening" invisible="state == 'closed' or accepted_at" groups="base.group_system,ab_sales_cash_shift.group_cash_manager"/>
                 <button name="action_review" type="object" string="Review Difference" invisible="review_state != 'pending'" groups="base.group_system,ab_sales_cash_shift.group_cash_finance"/>
+                <button name="action_print_wallet_report" type="object" string="Print Wallet Report" invisible="state != 'closed'"/>
                 <field name="state" widget="statusbar"/></header><sheet><group>
-                <group><field name="store_id"/><field name="employee_id"/><field name="slot"/><field name="start_at"/><field name="end_at"/>
+                <group><field name="store_id"/><field name="employee_id"/><field name="start_at"/><field name="end_at"/><field name="slot"/>
                     <field name="assignment_history"/><field name="accepted_at"/><field name="accepted_user_id"/><field name="closed_at"/><field name="closed_user_id"/></group>
                 <group><field name="currency_id" invisible="1"/><field name="opening_amount"/><field name="cash_amount"/>
                     <field name="counted_amount"/><field name="carry_amount"/><field name="variance"/><field name="variance_note"/>
@@ -83,11 +84,11 @@
             </list>
         </field>
     </record>
-    <record id="shift_cashier_action" model="ir.actions.client"><field name="name">Shift Cashier</field><field name="tag">ab_sales_cash_shift.cashier</field></record>
+    <record id="shift_cashier_action" model="ir.actions.client"><field name="name">Cashier</field><field name="tag">ab_sales.cashier</field></record>
     <record id="drawer_action" model="ir.actions.act_window"><field name="name">Shared Cash Drawers</field><field name="res_model">ab_sales_cash_drawer</field><field name="view_mode">list,form</field></record>
     <record id="treasury_action" model="ir.actions.act_window"><field name="name">Branch Treasuries</field><field name="res_model">ab_sales_cash_treasury</field><field name="view_mode">list,form</field></record>
     <record id="method_action" model="ir.actions.act_window"><field name="name">Cashier Payment Methods</field><field name="res_model">ab_sales_cash_method</field><field name="view_mode">list</field></record>
-    <record id="shift_action" model="ir.actions.act_window"><field name="name">Cash Shifts</field><field name="res_model">ab_sales_cash_shift</field><field name="view_mode">list,form</field></record>
+    <record id="shift_action" model="ir.actions.act_window"><field name="name">Cashier Wallets</field><field name="res_model">ab_sales_cash_shift</field><field name="view_mode">list,form</field></record>
     <record id="transfer_action" model="ir.actions.act_window"><field name="name">Treasury Transfers</field><field name="res_model">ab_sales_cash_transfer</field><field name="view_mode">list</field></record>
     <record id="tender_action" model="ir.actions.act_window"><field name="name">Shift Payment Breakdown</field><field name="res_model">ab_sales_cash_tender</field><field name="view_mode">list</field></record>
     <record id="finance_review_action" model="ir.actions.act_window">
@@ -95,8 +96,8 @@
         <field name="view_mode">list,form</field><field name="domain">[('review_state', '=', 'pending')]</field>
     </record>
     <menuitem id="cash_management_menu" name="Cash Management" parent="ab_sales.sales_menu_root" sequence="4"/>
-    <menuitem id="shift_cashier_menu" name="Shift Cashier" parent="cash_management_menu" action="shift_cashier_action" sequence="10" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager,base.group_system"/>
-    <menuitem id="shift_menu" name="Cash Shifts" parent="cash_management_menu" action="shift_action" sequence="20"/>
+    <menuitem id="shift_cashier_menu" name="Cashier" parent="cash_management_menu" action="shift_cashier_action" sequence="10" active="False" groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager,base.group_system"/>
+    <menuitem id="shift_menu" name="Cashier Wallets" parent="cash_management_menu" action="shift_action" sequence="20"/>
     <menuitem id="transfer_menu" name="Treasury Transfers" parent="cash_management_menu" action="transfer_action" sequence="30"/>
     <menuitem id="tender_menu" name="Shift Payment Breakdown" parent="cash_management_menu" action="tender_action" sequence="40"/>
     <menuitem id="finance_review_menu" name="Pending Finance Review" parent="cash_management_menu" action="finance_review_action" sequence="50" groups="base.group_system,ab_sales_cash_shift.group_cash_finance"/>

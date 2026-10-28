@@ -1,20 +1,8 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
-from zoneinfo import ZoneInfo
 
-from odoo import api, fields, models, _
+from odoo import SUPERUSER_ID, api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
-
-
-CAIRO = ZoneInfo('Africa/Cairo')
-
-
-def shift_bounds(moment):
-    local = moment.replace(tzinfo=timezone.utc).astimezone(CAIRO)
-    start = datetime(local.year, local.month, local.day, local.hour // 8 * 8, tzinfo=CAIRO)
-    end = start + timedelta(hours=8)
-    return (start.astimezone(timezone.utc).replace(tzinfo=None),
-            end.astimezone(timezone.utc).replace(tzinfo=None), local.hour // 8 + 1)
 
 
 def money(value, currency, nonnegative=True):
@@ -124,7 +112,7 @@ class CashMethod(models.Model):
 class CashDrawer(models.Model):
     _name = 'ab_sales_cash_drawer'
     _inherit = 'ab_sales_cash_configuration'
-    _description = 'Shared Branch Cash Drawer'
+    _description = 'Branch Cashier Wallet Control'
     _rec_name = 'store_id'
 
     store_id = fields.Many2one('ab_store', required=True, ondelete='restrict')
@@ -159,18 +147,29 @@ class CashDrawer(models.Model):
         drawer = self.sudo().with_context(active_test=False).search([
             ('store_id', '=', store.id), ('enabled', '=', True)], limit=1)
         if drawer:
-            store._check_integration_scope()
+            self.env['ab_sales_backend']._check_store(store.id, cashier=True)
         return self.browse(drawer.id)
 
     def _lock(self):
         self.ensure_one()
-        self.store_id._lock_stock_scope()
+        self.env['ab_sales_backend']._check_store(self.store_id.id, cashier=True)
+        self.store_id.with_user(SUPERUSER_ID)._lock_stock_scope()
         self.invalidate_recordset()
 
     def _current(self):
         self.ensure_one()
-        return self.env['ab_sales_cash_shift'].search([
-            ('drawer_id', '=', self.id), ('state', 'in', ['waiting', 'open'])], limit=1)
+        shift = self.env['ab_sales_cash_shift'].sudo().search([
+            ('drawer_id', '=', self.id), ('state', 'in', ['waiting', 'open'])], order='id desc', limit=1)
+        return self.env['ab_sales_cash_shift'].browse(shift.id)
+
+    def _next_opening_time(self):
+        self.ensure_one()
+        now = fields.Datetime.now()
+        latest = self.env['ab_sales_cash_shift'].sudo().search(
+            [('drawer_id', '=', self.id)], order='start_at desc, id desc', limit=1)
+        if latest and latest.start_at and latest.start_at >= now:
+            return latest.start_at + timedelta(seconds=1)
+        return now
 
     def _check_cashier(self, employee):
         self.ensure_one()
@@ -187,17 +186,27 @@ class CashDrawer(models.Model):
             raise AccessError(_('The employee session must belong to this drawer branch.'))
         return session
 
-    def _require_open(self, token=False, responsible=True):
+    def _require_open(self, token=False, responsible=True, create=False):
         self.ensure_one()
         self._lock()
         shift = self._current()
-        now = fields.Datetime.now()
-        if not shift or shift.state != 'open' or not shift.start_at <= now < shift.end_at:
-            raise ValidationError(_('The scheduled cash shift must be accepted before processing sales.'))
+        session = self._session(token) if responsible or create else False
+        if not shift and create:
+            shift = self.env['ab_sales_cash_shift']._insert({
+                'drawer_id': self.id,
+                'employee_id': session.employee_id.id,
+                'start_at': self._next_opening_time(),
+                'state': 'open',
+                'opening_amount': 0,
+                'cash_amount': 0,
+                'accepted_at': fields.Datetime.now(),
+                'accepted_user_id': self.env.uid,
+            })
+        if not shift:
+            raise ValidationError(_('No active cashier wallet exists for this branch.'))
         if responsible:
-            session = self._session(token)
             if session.employee_id != shift.employee_id:
-                raise AccessError(_('Only the responsible cashier can process this drawer shift.'))
+                raise AccessError(_('This branch wallet belongs to another cashier. Complete the formal handover first.'))
         return shift
 
     def action_prepare_opening(self):
@@ -212,7 +221,7 @@ class CashDrawer(models.Model):
 class CashShift(models.Model):
     _name = 'ab_sales_cash_shift'
     _inherit = 'ab_sales_cash_record'
-    _description = 'Branch Cash Shift'
+    _description = 'Cashier Wallet Ledger'
     _order = 'start_at desc, id desc'
     _rec_name = 'start_at'
 
@@ -221,10 +230,13 @@ class CashShift(models.Model):
     company_id = fields.Many2one(related='drawer_id.company_id', store=True)
     currency_id = fields.Many2one(related='company_id.currency_id')
     employee_id = fields.Many2one('ab_hr_employee', string='Responsible Cashier', required=True, ondelete='restrict')
-    start_at = fields.Datetime(required=True)
-    end_at = fields.Datetime(required=True)
-    slot = fields.Integer(string='Scheduled Shift', required=True)
+    start_at = fields.Datetime(string='Opened At', required=True, default=fields.Datetime.now)
+    end_at = fields.Datetime(string='Legacy Scheduled End')
+    slot = fields.Integer(string='Legacy Scheduled Shift')
     state = fields.Selection([('waiting', 'Awaiting Receipt'), ('open', 'Open'), ('closed', 'Closed')], required=True, default='waiting')
+    active_drawer_id = fields.Many2one(
+        'ab_sales_cash_drawer', compute='_compute_active_drawer_id', store=True, precompute=True,
+        readonly=True, index=True, ondelete='restrict')
     opening_amount = fields.Monetary(string='Opening Float')
     cash_amount = fields.Monetary(string='Expected Cash')
     accepted_at = fields.Datetime()
@@ -241,9 +253,23 @@ class CashShift(models.Model):
     reviewed_at = fields.Datetime()
     assignment_history = fields.Text(string='Opening Assignment History')
     previous_id = fields.Many2one('ab_sales_cash_shift', ondelete='restrict')
+    next_ids = fields.One2many('ab_sales_cash_shift', 'previous_id', string='Following Wallets')
     event_ids = fields.One2many('ab_sales_cash_event', 'shift_id')
     transfer_ids = fields.One2many('ab_sales_cash_transfer', 'shift_id')
-    _slot_unique = models.Constraint('UNIQUE(drawer_id, start_at)', 'A drawer has only one cash shift per scheduled period.')
+    _slot_unique = models.Constraint('UNIQUE(drawer_id, start_at)', 'A drawer has only one wallet opening at the same instant.')
+    _active_drawer_unique = models.Constraint('UNIQUE(active_drawer_id)', 'A branch can have only one active cashier wallet.')
+
+    @api.depends('drawer_id', 'state')
+    def _compute_active_drawer_id(self):
+        for shift in self:
+            shift.active_drawer_id = shift.drawer_id if shift.state in ('waiting', 'open') else False
+
+    def action_print_wallet_report(self):
+        self.ensure_one()
+        self.check_access('read')
+        if self.state != 'closed':
+            raise ValidationError(_('Close the cashier wallet before printing its report.'))
+        return self.env.ref('ab_sales_cash_shift.cash_wallet_report_action').report_action(self)
 
     def action_reschedule(self):
         self.ensure_one()

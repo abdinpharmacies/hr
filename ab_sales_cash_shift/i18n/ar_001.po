@@ -1,34 +1,70 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* ab_sales_cash_shift
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 11:15+0000\n"
-"PO-Revision-Date: 2026-10-19 11:15+0000\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2026-10-22 10:38+0000\n"
 "Language: ar_001\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid ""
-"%(time)s — %(user)s: %(old)s → %(new)s; %(before)s → %(after)s; %(reason)s"
-msgstr ""
-"%(time)s — %(user)s: %(old)s ← %(new)s؛ %(before)s ← %(after)s؛ %(reason)s"
+msgid "%(time)s — %(user)s: %(old)s → %(new)s; %(reason)s"
+msgstr "%(time)s — %(user)s: %(old)s ← %(new)s؛ %(reason)s"
 
 #. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/models/integration.py:0
-msgid "A cash manager must prepare the first opening float."
-msgstr "يجب أن يجهز مدير النقدية الرصيد الافتتاحي الأول."
+#: model:ir.actions.report,print_report_name:ab_sales_cash_shift.cash_wallet_report_action
+msgid "'Cashier Wallet - %s' % object.id"
+msgstr "'حافظة الكاشير - %s' % object.id"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Branch:</strong>"
+msgstr "<strong>الفرع:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Cashier:</strong>"
+msgstr "<strong>الكاشير:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Closed At:</strong>"
+msgstr "<strong>وقت الإغلاق:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Difference Note:</strong>"
+msgstr "<strong>ملاحظة الفرق:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Handover Reference:</strong>"
+msgstr "<strong>مرجع التسليم:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Opened At:</strong>"
+msgstr "<strong>وقت الفتح:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Receipt Confirmation:</strong>"
+msgstr "<strong>تأكيد الاستلام:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Treasury Receipt:</strong>"
+msgstr "<strong>استلام الخزنة:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "<strong>Wallet Reference:</strong>"
+msgstr "<strong>مرجع الحافظة:</strong>"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.constraint,message:ab_sales_cash_shift.constraint_ab_sales_cash_shift_active_drawer_unique
+msgid "A branch can have only one active cashier wallet."
+msgstr "لا يمكن أن يكون للفرع أكثر من حافظة كاشير نشطة واحدة."
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.constraint,message:ab_sales_cash_shift.constraint_ab_sales_cash_transfer_shift_direction_unique
@@ -36,9 +72,15 @@ msgid "A cash shift has one transfer per direction."
 msgstr "لكل وردية نقدية تحويل واحد في كل اتجاه."
 
 #. module: ab_sales_cash_shift
+#. odoo-python
+#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
+msgid "A confirmed wallet assignment cannot be changed."
+msgstr "لا يمكن تغيير إسناد حافظة تم تأكيد استلامها."
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.constraint,message:ab_sales_cash_shift.constraint_ab_sales_cash_shift_slot_unique
-msgid "A drawer has only one cash shift per scheduled period."
-msgstr "لكل درج وردية نقدية واحدة فقط في كل فترة مجدولة."
+msgid "A drawer has only one wallet opening at the same instant."
+msgstr "لا يمكن فتح أكثر من حافظة للفرع في اللحظة نفسها."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -51,11 +93,6 @@ msgstr "يجب إبقاء إعدادات الدرج الذي له سجل نقد�
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
 msgid "A pending cash difference requires a Finance review note."
 msgstr "يتطلب فرق النقدية المعلق ملاحظة مراجعة من الإدارة المالية."
-
-#. module: ab_sales_cash_shift
-#: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__accept
-msgid "Accept Drawer"
-msgstr "استلام الدرج"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__accepted_at
@@ -84,6 +121,11 @@ msgstr "التحصيلات المتراكمة"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_treasury__active
 msgid "Active"
 msgstr "نشط"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__active_drawer_id
+msgid "Active Drawer"
+msgstr "الحافظة النشطة"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation_line__amount
@@ -116,9 +158,9 @@ msgid "Awaiting Receipt"
 msgstr "بانتظار الاستلام"
 
 #. module: ab_sales_cash_shift
-#: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_shift
-msgid "Branch Cash Shift"
-msgstr "وردية نقدية الفرع"
+#: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_drawer
+msgid "Branch Cashier Wallet Control"
+msgstr "الرقابة على حافظات كاشير الفرع"
 
 #. module: ab_sales_cash_shift
 #: model:ir.actions.act_window,name:ab_sales_cash_shift.treasury_action
@@ -163,6 +205,7 @@ msgstr "صلاحيات إعدادات النقدية"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__variance
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
 msgid "Cash Difference"
 msgstr "فرق النقدية"
 
@@ -177,13 +220,17 @@ msgid "Cash Difference Finance Reviewer"
 msgstr "مراجع فروق النقدية بالإدارة المالية"
 
 #. module: ab_sales_cash_shift
+#: model:ir.ui.menu,name:ab_sales_cash_shift.cash_management_menu
+msgid "Cash Management"
+msgstr "إدارة النقدية"
+
+#. module: ab_sales_cash_shift
 #: model:res.groups.privilege,name:ab_sales_cash_shift.privilege_cash_shift
 msgid "Cash Shift Access"
 msgstr "صلاحيات الورديات النقدية"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_operation
-#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_operation_form
 msgid "Cash Shift Operation"
 msgstr "عملية الوردية النقدية"
 
@@ -198,9 +245,7 @@ msgid "Cash Shift Settlement"
 msgstr "تسوية دفع الوردية النقدية"
 
 #. module: ab_sales_cash_shift
-#: model:ir.actions.act_window,name:ab_sales_cash_shift.shift_action
 #: model:ir.module.category,name:ab_sales_cash_shift.category_cash_shift
-#: model:ir.ui.menu,name:ab_sales_cash_shift.shift_menu
 msgid "Cash Shifts"
 msgstr "الورديات النقدية"
 
@@ -240,6 +285,12 @@ msgid "Cash shifts require the native Odoo sales backend."
 msgstr "تتطلب الورديات النقدية تشغيل المبيعات داخل أودو."
 
 #. module: ab_sales_cash_shift
+#: model:ir.actions.client,name:ab_sales_cash_shift.shift_cashier_action
+#: model:ir.ui.menu,name:ab_sales_cash_shift.shift_cashier_menu
+msgid "Cashier"
+msgstr "الكاشير"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_method
 msgid "Cashier Payment Method"
 msgstr "طريقة دفع الكاشير"
@@ -249,6 +300,28 @@ msgstr "طريقة دفع الكاشير"
 #: model:ir.ui.menu,name:ab_sales_cash_shift.method_menu
 msgid "Cashier Payment Methods"
 msgstr "طرق دفع الكاشير"
+
+#. module: ab_sales_cash_shift
+#: model:ir.actions.report,name:ab_sales_cash_shift.cash_wallet_report_action
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Cashier Wallet Closing Report"
+msgstr "تقرير إغلاق حافظة الكاشير"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_shift
+msgid "Cashier Wallet Ledger"
+msgstr "دفتر حافظة الكاشير"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_operation_form
+msgid "Cashier Wallet Operation"
+msgstr "عملية حافظة الكاشير"
+
+#. module: ab_sales_cash_shift
+#: model:ir.actions.act_window,name:ab_sales_cash_shift.shift_action
+#: model:ir.ui.menu,name:ab_sales_cash_shift.shift_menu
+msgid "Cashier Wallets"
+msgstr "حافظات الكاشير"
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -296,13 +369,14 @@ msgstr "اختر عملية بيع واحدة أو مرتجعاً واحداً �
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "Choose the next cashier and retain no more than the counted cash."
-msgstr "اختر الكاشير التالي واحتفظ بمبلغ لا يتجاوز النقدية المعدودة."
+msgid "Choose the next cashier when retaining an opening balance."
+msgstr "اختر الكاشير التالي عند الاحتفاظ برصيد افتتاحي."
 
 #. module: ab_sales_cash_shift
-#: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__close
-msgid "Close Shift"
-msgstr "إغلاق الوردية"
+#. odoo-python
+#: code:addons/ab_sales_cash_shift/models/cash_shift.py:0
+msgid "Close the cashier wallet before printing its report."
+msgstr "أغلق حافظة الكاشير قبل طباعة تقريرها."
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_shift__state__closed
@@ -325,6 +399,11 @@ msgid "Code"
 msgstr "الكود"
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Collections"
+msgstr "التحصيلات"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_drawer__company_id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_event__company_id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_method__company_id
@@ -336,12 +415,6 @@ msgid "Company"
 msgstr "الشركة"
 
 #. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/models/integration.py:0
-msgid "Configure and enable this branch cash drawer first."
-msgstr "أعدّ درج نقدية هذا الفرع وفعّله أولاً."
-
-#. module: ab_sales_cash_shift
 #: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_operation_form
 msgid "Confirm"
 msgstr "تأكيد"
@@ -350,6 +423,11 @@ msgstr "تأكيد"
 #: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.transfer_list
 msgid "Confirm Receipt"
 msgstr "تأكيد الاستلام"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__accept
+msgid "Confirm Wallet Receipt"
+msgstr "تأكيد استلام الحافظة"
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -366,6 +444,11 @@ msgstr "سجل نقدي محكوم"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__counted_amount
 msgid "Counted Cash"
 msgstr "النقدية المعدودة"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Counted Physical Cash"
+msgstr "النقد الفعلي المعدود"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_drawer__create_uid
@@ -428,7 +511,6 @@ msgstr "الاتجاه"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_treasury__display_name
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cashier_api__display_name
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cashier_close_wizard__display_name
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_header__display_name
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_native_payment__display_name
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_store__display_name
 msgid "Display Name"
@@ -439,12 +521,6 @@ msgstr "اسم العرض"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__drawer_id
 msgid "Drawer"
 msgstr "الدرج"
-
-#. module: ab_sales_cash_shift
-#. odoo-javascript
-#: code:addons/ab_sales_cash_shift/static/src/cashier.xml:0
-msgid "Drawer Handover"
-msgstr "تسليم واستلام الدرج"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_transfer
@@ -499,11 +575,6 @@ msgid "Enabled"
 msgstr "مفعّل"
 
 #. module: ab_sales_cash_shift
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__end_at
-msgid "End At"
-msgstr "وقت الانتهاء"
-
-#. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/models/cash_shift.py:0
 msgid "Enter a finite, nonnegative monetary amount."
@@ -534,10 +605,9 @@ msgid "Expected Cash"
 msgstr "النقدية المتوقعة"
 
 #. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "Explain the cash difference for Finance review."
-msgstr "وضح سبب فرق النقدية لمراجعته من الإدارة المالية."
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Expected Physical Cash"
+msgstr "النقد الفعلي المتوقع"
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -566,6 +636,18 @@ msgid "First Opening Float"
 msgstr "الرصيد الافتتاحي الأول"
 
 #. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__next_ids
+msgid "Following Wallets"
+msgstr "الحافظات التالية"
+
+#. module: ab_sales_cash_shift
+#. odoo-javascript
+#: code:addons/ab_sales_cash_shift/static/src/cashier.xml:0
+#: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__close
+msgid "Hand Over and Close Wallet"
+msgstr "تسليم وإغلاق الحافظة"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__count_confirmed
 msgid "I physically counted this cash"
 msgstr "قمت بعد هذه النقدية فعلياً"
@@ -584,7 +666,6 @@ msgstr "قمت بعد هذه النقدية فعلياً"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_treasury__id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cashier_api__id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cashier_close_wizard__id
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_header__id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_native_payment__id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_store__id
 msgid "ID"
@@ -622,6 +703,16 @@ msgid "Last Updated on"
 msgstr "تاريخ آخر تحديث"
 
 #. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__end_at
+msgid "Legacy Scheduled End"
+msgstr "نهاية الوردية السابقة"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__slot
+msgid "Legacy Scheduled Shift"
+msgstr "الوردية المجدولة السابقة"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation_line__method_id
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_tender__method_id
 msgid "Method"
@@ -639,19 +730,41 @@ msgid "Native Sale Payment or Refund"
 msgstr "دفعة أو رد مبلغ بيع داخلي"
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Net"
+msgstr "الصافي"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__next_employee_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Next Cashier"
+msgstr "الكاشير التالي"
+
+#. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__carry_amount
+msgid "Next Employee Opening Balance"
+msgstr "الرصيد الافتتاحي للموظف التالي"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Next Opening Balance"
+msgstr "الرصيد الافتتاحي التالي"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__carry_amount
 msgid "Next Opening Float"
 msgstr "الرصيد الافتتاحي التالي"
 
 #. module: ab_sales_cash_shift
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__next_employee_id
-msgid "Next Responsible Cashier"
-msgstr "الكاشير المسؤول التالي"
-
-#. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_shift__review_state__none
 msgid "No Difference"
 msgstr "لا يوجد فرق"
+
+#. module: ab_sales_cash_shift
+#. odoo-python
+#: code:addons/ab_sales_cash_shift/models/cash_shift.py:0
+msgid "No active cashier wallet exists for this branch."
+msgstr "لا توجد حافظة كاشير نشطة لهذا الفرع."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -669,8 +782,8 @@ msgstr "موظف الخزينة المحدد وحده يمكنه تأكيد ال
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "Only the incoming responsible cashier can accept this drawer."
-msgstr "الكاشير المسؤول المستلم وحده يمكنه استلام هذا الدرج."
+msgid "Only the incoming cashier can confirm receipt of this wallet."
+msgstr "الكاشير المستلم وحده يمكنه تأكيد استلام هذه الحافظة."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -679,20 +792,24 @@ msgid "Only the responsible cashier can close this drawer shift."
 msgstr "الكاشير المسؤول وحده يمكنه إغلاق وردية هذا الدرج."
 
 #. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/models/cash_shift.py:0
-msgid "Only the responsible cashier can process this drawer shift."
-msgstr "الكاشير المسؤول وحده يمكنه تنفيذ عمليات وردية هذا الدرج."
-
-#. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_shift__state__open
 msgid "Open"
 msgstr "مفتوحة"
 
 #. module: ab_sales_cash_shift
+#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__start_at
+msgid "Opened At"
+msgstr "وقت الفتح"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__assignment_history
 msgid "Opening Assignment History"
 msgstr "سجل تعيين مستلم الرصيد الافتتاحي"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Opening Balance"
+msgstr "الرصيد الافتتاحي"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__opening_amount
@@ -730,9 +847,26 @@ msgid "Payment Breakdown Entry"
 msgstr "بند تفصيل الدفع"
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Payment Method"
+msgstr "طريقة الدفع"
+
+#. module: ab_sales_cash_shift
+#. odoo-python
+#: code:addons/ab_sales_cash_shift/models/integration.py:0
+msgid "Payment amounts cannot exceed the amount due."
+msgstr "لا يمكن أن يتجاوز مجموع مبالغ الدفع المبلغ المستحق."
+
+#. module: ab_sales_cash_shift
 #: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.shift_form
 msgid "Payments and Refunds"
 msgstr "المدفوعات والمبالغ المرتجعة"
+
+#. module: ab_sales_cash_shift
+#: model:ir.actions.act_window,name:ab_sales_cash_shift.finance_review_action
+#: model:ir.ui.menu,name:ab_sales_cash_shift.finance_review_menu
+msgid "Pending Finance Review"
+msgstr "بانتظار المراجعة المالية"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__counted_amount
@@ -747,9 +881,13 @@ msgstr "تتطلب المدفوعات الموجبة مرجع العملية ح�
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__prepare
-#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.drawer_form
 msgid "Prepare First Opening"
 msgstr "تجهيز الرصيد الافتتاحي الأول"
+
+#. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.drawer_form
+msgid "Prepare Funded Opening"
+msgstr "تجهيز رصيد افتتاحي ممول"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__previous_id
@@ -757,10 +895,15 @@ msgid "Previous"
 msgstr "السابق"
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.shift_form
+msgid "Print Wallet Report"
+msgstr "طباعة تقرير الحافظة"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__reschedule
 #: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.shift_form
-msgid "Reassign Unaccepted Opening"
-msgstr "إعادة تعيين الرصيد الافتتاحي غير المستلم"
+msgid "Reassign Unconfirmed Opening"
+msgstr "إعادة إسناد الرصيد الافتتاحي غير المؤكد"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields.selection,name:ab_sales_cash_shift.selection__ab_sales_cash_operation__operation__receive
@@ -804,6 +947,11 @@ msgid "Refund each payment method only up to its remaining original amount."
 msgstr "يجب ألا يتجاوز المرتجع لكل طريقة دفع المبلغ الأصلي المتبقي لها."
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Refunds"
+msgstr "المبالغ المرتجعة"
+
+#. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_method__require_reference
 msgid "Require Transaction Reference"
 msgstr "مرجع العملية مطلوب"
@@ -812,11 +960,6 @@ msgstr "مرجع العملية مطلوب"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__employee_id
 msgid "Responsible Cashier"
 msgstr "الكاشير المسؤول"
-
-#. module: ab_sales_cash_shift
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__carry_amount
-msgid "Retain for Next Shift"
-msgstr "المبلغ المحتفظ به للوردية التالية"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__return_id
@@ -864,11 +1007,6 @@ msgid "Sales Cashier Close Wizard"
 msgstr "معالج إغلاق صندوق المبيعات"
 
 #. module: ab_sales_cash_shift
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__slot
-msgid "Scheduled Shift"
-msgstr "الوردية المجدولة"
-
-#. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
 msgid "Select the responsible cashier for the opening."
@@ -883,11 +1021,6 @@ msgstr "الجلسة"
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_operation__session_token
 msgid "Session Token"
 msgstr "رمز الجلسة"
-
-#. module: ab_sales_cash_shift
-#: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_cash_drawer
-msgid "Shared Branch Cash Drawer"
-msgstr "درج النقدية المشترك بالفرع"
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -914,21 +1047,10 @@ msgid "Shift"
 msgstr "الوردية"
 
 #. module: ab_sales_cash_shift
-#: model:ir.actions.client,name:ab_sales_cash_shift.shift_cashier_action
-#: model:ir.ui.menu,name:ab_sales_cash_shift.shift_cashier_menu
-msgid "Shift Cashier"
-msgstr "كاشير الورديات"
-
-#. module: ab_sales_cash_shift
 #: model:ir.actions.act_window,name:ab_sales_cash_shift.tender_action
 #: model:ir.ui.menu,name:ab_sales_cash_shift.tender_menu
 msgid "Shift Payment Breakdown"
 msgstr "تفصيل مدفوعات الوردية"
-
-#. module: ab_sales_cash_shift
-#: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__start_at
-msgid "Start At"
-msgstr "وقت البداية"
 
 #. module: ab_sales_cash_shift
 #: model:ir.model.fields,field_description:ab_sales_cash_shift.field_ab_sales_cash_shift__state
@@ -961,7 +1083,6 @@ msgstr "يجب أن تتبع إعدادات النقدية شركة مسموحا
 
 #. module: ab_sales_cash_shift
 #. odoo-python
-#: code:addons/ab_sales_cash_shift/models/integration.py:0
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
 msgid "The document must belong to this branch."
 msgstr "يجب أن يتبع المستند هذا الفرع."
@@ -985,16 +1106,27 @@ msgid "The employee session must belong to this drawer branch."
 msgstr "يجب أن تتبع جلسة الموظف فرع هذا الدرج."
 
 #. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "The first opening has already been prepared."
-msgstr "تم تجهيز الرصيد الافتتاحي الأول بالفعل."
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.drawer_form
+msgid ""
+"The first collection opens a zero-balance employee wallet automatically. Use "
+"a funded opening only when cash is issued from the branch treasury."
+msgstr ""
+"ينشئ أول تحصيل حافظة موظف برصيد صفري تلقائياً. استخدم الرصيد الافتتاحي الممول "
+"فقط عند صرف نقدية من خزنة الفرع."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/models/integration.py:0
-msgid "The payment breakdown must equal the amount due."
-msgstr "يجب أن يساوي مجموع طرق الدفع المبلغ المستحق."
+msgid ""
+"The first collection will open a zero-balance wallet. There is no active "
+"wallet to hand over yet."
+msgstr "سينشئ أول تحصيل حافظة برصيد صفري. لا توجد حافظة نشطة لتسليمها حالياً."
+
+#. module: ab_sales_cash_shift
+#. odoo-python
+#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
+msgid "The next opening balance cannot exceed the counted cash."
+msgstr "لا يمكن أن يتجاوز الرصيد الافتتاحي التالي النقد المعدود."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -1010,21 +1142,24 @@ msgstr "يجب أن يطابق المبلغ المستلم مبلغ تحويل �
 
 #. module: ab_sales_cash_shift
 #. odoo-python
+#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
+msgid "This branch already has an active cashier wallet."
+msgstr "يوجد بالفعل حافظة كاشير نشطة لهذا الفرع."
+
+#. module: ab_sales_cash_shift
+#. odoo-python
 #: code:addons/ab_sales_cash_shift/models/cash_shift.py:0
-msgid "The scheduled cash shift must be accepted before processing sales."
-msgstr "يجب استلام الوردية النقدية المجدولة قبل تنفيذ المبيعات."
+#: code:addons/ab_sales_cash_shift/models/integration.py:0
+msgid ""
+"This branch wallet belongs to another cashier. Complete the formal handover "
+"first."
+msgstr "حافظة هذا الفرع مملوكة لكاشير آخر. أكمل التسليم الرسمي أولاً."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "This is not the current drawer shift. Refresh the screen."
-msgstr "هذه ليست وردية الدرج الحالية. حدّث الشاشة."
-
-#. module: ab_sales_cash_shift
-#. odoo-python
-#: code:addons/ab_sales_cash_shift/wizard/operations.py:0
-msgid "This opening period has expired; a cash manager must review it."
-msgstr "انتهت فترة هذا الرصيد الافتتاحي؛ يجب على مدير النقدية مراجعته."
+msgid "This is not the active cashier wallet. Refresh the screen."
+msgstr "هذه ليست حافظة الكاشير النشطة. حدّث الشاشة."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -1070,6 +1205,11 @@ msgid "Treasury"
 msgstr "الخزينة"
 
 #. module: ab_sales_cash_shift
+#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.cash_wallet_report_document
+msgid "Treasury Amount"
+msgstr "مبلغ الخزنة"
+
+#. module: ab_sales_cash_shift
 #: model:ir.actions.act_window,name:ab_sales_cash_shift.transfer_action
 #: model:ir.ui.menu,name:ab_sales_cash_shift.transfer_menu
 #: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.shift_form
@@ -1095,14 +1235,14 @@ msgstr "تعذر فتح العملية النقدية."
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/models/integration.py:0
-msgid "Use Shift Cashier to close the shared drawer and record the handover."
-msgstr "استخدم كاشير الورديات لإغلاق الدرج المشترك وتسجيل التسليم والاستلام."
+msgid "Use each accepted payment method at most once."
+msgstr "استخدم كل طريقة دفع مقبولة مرة واحدة فقط."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
 #: code:addons/ab_sales_cash_shift/models/integration.py:0
-msgid "Use each accepted payment method at most once."
-msgstr "استخدم كل طريقة دفع مقبولة مرة واحدة فقط."
+msgid "Use the Cashier screen to hand over and close the employee wallet."
+msgstr "استخدم شاشة الكاشير لتسليم حافظة الموظف وإغلاقها."
 
 #. module: ab_sales_cash_shift
 #. odoo-python
@@ -1127,27 +1267,59 @@ msgstr "لا يمكن تغيير المعنى المحاسبي لطرق الدف
 msgid "Wizard"
 msgstr "المعالج"
 
-#. module: ab_sales_cash_shift
-#: model:ir.model,name:ab_sales_cash_shift.model_ab_sales_header
-msgid "ab_sales_header"
-msgstr "فاتورة المبيعات"
+#~ msgid "A cash manager must prepare the first opening float."
+#~ msgstr "يجب أن يجهز مدير النقدية الرصيد الافتتاحي الأول."
 
-#. module: ab_sales_cash_shift
-#: model:ir.ui.menu,name:ab_sales_cash_shift.cash_management_menu
-msgid "Cash Management"
-msgstr "إدارة النقدية"
+#~ msgid "Branch Cash Shift"
+#~ msgstr "وردية نقدية الفرع"
 
-#. module: ab_sales_cash_shift
-#: model:ir.actions.act_window,name:ab_sales_cash_shift.finance_review_action
-#: model:ir.ui.menu,name:ab_sales_cash_shift.finance_review_menu
-msgid "Pending Finance Review"
-msgstr "بانتظار المراجعة المالية"
+#~ msgid "Close Shift"
+#~ msgstr "إغلاق الوردية"
 
-#. module: ab_sales_cash_shift
-#: model_terms:ir.ui.view,arch_db:ab_sales_cash_shift.drawer_form
-msgid ""
-"Set up the treasury and payment methods first. Enabling this drawer requires"
-" an accepted cash shift before submitting sales."
-msgstr ""
-"أعدّ الخزينة وطرق الدفع أولاً. يتطلب تفعيل هذا الدرج استلام الوردية النقدية "
-"قبل إرسال فواتير البيع."
+#~ msgid "Configure and enable this branch cash drawer first."
+#~ msgstr "أعدّ درج نقدية هذا الفرع وفعّله أولاً."
+
+#~ msgid "Drawer Handover"
+#~ msgstr "تسليم واستلام الدرج"
+
+#~ msgid "Explain the cash difference for Finance review."
+#~ msgstr "وضح سبب فرق النقدية لمراجعته من الإدارة المالية."
+
+#~ msgid "Next Responsible Cashier"
+#~ msgstr "الكاشير المسؤول التالي"
+
+#~ msgid "Only the responsible cashier can process this drawer shift."
+#~ msgstr "الكاشير المسؤول وحده يمكنه تنفيذ عمليات وردية هذا الدرج."
+
+#~ msgid "Retain for Next Shift"
+#~ msgstr "المبلغ المحتفظ به للوردية التالية"
+
+#~ msgid "Shared Branch Cash Drawer"
+#~ msgstr "درج النقدية المشترك بالفرع"
+
+#~ msgid "Start At"
+#~ msgstr "وقت البداية"
+
+#~ msgid "The first opening has already been prepared."
+#~ msgstr "تم تجهيز الرصيد الافتتاحي الأول بالفعل."
+
+#~ msgid "The scheduled cash shift must be accepted before processing sales."
+#~ msgstr "يجب استلام الوردية النقدية المجدولة قبل تنفيذ المبيعات."
+
+#~ msgid "This opening period has expired; a cash manager must review it."
+#~ msgstr "انتهت فترة هذا الرصيد الافتتاحي؛ يجب على مدير النقدية مراجعته."
+
+#~ msgid ""
+#~ "Use Shift Cashier to close the shared drawer and record the handover."
+#~ msgstr ""
+#~ "استخدم كاشير الورديات لإغلاق الدرج المشترك وتسجيل التسليم والاستلام."
+
+#~ msgid "ab_sales_header"
+#~ msgstr "فاتورة المبيعات"
+
+#~ msgid ""
+#~ "Set up the treasury and payment methods first. Enabling this drawer "
+#~ "requires an accepted cash shift before submitting sales."
+#~ msgstr ""
+#~ "أعدّ الخزينة وطرق الدفع أولاً. يتطلب تفعيل هذا الدرج استلام الوردية النقدية "
+#~ "قبل إرسال فواتير البيع."
