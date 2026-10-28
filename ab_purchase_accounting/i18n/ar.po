@@ -26,6 +26,19 @@ msgid "Accounting Journal"
 msgstr "قيد محاسبي"
 
 #. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/opening_balance.py:0
+#: code:addons/ab_purchase_accounting/models/purchase.py:0
+msgid "Accounting journal links are maintained by the accounting workflow."
+msgstr "تُدار روابط القيود المحاسبية من خلال سير العمل المحاسبي."
+
+#. module: ab_purchase_accounting
+#. odoo-python
+#: code:addons/ab_purchase_accounting/models/configuration.py:0
+msgid "Posted purchase accounting configuration cannot be changed."
+msgstr "لا يمكن تغيير إعداد محاسبة المشتريات بعد ترحيل قيود عليه."
+
+#. module: ab_purchase_accounting
 #: model:ir.actions.act_window,name:ab_purchase_accounting.action_purchase_accounting_config
 #: model:ir.ui.menu,name:ab_purchase_accounting.menu_purchase_accounting_config
 msgid "Purchase Accounting"

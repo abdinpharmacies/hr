@@ -4,6 +4,9 @@ Current changes before commit:
 - Serialize receipt/return finalization with cashier stock posting while preserving existing purchase and tax calculations.
 - Treat the current purchase-notice workflow as physical supplier returns without requiring the removed notice-effect field.
 - Document capture-time snapshot semantics; keep existing review/journal configuration behavior.
+- Prevent direct ORM rewrites of receipt, return, and non-purchase receipt journal links.
+- Freeze purchase-accounting configuration and receipt mappings after posted history exists.
+- Verify taxed purchase, supplier-return, and non-purchase receipt journals, exact balancing, retries, and immutability in journal mode.
 
 Validation: 59 workflow/security checks and 4 concurrency checks passed; fresh installation, targeted upgrades and Arabic runtime labels verified. Live startup repair passed without changing stock or document states.
 
@@ -15,6 +18,9 @@ Files changed:
 - ab_purchase_accounting/models/opening_balance.py
 - ab_purchase_accounting/models/purchase.py
 - ab_purchase_accounting/models/review.py
+- ab_purchase_accounting/models/configuration.py
+- ab_purchase_accounting/i18n/ar.po
+- ab_purchase_accounting/i18n/ar_001.po
 
 # Module changelog
 

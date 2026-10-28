@@ -90,6 +90,46 @@ class PurchaseAccountingConfig(models.Model):
         'Purchase accounting activation dates must be unique per company and branch.',
     )
 
+    def _has_posted_history(self):
+        for config in self:
+            domains = [
+                ('ab_purchase_header', [
+                    ('store_id', '=', config.branch_id.id),
+                    ('doc_date', '>=', config.activation_date),
+                    ('purchase_accounting_journal_id', '!=', False),
+                ]),
+                ('ab_purchase_notice_header', [
+                    ('store_id', '=', config.branch_id.id),
+                    ('doc_date', '>=', config.activation_date),
+                    ('purchase_accounting_journal_id', '!=', False),
+                ]),
+                ('ab_purchase_ob_header', [
+                    ('store_id', '=', config.branch_id.id),
+                    ('doc_date', '>=', config.activation_date),
+                    ('purchase_accounting_journal_id', '!=', False),
+                ]),
+            ]
+            if any(self.env[model_name].sudo().search_count(domain, limit=1)
+                   for model_name, domain in domains):
+                return True
+        return False
+
+    def write(self, vals):
+        protected = {
+            'company_id', 'branch_id', 'active', 'processing_mode', 'activation_date',
+            'posting_user_id', 'purchase_doctype_id', 'return_doctype_id',
+            'inventory_account_id', 'tax_account_id', 'supplier_account_id',
+            'default_costcenter_id', 'supplier_due_days', 'receipt_account_ids',
+        }
+        if protected.intersection(vals) and self._has_posted_history():
+            raise ValidationError(_('Posted purchase accounting configuration cannot be changed.'))
+        return super().write(vals)
+
+    def unlink(self):
+        if self._has_posted_history():
+            raise ValidationError(_('Posted purchase accounting configuration cannot be changed.'))
+        return super().unlink()
+
     @api.depends('company_id', 'branch_id', 'activation_date')
     def _compute_display_name(self):
         for rec in self:
@@ -240,6 +280,28 @@ class PurchaseAccountingReceiptAccount(models.Model):
         'UNIQUE(config_id, receipt_type_id)',
         'Configure each non-purchase receipt type only once per purchase accounting setup.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        configs = self.env['ab_purchase_accounting_config'].browse([
+            vals.get('config_id') for vals in vals_list if vals.get('config_id')
+        ])
+        if configs._has_posted_history():
+            raise ValidationError(_('Posted purchase accounting configuration cannot be changed.'))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        configs = self.mapped('config_id')
+        if vals.get('config_id'):
+            configs |= self.env['ab_purchase_accounting_config'].browse(vals['config_id'])
+        if {'config_id', 'receipt_type_id', 'offset_account_id'}.intersection(vals) and configs._has_posted_history():
+            raise ValidationError(_('Posted purchase accounting configuration cannot be changed.'))
+        return super().write(vals)
+
+    def unlink(self):
+        if self.mapped('config_id')._has_posted_history():
+            raise ValidationError(_('Posted purchase accounting configuration cannot be changed.'))
+        return super().unlink()
 
     @api.constrains('config_id', 'offset_account_id')
     def _check_offset_account(self):

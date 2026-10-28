@@ -4,6 +4,8 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_is_zero
 
+from .purchase import _ACCOUNTING_LINK
+
 
 def _money(value):
     return round(float(value or 0.0), 2)
@@ -42,6 +44,12 @@ class PurchaseObHeaderAccounting(models.Model):
             'view_mode': 'form',
             'views': [(False, 'form')],
         }
+
+    def write(self, vals):
+        if ('purchase_accounting_journal_id' in vals
+                and self.env.context.get('ab_purchase_accounting_link') is not _ACCOUNTING_LINK):
+            raise ValidationError(_('Accounting journal links are maintained by the accounting workflow.'))
+        return super().write(vals)
 
     def btn_submit_inventory(self):
         self.ensure_one()
@@ -118,7 +126,9 @@ class PurchaseObHeaderAccounting(models.Model):
         journal = self.env['ab_accounting_je_header'].with_user(config.posting_user_id).with_context(
             posting_context
         ).post_journal(request)
-        self.write({'purchase_accounting_journal_id': journal.id})
+        self.with_context(ab_purchase_accounting_link=_ACCOUNTING_LINK).write({
+            'purchase_accounting_journal_id': journal.id,
+        })
         return journal
 
     def _purchase_ob_accounting_line(
