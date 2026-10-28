@@ -8,6 +8,8 @@ from uuid import UUID
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
+from .branch_api import FORCE_ID_SALE_MODELS
+
 
 _metadata_write = ContextVar('branch_sale_metadata_write', default=None)
 _SCALAR_TYPES = {'boolean', 'char', 'text', 'selection', 'integer', 'float', 'monetary', 'date', 'datetime'}
@@ -96,6 +98,12 @@ class BranchMetadata(models.AbstractModel):
                 raise UserError(error)
             if field and (field.type != kind or field.comodel_name != model):
                 raise UserError(error)
+            refs = ([value] if ids else []) if kind == 'many2one' else value
+            for source_id, ref in zip(ids, refs):
+                if 'id' in ref and (model not in FORCE_ID_SALE_MODELS
+                                    or set(ref) != {'id'} or type(ref['id']) is not int
+                                    or ref['id'] != source_id):
+                    raise UserError(error)
         else:
             if set(descriptor) != {'type'} or kind not in _SCALAR_TYPES or (field and field.type != kind):
                 raise UserError(error)

@@ -12,6 +12,9 @@ from .routing import api_request, request_store, STORE_UNSET
 
 
 _return_employee = ContextVar('branch_api_return_employee', default=None)
+FORCE_ID_SALE_MODELS = frozenset({
+    'ab_product', 'ab_contract', 'ab_hr_employee', 'ab_doctor', 'ab_promo_program',
+})
 
 
 class BranchApiOperation(models.Model):
@@ -140,6 +143,10 @@ class BranchApi(models.AbstractModel):
                     fields.Domain('module', '=', str(value).split('.', 1)[0])
                     & fields.Domain('name', '=', str(value).split('.', 1)[-1])
                     & fields.Domain('model', '=', model)).mapped('res_id')), limit=2)
+        elif key == 'id' and model in FORCE_ID_SALE_MODELS:
+            if type(value) is not int or value <= 0:
+                raise UserError(_('Unsupported record reference.'))
+            records = self.env[model].search(fields.Domain('id', '=', value), limit=2)
         elif model == 'ab_hr_employee' and key == 'costcenter_code':
             records = self.env[model].search(fields.Domain('costcenter_id.code', '=', str(value)), limit=2)
         elif key in ('eplus_serial', 'code') and key in self.env[model]._fields:
@@ -153,6 +160,8 @@ class BranchApi(models.AbstractModel):
                 raise UserError(_('The selected contract is missing, inactive or duplicated on this branch. Synchronize contracts or select another contract.'))
             raise UserError(_('Branch reference is missing or ambiguous: %s') % model)
         records.check_access('read')
+        if key == 'id' and not records.active:
+            raise UserError(_('Branch reference is missing or ambiguous: %s') % model)
         return records
 
     @api.model
@@ -471,6 +480,8 @@ class BranchApi(models.AbstractModel):
             program = self._resolve('ab_promo_program', payload['promotion'])
             header.applied_program_ids = [fields.Command.set(program.ids)]
             header.btn_apply_promotion()
+            if program not in header.applied_program_ids:
+                raise UserError(_('Branch reference is missing or ambiguous: %s') % 'ab_promo_program')
         Pos._fill_lines_balance_from_offline(header)
         return header
 
