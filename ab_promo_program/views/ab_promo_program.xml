@@ -62,7 +62,7 @@
                         </group>
                         <group string="Compensation Details">
                             <field name="promotion_ownership" required="1"/>
-                            <field name="compensation_company_id"/>
+                            <field name="compensation_company_id" required="1"/>
                             <field name="compensation_timing" required="1"/>
                             <field name="compensation_type" required="1"/>
                             <field name="approval_email_attachment"
