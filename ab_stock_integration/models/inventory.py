@@ -10,7 +10,8 @@ class InventoryProcess(models.AbstractModel):
     @api.model
     def _check_store(self, store_id):
         store = super()._check_store(store_id)
-        if store.company_id not in self.env.companies:
+        if (not self.env.context.get('ab_sales_branch_scope')
+                and store.company_id not in self.env.companies):
             raise AccessError(_('The store must belong to an allowed company.'))
         return store
 

@@ -1,5 +1,15 @@
 Current changes before commit:
 
+- Allow the native sales workflow to use explicit branch scope across active companies while preserving normal company checks for every other inventory operation.
+
+Files changed:
+
+- ab_stock_integration/changelog.d
+- ab_stock_integration/models/inventory.py
+- ab_stock_integration/models/store.py
+
+Previous current changes:
+
 - Add a shared boundary for current cumulative inventory, store company checks, source metadata and explicit sales-to-stock unit mapping.
 - Preserve current inventory sums and tax outputs; validate quantities and posting scope before using existing business APIs.
 - Invalidate cached branch rules after inventory-store reassignment and serialize adapter stock posting.
