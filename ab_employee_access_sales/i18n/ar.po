@@ -819,3 +819,33 @@ msgstr "لا يملك هذا الموظف صلاحية الوصول إلى شا�
 #: code:addons/ab_employee_access_sales/static/src/pos/ab_employee_access_sales_pos_patch.js:0
 msgid "Unlock failed."
 msgstr "تعذر إلغاء القفل."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "An active internal Odoo user is required to use POS."
+msgstr "يلزم مستخدم أودو داخلي نشط لاستخدام نقطة البيع."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Branch connection is not configured. Contact support."
+msgstr "اتصال الفرع غير مُعد. تواصل مع الدعم."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "No stores match the Replica DB and employee permissions."
+msgstr "لا توجد مخازن تطابق صلاحيات قاعدة النسخة والموظف."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Selected store is not available for POS."
+msgstr "المخزن المحدد غير متاح لنقطة البيع."
+
+#. module: ab_employee_access_sales
+#. odoo-python
+#: code:addons/ab_employee_access_sales/models/ab_employee_access_sales_pos_api.py:0
+msgid "Selected store is outside the effective POS scope."
+msgstr "المخزن المحدد خارج نطاق نقطة البيع المسموح."

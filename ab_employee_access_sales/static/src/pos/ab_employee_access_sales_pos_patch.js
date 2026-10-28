@@ -55,6 +55,7 @@ if (PosAction) {
                 requireLogin: true,
                 selectedStoreId: 0,
                 allowedStoreIds: [],
+                visibleStoreIds: [],
                 employeeAccessId: 0,
                 employeeId: 0,
                 employee: false,
@@ -67,6 +68,7 @@ if (PosAction) {
             this._abSalesHrSaveCachedSession = this._abSalesHrSaveCachedSession.bind(this);
             this._abSalesHrClearCachedSession = this._abSalesHrClearCachedSession.bind(this);
             this._abSalesHrBootstrap = this._abSalesHrBootstrap.bind(this);
+            this._abSalesHrApplyStoreScope = this._abSalesHrApplyStoreScope.bind(this);
             this._abSalesHrApplySession = this._abSalesHrApplySession.bind(this);
             this._abSalesHrSessionToken = this._abSalesHrSessionToken.bind(this);
             this._abSalesHrPermissions = this._abSalesHrPermissions.bind(this);
@@ -114,6 +116,31 @@ if (PosAction) {
                             ...kwargs,
                             pos_hr_session_token: this._abSalesHrSessionToken(),
                         };
+                    }
+                    const scopedPosMethods = new Set([
+                        "pos_promotions",
+                        "pos_product_details",
+                        "pos_barcode_products",
+                        "pos_barcode_temp_products",
+                        "pos_link_barcode_temp",
+                        "pos_customer_lookup",
+                        "pos_customer_create",
+                        "pos_validate_new_customer",
+                        "pos_cached_balance_totals",
+                        "pos_refresh_search_balances",
+                        "pos_refresh_pos_balances",
+                    ]);
+                    const scopedUiMethods = new Set([
+                        "search_products",
+                        "get_products_promo_status",
+                        "pos_customer_insights",
+                        "pos_customer_invoices",
+                        "pos_store_status",
+                    ]);
+                    if (((model === "ab_sales_pos_api" && scopedPosMethods.has(method))
+                        || (model === "ab_sales_ui_api" && scopedUiMethods.has(method)))
+                        && kwargs && typeof kwargs === "object" && !("pos_hr_session_token" in kwargs)) {
+                        kwargs = {...kwargs, pos_hr_session_token: this._abSalesHrSessionToken()};
                     }
                     return rawCall(model, method, args, kwargs);
                 };
@@ -177,9 +204,6 @@ if (PosAction) {
 
         _abSalesHrStoreOptions() {
             const allowedIds = this.state.abSalesHr?.allowedStoreIds || [];
-            if (!allowedIds.length) {
-                return this.state.stores || [];
-            }
             return (this.state.stores || []).filter((store) => allowedIds.includes(store.id));
         },
 
@@ -200,11 +224,23 @@ if (PosAction) {
 
         abSalesHrStoreDomain() {
             const allowedIds = this.state.abSalesHr?.allowedStoreIds || [];
-            const domain = [["allow_sale", "=", true]];
-            if (allowedIds.length) {
-                domain.push(["id", "in", allowedIds]);
+            return [["allow_sale", "=", true], ["id", "in", allowedIds]];
+        },
+
+        _abSalesHrApplyStoreScope(payload) {
+            const availableIds = Array.isArray(payload?.available_store_ids)
+                ? payload.available_store_ids
+                : (Array.isArray(payload?.allowed_store_ids) ? payload.allowed_store_ids : []);
+            const visibleIds = Array.isArray(payload?.visible_store_ids)
+                ? payload.visible_store_ids
+                : availableIds;
+            this.state.abSalesHr.allowedStoreIds = availableIds;
+            this.state.abSalesHr.visibleStoreIds = visibleIds;
+            if (Array.isArray(payload?.stores)) {
+                this.state.stores = payload.stores;
+                this.state.storeById = Object.fromEntries(payload.stores.map((store) => [store.id, store]));
+                this.state.draftStoreIds = availableIds;
             }
-            return domain;
         },
 
         abSalesHrEmployeeValue() {
@@ -291,9 +327,9 @@ if (PosAction) {
                     device_uid: this._abSalesHrDeviceUid,
                     device_name: this._abSalesHrDeviceName,
                 });
-                this.state.abSalesHr.allowedStoreIds = Array.isArray(result?.allowed_store_ids) ? result.allowed_store_ids : [];
+                this._abSalesHrApplyStoreScope(result);
                 this.state.abSalesHr.selectedStoreId = parseInt(
-                    this.currentBill?.header?.store_id || result?.default_store_id || 0,
+                    result?.default_store_id || 0,
                     10
                 ) || 0;
                 if (result?.session?.token) {
@@ -323,6 +359,9 @@ if (PosAction) {
                 await this._saveCacheToServer({allowRetry: false});
             }
             const payload = sessionPayload || false;
+            if (payload) {
+                this._abSalesHrApplyStoreScope(payload);
+            }
             this.state.abSalesHr.session = payload;
             this.state.abSalesHr.requireLogin = !payload || payload.state !== "active";
             this.state.abSalesHr.selectedStoreId = parseInt(payload?.store?.id || this.state.abSalesHr.selectedStoreId || 0, 10) || 0;

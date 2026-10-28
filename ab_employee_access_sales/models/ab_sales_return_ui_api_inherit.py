@@ -6,6 +6,20 @@ class AbSalesReturnUiApi(models.TransientModel):
     _inherit = "ab_sales_return_ui_api"
 
     @api.model
+    def open_from_sale_header(self, sale_header_id, session_token=False, **kwargs):
+        sale_header = self._get_sale_header(sale_header_id)
+        token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
+        session_api = self.env["ab_employee_access_sales_pos_api"]
+        session = session_api._get_session(token, states=["active"])
+        profile = session._get_pos_profile()
+        if not profile:
+            raise UserError(_("Employee POS profile is missing."))
+        session_api._require_connectable_store(sale_header.store_id.id, profile=profile)
+        if session.store_id != sale_header.store_id:
+            session.write({"store_id": sale_header.store_id.id})
+        return super().open_from_sale_header(sale_header_id, **kwargs)
+
+    @api.model
     def _validate_return_employee_session(self, return_header_id, session_token, states=None):
         token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
         if not token:
@@ -26,9 +40,7 @@ class AbSalesReturnUiApi(models.TransientModel):
         if not target_store:
             raise UserError(_("Sales return store is missing."))
 
-        session_api._check_service_user(target_store)
-        if not profile._is_store_allowed_for_pos(target_store):
-            raise UserError(_("Employee is not allowed to work in store %s.") % (target_store.display_name,))
+        target_store = session_api._require_connectable_store(target_store.id, profile=profile)
 
         if session.store_id != target_store:
             session.write({"store_id": target_store.id})

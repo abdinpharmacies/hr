@@ -124,6 +124,7 @@ class AbSalesHrPosSession(models.Model):
         employee = self.employee_id
         profile = self._get_pos_profile()
         permissions = profile._effective_pos_permissions() if profile else {}
+        scope = self.env["ab_employee_access_sales_pos_api"]._resolve_pos_store_scope(profile=profile)
         return {
             "token": self.session_token,
             "session_id": self.id,
@@ -149,4 +150,11 @@ class AbSalesHrPosSession(models.Model):
             "device_uid": self.device_uid or "",
             "device_name": self.device_name or "",
             "device_ip": self.device_ip or "",
+            "stores": scope["stores"],
+            "visible_store_ids": scope["visible_store_ids"],
+            "available_store_ids": scope["available_store_ids"],
+            "allowed_store_ids": scope["available_store_ids"],
+            "default_store_id": scope["default_store"].id if scope["default_store"] else False,
+            "empty_reason": scope["empty_reason"],
+            "empty_message": scope["empty_message"],
         }

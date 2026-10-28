@@ -6,6 +6,118 @@ class AbSalesPosApi(models.TransientModel):
     _inherit = "ab_sales_pos_api"
 
     @api.model
+    def _require_pos_operation_session(self, pos_hr_session_token=None, store_id=False):
+        token = str(pos_hr_session_token or self.env.context.get("ab_pos_session_token") or "").strip()
+        session_api = self.env["ab_employee_access_sales_pos_api"]
+        session = session_api._get_session(token, states=["active"])
+        profile = session._get_pos_profile()
+        if not profile:
+            raise UserError(_("Employee POS profile is missing."))
+        target_store_id = store_id or session.store_id.id
+        store = session_api._require_connectable_store(target_store_id, profile=profile)
+        if session.store_id != store:
+            session.write({"store_id": store.id})
+        session.mark_activity()
+        return session
+
+    @api.model
+    def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
+                       pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_promotions(
+            store_id=store_id,
+            lines=lines,
+            applied_program_id=applied_program_id,
+            manual_clear=manual_clear,
+        )
+
+    @api.model
+    def pos_product_details(self, store_id, product_id, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_product_details(
+            store_id,
+            product_id,
+        )
+
+    @api.model
+    def pos_barcode_products(self, barcode=None, store_id=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_barcode_products(
+            barcode=barcode,
+            store_id=store_id,
+        )
+
+    @api.model
+    def pos_barcode_temp_products(self, barcode=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_barcode_temp_products(
+            barcode=barcode,
+        )
+
+    @api.model
+    def pos_link_barcode_temp(self, barcode=None, product_ids=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_link_barcode_temp(
+            barcode=barcode,
+            product_ids=product_ids,
+        )
+
+    @api.model
+    def pos_validate_new_customer(self, phone=None, name=None, address=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_validate_new_customer(
+            phone=phone,
+            name=name,
+            address=address,
+        )
+
+    @api.model
+    def pos_customer_lookup(self, phone=None, store_id=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_customer_lookup(
+            phone=phone,
+            store_id=store_id,
+        )
+
+    @api.model
+    def pos_customer_create(self, phone=None, name=None, address=None, store_id=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_customer_create(
+            phone=phone,
+            name=name,
+            address=address,
+            store_id=store_id,
+        )
+
+    @api.model
+    def pos_cached_balance_totals(self, product_ids=None, store_id=None, include_sync_metadata=False,
+                                  pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_cached_balance_totals(
+            product_ids=product_ids,
+            store_id=store_id,
+            include_sync_metadata=include_sync_metadata,
+        )
+
+    @api.model
+    def pos_refresh_search_balances(self, store_id=None, product_ids=None, pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_refresh_search_balances(
+            store_id=store_id,
+            product_ids=product_ids,
+        )
+
+    @api.model
+    def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False,
+                                 pos_hr_session_token=None):
+        session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
+        return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_refresh_pos_balances(
+            store_id=store_id,
+            product_ids=product_ids,
+            include_sync_metadata=include_sync_metadata,
+        )
+
+    @api.model
     def _validate_pos_hr_payload(self, payload):
         session_token = str(payload.get("pos_hr_session_token") or "").strip()
         if not session_token:
@@ -21,17 +133,12 @@ class AbSalesPosApi(models.TransientModel):
             store_id = 0
         if not store_id:
             raise UserError(_("Store is required."))
-        if session.store_id.id != store_id:
-            target_store = session_api._get_store(store_id, required=True)
-            session_api._check_service_user(target_store)
-            profile = session._get_pos_profile()
-            if not profile or not profile._is_store_allowed_for_pos(target_store):
-                raise UserError(_("Employee session does not match the selected store."))
-            session.write({"store_id": target_store.id})
-
         profile = session._get_pos_profile()
         if not profile:
             raise UserError(_("Employee POS profile is missing."))
+        target_store = session_api._require_connectable_store(store_id, profile=profile)
+        if session.store_id != target_store:
+            session.write({"store_id": target_store.id})
 
         session.mark_activity()
         return session

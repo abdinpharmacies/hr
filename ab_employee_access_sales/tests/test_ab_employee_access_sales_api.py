@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 from odoo.tests.common import TransactionCase
 
 
@@ -16,33 +16,75 @@ class TestAbSalesHrApi(TransactionCase):
             "name": "Branch Service User",
             "login": "branch_service_user",
             "email": "branch_service_user@example.com",
-            "groups_id": [(6, 0, [group_user.id])],
+            "group_ids": [(6, 0, [group_user.id])],
         })
         self.hr_manager_user = Users.create({
             "name": "POS HR Manager User",
             "login": "pos_hr_manager_user",
             "email": "pos_hr_manager_user@example.com",
-            "groups_id": [(6, 0, [group_user.id, group_manager.id])],
+            "group_ids": [(6, 0, [group_user.id, group_manager.id])],
         })
         self.normal_user = Users.create({
             "name": "Normal POS User",
             "login": "normal_pos_user",
             "email": "normal_pos_user@example.com",
-            "groups_id": [(6, 0, [group_user.id])],
+            "group_ids": [(6, 0, [group_user.id])],
         })
 
         self.store = self.env["ab_store"].sudo().create({
             "name": "POS HR Test Store",
             "code": "POS-HR",
             "allow_sale": True,
+            "eplus_serial": 81001,
             "pos_service_user_id": self.service_user.id,
         })
         self.store_2 = self.env["ab_store"].sudo().create({
             "name": "POS HR Test Store 2",
             "code": "POS-HR-2",
             "allow_sale": True,
+            "eplus_serial": 81002,
             "pos_service_user_id": self.service_user.id,
         })
+        self.store_unconfigured = self.env["ab_store"].sudo().create({
+            "name": "POS HR Test Store 3",
+            "code": "POS-HR-3",
+            "allow_sale": True,
+            "eplus_serial": 81003,
+        })
+        self.store_inactive = self.env["ab_store"].sudo().create({
+            "name": "POS HR Inactive Store",
+            "code": "POS-HR-I",
+            "allow_sale": True,
+            "active": False,
+            "eplus_serial": 81004,
+        })
+        self.store_sale_disabled = self.env["ab_store"].sudo().create({
+            "name": "POS HR Sale Disabled Store",
+            "code": "POS-HR-D",
+            "allow_sale": False,
+            "eplus_serial": 81005,
+        })
+        administrator = self.env.ref("base.user_admin")
+        self.rpc_config = self.env["ab_sales_branch_rpc_config"].sudo().create({
+            "name": "POS HR Test RPC",
+            "store_id": self.store.id,
+            "db_serial": 91001,
+            "rpc_url": "https://pos-hr-test.example.com",
+            "rpc_db": "pos_hr_test",
+            "api_key": "test-api-key-1",
+            "administrator_id": administrator.id,
+        })
+        self.rpc_config.write({"enrollment_state": "ready", "can_post": True})
+        self.rpc_config_2 = self.env["ab_sales_branch_rpc_config"].sudo().create({
+            "name": "POS HR Test RPC 2",
+            "store_id": self.store_2.id,
+            "db_serial": 91002,
+            "rpc_url": "https://pos-hr-test-2.example.com",
+            "rpc_db": "pos_hr_test_2",
+            "api_key": "test-api-key-2",
+            "administrator_id": administrator.id,
+        })
+        self.rpc_config_2.write({"enrollment_state": "ready", "can_post": True})
 
         self.cashier_role = self.env["ab_employee_access_sales_role"].sudo().create({
             "name": "Cashier",
@@ -123,13 +165,9 @@ class TestAbSalesHrApi(TransactionCase):
             device_name="Unit Test Device",
         )
 
-    def _mock_action_submit(self, recordset):
-        for rec in recordset:
-            rec.write({
-                "status": "pending",
-                "eplus_serial": rec.eplus_serial or (900000 + rec.id),
-            })
-        return True
+    def _mock_local_pos_submit(self, pos_api, payload):
+        header, _duplicate, _policy = pos_api._pos_create_prepending_header_from_payload(payload)
+        return pos_api._pos_submit_response(header, apply_submit=False)
 
     def test_employee_login_opens_session(self):
         payload = self._login_cashier()
@@ -171,6 +209,107 @@ class TestAbSalesHrApi(TransactionCase):
         self.assertEqual(updated["store"]["id"], self.store_2.id)
         self.assertEqual(session.store_id, self.store_2)
 
+    def test_scope_without_replica_or_profile_restriction_uses_all_sale_stores(self):
+        self.cashier_profile.write({"pos_allowed_store_ids": [(5, 0, 0)]})
+        scope = self.env["ab_employee_access_sales_pos_api"].with_user(self.normal_user)._resolve_pos_store_scope(
+            profile=self.cashier_profile,
+        )
+        self.assertIn(self.store.id, scope["visible_store_ids"])
+        self.assertIn(self.store_2.id, scope["visible_store_ids"])
+        self.assertIn(self.store_unconfigured.id, scope["visible_store_ids"])
+        self.assertNotIn(self.store_inactive.id, scope["visible_store_ids"])
+        self.assertNotIn(self.store_sale_disabled.id, scope["visible_store_ids"])
+        self.assertEqual(
+            {self.store.id, self.store_2.id},
+            {store_id for store_id in scope["available_store_ids"] if store_id in {self.store.id, self.store_2.id}},
+        )
+        unconfigured = next(row for row in scope["stores"] if row["id"] == self.store_unconfigured.id)
+        self.assertFalse(unconfigured["connection_ready"])
+        self.assertEqual(unconfigured["connection_state"], "not_configured")
+        self.assertEqual(unconfigured["connection_message"], "Branch connection is not configured. Contact support.")
+
+    def test_scope_applies_replica_and_profile_intersection(self):
+        replica = self.env["ab_replica_db"].sudo().create({
+            "name": "POS HR Replica Scope",
+            "db_serial": 99101,
+            "allowed_sales_store_ids": [(6, 0, [self.store_2.id])],
+            "default_sales_store_id": self.store_2.id,
+        })
+        replica_model = type(self.env["ab_replica_db"])
+        api = self.env["ab_employee_access_sales_pos_api"].with_user(self.normal_user)
+        self.cashier_profile.write({"pos_allowed_store_ids": [(5, 0, 0)]})
+        with patch.object(replica_model, "get_current_from_config", autospec=True, return_value=replica):
+            replica_only = api._resolve_pos_store_scope(profile=self.cashier_profile)
+        self.assertEqual(replica_only["visible_store_ids"], [self.store_2.id])
+        self.assertEqual(replica_only["default_store"], self.store_2)
+
+        self.cashier_profile.write({"pos_allowed_store_ids": [(6, 0, [self.store.id])]})
+        with patch.object(replica_model, "get_current_from_config", autospec=True, return_value=replica):
+            disjoint = api._resolve_pos_store_scope(profile=self.cashier_profile)
+        self.assertFalse(disjoint["visible_store_ids"])
+        self.assertEqual(disjoint["empty_reason"], "permission")
+        self.assertEqual(disjoint["empty_message"], "No stores match the Replica DB and employee permissions.")
+
+    def test_scope_does_not_bypass_profile_for_admin_manager_or_service_assignment(self):
+        self.cashier_profile.write({"pos_allowed_store_ids": [(6, 0, [self.store.id])]})
+        sales_manager = self.hr_manager_user
+        sales_manager.write({"group_ids": [(4, self.env.ref("ab_sales.group_ab_sales_manager").id)]})
+        self.normal_user.write({"group_ids": [(4, self.env.ref("ab_sales.group_call_center").id)]})
+        self.env["ab_hr_department"].sudo().create({
+            "name": "POS HR Unrelated Department",
+            "store_id": self.store_2.id,
+            "user_id": self.normal_user.id,
+        })
+        api_model = self.env["ab_employee_access_sales_pos_api"]
+        for user in (self.env.ref("base.user_admin"), sales_manager, self.normal_user):
+            scope = api_model.with_user(user)._resolve_pos_store_scope(profile=self.cashier_profile)
+            self.assertIn(self.store.id, scope["available_store_ids"])
+            self.assertNotIn(self.store_2.id, scope["visible_store_ids"])
+
+    def test_not_ready_store_is_visible_and_rejected(self):
+        self.rpc_config_2.write({"can_post": False})
+        scope = self.env["ab_employee_access_sales_pos_api"].with_user(self.service_user)._resolve_pos_store_scope(
+            profile=self.cashier_profile,
+        )
+        row = next(item for item in scope["stores"] if item["id"] == self.store_2.id)
+        self.assertFalse(row["connection_ready"])
+        self.assertEqual(row["connection_state"], "posting_disabled")
+        login = self._login_cashier()
+        with self.assertRaisesRegex(UserError, "Branch connection is not configured"):
+            self.env["ab_employee_access_sales_pos_api"].with_user(self.service_user).change_store(
+                session_token=login["token"],
+                store_id=self.store_2.id,
+            )
+
+    def test_session_token_is_bound_to_current_internal_user(self):
+        login = self._login_cashier()
+        with self.assertRaises(UserError):
+            self.env["ab_employee_access_sales_pos_api"].with_user(self.normal_user).heartbeat(login["token"])
+
+    def test_product_rpc_rejects_profile_out_of_scope_store(self):
+        self.cashier_profile.write({"pos_allowed_store_ids": [(6, 0, [self.store.id])]})
+        login = self._login_cashier()
+        with self.assertRaises(AccessError):
+            self.env["ab_sales_pos_api"].with_user(self.service_user).pos_product_details(
+                self.store_2.id,
+                self.product.id,
+                pos_hr_session_token=login["token"],
+            )
+
+    def test_user_can_read_only_own_trusted_callcenter_bill_without_branch_assignment(self):
+        own_header = self.env["ab_sales_header"].with_user(self.normal_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "description": "Own trusted POS bill",
+        })
+        other_header = self.env["ab_sales_header"].with_user(self.service_user)._create_callcenter_order({
+            "store_id": self.store.id,
+            "description": "Other trusted POS bill",
+        })
+        visible = self.env["ab_sales_header"].with_user(self.normal_user).search([
+            ("id", "in", [own_header.id, other_header.id]),
+        ])
+        self.assertEqual(visible, own_header)
+
     def test_eplus_employee_uses_return_login_session_employee(self):
         payload = self.env["ab_employee_access_sales_pos_api"].with_user(self.service_user).employee_login(
             employee_id=self.manager_employee.id,
@@ -183,15 +322,22 @@ class TestAbSalesHrApi(TransactionCase):
             "store_id": self.store.id,
             "description": "Return employee test",
         })
-        resolved = header.with_context(ab_return_session_token=payload["token"])._get_eplus_emp_id()
+        resolved = header.with_user(self.service_user).with_context(
+            ab_return_session_token=payload["token"],
+        )._get_eplus_emp_id()
         self.assertEqual(resolved, self.manager_costcenter.eplus_serial)
 
     def test_pos_submit_tracks_employee_session_and_log(self):
         login_payload = self._login_cashier()
         pos_api = self.env["ab_sales_pos_api"].with_user(self.service_user)
-        model_cls = type(self.env["ab_sales_header"])
+        pos_api_cls = type(pos_api)
 
-        with patch.object(model_cls, "action_submit", autospec=True, side_effect=self._mock_action_submit):
+        with patch.object(
+            pos_api_cls,
+            "_pos_submit_to_branch_rpc",
+            autospec=True,
+            side_effect=self._mock_local_pos_submit,
+        ):
             result = pos_api.pos_submit({
                 "header": {
                     "store_id": self.store.id,
@@ -230,9 +376,14 @@ class TestAbSalesHrApi(TransactionCase):
     def test_pos_submit_keeps_actual_salesperson_and_tracks_logged_employee(self):
         login_payload = self._login_cashier()
         pos_api = self.env["ab_sales_pos_api"].with_user(self.service_user)
-        model_cls = type(self.env["ab_sales_header"])
+        pos_api_cls = type(pos_api)
 
-        with patch.object(model_cls, "action_submit", autospec=True, side_effect=self._mock_action_submit):
+        with patch.object(
+            pos_api_cls,
+            "_pos_submit_to_branch_rpc",
+            autospec=True,
+            side_effect=self._mock_local_pos_submit,
+        ):
             result = pos_api.pos_submit({
                 "header": {
                     "store_id": self.store.id,

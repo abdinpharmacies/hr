@@ -1,7 +1,7 @@
 import json
 
 from odoo import api, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.http import request
 
 
@@ -23,11 +23,118 @@ class AbSalesHrPosApi(models.TransientModel):
 
     @api.model
     def _allowed_service_store_domain(self):
-        domain = [("allow_sale", "=", True)]
-        if self.env.user.has_group("base.group_system"):
-            return domain
-        domain.extend(["|", ("pos_service_user_id", "=", False), ("pos_service_user_id", "=", self.env.user.id)])
-        return domain
+        return [("active", "=", True), ("allow_sale", "=", True)]
+
+    @api.model
+    def _require_internal_user(self):
+        if not self.env.user.active or self.env.user.share:
+            raise AccessError(_("An active internal Odoo user is required to use POS."))
+        return True
+
+    @api.model
+    def _connection_message(self):
+        return _("Branch connection is not configured. Contact support.")
+
+    @api.model
+    def _resolve_pos_store_scope(self, profile=False):
+        self._require_internal_user()
+        Store = self.env["ab_store"].sudo()
+        base_stores = Store.search(self._allowed_service_store_domain(), order="name, id")
+        stores = base_stores
+        replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
+        replica_store_ids = set()
+        if replica_db and replica_db.allowed_sales_store_ids:
+            replica_store_ids = set(replica_db.allowed_sales_store_ids.ids)
+            stores = stores.filtered(lambda store: store.id in replica_store_ids)
+        profile = profile.sudo().exists()[:1] if profile else self.env["ab_employee_access"]
+        profile_store_ids = set()
+        if profile and profile.pos_allowed_store_ids:
+            profile_store_ids = set(profile.pos_allowed_store_ids.ids)
+            stores = stores.filtered(lambda store: store.id in profile_store_ids)
+
+        configs = self.env["ab_sales_branch_rpc_config"].sudo().with_context(active_test=False).search([
+            ("store_id", "in", stores.ids),
+        ])
+        configs_by_store = {}
+        for config in configs.sorted(lambda item: (not item.active, item.id)):
+            configs_by_store.setdefault(config.store_id.id, config)
+
+        rows = []
+        available_stores = Store
+        unavailable_message = self._connection_message()
+        for store in stores:
+            config = configs_by_store.get(store.id)
+            ready = bool(
+                config
+                and config.active
+                and config.enrollment_state == "ready"
+                and config.can_post
+                and config.api_key
+            )
+            if not config:
+                connection_state = "not_configured"
+            elif not config.active:
+                connection_state = "inactive"
+            elif config.enrollment_state != "ready" or not config.api_key:
+                connection_state = "verification_required"
+            elif not config.can_post:
+                connection_state = "posting_disabled"
+            else:
+                connection_state = "ready"
+            if ready:
+                available_stores |= store
+            rows.append({
+                "id": store.id,
+                "name": store.display_name or store.name or "",
+                "code": store.code or "",
+                "ip1": store.ip1 or "",
+                "connection_ready": ready,
+                "connection_state": connection_state,
+                "connection_message": "" if ready else unavailable_message,
+            })
+
+        default_store = Store
+        if replica_db and replica_db.default_sales_store_id in available_stores:
+            default_store = replica_db.default_sales_store_id
+        elif available_stores:
+            default_store = available_stores[:1]
+
+        restricted_to_empty = bool(base_stores and not stores and (replica_store_ids or profile_store_ids))
+        if restricted_to_empty:
+            empty_reason = "permission"
+            empty_message = _("No stores match the Replica DB and employee permissions.")
+        elif stores and not available_stores:
+            empty_reason = "connection"
+            empty_message = unavailable_message
+        elif not stores:
+            empty_reason = "no_stores"
+            empty_message = _("No stores available.")
+        else:
+            empty_reason = ""
+            empty_message = ""
+        return {
+            "visible_stores": stores,
+            "available_stores": available_stores,
+            "default_store": default_store,
+            "stores": rows,
+            "visible_store_ids": stores.ids,
+            "available_store_ids": available_stores.ids,
+            "empty_reason": empty_reason,
+            "empty_message": empty_message,
+        }
+
+    @api.model
+    def _require_connectable_store(self, store_id, profile=False):
+        try:
+            parsed_store_id = int(store_id or 0)
+        except Exception:
+            parsed_store_id = 0
+        scope = self._resolve_pos_store_scope(profile=profile)
+        if parsed_store_id not in scope["visible_store_ids"]:
+            raise AccessError(_("Selected store is outside the effective POS scope."))
+        if parsed_store_id not in scope["available_store_ids"]:
+            raise UserError(self._connection_message())
+        return scope["available_stores"].filtered(lambda store: store.id == parsed_store_id)[:1]
 
     @api.model
     def _get_store(self, store_id, required=True):
@@ -40,29 +147,18 @@ class AbSalesHrPosApi(models.TransientModel):
             limit=1,
         )
         if required and not store:
-            raise UserError(_("Selected store is not available for the current service user."))
+            raise UserError(_("Selected store is not available for POS."))
         return store
 
     @api.model
     def _available_stores_for_profile(self, profile):
-        profile = profile.sudo().exists()[:1]
-        stores = self.env["ab_store"].sudo().search(self._allowed_service_store_domain(), order="name")
-        if not profile:
-            return stores
-        if profile.pos_allowed_store_ids:
-            stores = stores.filtered(lambda store: store.id in profile.pos_allowed_store_ids.ids)
-        return stores
+        return self._resolve_pos_store_scope(profile=profile)["available_stores"]
 
     @api.model
     def _check_service_user(self, store):
         store = store.exists()
         if not store:
             raise UserError(_("Store not found."))
-        if self.env.user.has_group("base.group_system"):
-            return True
-        service_user = store.pos_service_user_id
-        if service_user and service_user.id != self.env.user.id:
-            raise UserError(_("Store %s is assigned to another service user.") % (store.display_name,))
         return True
 
     @api.model
@@ -89,8 +185,9 @@ class AbSalesHrPosApi(models.TransientModel):
 
     @api.model
     def _get_session(self, session_token, states=None, required=True):
+        self._require_internal_user()
         session = self.env["ab_employee_access_sales_pos_session"].sudo().search(
-            self._session_domain(session_token, states=states),
+            self._session_domain(session_token, states=states) + [("service_user_id", "=", self.env.uid)],
             limit=1,
         )
         if required and not session:
@@ -165,17 +262,25 @@ class AbSalesHrPosApi(models.TransientModel):
 
     @api.model
     def pos_bootstrap(self, session_token=False, store_id=False, device_uid="", device_name=""):
-        stores = self.env["ab_store"].sudo().search(self._allowed_service_store_domain(), order="name")
         session_payload = False
+        session = self.env["ab_employee_access_sales_pos_session"]
+        profile = self.env["ab_employee_access"]
         if session_token:
             session = self._get_session(session_token, states=["active", "locked"], required=False)
             if session:
-                session_payload = session.payload()
-        current_store = self._get_store(store_id, required=False) if store_id else self.env["ab_store"]
-        default_store = current_store[:1] or stores[:1]
+                profile = session._get_pos_profile()
+        scope = self._resolve_pos_store_scope(profile=profile)
+        if session and session.store_id.id in scope["available_store_ids"]:
+            session_payload = session.payload()
+        default_store = scope["default_store"]
         return {
-            "allowed_store_ids": stores.ids,
+            "stores": scope["stores"],
+            "visible_store_ids": scope["visible_store_ids"],
+            "available_store_ids": scope["available_store_ids"],
+            "allowed_store_ids": scope["available_store_ids"],
             "default_store_id": default_store.id if default_store else False,
+            "empty_reason": scope["empty_reason"],
+            "empty_message": scope["empty_message"],
             "service_user_id": self.env.user.id,
             "service_user_name": self.env.user.display_name,
             "require_employee_login": True,
@@ -224,19 +329,16 @@ class AbSalesHrPosApi(models.TransientModel):
         if not profile.check_pos_pin(pin):
             raise UserError(_("Employee PIN is invalid."))
 
-        if store_id:
-            store = self._get_store(store_id, required=True)
-            self._check_service_user(store)
-            if not profile._is_store_allowed_for_pos(store):
-                raise UserError(_("Employee is not allowed to work in store %s.") % (store.display_name,))
-        else:
-            store = self._available_stores_for_profile(profile)[:1]
-            if not store:
-                raise UserError(_("No POS store is available for this employee."))
-
         permissions = profile._effective_pos_permissions()
         if not permissions.get("allow_pos_screen"):
             raise UserError(_("Employee role does not allow POS screen access."))
+        scope = self._resolve_pos_store_scope(profile=profile)
+        if store_id:
+            store = self._require_connectable_store(store_id, profile=profile)
+        else:
+            store = scope["default_store"]
+            if not store:
+                raise UserError(scope["empty_message"] or _("No POS store is available for this employee."))
 
         normalized_device_uid = self._normalize_device_uid(device_uid)
         normalized_device_name = self._normalize_device_name(device_name, store=store)
@@ -284,6 +386,7 @@ class AbSalesHrPosApi(models.TransientModel):
         profile = session._get_pos_profile()
         if not profile or not profile.check_pos_pin(pin):
             raise UserError(_("Employee PIN is invalid."))
+        self._require_connectable_store(session.store_id.id, profile=profile)
         session.unlock_session()
         self._log_operation(
             "unlock",
@@ -311,6 +414,7 @@ class AbSalesHrPosApi(models.TransientModel):
     @api.model
     def heartbeat(self, session_token):
         session = self._get_session(session_token, states=["active"])
+        self._require_connectable_store(session.store_id.id, profile=session._get_pos_profile())
         session.mark_activity()
         return session.payload()
 
@@ -332,11 +436,10 @@ class AbSalesHrPosApi(models.TransientModel):
     @api.model
     def change_store(self, session_token, store_id):
         session = self._get_session(session_token, states=["active", "locked"])
-        store = self._get_store(store_id, required=True)
-        self._check_service_user(store)
         profile = session._get_pos_profile()
-        if not profile or not profile._is_store_allowed_for_pos(store):
-            raise UserError(_("Employee is not allowed to work in store %s.") % (store.display_name,))
+        if not profile:
+            raise UserError(_("Employee POS profile is missing."))
+        store = self._require_connectable_store(store_id, profile=profile)
         if session.store_id != store:
             session.write({"store_id": store.id})
             self._log_operation(
