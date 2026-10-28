@@ -202,6 +202,26 @@ class SalesPosBackend(models.TransientModel):
             return selected_server(self, store)
         return super()._get_store_server(store)
 
+    def _backend_converted_spare_values(self, store, serial, values):
+        """Verify a converted spare against its current, branch-owned E-Plus row."""
+        with self.connect_eplus(server=selected_server(self, store), param_str='?',
+                                charset='CP1256', autocommit=False) as connection:
+            with connection.cursor() as cursor:
+                row = self._bconnect_customer_by_id(cursor, serial)
+        if not row or row.get('eplus_serial') != serial or not row.get('active'):
+            return False
+        try:
+            source_store = int(row.get('cust_def_sell_store') or 0)
+        except (TypeError, ValueError):
+            return False
+        if (source_store != store.eplus_serial
+                or str(row.get('cust_code') or '').strip() != str(serial)):
+            return False
+        verified = self._customer_vals_from_bconnect(row, store)
+        if (not verified.get('active') or not (verified.get('name') or '').strip()
+                or verified.get('mobile_phone') != values.get('mobile_phone')):
+            return False
+        return verified
 
     def _backend_import_customer(self, values):
         store = request_store(self)
@@ -216,14 +236,26 @@ class SalesPosBackend(models.TransientModel):
         if len(matches) > 1:
             raise UserError(self.env._('The customer reference is duplicated on this branch. Review the customer records before retrying.'))
         customer = Customer.browse(matches.ids)
+        activate_spare = False
+        if customer:
+            customer.check_access('read')
+            if not customer.active:
+                if ((customer.code or '').strip().lower().startswith('spare')
+                        and customer.default_store_id == store):
+                    verified = self._backend_converted_spare_values(store, serial, values)
+                    if verified:
+                        values = verified
+                        activate_spare = True
+                if not activate_spare:
+                    raise UserError(self.env._('The customer is archived on this branch. Review the customer before using it.'))
         allowed = {'code', 'name', 'address', 'mobile_phone', 'work_phone', 'last_update_date',
                    'eplus_serial', 'eplus_create_date'}
         values = {key: value for key, value in values.items() if key in allowed}
         if customer:
-            customer.check_access('read')
-            if not customer.active:
-                raise UserError(self.env._('The customer is archived on this branch. Review the customer before using it.'))
-            customer.sudo().write(values)
+            customer.sudo().write(dict(values, active=True) if activate_spare else values)
+            if activate_spare:
+                _logger.info('Branch API activated converted spare E-Plus customer %s for store %s by user %s',
+                             serial, store.id, self.env.uid)
         else:
             Customer.check_access('create')
             customer = Customer.create(dict(values, default_store_id=store.id, active=True))
