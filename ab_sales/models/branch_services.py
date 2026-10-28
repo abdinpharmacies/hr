@@ -363,6 +363,17 @@ class ApiPosServices(models.TransientModel):
         client = self.env['ab_sales_branch_client']
         store = self.env['ab_store'].browse(int(store_id or 0)).exists()
         client._config(store)
+        phone = self._normalize_phone(phone)
+        if not phone:
+            raise UserError(_('Enter a phone number.'))
+        Customer = self.env['ab_customer']
+        Customer.check_access('read')
+        phone_domain = (fields.Domain('mobile_phone', '=', phone)
+                        | fields.Domain('work_phone', '=', phone)
+                        | fields.Domain('delivery_phone', '=', phone))
+        customer = Customer.search(fields.Domain('active', '=', True) & phone_domain, limit=1)
+        if customer:
+            return {'status': 'found', 'customer': self._customer_payload(customer)}
         return self._api_customer(store, client._call(store, 'lookup_customer', phone))
 
     @api.model
