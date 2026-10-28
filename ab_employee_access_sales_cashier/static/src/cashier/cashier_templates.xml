@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_employee_access_sales.CashierActionPatch" t-inherit="ab_sales.CashierAction" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'ab_cashier_window_body')]" position="inside">
+            <div class="ab_cashier_login_overlay" t-if="state.requirePinLogin &amp;&amp; !state.isAuthenticated">
+                <AbEmployeeAccessLoginPanel
+                        title="'Employee Login'"
+                        subtitle="cashierLoginPanelSubtitle()"
+                        showClose="true"
+                        onClose.bind="closeCashierLoginOverlay"
+                        showScreen="true"
+                        employee="cashierLoginPanelEmployeeValue()"
+                        employeeRelation="'ab_employee_access'"
+                        employeeDomain="[['pos_allow_login', '=', true]]"
+                        pin="cashierLoginPanelPinValue()"
+                        error="state.loginError"
+                        loading="state.loginLoading"
+                        showEmployee="true"
+                        showCancel="false"
+                        required="true"
+                        submitLabel="'Employee Login'"
+                        loadingLabel="'Signing in...'"
+                        employeeLabel="'Employee'"
+                        pinLabel="'PIN'"
+                        employeePlaceholder="'Select employee...'"
+                        pinPlaceholder="'Enter PIN'"
+                        pinInputName="'ab_sales_cashier_pin'"
+                        onSubmit.bind="submitCashierLoginPanel"
+                        onEmployeeUpdate.bind="onCashierLoginEmployeeUpdate"
+                        onPinInput.bind="cashierLoginPanelPinInput"
+                        onPinKeydown.bind="cashierLoginPanelPinKeydown"
+                />
+            </div>
+        </xpath>
+    </t>
+</templates>
