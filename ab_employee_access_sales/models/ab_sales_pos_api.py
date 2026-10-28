@@ -22,6 +22,7 @@ class AbSalesPosApi(models.TransientModel):
 
     @api.model
     def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
+                       contract_id=None, total_invoice_discount=0.0, customer_id=None,
                        pos_hr_session_token=None):
         session = self._require_pos_operation_session(pos_hr_session_token, store_id=store_id)
         return super(AbSalesPosApi, self.with_context(ab_pos_session_token=session.session_token)).pos_promotions(
@@ -29,6 +30,9 @@ class AbSalesPosApi(models.TransientModel):
             lines=lines,
             applied_program_id=applied_program_id,
             manual_clear=manual_clear,
+            contract_id=contract_id,
+            total_invoice_discount=total_invoice_discount,
+            customer_id=customer_id,
         )
 
     @api.model
