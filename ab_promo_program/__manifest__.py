@@ -12,7 +12,6 @@
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/ab_promo_program.xml',
-        'views/ab_promo_program_wizard.xml',
     ],
     # 'assets': {
     #     'web.assets_backend': [

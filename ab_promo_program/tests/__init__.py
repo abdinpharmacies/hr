@@ -1,1 +1,0 @@
-from . import test_promo_program_wizard_attachments
