@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 class AbSalesPosBalanceRefresh(models.TransientModel):
     _name = 'ab_sales_pos_api'
-    _inherit = ["ab_sales_pos_api", "ab_eplus_connect"]
+    _inherit = ["ab_sales_pos_api", "ab_sales_external_connector"]
 
     def _get_store_record(self, store_id):
         if not store_id:

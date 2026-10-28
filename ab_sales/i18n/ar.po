@@ -1776,3 +1776,14 @@ msgid ""
 msgstr ""
 "جميع خانات الفواتير المحلية البالغ عددها %s مشغولة. أزل فاتورة جاهزة أو "
 "مسودة قابلة للإزالة لإتاحة خانة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/external_connector.py:0
+msgid "Legacy E-Plus operations are unavailable. Install the optional Sales E-Plus Legacy module."
+msgstr "عمليات E-Plus القديمة غير متاحة. ثبّت إضافة مبيعات E-Plus القديمة الاختيارية."
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_external_connector
+msgid "Sales External Connector"
+msgstr "موصل المبيعات الخارجي"

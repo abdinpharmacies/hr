@@ -108,7 +108,7 @@ class AbSalesReturnHeaderRouter(models.Model):
             refund_total = float(repriced.get("refund_total") or 0.0)
             adjustments.update(
                 {
-                    # "total_bill_after_disc_delta": refund_total,
+                    "total_bill_after_disc_delta": refund_total,
                     "total_bill_net_delta": refund_total,
                     "fcs_current_balance_delta": refund_total,
                     "fh_value_delta": refund_total,

@@ -8,7 +8,6 @@ from typing import Literal
 from odoo import api, fields, models
 from odoo.tools.translate import _
 from odoo.exceptions import UserError, ValidationError
-from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 import decimal
 import logging
 
@@ -33,7 +32,7 @@ def _to_native(v):
 class AbdinSalesReturnHeader(models.Model):
     _name = 'ab_sales_return_header'
     _description = 'E-Plus Sales Return Header'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'ab_eplus_connect']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'ab_sales_external_connector']
     _rec_name = 'id'
     _order = 'id desc'
 
@@ -192,7 +191,7 @@ class AbdinSalesReturnHeader(models.Model):
         factory = getattr(pooled, '_reconnect_cb', None)
         if not factory:
             raise UserError(_('Connection to B-Connect failed.'))
-        return ConnectionProxy(factory(), wrap_dict_cursor=getattr(pooled, '_wrap_dict_cursor', False))
+        return self._clone_external_connection(pooled)
 
     def _return_marker_prefix(self):
         self.ensure_one()

@@ -7,8 +7,10 @@ import hashlib
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
-from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import DB, USER
-from odoo.addons.ab_eplus_connect.models.check_port_mssql import is_port_open
+from odoo.tools import config
+
+DB = config.get('bconnect_db')
+USER = config.get('bconnect_user')
 
 _logger = logging.getLogger(__name__)
 _request = ContextVar('ab_sales_backend_request', default=None)
@@ -55,7 +57,7 @@ def pin_server(model, store, server):
         server = (server or '').strip()
         if not server:
             raise UserError(model.env._('The selected store has no E-Plus server address.'))
-        if not is_port_open(server, port=1433):
+        if not model.is_port_open(server, port=1433):
             raise UserError(model.env._('The selected store E-Plus endpoint is unreachable.'))
         scope.server = server
     return scope.server
@@ -71,7 +73,7 @@ def selected_server(model, store=None):
 
 
 class SalesBackendConnector(models.AbstractModel):
-    _inherit = 'ab_eplus_connect'
+    _inherit = 'ab_sales_external_connector'
 
     @property
     def _connection_pool(self):

@@ -6,7 +6,7 @@ PARAM_STR = "?"
 
 class AbSalesUiStoreStatus(models.TransientModel):
     _name = "ab_sales_ui_api"
-    _inherit = ["ab_sales_ui_api", "ab_eplus_connect"]
+    _inherit = ["ab_sales_ui_api", "ab_sales_external_connector"]
 
     @api.model
     def pos_store_status(self, store_id=None):

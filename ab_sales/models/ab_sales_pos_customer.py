@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 
 class AbSalesPosCustomerApi(models.TransientModel):
     _name = 'ab_sales_pos_api'
-    _inherit = ["ab_sales_pos_api", "ab_eplus_connect"]
+    _inherit = ["ab_sales_pos_api", "ab_sales_external_connector"]
 
     @staticmethod
     def _normalize_phone(phone):

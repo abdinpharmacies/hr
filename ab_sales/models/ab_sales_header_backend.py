@@ -4,7 +4,6 @@ import hashlib
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 from odoo.tools import config
-from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 from .ab_sales_pos_backend import current_request, request_store, selected_server, pin_server
 
 class SalesHeaderBackend(models.Model):
@@ -77,14 +76,14 @@ class SalesHeaderBackend(models.Model):
         if not scope:
             return super()._get_submission_connection()
         pooled = self.get_connection()
-        if not isinstance(pooled, ConnectionProxy):
+        if not hasattr(pooled, '_reconnect_cb'):
             return pooled
         factory = scope.connection_factories.get(id(pooled))
         if not factory:
             raise UserError(_('Branch submission could not be confirmed. Retry the original bill.'))
         # The API read pool disables reconnect. Native sales still need a new
         # physical session, with neither reconnection nor statement replay.
-        return ConnectionProxy(factory(), wrap_dict_cursor=pooled._wrap_dict_cursor)
+        return self._clone_external_connection(pooled, factory=factory)
 
     def _backend_invoice_statuses(self, store, serials):
         """Branch-filtered committed status read; no lifecycle updates or commits."""

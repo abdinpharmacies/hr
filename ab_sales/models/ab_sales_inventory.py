@@ -45,7 +45,7 @@ class InventorySyncBusy(Exception):
 
 class InventoryEplus(models.Model):
     _name = 'ab_sales_inventory'
-    _inherit = ['ab_eplus_connect']
+    _inherit = ['ab_sales_external_connector']
     _description = 'ab_sales_inventory'
 
     product_eplus_serial = fields.Integer(index=True)

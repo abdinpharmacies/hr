@@ -11,7 +11,6 @@ from odoo import api, fields, models
 from odoo.tools.translate import _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools import config
-from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 
 PARAM_STR = '?'
 
@@ -308,7 +307,7 @@ class AbdinSalesHeader(models.Model):
     _description = 'ab_sales_header'
     _rec_name = 'id'
     _order = 'id desc'
-    _inherit = ['mail.thread', 'mail.activity.mixin', 'ab_eplus_connect']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'ab_sales_external_connector']
 
     repl_db = int(config.get('repl_db', 0)) or False
 
@@ -1295,13 +1294,10 @@ class AbdinSalesHeader(models.Model):
         so that neither another request nor a silent reconnect can commit half a bill.
         """
         pooled = self.get_connection()
-        if isinstance(pooled, ConnectionProxy):
+        if hasattr(pooled, '_reconnect_cb'):
             if not pooled._reconnect_cb:
                 raise UserError(_("Connection to E-Plus failed."))
-            return ConnectionProxy(
-                pooled._reconnect_cb(),
-                wrap_dict_cursor=pooled._wrap_dict_cursor,
-            )
+            return self._clone_external_connection(pooled)
         return pooled
 
     def action_retry(self):

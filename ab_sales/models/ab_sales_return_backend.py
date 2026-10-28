@@ -1,7 +1,6 @@
 """Backend boundary: live committed reads and native sales workflows."""
 from odoo import fields, models, _
 from odoo.exceptions import AccessError, UserError
-from odoo.addons.ab_eplus_connect.models.ab_eplus_connect import ConnectionProxy
 from .ab_sales_pos_backend import current_request, request_store, selected_server
 
 class SalesReturnBackend(models.Model):
@@ -157,7 +156,7 @@ class SalesReturnBackend(models.Model):
             raise UserError(_('Branch submission could not be confirmed. Retry the original bill.'))
         # Preserve API branch checks on the fresh native transaction. Neither
         # this connection nor its cursors may reconnect or replay statements.
-        connection = ConnectionProxy(factory(), wrap_dict_cursor=pooled._wrap_dict_cursor)
+        connection = self._clone_external_connection(pooled, factory=factory)
         return ReturnConnection(connection, self)
 
     def _backend_invoice_date(self, store, invoice, require_saved=False):

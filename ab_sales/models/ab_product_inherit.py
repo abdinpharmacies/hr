@@ -137,7 +137,7 @@ class ProductMetaData(models.Model):
 
 class Product(models.Model):
     _name = 'ab_product'
-    _inherit = ['abdin_et.extra_tools', 'ab_eplus_connect', 'ab_product']
+    _inherit = ['abdin_et.extra_tools', 'ab_sales_external_connector', 'ab_product']
 
     balance = fields.Float(compute='_compute_balance')
     has_balance = fields.Boolean(compute='_compute_has_balance', search='_search_has_balance')

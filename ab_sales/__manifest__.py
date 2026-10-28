@@ -4,7 +4,7 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_eplus_connect',
+    'depends': ['base', 'ab_customer', 'ab_contract', 'ab_product', 'ab_store', 'ab_inventory',
                 'abdin_et', 'ab_widgets', 'ab_hr'],
     'data': [
         'data/ir_cron.xml',
