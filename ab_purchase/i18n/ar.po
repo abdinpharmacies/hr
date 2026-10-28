@@ -181,6 +181,14 @@ msgid "Saved purchase invoice lines cannot be changed."
 msgstr "لا يمكن تعديل بنود فاتورة المشتريات المحفوظة."
 
 #. module: ab_purchase
+#. odoo-python
+#: code:addons/ab_purchase/models/ab_purchase_header.py:0
+#: code:addons/ab_purchase/models/ab_purchase_line.py:0
+#: code:addons/ab_purchase/models/ab_purchase_source_guard.py:0
+msgid "Submitted purchase records cannot be changed."
+msgstr "لا يمكن تغيير سجلات الشراء بعد تقديمها."
+
+#. module: ab_purchase
 msgid "Only purchase managers can save notices into stock."
 msgstr "يمكن لمديري المشتريات فقط حفظ الإشعارات في المخزون."
 

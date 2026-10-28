@@ -188,6 +188,12 @@ class AbdinPurchaseHeader(models.Model):
     def write(self, vals):
         if 'status' in vals:
             raise ValidationError(_("Use the purchase inventory actions to change status."))
+        protected = {
+            'supplier_id', 'store_id', 'doc_code', 'doc_date', 'net_invoice', 'net_tax',
+            'total_extra_discount_percentage', 'total_extra_discount', 'invoice_type', 'line_ids',
+        }
+        if protected.intersection(vals) and any(invoice.status != 'prepending' for invoice in self):
+            raise ValidationError(_("Submitted purchase records cannot be changed."))
         return super().write(vals)
 
     def unlink(self):

@@ -124,21 +124,13 @@ class AbdinPurchaseDetails(models.Model):
                 })
 
     def write(self, vals):
-        if any(rec.header_id.status == 'saved' for rec in self):
-            raise UserError(_("Saved purchase invoice lines cannot be changed."))
+        if any(rec.header_id.status != 'prepending' for rec in self):
+            raise UserError(_("Submitted purchase records cannot be changed."))
         if 'header_id' in vals:
             destination = self.env['ab_purchase_header'].browse(vals['header_id'])
             if destination.status != 'prepending' or any(line.header_id.status != 'prepending' for line in self):
                 raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
-        with self.env.cr.savepoint():
-            result = super().write(vals)
-            if {'qty', 'bonus', 'source_id', 'uom_id'} & vals.keys():
-                for rec in self.filtered(lambda line: line.header_id.status == 'pending'):
-                    rec.env['ab_inventory_process'].inventory_write(
-                        rec, rec.qty + rec.bonus, rec.header_id.store_id.id,
-                        status='pending',
-                    )
-        return result
+        return super().write(vals)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -146,7 +138,13 @@ class AbdinPurchaseDetails(models.Model):
             header = self.env['ab_purchase_header'].browse(vals.get('header_id'))
             if header.exists() and header.status != 'prepending':
                 raise ValidationError(_("Purchase lines cannot be added or deleted after submission."))
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        for line in records:
+            if 'integration_origin_model' in line.source_id._fields:
+                line.source_id._bind_origin(
+                    line.header_id.store_id, line.header_id._name, line.header_id.id, 'purchase',
+                )
+        return records
 
     def unlink(self):
         if any(line.header_id.status != 'prepending' for line in self):

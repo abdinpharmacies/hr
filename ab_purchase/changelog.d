@@ -13,6 +13,9 @@ Current changes before commit:
 - Place Unit beside Product and Sale price beside Quantity in quick entry and invoice lines; align Enter-key navigation with the new order.
 - Rename purchase screen and form labels from selling price to sale price, including the validation message.
 - Translate the new calculator, search, and submission messages in both Arabic catalogs.
+- Block direct ORM changes to submitted purchase headers, lines, and source economics.
+- Bind purchase sources to their originating invoice and branch when stock integration is installed.
+- Verify receipt, supplier-return, accounting rollback, idempotency, and branch isolation through the backend QA runner.
 
 Files changed:
 
@@ -22,6 +25,8 @@ Files changed:
 - ab_purchase/static/src/entry/purchase_entry.scss
 - ab_purchase/models/ab_purchase_entry.py
 - ab_purchase/models/ab_purchase_header.py
+- ab_purchase/models/ab_purchase_line.py
+- ab_purchase/models/ab_purchase_source_guard.py
 - ab_purchase/views/ab_purchase_header.xml
 - ab_purchase/__manifest__.py
 - ab_purchase/i18n/ar.po
