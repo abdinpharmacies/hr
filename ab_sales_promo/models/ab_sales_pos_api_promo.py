@@ -12,7 +12,26 @@ class AbSalesPosApi(models.TransientModel):
 
     @api.model
     def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
-                       contract_id=None, total_invoice_discount=0.0, customer_id=None):
+                       contract_id=None, total_invoice_discount=0.0, customer_id=None,
+                       pos_hr_session_token=None):
+        token = pos_hr_session_token or self.env.context.get("ab_pos_session_token")
+        super(AbSalesPosApi, self.with_context(ab_pos_session_token=token)).pos_promotions(
+            store_id=store_id,
+            lines=[],
+        )
+        return self._pos_promotions_preview(
+            store_id=store_id,
+            lines=lines,
+            applied_program_id=applied_program_id,
+            manual_clear=manual_clear,
+            contract_id=contract_id,
+            total_invoice_discount=total_invoice_discount,
+            customer_id=customer_id,
+        )
+
+    @api.model
+    def _pos_promotions_preview(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
+                                contract_id=None, total_invoice_discount=0.0, customer_id=None):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_promo_program", "ab_product_uom")
         replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if isinstance(manual_clear, str):
@@ -309,7 +328,7 @@ class AbSalesPosApi(models.TransientModel):
         program = payload.get('applied_program_id')
         if program:
             header = payload.get('header') or {}
-            preview = self.pos_promotions(
+            preview = self._pos_promotions_preview(
                 store_id=header.get('store_id'), lines=payload.get('lines'),
                 applied_program_id=program, manual_clear=False,
                 customer_id=header.get('customer_id'), contract_id=header.get('contract_id'),

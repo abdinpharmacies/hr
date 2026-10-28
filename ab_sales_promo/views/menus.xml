@@ -16,12 +16,5 @@
             sequence="10"
         />
 
-        <menuitem
-            id="ab_sales_promo_wizard_menu"
-            name="Promotion Wizard"
-            parent="ab_sales_promo_sub_menu"
-            action="ab_promo_program.ab_promo_program_wizard_action"
-            sequence="20"
-        />
     </data>
 </odoo>
