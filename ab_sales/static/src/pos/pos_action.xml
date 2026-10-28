@@ -583,19 +583,10 @@
                 <div t-if="state.busy" role="status"><i class="fa fa-spinner fa-spin me-1" aria-hidden="true"/>Loading drafts...</div>
                 <div t-if="state.tab === 'new'">
                     <label class="form-label">Store</label>
-                    <div class="list-group">
-                        <button t-foreach="props.stores" t-as="store" t-key="store.id" type="button"
-                                t-attf-class="list-group-item list-group-item-action #{state.store?.id === store.id ? 'active' : ''}"
-                                t-att-disabled="state.busy || !storeReady(store)"
-                                t-on-click="() => selectStore(store)">
-                            <div class="d-flex justify-content-between align-items-center gap-2">
-                                <span><t t-esc="store.name || store.code || '-'"/> <small t-if="store.code" t-esc="store.code"/></span>
-                                <span t-if="storeReady(store)" class="badge text-bg-success">Ready</span>
-                                <span t-else="" class="badge text-bg-secondary">Unavailable</span>
-                            </div>
-                            <div t-if="!storeReady(store)" class="small text-muted mt-1" t-esc="connectionMessage(store)"/>
-                        </button>
-                    </div>
+                    <ABMany2one relation="'ab_store'" value="state.store" update="onStoreUpdate"
+                                domain="storeDomain" placeholder.translate="Select store..." canCreate="false"
+                                canCreateEdit="false" canQuickCreate="false" canOpen="false"
+                                canWrite="true" string.translate="Store"/>
                     <div t-if="props.emptyMessage &amp;&amp; !hasReadyStore"
                          class="alert alert-warning mt-3 mb-0" t-esc="props.emptyMessage"/>
                     <button class="btn btn-primary mt-3" type="button" t-on-click="confirm"

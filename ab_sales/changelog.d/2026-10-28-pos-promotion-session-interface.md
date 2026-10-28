@@ -26,7 +26,10 @@ Files changed:
 
 Current changes before commit:
 - Accept the shared promotion preview arguments in the base POS fallback.
+- Restore the searchable store selector in the New Bill dialog and reject selections outside the available, ready stores.
 
 Files changed:
 - ab_sales/changelog.d/2026-10-28-pos-promotion-session-interface.md
 - ab_sales/models/ab_sales_pos_api.py
+- ab_sales/static/src/pos/pos_action.js
+- ab_sales/static/src/pos/pos_action.xml

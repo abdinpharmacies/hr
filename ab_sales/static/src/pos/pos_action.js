@@ -121,7 +121,6 @@ class AbSalesPosStoreDialog extends Component {
             }
         }
         this.storeDomain = this.storeDomain.bind(this);
-        this.selectStore = this.selectStore.bind(this);
     }
 
     get title() {
@@ -138,28 +137,15 @@ class AbSalesPosStoreDialog extends Component {
 
     onStoreUpdate(value) {
         if (value && value.id) {
-            this.state.store = value;
+            const store = (this.props.stores || []).find((row) => row.id === value.id);
+            this.state.store = this.storeReady(store) ? value : false;
         } else {
             this.state.store = false;
         }
     }
 
     storeReady(store) {
-        return store?.connection_ready !== false;
-    }
-
-    selectStore(store) {
-        if (!this.storeReady(store) || this.state.busy) {
-            return;
-        }
-        this.state.store = {
-            id: store.id,
-            display_name: store.name || store.code || "",
-        };
-    }
-
-    connectionMessage(store) {
-        return store?.connection_message || this.props.emptyMessage || _t("Branch connection is not configured. Contact support.");
+        return !!store && store.connection_ready !== false;
     }
 
     async confirm() {
