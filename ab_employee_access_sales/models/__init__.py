@@ -7,6 +7,5 @@ from . import ab_employee_access_sales_pos_session
 from . import ab_employee_access_sales_operation_log
 from . import ab_employee_access_sales_pos_api
 from . import ab_sales_header
-from . import ab_sales_cashier_api_inherit
 from . import ab_sales_pos_api
 from . import ab_sales_return_ui_api_inherit

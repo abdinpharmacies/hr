@@ -1,5 +1,20 @@
 Current changes before commit:
 
+- Move cashier-specific employee PIN/session integration and assets to the optional `ab_employee_access_sales_cashier` bridge.
+- Keep employee POS and return access installable without the cashier addon.
+
+Files changed:
+
+- ab_employee_access_sales/__manifest__.py
+- ab_employee_access_sales/changelog.d
+- ab_employee_access_sales/models/__init__.py
+- ab_employee_access_sales/models/ab_sales_cashier_api_inherit.py
+- ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier.scss
+- ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier_patch.js
+- ab_employee_access_sales/static/src/cashier/ab_employee_access_sales_cashier_templates.xml
+
+Previous current changes:
+
 - Disable login on every existing profile for a nonworking employee, including archived employees; continue skipping profile creation for nonworking employees.
 - Reenable existing disabled profiles, including manually disabled profiles, when the employee is active and working with an active assigned role and a department store. Preserve the login flag when other eligibility conditions are unmet.
 - Replace an existing single allowed store when it differs from the current department store. Preserve empty and multiple-store lists as administrator configuration; synchronize stores independently of login eligibility.

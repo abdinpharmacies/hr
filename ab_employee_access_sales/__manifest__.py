@@ -7,7 +7,7 @@
     "depends": [
         "web",
         "ab_widgets",
-        "ab_sales_cashier",
+        "ab_sales",
         "ab_employee_access",
         "ab_hr",
     ],
@@ -26,9 +26,6 @@
     ],
     "assets": {
         "web.assets_backend": [
-            "ab_employee_access_sales/static/src/cashier/**/*.js",
-            "ab_employee_access_sales/static/src/cashier/**/*.xml",
-            "ab_employee_access_sales/static/src/cashier/**/*.scss",
             "ab_employee_access_sales/static/src/pos/**/*.js",
             "ab_employee_access_sales/static/src/pos/**/*.xml",
             "ab_employee_access_sales/static/src/pos/**/*.scss",
