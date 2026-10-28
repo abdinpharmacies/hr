@@ -332,8 +332,10 @@ class ApiPosServices(models.TransientModel):
         result['_refreshed_at'] = fields.Datetime.to_string(fields.Datetime.now())
         return result
 
-    def _api_customer(self, store, result):
-        self.env['ab_sales_branch_client']._config(store)._validate_identity(result)
+    def _api_customer(self, store, result, phone=None):
+        client = self.env['ab_sales_branch_client']
+        config = client._config(store)
+        config._validate_identity(result)
         customer = result.get('customer')
         if not customer:
             return result
@@ -348,8 +350,24 @@ class ApiPosServices(models.TransientModel):
         if record:
             self.env['ab_customer'].browse(record.id).check_access('read')
             if not record.active:
-                raise UserError(_('The customer is archived in callcenter. Review the customer before using it.'))
-            record.write(values)
+                if (not phone or not (record.code or '').strip().lower().startswith('spare')
+                        or record.default_store_id != store):
+                    raise UserError(_('The customer is archived in callcenter. Review the customer before using it.'))
+                fresh = client._call(store, 'lookup_customer', phone)
+                config._validate_identity(fresh)
+                verified = fresh.get('customer') if fresh.get('status') == 'found' else None
+                serial = values['eplus_serial']
+                if (not isinstance(verified, dict)
+                        or verified.get('eplus_serial') != serial
+                        or str(verified.get('code') or '').strip() != str(serial)
+                        or verified.get('mobile_phone') != phone
+                        or not (verified.get('name') or '').strip()):
+                    raise UserError(_('The customer is archived in callcenter. Review the customer before using it.'))
+                values = {k: verified[k] for k in ('name', 'code', 'mobile_phone', 'work_phone', 'address', 'eplus_serial')
+                          if k in verified}
+                record.write(dict(values, active=True))
+            else:
+                record.write(values)
         else:
             record = Customer.create(dict(values, default_store_id=store.id))
         record = self.env['ab_customer'].browse(record.id)
@@ -374,7 +392,7 @@ class ApiPosServices(models.TransientModel):
         customer = Customer.search(fields.Domain('active', '=', True) & phone_domain, limit=1)
         if customer:
             return {'status': 'found', 'customer': self._customer_payload(customer)}
-        return self._api_customer(store, client._call(store, 'lookup_customer', phone))
+        return self._api_customer(store, client._call(store, 'lookup_customer', phone), phone=phone)
 
     @api.model
     def pos_customer_create(self, phone=None, name=None, address=None, store_id=None):
@@ -391,7 +409,7 @@ class ApiPosServices(models.TransientModel):
         if log:
             status = client._call(store, 'get_operation_status', token)
             if status['state'] == 'done':
-                return self._api_customer(store, status['result'])
+                return self._api_customer(store, status['result'], phone=validated['phone'])
             if status['state'] not in ('not_found', 'draft'):
                 raise UserError(_('Operation outcome needs reconciliation. Check the branch before retrying.'))
         else:
@@ -400,9 +418,10 @@ class ApiPosServices(models.TransientModel):
         self.env.cr.commit()
         try:
             result = client._call(store, 'create_customer', token, validated['phone'], validated['name'], validated['address'])
+            result = self._api_customer(store, result, phone=validated['phone'])
             log.write({'state': 'success'})
             self.env.cr.commit()
-            return self._api_customer(store, result)
+            return result
         except Exception:
             self.env.cr.rollback()
             log.write({'state': 'error', 'error_message': _('Check the branch operation status before retrying.')})

@@ -6,6 +6,11 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
 
+FORCE_ID_SALE_MODELS = frozenset({
+    'ab_product', 'ab_contract', 'ab_hr_employee', 'ab_doctor', 'ab_promo_program',
+})
+
+
 class BranchClient(models.AbstractModel):
     _name = 'ab_sales_branch_client'
     _description = 'Sales Branch API Client'
@@ -57,6 +62,8 @@ class BranchClient(models.AbstractModel):
         record.check_access('read')
         if 'active' in record._fields and not record.active:
             raise UserError(_('A valid record is required for branch submission.'))
+        if record._name in FORCE_ID_SALE_MODELS:
+            return {'id': record.id}
         if record._name == 'ab_hr_employee' and record.costcenter_id.code:
             return {'costcenter_code': record.costcenter_id.code}
         for key in ('eplus_serial', 'code'):
@@ -344,8 +351,6 @@ class BranchReturn(models.Model):
         employee.check_access('read')
         if not employee or not employee.active or not employee.costcenter_id.active:
             raise UserError(_('Select an active return employee with an active employee cost center.'))
-        if not employee.costcenter_id.code:
-            raise UserError(_('The return employee needs a cost center code that matches the branch employee.'))
         return self.env['ab_sales_branch_client']._reference(employee)
 
     def action_push_to_eplus_return(self):
