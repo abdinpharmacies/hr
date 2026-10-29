@@ -74,6 +74,30 @@ no fallback retain existing behavior. Corrections replace metadata rather than
 merge stale values. Historical metadata is not remapped if an addon is installed
 later. No live invoice is automatically retried by this upgrade.
 
+## Selected callcenter customer identity
+
+For authenticated API customer references using a positive `eplus_serial`,
+resolution includes archived customers and selects the lowest Odoo record ID
+when multiple records share the serial. The selected record must pass the
+caller's read access checks; access denial does not select another duplicate.
+An existing customer's default branch does not have to match the sales branch.
+Existing customer masters are never activated, renamed, merged or reassigned.
+
+When no branch customer matches, the existing E-Plus lookup/import and its
+validation still apply. Other models and customer reference formats retain
+their existing resolution rules.
+
+Callcenter supplies `bill_customer_name`, `bill_customer_phone` and
+`bill_customer_address` as invoice snapshots. They are preserved independently
+of the linked branch customer's name and contact details. Ordinary E-Plus
+posting uses the linked customer's serial; contract account overrides and all
+posting queries remain unchanged.
+
+Deploy this branch support before callcenter commit
+`f9aaae6f707e21d813dce02b554c68d3f4b136a7`. Frozen requests are not rewritten or
+automatically retried. Use confirmed-rejection draft recovery when an old
+attempt needs refreshed customer snapshots.
+
 ## Store selection and contract
 
 All methods accept optional keyword `store_eplus_serial`. An explicit value

@@ -32,10 +32,12 @@ class BranchCustomerSync(models.AbstractModel):
             return super()._resolve(model, ref)
         Customer = self.env['ab_customer'].with_context(active_test=False)
         Customer.check_access('read')
-        matches = Customer.sudo().search(fields.Domain('eplus_serial', '=', serial), limit=2)
+        # Callcenter owns the selected identity; archived branch copies remain
+        # valid references. Resolve duplicates deterministically without editing
+        # customer masters, then enforce access in the original caller's env.
+        matches = Customer.sudo().search(
+            fields.Domain('eplus_serial', '=', serial), order='id asc', limit=1)
         if matches:
-            if len(matches) != 1 or not matches.active:
-                raise UserError(self.env._('The selected customer is missing, inactive or duplicated on this branch. Synchronize customers or select another customer.'))
             customer = Customer.browse(matches.ids)
             customer.check_access('read')
             return customer
