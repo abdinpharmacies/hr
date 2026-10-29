@@ -81,7 +81,7 @@ class AbSalesHeaderPromo(models.Model):
                 not self.store_id or self.store_id not in program.store_ids):
             return False
         if (not force_program_effective) and program.replica_db_ids:
-            replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
+            replica_db = self._promotion_eligibility_replica(program)
             if not replica_db or replica_db not in program.replica_db_ids:
                 return False
 

@@ -14,7 +14,6 @@ class AbSalesPosApi(models.TransientModel):
     def pos_promotions(self, store_id=None, lines=None, applied_program_id=None, manual_clear=False,
                        contract_id=None, total_invoice_discount=0.0, customer_id=None):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_promo_program", "ab_product_uom")
-        replica_db = self.env["ab_replica_db"].sudo().get_current_from_config()
         if isinstance(manual_clear, str):
             manual_clear = (manual_clear or "").strip().lower() in ("1", "true", "yes", "on")
         else:
@@ -47,11 +46,6 @@ class AbSalesPosApi(models.TransientModel):
                 domain += ["|", ("store_ids", "=", False), ("store_ids", "in", header.store_id.id)]
             else:
                 domain += [("store_ids", "=", False)]
-
-            if replica_db:
-                domain += ["|", ("replica_db_ids", "=", False), ("replica_db_ids", "in", replica_db.id)]
-            else:
-                domain += [("replica_db_ids", "=", False)]
 
             promos = Promo.search(domain, order="sequence,id")
             applicable = Promo.browse()
