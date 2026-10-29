@@ -380,7 +380,7 @@ class EplusStockSnapshot(models.Model):
 
     @api.model
     def _fetch_eplus_stock_rows(self):
-        with self.connect_eplus(param_str="?", charset="CP1256") as conn:
+        with self.connect_eplus(charset="CP1256") as conn:
             with conn.cursor() as cursor:
                 cursor.execute(EPLUS_STOCK_SQL)
                 columns = [column[0] for column in (cursor.description or [])]
@@ -399,7 +399,7 @@ class EplusStockSnapshot(models.Model):
 
     @api.model
     def _execute_eplus_stock_store_query(self, sql):
-        with self.connect_eplus(param_str="?", charset="CP1256") as conn:
+        with self.connect_eplus(charset="CP1256") as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql)
                 columns = [column[0] for column in (cursor.description or [])]
