@@ -305,9 +305,9 @@ msgstr "صنف المرتجع لا يطابق بند الفاتورة الأصل
 msgid "Sale"
 msgstr "بيع"
 
-#. module: ab_branch_api
+#. module: ab_sales
 #. odoo-python
-#: code:addons/ab_branch_api/models/branch_api.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
 msgid "Source invoice must be saved before posting a return."
 msgstr "يجب حفظ الفاتورة الأصلية قبل ترحيل المرتجع."
 
@@ -660,9 +660,9 @@ msgstr "أعاد إي بلس قيم مخزون غير صالحة."
 msgid "Please enter sth_id (Original Invoice) first."
 msgstr "يرجى إدخال رقم الفاتورة الأصلية أولًا."
 
-#. module: ab_branch_api
+#. module: ab_sales
 #. odoo-python
-#: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
 msgid ""
 "Return invoice lines changed. Review the source invoice before retrying."
 msgstr "تغيرت بنود فاتورة المرتجع. راجع الفاتورة الأصلية قبل إعادة المحاولة."
@@ -685,9 +685,9 @@ msgstr "لا يمكن تعديل المرتجعات المحفوظة."
 msgid "Stock rows do not belong to the selected store and products."
 msgstr "بيانات المخزون لا تخص المخزن والأصناف المحددة."
 
-#. module: ab_branch_api
+#. module: ab_sales
 #. odoo-python
-#: code:addons/ab_branch_api/models/sales_workflow.py:0
+#: code:addons/ab_sales/models/ab_sales_return_backend.py:0
 msgid "The source invoice has no returnable lines."
 msgstr "لا تحتوي الفاتورة الأصلية على بنود قابلة للإرجاع."
 
@@ -931,8 +931,12 @@ msgstr ""
 #. module: ab_branch_api
 #. odoo-python
 #: code:addons/ab_branch_api/models/branch_api.py:0
-msgid "Callcenter sale transport selection is no longer supported. Upgrade the callcenter module."
-msgstr "لم يعد اختيار مسار إرسال مبيعات مركز الاتصال مدعومًا. يرجى ترقية وحدة مركز الاتصال."
+msgid ""
+"Callcenter sale transport selection is no longer supported. Upgrade the "
+"callcenter module."
+msgstr ""
+"لم يعد اختيار مسار إرسال مبيعات مركز الاتصال مدعومًا. يرجى ترقية وحدة مركز "
+"الاتصال."
 
 #. module: ab_branch_api
 #. odoo-python
@@ -1138,8 +1142,11 @@ msgstr "مرجع العميل مكرر في هذا الفرع. راجع سجلا
 
 #. module: ab_branch_api
 #: model:ir.module.module,description:base.module_ab_branch_api
-msgid "Authenticated branch API for sales, returns, stock and customer operations."
-msgstr "واجهة برمجة تطبيقات الفرع مع المصادقة لعمليات المبيعات والمرتجعات والمخزون والعملاء."
+msgid ""
+"Authenticated branch API for sales, returns, stock and customer operations."
+msgstr ""
+"واجهة برمجة تطبيقات الفرع مع المصادقة لعمليات المبيعات والمرتجعات والمخزون "
+"والعملاء."
 
 #. module: ab_branch_api
 #. odoo-python
@@ -1180,3 +1187,70 @@ msgstr "تتم إدارة البيانات الوصفية للمبيعات بو�
 #: model:ir.model,name:ab_branch_api.model_ab_branch_sale_metadata
 msgid "Technical Sale Metadata"
 msgstr "البيانات الوصفية الفنية للمبيعات"
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid ""
+"A positive source serial and valid database UUID are required together."
+msgstr "يجب إدخال رقم مصدر موجب ومعرّف UUID صالح لقاعدة البيانات معًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Submission source identity is invalid or unauthorized."
+msgstr "هوية مصدر الإرسال غير صالحة أو غير مصرح بها."
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_res_users__ab_branch_source_db_serial
+msgid "Branch Source DB Serial"
+msgstr "الرقم التسلسلي لقاعدة بيانات المصدر"
+
+#. module: ab_branch_api
+#: model:ir.model.fields,field_description:ab_branch_api.field_res_users__ab_branch_source_database_uuid
+msgid "Branch Source Database UUID"
+msgstr "معرّف UUID لقاعدة بيانات المصدر"
+
+#. module: ab_branch_api
+#: model_terms:ir.ui.view,arch_db:ab_branch_api.view_users_source_identity
+msgid "Submission Source"
+msgstr "مصدر الإرسال"
+
+#. module: ab_branch_api
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid "The submitted promotion is not eligible for this invoice."
+msgstr "العرض المرسل غير مؤهل لهذه الفاتورة."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/branch_api.py:0
+msgid ""
+"Promotion %(promotion)s is not eligible: source %(source)s, destination "
+"%(destination)s."
+msgstr ""
+"العرض %(promotion)s غير مؤهل: المصدر %(source)s، الوجهة %(destination)s."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Only a Call Center user can submit source identity."
+msgstr "يمكن لمستخدم مركز الاتصال فقط إرسال هوية المصدر."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Source DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة بيانات المصدر عددًا صحيحًا موجبًا."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Source DB serial must identify exactly one active replica."
+msgstr ""
+"يجب أن يحدد الرقم التسلسلي للمصدر قاعدة بيانات متماثلة نشطة واحدة فقط."
+
+#. module: ab_branch_api
+#. odoo-python
+#: code:addons/ab_branch_api/models/source_identity.py:0
+msgid "Invalid source database UUID metadata."
+msgstr "بيانات معرّف UUID لقاعدة بيانات المصدر غير صالحة."

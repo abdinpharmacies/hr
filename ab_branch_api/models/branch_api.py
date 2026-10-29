@@ -11,6 +11,8 @@ from odoo.tools import config
 from .routing import api_request, request_store, STORE_UNSET
 
 
+SOURCE_UNSET = object()
+
 _return_employee = ContextVar('branch_api_return_employee', default=None)
 FORCE_ID_SALE_MODELS = frozenset({
     'ab_product', 'ab_contract', 'ab_hr_employee', 'ab_doctor', 'ab_promo_program',
@@ -120,7 +122,7 @@ class BranchApi(models.AbstractModel):
         self._business_permissions('sale')
         can_post = all(self._business_permissions(kind, post=True, raise_exception=False)
                        for kind in ('sale', 'return'))
-        return {'version': 1, 'sales_submission_guard': 1,
+        return {'version': 1, 'sales_submission_guard': 1, 'submission_source_identity': 1,
                 'delivery_notifications': int('ab_delivery_request' in self.env.registry),
                 **self._identity(store, db_serial),
                 'store_name': store.display_name or '', 'branch_store_id': store.id, 'can_post': can_post,
@@ -366,11 +368,16 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     @api_request
-    def submit_return(self, db_serial, invoice, token, lines, notes='', employee_ref=False, *, store_eplus_serial=STORE_UNSET):
+    def submit_return(self, db_serial, invoice, token, lines, notes='', employee_ref=False, *, source_db_serial=SOURCE_UNSET, source_database_uuid=None, store_eplus_serial=STORE_UNSET):
         store = request_store(self)
         self._business_permissions('return', post=True)
+        origin = {}
+        if source_db_serial is not SOURCE_UNSET or source_database_uuid is not None:
+            origin = self._validated_source_identity(source_db_serial, source_database_uuid)
         operation = self._operation(store, token, 'return')
         payload = {'invoice': int(invoice), 'lines': lines, 'notes': str(notes), 'employee_ref': employee_ref}
+        if origin:
+            payload.update(source_db_serial=source_db_serial, source_database_uuid=source_database_uuid)
         self._prepare_post(operation, payload)
         if operation.state == 'done':
             self._return_header(store, operation, invoice)
@@ -379,10 +386,14 @@ class BranchApi(models.AbstractModel):
         header = self._return_header(store, operation, invoice)
         invoice_date = self._assert_invoice_branch(store, invoice, require_saved=True)
         header._validate_invoice_return_window(sth_id=int(invoice), sec_insert_date=invoice_date)
+        if origin:
+            header._write_sale_metadata(dict(header.sudo().metadata or {}, schema_version=1, **origin))
         header._backend_prepare()
         self._apply_return_lines(header, lines)
         header.notes = str(notes)
         header._validate_return()
+        if not operation.payload_hash:
+            operation.request_payload = payload
         operation.reservation_key = 'return:%s:%s' % (store.id, int(invoice))
 
         def post():
@@ -445,6 +456,11 @@ class BranchApi(models.AbstractModel):
             header = header_model._create_callcenter_order(values)
             operation.record_id = header.id
         Line = self.env['ab_sales_line']
+        origin = self._sale_source_identity(payload)
+        if origin:
+            metadata = dict(metadata or {'relation_models': {}, 'values': {}}, schema_version=1, **origin)
+            if payload.get('promotion'):
+                metadata['source_promotion_id'] = self._resolve('ab_promo_program', payload['promotion']).id
         header._write_sale_metadata(metadata)
         line_values, line_metadata = [], []
         for index, source in enumerate(payload.get('lines', [])):
@@ -479,7 +495,9 @@ class BranchApi(models.AbstractModel):
             header.applied_program_ids = [fields.Command.set(program.ids)]
             header.btn_apply_promotion()
             if program not in header.applied_program_ids:
-                raise UserError(_('Branch reference is missing or ambiguous: %s') % 'ab_promo_program')
+                raise UserError(_('Promotion %(promotion)s is not eligible: source %(source)s, destination %(destination)s.') % {
+                    'promotion': program.display_name, 'source': origin.get('source_db_serial', config.get('db_serial')),
+                    'destination': config.get('db_serial')})
         Pos._fill_lines_balance_from_offline(header)
         return header
 
