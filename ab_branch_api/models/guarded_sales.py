@@ -55,6 +55,7 @@ class GuardedSales(models.AbstractModel):
             raise UserError(_('A positive request revision is required.'))
         if not isinstance(payload, dict) or not isinstance(payload.get('header'), dict) or not isinstance(payload.get('lines'), list):
             raise UserError(_('Invalid sale payload.'))
+        self._sale_source_identity(payload)
         digest = hashlib.sha256(json.dumps({'payload': payload, 'push': True}, sort_keys=True, allow_nan=False).encode()).hexdigest()
         customer_serial = self._customer_reference_serial(payload['header'].get('customer_id'))
         if customer_serial:

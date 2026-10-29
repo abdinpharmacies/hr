@@ -19,7 +19,7 @@ class SaleMetadata(models.AbstractModel):
     _name = 'ab_branch_sale_metadata'
     _description = 'Technical Sale Metadata'
 
-    metadata = fields.Json(string='Metadata', default=dict, readonly=True, copy=False,
+    metadata = fields.Json(string='Metadata', default=lambda self: {}, readonly=True, copy=False,
                            groups='base.group_system')
 
     @api.model_create_multi
