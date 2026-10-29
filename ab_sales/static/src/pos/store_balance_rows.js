@@ -21,6 +21,7 @@ export class StoreBalanceRows extends Component {
         onMounted(() => this.searchRef.el?.focus());
         this.alive = true;
         this.version = 0;
+        this.positions = new Map();
         this.data = this.props.record.data[this.props.name];
         this.state = useState({productId: false, rows: [], search: "", initialError: ""});
         this.setRows(this.data);
@@ -36,9 +37,30 @@ export class StoreBalanceRows extends Component {
 
     setRows(data) {
         this.version++;
+        const productId = data?.product_id || false;
+        if (productId !== this.state.productId) {
+            this.positions.clear();
+            this.state.search = "";
+        }
         this.state.initialError = data?.initial_error || "";
-        this.state.productId = data?.product_id || false;
-        this.state.rows = (data?.rows || []).map((row) => ({...row, loading: false, error: ""}));
+        this.state.productId = productId;
+        const rows = (data?.rows || []).map((row) => ({...row, loading: false, error: ""}));
+        const unseen = rows.filter((row) => !this.positions.has(row.store_id));
+        unseen.sort(this.positions.size ?
+            (left, right) => Number(left.store_id) - Number(right.store_id) :
+            (left, right) => Number(this.isAvailable(right)) - Number(this.isAvailable(left)) ||
+                (this.isAvailable(left) && this.isAvailable(right) ? right.balance - left.balance : 0) ||
+                this.branchCollator.compare(left.store_name || "", right.store_name || "") ||
+                Number(left.store_id) - Number(right.store_id));
+        for (const row of unseen) {
+            if (!this.positions.has(row.store_id)) this.positions.set(row.store_id, this.positions.size);
+        }
+        this.state.rows = rows.sort((left, right) =>
+            this.positions.get(left.store_id) - this.positions.get(right.store_id));
+    }
+
+    isAvailable(row) {
+        return row.source !== "unavailable" && Number.isFinite(row.balance);
     }
 
     get visibleRows() {
@@ -56,20 +78,15 @@ export class StoreBalanceRows extends Component {
             if (hasArabicChars(query)) queries.push(mapArabicToUsQwerty(query));
             if (hasLatinKeyboardChars(query)) queries.push(mapUsToArabicQwerty(query));
             const seenIds = new Set();
-            rows = [...new Set(queries)].filter((mapped) => mapped && mapped !== query)
-                .flatMap(matchRows).filter((row) => {
-                    if (seenIds.has(row.store_id)) return false;
-                    seenIds.add(row.store_id);
-                    return true;
-                });
+            const matches = new Set([...new Set(queries)].filter((mapped) => mapped && mapped !== query)
+                .flatMap(matchRows).map((row) => row.store_id));
+            rows = this.state.rows.filter((row) => matches.has(row.store_id)).filter((row) => {
+                if (seenIds.has(row.store_id)) return false;
+                seenIds.add(row.store_id);
+                return true;
+            });
         }
-        return rows.slice().sort((left, right) => {
-            const leftBalance = Number.isFinite(left.balance) ? left.balance : Infinity;
-            const rightBalance = Number.isFinite(right.balance) ? right.balance : Infinity;
-            return (leftBalance - rightBalance) ||
-                this.branchCollator.compare(left.store_name || "", right.store_name || "") ||
-                Number(left.store_id) - Number(right.store_id);
-        });
+        return rows;
     }
 
     get countLabel() {
