@@ -102,22 +102,25 @@ class AbSalesReturnUiApi(models.TransientModel):
         }
 
     @api.model
-    def _action_payload(self, return_header_id):
-        return {
+    def _action_payload(self, return_header_id=False, sale_header_id=False):
+        action = {
             "type": "ir.actions.client",
             "tag": "ab_sales.return_ui",
             "name": _("Sales Return"),
             "target": "new",
             "context": {
                 **self.env.context,
-                "active_id": int(return_header_id),
-                "active_ids": [int(return_header_id)],
                 "dialog_size": "large",
             },
-            "params": {
-                "return_header_id": int(return_header_id),
-            },
+            "params": {},
         }
+        if return_header_id:
+            action["context"].update(active_id=int(return_header_id), active_ids=[int(return_header_id)])
+            action["params"]["return_header_id"] = int(return_header_id)
+        if sale_header_id:
+            action["context"].update(active_id=False, active_ids=[])
+            action["params"]["sale_header_id"] = int(sale_header_id)
+        return action
 
     @api.model
     def open_from_sale_header(self, sale_header_id, **kwargs):

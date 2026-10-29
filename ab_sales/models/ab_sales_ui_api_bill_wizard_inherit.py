@@ -1542,7 +1542,9 @@ class AbSalesUiApiBillWizardInherit(models.TransientModel):
         record_type, header = self._bill_wizard_get_record_from_ref(header_id)
         if record_type != "sale":
             raise UserError("Return action is available for sales bills only.")
-        return self.env["ab_sales_return_ui_api"].open_from_sale_header(header.id)
+        if not header.eplus_serial or header.status not in ("pending", "saved"):
+            raise UserError(_("This bill has no ePlus serial."))
+        return self.env["ab_sales_return_ui_api"]._action_payload(sale_header_id=header.id)
 
     @api.model
     def bill_wizard_render_print_text(self, header_id, print_format="a4"):

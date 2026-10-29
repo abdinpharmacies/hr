@@ -23,9 +23,10 @@ class AbSalesReturnUiApiAction extends Component {
         this.action = useService("action");
         this.notification = useService("notification");
 
+        this.saleHeaderId = this.props?.action?.params?.sale_header_id || null;
         this.returnHeaderId =
             this.props?.action?.params?.return_header_id ||
-            this.props?.action?.context?.active_id ||
+            (!this.saleHeaderId && this.props?.action?.context?.active_id) ||
             null;
 
         this.state = useState({
@@ -106,16 +107,21 @@ class AbSalesReturnUiApiAction extends Component {
 
     async close() {
         if (this.state.busy || this._returnClosing) return;
+        this._returnClosing = true;
         await this._abandonReturn();
-        await this.action.doAction({ type: "ir.actions.act_window_close" });
+        try {
+            await this.action.doAction({ type: "ir.actions.act_window_close" });
+        } catch (error) {
+            if (!this._destroyed) this._returnClosing = false;
+            throw error;
+        }
     }
 
     _shouldAbandonReturn() {
         return Boolean(
             !this._returnSubmissionStarted &&
             this.returnHeaderId &&
-            this.state.record &&
-            this.state.record.status === "prepending"
+            (!this.state.record || this.state.record.status === "prepending")
         );
     }
 
