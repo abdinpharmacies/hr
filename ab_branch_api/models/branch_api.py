@@ -240,12 +240,8 @@ class BranchApi(models.AbstractModel):
 
     @api.model
     def _return_header(self, store, operation, invoice):
-        source = self.env['ab_sales_header'].search(
-            fields.Domain('store_id', '=', store.id)
-            & fields.Domain('eplus_serial', '=', int(invoice))
-            & fields.Domain('is_callcenter_order', '=', True), limit=1)
-        if not source or int(invoice) <= 0:
-            raise AccessError(_('Only call-center invoices can be returned.'))
+        if int(invoice) <= 0:
+            raise AccessError(_('Return invoice does not match the request.'))
         header = self.env['ab_sales_return_header'].browse(operation.record_id).exists()
         if header:
             header.check_access('write')
@@ -254,6 +250,8 @@ class BranchApi(models.AbstractModel):
                     or not header.is_callcenter_order):
                 raise AccessError(_('Return invoice does not match the request.'))
         else:
+            # Legacy POS invoices may have no local header or call-center marker.
+            # The committed E-Plus invoice/store lookup establishes eligibility.
             self._assert_invoice_branch(store, invoice)
             header = self.env['ab_sales_return_header']._create_callcenter_order({
                 'store_id': store.id, 'origin_header_id': int(invoice)})
