@@ -8,20 +8,13 @@ class AbSalesReturnUiApi(models.TransientModel):
     @api.model
     def open_from_sale_header(self, sale_header_id, session_token=False, **kwargs):
         sale_header = self._get_sale_header(sale_header_id)
+        sale_header.check_access("read")
         token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
-        if token:
-            session_api = self.env["ab_employee_access_sales_pos_api"]
-            session = session_api._get_session(token, states=["active"])
-            profile = session._get_pos_profile()
-            if not profile:
-                raise UserError(_("Employee POS profile is missing."))
-            session_api._require_connectable_store(sale_header.store_id.id, profile=profile)
-            if session.store_id != sale_header.store_id:
-                session.write({"store_id": sale_header.store_id.id})
+        self._validate_return_session_for_store(sale_header.store_id, token)
         return super().open_from_sale_header(sale_header_id, **kwargs)
 
     @api.model
-    def _validate_return_employee_session(self, return_header_id, session_token, states=None):
+    def _validate_return_session_for_store(self, store, session_token, states=None):
         token = str(session_token or self.env.context.get("ab_return_session_token") or "").strip()
         if not token:
             raise UserError(_("Employee login is required."))
@@ -36,18 +29,22 @@ class AbSalesReturnUiApi(models.TransientModel):
         if not permissions.get("allow_return_screen"):
             raise UserError(_("Employee role does not allow sales return screen access."))
 
-        header = self._get_return_header(return_header_id)
-        target_store = header.store_id
-        if not target_store:
+        if not store:
             raise UserError(_("Sales return store is missing."))
 
-        target_store = session_api._require_connectable_store(target_store.id, profile=profile)
+        target_store = session_api._require_connectable_store(store.id, profile=profile)
 
         if session.store_id != target_store:
             session.write({"store_id": target_store.id})
 
         session.mark_activity()
         return session
+
+    @api.model
+    def _validate_return_employee_session(self, return_header_id, session_token, states=None):
+        header = self._get_return_header(return_header_id)
+        header.check_access("read")
+        return self._validate_return_session_for_store(header.store_id, session_token, states=states)
 
     @api.model
     def get_state(self, return_header_id, session_token=False):

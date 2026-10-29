@@ -310,7 +310,7 @@ class TestAbSalesHrApi(TransactionCase):
         ])
         self.assertEqual(visible, own_header)
 
-    def test_owner_opens_return_dialog_before_employee_login(self):
+    def test_owner_opens_return_after_employee_login(self):
         sale_header = self.env["ab_sales_header"].with_user(self.normal_user)._create_callcenter_order({
             "store_id": self.store.id,
             "description": "Owner return dialog",
@@ -329,10 +329,12 @@ class TestAbSalesHrApi(TransactionCase):
             autospec=True,
             return_value={"res_id": return_header.id},
         ):
-            action = return_api.open_from_sale_header(sale_header.id)
-
-        self.assertEqual(action["tag"], "ab_sales.return_ui")
-        self.assertEqual(action["params"]["return_header_id"], return_header.id)
+            count = self.env["ab_sales_return_header"].search_count([])
+            action = self.env["ab_sales_ui_api"].with_user(self.normal_user).bill_wizard_open_return_action(sale_header.id)
+            self.assertEqual(action["params"], {"sale_header_id": sale_header.id})
+            self.assertEqual(self.env["ab_sales_return_header"].search_count([]), count)
+            with self.assertRaisesRegex(UserError, "Employee login is required"):
+                return_api.open_from_sale_header(sale_header.id)
         with self.assertRaisesRegex(UserError, "Employee login is required"):
             return_api.get_state(return_header.id)
 
@@ -343,6 +345,10 @@ class TestAbSalesHrApi(TransactionCase):
             device_uid="OWNER_RETURN_DEVICE",
             device_name="Owner Return Device",
         )
+        with patch.object(header_model, "action_open_sales_return", autospec=True,
+                          return_value={"res_id": return_header.id}):
+            action = return_api.open_from_sale_header(sale_header.id, session_token=session["token"])
+        self.assertEqual(action["params"]["return_header_id"], return_header.id)
         state = return_api.get_state(return_header.id, session_token=session["token"])
         self.assertEqual(state["id"], return_header.id)
 

@@ -68,8 +68,6 @@ if (ReturnAction) {
             this._abReturnClearSessionState = this._abReturnClearSessionState.bind(this);
             this._abReturnBootstrap = this._abReturnBootstrap.bind(this);
             this._abReturnLogout = this._abReturnLogout.bind(this);
-            this._abReturnLogoutOnDestroy = this._abReturnLogoutOnDestroy.bind(this);
-            this._abReturnMaybeAbandonTemporaryReturn = this._abReturnMaybeAbandonTemporaryReturn.bind(this);
             this._abReturnDestroyCleanup = this._abReturnDestroyCleanup.bind(this);
             this.returnLoginPanelSubtitle = this.returnLoginPanelSubtitle.bind(this);
             this.returnLoginPanelEmployeeValue = this.returnLoginPanelEmployeeValue.bind(this);
@@ -160,23 +158,46 @@ if (ReturnAction) {
             this._abReturnLastLoadError = "";
         },
 
+        _abReturnInactive() {
+            return this._destroyed || this._returnClosing || this._abReturnClosing;
+        },
+
+        async _abReturnReleaseToken(token) {
+            this._abReturnReleasedTokens ||= new Set();
+            if (!token || this._abReturnReleasedTokens.has(token)) return;
+            this._abReturnReleasedTokens.add(token);
+            try {
+                await this.orm.call("ab_employee_access_sales_pos_api", "logout_session", [], {
+                    session_token: token,
+                });
+            } catch {
+                // A failed cleanup must not resume a closed popup.
+            }
+        },
+
         async _abReturnBootstrap() {
+            if (this._abReturnInactive()) return;
             this.state.abReturnAccess.loading = true;
             this.state.abReturnAccess.error = "";
             const cached = this._abReturnLoadCachedSession();
-            const cachedToken = String(cached?.session_token || "").trim();
+            const cachedToken = this.saleHeaderId ? "" : String(cached?.session_token || "").trim();
             try {
                 const payload = await this.orm.call("ab_employee_access_sales_pos_api", "pos_bootstrap", [], {
                     session_token: cachedToken,
                     device_uid: this._abReturnDeviceUid,
                     device_name: this._abReturnDeviceName,
                 });
+                if (this._abReturnInactive()) {
+                    await this._abReturnReleaseToken(payload?.session?.token);
+                    return;
+                }
                 this._abReturnDeviceUid = payload?.device_uid || this._abReturnDeviceUid;
                 this._abReturnDeviceName = payload?.device_name || this._abReturnDeviceName;
                 const sessionPayload = payload?.session || false;
                 if (sessionPayload?.permissions?.allow_return_screen) {
                     this._abReturnApplySession(sessionPayload);
                     const loaded = await this.load({reportError: false});
+                    if (this._abReturnInactive()) return;
                     if (!loaded) {
                         this.state.abReturnAccess.error = this._abReturnLastLoadError || _t("Employee login is required.");
                         await this._abReturnLogout({silent: true, preserveError: true});
@@ -186,16 +207,20 @@ if (ReturnAction) {
                     this._abReturnClearSessionState();
                 }
             } catch (error) {
+                if (this._abReturnInactive()) return;
                 this._abReturnClearCachedSession();
                 this._abReturnClearSessionState();
                 this.state.abReturnAccess.error = this._messageFromError(error, _t("Failed to start employee login."));
             } finally {
-                this.state.abReturnAccess.loading = false;
-                this.state.loading = false;
+                if (!this._abReturnInactive()) {
+                    this.state.abReturnAccess.loading = false;
+                    this.state.loading = false;
+                }
             }
         },
 
         async load({reportError = true} = {}) {
+            if (this._abReturnInactive()) return false;
             const sessionToken = this._abReturnSessionToken();
             if (!sessionToken) {
                 this.state.loading = false;
@@ -205,12 +230,27 @@ if (ReturnAction) {
             this.state.loading = true;
             this._abReturnLastLoadError = "";
             try {
+                if (!this.returnHeaderId && this.saleHeaderId) {
+                    const action = await this.orm.call("ab_sales_return_ui_api", "open_from_sale_header", [], {
+                        sale_header_id: this.saleHeaderId,
+                    });
+                    this.returnHeaderId = action?.params?.return_header_id || null;
+                    if (this._abReturnInactive()) {
+                        await this._abandonReturn();
+                        return false;
+                    }
+                    if (!this.returnHeaderId) {
+                        throw new Error(_t("Failed to load sales return."));
+                    }
+                }
                 const record = await this.orm.call("ab_sales_return_ui_api", "get_state", [], {
                     return_header_id: this.returnHeaderId,
                 });
+                if (this._abReturnInactive()) return false;
                 this._applyRecord(record);
                 return true;
             } catch (error) {
+                if (this._abReturnInactive()) return false;
                 this.state.record = null;
                 this._abReturnLastLoadError = this._messageFromError(error, _t("Failed to load sales return."));
                 if (reportError) {
@@ -218,7 +258,7 @@ if (ReturnAction) {
                 }
                 return false;
             } finally {
-                this.state.loading = false;
+                if (!this._abReturnInactive()) this.state.loading = false;
             }
         },
 
@@ -261,7 +301,7 @@ if (ReturnAction) {
         },
 
         async submitReturnLoginPanel() {
-            if (this.state.abReturnAccess.loginLoading) {
+            if (this._abReturnInactive() || this.state.abReturnAccess.loginLoading) {
                 return false;
             }
             const employeeAccessId = Number.parseInt(this.state.abReturnAccess.employee?.id || 0, 10) || 0;
@@ -279,17 +319,21 @@ if (ReturnAction) {
                     device_uid: this._abReturnDeviceUid,
                     device_name: this._abReturnDeviceName,
                 });
+                if (this._abReturnInactive()) {
+                    await this._abReturnReleaseToken(sessionPayload?.token);
+                    return false;
+                }
                 if (!sessionPayload?.permissions?.allow_return_screen) {
                     if (sessionPayload?.token) {
-                        await this.orm.call("ab_employee_access_sales_pos_api", "logout_session", [], {
-                            session_token: sessionPayload.token,
-                        });
+                        await this._abReturnReleaseToken(sessionPayload.token);
                     }
+                    if (this._abReturnInactive()) return false;
                     this.state.abReturnAccess.error = _t("Employee role does not allow sales return screen access.");
                     return false;
                 }
                 this._abReturnApplySession(sessionPayload);
                 const loaded = await this.load({reportError: false});
+                if (this._abReturnInactive()) return false;
                 if (!loaded) {
                     this.state.abReturnAccess.error = this._abReturnLastLoadError || _t("Employee login is required.");
                     await this._abReturnLogout({silent: true, preserveError: true});
@@ -297,86 +341,42 @@ if (ReturnAction) {
                 }
                 return true;
             } catch (error) {
+                if (this._abReturnInactive()) return false;
                 this.state.abReturnAccess.error = this._messageFromError(error, _t("Employee login failed."));
                 return false;
             } finally {
-                this.state.abReturnAccess.loginLoading = false;
+                if (!this._abReturnInactive()) this.state.abReturnAccess.loginLoading = false;
             }
         },
 
         async _abReturnLogout({silent = true, preserveError = false} = {}) {
-            if (this._abReturnLogoutStarted) {
-                return;
-            }
             const token = this._abReturnSessionToken();
-            this._abReturnLogoutStarted = true;
-            try {
-                if (token) {
-                    await this.orm.call("ab_employee_access_sales_pos_api", "logout_session", [], {
-                        session_token: token,
-                    });
-                }
-            } catch (error) {
-                if (!silent) {
-                    this.notification.add(this._messageFromError(error, _t("Failed to close employee session.")), {
-                        type: "warning",
-                    });
-                }
-            } finally {
-                const preservedError = preserveError ? this.state.abReturnAccess.error : "";
-                this._abReturnClearCachedSession();
-                this._abReturnClearSessionState();
-                this.state.abReturnAccess.error = preservedError;
-                this._abReturnLogoutStarted = false;
-            }
-        },
-
-        _abReturnLogoutOnDestroy() {
-            const token = this._abReturnSessionToken();
-            if (!token || this._abReturnLogoutStarted) {
-                return;
-            }
-            this._abReturnLogoutStarted = true;
             this._abReturnClearCachedSession();
-            Promise.resolve(
-                this.orm.call("ab_employee_access_sales_pos_api", "logout_session", [], {
-                    session_token: token,
-                })
-            ).catch(() => {});
-        },
-
-        async _abReturnMaybeAbandonTemporaryReturn() {
-            if (!this.returnHeaderId) {
-                return;
-            }
-            try {
-                await this.orm.call("ab_sales_return_ui_api", "abandon_return", [], {
-                    return_header_id: this.returnHeaderId,
-                });
-            } catch {
-                // Ignore abandon failures during close.
+            await this._abReturnReleaseToken(token);
+            if (!this._abReturnInactive()) {
+                const error = preserveError ? this.state.abReturnAccess.error : "";
+                this._abReturnClearSessionState();
+                this.state.abReturnAccess.error = error;
             }
         },
 
         _abReturnDestroyCleanup() {
-            if (this._abReturnDestroyCleanupStarted) {
-                return;
-            }
-            this._abReturnDestroyCleanupStarted = true;
-            this._abReturnLogoutOnDestroy();
-            if (this.returnHeaderId) {
-                Promise.resolve(
-                    this.orm.call("ab_sales_return_ui_api", "abandon_return", [], {
-                        return_header_id: this.returnHeaderId,
-                    })
-                ).catch(() => {});
-            }
+            this._abReturnClosing = true;
+            this._abReturnClearCachedSession();
+            void this._abReturnReleaseToken(this._abReturnSessionToken());
+            void this._abandonReturn();
         },
 
         async close() {
+            if (this._abReturnInactive() || this.state.busy) return;
+            this._abReturnClosing = true;
             await this._abReturnLogout({silent: true});
-            await this._abReturnMaybeAbandonTemporaryReturn();
-            return await super.close(...arguments);
+            try {
+                return await super.close(...arguments);
+            } catch (error) {
+                if (!this._destroyed) this._abReturnClosing = false;
+                throw error;
+            }
         },
     });
 }
