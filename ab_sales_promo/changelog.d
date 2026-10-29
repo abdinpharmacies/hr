@@ -139,3 +139,30 @@ Verification:
 - Nine grouped rollback-only Odoo checks cover unrestricted and allowed customers, unauthorized and unsaved customers, computed-field invalidation, ORM writes, final validation, return repricing, existing eligibility gates, and runtime Arabic translations; E-Plus connections were blocked.
 - Eight POS checks using the existing customer handlers and module patch cover requests, selection, clearing, new-customer mode, stale responses, bill switching, and read-only bills.
 - Both Arabic PO files pass msgfmt --check-format; development check scripts remain outside the addon package.
+
+## b505facf2ec4732815f3b672322292b22a161add
+
+Author: hager yasser
+Date: 2026-10-15T12:30:22+03:00
+Subject: ab_sales_promo/FEAT(#21055): Enforce Allowed Customers for Promotions
+
+- Recent module baseline reviewed before source-identity work.
+
+Files changed:
+- ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+- ab_sales_promo/static/src/pos/pos_action_promo_net_patch.js
+
+## Current changes before commit:
+
+- Use header-specific replica eligibility for promotion calculations.
+- Runtime integration verification uses isolated databases; production deployment remains separate.
+
+Files changed:
+- ab_sales_promo/models/ab_sales_header_promo_inherit.py
+- ab_sales_promo/models/ab_sales_pos_api_promo.py
+
+Verification: isolated receiver upgrades and clean sender installation passed; focused source authorization, promotion replica eligibility, copied metadata, sender identity, and Arabic receiver view checks passed with external network blocked. Translation format and Python syntax checks passed. No production deployment or rejected-bill replay performed.
