@@ -987,6 +987,10 @@ class AbdinSalesHeader(models.Model):
             'total_tax': 0.0,
         }
 
+    def _promotion_eligibility_replica(self, program):
+        self.ensure_one()
+        return self.env['ab_replica_db'].sudo().get_current_from_config()
+
     def _validate_before_push(self):
         if self.status not in ('prepending', 'rejected', 'unknown'):
             raise UserError(_("This invoice cannot be submitted in its current status."))
