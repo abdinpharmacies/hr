@@ -24,7 +24,9 @@ class AllStoreBalance(models.AbstractModel):
     def _stores(self):
         # Explicit business exception: transfer balances are visible across branches,
         # independently of employee assignment and branch API registration.
-        return self.env['ab_store'].sudo().with_context(active_test=False).search(fields.Domain('allow_transfer', '=', True))
+        # Eligibility must also hold when the caller disables implicit active filtering.
+        return self.env['ab_store'].sudo().with_context(active_test=False).search(
+            fields.Domain('active', '=', True) & fields.Domain('allow_transfer', '=', True))
 
     def _read(self, product_serials):
         serials = sorted({int(s) for s in product_serials or [] if s and int(s) > 0})

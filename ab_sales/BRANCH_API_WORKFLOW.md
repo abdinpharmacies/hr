@@ -483,9 +483,14 @@ to `bconnect_ip2`. Opening never invokes a cache writer or changes balances,
 prices, sources or timestamps. Delayed POS search refresh remains branch API
 only and saves its selected-branch result to the cache as before.
 
-The informational scope is every `ab_store` with `allow_transfer=True` (the
-existing field corresponding to “can_transfer”), including archived stores while
-that flag remains enabled. Branch registration, sales permission and employee
+The informational scope is every `ab_store` with `active=True` AND
+`allow_transfer=True` (the existing field corresponding to “can_transfer”).
+Both conditions are explicit, including when callers use `active_test=False`.
+The shared selector applies to popup rows, live query store IDs, saved totals,
+individual refresh eligibility and scheduled/manual all-store refreshes.
+Archived or transfer-disabled stores are excluded; their saved cache records
+are retained without contributing to the informational display or totals.
+Branch registration, sales permission and employee
 assignment do not narrow the informational aggregate. This does not grant access
 to branch transactions. Missing/nonpositive E-Plus IDs remain visible as
 unavailable and are excluded from source queries and totals without blocking
@@ -550,7 +555,7 @@ superseded/closed popup responses are ignored.
 
 The fixed popup API operation may read a transfer-enabled branch outside the
 employee's sales assignment. Product access and wizard ACLs are required.
-Every request rechecks transfer eligibility, a verified active API configuration,
+Every request rechecks active and transfer eligibility, a verified active API configuration,
 branch/database/product identity, quantities and timestamp. General branch-client
 and transaction permissions are unchanged. Unavailable API connections remain
 visible with disabled buttons and explanations. Both Arabic catalogs contain
@@ -579,8 +584,9 @@ branch API responses retain the existing rejection behavior.
 Duplicate positive store E-Plus IDs keep the lowest Odoo store ID as the live
 mapping; other duplicate rows remain unavailable with an explanation. Unmapped
 rows also remain visible and do not block valid stores. No mapping means no
-external request. Archived/unregistered/unassigned stores remain in the transfer
-scope. Row explanations replace the removed unmapped-store banner.
+external request. Active, transfer-enabled stores remain in scope even when
+unregistered or unassigned; archived stores are excluded. Row explanations
+replace the removed unmapped-store banner.
 
 Live means freshly queried from main B-Connect, not proof that its underlying
 branch replication has caught up. The timestamp records the read, not a source
