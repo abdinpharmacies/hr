@@ -1,12 +1,14 @@
 /** @odoo-module **/
 
-import {Component, onWillUnmount, onWillUpdateProps, useState} from "@odoo/owl";
+import {Component, onMounted, onWillUnmount, onWillUpdateProps, useRef, useState} from "@odoo/owl";
 import {registry} from "@web/core/registry";
 import {useService} from "@web/core/utils/hooks";
 import {_t} from "@web/core/l10n/translation";
-import {deserializeDateTime, formatDateTime} from "@web/core/l10n/dates";
+import {user} from "@web/core/user";
 import {formatFloat} from "@web/views/fields/formatters";
 import {standardFieldProps} from "@web/views/fields/standard_field_props";
+
+import {hasArabicChars, hasLatinKeyboardChars, mapArabicToUsQwerty, mapUsToArabicQwerty} from "./utils/keyboard_mapping";
 
 export class StoreBalanceRows extends Component {
     static template = "ab_sales.StoreBalanceRows";
@@ -14,6 +16,9 @@ export class StoreBalanceRows extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.searchRef = useRef("search");
+        this.branchCollator = new Intl.Collator(user.lang);
+        onMounted(() => this.searchRef.el?.focus());
         this.alive = true;
         this.version = 0;
         this.data = this.props.record.data[this.props.name];
@@ -37,10 +42,33 @@ export class StoreBalanceRows extends Component {
     }
 
     get visibleRows() {
-        const terms = this.state.search.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-        return this.state.rows.filter((row) => {
-            const text = `${row.store_name} ${row.store_code || ""}`.toLocaleLowerCase();
-            return terms.every((term) => text.includes(term));
+        const query = this.state.search.trim();
+        const matchRows = (search) => {
+            const terms = search.toLocaleLowerCase(user.lang).split(/\s+/).filter(Boolean);
+            return this.state.rows.filter((row) => {
+                const text = `${row.store_name || ""} ${row.store_code || ""}`.toLocaleLowerCase(user.lang);
+                return terms.every((term) => text.includes(term));
+            });
+        };
+        let rows = matchRows(query);
+        if (!rows.length && query) {
+            const queries = [];
+            if (hasArabicChars(query)) queries.push(mapArabicToUsQwerty(query));
+            if (hasLatinKeyboardChars(query)) queries.push(mapUsToArabicQwerty(query));
+            const seenIds = new Set();
+            rows = [...new Set(queries)].filter((mapped) => mapped && mapped !== query)
+                .flatMap(matchRows).filter((row) => {
+                    if (seenIds.has(row.store_id)) return false;
+                    seenIds.add(row.store_id);
+                    return true;
+                });
+        }
+        return rows.slice().sort((left, right) => {
+            const leftBalance = Number.isFinite(left.balance) ? left.balance : Infinity;
+            const rightBalance = Number.isFinite(right.balance) ? right.balance : Infinity;
+            return (leftBalance - rightBalance) ||
+                this.branchCollator.compare(left.store_name || "", right.store_name || "") ||
+                Number(left.store_id) - Number(right.store_id);
         });
     }
 
@@ -54,17 +82,10 @@ export class StoreBalanceRows extends Component {
         return Number.isFinite(value) ? formatFloat(Math.max(0, value), {digits: [16, 2]}) : "—";
     }
 
-    sourceLabel(row) {
-        if (row.source === "unavailable") return _t("Unavailable");
-        if (row.source === "branch_api") return _t("Branch API");
-        if (row.source === "eplus") return _t("E-Plus");
-        return _t("Cached balance");
-    }
-
-    formattedTime(row) {
-        if (!row.refreshed_at) return "";
-        try { return formatDateTime(deserializeDateTime(row.refreshed_at)); }
-        catch { return ""; }
+    refreshLabel(row) {
+        if (row.loading) return _t("Refreshing balance from branch...");
+        if (row.error) return _t("Retry balance refresh from branch");
+        return _t("Refresh balance from branch");
     }
 
     async refreshBranch(row) {

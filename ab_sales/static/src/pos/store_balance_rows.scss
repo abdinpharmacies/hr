@@ -1,0 +1,39 @@
+.o_ab_sales_store_balance_rows {
+    .o_ab_sales_store_balance_grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.5rem;
+
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    .o_ab_sales_store_balance_entry {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        column-gap: 0.75rem;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .o_ab_sales_store_balance_name {
+        min-width: 0;
+    }
+
+    .o_ab_sales_store_balance_value {
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            flex-shrink: 0;
+        }
+    }
+
+    .o_ab_sales_store_balance_feedback {
+        grid-column: 1 / -1;
+    }
+}

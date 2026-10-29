@@ -6542,7 +6542,7 @@ msgstr "تحديث الأيام المكتملة"
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/add_products/product_card.xml:0
 #: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
-#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
 msgid "Refresh balance from branch"
 msgstr "تحديث الرصيد من الفرع"
 
@@ -7890,7 +7890,7 @@ msgstr ""
 #. odoo-javascript
 #. odoo-python
 #: code:addons/ab_sales/models/branch_services.py:0
-#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "Unavailable"
 msgstr "غير متاح"
 
@@ -8017,3 +8017,15 @@ msgid ""
 msgstr ""
 "تعذر تحديث الفواتير بعد إغلاق المرتجع. أعد تحميل معالج الفواتير لعرض أحدث "
 "حالة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Refreshing balance from branch..."
+msgstr "جارٍ تحديث الرصيد من الفرع..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.js:0
+msgid "Retry balance refresh from branch"
+msgstr "إعادة محاولة تحديث الرصيد من الفرع"
