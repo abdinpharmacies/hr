@@ -238,7 +238,7 @@
                                                   t-esc="currentBill.header.bill_customer_phone or currentBill.header.customer_phone or currentBill.header.customer_mobile or '-'"/>
                                                 <span class="sep ab_pos_customer_info_separator">|</span>
                                                 <span class="ab_pos_customer_info_address"
-                                                      t-esc="state.customerInsights and state.customerInsights.customer and state.customerInsights.customer.last_address or currentBill.header.bill_customer_address or currentBill.header.customer_address or '-'"/>
+                                                      t-esc="currentBill.header.bill_customer_address || currentBill.header.invoice_address || (state.customerInsights &amp;&amp; state.customerInsights.customer &amp;&amp; state.customerInsights.customer.last_address) || currentBill.header.customer_address || '-'"/>
                                         </div>
                                         </div>
                                         </div>

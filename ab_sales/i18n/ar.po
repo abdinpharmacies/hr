@@ -7591,6 +7591,12 @@ msgid "Retry balance refresh from branch"
 msgstr "إعادة محاولة تحديث الرصيد من الفرع"
 
 #. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A valid customer E-Plus reference is required."
+msgstr "يلزم وجود مرجع إي بلس صالح للعميل."
+
+#. module: ab_sales
 #. odoo-javascript
 #: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "No branch balances are currently available."

@@ -75,7 +75,7 @@ class BranchClient(models.AbstractModel):
         raise UserError(_('A stable branch reference is missing for %s.') % record.display_name)
 
     @api.model
-    def _sale_relation_ids(self, field, value):
+    def _sale_relation_ids(self, field, value, allow_inactive=False):
         """Normalize a new submission snapshot without executing ORM commands."""
         error = _('Invalid source relation for branch submission.')
         if field.type == 'many2one':
@@ -112,9 +112,16 @@ class BranchClient(models.AbstractModel):
         if len(records) != len(ids):
             raise UserError(error)
         records.check_access('read')
-        if 'active' in records._fields and any(not record.active for record in records):
+        if not allow_inactive and 'active' in records._fields and any(not record.active for record in records):
             raise UserError(error)
         return ids
+
+    @api.model
+    def _sale_customer_reference(self, customer):
+        customer.check_access('read')
+        if type(customer.eplus_serial) is not int or customer.eplus_serial <= 0:
+            raise UserError(_('A valid customer E-Plus reference is required.'))
+        return {'eplus_serial': customer.eplus_serial}
 
     @api.model
     def _sale_correction_payload(self, wire):
@@ -149,9 +156,11 @@ class BranchClient(models.AbstractModel):
                 field = model._fields[key]
                 descriptor = {'type': field.type}
                 if field.type in ('many2one', 'many2many'):
-                    ids = self._sale_relation_ids(field, value)
+                    selected_customer = model._name == 'ab_sales_header' and key == 'customer_id'
+                    ids = self._sale_relation_ids(field, value, allow_inactive=selected_customer)
                     descriptor.update(model=field.comodel_name, ids=ids)
-                    refs = [self._reference(self.env[field.comodel_name].browse(i)) for i in ids]
+                    reference = self._sale_customer_reference if selected_customer else self._reference
+                    refs = [reference(self.env[field.comodel_name].browse(i)) for i in ids]
                     value = (refs[0] if refs else False) if field.type == 'many2one' else refs
                 elif field.type in ('date', 'datetime'):
                     if not value:

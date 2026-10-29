@@ -109,6 +109,15 @@ class AbSalesPosApi(models.TransientModel):
         """Separate editable values from identity rebuilt from the active session."""
         incoming = payload.get("header") or {}
         values = self._pos_editable_header_vals(incoming)
+        if values.get('customer_id'):
+            client = self.env['ab_sales_branch_client']
+            ids = client._sale_relation_ids(
+                self.env['ab_sales_header']._fields['customer_id'], values['customer_id'], allow_inactive=True)
+            customer = self.env['ab_customer'].browse(ids)
+            client._sale_customer_reference(customer)
+            values.update(customer_id=customer.id, new_customer_name=False,
+                          new_customer_phone=False, new_customer_address=False)
+        values.update(self.env['ab_sales_header'].new(values)._get_bill_customer_snapshot_vals())
         session = self._pos_require_sales_session(payload.get("pos_hr_session_token"))
         if session:
             employee = self.env["ab_hr_employee"]
@@ -723,6 +732,11 @@ class AbSalesPosApi(models.TransientModel):
             or header.new_customer_address
             or ""
         )
+        if header.is_callcenter_order:
+            customer_name = header.bill_customer_name or customer_name
+            customer_phone = header.bill_customer_phone or customer_phone
+            customer_address = header.bill_customer_address or customer_address
+
         response = {
             "remote_callcenter": True,
             "duplicate_token": bool(duplicate_token),
@@ -818,6 +832,11 @@ class AbSalesPosApi(models.TransientModel):
                 or header.new_customer_address
                 or ""
         )
+
+        if header.is_callcenter_order:
+            customer_name = header.bill_customer_name or customer_name
+            customer_phone = header.bill_customer_phone or customer_phone
+            customer_address = header.bill_customer_address or customer_address
 
         return {
             "duplicate_token": True,

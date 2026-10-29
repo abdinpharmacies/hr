@@ -250,11 +250,11 @@ class AbSalesPosSubmitDialog extends Component {
         const header = this.props.bill?.header || {};
         const preferredBillName = (this.props.preferredBillName || "").trim();
         const preferredBillAddress = (this.props.preferredBillAddress || "").trim();
-        const billCustomerName = preferredBillName || header.bill_customer_name || header.customer_name || "";
+        const billCustomerName = header.bill_customer_name || header.customer_name || preferredBillName || "";
         const billCustomerPhone =
             header.bill_customer_phone || header.customer_phone || header.customer_mobile || "";
         const billCustomerAddress =
-            preferredBillAddress || header.bill_customer_address || header.invoice_address || header.customer_address || "";
+            header.bill_customer_address || header.invoice_address || preferredBillAddress || header.customer_address || "";
         const defaultEmployee = this.props.defaultEmployee || {};
         const defaultEmployeeId = parseInt(defaultEmployee.id || 0, 10) || 0;
         const defaultEmployeeName = (defaultEmployee.name || defaultEmployee.display_name || "").trim();
