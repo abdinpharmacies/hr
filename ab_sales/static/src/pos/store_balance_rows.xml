@@ -45,7 +45,8 @@
                 </div>
             </div>
             <div t-if="!visibleRows.length" class="text-muted">
-                <span t-if="state.rows.length">No branches match your search.</span>
+                <span t-if="availableRows.length">No branches match your search.</span>
+                <span t-elif="state.rows.length">No branch balances are currently available.</span>
                 <span t-else="">No transfer-enabled branches found.</span>
             </div>
         </div>

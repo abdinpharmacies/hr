@@ -63,11 +63,15 @@ export class StoreBalanceRows extends Component {
         return row.source !== "unavailable" && Number.isFinite(row.balance);
     }
 
+    get availableRows() {
+        return this.state.rows.filter((row) => this.isAvailable(row));
+    }
+
     get visibleRows() {
         const query = this.state.search.trim();
         const matchRows = (search) => {
             const terms = search.toLocaleLowerCase(user.lang).split(/\s+/).filter(Boolean);
-            return this.state.rows.filter((row) => {
+            return this.availableRows.filter((row) => {
                 const text = `${row.store_name || ""} ${row.store_code || ""}`.toLocaleLowerCase(user.lang);
                 return terms.every((term) => text.includes(term));
             });
@@ -80,7 +84,7 @@ export class StoreBalanceRows extends Component {
             const seenIds = new Set();
             const matches = new Set([...new Set(queries)].filter((mapped) => mapped && mapped !== query)
                 .flatMap(matchRows).map((row) => row.store_id));
-            rows = this.state.rows.filter((row) => matches.has(row.store_id)).filter((row) => {
+            rows = this.availableRows.filter((row) => matches.has(row.store_id)).filter((row) => {
                 if (seenIds.has(row.store_id)) return false;
                 seenIds.add(row.store_id);
                 return true;
@@ -91,7 +95,7 @@ export class StoreBalanceRows extends Component {
 
     get countLabel() {
         return _t("Showing %(visible)s of %(total)s branches", {
-            visible: this.visibleRows.length, total: this.state.rows.length,
+            visible: this.visibleRows.length, total: this.availableRows.length,
         });
     }
 
