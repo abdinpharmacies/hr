@@ -64,7 +64,7 @@ export class StoreBalanceRows extends Component {
     }
 
     get availableRows() {
-        return this.state.rows.filter((row) => this.isAvailable(row));
+        return this.state.rows.filter((row) => this.isAvailable(row) && row.balance > 0);
     }
 
     get visibleRows() {

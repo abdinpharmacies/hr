@@ -39,9 +39,11 @@ class AbProductBalanceWizard(models.TransientModel):
             snapshot = reader._read_live(product) if product else {}
             if product:
                 for store in stores:
+                    pair = (store.id, product.eplus_serial)
+                    if snapshot['balances'].get(pair, 0.0) <= 0:
+                        continue
                     reason = self._branch_api_unavailable_reason(store, config_by_store.get(store.id))
                     live_reason = snapshot['unavailable_reasons'].get(store.id)
-                    pair = (store.id, product.eplus_serial)
                     rows.append({
                         'store_id': store.id,
                         'store_name': store.display_name,

@@ -94,14 +94,15 @@ class AllStoreBalance(models.AbstractModel):
                           cached_fallback=True)
             for store_id in store_map.values():
                 pair = (store_id, serial)
-                if pair in snapshot['balances']:
-                    result['balances'][pair] = max(0.0, snapshot['balances'][pair])
+                if snapshot['balances'].get(pair, 0.0) > 0:
+                    result['balances'][pair] = snapshot['balances'][pair]
                     result['metadata'][pair] = snapshot['metadata'][pair]
             return result
         fetched = fields.Datetime.to_string(fields.Datetime.now())
-        for store_id in store_map.values():
-            pair = (store_id, serial)
-            result['balances'][pair] = max(0.0, balances.get(pair, 0.0))
+        for pair, balance in balances.items():
+            if balance <= 0:
+                continue
+            result['balances'][pair] = balance
             result['metadata'][pair] = {'source': 'eplus', 'refreshed_at': fetched}
         return result
 
@@ -175,6 +176,19 @@ class AllStoreBalance(models.AbstractModel):
                             products_sql = ','.join(['%s'] * len(batch or []))
                             product_filter = f'stock.itm_id IN ({products_sql}) AND' if batch is not None else ''
                             stores_sql = ','.join(['%s'] * len(store_batch))
+                            # Filter totals, not batches: negative batches must still offset stock.
+                            # Keep invalid groups so validation below still rejects bad source data.
+                            positive_filter = """
+                                HAVING SUM(CAST(CASE
+                                    WHEN item.itm_unit1_unit3 IS NULL
+                                         OR item.itm_unit1_unit3 <= 0
+                                         OR stock.itm_qty IS NULL THEN 0
+                                    ELSE stock.itm_qty / item.itm_unit1_unit3
+                                END AS decimal(18,2))) > 0
+                                OR SUM(CASE WHEN item.itm_unit1_unit3 IS NULL
+                                                 OR item.itm_unit1_unit3 <= 0
+                                                 OR stock.itm_qty IS NULL THEN 1 ELSE 0 END) > 0
+                            """ if live else ""
                             cursor.execute(f"""
                                 SELECT stock.itm_id, stock.sto_id,
                                        SUM(CAST(CASE
@@ -190,6 +204,7 @@ class AllStoreBalance(models.AbstractModel):
                                 LEFT JOIN Item_Catalog item ON item.itm_id = stock.itm_id
                                 WHERE {product_filter} stock.sto_id IN ({stores_sql})
                                 GROUP BY stock.itm_id, stock.sto_id
+                                {positive_filter}
                             """, tuple((batch or []) + store_batch))
                             batches.append((batch, store_batch, cursor.fetchall()))
             except Exception:

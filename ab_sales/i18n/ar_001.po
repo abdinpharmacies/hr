@@ -8041,3 +8041,9 @@ msgstr "يلزم وجود مرجع إي بلس صالح للعميل."
 #: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "No branch balances are currently available."
 msgstr "لا تتوفر أرصدة للفروع حاليًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
+msgid "No positive branch balances found."
+msgstr "لم يتم العثور على أرصدة موجبة للفروع."

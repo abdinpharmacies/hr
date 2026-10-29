@@ -10,6 +10,11 @@
     }
 
     .o_ab_sales_store_balance_entry {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 0 3px 10px rgba(15, 23, 42, 0.06);
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: start;
@@ -31,6 +36,16 @@
             min-height: 44px;
             flex-shrink: 0;
         }
+    }
+
+    .o_ab_sales_store_balance_badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        background: #e6f4f1;
+        color: #0f766e;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
     }
 
     .o_ab_sales_store_balance_feedback {

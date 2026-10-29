@@ -14,7 +14,7 @@
             <p class="text-muted small mb-2" t-esc="countLabel"/>
             <div class="o_ab_sales_store_balance_grid">
                 <div t-foreach="visibleRows" t-as="row" t-key="row.store_id"
-                     class="o_ab_sales_store_balance_entry border rounded p-2">
+                     class="o_ab_sales_store_balance_entry">
                     <div class="o_ab_sales_store_balance_name">
                         <div class="fw-semibold" t-esc="row.store_name"/>
                         <small t-if="row.store_code" class="text-muted" t-esc="row.store_code"/>
@@ -22,7 +22,7 @@
                     <div class="o_ab_sales_store_balance_value d-flex align-items-center gap-2">
                         <div class="text-end">
                             <small class="text-muted d-block">Balance</small>
-                            <span t-esc="formatBalance(row.balance)"/>
+                            <span class="o_ab_sales_store_balance_badge" t-esc="formatBalance(row.balance)"/>
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-secondary"
                                 t-att-disabled="row.loading || !row.can_refresh"
@@ -46,8 +46,7 @@
             </div>
             <div t-if="!visibleRows.length" class="text-muted">
                 <span t-if="availableRows.length">No branches match your search.</span>
-                <span t-elif="state.rows.length">No branch balances are currently available.</span>
-                <span t-else="">No transfer-enabled branches found.</span>
+                <span t-else="">No positive branch balances found.</span>
             </div>
         </div>
     </t>
