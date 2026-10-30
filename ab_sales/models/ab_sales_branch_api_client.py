@@ -4,6 +4,7 @@ from datetime import timezone
 from uuid import UUID, uuid4
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
+from odoo.tools import config as odoo_config
 
 
 FORCE_ID_SALE_MODELS = frozenset({
@@ -127,6 +128,19 @@ class BranchClient(models.AbstractModel):
     def _sale_correction_payload(self, wire):
         """Extension point for a copied wire payload in a confirmed rejected revision."""
         return wire
+
+    @api.model
+    def _sale_source_identity(self, wire, capabilities):
+        """Enrich only a new promotion attempt; never refresh a frozen origin."""
+        if ('source_db_serial' in wire or not wire.get('promotion')
+                or capabilities.get('submission_source_identity') != 1):
+            return wire
+        serial = odoo_config.get('db_serial')
+        if isinstance(serial, str) and serial.strip().isascii() and serial.strip().isdigit():
+            serial = int(serial.strip())
+        if type(serial) is not int or serial <= 0:
+            raise UserError(_('A positive callcenter DB serial is required to submit this promotion.'))
+        return dict(wire, source_db_serial=serial)
 
     @api.model
     def _sale_payload(self, payload):

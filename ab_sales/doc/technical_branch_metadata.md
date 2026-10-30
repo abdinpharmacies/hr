@@ -44,3 +44,32 @@ fields, and freezes the next revision with the original request in audit history
 No quantity or price change is required for this repair. Ordinary **Retry** still
 replays the original frozen payload, and an already frozen correction replays
 without incrementing the revision again. No live bill is automatically submitted.
+
+## Promotion source identity
+
+For a new sale with a selected promotion, a receiver advertising
+`submission_source_identity: 1` receives a top-level `source_db_serial` derived
+from the callcenter server's positive integer `db_serial` configuration. The
+existing `metadata_context.source` UUID and promotion reference are retained.
+Browser-supplied source identity is ignored. Destination RPC/store routing and
+all other promotion eligibility checks remain unchanged.
+
+Ordinary sales do not require this new source configuration. Older receivers
+retain the legacy payload and validation behavior, including promotion sales;
+a promotion allowed only for callcenter may still be rejected there.
+
+The receiver must include the source-identity implementation and promotion fixes
+through `4e2e098956049f0a66c7bea0ce24bcba840f9eca`, with the earlier
+`ab_branch_api` schema upgrade applied. The advertised capability alone does not
+prove those promotion fixes are installed. The receiver API user must have the
+Call Center role, and the source serial must identify exactly one active replica.
+
+Frozen retries never gain or refresh source identity. A confirmed rejected
+correction may add missing identity in its next revision, even without changing
+quantities or promotion; previous identity and audit history are preserved.
+Lost-response retries replay that revision unchanged. Confirmed-rejection draft
+recovery creates a replacement attempt using the new submission behavior.
+
+Deploy the callcenter code, upgrade only `ab_sales` to load translations and
+module metadata, then restart its workers. This change does not alter returns,
+grant roles, repair production data, or automatically replay any submission.

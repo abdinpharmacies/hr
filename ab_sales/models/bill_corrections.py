@@ -167,7 +167,7 @@ class BillCorrectionApi(models.TransientModel):
         marker = header._correction_marker()
         if not marker or any(request.get(key) != value for key, value in marker.items()):
             raise UserError(_('This correction is no longer active. Refresh the bill.'))
-        self._confirm_correction_rejection(header)
+        config = self._confirm_correction_rejection(header)
         bill = record.bill_json
         self._validate_correction_bill(header, bill)
         payload = deepcopy(stored)
@@ -183,6 +183,11 @@ class BillCorrectionApi(models.TransientModel):
                     self.env['ab_promo_program'].browse(int(promotion)).exists())
         payload['applied_program_id'] = promotion
         wire = self.env['ab_sales_branch_client']._sale_correction_payload(wire)
+        if wire.get('promotion') and 'source_db_serial' not in wire:
+            client = self.env['ab_sales_branch_client']
+            capabilities = client._call(header.store_id, 'get_capabilities')
+            config._validate_identity(capabilities)
+            wire = client._sale_source_identity(wire, capabilities)
         payload['_branch_wire_payload'] = wire
         if wire == stored['_branch_wire_payload']:
             raise UserError(_('Change a quantity or promotion before submitting the correction.'))

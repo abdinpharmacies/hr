@@ -8047,3 +8047,9 @@ msgstr "لا تتوفر أرصدة للفروع حاليًا."
 #: code:addons/ab_sales/static/src/pos/store_balance_rows.xml:0
 msgid "No positive branch balances found."
 msgstr "لم يتم العثور على أرصدة موجبة للفروع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_api_client.py:0
+msgid "A positive callcenter DB serial is required to submit this promotion."
+msgstr "يلزم رقم تسلسلي موجب لقاعدة بيانات الكول سنتر لإرسال هذا العرض."

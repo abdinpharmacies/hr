@@ -375,6 +375,7 @@ class LocalSubmission(models.TransientModel):
                 # Audit metadata is server-derived only for a newly frozen attempt.
                 values.update(self._pos_submission_header_vals(payload))
                 wire = client._sale_payload(payload)
+                wire = client._sale_source_identity(wire, capabilities)
                 if duplicate:
                     with self.env.cr.savepoint():
                         self._replace_branch_bill(header, payload)
