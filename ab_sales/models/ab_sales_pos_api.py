@@ -620,27 +620,26 @@ class AbSalesPosApi(models.TransientModel):
         return items
 
     @api.model
-    def _pos_fill_inventory_json_for_price_validation(self, header, vals):
-        if not header or vals.get("inventory_json") or not vals.get("product_id"):
-            return vals
+    def _pos_fill_inventory_json_for_price_validation(self, header, vals_list):
+        """Read authoritative branch prices before create runs line constraints."""
+        header.ensure_one()
+        lines = self.env["ab_sales_line"]
+        for vals in vals_list:
+            lines += self.env["ab_sales_line"].new({
+                "header_id": header.id,
+                "product_id": int(vals["product_id"]),
+                "qty_str": vals.get("qty_str") or "1",
+                "sell_price": vals.get("sell_price") or 0.0,
+                "uom_id": vals.get("uom_id") or False,
+                "inventory_json": {},
+            })
 
-        line_vals = {
-            "header_id": header.id,
-            "product_id": int(vals.get("product_id")),
-            "qty_str": vals.get("qty_str") or "1",
-            "sell_price": vals.get("sell_price") or 0.0,
-            "uom_id": vals.get("uom_id") or False,
-            "inventory_json": {},
-        }
-        line = self.env["ab_sales_line"].new(line_vals)
-        if line.product_id.is_priced and line._sell_price_matches_price_badges():
-            return vals
-
-        line._recompute_inventory_json()
-        payload = line.inventory_json or {}
-        if isinstance(payload, dict):
-            vals["inventory_json"] = payload
-        return vals
+        # The branch adapter groups by store and batches product serials. Never
+        # trust browser snapshots or turn a failed stock read into default prices.
+        lines._recompute_inventory_json()
+        for vals, line in zip(vals_list, lines):
+            vals["inventory_json"] = line.inventory_json
+        return vals_list
 
     @api.model
     def _fill_lines_balance_from_offline(self, header):
@@ -970,6 +969,7 @@ class AbSalesPosApi(models.TransientModel):
             lines_to_create.append(vals)
 
         if lines_to_create:
+            self._pos_fill_inventory_json_for_price_validation(header, lines_to_create)
             self.env["ab_sales_line"].create(lines_to_create)
 
         self._pos_apply_payload_promotion(header, payload)
