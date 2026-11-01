@@ -183,3 +183,16 @@ Files changed:
 - ab_tax_eta_archive/models/eta_dashboard.py
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/models/eta_sync.py
+
+16030027 — yahyazakaria22 — 2026-11-01
+fix: resume ETA receipt retrieval in ten-minute windows
+
+- Retrieve recent ETA receipts in resumable 10-minute intervals and retain completed intervals after a later retry fails.
+- Commit scheduled retrieval progress after each interval and run the sync job every minute.
+- Resume pending backfill days before opening another day, while retrying failed days at most hourly.
+- Check completed overlap days once daily to keep the faster schedule focused on unfinished work.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/data/cron.xml
