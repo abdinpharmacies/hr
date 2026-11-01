@@ -6,6 +6,7 @@ from urllib.parse import urlsplit
 import pytz
 
 import requests
+from psycopg2.errors import UniqueViolation
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -16,7 +17,7 @@ ETA_MAX_RECEIPTS_PER_SEARCH = 3000
 ETA_RECEIPT_PAGE_SIZE = 10
 ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
 ETA_MAX_INVOICE_PAGES = 20
-ETA_RECEIPT_WINDOW = timedelta(minutes=10)
+ETA_RECEIPT_WINDOW = timedelta(minutes=5)
 
 
 class EtaSearchNoResult(Exception):
@@ -162,6 +163,10 @@ class EtaSync(models.Model):
         self.ensure_one()
         try:
             with self.env.cr.savepoint():
+                if not self.try_lock_for_update():
+                    _logger.info('ETA retrieval is already running for %s %s %s',
+                                 self.report_date, self.kind, self.direction)
+                    return
                 result = self._retrieve(auth_cache=auth_cache)
         except (requests.RequestException, UserError, ValidationError, ValueError, KeyError) as exc:
             _logger.warning('ETA retrieval failed for %s %s %s: %s',
@@ -286,7 +291,24 @@ class EtaSync(models.Model):
                 else:
                     new_values.append(values)
             if new_values:
-                model.create(new_values)
+                try:
+                    with self.env.cr.savepoint():
+                        model.create(new_values)
+                except UniqueViolation:
+                    for values in new_values:
+                        try:
+                            with self.env.cr.savepoint():
+                                model.create(values)
+                        except UniqueViolation:
+                            existing = model.search([
+                                ('config_id', '=', config.id),
+                                ('direction', '=', self.direction),
+                                ('uuid', '=', values['uuid']),
+                            ], limit=1)
+                            if not existing:
+                                raise
+                            issue_dates.add(existing.report_date)
+                            existing.write(values)
         if receipt_search:
             document_count = model.search_count([
                 ('config_id', '=', config.id), ('direction', '=', self.direction),
