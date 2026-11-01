@@ -264,3 +264,14 @@ fix: list every configured ETA retrieval day
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+
+3b31488e — yahyazakaria22 — 2026-11-02
+fix: prioritize ETA invoices and pace search requests
+
+- Process eligible invoice retrievals before receipt retrievals and keep receipts queued while invoice work remains.
+- Pace each ETA invoice search request by 2.1 seconds and each receipt search request by 0.6 seconds, including across pages and date windows.
+- Wait beyond ETA's Retry-After value when a request is throttled.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
