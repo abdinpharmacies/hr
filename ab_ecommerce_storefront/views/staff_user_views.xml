@@ -22,5 +22,5 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
-    <menuitem id="menu_staff_user_wizard" name="Add Staff User" parent="website.menu_website_configuration" action="action_staff_user_wizard" sequence="90" groups="website.group_website_designer"/>
+    <menuitem id="menu_staff_user_wizard" name="Add Staff User" parent="website.menu_site" action="action_staff_user_wizard" sequence="90" groups="website.group_website_designer"/>
 </odoo>
