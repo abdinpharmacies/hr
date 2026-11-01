@@ -13271,21 +13271,6 @@ msgstr "فئة منتجات الموقع الإلكتروني"
 msgid "about Abdin Pharmacies, Egyptian pharmacy chain, Abdin Sohag"
 msgstr "عن صيدليات عابدين، سلسلة صيدليات مصرية، عابدين سوهاج"
 
-#~ msgid ""
-#~ "<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
-#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
-#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
-#~ msgstr ""
-#~ "<span data-ab-cart-hold-active=\"\">الوقت المتبقي لحجز الموقع:</span>\n"
-#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
-#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">انتهت مهلة الحجز على الموقع. تظل الأصناف في سلتك وسيتم التحقق من توافرها مرة أخرى عند إتمام الطلب.</span>"
-
-#~ msgid ""
-#~ "Removing an item releases its website hold. Final stock availability is "
-#~ "checked at checkout."
-#~ msgstr ""
-#~ "حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
-#~ "إتمام الطلب."
 #. module: ab_ecommerce_storefront
 #: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_staff_user_wizard
 #: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_staff_user_wizard
@@ -13337,3 +13322,19 @@ msgstr "سيتم إرسال رسالة دعوة إذا كانت خدمة الب�
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
 msgid "Name, login, and email are required."
 msgstr "الاسم واسم المستخدم والبريد الإلكتروني حقول مطلوبة."
+
+#~ msgid ""
+#~ "<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
+#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">Your website hold has expired. Items remain in your cart and availability will be checked again at checkout.</span>"
+#~ msgstr ""
+#~ "<span data-ab-cart-hold-active=\"\">الوقت المتبقي لحجز الموقع:</span>\n"
+#~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"
+#~ "                <span class=\"d-none\" data-ab-cart-hold-expired=\"\">انتهت مهلة الحجز على الموقع. تظل الأصناف في سلتك وسيتم التحقق من توافرها مرة أخرى عند إتمام الطلب.</span>"
+
+#~ msgid ""
+#~ "Removing an item releases its website hold. Final stock availability is "
+#~ "checked at checkout."
+#~ msgstr ""
+#~ "حذف الصنف يلغي حجزه على الموقع. يتم التحقق النهائي من توافر المخزون عند "
+#~ "إتمام الطلب."
