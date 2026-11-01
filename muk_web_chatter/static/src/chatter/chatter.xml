@@ -16,7 +16,7 @@
                     'active': state.composerType === 'message',
                     'my-2': !props.compactHeight
                 }" 
-                t-att-disabled="!state.thread.hasWriteAccess and !(state.thread.hasReadAccess and state.thread.canPostOnReadonly) and props.threadId" 
+                t-att-disabled="!state.thread.canPostMessage and props.threadId"
                 data-hotkey="m" 
                 t-on-click="() => this.toggleComposer('message')"
             >
@@ -33,7 +33,7 @@
                     'active': state.composerType === 'note',
                     'my-2': !props.compactHeight
                 }"
-                t-att-disabled="!state.thread.hasWriteAccess and !(state.thread.hasReadAccess and state.thread.canPostOnReadonly) and props.threadId"
+                t-att-disabled="!state.thread.canPostMessage and props.threadId"
                 data-hotkey="shift+m"
                 t-on-click="() => this.toggleComposer('note')"
             >
@@ -46,9 +46,6 @@
         </xpath>
         <xpath expr="//button[hasclass('o-mail-Chatter-activity')]/span" position="attributes">
             <attribute name="class" add="d-none d-sm-inline" separator=" " />
-        </xpath>
-        <xpath expr="//button[@t-if='props.hasAttachmentPreview and state.thread.attachmentsInWebClientView.length']" position="attributes">
-            <attribute name="t-if">props.isChatterAside and props.hasAttachmentPreview and state.thread.attachmentsInWebClientView.length</attribute>
         </xpath>
         <xpath expr="//button[@t-on-click='onClickSearch']" position="after">
         	<button
