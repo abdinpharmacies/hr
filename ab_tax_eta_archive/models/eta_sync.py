@@ -18,6 +18,8 @@ ETA_RECEIPT_PAGE_SIZE = 10
 ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
 ETA_MAX_INVOICE_PAGES = 20
 ETA_RECEIPT_WINDOW = timedelta(minutes=5)
+ETA_INVOICE_SEARCH_DELAY = 2.1
+ETA_RECEIPT_SEARCH_DELAY = 0.6
 
 
 class EtaSearchNoResult(Exception):
@@ -61,7 +63,7 @@ class EtaSync(models.Model):
                 continue
             if not self._ensure_run_days(config, today):
                 return
-            for kind in ('receipt', 'invoice'):
+            for kind in ('invoice', 'receipt'):
                 for direction in ('sent', 'received'):
                     attempted = set()
                     for priority_day in (today - timedelta(days=1), delivery_day):
@@ -122,8 +124,21 @@ class EtaSync(models.Model):
                         )
                         if not self._cron_attempt(oldest_check):
                             return
+                if kind == 'invoice' and self._invoice_work_remaining(
+                        config, today, error_retry_before):
+                    break
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(remaining=0)
+
+    def _invoice_work_remaining(self, config, today, error_retry_before):
+        runs = self.search([
+            ('config_id', '=', config.id), ('kind', '=', 'invoice'),
+            ('report_date', '>=', config.start_date), ('report_date', '<', today),
+            ('state', 'in', ['pending', 'error']),
+        ])
+        return bool(runs.filtered(
+            lambda run: run.state == 'pending' or not run.last_run_at or
+            fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
 
     def _ensure_run_days(self, config, today):
         existing = self.search([
@@ -135,7 +150,7 @@ class EtaSync(models.Model):
         missing = []
         day = config.start_date
         while day <= today:
-            for kind in ('receipt', 'invoice'):
+            for kind in ('invoice', 'receipt'):
                 for direction in ('sent', 'received'):
                     if (day, kind, direction) not in known:
                         missing.append({
@@ -381,7 +396,6 @@ class EtaSync(models.Model):
                 raise ValidationError(_('ETA invoice pagination stopped before the final page.'))
             seen.add(next_token)
             token = next_token
-            time.sleep(0.5)
 
     def _split_search_window(self, start, end, limit_message):
         if end - start <= timedelta(milliseconds=1):
@@ -409,8 +423,6 @@ class EtaSync(models.Model):
         count = 0
         total = None
         for page_no in range(1, ETA_MAX_RECEIPT_PAGE_NO + 1):
-            if page_no > 1:
-                time.sleep(0.5)
             try:
                 payload = self._request(
                     'GET', f'{api_url}/api/v1/receipts/search',
@@ -460,7 +472,13 @@ class EtaSync(models.Model):
         yield from pages
 
     def _request(self, method, url, allow_no_result=False, allow_search_limit=False, **kwargs):
+        search_delay = {
+            '/api/v1.0/documents/search': ETA_INVOICE_SEARCH_DELAY,
+            '/api/v1/receipts/search': ETA_RECEIPT_SEARCH_DELAY,
+        }.get(urlsplit(url).path, 0)
         for attempt in range(4):
+            if search_delay:
+                time.sleep(search_delay)
             try:
                 response = requests.request(method, url, timeout=40, **kwargs)
             except requests.RequestException:
@@ -470,8 +488,11 @@ class EtaSync(models.Model):
                 continue
             if response.status_code in (429, 503) and attempt < 3:
                 retry_after = response.headers.get('Retry-After', '')
-                delay = int(retry_after) if retry_after.isdigit() else 2 ** attempt
-                time.sleep(max(delay, 1))
+                try:
+                    delay = float(retry_after)
+                except (TypeError, ValueError):
+                    delay = 2 ** attempt
+                time.sleep(max(delay + 0.5, 1))
                 continue
             if response.status_code == 400 and allow_search_limit:
                 try:
