@@ -59,6 +59,8 @@ class EtaSync(models.Model):
         for config in self.env['ab_tax_eta_archive_config'].search([('active', '=', True)]):
             if not config.start_date:
                 continue
+            if not self._ensure_run_days(config, today):
+                return
             for kind in ('receipt', 'invoice'):
                 for direction in ('sent', 'received'):
                     attempted = set()
@@ -97,24 +99,9 @@ class EtaSync(models.Model):
                     if unfinished:
                         oldest_unfinished = min(
                             unfinished,
-                            key=lambda run: (run.state != 'pending',
-                                             fields.Datetime.to_datetime(run.last_run_at)
-                                             if run.last_run_at else datetime.min),
+                            key=lambda run: (run.report_date, run.state != 'pending'),
                         )
                         if not self._cron_attempt(oldest_unfinished):
-                            return
-                        continue
-
-                    attempted_days = set(self.search(stream_domain).mapped('report_date'))
-                    day = config.start_date
-                    while day in attempted_days:
-                        day += timedelta(days=1)
-                    if day < today:
-                        run = self.create({
-                            'config_id': config.id, 'kind': kind,
-                            'direction': direction, 'report_date': day,
-                        })
-                        if not self._cron_attempt(run):
                             return
                         continue
 
@@ -137,6 +124,33 @@ class EtaSync(models.Model):
                             return
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(remaining=0)
+
+    def _ensure_run_days(self, config, today):
+        existing = self.search([
+            ('config_id', '=', config.id),
+            ('report_date', '>=', config.start_date),
+            ('report_date', '<=', today),
+        ])
+        known = {(run.report_date, run.kind, run.direction) for run in existing}
+        missing = []
+        day = config.start_date
+        while day <= today:
+            for kind in ('receipt', 'invoice'):
+                for direction in ('sent', 'received'):
+                    if (day, kind, direction) not in known:
+                        missing.append({
+                            'config_id': config.id, 'report_date': day,
+                            'kind': kind, 'direction': direction,
+                        })
+            day += timedelta(days=1)
+        for offset in range(0, len(missing), 200):
+            self.create(missing[offset:offset + 200])
+            if (self.env.context.get('cron_id') and
+                    not self.env['ir.cron']._commit_progress(
+                        min(200, len(missing) - offset),
+                        remaining=max(len(missing) - offset - 200, 0) + 1)):
+                return False
+        return True
 
     def _cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
