@@ -1,14 +1,13 @@
 import base64
-from datetime import timedelta
-from types import SimpleNamespace
+import importlib.util
+from datetime import datetime, timedelta
+from pathlib import Path
 from unittest.mock import patch
-from lxml import etree
-from psycopg2.errors import UniqueViolation
+
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.tests import Form, TransactionCase, tagged
+from odoo.tests import TransactionCase, tagged
 from odoo.tests.common import new_test_user
-from odoo.tools import mute_logger
 
 
 @tagged('post_install', '-at_install')
@@ -16,1648 +15,616 @@ class TestSupplierClaimCycle(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env['res.lang']._activate_lang('ar_001')
-        cls.env['ir.module.module'].search(
-            fields.Domain('name', '=', 'ab_supplier_claim_cycle')
-        )._update_translations(filter_lang=['ar_001'])
-        cls.roles = ('user', 'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts', 'reviewer', 'admin')
-        cls.users = {role: new_test_user(cls.env(context=dict(cls.env.context, no_reset_password=True)), login='scc_test_'+role,
-                     groups='ab_supplier_claim_cycle.supplier_claim_group_'+role) for role in cls.roles}
-        cls.outsider = new_test_user(cls.env(context=dict(cls.env.context, no_reset_password=True)), login='scc_test_outsider', groups='base.group_user')
-        cls.system = new_test_user(cls.env(context=dict(cls.env.context, no_reset_password=True)), login='scc_test_system', groups='base.group_system')
-        cls.supplier = cls.env['ab_costcenter'].create({
-            'name': 'Cycle Supplier Alpha', 'code': '1-42',
-        })
-        cls.cash = cls.env['ab_costcenter'].create({
-            'name': 'Cash Supplier', 'code': '1-43',
-        })
-        cls.non_supplier_center = cls.env['ab_costcenter'].create({
-            'name': 'Internal Cost Center', 'code': '2-10',
-        })
+        cls.roles = ('user', 'inventory', 'purchasing', 'tax', 'supplier_accounts', 'bank_accounts', 'reviewer', 'admin')
+        cls.users = {role: new_test_user(cls.env, login='scc_test_' + role,
+            groups='ab_supplier_claim_cycle.supplier_claim_group_' + role) for role in cls.roles}
+        cls.supplier = cls.env['ab_costcenter'].create({'name': 'Test supplier', 'code': '1-42'})
         cls.Claim = cls.env['ab_supplier_claim_cycle']
+        cls.document = base64.b64encode(b'original evidence')
+        cls.replacement = base64.b64encode(b'corrected evidence')
 
-    def claim(self, cash=False):
-        return self.Claim.with_user(self.users['user']).create(self.values(cash))
+    def claim(self, payment='bank_transfer', tax='tax_payment', **values):
+        return self.Claim.with_user(self.users['user']).create(dict(
+            supplier_id=self.supplier.id, num_of_invoice=2, area='north', claim_amount=100,
+            type_of_invoice='original', payment_nature=payment, tax_classification=tax, **values))
 
-    def values(self, cash=False):
-        return dict(supplier_id=(self.cash if cash else self.supplier).id, num_of_invoice=2,
-                    area='north', amount_of_check='100', type_of_invoice='original',
-                    payment_nature='cash' if cash else 'bank_transfer',
-                    tax_classification='tax_payment', section='medical')
+    def decide(self, claim, role, decision='approved', **values):
+        return claim.with_user(self.users[role]).action_decide(role, decision, **values)
 
-    def decide(self, claim, department, decision='approved', reason=None, followup_date=None, **vals):
-        record=claim.with_user(self.users[department])
-        if decision in ('rejected', 'deferred'):
-            reason = vals.pop(department + '_notes', reason)
-            followup_date = vals.pop(department + '_followup_date', followup_date)
-        if vals: record.write(vals)
-        return record.action_decide(department, decision, reason=reason, followup_date=followup_date)
-
-    def accounts(self, claim):
+    def financial(self, claim):
         claim.action_submit()
-        self.decide(claim,'inventory')
-        self.decide(claim,'purchasing')
+        if claim.payment_nature != 'cash':
+            self.decide(claim, 'purchasing')
+            self.decide(claim, 'inventory')
+
+    def prepare(self, claim):
+        self.financial(claim)
+        if claim.tax_decision != 'not_required':
+            claim.with_user(self.users['tax']).write({'tax_review_attachment': self.document,
+                'tax_review_filename': 'tax.pdf', 'tax_discount_decision': 'apply'})
+            self.decide(claim, 'tax')
+        if claim.payment_nature == 'check':
+            claim.with_user(self.users['supplier_accounts']).write({
+                'supplier_cheque_attachment': self.document, 'supplier_cheque_filename': 'supplier.pdf'})
+        self.decide(claim, 'supplier_accounts')
 
     def bank(self, claim):
-        self.accounts(claim)
-        self.decide(claim,'supplier_accounts',cheque_attachment=base64.b64encode(b'cheque'),cheque_filename='cheque.pdf')
+        self.prepare(claim)
+        claim.write({'payment_request_attachment': self.document, 'payment_request_filename': 'request.pdf'})
+        claim.action_prepare_payment()
 
-    def test_manual_claim_reference_normalization_and_uniqueness(self):
-        claims = self.Claim.with_user(self.users['user']).create([
-            self.values(), {**self.values(), 'claim_reference': '   '},
-            {**self.values(), 'claim_reference': '  ext-ab/123  '},
-        ])
-        self.assertEqual(claims.mapped('claim_reference'), [False, False, 'EXT-AB/123'])
-        claims[0].write({'claim_reference': '  new-42  '})
-        self.assertEqual(claims[0].claim_reference, 'NEW-42')
-        with mute_logger('odoo.sql_db'), self.assertRaises(UniqueViolation):
-            self.Claim.with_user(self.users['user']).create([
-                {**self.values(), 'claim_reference': 'new-batch'},
-                {**self.values(), 'claim_reference': ' ext-ab/123 '},
-            ])
-        self.assertFalse(self.Claim.search(fields.Domain('claim_reference', '=', 'NEW-BATCH')))
-        with mute_logger('odoo.sql_db'), self.assertRaises(UniqueViolation):
-            claims[1].write({'claim_reference': ' new-42 '})
-            claims[1].flush_recordset(['claim_reference'])
-        self.assertFalse(claims[1].claim_reference)
-        with mute_logger('odoo.sql_db'), self.assertRaises(UniqueViolation):
-            claims[:2].write({'claim_reference': 'same-id'})
-            claims[:2].flush_recordset(['claim_reference'])
-        self.assertEqual(claims[:2].mapped('claim_reference'), ['NEW-42', False])
-        claims[0].write({'claim_reference': '\t\n'})
-        self.assertFalse(claims[0].claim_reference)
-        context_claim = self.Claim.with_user(self.users['user']).with_context(
-            default_claim_reference=' context-id ').create(self.values())
-        self.assertEqual(context_claim.claim_reference, 'CONTEXT-ID')
 
-    def test_claim_reference_permissions_and_lifecycle(self):
+    def test_followup_dates_survive_saving_and_department_decisions(self):
+        from odoo.tests import Form
         claim = self.claim()
-        claim.write({'claim_reference': ' initial-id '})
         claim.action_submit()
-        for role in self.roles:
-            if role != 'admin':
-                with self.assertRaises(AccessError):
-                    claim.with_user(self.users[role]).write({'claim_reference': 'forged'})
-        for user in (self.users['admin'], self.system):
-            claim.with_user(user).write({'claim_reference': ' admin-id '})
-            self.assertEqual(claim.claim_reference, 'ADMIN-ID')
+        dates = {department: fields.Date.today() + timedelta(days=index + 1)
+                 for index, department in enumerate(('inventory', 'purchasing', 'tax', 'supplier_accounts', 'bank_accounts'))}
+        for department in dates:
+            if department == 'tax':
+                claim.with_user(self.users['tax']).write({
+                    'tax_review_attachment': self.document, 'tax_discount_decision': 'apply'})
+            if department == 'bank_accounts':
+                claim.write({'payment_request_attachment': self.document, 'payment_request_filename': 'request.pdf'})
+                claim.action_prepare_payment()
+                claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': self.document})
+            field_name = department + '_followup_date'
+            with Form(claim.with_user(self.users[department])) as form:
+                setattr(form, field_name, dates[department])
+            claim.flush_recordset([field_name])
+            claim.invalidate_recordset([field_name])
+            self.assertEqual(claim[field_name], dates[department])
+            self.decide(claim, department)
+            claim.flush_recordset([field_name])
+            claim.invalidate_recordset([field_name])
+            self.assertEqual(claim[field_name], dates[department])
+            self.assertEqual(claim.history_ids[0].followup_date, dates[department])
+        claim.invalidate_recordset()
+        for department, date in dates.items():
+            self.assertEqual(claim[department + '_followup_date'], date)
+
+    def test_rejection_retains_each_departments_followup_date(self):
+        claim = self.claim()
+        claim.action_submit()
+        inventory_date = fields.Date.today() + timedelta(days=2)
+        purchasing_date = fields.Date.today() + timedelta(days=4)
+        claim.with_user(self.users['inventory']).write({'inventory_followup_date': inventory_date})
+        self.decide(claim, 'purchasing', 'deferred', reason='Waiting', followup_date=purchasing_date)
         self.decide(claim, 'inventory', 'rejected', reason='Correction')
-        claim.write({'claim_reference': ' corrected-id '})
+        claim.invalidate_recordset()
+        self.assertEqual(claim.inventory_followup_date, inventory_date)
+        self.assertEqual(claim.purchasing_followup_date, purchasing_date)
         claim.action_submit()
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            self.decide(claim, department)
-            self.assertEqual(claim.claim_reference, 'CORRECTED-ID')
-        with self.assertRaises(AccessError):
-            claim.write({'claim_reference': 'secretarial-too-late'})
-        claim.with_user(self.system).write({'claim_reference': 'final-id'})
-        claim.with_user(self.users['admin']).write({'active': False})
-        for user in (self.users['user'], self.users['admin'], self.system):
-            with self.assertRaises(UserError):
-                claim.with_user(user).write({'claim_reference': False})
-        self.assertEqual(claim.claim_reference, 'FINAL-ID')
-        with mute_logger('odoo.sql_db'), self.assertRaises(UniqueViolation):
-            self.Claim.with_user(self.users['user']).create({**self.values(), 'claim_reference': 'final-id'})
-        claim.with_user(self.users['admin']).write({'active': True})
-        claim.action_close()
-        for user in (self.users['user'], self.users['admin'], self.system):
-            with self.assertRaises(UserError):
-                claim.with_user(user).write({'claim_reference': 'closed-change'})
-        claim.with_user(self.users['admin']).write({'active': False})
-        claim.with_user(self.users['admin']).write({'active': True})
-        self.assertEqual(claim.claim_reference, 'FINAL-ID')
+        self.assertEqual(claim.inventory_followup_date, inventory_date)
+        self.assertEqual(claim.purchasing_followup_date, purchasing_date)
 
-    def test_claim_reference_display_search_and_translation(self):
+    def test_open_claim_input_changes_restart_applicable_reviews(self):
+        replacement_supplier = self.env['ab_costcenter'].create({'name': 'Changed supplier', 'code': '1-changed'})
+        for stage in ('draft', 'operational_review', 'financial_review', 'secretarial_preparation',
+                      'bank_accounts', 'ready_to_close', 'returned_secretarial'):
+            for field_name, new_value in (('supplier_id', replacement_supplier.id),
+                                          ('payment_nature', 'cash'), ('type_of_invoice', 'copy')):
+                with self.subTest(stage=stage, field=field_name):
+                    claim = self.claim()
+                    if stage in ('operational_review', 'returned_secretarial'):
+                        claim.action_submit()
+                        if stage == 'returned_secretarial':
+                            self.decide(claim, 'inventory', 'rejected', reason='Correction')
+                    elif stage == 'financial_review':
+                        self.financial(claim)
+                    elif stage == 'secretarial_preparation':
+                        self.prepare(claim)
+                    elif stage in ('bank_accounts', 'ready_to_close'):
+                        self.bank(claim)
+                        if stage == 'ready_to_close':
+                            claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': self.document})
+                            self.decide(claim, 'bank_accounts')
+                    self.assertEqual(claim.state, stage)
+                    previous_history = claim.history_ids.read(['event', 'reason', 'decision'])
+                    previous_round, previous_revision = claim.review_round, claim.document_revision
+                    self.assertTrue(claim.can_edit_open_claim_fields)
+                    self.assertTrue(claim.can_edit_payment_nature)
+                    claim.write({field_name: new_value})
+                    claim.invalidate_recordset()
+                    self.assertEqual(claim[field_name].id if field_name == 'supplier_id' else claim[field_name], new_value)
+                    for entry in previous_history:
+                        self.assertEqual(self.env['ab_supplier_claim_cycle.history'].browse(entry['id']).read(
+                            ['event', 'reason', 'decision'])[0], entry)
+                    if stage == 'draft':
+                        self.assertEqual(claim.state, 'draft')
+                        continue
+                    cash = claim.payment_nature == 'cash'
+                    self.assertEqual(claim.state, 'financial_review' if cash else 'operational_review')
+                    self.assertEqual(claim.inventory_decision, 'not_required' if cash else 'pending')
+                    self.assertEqual(claim.purchasing_decision, 'not_required' if cash else 'pending')
+                    self.assertEqual(claim.tax_decision, 'pending')
+                    self.assertEqual(claim.supplier_accounts_decision, 'pending')
+                    self.assertEqual(claim.bank_accounts_decision, 'not_required' if cash else 'pending')
+                    self.assertEqual(claim.review_round, previous_round + 1)
+                    self.assertEqual(claim.document_revision, previous_revision + 1)
+                    self.assertEqual(claim.history_ids[0].event, 'claim_updated')
+                    self.assertFalse(claim.payment_request_attachment)
+                    self.assertFalse(claim.tax_review_attachment)
+                    self.assertFalse(claim.bank_cheque_attachment)
+                    self.assertFalse(claim.bank_approval_revision)
+                    self.assertFalse(claim.payment_request_revision)
+                    self.assertFalse(claim.preparation_due_date)
+                    if stage in ('secretarial_preparation', 'bank_accounts', 'ready_to_close'):
+                        self.assertTrue(claim.document_ids.filtered(lambda document: document.kind == 'tax_review'))
+                    if stage in ('bank_accounts', 'ready_to_close'):
+                        self.assertTrue(claim.document_ids.filtered(lambda document: document.kind == 'payment_request'))
+
+    def test_claim_input_edit_permissions_and_noop(self):
         claim = self.claim()
-        supplier_name = self.supplier.display_name
-        self.assertEqual(claim.display_name, supplier_name)
-        claim.write({'claim_reference': ' display-42 '})
-        self.assertEqual(claim.display_name, f'[DISPLAY-42] {supplier_name}')
-        self.assertIn(claim.id, [row[0] for row in self.Claim.name_search('display-42')])
-        self.assertIn(claim.id, [row[0] for row in self.Claim.name_search('Cycle Supplier')])
-        self.assertIn(claim, self.Claim.search(fields.Domain('claim_reference', '=', 'DISPLAY-42')))
-        claim.write({'claim_reference': False})
-        self.assertEqual(claim.display_name, supplier_name)
-        self.assertIn(claim.id, [row[0] for row in self.Claim.name_search('Cycle Supplier')])
-        self.assertEqual(self.Claim.with_context(lang='ar_001').fields_get(
-            ['claim_reference'])['claim_reference']['string'], 'رقم المطالبة')
-        constraint = self.env['ir.model.constraint'].search(
-            fields.Domain('name', '=', 'ab_supplier_claim_cycle_claim_reference_unique'))
-        self.assertEqual(constraint.with_context(lang='ar_001').message, 'يجب أن يكون رقم المطالبة فريدًا.')
-
-    def test_secretarial_cheque_fallback_routes_and_roles(self):
-        cheque = base64.b64encode(b'fallback')
-        for cash in (True, False):
-            for user in (self.users['user'], self.users['admin'], self.system):
-                claim = self.claim(cash)
-                claim.action_submit() if cash else self.accounts(claim)
-                self.decide(claim, 'supplier_accounts')
-                self.assertEqual(claim.state, 'ready_to_close' if cash else 'bank_accounts')
-                for role in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts', 'reviewer'):
+        self.bank(claim)
+        for role in ('inventory', 'purchasing', 'tax', 'supplier_accounts', 'bank_accounts', 'reviewer'):
+            for name, value in (('supplier_id', self.supplier.id), ('payment_nature', 'cash'), ('type_of_invoice', 'copy')):
+                with self.subTest(role=role, field=name):
                     with self.assertRaises(AccessError):
-                        claim.with_user(self.users[role]).write({
-                            'cheque_attachment': cheque, 'cheque_filename': 'forged.pdf'})
-                uploader = claim.with_user(user)
-                self.assertTrue(uploader.can_upload_secretarial_cheque)
-                with self.assertRaises(AccessError):
-                    uploader.write({'cheque_filename': 'filename-only.pdf'})
-                uploader.write({'cheque_attachment': cheque, 'cheque_filename': 'fallback.pdf'})
-                self.assertEqual(claim.cheque_attachment, cheque)
-                self.assertFalse(uploader.can_upload_secretarial_cheque)
-                for later_user in (self.users['user'], self.users['admin'], self.system):
-                    for vals in ({'cheque_attachment': base64.b64encode(b'replacement')},
-                                 {'cheque_attachment': False}, {'cheque_filename': False},
-                                 {'cheque_filename': 'renamed.pdf'}):
-                        with self.assertRaises(AccessError):
-                            claim.with_user(later_user).write(vals)
-                if not cash:
-                    self.decide(claim, 'bank_accounts')
-                claim.action_close()
-                self.assertEqual(claim.cheque_attachment, cheque)
-                self.assertEqual(claim.cheque_filename, 'fallback.pdf')
-        ready = self.claim()
-        self.accounts(ready)
-        self.decide(ready, 'supplier_accounts')
-        self.decide(ready, 'bank_accounts')
-        ready.write({'cheque_attachment': cheque})
-        self.assertEqual(ready.cheque_attachment, cheque)
+                        claim.with_user(self.users[role]).write({name: value})
+        previous = (claim.state, claim.review_round, claim.document_revision, claim.history_ids.ids)
+        claim.write({'supplier_id': claim.supplier_id.id, 'payment_nature': claim.payment_nature,
+                     'type_of_invoice': claim.type_of_invoice})
+        self.assertEqual((claim.state, claim.review_round, claim.document_revision, claim.history_ids.ids), previous)
+        claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': self.document})
+        self.decide(claim, 'bank_accounts')
+        claim.action_close()
+        for role in ('user', 'admin'):
+            record = claim.with_user(self.users[role])
+            self.assertFalse(record.can_edit_open_claim_fields)
+            self.assertFalse(record.can_edit_payment_nature)
+            for name, value in (('supplier_id', self.supplier.id), ('payment_nature', 'cash'), ('type_of_invoice', 'copy')):
+                with self.assertRaises(UserError):
+                    record.write({name: value})
 
-    def test_secretarial_cheque_rejects_early_inactive_and_existing_files(self):
-        cheque = base64.b64encode(b'supplier file')
-        claim = self.claim()
-        for stage in ('draft', 'inventory', 'purchasing', 'supplier_accounts'):
-            self.assertEqual(claim.state, stage)
-            with self.assertRaises(AccessError):
-                claim.write({'cheque_attachment': cheque})
-            if stage == 'draft':
-                claim.action_submit()
-            elif stage != 'supplier_accounts':
-                self.decide(claim, stage)
-        self.decide(claim, 'supplier_accounts', 'deferred', reason='Wait', followup_date=fields.Date.today())
-        claim.with_user(self.users['supplier_accounts']).write({
-            'cheque_attachment': cheque, 'cheque_filename': 'supplier.pdf'})
-        # Preserve Supplier Accounts' existing pending/deferred replacement rights.
-        claim.with_user(self.users['supplier_accounts']).write({'cheque_attachment': False})
-        claim.with_user(self.users['supplier_accounts']).write({'cheque_attachment': cheque})
-        self.decide(claim, 'supplier_accounts')
-        for user in (self.users['user'], self.users['admin'], self.system):
-            self.assertFalse(claim.with_user(user).can_upload_secretarial_cheque)
-            for vals in ({'cheque_attachment': cheque}, {'cheque_attachment': False}, {'cheque_filename': False}):
-                with self.assertRaises(AccessError):
-                    claim.with_user(user).write(vals)
-        empty = self.claim()
-        self.accounts(empty)
-        self.decide(empty, 'supplier_accounts')
-        empty.with_user(self.users['admin']).write({'active': False})
-        with self.assertRaises(UserError):
-            empty.write({'cheque_attachment': cheque})
-        empty.with_user(self.users['admin']).write({'active': True})
-        self.decide(empty, 'bank_accounts', 'rejected', reason='Return')
-        with self.assertRaises(AccessError):
-            empty.write({'cheque_attachment': cheque})
-        empty.action_submit()
-        self.decide(empty, 'bank_accounts')
-        empty.action_close()
-        with self.assertRaises(UserError):
-            empty.write({'cheque_attachment': cheque})
-
-    def test_secretarial_cheque_upload_from_form(self):
-        cheque = base64.b64encode(b'cheque uploaded through the form')
-        for stage, cash in (('bank_accounts', False), ('ready_to_close', False), ('ready_to_close', True)):
-            for user in (self.users['user'], self.users['admin'], self.system):
-                claim = self.claim(cash)
-                claim.action_submit() if cash else self.accounts(claim)
-                self.decide(claim, 'supplier_accounts')
-                if stage == 'ready_to_close' and not cash:
-                    self.decide(claim, 'bank_accounts')
-                self.assertEqual(claim.state, stage)
-                with Form(claim.with_user(user)) as form:
-                    # The binary widget updates its hidden filename alongside
-                    # the binary value, before running the upload onchange.
-                    form._values['cheque_filename'] = 'secretarial.pdf'
-                    form._values._changed.add('cheque_filename')
-                    form.cheque_attachment = cheque
-                claim.invalidate_recordset()
-                self.assertEqual(claim.cheque_attachment, cheque)
-                self.assertEqual(claim.cheque_filename, 'secretarial.pdf')
-                self.assertFalse(claim.with_user(user).can_upload_secretarial_cheque)
-                with self.assertRaises(AccessError):
-                    claim.with_user(user).write({'cheque_attachment': False})
-
-    def test_cheque_fallback_checks_refreshed_claim_after_lock(self):
-        claim = self.claim(True)
-        claim.action_submit()
-        self.decide(claim, 'supplier_accounts')
-        self.assertTrue(claim.can_upload_secretarial_cheque)
-        first_file = base64.b64encode(b'first upload')
-        lock = type(claim).lock_for_update
-
-        def lock_with_competing_upload(records, **kwargs):
-            lock(records, **kwargs)
-            records._workflow_write({'cheque_attachment': first_file, 'cheque_filename': 'first.pdf'})
-
-        # Simulate a winner changing the row between the cached UI eligibility
-        # check and the refreshed server-side permission check.
-        with patch.object(type(claim), 'lock_for_update', lock_with_competing_upload):
-            try:
-                claim.write({'cheque_attachment': base64.b64encode(b'loser'), 'cheque_filename': 'loser.pdf'})
-            except AccessError:
-                pass
-            else:
-                self.fail('A stale eligibility value allowed an overwrite.')
-        self.assertEqual(claim.cheque_attachment, first_file)
-        self.assertEqual(claim.cheque_filename, 'first.pdf')
-
-    def test_secretarial_resubmission_preserves_supplier_cheque(self):
-        for cash in (True, False):
-            claim = self.claim(cash)
-            claim.action_submit() if cash else self.accounts(claim)
-            cheque = base64.b64encode(b'supplier cheque')
-            self.decide(claim, 'supplier_accounts', 'rejected', reason='Correct invoices',
-                        cheque_attachment=cheque, cheque_filename='supplier.pdf')
-            self.assertEqual(claim.state, 'returned_secretarial')
-            with self.assertRaises(AccessError):
-                claim.write({'cheque_attachment': False, 'cheque_filename': False})
-            claim.action_submit()
-            self.assertEqual(claim.state, 'supplier_accounts')
-            self.assertEqual(claim.cheque_attachment, cheque)
-            self.assertEqual(claim.cheque_filename, 'supplier.pdf')
+    def test_cash_to_cheque_requires_new_operational_reviews_and_evidence(self):
+        claim = self.claim('cash')
+        self.bank(claim)
+        self.assertEqual(claim.state, 'ready_to_close')
+        claim.write({'payment_nature': 'check'})
+        self.assertEqual(claim.state, 'operational_review')
+        self.decide(claim, 'inventory')
+        self.decide(claim, 'purchasing')
+        claim.with_user(self.users['tax']).write({'tax_review_attachment': self.replacement,
+                                                'tax_discount_decision': 'do_not_apply'})
+        self.decide(claim, 'tax')
+        with self.assertRaises(ValidationError):
             self.decide(claim, 'supplier_accounts')
-            self.assertFalse(claim.can_upload_secretarial_cheque)
-            if not cash:
-                self.decide(claim, 'bank_accounts', 'rejected', reason='Correct notes')
-                claim.action_submit()
-                self.assertEqual(claim.cheque_attachment, cheque)
-                self.assertEqual(claim.cheque_filename, 'supplier.pdf')
-                self.decide(claim, 'bank_accounts')
-            claim.action_close()
-            self.assertEqual(claim.cheque_attachment, cheque)
-            self.assertEqual(claim.cheque_filename, 'supplier.pdf')
-
-    def test_claim_reference_and_fallback_view_controls(self):
-        from odoo.tools.safe_eval import safe_eval
-        for role, user in [*self.users.items(), ('admin', self.system)]:
-            model = self.Claim.with_user(user)
-            form = etree.fromstring(model.get_view(
-                view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-            reference, = form.xpath('//group[@name="supplier_classification"]/field[@name="claim_reference"]')
-            fallback, = form.xpath('//group[@name="claim_secretarial_review"]//field[@name="cheque_attachment"]')
-            self.assertEqual(fallback.get('filename'), 'cheque_filename')
-            for state, _label in self.Claim._fields['state'].selection:
-                for active in (True, False):
-                    for existing in (False, base64.b64encode(b'existing')):
-                        record = model.new({'state': state, 'active': active, 'cheque_attachment': existing})
-                        values = dict(can_edit_correction_fields=record.can_edit_correction_fields,
-                                      can_upload_secretarial_cheque=record.can_upload_secretarial_cheque,
-                                      cheque_attachment=existing)
-                        expected = role in ('user', 'admin') and active and state in ('bank_accounts', 'ready_to_close') and not existing
-                        self.assertEqual(record.can_upload_secretarial_cheque, bool(expected))
-                        self.assertEqual(bool(safe_eval(fallback.get('readonly'), values)), not expected)
-                        self.assertEqual(bool(safe_eval(fallback.get('invisible'), values)), not expected and not existing)
-                        can_correct = active and state != 'closed' and (role == 'admin' or (
-                            role == 'user' and state in ('draft', 'returned_secretarial')))
-                        self.assertEqual(bool(safe_eval(reference.get('readonly'), values)), not can_correct)
-            listing = etree.fromstring(model.get_view(
-                view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_tree').id, view_type='list')['arch'])
-            column, = listing.xpath('//list/field[@name="claim_reference"]')
-            self.assertEqual(column.get('optional'), 'hide')
-            search = etree.fromstring(model.get_view(
-                view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_search').id, view_type='search')['arch'])
-            self.assertEqual(len(search.xpath('//search/field[@name="claim_reference"]')), 1)
-
-    def test_timeline_details_follow_each_stage(self):
-        claim = self.claim().with_context(lang='en_US', tz='UTC')
-        self.assertFalse(claim.timeline_inventory)
-        self.bank(claim)
-        self.assertIn(self.users['inventory'].display_name, claim.timeline_inventory)
-        self.assertTrue(claim.timeline_inventory_date)
-        self.assertNotIn('→', claim.timeline_inventory)
-        self.assertTrue(claim.timeline_supplier_accounts_date)
-        self.assertNotIn('→', claim.timeline_supplier_accounts)
-        self.assertFalse(claim.timeline_closure)
-        self.decide(claim, 'bank_accounts')
-        self.assertTrue(claim.timeline_bank_accounts_date)
-        self.assertNotIn('→', claim.timeline_bank_accounts)
-        claim.action_close()
-        self.assertTrue(claim.timeline_closure_date)
-        self.assertNotIn('→', claim.timeline_closure)
-        self.assertIn(self.users['user'].display_name, claim.timeline_closure)
-        self.assertIn(self.users['bank_accounts'].display_name, claim.timeline_bank_accounts)
-        with self.assertRaises(AccessError):
-            claim.with_user(self.outsider).read(['timeline_inventory'])
-
-    def test_review_panel_visibility_and_note_attachments(self):
-        claim = self.claim()
-        self.assertFalse(claim.can_edit_current_review)
-        claim.action_submit()
-        self.assertFalse(claim.can_edit_current_review)
-        self.assertTrue(claim.with_user(self.users['inventory']).can_edit_current_review)
-        self.assertTrue(claim.with_user(self.users['admin']).can_edit_current_review)
-        self.decide(claim, 'inventory')
-        self.assertFalse(claim.with_user(self.users['inventory']).can_edit_current_review)
-        self.decide(claim, 'purchasing')
-        supplier_file = base64.b64encode(b'supplier evidence')
-        bank_file = base64.b64encode(b'bank evidence')
-        self.decide(claim, 'supplier_accounts', supplier_accounts_notes='Supplier note',
-                    cheque_attachment=supplier_file, cheque_filename='supplier.pdf')
-        self.decide(claim, 'bank_accounts', bank_accounts_notes='Bank note',
-                    bank_cheque_attachment=bank_file, bank_cheque_filename='bank.pdf')
-        entries = claim.note_history_ids
-        supplier_entry = entries.filtered(lambda entry: entry.department == 'supplier_accounts')
-        bank_entry = entries.filtered(lambda entry: entry.department == 'bank_accounts')
-        self.assertEqual(supplier_entry.cheque_attachment, supplier_file)
-        self.assertEqual(supplier_entry.cheque_filename, 'supplier.pdf')
-        self.assertEqual(bank_entry.cheque_attachment, bank_file)
-        self.assertEqual(bank_entry.cheque_filename, 'bank.pdf')
-        self.assertTrue(supplier_entry.occurred_at)
-        self.assertFalse(claim.with_user(self.users['admin']).can_edit_current_review)
-        with self.assertRaises(AccessError):
-            bank_entry.with_user(self.outsider).read(['cheque_attachment'])
-        with self.assertRaises(AccessError):
-            bank_entry.write({'cheque_attachment': supplier_file})
-
-    def test_attachment_only_history_note(self):
-        claim = self.claim().with_context(lang='en_US')
-        self.accounts(claim)
-        self.assertFalse(claim.note_history_ids)
-        self.decide(claim, 'supplier_accounts', cheque_attachment=base64.b64encode(b'supplier'),
-                    cheque_filename='supplier.pdf', supplier_accounts_notes='  ')
-        supplier_entry = claim.note_history_ids
-        self.assertEqual(len(supplier_entry), 1)
-        self.assertFalse(supplier_entry.reason)
-        self.assertEqual(supplier_entry.display_note, 'Cheque attachment')
-        self.assertEqual(supplier_entry.with_context(lang='ar_001').display_note, 'مرفق الشيك')
-        self.decide(claim, 'bank_accounts', bank_cheque_attachment=base64.b64encode(b'bank'),
-                    bank_cheque_filename='bank.pdf')
-        self.assertEqual(len(claim.note_history_ids), 2)
-        self.assertEqual(set(claim.note_history_ids.mapped('display_note')), {'Cheque attachment'})
-        self.assertEqual(set(claim.note_history_ids.mapped('cheque_filename')), {'supplier.pdf', 'bank.pdf'})
-        other = self.claim()
-        self.accounts(other)
-        self.decide(other, 'supplier_accounts', supplier_accounts_notes='User note',
-                    cheque_attachment=base64.b64encode(b'proof'))
-        self.assertEqual(other.note_history_ids.display_note, 'User note')
-
-    def test_costcenter_lookup_and_security(self):
-        CostCenter = self.env['ab_costcenter'].with_user(self.users['user'])
-        self.assertIn(self.supplier.id, [row[0] for row in CostCenter.name_search('Cycle Supplier')])
-        self.assertFalse(CostCenter.search(fields.Domain('id', '=', self.non_supplier_center.id)))
-        with self.assertRaises(AccessError):
-            self.non_supplier_center.with_user(self.users['user']).read(['name'])
-        self.assertEqual(self.non_supplier_center.with_user(self.system).name, 'Internal Cost Center')
-
-    def test_cash_closure_and_archive(self):
-        claim=self.claim(True); claim.action_submit()
-        self.assertEqual(claim.state,'supplier_accounts')
-        for d in ('inventory','purchasing','bank_accounts'):self.assertEqual(claim[d+'_decision'],'not_required')
-        self.decide(claim,'supplier_accounts')
-        self.assertEqual(claim.state,'ready_to_close')
-        for role in ('inventory','purchasing','supplier_accounts','bank_accounts','reviewer'):
-            with self.assertRaises(AccessError):claim.with_user(self.users[role]).action_close()
-        claim.action_close()
-        for role in ('user','admin'):
-            with self.assertRaises(UserError):claim.with_user(self.users[role]).write({'amount_of_check':'999'})
-            with self.assertRaises(AccessError):claim.with_user(self.users[role]).unlink()
-        with self.assertRaises(UserError):claim.sudo().unlink()
-        claim.with_user(self.users['admin']).write({'active':False}); self.assertFalse(claim.active)
-        claim.with_user(self.users['admin']).write({'active':True}); self.assertEqual(claim.state,'closed')
-
-    def test_sequential_approvals_and_no_early_purchasing(self):
-        claim = self.claim()
-        claim.action_submit()
-        self.assertEqual(claim.state, 'inventory')
-        with self.assertRaises(AccessError):
-            self.decide(claim, 'purchasing')
-        for user in (self.users['admin'], self.system):
-            with self.assertRaises(UserError):
-                claim.with_user(user).action_decide('purchasing', 'approved')
-            with self.assertRaises(AccessError):
-                claim.with_user(user).write({'purchasing_notes': 'Too early'})
-        self.decide(claim, 'inventory')
-        self.assertEqual(claim.state, 'purchasing')
-        self.decide(claim, 'purchasing')
-        self.assertEqual(claim.state, 'supplier_accounts')
+        claim.with_user(self.users['supplier_accounts']).write({'supplier_cheque_attachment': self.replacement})
         self.decide(claim, 'supplier_accounts')
-        self.assertEqual(claim.state, 'bank_accounts')
-        self.decide(claim, 'bank_accounts')
-        claim.action_close()
-        self.assertEqual(claim.state, 'closed')
+        with self.assertRaises(ValidationError):
+            claim.action_prepare_payment()
+        with self.assertRaises(ValidationError):
+            claim.write({'payment_request_attachment': self.document})
 
-    def test_check_uses_full_review_route(self):
-        claim = self.Claim.with_user(self.users['user']).create({
-            **self.values(),
-            'payment_nature': 'check',
-        })
-        claim.action_submit()
-        self.assertEqual(claim.state, 'inventory')
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            self.decide(claim, department)
-        self.assertEqual(claim.state, 'ready_to_close')
-
-    def test_sequential_rejection_new_round(self):
-        for rejecting in ('inventory', 'purchasing'):
-            claim = self.claim()
-            claim.action_submit()
-            if rejecting == 'purchasing':
-                self.decide(claim, 'inventory')
-            with self.assertRaises(ValidationError):
-                self.decide(claim, rejecting, 'rejected')
-            self.decide(claim, rejecting, 'rejected', **{rejecting + '_notes': 'Mismatch'})
-            self.assertEqual(claim.state, 'returned_secretarial')
-            claim.action_submit()
-            self.assertEqual(claim.state, rejecting)
-            self.assertEqual(claim.review_round, 2)
-            self.assertEqual(claim[rejecting + '_decision'], 'pending')
-            if rejecting == 'purchasing':
-                self.assertEqual(claim.inventory_decision, 'approved')
-            self.assertFalse(claim.history_ids.filtered(lambda h: h.decision == 'cancelled'))
-            self.assertTrue(claim.history_ids.filtered(lambda h: h.reason == 'Mismatch' and h.review_round == 1))
-
-    def test_late_rejections_resume(self):
-        for stage in ('supplier_accounts','bank_accounts'):
-            claim=self.claim()
-            self.accounts(claim) if stage=='supplier_accounts' else self.bank(claim)
-            self.decide(claim,stage,'rejected',**{stage+'_notes':'Please correct'})
-            self.assertEqual(claim.resume_stage,stage)
-            claim.write({'secretarial_notes':'Corrected'}); claim.action_submit()
-            self.assertEqual(claim.state,stage)
-            self.assertEqual(claim.inventory_decision,'approved')
-            self.assertEqual(claim.purchasing_decision,'approved')
-            self.assertEqual(claim[stage+'_decision'],'pending')
-
-    def test_deferral_validation_every_department(self):
-        for d in ('inventory','purchasing','supplier_accounts','bank_accounts'):
-            claim=self.claim()
-            if d=='bank_accounts':self.bank(claim)
-            elif d=='supplier_accounts':self.accounts(claim)
-            else:
-                claim.action_submit()
-                if d == 'purchasing': self.decide(claim, 'inventory')
-            before=claim.state
-            with self.assertRaises(ValidationError):self.decide(claim,d,'deferred')
-            self.decide_write=claim.with_user(self.users[d])
-            self.assertEqual(claim[d+'_followup_date'], fields.Date.context_today(claim))
-            self.decide_write.write({d+'_notes':'Waiting', d+'_followup_date': False})
-            with self.assertRaises(ValidationError):self.decide(claim,d,'deferred',reason='Waiting')
-            self.decide_write.write({d+'_followup_date':fields.Date.today()-timedelta(days=1)})
-            with self.assertRaises(ValidationError):
-                self.decide(claim,d,'deferred',reason='Waiting',followup_date=fields.Date.today()-timedelta(days=1))
-            self.decide(claim,d,'deferred',reason='Waiting',followup_date=fields.Date.today())
-            self.assertEqual(claim.state,before); self.assertEqual(claim[d+'_decision'],'deferred')
-            extra={'cheque_attachment':base64.b64encode(b'cheque')} if d=='supplier_accounts' else {}
-            self.decide(claim,d,**extra)
-
-    def test_security_every_group(self):
-        claim=self.claim(); claim.action_submit()
-        for role in self.roles:
-            rec=claim.with_user(self.users[role])
-            for vals in ({'state':'closed'},{'inventory_decision':'approved'},{'payment_nature':'cash'}, {'review_round':99}):
-                with self.assertRaises(AccessError):rec.with_context(workflow_internal=True).write(vals)
-            if role not in ('user','admin'):
-                with self.assertRaises(AccessError):self.Claim.with_user(self.users[role]).create(self.values())
-                with self.assertRaises(AccessError):rec.write({'amount_of_check':'22'})
-            if role not in ('inventory','admin'):
-                with self.assertRaises(AccessError):rec.action_decide('inventory','approved')
-            if role not in ('purchasing','admin'):
-                with self.assertRaises(AccessError):rec.write({'purchasing_notes':'Forged'})
-        with self.assertRaises(AccessError):claim.with_user(self.outsider).read(['state'])
-        with self.assertRaises(AccessError):claim.with_user(self.users['bank_accounts']).read(['state'])
-        self.assertEqual(claim.with_user(self.users['reviewer']).state,'inventory')
-        with self.assertRaises(AccessError):self.Claim.with_user(self.users['user']).create(dict(self.values(),state='closed'))
-        draft=self.Claim.with_user(self.users['user']).with_context(default_state='closed',default_inventory_decision='approved').create(self.values())
-        self.assertEqual(draft.state,'draft'); self.assertEqual(draft.inventory_decision,'not_required')
-        self.assertTrue(self.system.has_group('ab_supplier_claim_cycle.supplier_claim_group_admin'))
-        claim.with_user(self.system).action_decide('inventory','approved')
-        claim.with_user(self.users['admin']).action_decide('purchasing','approved')
-        with self.assertRaises(AccessError):claim.with_user(self.users['inventory']).write({'inventory_notes':'Late'})
-        with self.assertRaises(AccessError):claim.with_user(self.users['supplier_accounts']).action_decide('bank_accounts','approved')
-        with self.assertRaises(AccessError):claim.with_user(self.users['supplier_accounts']).action_submit()
-        with self.assertRaises(AccessError):claim.with_user(self.users['user']).action_decide('supplier_accounts','approved')
-
-    def test_history_immutable_and_visibility(self):
-        claim=self.claim(); self.accounts(claim)
-        history=claim.history_ids
-        for role in self.roles:
-            h=history.with_user(self.users[role])
-            with self.assertRaises(AccessError):h.write({'reason':'Forgery'})
-            with self.assertRaises(AccessError):h.unlink()
-            with self.assertRaises(AccessError):self.env['ab_supplier_claim_cycle.history'].with_user(self.users[role]).create({'claim_id':claim.id})
-        self.assertTrue(history.filtered(lambda h:h.department=='inventory' and h.user_id==self.users['inventory']))
-        with self.assertRaises(AccessError):history.with_user(self.users['bank_accounts']).read(['reason'])
-
-    def test_buttons_and_view_validation(self):
-        view=self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
-        view._check_xml()
-        for role in self.roles:
-            arch=self.Claim.with_user(self.users[role]).get_view(view_id=view.id,view_type='form')['arch']
-            tree=etree.fromstring(arch)
-            self.assertFalse(tree.xpath('//notebook/page'))
-            self.assertTrue(tree.xpath('//field[@name="note_history_ids"]/list[@no_open="True"]'))
-            self.assertFalse(tree.xpath('//sheet//button'))
-            self.assertTrue(tree.xpath('//group[@name="department_reviews"]'))
-            for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-                self.assertTrue(tree.xpath(
-                    '//group[@name="department_reviews"]//field[@name="%s_notes"]' % department))
-            closures=tree.xpath("//button[@name='action_close']")
-            self.assertEqual(bool(closures),role in ('user','admin'))
-            for button in tree.xpath("//button[@name='action_department_decision']"):
-                self.assertIn(role,('admin','inventory','purchasing','supplier_accounts','bank_accounts'))
-                self.assertIn("not in ('pending', 'deferred')",button.get('invisible'))
-                if role!='admin':self.assertIn("'claim_department': '"+role+"'",button.get('context'))
-
-    def test_secretarial_form_create(self):
-        with Form(self.Claim.with_user(self.users['user'])) as form:
-            form.supplier_id = self.cash
-            form.num_of_invoice = 3
-            form.area = 'north'
-            form.amount_of_check = '200'
-            form.type_of_invoice = 'original'
-        self.assertEqual(form.record.state, 'draft')
-
-    def test_purchasing_rejection_preserves_inventory_and_early_close(self):
-        claim = self.claim()
-        with self.assertRaises(UserError):
-            claim.action_close()
-        claim.action_submit()
-        self.decide(claim, 'inventory')
-        self.decide(claim, 'purchasing', 'rejected', purchasing_notes='Invoice mismatch')
-        claim.action_submit()
-        self.assertEqual(claim.inventory_decision, 'approved')
-        self.assertEqual(claim.purchasing_decision, 'pending')
-        self.assertEqual(claim.review_round, 2)
-
-    def test_multi_record_actions(self):
-        claims = self.Claim.with_user(self.users['user']).create([self.values(True), self.values(True)])
-        claims.action_submit()
-        claims.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved')
-        claims.action_close()
-        self.assertEqual(set(claims.mapped('state')), {'closed'})
-        claims.with_user(self.users['admin']).write({'active': False})
-        self.assertFalse(any(claims.mapped('active')))
-
-    def test_force_unlink_context_cannot_bypass_protection(self):
-        claim = self.claim(True)
-        claim.action_submit()
-        self.decide(claim, 'supplier_accounts')
-        with self.assertRaises(UserError):
-            claim.sudo().with_context(_force_unlink=True).unlink()
-        with self.assertRaises(UserError):
-            self.supplier.sudo().with_context(_force_unlink=True).unlink()
-        with self.assertRaises(AccessError):
-            claim.history_ids.sudo().with_context(_force_unlink=True).unlink()
-
-    def test_optional_cheques_and_bank_upload_access(self):
-        claim = self.claim()
-        self.accounts(claim)
-        self.decide(claim, 'supplier_accounts')
-        self.assertEqual(claim.state, 'bank_accounts')
-        self.assertFalse(claim.cheque_attachment)
-        for role in ('user', 'inventory', 'purchasing', 'supplier_accounts', 'reviewer'):
-            with self.assertRaises(AccessError):
-                claim.with_user(self.users[role]).write({'bank_cheque_attachment': base64.b64encode(b'bank')})
-        claim.with_user(self.users['bank_accounts']).write({
-            'bank_cheque_attachment': base64.b64encode(b'bank'), 'bank_cheque_filename': 'bank.pdf'})
-        self.assertTrue(claim.bank_cheque_attachment)
-        self.assertFalse(claim.cheque_attachment)
-        self.decide(claim, 'bank_accounts')
-        with self.assertRaises(AccessError):
-            claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': False})
-        claim.action_close()
-        other = self.claim()
-        self.accounts(other)
-        self.decide(other, 'supplier_accounts')
-        self.decide(other, 'bank_accounts')
-        other.action_close()
-        self.assertEqual(other.state, 'closed')
-
-    def test_evidence_and_archived_claim_protection(self):
+    def test_open_claim_form_fields_match_server_permissions(self):
+        from odoo.tests import Form
         claim = self.claim()
         self.bank(claim)
-        with self.assertRaises(AccessError):
-            claim.with_user(self.users['supplier_accounts']).write({'cheque_attachment': False})
-        self.decide(claim, 'bank_accounts')
-        claim.action_close()
-        with self.assertRaises(UserError):
-            claim.with_user(self.users['admin']).write({'cheque_attachment': False})
-        claim.with_user(self.users['admin']).write({'active': False})
-        with self.assertRaises(UserError):
-            claim.action_submit()
-        self.assertTrue(claim.cheque_attachment)
+        supplier = self.env['ab_costcenter'].create({'name': 'Form supplier', 'code': '1-form'})
+        for name, value in (('supplier_id', supplier), ('type_of_invoice', 'copy'), ('payment_nature', 'cash')):
+            with Form(claim) as form:
+                setattr(form, name, value)
+            claim.invalidate_recordset()
+            self.assertEqual(claim[name], value)
+        self.assertEqual(claim.state, 'financial_review')
 
-    def test_deferred_details_cannot_be_cleared(self):
-        claim = self.claim()
-        claim.action_submit()
-        self.decide(claim, 'inventory', 'deferred', inventory_notes='Awaiting receipt',
-                    inventory_followup_date=fields.Date.today())
-        claim.with_user(self.users['inventory']).write({'inventory_notes': False})
-        with self.assertRaises(ValidationError), self.env.cr.savepoint():
-            claim.with_user(self.users['inventory']).write({'inventory_followup_date': False})
-        self.assertEqual(claim.exception_history_ids.reason, 'Awaiting receipt')
-        self.assertEqual(claim.inventory_decision, 'deferred')
-        self.assertTrue(claim.inventory_followup_date)
-
-    def test_rejected_cycles_finish_with_audited_closure(self):
-        for cash, rejecting in ((False, 'inventory'), (False, 'purchasing'),
-                                (False, 'supplier_accounts'), (False, 'bank_accounts'),
-                                (True, 'supplier_accounts')):
-            with self.subTest(cash=cash, rejecting=rejecting):
-                claim = self.claim(cash)
-                if cash or rejecting in ('inventory', 'purchasing'):
-                    claim.action_submit()
-                    if rejecting == 'purchasing': self.decide(claim, 'inventory')
-                elif rejecting == 'supplier_accounts':
-                    self.accounts(claim)
-                else:
-                    self.bank(claim)
-                self.decide(claim, rejecting, 'rejected', **{rejecting + '_notes': 'Correct invoice'})
-                self.assertEqual(claim.state, 'returned_secretarial')
-                claim.write({'secretarial_notes': 'Invoice corrected'})
-                claim.action_submit()
-                self.assertEqual(claim.review_round, 2)
-                if claim.state == 'inventory':
-                    self.decide(claim, 'inventory')
-                if claim.state == 'purchasing':
-                    self.decide(claim, 'purchasing')
-                if claim.state == 'supplier_accounts':
-                    evidence = {} if cash else {'cheque_attachment': base64.b64encode(b'corrected cheque')}
-                    self.decide(claim, 'supplier_accounts', **evidence)
-                if claim.state == 'bank_accounts':
-                    self.decide(claim, 'bank_accounts')
-                self.assertEqual(claim.state, 'ready_to_close')
-                claim.action_close()
-                self.assertEqual(claim.state, 'closed')
-                history = claim.history_ids.sorted('id')
-                self.assertEqual(history[-1].event, 'closed')
-                self.assertEqual(history[-1].user_id, self.users['user'])
-                self.assertEqual(history[-1].review_round, 2)
-                self.assertTrue(all(history.mapped('occurred_at')))
-                for previous, current in zip(history, history[1:]):
-                    if current.decision != 'cancelled':
-                        self.assertEqual(previous.to_state, current.from_state)
-
-    def test_stage_permissions_and_queues_every_department(self):
-        from odoo.tools.safe_eval import safe_eval
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            with self.subTest(department=department):
-                claim = self.claim()
-                if department == 'bank_accounts':
-                    self.bank(claim)
-                elif department == 'supplier_accounts':
-                    self.accounts(claim)
-                else:
-                    claim.action_submit()
-                    if department == 'purchasing': self.decide(claim, 'inventory')
-                for role in self.roles:
-                    rec = claim.with_user(self.users[role])
-                    if role not in (department, 'admin'):
-                        with self.assertRaises(AccessError), self.env.cr.savepoint():
-                            rec.write({department + '_notes': 'Unauthorized'})
-                        with self.assertRaises(AccessError), self.env.cr.savepoint():
-                            rec.action_decide(department, 'approved')
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        rec.write({department + '_decision': 'approved'})
-                self.decide(claim, department, 'deferred', **{
-                    department + '_notes': 'Awaiting documents',
-                    department + '_followup_date': fields.Date.today(),
-                })
-                queue_domain = fields.Domain('state', '=', department)
-                queue_model = self.Claim.with_user(self.users[department])
-                self.assertIn(claim, queue_model.search(queue_domain))
-                self.assertTrue(claim.with_user(self.users[department]).has_access('write'))
-                extra = {'cheque_attachment': base64.b64encode(b'cheque')} if department == 'supplier_accounts' else {}
-                self.decide(claim, department, **extra)
-                self.assertNotIn(claim, queue_model.search(queue_domain))
-
-    def test_administrators_complete_both_routes(self):
-        for user in (self.users['admin'], self.system):
-            for cash in (False, True):
-                with self.subTest(user=user.login, cash=cash):
-                    claim = self.Claim.with_user(user).create(self.values(cash))
-                    claim.action_submit()
-                    if not cash:
-                        claim.action_decide('inventory', 'approved')
-                        claim.action_decide('purchasing', 'approved')
-                        claim.write({'cheque_attachment': base64.b64encode(b'cheque')})
-                    claim.action_decide('supplier_accounts', 'approved')
-                    if not cash:
-                        claim.action_decide('bank_accounts', 'approved')
-                    claim.action_close()
-                    self.assertEqual(claim.state, 'closed')
-                    self.assertEqual(set(claim.history_ids.mapped('user_id').ids), {user.id})
-                    with self.assertRaises(UserError):
-                        claim.write({'secretarial_notes': 'Forbidden after closure'})
-
-    def test_shared_claims_menu_and_completed_visibility(self):
-        from odoo.tools.safe_eval import safe_eval
-        action = self.env.ref('ab_supplier_claim_cycle.invoice_action')
-        self.assertEqual(safe_eval(action.domain), [])
-        self.assertEqual(safe_eval(action.context), {})
-        menu = self.env.ref('ab_supplier_claim_cycle.invoice_menu')
-        for user in [*self.users.values(), self.system]:
-            visible = self.env['ir.ui.menu'].with_user(user)._visible_menu_ids()
-            self.assertIn(menu.id, visible)
-        self.assertNotIn(menu.id, self.env['ir.ui.menu'].with_user(self.outsider)._visible_menu_ids())
-
-        claim = self.claim()
-        claim.action_submit()
-        domain = fields.Domain('id', '=', claim.id)
-        def assert_visible(role):
-            self.assertIn(claim, self.Claim.with_user(self.users[role]).search(domain))
-        assert_visible('user')
-        self.assertFalse(self.Claim.with_user(self.users['bank_accounts']).search(domain))
-        self.decide(claim, 'inventory', 'deferred', inventory_notes='Waiting',
-                    inventory_followup_date=fields.Date.today())
-        assert_visible('inventory')
-        self.decide(claim, 'inventory')
-        self.decide(claim, 'purchasing')
-        assert_visible('inventory')
-        assert_visible('purchasing')
-        self.decide(claim, 'supplier_accounts', 'rejected', supplier_accounts_notes='Correct invoice')
-        assert_visible('supplier_accounts')
-        assert_visible('user')
-        claim.action_submit()
-        self.decide(claim, 'supplier_accounts', cheque_attachment=base64.b64encode(b'cheque'))
-        assert_visible('supplier_accounts')
-        self.decide(claim, 'bank_accounts')
-        claim.action_close()
-        for role in self.roles:
-            assert_visible(role)
-        self.assertIn(claim, self.Claim.with_user(self.system).search(domain))
-        claim.with_user(self.users['admin']).write({'active': False})
-        for role in self.roles:
-            self.assertIn(claim, self.Claim.with_user(self.users[role]).with_context(active_test=False).search(domain))
-
-    def test_plain_form_stage_visibility(self):
-        from odoo.tools.safe_eval import safe_eval
-        view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
-        departments = ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts')
-        for user in [*self.users.values(), self.system]:
-            for lang in ('en_US', 'ar_001'):
-                arch = etree.fromstring(self.Claim.with_user(user).with_context(lang=lang).get_view(
-                    view_id=view.id, view_type='form')['arch'])
-                self.assertTrue(arch.xpath("//div[@class='o_scc_top_tracking']"))
-                values = dict(state='draft', payment_nature='bank_transfer', active=True, cheque_attachment=False, resume_stage=False,
-                              **{d + '_decision': 'pending' for d in departments})
-                def visible(node):
-                    return not any(safe_eval(parent.get('invisible', 'False'), values)
-                                   for parent in [node, *node.iterancestors()])
-                for stage in ('draft', *departments, 'returned_secretarial', 'ready_to_close', 'closed'):
-                    values['state'] = stage
-                    authorized = stage in departments and (user in (self.users['admin'], self.system) or user == self.users[stage])
-                    values['can_edit_current_review'] = authorized
-                    notes = [node.get('name') for node in arch.xpath(
-                        '//group[@name="department_reviews"]//field[contains(@name,"_notes")]') if visible(node)]
-                    self.assertEqual(notes, [stage + '_notes'] if authorized else [])
-                    buttons = [n for n in arch.xpath('//header/button[@name="action_department_decision"]') if visible(n)]
-                    authorized = stage in departments and (user in (self.users['admin'], self.system)
-                                                            or user == self.users[stage])
-                    self.assertEqual(len(buttons), 3 if authorized else 0)
-                    if lang == 'en_US' and buttons:
-                        self.assertEqual([n.get('string') for n in buttons], ['Approve', 'Reject', 'Defer'])
-                    rejection = arch.xpath('//field[@name="rejection_reason"]')
-                    permitted = user in (self.users['user'], self.users['admin'], self.system)
-                    self.assertEqual(bool(rejection), permitted)
-                    if rejection:
-                        self.assertEqual(visible(rejection[0]), stage == 'returned_secretarial')
-                    for node in arch.xpath('//group[@name="department_reviews"]//field[@name="cheque_attachment"]'):
-                        expected = authorized and stage == 'supplier_accounts' and node.get('invisible') != 'not cheque_attachment'
-                        self.assertEqual(visible(node), expected)
-                for nature in ('cash', 'bank_transfer', 'check'):
-                    values.update(payment_nature=nature, state='supplier_accounts')
-                    bars = [n for n in arch.xpath('//header/field[@widget="statusbar"]') if visible(n)]
-                    self.assertEqual(len(bars), 1)
-                    self.assertEqual('inventory' in bars[0].get('statusbar_visible'), nature != 'cash')
-                values.update(state='inventory', active=False)
-                self.assertFalse(any(visible(n) for n in arch.xpath('//header/button')))
-
-    def test_history_starts_with_department_decisions(self):
-        History = self.env['ab_supplier_claim_cycle.history']
-        for cash in (False, True):
-            claim = self.claim(cash)
-            domain = fields.Domain('claim_id', '=', claim.id)
-            self.assertFalse(History.search(domain))
-            claim.action_submit()
-            self.assertFalse(History.search(domain))
-            self.assertFalse(claim.history_ids)
-            department = 'supplier_accounts' if cash else 'inventory'
-            self.decide(claim, department, 'rejected', **{department + '_notes': 'Review invoice'})
-            self.assertEqual(claim.history_ids.mapped('event'), ['decision'])
-            claim.action_submit()
-            self.assertEqual(set(claim.history_ids.mapped('event')), {'decision', 'resubmitted'})
-
-    def test_inline_secretarial_note_history_and_permissions(self):
-        claim = self.claim()
-        self.assertFalse(claim.history_ids)
-        for role in self.roles:
-            if role not in ('user', 'admin'):
-                with self.assertRaises(AccessError):
-                    claim.with_user(self.users[role]).write({'secretarial_notes': 'Unauthorized'})
-        claim.write({'secretarial_notes': '  '})
-        self.assertFalse(claim.history_ids)
-        claim.write({'secretarial_notes': 'Invoice documents checked'})
-        row = claim.history_ids
-        self.assertEqual(len(row), 1)
-        self.assertEqual((row.event, row.department, row.reason),
-                         ('secretarial_note', 'secretarial', 'Invoice documents checked'))
-        self.assertEqual(row.user_id, self.users['user'])
-        self.assertTrue(row.occurred_at)
-        claim.action_submit()
-        with self.assertRaises(AccessError):
-            claim.write({'secretarial_notes': 'Wrong stage'})
-        self.decide(claim, 'inventory', 'rejected', inventory_notes='Correct documents')
-        claim.write({'secretarial_notes': 'Documents corrected'})
-        self.assertEqual(len(claim.history_ids.filtered(lambda h: h.department == 'secretarial')), 2)
-        with self.assertRaises(AccessError):
-            row.write({'reason': 'Changed'})
-        with self.assertRaises(AccessError):
-            row.unlink()
-        claim.with_user(self.users['admin']).write({'active': False})
-        with self.assertRaises(UserError):
-            claim.write({'secretarial_notes': 'Archived'})
-        closed = self.claim(True)
-        closed.action_submit()
-        self.decide(closed, 'supplier_accounts')
-        closed.action_close()
-        with self.assertRaises(UserError):
-            closed.write({'secretarial_notes': 'Closed'})
-
-    def test_claim_attachment_permissions(self):
-        draft_file = base64.b64encode(b'draft attachment')
-        claim = self.Claim.with_user(self.users['user']).create({
-            **self.values(),
-            'attachment': draft_file,
-        })
-        self.assertEqual(claim.attachment, draft_file)
-        context_claim = self.Claim.with_user(self.users['user']).with_context(
-            default_attachment=draft_file).create(self.values())
-        self.assertFalse(context_claim.attachment)
-
-        updated_file = base64.b64encode(b'updated attachment')
-        claim.write({'attachment': updated_file})
-        self.assertEqual(claim.attachment, updated_file)
-
-        claim.action_submit()
-        with self.assertRaises(AccessError):
-            claim.with_user(self.users['inventory']).write({'attachment': draft_file})
-
-    def test_claim_attachment_download_and_protection_through_workflow(self):
-        content = b'Secretary claim evidence'
-        claim = self.claim()
-        claim.write({'attachment': base64.b64encode(content)})
-        claim.action_submit()
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            with self.subTest(department=department):
-                reader = claim.with_user(self.users[department])
-                self.assertEqual(reader.attachment, base64.b64encode(content))
-                binary = self.env['ir.binary'].with_user(self.users[department])
-                record = binary._find_record(res_model=claim._name, res_id=claim.id, field='attachment')
-                with patch('odoo.http.request', SimpleNamespace(env=reader.env)):
-                    self.assertEqual(binary._get_stream_from(record, 'attachment').read(), content)
-                for role in (department, 'user'):
-                    for value in (False, base64.b64encode(b'replacement')):
-                        with self.assertRaises(AccessError):
-                            claim.with_user(self.users[role]).write({'attachment': value})
-                self.decide(claim, department)
-        self.assertEqual(claim.state, 'ready_to_close')
-        with self.assertRaises(AccessError):
-            claim.write({'attachment': False})
-        claim.action_close()
-        self.assertEqual(claim.attachment, base64.b64encode(content))
-        with self.assertRaises(UserError):
-            claim.write({'attachment': False})
-        with self.assertRaises(AccessError):
-            self.env['ir.binary'].with_user(self.outsider)._find_record(
-                res_model=claim._name, res_id=claim.id, field='attachment')
-
-    def test_claim_attachment_return_and_resubmission(self):
-        claim = self.claim()
-        claim.write({'attachment': base64.b64encode(b'original')})
-        claim.action_submit()
-        self.decide(claim, 'inventory', decision='rejected', reason='Replace evidence')
-        self.assertEqual(claim.state, 'returned_secretarial')
-        replacement = base64.b64encode(b'corrected evidence')
-        claim.write({'attachment': replacement})
-        self.assertEqual(claim.attachment, replacement)
-        claim.action_submit()
-        with self.assertRaises(AccessError):
-            claim.write({'attachment': False})
-        self.assertEqual(claim.attachment, replacement)
-
-    def test_claim_attachment_form_visibility_and_readonly(self):
-        from odoo.tools.safe_eval import safe_eval
-
-        view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
-        states = [key for key, label in self.Claim._fields['state'].selection]
-        for role in self.roles:
-            for lang in ('en_US', 'ar_001'):
-                arch = etree.fromstring(self.Claim.with_user(self.users[role]).with_context(lang=lang).get_view(
-                    view_id=view.id, view_type='form')['arch'])
-                panel, = arch.xpath('//group[@name="claim_secretarial_review"]')
-                attachment, = panel.xpath('.//field[@name="attachment"]')
-                for state in states:
-                    for active in (True, False):
-                        with self.subTest(role=role, lang=lang, state=state, active=active):
-                            can_correct = active and state != 'closed' and (role == 'admin' or (
-                                role == 'user' and state in ('draft', 'returned_secretarial')))
-                            values = {'state': state, 'active': active, 'can_edit_correction_fields': can_correct}
-                            for node in [attachment, *attachment.iterancestors()]:
-                                self.assertFalse(safe_eval(node.get('invisible', 'False'), values))
-                            expected = not can_correct
-                            self.assertEqual(bool(safe_eval(attachment.get('readonly', 'False'), values)), expected)
-
-    def test_secretarial_note_api_and_form_visibility(self):
-        claim = self.Claim.with_user(self.users['user']).create({**self.values(), 'secretarial_notes': 'First note'})
-        self.assertEqual(claim.history_ids.reason, 'First note')
-        claim.write({'secretarial_notes': 'Second note'})
-        self.assertEqual(len(claim.history_ids), 2)
-        claim.write({'secretarial_notes': 'Second note'})
-        self.assertEqual(len(claim.history_ids), 2)
-        claim.write({'secretarial_notes': False})
-        self.assertEqual(len(claim.history_ids), 2)
-        claim._log('restored')
-        claim._log('decision', department='inventory', reason='   ')
-        self.assertEqual(len(claim.note_history_ids), 2)
-        self.assertEqual(len(claim.history_ids), 4)
-        self.assertEqual(set(claim.note_history_ids.mapped('reason')), {'First note', 'Second note'})
-        with self.assertRaises(AccessError):
-            claim.with_user(self.users['inventory']).write({'secretarial_notes': 'Unauthorized'})
-        view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
-        for role in self.roles:
-            for lang in ('en_US', 'ar_001'):
-                arch = etree.fromstring(self.Claim.with_user(self.users[role]).with_context(lang=lang).get_view(
-                    view_id=view.id, view_type='form')['arch'])
-                self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="secretarial_notes"]'))
-                self.assertTrue(arch.xpath('//group[@name="claim_secretarial_review"]//field[@name="attachment"]'))
-                self.assertTrue(arch.xpath('//chatter'))
-                buttons = arch.xpath('//button[@name="action_open_secretarial_note"]')
-                self.assertFalse(buttons)
-                self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list/field[@name="display_note"]'))
-
-    def test_timeline_payment_routes(self):
-        from odoo.tools.safe_eval import safe_eval
-        arch = etree.fromstring(self.Claim.get_view(
-            view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-        self.assertTrue(arch.xpath('//field[@name="note_history_ids"]/list[@no_open="True"]'))
-        steps = arch.xpath('//div[@class="o_scc_route_step"]')
-        for nature, count in [('cash', 3), ('bank_transfer', 6), ('check', 6)]:
-            values = dict(payment_nature=nature, state='draft', resume_stage=False,
-                          **{d + '_decision': 'not_required' for d in ('inventory','purchasing','supplier_accounts','bank_accounts')})
-            visible = [node for node in steps if not safe_eval(node.get('invisible', 'False'), values)]
-            self.assertEqual(len(visible), count)
-            for node in visible:
-                variants = [part for part in node if not safe_eval(part.get('invisible', 'False'), values)]
-                self.assertEqual(len(variants), 1)
-
-    def test_latest_claim_defaults_include_archived_drafts(self):
-        older = self.claim()
-        older.write({
-            'type_of_invoice': 'original', 'payment_nature': 'bank_transfer',
-            'tax_classification': 'tax_payment', 'section': 'medical',
-        })
-        latest = self.claim()
-        latest.write({
-            'type_of_invoice': 'copy', 'payment_nature': 'cash',
-            'tax_classification': 'through_supplier', 'section': 'cosmo',
-        })
-        latest.with_user(self.users['admin']).write({'active': False})
-
-        values = {
-            'supplier_id': self.supplier.id, 'num_of_invoice': 3,
-            'area': 'south', 'amount_of_check': '250',
-        }
-        claim = self.Claim.with_user(self.users['user']).create(values)
-        self.assertEqual(
-            tuple(claim[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
-            ('copy', 'cash', 'through_supplier', 'cosmo'),
-        )
-
-    def test_explicit_values_override_previous_claim(self):
-        self.claim()
-        values = {
-            **self.values(),
-            'type_of_invoice': 'copy', 'payment_nature': 'cash',
-            'tax_classification': 'non_tax_payment', 'section': 'other',
-        }
-        claim = self.Claim.with_user(self.users['user']).create(values)
-        self.assertEqual(
-            tuple(claim[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
-            ('copy', 'cash', 'non_tax_payment', 'other'),
-        )
-
-    def test_supplier_change_loads_or_clears_previous_values(self):
-        previous_cash = self.claim(True)
-        previous_cash.write({
-            'type_of_invoice': 'copy', 'tax_classification': 'through_supplier', 'section': 'cosmo',
-        })
-        draft = self.claim()
-        draft.write({'supplier_id': self.cash.id})
-        self.assertEqual(
-            tuple(draft[name] for name in ('type_of_invoice', 'payment_nature', 'tax_classification', 'section')),
-            ('copy', 'cash', 'through_supplier', 'cosmo'),
-        )
-
-        empty_center = self.env['ab_costcenter'].create({'name': 'No Claims', 'code': '1-99'})
-        draft.write({'supplier_id': empty_center.id})
-        self.assertFalse(any(draft[name] for name in (
-            'type_of_invoice', 'payment_nature', 'tax_classification', 'section',
-        )))
-
-    def test_supplier_and_section_permissions_in_every_stage(self):
-        self.claim(True)
-        self.claim()
-        editors = (self.users['user'], self.users['admin'], self.system)
-        restricted = [user for role, user in self.users.items() if role not in ('user', 'admin')]
-        for state, _label in self.Claim._fields['state'].selection:
-            claim = self.claim()
-            claim._workflow_write({'state': state})
-            if state == 'closed':
-                for user in editors:
-                    for values in ({'supplier_id': self.cash.id}, {'section': 'cosmo'}):
-                        with self.assertRaises(UserError), self.env.cr.savepoint():
-                            claim.with_user(user).write(values)
-                continue
-            preserved = {name: claim[name] for name in (
-                'type_of_invoice', 'payment_nature', 'tax_classification', 'area')}
-            history_ids = claim.history_ids.ids
-            for index, user in enumerate(editors):
-                supplier = self.cash if index % 2 == 0 else self.supplier
-                claim.with_user(user).write({'supplier_id': supplier.id, 'section': 'cosmo'})
-                self.assertEqual(claim.supplier_id, supplier)
-                self.assertEqual(claim.section, 'cosmo')
-                self.assertEqual(claim.state, state)
-                self.assertEqual(claim.history_ids.ids, history_ids)
-                if state != 'draft':
-                    self.assertEqual({name: claim[name] for name in preserved}, preserved)
-            for user in (*restricted, self.outsider):
-                for values in ({'supplier_id': self.supplier.id}, {'section': 'other'}):
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        claim.with_user(user).write(values)
-            claim.with_user(self.users['admin']).write({'active': False})
-            for user in editors:
-                for values in ({'supplier_id': self.supplier.id}, {'section': 'other'}):
-                    with self.assertRaises(UserError), self.env.cr.savepoint():
-                        claim.with_user(user).write(values)
-
-    def test_supplier_change_defaults_only_drafts_in_mixed_recordset(self):
-        previous_cash = self.claim(True)
-        previous_cash.write({
-            'type_of_invoice': 'copy', 'tax_classification': 'through_supplier',
-            'section': 'cosmo', 'area': 'south',
-        })
+    def test_batch_supplier_changes_do_not_copy_defaults_to_submitted_claims(self):
+        other = self.env['ab_costcenter'].create({'name': 'Batch supplier', 'code': '1-batch'})
+        self.Claim.with_user(self.users['user']).create({
+            'supplier_id': other.id, 'num_of_invoice': 1, 'area': 'south', 'claim_amount': 100,
+            'type_of_invoice': 'copy', 'payment_nature': 'cash', 'tax_classification': 'non_tax_payment'})
         draft = self.claim()
         submitted = self.claim()
-        submitted.action_submit()
-        preserved = {name: submitted[name] for name in (
-            'type_of_invoice', 'payment_nature', 'tax_classification', 'section', 'area')}
-        (draft | submitted).write({'supplier_id': self.cash.id})
-        self.assertEqual(draft.supplier_id, self.cash)
-        self.assertEqual(submitted.supplier_id, self.cash)
-        for name, value in preserved.items():
-            self.assertEqual(submitted[name], value)
-            self.assertEqual(draft[name], previous_cash[name])
-        with Form(submitted) as form:
-            form.supplier_id = self.supplier
-            form.section = 'other'
-        self.assertEqual(submitted.supplier_id, self.supplier)
-        self.assertEqual(submitted.section, 'other')
-        for name in preserved.keys() - {'section'}:
-            self.assertEqual(submitted[name], preserved[name])
-        submitted._workflow_write({'state': 'closed'})
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            (draft | submitted).write({'supplier_id': self.supplier.id, 'section': 'medical'})
-        self.assertEqual(draft.supplier_id, self.cash)
-        self.assertEqual(draft.section, 'cosmo')
+        self.bank(submitted)
+        (draft | submitted).write({'supplier_id': other.id})
+        self.assertEqual((draft.payment_nature, draft.tax_classification, draft.area, draft.type_of_invoice),
+                         ('cash', 'non_tax_payment', 'south', 'copy'))
+        self.assertEqual((submitted.payment_nature, submitted.tax_classification,
+                          submitted.area, submitted.type_of_invoice),
+                         ('bank_transfer', 'tax_payment', 'north', 'original'))
+        self.assertEqual(submitted.state, 'operational_review')
+        self.assertEqual(submitted.tax_decision, 'pending')
+        self.assertFalse(submitted.payment_request_attachment)
 
-    def test_draft_form_uses_latest_claim_values(self):
-        previous = self.claim()
-        previous.write({
-            'type_of_invoice': 'copy', 'payment_nature': 'cash',
-            'tax_classification': 'through_supplier', 'section': 'other',
-        })
-        with Form(self.Claim.with_user(self.users['user'])) as form:
-            form.supplier_id = self.supplier
-            self.assertEqual(form.type_of_invoice, 'copy')
-            self.assertEqual(form.payment_nature, 'cash')
-            self.assertEqual(form.tax_classification, 'through_supplier')
-            self.assertEqual(form.section, 'other')
-            form.num_of_invoice = 2
-            form.area = 'north'
-            form.amount_of_check = '100'
-        self.assertEqual(form.record.supplier_id, self.supplier)
-
-    def test_supplier_classification_form_permissions(self):
+    def test_global_reads_and_draft_isolation(self):
+        claim = self.claim()
         for role in self.roles:
-            arch = etree.fromstring(self.Claim.with_user(self.users[role]).get_view(
-                view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-            for name in ('tax_classification', 'section', 'supplier_id'):
-                nodes = arch.xpath('//group[@name="supplier_classification"]/field[@name="%s"]' % name)
-                self.assertTrue(nodes)
-                expected = 'True'
-                if role in ('user', 'admin'):
-                    expected = "state != 'draft' or not active" if name == 'tax_classification' else 'not can_edit_supplier_section'
-                self.assertTrue(all(node.get('readonly') == expected for node in nodes))
-        previous = self.claim()
-        with Form(self.Claim.with_user(self.users['user'])) as form:
-            form.supplier_id = self.supplier
-            self.assertEqual(form.tax_classification, previous.tax_classification)
-            form.num_of_invoice = 1
-            form.area = 'north'
-            form.amount_of_check = '100'
-            form.type_of_invoice = 'original'
-        self.assertEqual(form.record.supplier_id, self.supplier)
-
-    def test_preserved_tax_values_have_selection_labels(self):
-        claim = self.Claim.with_user(self.users['user']).create({
-            **self.values(), 'tax_classification': 'withholding_tax',
-        })
-        with Form(claim) as form:
-            self.assertEqual(form.tax_classification, 'withholding_tax')
-        claim_fields = self.Claim.fields_get(['tax_classification', 'state'])
-        self.assertIn(claim.tax_classification, dict(claim_fields['tax_classification']['selection']))
-        self.assertNotIn('tax_accounts', dict(claim_fields['state']['selection']))
-        history = self.env['ab_supplier_claim_cycle.history']._append([{
-            'claim_id': claim.id, 'event': 'tax_finished',
-            'from_state': 'tax_accounts', 'to_state': 'tax_accounts',
-            'department': 'tax_accounts', 'tax_classification': 'withholding_tax',
-            'review_round': 1, 'user_id': self.users['admin'].id,
-            'occurred_at': fields.Datetime.now(),
-        }])
-        names = ['event', 'from_state', 'to_state', 'department', 'tax_classification']
-        descriptions = history.fields_get(names)
-        for name in names:
-            self.assertIn(history[name], dict(descriptions[name]['selection']))
-        with self.assertRaises(AccessError):
-            history.with_user(self.users['admin']).write({'department': 'secretarial'})
-
-    def test_fresh_model_contract(self):
-        self.assertEqual(set(dict(self.Claim._fields['state'].selection)), {
-            'draft', 'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts',
-            'returned_secretarial', 'ready_to_close', 'closed',
-        })
-        self.assertEqual(self.Claim._fields['supplier_id'].comodel_name, 'ab_costcenter')
-        self.assertNotIn('business_category', self.Claim._fields)
-        self.assertNotIn('bracket_id', self.Claim._fields)
-        self.assertNotIn('bracket_snapshot', self.env['ab_supplier_claim_cycle.history']._fields)
-        self.assertEqual(set(dict(self.env['ab_supplier_claim_cycle.history']._fields['event'].selection)), {
-            'resubmitted', 'decision', 'closed', 'archived', 'restored', 'secretarial_note', 'tax_finished',
-        })
-        self.supplier.active = False
-        with self.assertRaises(ValidationError), self.env.cr.savepoint():
-            self.claim().action_submit()
-
-    def test_followup_defaults_and_exception_steps(self):
-        claim = self.claim()
+            record = claim.with_user(self.users[role])
+            if role in ('user', 'admin'):
+                record.read(['claim_amount'])
+            else:
+                with self.assertRaises(AccessError):
+                    record.read(['claim_amount'])
         claim.action_submit()
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            record = claim.with_user(self.users[department])
-            today = fields.Date.context_today(record)
-            self.assertEqual(record[f'{department}_followup_date'], today)
-            future = today + timedelta(days=3)
-            self.decide(claim, department, 'deferred', **{
-                f'{department}_notes': 'Waiting for documents',
-                f'{department}_followup_date': future})
-            self.assertEqual(record[f'{department}_followup_date'], future)
-            self.decide(claim, department, 'deferred', reason='Still waiting', followup_date=future)
-            self.decide(claim, department, 'rejected', reason='Please correct')
-            events = claim[f'timeline_{department}_exception_ids']
-            self.assertEqual(events.mapped('decision'), ['deferred', 'deferred', 'rejected'])
-            self.assertEqual(events.mapped('user_id'), self.users[department])
-            self.assertEqual(events[0].followup_date, future)
-            claim.action_submit()
-            self.assertEqual(record[f'{department}_followup_date'], today)
-            self.decide(claim, department)
-            self.assertEqual(claim[f'timeline_{department}_exception_ids'], events)
-        with self.assertRaises(AccessError):
-            claim.with_user(self.outsider).read(['timeline_inventory_exception_ids'])
-        cash = self.claim(cash=True)
-        cash.action_submit()
-        self.assertEqual(cash.supplier_accounts_followup_date, fields.Date.context_today(cash))
+        for role in self.roles:
+            self.assertEqual(claim.with_user(self.users[role]).read(['claim_amount'])[0]['claim_amount'], 100)
 
-    def open_decision(self, claim, department, decision, user=None):
-        record = claim.with_user(user or self.users[department])
-        action = record.with_context(claim_department=department, claim_decision=decision).action_department_decision()
-        self.assertEqual((action['type'], action['target']), ('ir.actions.act_window', 'new'))
-        return self.env[action['res_model']].with_user(record.env.user).browse(action['res_id'])
-
-    def test_decision_popups_and_separate_notes_every_department(self):
-        claim = self.claim()
-        claim.action_submit()
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            record = claim.with_user(self.users[department])
-            record.write({department + '_notes': 'Ordinary note'})
-            history = claim.history_ids
-            popup = self.open_decision(claim, department, 'deferred')
-            self.assertFalse(popup.reason)
-            self.assertEqual(popup.followup_date, fields.Date.context_today(record))
-            self.assertEqual(claim.history_ids, history)
-            self.assertEqual(claim.state, department)
-            # Cancelling/discarding a popup does not submit a decision.
-            popup.unlink()
-            self.assertEqual(claim.history_ids, history)
-            popup = self.open_decision(claim, department, 'deferred')
-            for reason, date in ((False, fields.Date.today()), ('  ', fields.Date.today()),
-                                 ('Waiting', False), ('Waiting', fields.Date.today() - timedelta(days=1))):
-                popup.write({'reason': reason, 'followup_date': date})
-                with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                    popup.action_confirm()
-            popup.write({'reason': '  Missing documents  ', 'followup_date': fields.Date.today()})
-            self.assertEqual(popup.action_confirm()['type'], 'ir.actions.act_window_close')
-            self.assertEqual(record[department + '_notes'], 'Ordinary note')
-            entry = claim.exception_history_ids[0]
-            self.assertEqual((entry.reason, entry.notes, entry.display_note),
-                             ('Missing documents', 'Ordinary note', 'Ordinary note'))
-            self.assertIn(entry, claim.note_history_ids)
-            self.assertEqual(claim.state, department)
-            # Ordinary notes can be cleared independently of a recorded deferral.
-            record.write({department + '_notes': False})
-            popup = self.open_decision(claim, department, 'rejected')
-            self.assertFalse(popup.reason)
-            self.assertFalse(popup.followup_date)
-            popup.reason = 'Correct invoice'
-            popup.action_confirm()
-            self.assertEqual(claim.state, 'returned_secretarial')
-            self.assertEqual(claim.rejection_reason, 'Correct invoice')
-            rejected = claim.exception_history_ids[0]
-            self.assertEqual(rejected.reason, 'Correct invoice')
-            self.assertFalse(rejected.notes)
-            self.assertNotIn('Correct invoice', claim.note_history_ids.mapped('display_note'))
-            claim.action_submit()
-            self.decide(claim, department)
-
-    def test_reason_api_does_not_fall_back_to_notes(self):
-        claim = self.claim()
-        claim.action_submit()
-        record = claim.with_user(self.users['inventory'])
-        record.inventory_notes = 'Not a rejection reason'
-        for decision in ('rejected', 'deferred'):
-            with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                record.action_decide('inventory', decision, followup_date=fields.Date.today())
-        self.assertFalse(claim.history_ids)
-        self.assertEqual(claim.state, 'inventory')
-
-    def test_decision_popup_access_and_stale_confirmation(self):
-        claim = self.claim()
-        claim.action_submit()
-        for user in (self.users['user'], self.users['reviewer'], self.users['purchasing'], self.outsider):
-            with self.assertRaises(AccessError), self.env.cr.savepoint():
-                self.open_decision(claim, 'inventory', 'rejected', user=user)
-        popup = self.open_decision(claim, 'inventory', 'rejected')
-        popup.reason = 'Correction'
-        with self.assertRaises(AccessError), self.env.cr.savepoint():
-            popup.with_user(self.users['purchasing']).action_confirm()
-        # Even a forged wizard must pass the claim's department authorization.
-        forged = self.env[popup._name].with_user(self.users['purchasing']).create({
-            'claim_id': claim.id, 'department': 'inventory', 'decision': 'rejected',
-            'review_round': claim.review_round, 'history_revision': 0, 'reason': 'Forged',
-        })
-        with self.assertRaises(AccessError), self.env.cr.savepoint():
-            forged.action_confirm()
-        self.decide(claim, 'inventory', 'deferred', reason='Waiting', followup_date=fields.Date.today())
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            popup.action_confirm()
-        for user in (self.users['admin'], self.system):
-            admin_popup = self.open_decision(claim, 'inventory', 'deferred', user=user)
-            admin_popup.reason = 'Admin follow-up'
-            admin_popup.action_confirm()
-            with self.assertRaises(UserError), self.env.cr.savepoint():
-                admin_popup.action_confirm()
-        popup = self.open_decision(claim, 'inventory', 'rejected', user=self.users['admin'])
-        popup.reason = 'Late'
-        claim.with_user(self.users['admin']).write({'active': False})
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            popup.action_confirm()
-        claim.with_user(self.users['admin']).write({'active': True})
-        self.decide(claim, 'inventory')
-        self.decide(claim, 'purchasing')
-        self.decide(claim, 'supplier_accounts')
+    def test_all_documents_history_closed_archived_reads(self):
+        claim = self.claim('check')
+        self.bank(claim)
+        claim.with_user(self.users['bank_accounts']).write({'bank_cheque_attachment': self.document,
+                                                           'bank_cheque_filename': 'bank.pdf'})
         self.decide(claim, 'bank_accounts')
         claim.action_close()
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            popup.action_confirm()
-
-    def test_legacy_history_separation(self):
-        claim = self.claim()
-        history = self.env['ab_supplier_claim_cycle.history']
-        rows = []
-        for decision in ('approved', 'rejected', 'deferred'):
-            values = claim._history_values('decision', department='inventory', decision=decision,
-                                          reason='Legacy ' + decision)
-            values.pop('notes')
-            rows.append(values)
-        history._append(rows)
-        self.assertEqual(claim.note_history_ids.mapped('display_note'), ['Legacy approved'])
-        self.assertEqual(set(claim.exception_history_ids.mapped('reason')), {'Legacy rejected', 'Legacy deferred'})
-        self.assertEqual(set(claim.history_ids.mapped('reason')),
-                         {'Legacy approved', 'Legacy rejected', 'Legacy deferred'})
-
-    def test_popup_form_and_translations(self):
-        claim = self.claim()
-        claim.action_submit()
-        for language, title, reason_label, confirm in (
-                ('en_US', 'Reject Claim', 'Rejection Reason', 'Confirm'),
-                ('ar_001', 'رفض المطالبة', 'سبب الرفض', 'تأكيد')):
-            record = claim.with_user(self.users['inventory']).with_context(
-                lang=language, claim_department='inventory', claim_decision='rejected')
-            action = record.action_department_decision()
-            self.assertEqual(action['name'], title)
-            popup = self.env[action['res_model']].with_user(record.env.user).with_context(
-                lang=language).browse(action['res_id'])
-            arch = etree.fromstring(popup.get_view(view_type='form')['arch'])
-            self.assertEqual(arch.xpath('//label[@for="reason"]')[0].get('string'), reason_label)
-            self.assertEqual(arch.xpath('//button[@name="action_confirm"]')[0].get('string'), confirm)
-            with Form(popup) as form:
-                form.reason = 'Reason entered in form'
-            self.assertEqual(popup.reason, 'Reason entered in form')
-            claim_arch = etree.fromstring(record.get_view(view_type='form')['arch'])
-            heading = claim_arch.xpath('//div[contains(@class,"o_scc_exception_history")]/h3')[0]
-            self.assertEqual(heading.text, 'Rejections & Deferrals' if language == 'en_US'
-                             else 'حالات الرفض والتأجيل')
-        self.assertEqual(claim.state, 'inventory')
-        self.assertFalse(claim.history_ids)
-
-    def test_popup_cannot_confirm_after_return_and_resubmit(self):
-        claim = self.claim()
-        claim.action_submit()
-        popup = self.open_decision(claim, 'inventory', 'rejected')
-        popup.reason = 'Old round'
-        self.decide(claim, 'inventory', 'rejected', reason='Actual correction')
-        claim.action_submit()
-        self.assertEqual(claim.state, 'inventory')
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            popup.action_confirm()
-        self.assertEqual(len(claim.exception_history_ids), 1)
-
-    def test_delivery_contacts_persist_and_are_claim_specific(self):
-        contacts = {
-            'delivery_representative_name': 'Company representative',
-            'delivery_representative_phone': '+20 (100) 123-4567',
-        }
-        claim = self.Claim.with_user(self.users['user']).create({**self.values(), **contacts})
-        claim.invalidate_recordset(list(contacts))
-        self.assertEqual({name: claim[name] for name in contacts}, contacts)
-        other = self.claim()
-        self.assertFalse(other.delivery_representative_name)
-        self.assertFalse(other.delivery_representative_phone)
-        duplicate = claim.copy()
-        self.assertFalse(duplicate.delivery_representative_name)
-        self.assertFalse(duplicate.delivery_representative_phone)
-        claim.write(self.values(cash=True))
-        self.assertEqual({name: claim[name] for name in contacts}, contacts)
-        # Both populated and empty contacts survive the full non-cash workflow.
-        claim.write({'payment_nature': 'bank_transfer'})
-        for record in (claim, other):
-            record.action_submit()
-            for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-                self.decide(record, department)
-            record.action_close()
-        for role in self.roles:
-            values = claim.with_user(self.users[role]).read(list(contacts))[0]
-            self.assertEqual({name: values[name] for name in contacts}, contacts)
-        self.assertFalse(other.delivery_representative_name)
-        self.assertFalse(other.delivery_representative_phone)
-
-    def test_delivery_contacts_role_and_stage_permissions(self):
-        names = ('delivery_representative_name', 'delivery_representative_phone')
-        editors = (self.users['user'], self.users['admin'], self.system)
-        for user in editors:
-            claim = self.Claim.with_user(user).create({
-                **self.values(), names[0]: 'Initial', names[1]: '010 1234 5678',
-            })
-            for editor in editors:
-                claim.with_user(editor).write(dict.fromkeys(names, 'Draft correction'))
-            for role in self.roles:
-                if role in ('user', 'admin'):
-                    continue
-                for name in names:
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        claim.with_user(self.users[role]).write({name: 'Unauthorized'})
-                with self.assertRaises(AccessError), self.env.cr.savepoint():
-                    self.Claim.with_user(self.users[role]).create({**self.values(), names[0]: 'Unauthorized'})
-            claim.action_submit()
-            for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-                for editor in (*editors, self.users[department]):
-                    for name in names:
-                        with self.assertRaises(AccessError), self.env.cr.savepoint():
-                            claim.with_user(editor).write({name: 'Submitted correction'})
-                self.decide(claim, department, 'rejected', reason='Correct claim')
-                for editor in editors:
-                    claim.with_user(editor).write(dict.fromkeys(names, 'Returned correction'))
-                for name in names:
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        claim.with_user(self.users[department]).write({name: 'Unauthorized'})
-                claim.action_submit()
-                self.decide(claim, department)
-            for editor in editors:
-                with self.assertRaises(AccessError), self.env.cr.savepoint():
-                    claim.with_user(editor).write({names[0]: 'Ready correction'})
-            claim.action_close()
-            for editor in editors:
-                for name in names:
-                    with self.assertRaises(UserError), self.env.cr.savepoint():
-                        claim.with_user(editor).write({name: 'Closed correction'})
-            self.assertEqual(tuple(claim[name] for name in names), ('Returned correction',) * 2)
-
-    def test_delivery_contact_views_and_translations(self):
-        from odoo.tools.safe_eval import safe_eval
-        names = ('delivery_representative_name', 'delivery_representative_phone')
-        states = dict(self.Claim._fields['state'].selection)
-        for name in names:
-            field = self.Claim._fields[name]
-            self.assertTrue(field.store)
-            self.assertFalse(field.required)
-            self.assertFalse(field.copy)
-        for role, user in [*self.users.items(), ('admin', self.system)]:
-            for lang in ('en_US', 'ar_001'):
-                model = self.Claim.with_user(user).with_context(lang=lang)
-                form = etree.fromstring(model.get_view(
-                    view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id,
-                    view_type='form')['arch'])
-                listing = etree.fromstring(model.get_view(
-                    view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_tree').id,
-                    view_type='list')['arch'])
-                labels = model.fields_get(list(names))
-                for name, english, arabic in (
-                        (names[0], 'Company Representative Name', 'اسم مندوب الشركة'),
-                        (names[1], 'Company Representative Phone', 'رقم هاتف مندوب الشركة')):
-                    self.assertEqual(labels[name]['string'], english if lang == 'en_US' else arabic)
-                    nodes = form.xpath('//group[@name="claim_details"]/field[@name="%s"]' % name)
-                    self.assertEqual(len(nodes), 1)
-                    node = nodes[0]
-                    for state in states:
-                        for active in (True, False):
-                            values = {'state': state, 'active': active}
-                            for ancestor in [node, *node.iterancestors()]:
-                                self.assertFalse(safe_eval(ancestor.get('invisible', 'False'), values))
-                            expected = not (role in ('user', 'admin') and active
-                                            and state in ('draft', 'returned_secretarial'))
-                            self.assertEqual(bool(safe_eval(node.get('readonly', 'False'), values)), expected)
-                    columns = listing.xpath('//list/field[@name="%s"]' % name)
-                    self.assertEqual(len(columns), 1)
-                    self.assertEqual(columns[0].get('optional'), 'hide')
-                    self.assertEqual(columns[0].get('readonly'), 'True')
-                    if name.endswith('phone'):
-                        self.assertEqual(node.get('widget'), 'phone')
-                        self.assertEqual(columns[0].get('widget'), 'phone')
-
-    def test_admin_corrections_preserve_protected_fields(self):
-        claim = self.claim()
-        claim.action_submit()
-        admins = (self.users['admin'], self.system)
-        protected = {
-            'tax_classification': 'non_tax_payment',
-            'state': 'closed', 'review_round': 99, 'user_id': self.users['admin'].id,
-            'resume_stage': 'bank_accounts', 'rejection_department': 'inventory',
-            'rejection_reason': 'Forged', 'history_ids': [(5, 0, 0)],
-            **{department + '_decision': 'approved' for department in (
-                'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts')},
-        }
-        corrections = dict(num_of_invoice=7, area='south', amount_of_check='250',
-                           type_of_invoice='copy', secretarial_notes='Administrator correction',
-                           attachment=base64.b64encode(b'corrected attachment'))
-        for stage in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts', 'ready_to_close'):
-            self.assertEqual(claim.state, stage)
-            for admin in admins:
-                record = claim.with_user(admin)
-                record.write(corrections)
-                self.assertEqual({name: record[name] for name in corrections}, corrections)
-                for name, value in protected.items():
-                    with self.subTest(stage=stage, user=admin.login, field=name):
-                        with self.assertRaises(AccessError), self.env.cr.savepoint():
-                            record.with_context(workflow_internal=True).write({name: value})
-                if stage != 'ready_to_close':
-                    values = {stage + '_notes': 'Admin review', stage + '_followup_date': fields.Date.today()}
-                    if stage == 'supplier_accounts':
-                        values.update(cheque_attachment=base64.b64encode(b'cheque'), cheque_filename='cheque.pdf')
-                    elif stage == 'bank_accounts':
-                        values.update(bank_cheque_attachment=base64.b64encode(b'bank'), bank_cheque_filename='bank.pdf')
-                    record.write(values)
-            if stage != 'ready_to_close':
-                self.decide(claim, stage)
-        claim.action_close()
-        for admin in admins:
-            with self.assertRaises(UserError), self.env.cr.savepoint():
-                claim.with_user(admin).write(corrections)
-        draft = self.claim()
-        draft.with_user(self.users['admin']).write({'active': False})
-        for admin in admins:
-            with self.assertRaises(UserError), self.env.cr.savepoint():
-                draft.with_user(admin).write(corrections)
-
-    def test_only_admin_can_archive_and_restore_all_stages(self):
-        claim = self.claim()
-        for stage in ('draft', 'inventory', 'purchasing', 'supplier_accounts', 'bank_accounts',
-                      'ready_to_close', 'closed'):
-            self.assertEqual(claim.state, stage)
-            for admin in (self.users['admin'], self.system):
-                for active in (False, True):
-                    for role in self.roles:
-                        if role == 'admin':
-                            continue
-                        with self.assertRaises(AccessError), self.env.cr.savepoint():
-                            claim.with_user(self.users[role]).write({'active': active})
-                    claim.with_user(admin).write({'active': active})
-                    self.assertEqual(claim.active, active)
-                    self.assertEqual(claim.state, stage)
-                    event = claim.history_ids.sorted('id')[-1]
-                    self.assertEqual(event.event, 'restored' if active else 'archived')
-                    self.assertEqual(event.user_id, admin)
-            if stage == 'draft':
-                claim.action_submit()
-            elif stage == 'ready_to_close':
-                claim.action_close()
-            elif stage != 'closed':
-                self.decide(claim, stage)
-        for user in (*self.users.values(), self.system):
-            with self.assertRaises(AccessError), self.env.cr.savepoint():
-                claim.with_user(user).with_context(_force_unlink=True, module_uninstall=True).unlink()
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            claim.sudo().with_context(_force_unlink=True, module_uninstall=True).unlink()
-
-    def test_supplier_accounts_payment_changes_and_final_routing(self):
-        for initial, final in (('cash', 'check'), ('cash', 'bank_transfer'), ('check', 'cash'),
-                               ('bank_transfer', 'cash')):
-            for user in (self.users['supplier_accounts'], self.users['admin'], self.system):
-                claim = self.Claim.with_user(self.users['user']).create({**self.values(), 'payment_nature': initial})
-                claim.action_submit()
-                if initial != 'cash':
-                    self.decide(claim, 'inventory')
-                    self.decide(claim, 'purchasing')
-                completed = (claim.inventory_decision, claim.purchasing_decision)
-                record = claim.with_user(user)
-                for role in ('user', 'inventory', 'purchasing', 'bank_accounts', 'reviewer'):
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        claim.with_user(self.users[role]).write({'payment_nature': final})
-                for empty in (False, ''):
-                    with self.assertRaises(ValidationError), self.env.cr.savepoint():
-                        record.write({'payment_nature': empty})
-                record.write({'payment_nature': final})
-                self.decide(claim, 'supplier_accounts', 'deferred', reason='Waiting', followup_date=fields.Date.today())
-                record.write({'payment_nature': initial})
-                record.write({'payment_nature': final})
-                # Normalize an existing bank approval when Supplier Accounts reviews again.
-                claim._workflow_write({'bank_accounts_decision': 'approved'})
-                self.decide(claim, 'supplier_accounts')
-                self.assertEqual((claim.inventory_decision, claim.purchasing_decision), completed)
-                self.assertEqual(claim.state, 'ready_to_close' if final == 'cash' else 'bank_accounts')
-                self.assertEqual(claim.bank_accounts_decision, 'not_required' if final == 'cash' else 'pending')
-                for editor in (user, self.users['admin'], self.system):
-                    with self.assertRaises(AccessError), self.env.cr.savepoint():
-                        claim.with_user(editor).write({'payment_nature': initial})
-                if final != 'cash':
-                    self.decide(claim, 'bank_accounts')
-                claim.action_close()
-
-    def test_payment_nature_stage_boundaries(self):
-        claim = self.claim()
-        for user in (self.users['user'], self.users['admin'], self.system):
-            claim.with_user(user).write({'payment_nature': 'check'})
-        claim.action_submit()
-        for department in ('inventory', 'purchasing'):
-            for user in (*self.users.values(), self.system):
-                with self.assertRaises(AccessError), self.env.cr.savepoint():
-                    claim.with_user(user).write({'payment_nature': 'cash'})
-            self.decide(claim, department)
-        self.decide(claim, 'supplier_accounts', 'rejected', reason='Correction')
-        for user in (*self.users.values(), self.system):
-            with self.assertRaises(AccessError), self.env.cr.savepoint():
-                claim.with_user(user).write({'payment_nature': 'cash'})
-        claim.action_submit()
         claim.with_user(self.users['admin']).write({'active': False})
-        with self.assertRaises(UserError), self.env.cr.savepoint():
-            claim.with_user(self.users['admin']).write({'payment_nature': 'cash'})
-        claim.with_user(self.users['admin']).write({'active': True})
-        claim._workflow_write({'payment_nature': False})
-        with self.assertRaises(ValidationError), self.env.cr.savepoint():
+        for role in self.roles:
+            record = claim.with_user(self.users[role])
+            for kind in ('supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque'):
+                self.assertEqual(record[kind + '_attachment'], self.document)
+            record.history_ids.read(['reason', 'tax_decision'])
+            self.assertTrue(record.document_ids.read(['content']))
+
+    def test_parallel_operational_orders_and_gate(self):
+        for first, second in [('inventory', 'purchasing'), ('purchasing', 'inventory')]:
+            claim = self.claim()
+            claim.action_submit()
+            self.decide(claim, first)
+            self.assertEqual(claim.state, 'operational_review')
+            with self.assertRaises(AccessError):
+                self.decide(claim, 'supplier_accounts')
+            self.decide(claim, second)
+            self.assertEqual(claim.state, 'financial_review')
+
+    def test_operational_rejection_preserves_approval(self):
+        for approved in (True, False):
+            claim = self.claim()
+            claim.action_submit()
+            if approved:
+                self.decide(claim, 'inventory')
+            self.decide(claim, 'purchasing', 'rejected', reason='Correction')
+            self.assertEqual(claim.inventory_decision, 'approved' if approved else 'cancelled')
+            claim.action_submit()
+            self.assertEqual(claim.inventory_decision, 'approved' if approved else 'pending')
+            self.assertEqual(claim.purchasing_decision, 'pending')
+
+    def test_tax_requirements_and_financial_parallelism(self):
+        for classification in ('through_supplier', 'tax_payment', 'withholding_tax', 'non_tax_payment'):
+            claim = self.claim('cash', classification)
+            self.financial(claim)
+            required = classification != 'non_tax_payment'
+            self.assertEqual(claim.tax_decision, 'pending' if required else 'not_required')
+            if required:
+                with self.assertRaises(ValidationError):
+                    self.decide(claim, 'supplier_accounts')
+                self.decide(claim, 'supplier_accounts', 'deferred', reason='Waiting', followup_date=fields.Date.today())
+                with self.assertRaises(ValidationError):
+                    self.decide(claim, 'tax')
+                claim.with_user(self.users['tax']).write({'tax_discount_decision': 'do_not_apply'})
+                with self.assertRaises(ValidationError):
+                    self.decide(claim, 'tax')
+                claim.with_user(self.users['tax']).write({'tax_review_attachment': self.document})
+                self.decide(claim, 'tax')
+            self.decide(claim, 'supplier_accounts')
+            self.assertEqual(claim.state, 'secretarial_preparation')
+
+    def test_financial_rejections_restart_reviews(self):
+        for role in ('tax', 'supplier_accounts'):
+            claim = self.claim('cash')
+            self.financial(claim)
+            self.decide(claim, role, 'rejected', reason='Correction')
+            self.assertEqual(claim.state, 'returned_secretarial')
+            claim.write({'claim_amount': 200})
+            claim.action_submit()
+            self.assertEqual((claim.tax_decision, claim.supplier_accounts_decision), ('pending', 'pending'))
+
+    def test_deferral_reason_date_and_independence(self):
+        claim = self.claim('cash')
+        self.financial(claim)
+        for kwargs in ({}, {'reason': 'Waiting'}, {'followup_date': fields.Date.today()}):
+            with self.assertRaises(ValidationError):
+                self.decide(claim, 'tax', 'deferred', **kwargs)
+        self.decide(claim, 'tax', 'deferred', reason='Waiting', followup_date=fields.Date.today())
+        self.decide(claim, 'supplier_accounts', 'rejected', reason='Different issue')
+        self.assertEqual(claim.state, 'returned_secretarial')
+
+    def test_amount_rounding_and_protection(self):
+        claim = self.claim('cash')
+        claim.write({'claim_amount': 100.50})
+        self.financial(claim)
+        claim.with_user(self.users['tax']).write({'tax_discount_decision': 'apply'})
+        self.assertEqual((claim.tax_discount_amount, claim.net_claim_amount), (1.01, 99.49))
+        claim.with_user(self.users['tax']).write({'tax_discount_decision': 'do_not_apply'})
+        self.assertEqual((claim.tax_discount_amount, claim.net_claim_amount), (0, 100.50))
+        for field in ('tax_discount_amount', 'tax_discount_rate', 'net_claim_amount'):
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users['admin']).write({field: 99})
+        for amount in (0, -1, float('inf'), float('nan')):
+            with self.assertRaises(ValidationError), self.env.cr.savepoint():
+                self.claim().write({'claim_amount': amount})
+
+    def test_cash_check_transfer_and_required_preparation(self):
+        for payment in ('cash', 'check', 'bank_transfer'):
+            claim = self.claim(payment)
+            self.prepare(claim)
+            with self.assertRaises(ValidationError):
+                claim.action_prepare_payment()
+            claim.write({'payment_request_attachment': self.document})
+            claim.action_prepare_payment()
+            if payment != 'cash':
+                self.assertEqual(claim.state, 'bank_accounts')
+                self.decide(claim, 'bank_accounts')
+            self.assertEqual(claim.state, 'ready_to_close')
+            claim.action_close()
+            self.assertEqual(claim.state, 'closed')
+
+    def test_check_requires_supplier_document(self):
+        claim = self.claim('check', 'non_tax_payment')
+        self.financial(claim)
+        with self.assertRaises(ValidationError):
             self.decide(claim, 'supplier_accounts')
 
-    def test_claim_input_editability_and_form_controls(self):
-        from odoo.tools.safe_eval import safe_eval
+    def test_bank_gate_return_destinations(self):
+        claim = self.claim('check')
+        claim.action_submit()
+        with self.assertRaises(AccessError):
+            self.decide(claim, 'bank_accounts')
+        claim = self.claim('check')
+        self.bank(claim)
+        with self.assertRaises(ValidationError):
+            self.decide(claim, 'bank_accounts', 'rejected', reason='Correct request')
+        self.decide(claim, 'bank_accounts', 'rejected', reason='Correct request', return_destination='secretarial')
+        self.assertEqual(claim.secretarial_preparation_status, 'returned')
+        self.assertFalse(claim.payment_request_attachment)
+        self.assertEqual(claim.tax_review_attachment, self.document)
+        with self.assertRaises(ValidationError):
+            claim.action_prepare_payment()
+        claim.write({'payment_request_attachment': self.replacement})
+        claim.action_prepare_payment()
+        self.decide(claim, 'bank_accounts', 'rejected', reason='Amount issue', return_destination='supplier_accounts', affects_tax=True)
+        self.assertEqual((claim.state, claim.tax_decision, claim.supplier_accounts_decision), ('financial_review', 'pending', 'pending'))
+        self.assertFalse(claim.payment_request_attachment)
+
+    def test_bank_financial_return_preserves_unaffected_tax(self):
         claim = self.claim()
-        for role, user in [*self.users.items(), ('admin', self.system)]:
-            model = self.Claim.with_user(user)
-            arch = etree.fromstring(model.get_view(
-                view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
-            payment, = arch.xpath('//group[@name="supplier_classification"]/field[@name="payment_nature"]')
-            for state, _label in self.Claim._fields['state'].selection:
-                for active in (True, False):
-                    for decision in ('pending', 'deferred', 'approved', 'not_required'):
-                        record = model.new({'state': state, 'active': active,
-                                            'supplier_accounts_decision': decision})
-                        can_correct = active and state != 'closed' and (role == 'admin' or (role == 'user'
-                            and state in ('draft', 'returned_secretarial')))
-                        can_pay = active and ((role in ('user', 'admin') and state == 'draft') or (
-                            role in ('supplier_accounts', 'admin') and state == 'supplier_accounts'
-                            and decision in ('pending', 'deferred')))
-                        can_edit_supplier_section = active and state != 'closed' and role in ('user', 'admin')
-                        self.assertEqual(record.can_edit_supplier_section, can_edit_supplier_section)
-                        for name in ('supplier_id', 'section'):
-                            node, = arch.xpath('//group[@name="supplier_classification"]/field[@name="%s"]' % name)
-                            self.assertEqual(bool(safe_eval(node.get('readonly', 'False'), {
-                                'can_edit_supplier_section': can_edit_supplier_section})), not can_edit_supplier_section)
-                        self.assertEqual(record.can_edit_correction_fields, can_correct)
-                        self.assertEqual(record.can_edit_payment_nature, can_pay)
-                        values = dict(can_edit_correction_fields=can_correct, can_edit_payment_nature=can_pay)
-                        self.assertEqual(bool(safe_eval(payment.get('readonly', 'False'), values)), not can_pay)
-                        for name in ('num_of_invoice', 'area', 'amount_of_check', 'type_of_invoice',
-                                     'secretarial_notes', 'attachment'):
-                            node, = arch.xpath('//field[@name="%s"]' % name)
-                            self.assertEqual(bool(safe_eval(node.get('readonly', 'False'), values)), not can_correct)
+        self.bank(claim)
+        self.decide(claim, 'bank_accounts', 'rejected', reason='Supplier document', return_destination='supplier_accounts')
+        self.assertEqual(claim.tax_decision, 'approved')
+        self.assertEqual(claim.secretarial_preparation_status, 'suspended')
+
+    def test_document_replacement_revision_and_history(self):
+        claim = self.claim('check')
+        self.bank(claim)
+        for role in self.roles:
+            if role == 'admin':
+                continue
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users[role]).action_replace_supplier_document(self.replacement, 'new.pdf', 'Correction')
+        manager = claim.with_user(self.users['admin'])
+        with self.assertRaises(ValidationError):
+            manager.action_replace_supplier_document(self.replacement, 'new.pdf', '')
+        manager.action_replace_supplier_document(self.replacement, 'new.pdf', 'Correction')
+        self.assertEqual((claim.document_revision, claim.state), (2, 'secretarial_preparation'))
+        self.assertFalse(claim.payment_request_attachment)
+        self.assertIn(self.document, claim.document_ids.mapped('content'))
+        manager.action_replace_supplier_document(self.replacement, 'new.pdf', 'Amount correction', claim_amount=200)
+        self.assertEqual((claim.state, claim.tax_decision, claim.supplier_accounts_decision), ('financial_review', 'pending', 'pending'))
+
+    def test_direct_orm_and_combined_group_security(self):
+        claim = self.claim()
+        claim.action_submit()
+        for role in self.roles:
+            record = claim.with_user(self.users[role]).with_context(workflow_internal=True, skip_security=True)
+            for field, value in [('state', 'closed'), ('tax_decision', 'approved'), ('claim_amount', 500), ('payment_request_attachment', self.document), ('migration_gate_exception', True)]:
+                with self.assertRaises(AccessError):
+                    record.write({field: value})
+            with self.assertRaises(AccessError):
+                record.unlink()
+        combined = new_test_user(self.env, login='scc_combined', groups=','.join(
+            'ab_supplier_claim_cycle.supplier_claim_group_' + r for r in ('inventory', 'purchasing')))
+        with self.assertRaises(AccessError):
+            claim.with_user(combined).action_decide('supplier_accounts', 'approved')
+        reviewer = new_test_user(self.env, login='scc_reviewer_combined', groups=','.join(
+            'ab_supplier_claim_cycle.supplier_claim_group_' + r for r in ('reviewer', 'inventory')))
+        with self.assertRaises(AccessError):
+            claim.with_user(reviewer).action_decide('inventory', 'approved')
+
+    def test_forged_create_defaults_and_history(self):
+        claim = self.Claim.with_user(self.users['user']).with_context(default_state='closed',
+            default_migration_gate_exception=True, default_tax_decision='approved').create({
+                'supplier_id': self.supplier.id, 'num_of_invoice': 1, 'area': 'north',
+                'claim_amount': 100, 'type_of_invoice': 'original'})
+        self.assertEqual(claim.state, 'draft')
+        self.assertFalse(claim.migration_gate_exception)
+        claim.write({'payment_nature': 'cash', 'tax_classification': 'non_tax_payment'})
+        claim.action_submit()
+        for role in self.roles:
+            history = claim.with_user(self.users[role]).history_ids
+            with self.assertRaises(AccessError):
+                history.write({'reason': 'Forged'})
+            with self.assertRaises(AccessError):
+                history.unlink()
+
+    def test_company_and_branch_scope(self):
+        company = self.env['res.company'].create({'name': 'Isolated branch'})
+        claim = self.claim()
+        claim._workflow_write({'company_id': company.id})
+        for role in self.roles:
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users[role]).read(['claim_amount'])
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users[role]).action_submit()
+
+    def test_calendar_sla_holiday_and_snapshot(self):
+        calendar = self.env.company.resource_calendar_id
+        self.env['resource.calendar.leaves'].create({'name': 'Test holiday', 'calendar_id': calendar.id,
+            'date_from': datetime(2026, 11, 2, 0), 'date_to': datetime(2026, 11, 2, 23, 59, 59)})
+        claim = self.claim('cash', 'non_tax_payment')
+        self.financial(claim)
+        with patch.object(fields.Datetime, 'now', return_value=datetime(2026, 10, 30, 10)):
+            self.decide(claim, 'supplier_accounts')
+        due = claim.preparation_due_date
+        self.assertEqual(due.date().isoformat(), '2026-11-04')
+        self.env.company.supplier_claim_secretarial_sla_days = 5
+        self.assertEqual(claim.preparation_due_date, due)
+        with patch.object(fields.Datetime, 'now', return_value=due + timedelta(days=1)):
+            claim.invalidate_recordset(['preparation_overdue'])
+            self.assertTrue(claim.preparation_overdue)
+
+    def test_migration_amount_parser(self):
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.0.0/pre-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        for raw, expected in [(' 1,234.50 ', 1234.50), ('10', 10), ('100.505', 100.51), ('10000000000000000', 10000000000000000)]:
+            self.assertEqual(float(module.parse_amount(raw)), expected)
+        for raw in ('', 'abc', '1,2', '-5', '0', 'NaN', 'Infinity'):
+            with self.assertRaises(ValueError):
+                module.parse_amount(raw)
+
+    def test_migration_invalid_input_is_atomic(self):
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.0.0/pre-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_atomic_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with self.env.cr.savepoint():
+            self.env.cr.execute('CREATE TEMP TABLE ab_supplier_claim_cycle (id integer, amount_of_check varchar, cheque_attachment bytea, cheque_filename varchar) ON COMMIT DROP')
+            self.env.cr.execute("INSERT INTO ab_supplier_claim_cycle VALUES (1, '1,000.50', %s, 'one.pdf'), (2, 'invalid', NULL, NULL)", [b'evidence'])
+            with self.assertRaisesRegex(ValueError, 'IDs \\[2\\]'):
+                module.migrate(self.env.cr, '19.0.4.2.1')
+            self.env.cr.execute('SELECT amount_of_check FROM ab_supplier_claim_cycle ORDER BY id')
+            self.assertEqual(self.env.cr.fetchall(), [('1,000.50',), ('invalid',)])
+            self.env.cr.execute("UPDATE ab_supplier_claim_cycle SET amount_of_check='2.50' WHERE id=2")
+            module.migrate(self.env.cr, '19.0.4.2.1')
+            self.env.cr.execute('SELECT claim_amount, supplier_cheque_attachment, supplier_cheque_filename FROM ab_supplier_claim_cycle WHERE id=1')
+            amount, content, filename = self.env.cr.fetchone()
+            self.assertEqual((amount, bytes(content), filename), (1000.50, b'evidence', 'one.pdf'))
+            self.env.cr.execute('DROP TABLE pg_temp.ab_supplier_claim_cycle')
+
+    def test_document_history_is_immutable(self):
+        claim = self.claim('check')
+        self.bank(claim)
+        for role in self.roles:
+            docs = claim.with_user(self.users[role]).document_ids
+            with self.assertRaises(AccessError):
+                docs.write({'content': self.replacement})
+            with self.assertRaises(AccessError):
+                docs.unlink()
+
+    def test_bank_return_cannot_reuse_invalidated_request(self):
+        claim = self.claim()
+        self.bank(claim)
+        self.decide(claim, 'bank_accounts', 'rejected', reason='Fix request', return_destination='secretarial')
+        with self.assertRaises(ValidationError):
+            claim.write({'payment_request_attachment': self.document})
+
+    def test_english_arabic_views_and_queues(self):
+        from lxml import etree
+        self.env['res.lang']._activate_lang('ar_001')
+        self.env['ir.module.module'].search([('name', '=', 'ab_supplier_claim_cycle')])._update_translations(filter_lang=['ar_001'])
+        for language, expected in [('en_US', 'Complete Preparation'), ('ar_001', 'إتمام تجهيز طلب الدفع')]:
+            for role in self.roles:
+                model = self.Claim.with_user(self.users[role]).with_context(lang=language)
+                arch = etree.fromstring(model.get_view(view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
+                self.assertEqual(arch.xpath('//button[@name="action_prepare_payment"]')[0].get('string'), expected)
+                self.assertTrue(arch.xpath('//field[@name="tax_review_attachment"]'))
+                self.assertFalse(arch.xpath('//*[@attrs or @states]'))
+        selection = self.Claim.with_context(lang='ar_001').fields_get(['tax_decision'])['tax_decision']['selection']
+        self.assertEqual(dict(selection)['approved'], 'تمت الموافقة')
+        all_claims = self.env.ref('ab_supplier_claim_cycle.invoice_action')
+        self.assertEqual(all_claims.domain, "[]")
+
+    def test_supplier_defaults_and_reference_normalization(self):
+        first = self.claim('cash', 'non_tax_payment', claim_reference='  test-42  ')
+        self.assertEqual(first.claim_reference, 'TEST-42')
+        other = self.env['ab_costcenter'].create({'name': 'Other supplier', 'code': '1-other'})
+        draft = self.Claim.with_user(self.users['user']).create({
+            'supplier_id': other.id, 'num_of_invoice': 1, 'area': 'north', 'claim_amount': 200,
+            'type_of_invoice': 'copy'})
+        draft.write({'supplier_id': self.supplier.id})
+        self.assertEqual((draft.payment_nature, draft.tax_classification), ('cash', 'non_tax_payment'))
+        self.assertEqual(draft.claim_amount, 200)
+
+    def test_zero_amount_create_and_manager_stage_guards(self):
+        with self.assertRaises(ValidationError):
+            self.Claim.with_user(self.users['user']).create({'supplier_id': self.supplier.id,
+                'num_of_invoice': 1, 'area': 'north', 'type_of_invoice': 'original'})
+        claim = self.claim()
+        claim.action_submit()
+        with self.assertRaises(UserError):
+            claim.with_user(self.users['admin']).action_decide('bank_accounts', 'approved')
+        with self.assertRaises(UserError):
+            claim.with_user(self.users['admin']).action_replace_supplier_document(self.document, 'supplier.pdf', 'Correction')
+
+    def test_multiple_company_migration_requires_mapping(self):
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.0.0/pre-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_company_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.env['res.company'].create({'name': 'Another branch'})
+        with self.env.cr.savepoint():
+            self.env.cr.execute('CREATE TEMP TABLE ab_supplier_claim_cycle (id integer, amount_of_check varchar, cheque_attachment bytea, cheque_filename varchar) ON COMMIT DROP')
+            self.env.cr.execute("INSERT INTO ab_supplier_claim_cycle VALUES (123, '100', NULL, NULL)")
+            with self.assertRaisesRegex(ValueError, 'explicit company XML ID'):
+                module.migrate(self.env.cr, '19.0.4.2.1')
+            self.env['ir.config_parameter'].set_param('ab_supplier_claim_cycle.migration_company_map', '{"123": "base.main_company"}')
+            module.migrate(self.env.cr, '19.0.4.2.1')
+            self.env.cr.execute('SELECT company_id FROM ab_supplier_claim_cycle')
+            self.assertEqual(self.env.cr.fetchone()[0], self.env.ref('base.main_company').id)
+            self.env.cr.execute('DROP TABLE pg_temp.ab_supplier_claim_cycle')
+
+    def test_secretarial_form_creates_and_submits(self):
+        from odoo.tests import Form
+        with Form(self.Claim.with_user(self.users['user'])) as form:
+            form.supplier_id = self.supplier
+            form.num_of_invoice = 1
+            form.area = 'north'
+            form.claim_amount = 100
+            form.type_of_invoice = 'original'
+            form.payment_nature = 'cash'
+            form.tax_classification = 'non_tax_payment'
+        claim = form.record
+        claim.action_submit()
+        self.assertEqual(claim.state, 'financial_review')
+
+    def test_migrated_bank_return_can_resume(self):
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.0.0/post-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_return_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        claim = self.claim()
+        claim._workflow_write({'state': 'returned_secretarial', 'resume_stage': 'bank_accounts',
+            'supplier_accounts_decision': 'approved', 'inventory_decision': 'approved',
+            'purchasing_decision': 'approved'})
+        self.env.flush_all()
+        self.env.cr.execute('ALTER TABLE ab_supplier_claim_cycle ADD COLUMN IF NOT EXISTS cheque_attachment bytea')
+        self.env.cr.execute('ALTER TABLE ab_supplier_claim_cycle ADD COLUMN IF NOT EXISTS cheque_filename varchar')
+        module.migrate(self.env.cr, '19.0.4.2.1')
+        claim.invalidate_recordset()
+        self.assertEqual((claim.state, claim.resume_stage), ('returned_secretarial', 'financial_review'))
+        self.assertFalse(claim.migration_gate_exception)
+        claim.action_submit()
+        self.assertEqual((claim.state, claim.tax_decision, claim.supplier_accounts_decision),
+                         ('financial_review', 'pending', 'pending'))
+
+    def test_views_load_in_xml_developer_mode(self):
+        from lxml import etree
+        from odoo.addons.base.models.ir_ui_view import get_view_arch_from_file
+        root = Path(__file__).parents[1]
+        for path in root.rglob('*.xml'):
+            tree = etree.parse(str(path))
+            for record in tree.xpath('//record[@model="ir.ui.view"]'):
+                if record.find('field[@name="arch"]') is not None:
+                    xmlid = 'ab_supplier_claim_cycle.' + record.get('id')
+                    with self.subTest(view=xmlid):
+                        self.assertTrue(get_view_arch_from_file(str(path), xmlid))
+
+    def test_parallel_workflow_preserves_original_design(self):
+        from lxml import etree
+        view = self.env.ref('ab_supplier_claim_cycle.invoice_view_form')
+        arch = etree.fromstring(self.Claim.get_view(view_id=view.id, view_type='form')['arch'])
+        self.assertIn('o_scc_form', arch.get('class', ''))
+        for name, style in [('supplier_classification', 'o_scc_classification'),
+                            ('claim_details', 'o_scc_details'), ('department_reviews', 'o_scc_reviews')]:
+            group = arch.xpath('//group[@name="%s"]' % name)[0]
+            self.assertIn(style, group.get('class', ''))
+        for name in ('operational_parallel_timeline', 'financial_parallel_timeline'):
+            self.assertTrue(arch.xpath('//div[@name="%s"]' % name))
+        self.assertTrue(arch.xpath('//page[@name="claim_exceptions"]/field[@name="exception_history_ids"]'))
+        self.assertTrue(arch.xpath('//field[@name="note_history_ids"]'))
+        self.assertTrue(arch.xpath('//group[@name="payment_preparation"]'))
+        listing = etree.fromstring(self.Claim.get_view(view_id=self.env.ref(
+            'ab_supplier_claim_cycle.invoice_view_tree').id, view_type='list')['arch'])
+        state = listing.xpath('//field[@name="state"]')[0]
+        self.assertEqual(state.get('decoration-info'), "state == 'operational_review'")
+        self.assertEqual(state.get('decoration-primary'), "state == 'financial_review'")

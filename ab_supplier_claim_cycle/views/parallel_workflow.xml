@@ -1,0 +1,571 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <record id="invoice_form_parallel_workflow" model="ir.ui.view">
+    <field name="name">supplier.claim.parallel.workflow</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="priority">99</field>
+    <field name="inherit_id" ref="invoice_form_shipment_design"/>
+    <field name="arch" type="xml">
+      <xpath expr="//chatter" position="replace"/>
+      <xpath expr="//sheet" position="inside">
+        <field name="can_prepare_payment" invisible="True"/>
+        <field name="can_close_claim" invisible="True"/>
+        <field name="can_edit_inventory" invisible="True"/>
+        <field name="can_edit_purchasing" invisible="True"/>
+        <field name="can_edit_tax" invisible="True"/>
+        <field name="can_edit_supplier_accounts" invisible="True"/>
+        <field name="can_edit_bank_accounts" invisible="True"/>
+      </xpath>
+      <xpath expr="//header/button[@name='action_submit'][@invisible=&quot;state != 'draft' or not active&quot;]" position="attributes">
+        <attribute name="invisible">state != 'draft' or not can_edit_correction_fields</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_submit'][@invisible=&quot;state != 'returned_secretarial' or not active&quot;]" position="attributes">
+        <attribute name="invisible">state != 'returned_secretarial' or not can_edit_correction_fields</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_close']" position="attributes">
+        <attribute name="invisible">not can_close_claim</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'inventory')][contains(@context, 'approved')]" position="attributes">
+        <attribute name="invisible">not can_edit_inventory</attribute>
+        <attribute name="string">Approve Inventory</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'inventory')][contains(@context, 'rejected')]" position="attributes">
+        <attribute name="invisible">not can_edit_inventory</attribute>
+        <attribute name="string">Reject Inventory</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'inventory')][contains(@context, 'deferred')]" position="attributes">
+        <attribute name="invisible">not can_edit_inventory</attribute>
+        <attribute name="string">Defer Inventory</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'purchasing')][contains(@context, 'approved')]" position="attributes">
+        <attribute name="invisible">not can_edit_purchasing</attribute>
+        <attribute name="string">Approve Purchasing</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'purchasing')][contains(@context, 'rejected')]" position="attributes">
+        <attribute name="invisible">not can_edit_purchasing</attribute>
+        <attribute name="string">Reject Purchasing</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'purchasing')][contains(@context, 'deferred')]" position="attributes">
+        <attribute name="invisible">not can_edit_purchasing</attribute>
+        <attribute name="string">Defer Purchasing</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'supplier_accounts')][contains(@context, 'approved')]" position="attributes">
+        <attribute name="invisible">not can_edit_supplier_accounts</attribute>
+        <attribute name="string">Approve Supplier Accounts</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'supplier_accounts')][contains(@context, 'rejected')]" position="attributes">
+        <attribute name="invisible">not can_edit_supplier_accounts</attribute>
+        <attribute name="string">Reject Supplier Accounts</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'supplier_accounts')][contains(@context, 'deferred')]" position="attributes">
+        <attribute name="invisible">not can_edit_supplier_accounts</attribute>
+        <attribute name="string">Defer Supplier Accounts</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'bank_accounts')][contains(@context, 'approved')]" position="attributes">
+        <attribute name="invisible">not can_edit_bank_accounts</attribute>
+        <attribute name="string">Approve Bank Accounts</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'bank_accounts')][contains(@context, 'rejected')]" position="attributes">
+        <attribute name="invisible">not can_edit_bank_accounts</attribute>
+        <attribute name="string">Reject Bank Accounts</attribute>
+      </xpath>
+      <xpath expr="//header/button[@name='action_department_decision'][contains(@context, 'bank_accounts')][contains(@context, 'deferred')]" position="attributes">
+        <attribute name="invisible">not can_edit_bank_accounts</attribute>
+        <attribute name="string">Defer Bank Accounts</attribute>
+      </xpath>
+      <xpath expr="//header" position="inside">
+        <button name="action_prepare_payment" string="Complete Preparation" type="object" invisible="not can_prepare_payment" class="btn-primary"/>
+        <button name="action_open_document_replacement" string="Replace Supplier Document" type="object" invisible="state not in ('financial_review', 'secretarial_preparation', 'bank_accounts', 'ready_to_close') or not active" class="btn-primary" groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+        <button name="action_department_decision" string="Approve Tax" type="object" invisible="not can_edit_tax" context="{'claim_department': 'tax', 'claim_decision': 'approved'}" class="btn-primary"/>
+        <button name="action_department_decision" string="Reject Tax" type="object" invisible="not can_edit_tax" context="{'claim_department': 'tax', 'claim_decision': 'rejected'}" class="btn-secondary"/>
+        <button name="action_department_decision" string="Defer Tax" type="object" invisible="not can_edit_tax" context="{'claim_department': 'tax', 'claim_decision': 'deferred'}" class="btn-secondary"/>
+      </xpath>
+      <xpath expr="//header/field[@name=&quot;state&quot;][@invisible=&quot;payment_nature == 'cash'&quot;]" position="attributes">
+        <attribute name="statusbar_visible">draft,operational_review,financial_review,secretarial_preparation,bank_accounts,ready_to_close,closed</attribute>
+      </xpath>
+      <xpath expr="//header/field[@name=&quot;state&quot;][@invisible=&quot;payment_nature != 'cash'&quot;]" position="attributes">
+        <attribute name="statusbar_visible">draft,financial_review,secretarial_preparation,ready_to_close,closed</attribute>
+      </xpath>
+      <xpath expr="//group[@name='supplier_classification']/field[@name='tax_classification'][not(starts-with(@groups, '!'))]" position="attributes">
+        <attribute name="readonly">not can_edit_correction_fields</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_name'][not(starts-with(@groups, '!'))]" position="attributes">
+        <attribute name="readonly">not can_edit_correction_fields</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_phone'][not(starts-with(@groups, '!'))]" position="attributes">
+        <attribute name="readonly">not can_edit_correction_fields</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']/field[@name='amount_of_check'][not(starts-with(@groups, '!'))]" position="attributes">
+        <attribute name="name">claim_amount</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']/field[@name='amount_of_check'][starts-with(@groups, '!')]" position="attributes">
+        <attribute name="name">claim_amount</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']" position="inside">
+        <field name="tax_discount_decision" readonly="True"/>
+        <field name="tax_discount_rate" readonly="True"/>
+        <field name="tax_discount_amount" readonly="True"/>
+        <field name="net_claim_amount" readonly="True"/>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']" position="attributes">
+        <attribute name="invisible">state == 'draft'</attribute>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']/group[field[@name='inventory_decision']]" position="replace">
+        <group name="inventory_review" string="Inventory">
+          <field name="inventory_decision" widget="badge" readonly="True"/>
+          <field name="inventory_notes" readonly="not can_edit_inventory"/>
+          <field name="inventory_followup_date" readonly="not can_edit_inventory"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']/group[field[@name='purchasing_decision']]" position="replace">
+        <group name="purchasing_review" string="Purchasing">
+          <field name="purchasing_decision" widget="badge" readonly="True"/>
+          <field name="purchasing_notes" readonly="not can_edit_purchasing"/>
+          <field name="purchasing_followup_date" readonly="not can_edit_purchasing"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']/group[field[@name='supplier_accounts_decision']]" position="replace">
+        <group name="supplier_accounts_review" string="Supplier Accounts">
+          <field name="supplier_accounts_decision" widget="badge" readonly="True"/>
+          <field name="supplier_accounts_notes" readonly="not can_edit_supplier_accounts"/>
+          <field name="supplier_accounts_followup_date" readonly="not can_edit_supplier_accounts"/>
+          <field name="supplier_cheque_attachment" filename="supplier_cheque_filename" readonly="not can_edit_supplier_accounts"/>
+          <field name="supplier_cheque_filename" invisible="True"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='department_reviews']/group[field[@name='bank_accounts_decision']]" position="replace">
+        <group name="bank_accounts_review" string="Bank Accounts">
+          <field name="bank_accounts_decision" widget="badge" readonly="True"/>
+          <field name="bank_accounts_notes" readonly="not can_edit_bank_accounts"/>
+          <field name="bank_accounts_followup_date" readonly="not can_edit_bank_accounts"/>
+          <field name="bank_cheque_attachment" filename="bank_cheque_filename" readonly="not can_edit_bank_accounts"/>
+          <field name="bank_cheque_filename" invisible="True"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='supplier_accounts_review']" position="before">
+        <group name="tax_review" string="Tax Department">
+          <field name="tax_decision" readonly="True"/>
+          <field name="tax_discount_decision" readonly="not can_edit_tax"/>
+          <field name="tax_review_attachment" readonly="not can_edit_tax" filename="tax_review_filename"/>
+          <field name="tax_review_filename" invisible="True"/>
+          <field name="tax_notes" readonly="not can_edit_tax"/>
+          <field name="tax_followup_date" readonly="not can_edit_tax"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='claim_secretarial_review']//field[@name='cheque_attachment']" position="attributes">
+        <attribute name="name">supplier_cheque_attachment</attribute>
+        <attribute name="filename">supplier_cheque_filename</attribute>
+        <attribute name="readonly">True</attribute>
+        <attribute name="invisible">not supplier_cheque_attachment</attribute>
+        <attribute name="force_save"/>
+      </xpath>
+      <xpath expr="//group[@name='claim_secretarial_review']//field[@name='cheque_filename']" position="attributes">
+        <attribute name="name">supplier_cheque_filename</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_secretarial_review']//field[@name='secretarial_notes'][not(starts-with(@groups, '!'))]" position="attributes">
+        <attribute name="readonly">not can_edit_correction_fields and not can_prepare_payment</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_secretarial_review']" position="inside">
+        <group name="payment_preparation" string="Secretarial Preparation">
+          <field name="secretarial_preparation_status" readonly="True"/>
+          <field name="preparation_started_at" readonly="True"/>
+          <field name="preparation_due_date" readonly="True"/>
+          <field name="preparation_overdue" readonly="True"/>
+          <field name="payment_request_attachment" filename="payment_request_filename" readonly="not can_prepare_payment"/>
+          <field name="payment_request_filename" invisible="True"/>
+        </group>
+      </xpath>
+      <xpath expr="//group[@name='claim_rejection']" position="attributes">
+        <attribute name="groups"/>
+        <attribute name="invisible">not rejection_reason</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_rejection']" position="inside">
+        <field name="return_destination" readonly="True"/>
+      </xpath>
+      <xpath expr="//sheet" position="inside">
+        <group name="claim_document_audit" string="Documents" class="o_scc_panel o_scc_details">
+          <field name="document_revision" readonly="True"/>
+          <field name="payment_request_revision" readonly="True"/>
+          <field name="bank_approval_revision" readonly="True"/>
+          <field name="migration_gate_exception" readonly="True"/>
+          <field name="review_round" readonly="True"/>
+          <field name="company_id" readonly="True"/>
+          <field name="document_ids" readonly="True" nolabel="1" colspan="2" class="o_scc_history_table">
+            <list create="false" edit="false" delete="false">
+              <field name="kind"/>
+              <field name="revision"/>
+              <field name="filename"/>
+              <field name="reason"/>
+              <field name="user_id"/>
+              <field name="occurred_at"/>
+              <field name="content" filename="filename" widget="binary"/>
+            </list>
+          </field>
+        </group>
+        <div class="o_scc_history_section">
+          <h3>Workflow History</h3>
+          <field name="history_ids" readonly="True" nolabel="1" class="o_scc_history_table">
+            <list create="false" edit="false" delete="false">
+              <field name="occurred_at"/>
+              <field name="user_id"/>
+              <field name="event"/>
+              <field name="from_state"/>
+              <field name="to_state"/>
+              <field name="department"/>
+              <field name="decision"/>
+              <field name="reason"/>
+              <field name="followup_date"/>
+              <field name="return_destination"/>
+              <field name="document_revision"/>
+            </list>
+          </field>
+        </div>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_inventory']]/div[hasclass('o_scc_timeline_current')]" position="attributes">
+        <attribute name="invisible">not ((state == 'operational_review' or (state == 'returned_secretarial' and resume_stage == 'operational_review')) and inventory_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_inventory']]/div[hasclass('o_scc_timeline_upcoming')]" position="attributes">
+        <attribute name="invisible">inventory_decision == 'approved' or ((state == 'operational_review' or (state == 'returned_secretarial' and resume_stage == 'operational_review')) and inventory_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_purchasing']]/div[hasclass('o_scc_timeline_current')]" position="attributes">
+        <attribute name="invisible">not ((state == 'operational_review' or (state == 'returned_secretarial' and resume_stage == 'operational_review')) and purchasing_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_purchasing']]/div[hasclass('o_scc_timeline_upcoming')]" position="attributes">
+        <attribute name="invisible">purchasing_decision == 'approved' or ((state == 'operational_review' or (state == 'returned_secretarial' and resume_stage == 'operational_review')) and purchasing_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_supplier_accounts']]/div[hasclass('o_scc_timeline_current')]" position="attributes">
+        <attribute name="invisible">not ((state == 'financial_review' or (state == 'returned_secretarial' and resume_stage == 'financial_review')) and supplier_accounts_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_supplier_accounts']]/div[hasclass('o_scc_timeline_upcoming')]" position="attributes">
+        <attribute name="invisible">supplier_accounts_decision == 'approved' or ((state == 'financial_review' or (state == 'returned_secretarial' and resume_stage == 'financial_review')) and supplier_accounts_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_bank_accounts']]/div[hasclass('o_scc_timeline_current')]" position="attributes">
+        <attribute name="invisible">not ((state == 'bank_accounts' or (state == 'returned_secretarial' and resume_stage == 'bank_accounts')) and bank_accounts_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_bank_accounts']]/div[hasclass('o_scc_timeline_upcoming')]" position="attributes">
+        <attribute name="invisible">bank_accounts_decision == 'approved' or ((state == 'bank_accounts' or (state == 'returned_secretarial' and resume_stage == 'bank_accounts')) and bank_accounts_decision != 'approved')</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_supplier_accounts']]" position="before">
+        <div class="o_scc_route_step" role="listitem">
+          <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="not (tax_decision in ('approved', 'not_required') and state != 'draft')">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Tax Department</summary>
+              <field name="timeline_tax_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_tax_date"/>
+            </details>
+            <field name="tax_decision" nolabel="1" readonly="True"/>
+            <field name="timeline_tax" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_tax"/>
+          </div>
+          <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="not ((state == 'financial_review' or (state == 'returned_secretarial' and resume_stage == 'financial_review')) and tax_decision not in ('approved', 'not_required'))">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Tax Department</summary>
+              <field name="timeline_tax_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_tax_date"/>
+            </details>
+            <field name="tax_decision" nolabel="1" readonly="True"/>
+            <field name="timeline_tax" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_tax"/>
+          </div>
+          <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="(tax_decision in ('approved', 'not_required') and state != 'draft') or ((state == 'financial_review' or (state == 'returned_secretarial' and resume_stage == 'financial_review')) and tax_decision not in ('approved', 'not_required'))">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Tax Department</summary>
+              <field name="timeline_tax_date" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not timeline_tax_date"/>
+            </details>
+            <field name="tax_decision" nolabel="1" readonly="True"/>
+            <field name="timeline_tax" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not timeline_tax"/>
+          </div>
+        </div>
+        <field name="timeline_tax_exception_ids" readonly="True" nolabel="1" mode="kanban" class="o_scc_timeline_exceptions" invisible="not timeline_tax_exception_ids">
+          <kanban create="false" edit="false" delete="false" can_open="false" default_order="id asc">
+            <field name="decision"/>
+            <templates>
+              <t t-name="card">
+                <div t-att-class="'o_scc_top_timeline_step o_scc_exception_' + record.decision.raw_value">
+                  <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+                  <details class="o_scc_stage_date_toggle">
+                    <summary>
+                      <field name="decision"/>
+                    </summary>
+                    <field name="occurred_at" class="o_scc_stage_date"/>
+                  </details>
+                  <field name="department" class="o_scc_step_status"/>
+                  <field name="user_id" class="o_scc_stage_details"/>
+                </div>
+              </t>
+            </templates>
+          </kanban>
+        </field>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_bank_accounts']]" position="before">
+        <div class="o_scc_route_step" role="listitem" name="preparation_timeline">
+          <div class="o_scc_top_timeline_step o_scc_timeline_completed" invisible="secretarial_preparation_status != 'prepared'">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Secretarial Preparation</summary>
+              <field name="preparation_started_at" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not preparation_started_at"/>
+            </details>
+            <field name="secretarial_preparation_status" nolabel="1" readonly="True"/>
+            <field name="preparation_due_date" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not preparation_due_date"/>
+          </div>
+          <div class="o_scc_top_timeline_step o_scc_timeline_current" invisible="state != 'secretarial_preparation'">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Secretarial Preparation</summary>
+              <field name="preparation_started_at" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not preparation_started_at"/>
+            </details>
+            <field name="secretarial_preparation_status" nolabel="1" readonly="True"/>
+            <field name="preparation_due_date" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not preparation_due_date"/>
+          </div>
+          <div class="o_scc_top_timeline_step o_scc_timeline_upcoming" invisible="secretarial_preparation_status == 'prepared' or state == 'secretarial_preparation'">
+            <span class="o_scc_top_timeline_dot" aria-hidden="true"/>
+            <details class="o_scc_stage_date_toggle">
+              <summary>Secretarial Preparation</summary>
+              <field name="preparation_started_at" readonly="True" nolabel="1" class="o_scc_stage_date" invisible="not preparation_started_at"/>
+            </details>
+            <field name="secretarial_preparation_status" nolabel="1" readonly="True"/>
+            <field name="preparation_due_date" readonly="True" nolabel="1" class="o_scc_stage_details" invisible="not preparation_due_date"/>
+          </div>
+        </div>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_inventory']]" position="before">
+        <div name="operational_parallel_timeline" invisible="payment_nature == 'cash'" class="o_scc_route_step o_scc_parallel_stage"/>
+      </xpath>
+      <xpath expr="//div[@name='operational_parallel_timeline']" position="inside">
+        <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_inventory']]" position="move"/>
+        <xpath expr="//field[@name='timeline_inventory_exception_ids']" position="move"/>
+        <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_purchasing']]" position="move"/>
+        <xpath expr="//field[@name='timeline_purchasing_exception_ids']" position="move"/>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_tax']]" position="before">
+        <div name="financial_parallel_timeline" invisible="False" class="o_scc_route_step o_scc_parallel_stage"/>
+      </xpath>
+      <xpath expr="//div[@name='financial_parallel_timeline']" position="inside">
+        <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_tax']]" position="move"/>
+        <xpath expr="//field[@name='timeline_tax_exception_ids']" position="move"/>
+        <xpath expr="//div[hasclass('o_scc_route_step')][.//field[@name='timeline_supplier_accounts']]" position="move"/>
+        <xpath expr="//field[@name='timeline_supplier_accounts_exception_ids']" position="move"/>
+      </xpath>
+    </field>
+  </record>
+  <record id="invoice_form_layout_refinement" model="ir.ui.view">
+    <field name="name">supplier.claim.layout.refinement</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_form_parallel_workflow"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='claim_entry']" position="attributes">
+        <attribute name="col">3</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']" position="attributes">
+        <attribute name="colspan">2</attribute>
+        <attribute name="col">2</attribute>
+      </xpath>
+      <xpath expr="//group[@name='claim_details']" position="inside">
+        <group name="claim_contact_invoice"/>
+        <group name="claim_amounts"/>
+      </xpath>
+      <xpath expr="//group[@name='claim_contact_invoice']" position="inside">
+        <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_name'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_name'][starts-with(@groups, '!')]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_phone'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_phone'][starts-with(@groups, '!')]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='num_of_invoice'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='num_of_invoice'][starts-with(@groups, '!')]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='type_of_invoice'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='type_of_invoice'][starts-with(@groups, '!')]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='area'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='area'][starts-with(@groups, '!')]" position="move"/>
+      </xpath>
+      <xpath expr="//group[@name='claim_amounts']" position="inside">
+        <xpath expr="//group[@name='claim_details']/field[@name='claim_amount'][not(starts-with(@groups, '!'))]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='claim_amount'][starts-with(@groups, '!')]" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='tax_discount_decision']" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='tax_discount_rate']" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='tax_discount_amount']" position="move"/>
+        <xpath expr="//group[@name='claim_details']/field[@name='net_claim_amount']" position="move"/>
+      </xpath>
+      <xpath expr="//field[@name='timeline_inventory_exception_ids']" position="replace"/>
+      <xpath expr="//field[@name='timeline_purchasing_exception_ids']" position="replace"/>
+      <xpath expr="//field[@name='timeline_tax_exception_ids']" position="replace"/>
+      <xpath expr="//field[@name='timeline_supplier_accounts_exception_ids']" position="replace"/>
+      <xpath expr="//field[@name='timeline_bank_accounts_exception_ids']" position="replace"/>
+      <xpath expr="//div[@name='preparation_timeline']/div[hasclass('o_scc_timeline_current')]" position="attributes">
+        <attribute name="invisible">state != 'secretarial_preparation' or secretarial_preparation_status == 'prepared'</attribute>
+      </xpath>
+      <xpath expr="//sheet" position="inside">
+        <div name="claim_workflow_box" class="o_scc_panel o_scc_workflow_box">
+        <notebook name="claim_workflow_details" class="o_scc_workflow_details">
+          <page name="claim_reviews" string="Review Details" invisible="state == 'draft'"/>
+          <page name="claim_preparation" string="Secretarial Preparation"/>
+          <page name="claim_notes" string="Notes"/>
+          <page name="claim_exceptions" string="Rejections &amp; Deferrals" invisible="not exception_history_ids"/>
+          <page name="claim_history" string="Workflow History"/>
+        </notebook>
+        </div>
+      </xpath>
+      <xpath expr="//page[@name='claim_reviews']" position="inside">
+        <xpath expr="//group[@name='department_reviews']" position="move"/>
+      </xpath>
+      <xpath expr="//page[@name='claim_preparation']" position="inside">
+        <xpath expr="//group[@name='claim_secretarial_review']" position="move"/>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_history_section')][field[@name='note_history_ids']]" position="attributes">
+        <attribute name="name">claim_notes_section</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_history_section')][field[@name='exception_history_ids']]" position="attributes">
+        <attribute name="name">claim_exceptions_section</attribute>
+      </xpath>
+      <xpath expr="//div[hasclass('o_scc_history_section')][field[@name='history_ids']]" position="attributes">
+        <attribute name="name">claim_history_section</attribute>
+      </xpath>
+      <xpath expr="//page[@name='claim_notes']" position="inside">
+        <xpath expr="//field[@name='note_history_ids']" position="move"/>
+      </xpath>
+      <xpath expr="//page[@name='claim_exceptions']" position="inside">
+        <xpath expr="//field[@name='exception_history_ids']" position="move"/>
+      </xpath>
+      <xpath expr="//page[@name='claim_history']" position="inside">
+        <xpath expr="//field[@name='history_ids']" position="move"/>
+      </xpath>
+      <xpath expr="//div[@name='claim_notes_section']" position="replace"/>
+      <xpath expr="//div[@name='claim_exceptions_section']" position="replace"/>
+      <xpath expr="//div[@name='claim_history_section']" position="replace"/>
+      <xpath expr="//notebook[@name='claim_workflow_details']" position="before">
+        <xpath expr="//group[@name='claim_rejection']" position="move"/>
+      </xpath>
+      <xpath expr="//group[@name='claim_document_audit']" position="attributes">
+        <attribute name="class" add="o_scc_documents" separator=" "/>
+      </xpath>
+    </field>
+  </record>
+  <record id="invoice_action" model="ir.actions.act_window">
+    <field name="domain">[]</field>
+    <field name="context">{'active_test': False}</field>
+  </record>
+  <record id="invoice_menu" model="ir.ui.menu">
+    <field name="group_ids" eval="[(4, ref('supplier_claim_group_tax'))]"/>
+  </record>
+  <record id="action_draft_claims" model="ir.actions.act_window">
+    <field name="name">Draft Claims</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state', '=', 'draft')]</field>
+  </record>
+  <menuitem id="menu_draft_claims" name="Draft Claims" parent="supplier_claim_cycle_sub_menu" action="action_draft_claims" groups="supplier_claim_group_user,supplier_claim_group_admin"/>
+  <record id="action_tax_pending" model="ir.actions.act_window">
+    <field name="name">Tax Reviews Pending</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','financial_review'),('tax_decision','in',['pending','deferred'])]</field>
+  </record>
+  <menuitem id="menu_tax_pending" name="Tax Reviews Pending" parent="supplier_claim_cycle_sub_menu" action="action_tax_pending" groups="supplier_claim_group_tax,supplier_claim_group_admin"/>
+  <record id="action_inventory_pending" model="ir.actions.act_window">
+    <field name="name">Inventory Pending Reviews</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state', '=', 'operational_review'), ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
+  </record>
+  <menuitem id="menu_inventory_pending" name="Inventory Pending Reviews" parent="supplier_claim_cycle_sub_menu" action="action_inventory_pending" groups="supplier_claim_group_inventory,supplier_claim_group_admin"/>
+  <record id="action_purchasing_pending" model="ir.actions.act_window">
+    <field name="name">Purchasing Pending Reviews</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state', '=', 'operational_review'), ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
+  </record>
+  <menuitem id="menu_purchasing_pending" name="Purchasing Pending Reviews" parent="supplier_claim_cycle_sub_menu" action="action_purchasing_pending" groups="supplier_claim_group_purchasing,supplier_claim_group_admin"/>
+  <record id="action_supplier_accounts_pending" model="ir.actions.act_window">
+    <field name="name">Supplier Accounts Pending</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state', '=', 'financial_review'), ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
+  </record>
+  <menuitem id="menu_supplier_accounts_pending" name="Supplier Accounts Pending" parent="supplier_claim_cycle_sub_menu" action="action_supplier_accounts_pending" groups="supplier_claim_group_supplier_accounts,supplier_claim_group_admin"/>
+  <record id="action_bank_accounts_pending" model="ir.actions.act_window">
+    <field name="name">Bank Accounts Pending</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['pending', 'deferred']), ('secretarial_preparation_status', '=', 'prepared')]</field>
+  </record>
+  <menuitem id="menu_bank_accounts_pending" name="Bank Accounts Pending" parent="supplier_claim_cycle_sub_menu" action="action_bank_accounts_pending" groups="supplier_claim_group_bank_accounts,supplier_claim_group_admin"/>
+  <record id="action_preparation_pending" model="ir.actions.act_window">
+    <field name="name">Claims Requiring Payment Request</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','secretarial_preparation'),('secretarial_preparation_status','=','pending')]</field>
+  </record>
+  <menuitem id="menu_preparation_pending" name="Claims Requiring Payment Request" parent="supplier_claim_cycle_sub_menu" action="action_preparation_pending" groups="supplier_claim_group_user,supplier_claim_group_admin"/>
+  <record id="action_returned_requests" model="ir.actions.act_window">
+    <field name="name">Returned Payment Requests</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','secretarial_preparation'),('secretarial_preparation_status','=','returned')]</field>
+  </record>
+  <menuitem id="menu_returned_requests" name="Returned Payment Requests" parent="supplier_claim_cycle_sub_menu" action="action_returned_requests" groups="supplier_claim_group_user,supplier_claim_group_admin"/>
+  <record id="action_overdue_preparation" model="ir.actions.act_window">
+    <field name="name">Overdue Payment Preparation</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','secretarial_preparation'),('preparation_due_date','&lt;',time.strftime('%Y-%m-%d %H:%M:%S'))]</field>
+  </record>
+  <menuitem id="menu_overdue_preparation" name="Overdue Payment Preparation" parent="supplier_claim_cycle_sub_menu" action="action_overdue_preparation" groups="supplier_claim_group_user,supplier_claim_group_admin"/>
+  <record id="action_returned_claims" model="ir.actions.act_window">
+    <field name="name">Returned Claims</field>
+    <field name="res_model">ab_supplier_claim_cycle</field>
+    <field name="view_mode">list,form</field>
+    <field name="domain">[('state','=','returned_secretarial')]</field>
+  </record>
+  <menuitem id="menu_returned_claims" name="Returned Claims" parent="supplier_claim_cycle_sub_menu" action="action_returned_claims" groups="supplier_claim_group_user,supplier_claim_group_admin"/>
+  <record id="claim_menu_root" model="ir.ui.menu">
+    <field name="action" ref="invoice_action"/>
+  </record>
+  <record id="supplier_claim_cycle_sub_menu" model="ir.ui.menu">
+    <field name="active" eval="False"/>
+  </record>
+  <record id="claim_sla_company_form" model="ir.ui.view">
+    <field name="name">supplier.claim.company.sla</field>
+    <field name="model">res.company</field>
+    <field name="inherit_id" ref="base.view_company_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <group string="Supplier Claim Preparation">
+          <field name="supplier_claim_secretarial_sla_days"/>
+        </group>
+      </xpath>
+    </field>
+  </record>
+  <record id="claim_list_parallel" model="ir.ui.view">
+    <field name="name">supplier.claim.parallel.list</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_list_state_colors"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='amount_of_check']" position="replace">
+        <field name="claim_amount" optional="show"/>
+        <field name="tax_discount_amount" optional="show"/>
+        <field name="net_claim_amount" optional="show"/>
+        <field name="tax_decision" optional="show"/>
+        <field name="secretarial_preparation_status" optional="show"/>
+        <field name="preparation_due_date" optional="show"/>
+      </xpath>
+      <xpath expr="//field[@name='state']" position="attributes">
+        <attribute name="decoration-info">state == 'operational_review'</attribute>
+        <attribute name="decoration-primary">state == 'financial_review'</attribute>
+        <attribute name="decoration-warning">state in ('secretarial_preparation', 'bank_accounts')</attribute>
+      </xpath>
+    </field>
+  </record>
+  <record id="claim_search_parallel" model="ir.ui.view">
+    <field name="name">supplier.claim.parallel.search</field>
+    <field name="model">ab_supplier_claim_cycle</field>
+    <field name="inherit_id" ref="invoice_view_search"/>
+    <field name="arch" type="xml">
+      <xpath expr="//filter[@name='inventory']" position="attributes">
+        <attribute name="domain">[('state', '=', 'operational_review'), ('inventory_decision', 'in', ['pending', 'deferred'])]</attribute>
+      </xpath>
+      <xpath expr="//filter[@name='purchasing']" position="attributes">
+        <attribute name="domain">[('state', '=', 'operational_review'), ('purchasing_decision', 'in', ['pending', 'deferred'])]</attribute>
+      </xpath>
+      <xpath expr="//filter[@name='supplier_accounts']" position="attributes">
+        <attribute name="domain">[('state', '=', 'financial_review'), ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</attribute>
+      </xpath>
+    </field>
+  </record>
+</odoo>

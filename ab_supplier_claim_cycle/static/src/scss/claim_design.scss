@@ -543,3 +543,91 @@ $scc-ease: cubic-bezier(0.2, 0, 0.2, 1);
         }
     }
 }
+
+.o_scc_form .o_scc_parallel_stage {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+
+    > .o_scc_route_step {
+        flex: 0 0 auto;
+        width: 100%;
+
+        &::after {
+            display: none;
+        }
+    }
+
+    .o_scc_timeline_exceptions .o_kanban_record {
+        flex: 0 0 auto !important;
+
+        &::after {
+            display: none;
+        }
+    }
+}
+
+.o_scc_form {
+    .o_scc_entry_grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+        align-items: stretch !important;
+        margin-bottom: 24px;
+
+        > .o_scc_panel {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+        }
+    }
+
+    .o_scc_details > .o_inner_group {
+        min-width: 0;
+    }
+
+    .o_scc_workflow_details {
+        margin-top: 24px;
+
+        .nav-tabs {
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .o_scc_panel {
+            margin: 0;
+            padding: 12px 0 0;
+            border: 0;
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .o_scc_reviews {
+            align-items: stretch !important;
+            row-gap: 20px;
+        }
+    }
+
+    .o_scc_documents {
+        margin-top: 24px;
+        margin-bottom: 0;
+    }
+
+    @media (max-width: 991px) {
+        .o_scc_entry_grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}
+
+.o_scc_form {
+    .o_scc_workflow_box {
+        margin-top: 24px;
+
+        .o_scc_workflow_details {
+            margin-top: 0;
+        }
+    }
+
+}

@@ -18,12 +18,12 @@ msgstr ""
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "يتطلب إجراءً"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "After closed you can't edit again"
-msgstr "لا يمكن التعديل بعد اختيار تسليم الشيك"
+msgstr "لا يمكن تعديل المطالبة بعد إغلاقها."
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__amount_of_check
@@ -33,12 +33,12 @@ msgstr "قيمة الشيك"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__area
 msgid "Area"
-msgstr "الاقليم"
+msgstr "المنطقة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_attachment_count
 msgid "Attachment Count"
-msgstr ""
+msgstr "عدد المرفقات"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__bank_acc
@@ -52,8 +52,12 @@ msgstr "حسابات البنوك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.ui.menu,name:ab_supplier_claim_cycle.invoice_menu
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__claim_id
 msgid "Claim"
-msgstr "المطالبات"
+msgstr "المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.ui.menu,name:ab_supplier_claim_cycle.claim_sub_menu
@@ -64,13 +68,19 @@ msgstr "تفاصيل المطالبة"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__closed
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__closed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__closed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__closed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__closed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__closed
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 msgid "Closed"
-msgstr "مغلق"
+msgstr "مغلقة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__copy
 msgid "Copy"
-msgstr "صورة"
+msgstr "صورة الفاتورة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__bank_statement
@@ -79,52 +89,75 @@ msgstr "كشف حساب"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__create_uid
 msgid "Created by"
-msgstr "الموظف"
+msgstr "أنشأه"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__create_date
 msgid "Created on"
-msgstr "تاريخ المطالبة"
+msgstr "تاريخ الإنشاء"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_costcenter__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_company__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_config_settings__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "الاسم المعروض"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "المتابعون"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "المتابعون (جهات الاتصال)"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__has_message
 msgid "Has Message"
-msgstr ""
+msgstr "توجد رسائل"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_costcenter__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_company__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_config_settings__id
 msgid "ID"
-msgstr ""
+msgstr "المعرّف"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread
 msgid "If checked, new messages require your attention."
-msgstr ""
+msgstr "عند التحديد، توجد رسائل جديدة تتطلب انتباهك."
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
+msgstr "عند التحديد، توجد رسائل تعذر تسليمها."
 
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__inventory
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__inventory
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__inventory
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
@@ -133,53 +166,66 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__inventory
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__inventory
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__inventory
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__inventory
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_inventory
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 msgid "Inventory"
-msgstr "المخزون"
+msgstr "المخازن"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_is_follower
 msgid "Is Follower"
-msgstr ""
+msgstr "متابع"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle____last_update
 msgid "Last Modified on"
-msgstr ""
+msgstr "تاريخ آخر تعديل"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
 msgid "Last Update Date"
-msgstr ""
+msgstr "تاريخ آخر تحديث"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "آخر تحديث بواسطة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "تاريخ آخر تحديث"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_main_attachment_id
 msgid "Main Attachment"
-msgstr ""
+msgstr "المرفق الرئيسي"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error
 msgid "Message Delivery error"
-msgstr ""
+msgstr "تعذر تسليم الرسالة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_ids
 msgid "Messages"
-msgstr ""
+msgstr "الرسائل"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__area__north
 msgid "North"
-msgstr "الاقليم الشمالى"
+msgstr "المنطقة الشمالية"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__num_of_invoice
@@ -189,32 +235,32 @@ msgstr "عدد فواتير المطالبة"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction_counter
 msgid "Number of Actions"
-msgstr ""
+msgstr "عدد الإجراءات المطلوبة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error_counter
 msgid "Number of errors"
-msgstr ""
+msgstr "عدد الأخطاء"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction_counter
 msgid "Number of messages which requires an action"
-msgstr ""
+msgstr "عدد الرسائل التي تتطلب إجراءً"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr ""
+msgstr "عدد الرسائل التي تعذر تسليمها"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread_counter
 msgid "Number of unread messages"
-msgstr ""
+msgstr "عدد الرسائل غير المقروءة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__original
 msgid "Original"
-msgstr "اصل"
+msgstr "أصل الفاتورة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__purchase
@@ -236,8 +282,7 @@ msgstr "توقيع الشيك"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__area__south
 msgid "South"
-msgstr "الاقليم الجنوبى"
-
+msgstr "المنطقة الجنوبية"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__status
@@ -247,32 +292,37 @@ msgstr "المرحلة"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_id
 msgid "Supplier"
-msgstr "اسم الشركة"
+msgstr "المورد"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__type_of_invoice
 msgid "Type Of Invoice"
-msgstr "نوع الفواتير"
+msgstr "نوع الفاتورة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread
 msgid "Unread Messages"
-msgstr ""
+msgstr "الرسائل غير المقروءة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread_counter
 msgid "Unread Messages Counter"
-msgstr ""
+msgstr "عدد الرسائل غير المقروءة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__user_id
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__user_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__user_id
 msgid "User"
 msgstr "الموظف"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.module.category,name:ab_supplier_claim_cycle.ab_supplier_claim_cycle_category
 #: model:ir.ui.menu,name:ab_supplier_claim_cycle.claim_menu_root
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_cycle
+#: model:res.groups.privilege,name:ab_supplier_claim_cycle.privilege_ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Supplier Claim"
 msgstr "مطالبات الموردين"
 
@@ -280,12 +330,12 @@ msgstr "مطالبات الموردين"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__suppliers
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Suppliers"
-msgstr "المورد"
+msgstr "الموردون"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_cycle
 msgid "ab_supplier_claim_cycle"
-msgstr ""
+msgstr "مطالبات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.actions.act_window,name:ab_supplier_claim_cycle.invoice_action
@@ -295,28 +345,27 @@ msgstr "المطالبات"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "invoice_form"
-msgstr ""
+msgstr "نموذج المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
 msgid "invoice_tree"
-msgstr ""
+msgstr "قائمة المطالبات"
 
 #. module: ab_supplier_claim_cycle
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
 msgid "supplier claim User"
-msgstr ""
+msgstr "مستخدم مطالبات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_admin
 msgid "supplier claim admin"
-msgstr ""
+msgstr "مسؤول مطالبات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_reviewer
 msgid "supplier claim reviewer"
-msgstr ""
-
+msgstr "مراجع مطالبات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -324,9 +373,9 @@ msgstr ""
 msgid "A cheque attachment is required before Bank Accounts."
 msgstr "يجب إرفاق الشيك قبل الإحالة إلى حسابات البنوك."
 
-#: code:addons/ab_supplier_claim_cycle/wizard/claim_decision.py:0
 #. module: ab_supplier_claim_cycle
 #. odoo-python
+#: code:addons/ab_supplier_claim_cycle/wizard/claim_decision.py:0
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "A reason is required for rejection or deferral."
 msgstr "يجب إدخال سبب الرفض أو التأجيل."
@@ -349,6 +398,7 @@ msgstr "جميع المطالبات"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Approve"
 msgstr "موافقة"
 
@@ -359,6 +409,12 @@ msgstr "موافقة"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__approved
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__approved
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__approved
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__approved
 msgid "Approved"
 msgstr "تمت الموافقة"
 
@@ -380,8 +436,9 @@ msgstr "يجب أرشفة الموردين بدلاً من حذفهم."
 msgid "Archived"
 msgstr "مؤرشف"
 
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__bank_accounts
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__bank_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__bank_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__bank_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__bank_accounts
@@ -393,11 +450,13 @@ msgstr "مؤرشف"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Bank Accounts"
 msgstr "حسابات البنوك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_accounts_decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__bank_accounts_decision
 msgid "Bank Accounts Decision"
 msgstr "قرار حسابات البنوك"
 
@@ -415,7 +474,7 @@ msgstr "ملاحظات حسابات البنوك"
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier__business_category
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__business_category
 msgid "Business Category"
-msgstr "فئة النشاط"
+msgstr "نوع النشاط"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__cancelled
@@ -424,6 +483,12 @@ msgstr "فئة النشاط"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__cancelled
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__cancelled
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__cancelled
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__cancelled
 msgid "Cancelled"
 msgstr "ملغى"
 
@@ -452,11 +517,13 @@ msgstr "شيك بنكي"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_cheque_attachment
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__cheque_attachment
 msgid "Cheque Attachment"
 msgstr "مرفق الشيك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_filename
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__cheque_filename
 msgid "Cheque Filename"
 msgstr "اسم ملف الشيك"
 
@@ -467,6 +534,7 @@ msgstr "دورة المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Close Claim"
 msgstr "إغلاق المطالبة"
 
@@ -494,11 +562,13 @@ msgstr "أنشئ المطالبة كمسودة دون تحديد قيم سير �
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__decision
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__decision
 msgid "Decision"
 msgstr "القرار"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Defer"
 msgstr "تأجيل"
 
@@ -515,15 +585,23 @@ msgstr "يتطلب التأجيل تاريخ متابعة اليوم أو بعد
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__deferred
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__deferred
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__deferred
 msgid "Deferred"
 msgstr "مؤجل"
 
-#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__department
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__department
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__department
 msgid "Department"
 msgstr "القسم"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__draft
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__draft
@@ -569,6 +647,7 @@ msgstr "قرار القسم غير صالح."
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__inventory_decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__inventory_decision
 msgid "Inventory Decision"
 msgstr "قرار المخازن"
 
@@ -607,8 +686,9 @@ msgstr "شيك"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__non_tax_payment
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__tax_type__non_tax_payment
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_classification__non_tax_payment
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document_replacement__new_tax_classification__non_tax_payment
 msgid "Non-tax Payment"
-msgstr "غير ضريبي"
+msgstr "سداد غير خاضع للضريبة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__not_required
@@ -617,6 +697,13 @@ msgstr "غير ضريبي"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__not_required
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__not_required
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__not_required
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__not_required
 msgid "Not Required"
 msgstr "غير مطلوب"
 
@@ -627,6 +714,7 @@ msgstr "عدد الرسائل التي تتطلب إجراءً"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__occurred_at
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__occurred_at
 msgid "Occurred At"
 msgstr "وقت الحدث"
 
@@ -655,7 +743,7 @@ msgstr "أخرى"
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier__payment_nature
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__payment_nature
 msgid "Payment Nature"
-msgstr "طبيعة السداد"
+msgstr "طريقة السداد"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__bank_accounts_decision__pending
@@ -663,11 +751,19 @@ msgstr "طبيعة السداد"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__purchasing_decision__pending
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__pending
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__pending
 msgid "Pending"
 msgstr "قيد الانتظار"
 
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__purchasing
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__purchasing
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_purchasing
@@ -678,11 +774,14 @@ msgstr "قيد الانتظار"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__purchasing
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__purchasing
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 msgid "Purchasing"
 msgstr "المشتريات"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__purchasing_decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__purchasing_decision
 msgid "Purchasing Decision"
 msgstr "قرار المشتريات"
 
@@ -706,15 +805,18 @@ msgstr "ملاحظات المشتريات"
 msgid "Ready to Close"
 msgstr "جاهزة للإغلاق"
 
+#. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__reason
-#. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__reason
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__reason
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__reason
 msgid "Reason"
 msgstr "السبب"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Reject"
 msgstr "رفض"
 
@@ -725,6 +827,13 @@ msgstr "رفض"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__supplier_accounts_decision__rejected
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__decision__rejected
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__bank_accounts_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__inventory_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__purchasing_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__supplier_accounts_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_decision__rejected
 msgid "Rejected"
 msgstr "مرفوض"
 
@@ -733,8 +842,8 @@ msgstr "مرفوض"
 msgid "Rejection Department"
 msgstr "القسم الرافض"
 
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__rejection_reason
 msgid "Rejection Reason"
 msgstr "سبب الرفض"
@@ -766,11 +875,12 @@ msgstr "مرحلة استئناف المراجعة"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__returned_secretarial
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 msgid "Returned to Secretarial"
-msgstr "مرتجعة إلى السكرتارية"
+msgstr "معادة إلى السكرتارية"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__review_round
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__review_round
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__review_round
 msgid "Review Round"
 msgstr "جولة المراجعة"
 
@@ -788,6 +898,8 @@ msgstr "خطأ في تسليم الرسالة النصية"
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__secretarial
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__return_destination__secretarial
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__return_destination__secretarial
 msgid "Secretarial"
 msgstr "السكرتارية"
 
@@ -820,16 +932,19 @@ msgstr "الحالة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Submit"
 msgstr "إرسال"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__submitted
 msgid "Submitted"
 msgstr "تم الإرسال"
 
-#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__supplier_accounts
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__supplier_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__supplier_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__supplier_accounts
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__supplier_accounts
@@ -841,11 +956,15 @@ msgstr "تم الإرسال"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_search
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__return_destination__supplier_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__return_destination__supplier_accounts
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Supplier Accounts"
 msgstr "حسابات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_accounts_decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__supplier_accounts_decision
 msgid "Supplier Accounts Decision"
 msgstr "قرار حسابات الموردين"
 
@@ -866,6 +985,7 @@ msgstr "سجل مراحل مطالبات الموردين"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__tax_classification
 msgid "Tax Classification"
 msgstr "التصنيف الضريبي"
 
@@ -873,6 +993,7 @@ msgstr "التصنيف الضريبي"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__tax_payment
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__tax_type__tax_payment
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_classification__tax_payment
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document_replacement__new_tax_classification__tax_payment
 msgid "Tax Payment"
 msgstr "ضريبي"
 
@@ -1018,12 +1139,14 @@ msgstr "مراجعتان بالتوازي"
 msgid "In Review"
 msgstr "قيد المراجعة"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Upcoming"
-msgstr "لاحقاً"
+msgstr "القادمة"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
@@ -1033,7 +1156,7 @@ msgstr "الإغلاق"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 msgid "Returned for correction"
-msgstr "مرتجعة للتصحيح"
+msgstr "معادة للتصحيح"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
@@ -1045,6 +1168,8 @@ msgstr "بيانات المطالبة"
 msgid "Current Review"
 msgstr "المراجعة الحالية"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form_simple
 msgid "Review Details"
@@ -1059,7 +1184,7 @@ msgstr "معلومات إضافية"
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "Inventory approval is required before Purchasing approval."
-msgstr "يجب اعتماد المخزون قبل اعتماد المشتريات."
+msgstr "يلزم اعتماد المخازن قبل اعتماد المشتريات."
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -1069,25 +1194,31 @@ msgstr "لا توجد مرحلة مراجعة صالحة لاستئناف الم
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
-msgid "Department approvals are unverified. An administrator can restart this claim for fresh review."
-msgstr "موافقات الأقسام غير موثقة. يمكن للمسؤول إعادة بدء مراجعة هذه المطالبة."
+msgid ""
+"Department approvals are unverified. An administrator can restart this claim"
+" for fresh review."
+msgstr ""
+"موافقات الأقسام غير موثقة. يمكن للمسؤول إعادة بدء مراجعة هذه المطالبة."
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier__tax_type__through_supplier
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__through_supplier
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_classification__through_supplier
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document_replacement__new_tax_classification__through_supplier
 msgid "Advance Payments"
 msgstr "دفعات مقدمة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__tax_classification
 msgid "Tax Type"
 msgstr "نوع الضريبة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__section
 msgid "Section"
-msgstr "القسم"
+msgstr "قطاع النشاط"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bracket_id
@@ -1101,6 +1232,7 @@ msgstr "المورد والتصنيف"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Claim Details"
 msgstr "تفاصيل المطالبة"
 
@@ -1110,8 +1242,10 @@ msgstr "تفاصيل المطالبة"
 msgid "Payment Terms"
 msgstr "شروط السداد"
 
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
 msgid "Notes"
 msgstr "ملاحظات"
@@ -1124,7 +1258,7 @@ msgstr "بيانات مرجعية"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bracket_payment_type
 msgid "Payment Type"
-msgstr "نوع السداد"
+msgstr "طريقة السداد"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bracket_start_day
@@ -1139,7 +1273,7 @@ msgstr "يوم النهاية"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bracket_credit_days
 msgid "Credit Days"
-msgstr "أيام الائتمان"
+msgstr "مدة السداد بالأيام"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bracket_discount
@@ -1204,11 +1338,12 @@ msgstr "ملاحظات / سبب القرار"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
 msgid "Returned for Correction"
-msgstr "معاد للتصحيح"
+msgstr "معادة للتصحيح"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_note_wizard__note
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__display_note
 msgid "Note"
 msgstr "الملاحظة"
 
@@ -1217,9 +1352,10 @@ msgstr "الملاحظة"
 msgid "Save Note"
 msgstr "حفظ الملاحظة"
 
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_decision_wizard_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.secretarial_note_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_document_replacement_form
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -1255,22 +1391,25 @@ msgstr "مسار المطالبة"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Follow the claim through each review stage"
-msgstr "تابع المطالبة عبر مراحل المراجعة"
+msgstr "تابع مراحل المراجعة والقرارات وسجل المطالبة"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Claim review stages"
 msgstr "مراحل مراجعة المطالبة"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Completed"
 msgstr "مكتمل"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 msgid "Current"
-msgstr "الحالي"
+msgstr "الحالية"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
@@ -1280,8 +1419,10 @@ msgstr "المتابعة: "
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_supplier_terms
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_attachment
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_cheque_attachment
 msgid "Supplier Cheque Attachment"
-msgstr "مرفق شيك حسابات الموردين"
+msgstr "مرفق شيك المورد"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
@@ -1420,11 +1561,16 @@ msgstr "مرفق الشيك"
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
 msgid "Read from the supplier and frozen on first submission."
 msgstr "تُقرأ من بيانات المورد وتُثبت عند الإرسال الأول."
+
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
 #: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
-msgid "Defaults from the supplier. Editable in Draft; saved choices are remembered for future claims."
-msgstr "القيمة الافتراضية من المورد. يمكن تعديلها في المسودة، وتُحفظ الاختيارات للمطالبات القادمة."
+msgid ""
+"Defaults from the supplier. Editable in Draft; saved choices are remembered "
+"for future claims."
+msgstr ""
+"القيمة الافتراضية من المورد. يمكن تعديلها في المسودة، وتُحفظ الاختيارات "
+"للمطالبات القادمة."
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
@@ -1502,3 +1648,893 @@ msgstr "رقم المطالبة"
 #: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_ab_supplier_claim_cycle_claim_reference_unique
 msgid "Claim ID must be unique."
 msgstr "يجب أن يكون رقم المطالبة فريدًا."
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "<span class=\"o_scc_step_status\">Completed</span>"
+msgstr "<span class=\"o_scc_step_status\">مكتمل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "<span class=\"o_scc_step_status\">Current</span>"
+msgstr "<span class=\"o_scc_step_status\">الحالي</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_shipment_design
+msgid "<span class=\"o_scc_step_status\">Upcoming</span>"
+msgstr "<span class=\"o_scc_step_status\">القادم</span>"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "A replacement document, filename and reason are required."
+msgstr "يجب إرفاق مستند بديل وإدخال اسم الملف وسبب الاستبدال."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "A supplier cheque attachment is required."
+msgstr "يجب إرفاق شيك المورد."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "A tax review attachment is required."
+msgstr "يجب إرفاق مستند المراجعة الضريبية."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_costcenter
+msgid "Abdin Cost Centers"
+msgstr "مراكز تكلفة عابدين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__affects_tax
+msgid "Affects Amount or Tax Information"
+msgstr "يؤثر على المبلغ أو البيانات الضريبية"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Amounts"
+msgstr "المبالغ"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_discount_decision__apply
+msgid "Apply"
+msgstr "يُطبق"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_costcenter.py:0
+msgid "Archive cost centers instead of deleting them."
+msgstr "يرجى أرشفة مراكز التكلفة بدلاً من حذفها."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__attachment
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_bank_accounts_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_bank_accounts_pending
+msgid "Bank Accounts Pending"
+msgstr "مطالبات بانتظار مراجعة حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_approval_revision
+msgid "Bank Approval Revision"
+msgstr "إصدار اعتماد حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__bank_cheque_filename
+msgid "Bank Cheque Filename"
+msgstr "اسم ملف مستند البنك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document__kind__bank_cheque
+msgid "Bank Document"
+msgstr "مستند البنك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_bank_accounts
+msgid "Can Edit Bank Accounts"
+msgstr "يمكن تعديل الحسابات البنكية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_correction_fields
+msgid "Can Edit Correction Fields"
+msgstr "يمكن تعديل حقول التصحيح"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_current_review
+msgid "Can Edit Current Review"
+msgstr "يمكن تعديل المراجعة الحالية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_inventory
+msgid "Can Edit Inventory"
+msgstr "يمكن تعديل المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_payment_nature
+msgid "Can Edit Payment Nature"
+msgstr "يمكن تعديل طريقة الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_purchasing
+msgid "Can Edit Purchasing"
+msgstr "يمكن تعديل المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_supplier_accounts
+msgid "Can Edit Supplier Accounts"
+msgstr "يمكن تعديل حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_supplier_section
+msgid "Can Edit Supplier Section"
+msgstr "يمكن تعديل قسم المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_tax
+msgid "Can Edit Tax"
+msgstr "يمكن تعديل الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_prepare_payment
+msgid "Can Prepare Payment"
+msgstr "يمكن تجهيز الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_upload_secretarial_cheque
+msgid "Can Upload Secretarial Cheque"
+msgstr "يمكن للسكرتارية إرفاق الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__change_amount
+msgid "Change Amount"
+msgstr "تغيير المبلغ"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__change_tax_type
+msgid "Change Tax Type"
+msgstr "تغيير نوع الضريبة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Choose a return destination."
+msgstr "اختر جهة الإرجاع."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__claim_amount
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__claim_amount
+msgid "Claim Amount"
+msgstr "مبلغ المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_preparation_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_preparation_pending
+msgid "Claims Requiring Payment Request"
+msgstr "مطالبات تتطلب طلب دفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_res_company
+msgid "Companies"
+msgstr "الشركات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Complete Preparation"
+msgstr "إتمام تجهيز طلب الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_res_config_settings
+msgid "Config Settings"
+msgstr "إعدادات التهيئة"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Configure the company working calendar."
+msgstr "يرجى إعداد تقويم عمل الشركة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__content
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__content
+msgid "Content"
+msgstr "المرفق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__cheque_attachment
+msgid ""
+"Current cheque uploaded on this claim by the department that wrote the note."
+msgstr "الشيك الحالي المرفق بالمطالبة بواسطة القسم الذي كتب الملاحظة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_classification
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__tax_classification
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
+msgid ""
+"Defaults from the latest claim for this cost center and remains editable in "
+"Draft."
+msgstr ""
+"القيمة الافتراضية من آخر مطالبة لمركز التكلفة ويمكن تعديلها في المسودة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__section
+msgid ""
+"Defaults from the latest claim for this cost center. Administrators and "
+"Secretarial can edit it in any open stage."
+msgstr ""
+"القيمة الافتراضية من آخر مطالبة لمركز التكلفة. يمكن للمسؤولين والسكرتارية "
+"تعديلها في المراحل المفتوحة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_discount_decision__do_not_apply
+msgid "Do Not Apply"
+msgstr "لا يُطبق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__document_ids
+msgid "Document"
+msgstr "المستند"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__document_revision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__document_revision
+msgid "Document Revision"
+msgstr "إصدار المستند"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "Document history cannot be deleted."
+msgstr "لا يمكن حذف سجل المستندات."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "Document history cannot be modified."
+msgstr "لا يمكن تعديل سجل المستندات."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__document_replaced
+msgid "Document_Replaced"
+msgstr "استبدال المستند"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Documents"
+msgstr "المستندات"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "Documents are recorded only by workflow actions."
+msgstr "تُسجل المستندات من خلال إجراءات سير العمل فقط."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_draft_claims
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_draft_claims
+msgid "Draft Claims"
+msgstr "مسودات المطالبات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__exception_history_ids
+msgid "Exception History"
+msgstr "سجل الاستثناءات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__filename
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__filename
+msgid "Filename"
+msgstr "اسم الملف"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__financial_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__financial_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__financial_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__financial_review
+msgid "Financial Review"
+msgstr "المراجعة المالية"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Financial approvals are required before payment preparation."
+msgstr "الاعتمادات المالية مطلوبة قبل تجهيز الدفع."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__history_revision
+msgid "History Revision"
+msgstr "إصدار السجل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid ""
+"Inventory + Purchasing → Tax + Supplier Accounts → Secretarial Preparation →"
+" Bank Accounts → Closure"
+msgstr ""
+"المخازن والمشتريات ← الضرائب وحسابات الموردين ← تجهيز السكرتارية ← الحسابات "
+"البنكية ← الإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_inventory_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_inventory_pending
+msgid "Inventory Pending Reviews"
+msgstr "مطالبات بانتظار مراجعة المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__kind
+msgid "Kind"
+msgstr "نوع المستند"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__migration_gate_exception
+msgid "Migration Gate Exception"
+msgstr "استثناء متطلبات الترحيل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__migration_exception
+msgid "Migration_Exception"
+msgstr "استثناء الترحيل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__net_claim_amount
+msgid "Net Claim Amount"
+msgstr "صافي مبلغ المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document_replacement__new_tax_classification
+msgid "New Tax Classification"
+msgstr "نوع الضريبة الجديد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__note_history_ids
+msgid "Note History"
+msgstr "سجل الملاحظات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__operational_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__operational_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__operational_review
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__operational_review
+msgid "Operational Review"
+msgstr "مراجعة المخازن والمشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_overdue_preparation
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_overdue_preparation
+msgid "Overdue Payment Preparation"
+msgstr "طلبات دفع تجاوزت مهلة التجهيز"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document__kind__payment_request
+msgid "Payment Request"
+msgstr "طلب الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__payment_request_attachment
+msgid "Payment Request Attachment"
+msgstr "مرفق طلب الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__payment_request_filename
+msgid "Payment Request Filename"
+msgstr "اسم ملف طلب الدفع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__payment_request_revision
+msgid "Payment Request Revision"
+msgstr "إصدار طلب الدفع"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Payment preparation is not pending."
+msgstr "تجهيز الدفع ليس معلقاً."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__preparation_due_date
+msgid "Preparation Due Date"
+msgstr "الموعد النهائي للتجهيز"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__preparation_overdue
+msgid "Preparation Overdue"
+msgstr "التجهيز متأخر"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__preparation_started_at
+msgid "Preparation Started At"
+msgstr "بداية التجهيز"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__preparation_status
+msgid "Preparation Status"
+msgstr "حالة التجهيز"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__prepared
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__prepared
+msgid "Prepared"
+msgstr "تم التجهيز"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_purchasing_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_purchasing_pending
+msgid "Purchasing Pending Reviews"
+msgstr "مطالبات بانتظار مراجعة المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_document_replacement_form
+msgid "Replace"
+msgstr "استبدال"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_document_replacement
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_document_replacement_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Replace Supplier Document"
+msgstr "استبدال مستند المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__return_destination
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_decision_wizard__return_destination
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__return_destination
+msgid "Return Destination"
+msgstr "جهة الإرجاع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__returned
+msgid "Returned"
+msgstr "مرتجع"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_returned_claims
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_returned_claims
+msgid "Returned Claims"
+msgstr "المطالبات المعادة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_returned_requests
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_returned_requests
+msgid "Returned Payment Requests"
+msgstr "طلبات الدفع المعادة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__revision
+msgid "Revision"
+msgstr "الإصدار"
+
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__resume_stage__secretarial_preparation
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__state__secretarial_preparation
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__secretarial_preparation
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__secretarial_preparation
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Secretarial Preparation"
+msgstr "تجهيز السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__secretarial_preparation_status
+msgid "Secretarial Preparation Status"
+msgstr "حالة تجهيز السكرتارية"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Select an active supplier, payment nature and tax type."
+msgstr "اختر مورداً نشطاً وطريقة دفع ونوع ضريبة."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Select the tax discount decision and upload the tax review attachment."
+msgstr "حدد قرار الخصم الضريبي وأرفق مستند المراجعة الضريبية."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_supplier_accounts_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_supplier_accounts_pending
+msgid "Supplier Accounts Pending"
+msgstr "مطالبات بانتظار مراجعة حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document__kind__supplier_cheque
+msgid "Supplier Cheque"
+msgstr "شيك المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__cheque_filename
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_cheque_filename
+msgid "Supplier Cheque Filename"
+msgstr "اسم ملف شيك المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_document
+msgid "Supplier Claim Document Revision"
+msgstr "إصدار مستند مطالبة المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_sla_company_form
+msgid "Supplier Claim Preparation"
+msgstr "تجهيز مطالبة المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_company__supplier_claim_secretarial_sla_days
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_res_config_settings__supplier_claim_secretarial_sla_days
+msgid "Supplier Claim Secretarial Sla Days"
+msgstr "مهلة تجهيز السكرتارية بأيام العمل"
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_tax
+msgid "Supplier Claim Tax Department"
+msgstr "قسم ضرائب مطالبات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Supplier document replacement requires financial review or payment "
+"preparation."
+msgstr "استبدال مستند المورد متاح خلال المراجعة المالية أو تجهيز الدفع."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__suspended
+msgid "Suspended"
+msgstr "موقوف"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__rejection_department__tax
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_decision_wizard__department__tax
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__tax
+msgid "Tax"
+msgstr "الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Tax + Supplier Accounts → Secretarial Preparation → Closure"
+msgstr "الضرائب وحسابات الموردين ← تجهيز السكرتارية ← الإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_decision
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle_history__tax_decision
+msgid "Tax Decision"
+msgstr "قرار الضرائب"
+
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Tax Department"
+msgstr "قسم الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_discount_amount
+msgid "Tax Discount Amount"
+msgstr "مبلغ الخصم الضريبي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_discount_decision
+msgid "Tax Discount Decision"
+msgstr "قرار الخصم الضريبي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_discount_rate
+msgid "Tax Discount Rate"
+msgstr "نسبة الخصم الضريبي"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_followup_date
+msgid "Tax Followup Date"
+msgstr "تاريخ متابعة الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_notes
+msgid "Tax Notes"
+msgstr "ملاحظات الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document__kind__tax_review
+msgid "Tax Review"
+msgstr "المراجعة الضريبية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_review_attachment
+msgid "Tax Review Attachment"
+msgstr "مرفق المراجعة الضريبية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__tax_review_filename
+msgid "Tax Review Filename"
+msgstr "اسم ملف المراجعة الضريبية"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.action_tax_pending
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.menu_tax_pending
+msgid "Tax Reviews Pending"
+msgstr "مطالبات بانتظار المراجعة الضريبية"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Tax approval is required before Supplier Accounts approval."
+msgstr "اعتماد الضرائب مطلوب قبل اعتماد حسابات الموردين."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__department__tax_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__from_state__tax_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__to_state__tax_accounts
+msgid "Taxes"
+msgstr "الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__tax_finished
+msgid "Taxes Finished"
+msgstr "اكتمال الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "The claim amount must be a positive finite number."
+msgstr "يجب أن يكون مبلغ المطالبة رقماً موجباً ومحدوداً."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "The preparation SLA must be a positive number of working days."
+msgstr "يجب أن تكون مهلة التجهيز عدداً موجباً من أيام العمل."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "The working calendar has no preparation deadline."
+msgstr "تعذر تحديد موعد نهائي للتجهيز من تقويم العمل."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_bank_accounts
+msgid "Timeline Bank Accounts"
+msgstr "تفاصيل مرحلة حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_bank_accounts_date
+msgid "Timeline Bank Accounts Date"
+msgstr "تاريخ مرحلة حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_bank_accounts_exception_ids
+msgid "Timeline Bank Accounts Exception"
+msgstr "حالات الرفض والتأجيل في حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_closure
+msgid "Timeline Closure"
+msgstr "تفاصيل مرحلة الإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_closure_date
+msgid "Timeline Closure Date"
+msgstr "تاريخ مرحلة الإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_draft
+msgid "Timeline Draft"
+msgstr "تفاصيل مرحلة المسودة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_draft_date
+msgid "Timeline Draft Date"
+msgstr "تاريخ مرحلة المسودة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_inventory
+msgid "Timeline Inventory"
+msgstr "تفاصيل مرحلة المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_inventory_date
+msgid "Timeline Inventory Date"
+msgstr "تاريخ مرحلة المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_inventory_exception_ids
+msgid "Timeline Inventory Exception"
+msgstr "حالات الرفض والتأجيل في المخازن"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_purchasing
+msgid "Timeline Purchasing"
+msgstr "تفاصيل مرحلة المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_purchasing_date
+msgid "Timeline Purchasing Date"
+msgstr "تاريخ مرحلة المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_purchasing_exception_ids
+msgid "Timeline Purchasing Exception"
+msgstr "حالات الرفض والتأجيل في المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_supplier_accounts
+msgid "Timeline Supplier Accounts"
+msgstr "تفاصيل مرحلة حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_supplier_accounts_date
+msgid "Timeline Supplier Accounts Date"
+msgstr "تاريخ مرحلة حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_supplier_accounts_exception_ids
+msgid "Timeline Supplier Accounts Exception"
+msgstr "حالات الرفض والتأجيل في حسابات الموردين"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_tax
+msgid "Timeline Tax"
+msgstr "تفاصيل مرحلة الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_tax_date
+msgid "Timeline Tax Date"
+msgstr "تاريخ مرحلة الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__timeline_tax_exception_ids
+msgid "Timeline Tax Exception"
+msgstr "حالات الرفض والتأجيل في الضرائب"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Upload a payment request for the current document revision."
+msgstr "أرفق طلب دفع لإصدار المستند الحالي."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__secretarial_preparation_status__waiting
+msgid "Waiting"
+msgstr "قيد الانتظار"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__tax_classification__withholding_tax
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__tax_classification__withholding_tax
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document_replacement__new_tax_classification__withholding_tax
+msgid "Withholding Tax"
+msgstr "ضريبة الخصم من المنبع"
+
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Workflow History"
+msgstr "سجل سير العمل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Workflow Timeline"
+msgstr "مسار المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Upload a corrected payment request; the invalidated document cannot be "
+"reused."
+msgstr "أرفق طلب دفع مصححاً؛ لا يمكن إعادة استخدام المستند الملغى."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__invalidated_payment_request_digest
+msgid "Invalidated Payment Request Digest"
+msgstr "بصمة طلب الدفع الملغى"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_close_claim
+msgid "Can Close Claim"
+msgstr "يمكن إغلاق المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Approve Inventory"
+msgstr "المخازن: اعتماد المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Reject Inventory"
+msgstr "المخازن: رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Defer Inventory"
+msgstr "المخازن: تأجيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Approve Purchasing"
+msgstr "المشتريات: اعتماد المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Reject Purchasing"
+msgstr "المشتريات: رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Defer Purchasing"
+msgstr "المشتريات: تأجيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Approve Supplier Accounts"
+msgstr "حسابات الموردين: اعتماد المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Reject Supplier Accounts"
+msgstr "حسابات الموردين: رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Defer Supplier Accounts"
+msgstr "حسابات الموردين: تأجيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Approve Bank Accounts"
+msgstr "حسابات البنوك: اعتماد المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Reject Bank Accounts"
+msgstr "حسابات البنوك: رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Defer Bank Accounts"
+msgstr "حسابات البنوك: تأجيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Approve Tax"
+msgstr "الضرائب: اعتماد المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Reject Tax"
+msgstr "الضرائب: رفض المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
+msgid "Defer Tax"
+msgstr "الضرائب: تأجيل المطالبة"
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+msgid "Rejections & Deferrals"
+msgstr "حالات الرفض والتأجيل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle_history__event__claim_updated
+msgid "Claim Details Updated"
+msgstr "تحديث بيانات المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Claim details changed: %(changes)s. Previous approvals and payment documents"
+" require review."
+msgstr ""
+"تم تغيير بيانات المطالبة: %(changes)s. يلزم إعادة مراجعة الموافقات ومستندات "
+"الدفع السابقة."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_open_claim_fields
+msgid "Can Edit Open Claim Fields"
+msgstr "يمكن تعديل بيانات المطالبة قبل الإغلاق"

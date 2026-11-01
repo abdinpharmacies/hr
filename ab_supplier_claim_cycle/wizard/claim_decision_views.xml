@@ -12,6 +12,8 @@
           <label for="reason" string="Rejection Reason" invisible="decision != 'rejected'"/>
           <label for="reason" string="Deferral Reason" invisible="decision != 'deferred'"/>
           <field name="reason" nolabel="1" required="True" placeholder="Enter the reason for this decision..."/>
+          <field name="return_destination" invisible="department != 'bank_accounts' or decision != 'rejected'" required="department == 'bank_accounts' and decision == 'rejected'"/>
+          <field name="affects_tax" invisible="return_destination != 'supplier_accounts'"/>
           <field name="followup_date" invisible="decision != 'deferred'" required="decision == 'deferred'"/>
         </group>
         <footer>
@@ -20,5 +22,17 @@
         </footer>
       </form>
     </field>
+  </record>
+  <record id="claim_document_replacement_form" model="ir.ui.view">
+    <field name="name">supplier.claim.document.replacement.form</field>
+    <field name="model">ab_supplier_claim_document_replacement</field>
+    <field name="arch" type="xml">
+      <form string="Replace Supplier Document"><group>
+      <field name="claim_id" readonly="True"/><field name="content" filename="filename"/>
+      <field name="filename"/><field name="reason"/>
+      <field name="change_amount"/><field name="claim_amount" invisible="not change_amount"/>
+      <field name="change_tax_type"/><field name="new_tax_classification" invisible="not change_tax_type" required="change_tax_type"/>
+    </group><footer><button name="action_confirm" type="object" string="Replace" class="btn-primary"/>
+    <button special="cancel" string="Cancel"/></footer></form></field>
   </record>
 </odoo>

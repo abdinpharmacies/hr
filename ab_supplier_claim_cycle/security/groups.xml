@@ -45,4 +45,9 @@
     <record id="base.group_system" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('supplier_claim_group_admin'))]"/>
     </record>
+    <record id="supplier_claim_group_tax" model="res.groups">
+        <field name="name">Supplier Claim Tax Department</field>
+        <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
 </odoo>

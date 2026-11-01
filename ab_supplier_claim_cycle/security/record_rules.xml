@@ -4,7 +4,7 @@
         <field name="name">claim_read_user</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -14,7 +14,7 @@
         <field name="name">history_read_user</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_user'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -34,7 +34,7 @@
         <field name="name">claim_read_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'inventory'), ('inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -44,7 +44,7 @@
         <field name="name">history_read_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'inventory'), ('claim_id.inventory_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -54,7 +54,7 @@
         <field name="name">claim_write_inventory</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_inventory'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "inventory"), ("inventory_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[('active', '=', True), ('state', '=', 'operational_review'), ('inventory_decision', 'in', ['pending', 'deferred'])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -64,7 +64,7 @@
         <field name="name">claim_read_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'purchasing'), ('purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -74,7 +74,7 @@
         <field name="name">history_read_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'purchasing'), ('claim_id.purchasing_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -84,7 +84,7 @@
         <field name="name">claim_write_purchasing</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_purchasing'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "purchasing"), ("purchasing_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[('active', '=', True), ('state', '=', 'operational_review'), ('purchasing_decision', 'in', ['pending', 'deferred'])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -94,7 +94,7 @@
         <field name="name">claim_read_supplier_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'supplier_accounts'), ('supplier_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -104,7 +104,7 @@
         <field name="name">history_read_supplier_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'supplier_accounts'), ('claim_id.supplier_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -114,7 +114,7 @@
         <field name="name">claim_write_supplier_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_supplier_accounts'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "supplier_accounts"), ("supplier_accounts_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[('active', '=', True), ('state', '=', 'financial_review'), ('supplier_accounts_decision', 'in', ['pending', 'deferred'])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -124,7 +124,7 @@
         <field name="name">claim_read_bank_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">['|', ('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -134,7 +134,7 @@
         <field name="name">history_read_bank_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">['|', ('claim_id.state', '=', 'bank_accounts'), ('claim_id.bank_accounts_decision', 'in', ['approved', 'rejected', 'deferred', 'cancelled'])]</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -144,7 +144,7 @@
         <field name="name">claim_write_bank_accounts</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_bank_accounts'))]"/>
-        <field name="domain_force">[("active", "=", True), ("state", "=", "bank_accounts"), ("bank_accounts_decision", "in", ["pending", "deferred"])]</field>
+        <field name="domain_force">[('active', '=', True), ('state', '=', 'bank_accounts'), ('bank_accounts_decision', 'in', ['pending', 'deferred'])]</field>
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -154,7 +154,7 @@
         <field name="name">claim_read_reviewer</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_reviewer'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -164,7 +164,7 @@
         <field name="name">history_read_reviewer</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_reviewer'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -174,7 +174,7 @@
         <field name="name">claim_read_admin</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -184,7 +184,7 @@
         <field name="name">history_read_admin</field>
         <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
         <field name="groups" eval="[(4, ref('supplier_claim_group_admin'))]"/>
-        <field name="domain_force">[(1, "=", 1)]</field>
+        <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -198,6 +198,54 @@
         <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_read_tax" model="ir.rule">
+        <field name="name">claim_read_tax</field>
+        <field name="domain_force">['|', ('state', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="history_read_tax" model="ir.rule">
+        <field name="name">history_read_tax</field>
+        <field name="domain_force">['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+    <record id="claim_company_scope" model="ir.rule">
+        <field name="name">Claim company scope</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="history_company_scope" model="ir.rule">
+        <field name="name">Claim company scope</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle_history"/>
+        <field name="domain_force">[('claim_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="document_company_scope" model="ir.rule">
+        <field name="name">Claim company scope</field>
+        <field name="model_id" ref="model_ab_supplier_claim_document"/>
+        <field name="domain_force">[('claim_id.company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="document_visibility" model="ir.rule">
+        <field name="name">Claim document visibility</field>
+        <field name="model_id" ref="model_ab_supplier_claim_document"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('ab_supplier_claim_cycle.supplier_claim_group_admin') or user.has_group('ab_supplier_claim_cycle.supplier_claim_group_user') else ['|', ('claim_id.state', '!=', 'draft'), ('claim_id.create_uid', '=', user.id)]</field>
+    </record>
+    <record id="claim_write_tax" model="ir.rule">
+        <field name="name">Tax pending review</field>
+        <field name="model_id" ref="model_ab_supplier_claim_cycle"/>
+        <field name="groups" eval="[(4, ref('supplier_claim_group_tax'))]"/>
+        <field name="domain_force">[('active', '=', True), ('state', '=', 'financial_review'), ('tax_decision', 'in', ['pending', 'deferred'])]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 </odoo>

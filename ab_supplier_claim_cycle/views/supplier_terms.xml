@@ -13,9 +13,10 @@
           <field name="can_edit_supplier_section" invisible="True"/>
           <field name="can_edit_correction_fields" invisible="True"/>
           <field name="can_edit_payment_nature" invisible="True"/>
+          <field name="can_edit_open_claim_fields" invisible="True"/>
           <group name="supplier_classification" string="Supplier &amp; Classification">
             <field name="claim_reference" readonly="not can_edit_correction_fields"/>
-            <field name="supplier_id" readonly="not can_edit_supplier_section" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/><field name="supplier_id" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/>
+            <field name="supplier_id" readonly="not can_edit_open_claim_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/><field name="supplier_id" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" options="{'no_create': True}"/>
             <field name="tax_classification" readonly="state != 'draft' or not active" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="tax_classification" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="section" readonly="not can_edit_supplier_section" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="section" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="payment_nature" readonly="not can_edit_payment_nature" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin,ab_supplier_claim_cycle.supplier_claim_group_supplier_accounts"/>
@@ -29,7 +30,7 @@
             <field name="num_of_invoice" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="num_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="amount_of_check" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="amount_of_check" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
             <field name="area" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="area" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
-            <field name="type_of_invoice" readonly="not can_edit_correction_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
+            <field name="type_of_invoice" readonly="not can_edit_open_claim_fields" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin" /><field name="type_of_invoice" readonly="True" groups="!ab_supplier_claim_cycle.supplier_claim_group_user,!ab_supplier_claim_cycle.supplier_claim_group_admin" />
           </group>
         </group>
         <group name="claim_secretarial_review" class="o_scc_panel o_scc_secretarial_review">
