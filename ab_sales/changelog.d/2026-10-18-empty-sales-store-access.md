@@ -20,7 +20,7 @@ Files changed:
 ## Current changes before commit:
 
 - Treat an empty replica Allowed Sales Stores list as unrestricted for otherwise permitted active sales stores, including search timestamp lookup and balance refresh.
-- Remove the extra department-assignment rejection from the shared search/refresh store check. Retain Odoo access checks and existing employee-profile and service-user controls.
+- Preserve branch19 department-assignment restrictions in the shared search/refresh store check while allowing an empty replica list. Retain Odoo access checks and existing employee-profile and service-user controls.
 - Keep configured replica restrictions even when every configured store is disabled; reject inactive or non-sales stores in balance validation and sales constraints.
 - Share the sales-store domain with the draft selector. Return authoritative eligible store IDs to the POS and use them in both store selectors, intersecting draft employee permissions as before.
 - Surface settings failures instead of silently offering all stores. Ignore defaults outside the eligible list.
