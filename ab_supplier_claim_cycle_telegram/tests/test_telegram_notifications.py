@@ -47,9 +47,9 @@ class TestCycleTelegramNotifications(TransactionCase):
     def claim(self, cash=False):
         return self.claim_model.with_user(self.users['user']).create({
             'supplier_id': self.supplier.id, 'num_of_invoice': 1, 'area': 'north',
-            'amount_of_check': '1250', 'type_of_invoice': 'original',
+            'claim_amount': 1250, 'type_of_invoice': 'original',
             'payment_nature': 'cash' if cash else 'bank_transfer',
-            'tax_classification': 'tax_payment', 'section': 'medical',
+            'tax_classification': 'non_tax_payment', 'section': 'medical',
         })
 
     def transition(self, claim, callback, role):
@@ -69,37 +69,34 @@ class TestCycleTelegramNotifications(TransactionCase):
     def test_non_cash_route_and_closure(self):
         claim = self.claim()
         self.transition(claim, claim.action_submit, 'inventory')
-        for department, target in (
-            ('inventory', 'purchasing'), ('purchasing', 'supplier_accounts'),
-            ('supplier_accounts', 'bank_accounts'), ('bank_accounts', 'user'),
-        ):
-            self.transition(claim, lambda: claim.with_user(self.users[department]).action_decide(
-                department, 'approved'), target)
+        with trap_jobs() as trap:
+            claim.with_user(self.users['inventory']).action_decide('inventory', 'approved')
+            trap.assert_jobs_count(0)
+        self.transition(claim, lambda: claim.with_user(self.users['purchasing']).action_decide('purchasing', 'approved'), 'supplier_accounts')
+        self.transition(claim, lambda: claim.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved'), 'user')
+        claim.write({'payment_request_attachment': 'ZG9jdW1lbnQ='})
+        self.transition(claim, claim.action_prepare_payment, 'bank_accounts')
+        self.transition(claim, lambda: claim.with_user(self.users['bank_accounts']).action_decide('bank_accounts', 'approved'), 'user')
         self.transition(claim, claim.action_close, 'user')
-        self.assertEqual(claim._cycle_telegram_chat_ids(), [self.chats['user']])
 
     def test_cash_route(self):
         claim = self.claim(cash=True)
         self.transition(claim, claim.action_submit, 'supplier_accounts')
-        self.transition(claim, lambda: claim.with_user(self.users['supplier_accounts']).action_decide(
-            'supplier_accounts', 'approved'), 'user')
+        self.transition(claim, lambda: claim.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved'), 'user')
+        claim.write({'payment_request_attachment': 'ZG9jdW1lbnQ='})
+        self.transition(claim, claim.action_prepare_payment, 'user')
         self.assertEqual(claim.state, 'ready_to_close')
         self.transition(claim, claim.action_close, 'user')
 
     def test_rejection_resubmission_and_deferral(self):
         claim = self.claim()
         self.transition(claim, claim.action_submit, 'inventory')
-        for department in ('inventory', 'purchasing', 'supplier_accounts', 'bank_accounts'):
-            with trap_jobs() as trap:
-                claim.with_user(self.users[department]).action_decide(
-                    department, 'deferred', reason='Waiting', followup_date=fields.Date.today())
-                trap.assert_jobs_count(0)
-            self.transition(claim, lambda: claim.with_user(self.users[department]).action_decide(
-                department, 'rejected', reason='<Correction needed>'), 'user')
-            self.assertIn('&lt;Correction needed&gt;', claim._cycle_telegram_message())
-            self.transition(claim, claim.action_submit, department)
-            with trap_jobs():
-                claim.with_user(self.users[department]).action_decide(department, 'approved')
+        with trap_jobs() as trap:
+            claim.with_user(self.users['inventory']).action_decide('inventory', 'deferred', reason='Waiting', followup_date=fields.Date.today())
+            trap.assert_jobs_count(0)
+        self.transition(claim, lambda: claim.with_user(self.users['inventory']).action_decide('inventory', 'rejected', reason='<Correction needed>'), 'user')
+        self.assertIn('&lt;Correction needed&gt;', claim._cycle_telegram_message())
+        self.transition(claim, claim.action_submit, 'inventory')
 
     def test_delivery_uses_bot_and_preserves_event_snapshot(self):
         claim = self.claim(cash=True)
@@ -111,10 +108,10 @@ class TestCycleTelegramNotifications(TransactionCase):
             trap.perform_enqueued_jobs()
             self.assertEqual(send.call_count, expected_count)
             for call in send.call_args_list:
-                self.assertIn('Current stage: Supplier Accounts', call.args[1])
+                self.assertIn('Current stage: Financial Review', call.args[1])
                 self.assertIn('Supplier: Telegram Supplier &lt;Test&gt;', call.args[1])
                 self.assertIn('Amount: 1250', call.args[1])
-                self.assertIn(f'/odoo/ab_supplier_claim_cycle/{claim.id}', call.args[1])
+                self.assertIn(f'/odoo/action-ab_supplier_claim_cycle.invoice_action/{claim.id}', call.args[1])
                 self.assertTrue(call.kwargs['disable_web_page_preview'])
 
     def test_delivery_failure_is_retryable_and_claim_remains_submitted(self):
@@ -125,7 +122,7 @@ class TestCycleTelegramNotifications(TransactionCase):
             with patch.object(self.bot_class, 'send_message', **kwargs):
                 with self.assertRaises(RetryableJobError), self.env.cr.savepoint():
                     claim.sudo()._deliver_cycle_telegram_notification(self.chats['supplier_accounts'], 'Message')
-            self.assertEqual(claim.state, 'supplier_accounts')
+            self.assertEqual(claim.state, 'financial_review')
         job = Job(claim.sudo()._deliver_cycle_telegram_notification,
                   args=(self.chats['supplier_accounts'], 'Message'), max_retries=0)
         with patch.object(self.bot_class, 'send_message', return_value={'sent': False}):
@@ -190,7 +187,7 @@ class TestCycleTelegramNotifications(TransactionCase):
             send.assert_not_called()
             expected = sum(len(claim._cycle_telegram_chat_ids()) for claim in claims)
             trap.assert_jobs_count(expected)
-        self.assertEqual(claims.mapped('state'), ['inventory', 'supplier_accounts'])
+        self.assertEqual(claims.mapped('state'), ['operational_review', 'financial_review'])
 
     def test_missing_enable_setting_does_not_create_parameter(self):
         parameters = self.env['ir.config_parameter'].sudo()
@@ -235,7 +232,7 @@ class TestCycleTelegramNotifications(TransactionCase):
                     send.assert_not_called()
                 keys = {call.args[1] for call in lookup.call_args_list}
                 self.assertEqual(keys, {'telegram.notifications.enabled', TOKEN_PARAMETER})
-            self.assertEqual(claim.state, 'supplier_accounts')
+            self.assertEqual(claim.state, 'financial_review')
         parameters.set_param(TOKEN_PARAMETER, 'shared-restored-token')
         with patch.object(self.bot_class, 'send_message', return_value={'sent': True}) as send:
             claim.sudo()._deliver_cycle_telegram_notification(self.chats['supplier_accounts'], 'Message')

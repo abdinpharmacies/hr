@@ -12,12 +12,12 @@ _logger = logging.getLogger(__name__)
 CHANNEL = 'root.supplier_claim_cycle_telegram'
 PARAMETER = 'telegram.notifications.enabled'
 STAGE_ROLES = {
-    'inventory': 'inventory',
-    'purchasing': 'purchasing',
-    'supplier_accounts': 'supplier_accounts',
-    'bank_accounts': 'bank_accounts',
-    'returned_secretarial': 'user',
-    'ready_to_close': 'user',
+    'operational_review': ('inventory', 'purchasing'),
+    'financial_review': ('tax', 'supplier_accounts'),
+    'secretarial_preparation': ('user',),
+    'bank_accounts': ('bank_accounts',),
+    'returned_secretarial': ('user',),
+    'ready_to_close': ('user',),
 }
 
 
@@ -34,15 +34,17 @@ class SupplierClaimCycle(models.Model):
         if self.state == 'closed':
             users = self.user_id
         else:
-            role = STAGE_ROLES.get(self.state)
-            if not role:
-                return []
-            group = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_' + role)
+            roles = STAGE_ROLES.get(self.state, ())
+            roles = [role for role in roles if role == 'user' or self._department_actionable(role)]
+            groups = self.env['res.groups'].browse([
+                self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_' + role).id for role in roles])
             users = self.env['res.users'].sudo().search(
-                fields.Domain('group_ids', 'in', group.ids)
+                fields.Domain('group_ids', 'in', groups.ids)
+                & fields.Domain('company_ids', 'in', self.company_id.ids)
                 & fields.Domain('active', '=', True)
                 & fields.Domain('share', '=', False)
             )
+        users = users.filtered(lambda user: self.with_user(user).has_access('read'))
         employees = self.env['ab_hr_employee'].sudo().search(
             fields.Domain('user_id', 'in', users.filtered('active').ids)
             & fields.Domain('costcenter_id', '!=', False)
@@ -61,12 +63,12 @@ class SupplierClaimCycle(models.Model):
         claim = self.sudo()
         stage = dict(claim._fields['state']._description_selection(claim.env))[claim.state]
         base_url = claim.get_base_url().rstrip('/')
-        url = f'{base_url}/odoo/ab_supplier_claim_cycle/{claim.id}'
+        url = f'{base_url}/odoo/action-ab_supplier_claim_cycle.invoice_action/{claim.id}'
         lines = [
             '<b>Supplier Claim</b>',
             'Claim ID: ' + escape(claim.claim_reference or str(claim.id)),
             'Supplier: ' + escape(claim.supplier_id.display_name),
-            'Amount: ' + escape(claim.amount_of_check or ''),
+            'Amount: ' + escape(f'{claim.claim_amount:.2f}'),
             'Current stage: ' + escape(stage),
         ]
         if claim.state == 'returned_secretarial' and claim.rejection_reason:
@@ -96,10 +98,17 @@ class SupplierClaimCycle(models.Model):
         self._queue_cycle_telegram_notifications(dict.fromkeys(self.ids, 'returned_secretarial'))
         return result
 
-    def action_decide(self, department, decision, reason=None, followup_date=None):
+    def action_decide(self, department, decision, reason=None, followup_date=None, **kwargs):
+        previous = {claim.id: claim.state for claim in self}
         result = super().action_decide(
-            department, decision, reason=reason, followup_date=followup_date)
-        self._queue_cycle_telegram_notifications(dict.fromkeys(self.ids, department))
+            department, decision, reason=reason, followup_date=followup_date, **kwargs)
+        self._queue_cycle_telegram_notifications(previous)
+        return result
+
+    def action_prepare_payment(self):
+        previous = {claim.id: claim.state for claim in self}
+        result = super().action_prepare_payment()
+        self._queue_cycle_telegram_notifications(previous)
         return result
 
     def action_close(self):
