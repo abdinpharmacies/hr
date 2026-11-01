@@ -9,6 +9,7 @@ import pytz
 
 import requests
 from openpyxl import Workbook
+from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Font, PatternFill
 from openpyxl.utils import get_column_letter
 
@@ -105,22 +106,14 @@ class EtaExport(models.Model):
         records = model.search([('config_id', '=', config.id), ('report_date', '=', report_date),
                                 ('direction', '=', direction)],
                                order='issued_at, uuid')
-        workbook = Workbook()
-        sheet = workbook.active
-        sheet.title = 'Invoices' if kind == 'invoice' else 'Receipts'
         identifier = 'Internal ID' if kind == 'invoice' else 'Receipt Number'
         headers = ['UUID', identifier, 'Submission UUID', 'Type', 'Status',
                    'Issuer ID', 'Issuer Name', 'Receiver ID', 'Receiver Name',
                    'Issued At (UTC)', 'Received At (UTC)', 'Total', 'Currency']
         if kind == 'receipt':
             headers.append(_('POS Serial'))
-        sheet.append(headers)
-        for cell in sheet[1]:
-            cell.font = Font(bold=True, color='FFFFFF')
-            cell.fill = PatternFill('solid', fgColor='17426B')
-        sheet.freeze_panes = 'A2'
-        source_rows = []
-        for record in records:
+
+        def export_cells(record):
             row = [
                 record.uuid,
                 record.internal_id if kind == 'invoice' else record.receipt_number,
@@ -133,22 +126,41 @@ class EtaExport(models.Model):
                       record.total, _excel_cell(record.currency)])
             if kind == 'receipt':
                 cells.append(_excel_cell(record.pos_serial_number))
-            sheet.append(cells)
-            source_rows.append(cells)
-        source_digest = hashlib.sha256(
-            json.dumps(source_rows, ensure_ascii=False, default=str).encode('utf-8')
-        ).hexdigest()
+            return cells
+
+        digest = hashlib.sha256()
+        digest.update(b'[')
+        for index, record in enumerate(records):
+            if index:
+                digest.update(b', ')
+            digest.update(json.dumps(export_cells(record), ensure_ascii=False,
+                                     default=str).encode('utf-8'))
+        digest.update(b']')
+        source_digest = digest.hexdigest()
         if export and export.source_digest == source_digest:
             return export
-        for row in sheet.iter_rows(min_row=2, min_col=10, max_col=11):
-            for cell in row:
-                cell.number_format = 'yyyy-mm-dd hh:mm:ss'
+
+        workbook = Workbook(write_only=True)
+        sheet = workbook.create_sheet(title='Invoices' if kind == 'invoice' else 'Receipts')
+        sheet.freeze_panes = 'A2'
         widths = (67, 25, 35, 18, 18, 22, 36, 22, 36, 23, 23, 18, 12)
         if kind == 'receipt':
             widths += (24,)
         for column, width in enumerate(widths, start=1):
             sheet.column_dimensions[get_column_letter(column)].width = width
-        sheet.auto_filter.ref = sheet.dimensions
+        sheet.auto_filter.ref = f'A1:{get_column_letter(len(headers))}{len(records) + 1}'
+        header_cells = [WriteOnlyCell(sheet, value=value) for value in headers]
+        for cell in header_cells:
+            cell.font = Font(bold=True, color='FFFFFF')
+            cell.fill = PatternFill('solid', fgColor='17426B')
+        sheet.append(header_cells)
+        for record in records:
+            cells = export_cells(record)
+            for index in (9, 10):
+                cell = WriteOnlyCell(sheet, value=cells[index])
+                cell.number_format = 'yyyy-mm-dd hh:mm:ss'
+                cells[index] = cell
+            sheet.append(cells)
         output = io.BytesIO()
         workbook.save(output)
         revision = export.revision + 1 if export and export.telegram_sent_at else (export.revision if export else 1)
@@ -156,7 +168,7 @@ class EtaExport(models.Model):
         values = {
             'config_id': config.id, 'report_date': report_date,
             'category': category, 'revision': revision, 'filename': filename,
-            'file_data': base64.b64encode(output.getvalue()),
+            'file_data': base64.b64encode(output.getbuffer()),
             'record_count': len(records), 'source_digest': source_digest,
         }
         if export and not export.telegram_sent_at:

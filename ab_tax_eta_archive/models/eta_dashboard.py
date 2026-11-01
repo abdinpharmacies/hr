@@ -53,7 +53,7 @@ class EtaDashboard(models.Model):
             ('receipt', 'ab_tax_eta_archive_receipt'),
         ):
             groups = self.env[model_name]._read_group(
-                issue_domain, ['report_date', 'direction'], ['__count'])
+                issue_domain, ['report_date:day', 'direction'], ['__count'])
             for issue_date, direction, count in groups:
                 category = f'{direction}_{kind}'
                 categories[category]['count'] += count

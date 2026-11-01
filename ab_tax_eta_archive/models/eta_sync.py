@@ -17,11 +17,15 @@ _logger = logging.getLogger(__name__)
 ETA_MAX_RECEIPTS_PER_SEARCH = 3000
 ETA_RECEIPT_PAGE_SIZE = 10
 ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
-ETA_MAX_INVOICE_PAGES = 1000
+ETA_MAX_INVOICE_PAGES = 20
 
 
 class EtaSearchNoResult(Exception):
     """ETA found no documents for the requested receipt search criteria."""
+
+
+class EtaSearchLimit(Exception):
+    """ETA requires a narrower receipt search interval."""
 
 
 class EtaSync(models.Model):
@@ -197,37 +201,46 @@ class EtaSync(models.Model):
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
         if self.kind == 'invoice':
-            items = self._invoice_pages(api_url, auth, start, end)
+            pages = self._invoice_pages(api_url, auth, start, end)
             model = self.env['ab_tax_eta_archive_invoice']
         else:
             if self.report_date < datetime.now(cairo).date() - timedelta(days=29):
-                items = self._receipt_package_pages(api_url, auth, start, end)
+                pages = self._receipt_package_pages(api_url, auth, start, end)
             else:
-                items = self._receipt_pages(api_url, auth, start, end)
-            if items is None:
+                pages = self._receipt_pages(api_url, auth, start, end)
+            if pages is None:
                 return None
             model = self.env['ab_tax_eta_archive_receipt']
-        unique = {}
-        for item in items:
-            values = model._eta_values(item, self.direction, config)
-            if eta_report_date(item['dateTimeReceived']) != self.report_date:
-                raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
-            unique[values['uuid']] = values
-        if len(unique) != len(items):
-            raise ValidationError(_('ETA returned duplicate document UUIDs for one retrieval.'))
-        existing = model.search([('config_id', '=', config.id),
-                                 ('direction', '=', self.direction),
-                                 ('uuid', 'in', list(unique))])
-        by_uuid = {record.uuid: record for record in existing}
+        seen_uuids = set()
         issue_dates = set()
-        for uuid, values in unique.items():
-            issue_dates.add(values['report_date'])
-            if uuid in by_uuid:
-                issue_dates.add(by_uuid[uuid].report_date)
-                by_uuid[uuid].write(values)
-            else:
-                model.create(values)
-        return len(unique), issue_dates
+        for page in pages:
+            unique = {}
+            for item in page:
+                values = model._eta_values(item, self.direction, config)
+                if eta_report_date(item['dateTimeReceived']) != self.report_date:
+                    raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
+                uuid = values['uuid']
+                if uuid in seen_uuids:
+                    raise ValidationError(_('ETA returned duplicate document UUIDs for one retrieval.'))
+                seen_uuids.add(uuid)
+                unique[uuid] = values
+            if not unique:
+                continue
+            existing = model.search([('config_id', '=', config.id),
+                                     ('direction', '=', self.direction),
+                                     ('uuid', 'in', list(unique))])
+            by_uuid = {record.uuid: record for record in existing}
+            new_values = []
+            for uuid, values in unique.items():
+                issue_dates.add(values['report_date'])
+                if uuid in by_uuid:
+                    issue_dates.add(by_uuid[uuid].report_date)
+                    by_uuid[uuid].write(values)
+                else:
+                    new_values.append(values)
+            if new_values:
+                model.create(new_values)
+        return len(seen_uuids), issue_dates
 
     def _receipt_package_pages(self, api_url, headers, start, end):
         packages = self.package_ids
@@ -284,10 +297,7 @@ class EtaSync(models.Model):
         completed = packages.filtered(lambda item: item.state == 'done')
         if not completed:
             raise ValidationError(_('ETA receipt package retrieval completed without data or a valid empty package.'))
-        items = []
-        for part in completed:
-            items.extend(json.loads(part.payload_json))
-        return items
+        return (json.loads(part.payload_json) for part in completed)
 
     def _download_package(self, api_url, headers, package_id):
         for attempt in range(4):
@@ -334,10 +344,14 @@ class EtaSync(models.Model):
             'direction': 'Sent' if self.direction == 'sent' else 'Received',
             'pageSize': 100,
         }
-        items, token, seen = [], None, set()
+        pages, token, seen = [], None, set()
         while True:
             if len(seen) >= ETA_MAX_INVOICE_PAGES:
-                raise ValidationError(_('ETA invoice search exceeded the safe page limit.'))
+                first, second = self._split_search_window(
+                    start, end, _('ETA invoice search exceeded the safe page limit.'))
+                yield from self._invoice_pages(api_url, headers, *first)
+                yield from self._invoice_pages(api_url, headers, *second)
+                return
             current = dict(params)
             if token:
                 current['continuationToken'] = token
@@ -347,15 +361,29 @@ class EtaSync(models.Model):
             metadata = payload.get('metadata')
             if not isinstance(page, list) or not isinstance(metadata, dict):
                 raise ValidationError(_('ETA invoice search returned an invalid page.'))
-            items.extend(page)
+            pages.append(page)
             next_token = metadata.get('continuationToken')
             if next_token == 'EndofResultSet':
-                return items
+                yield from pages
+                return
             if not next_token or next_token in seen:
                 raise ValidationError(_('ETA invoice pagination stopped before the final page.'))
             seen.add(next_token)
             token = next_token
             time.sleep(0.5)
+
+    def _split_search_window(self, start, end, limit_message):
+        if end - start <= timedelta(milliseconds=1):
+            raise ValidationError(limit_message)
+        midpoint = start + (end - start) / 2
+        midpoint = midpoint.replace(microsecond=(midpoint.microsecond // 1000) * 1000)
+        return (start, midpoint), (midpoint + timedelta(milliseconds=1), end)
+
+    def _split_receipt_pages(self, api_url, headers, start, end):
+        first, second = self._split_search_window(
+            start, end, _('ETA receipt result limit reached for a one-millisecond window.'))
+        yield from self._receipt_pages(api_url, headers, *first)
+        yield from self._receipt_pages(api_url, headers, *second)
 
     def _receipt_pages(self, api_url, headers, start, end):
         params = {
@@ -364,7 +392,8 @@ class EtaSync(models.Model):
             'DateTimeReceivedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
             'PageSize': ETA_RECEIPT_PAGE_SIZE,
         }
-        items = []
+        pages = []
+        count = 0
         total = None
         for page_no in range(1, ETA_MAX_RECEIPT_PAGE_NO + 1):
             if page_no > 1:
@@ -373,12 +402,15 @@ class EtaSync(models.Model):
                 payload = self._request(
                     'GET', f'{api_url}/api/v1/receipts/search',
                     headers=headers, params={**params, 'PageNo': page_no},
-                    allow_no_result=True,
+                    allow_no_result=True, allow_search_limit=True,
                 )
             except EtaSearchNoResult:
                 if page_no == 1:
-                    return []
+                    return
                 break
+            except EtaSearchLimit:
+                yield from self._split_receipt_pages(api_url, headers, start, end)
+                return
             page = payload.get('receipts')
             metadata = payload.get('metadata')
             if not isinstance(page, list) or not isinstance(metadata, dict):
@@ -390,29 +422,25 @@ class EtaSync(models.Model):
                 raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
             total = page_total
             if total >= ETA_MAX_RECEIPTS_PER_SEARCH:
-                break
+                yield from self._split_receipt_pages(api_url, headers, start, end)
+                return
             if not page:
                 break
-            items.extend(page)
-            if len(items) >= total:
+            count += len(page)
+            pages.append(page)
+            if count >= total:
                 break
         else:
             raise ValidationError(_('ETA receipt search exceeded the safe page limit.'))
 
         if total is None:
             raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
-        if total >= ETA_MAX_RECEIPTS_PER_SEARCH:
-            if end - start <= timedelta(milliseconds=1):
-                raise ValidationError(_('ETA receipt result limit reached for a one-millisecond window.'))
-            midpoint = start + (end - start) / 2
-            midpoint = midpoint.replace(microsecond=(midpoint.microsecond // 1000) * 1000)
-            return (self._receipt_pages(api_url, headers, start, midpoint) +
-                    self._receipt_pages(api_url, headers, midpoint + timedelta(milliseconds=1), end))
-        if len({item.get('uuid') for item in items}) != total:
+        if count != total:
             raise ValidationError(_('ETA receipt page count does not match the reported total.'))
-        return items
+        yield from pages
 
-    def _request(self, method, url, allow_package_limit=False, allow_no_result=False, **kwargs):
+    def _request(self, method, url, allow_package_limit=False, allow_no_result=False,
+                 allow_search_limit=False, **kwargs):
         for attempt in range(4):
             try:
                 response = requests.request(method, url, timeout=40, **kwargs)
@@ -426,24 +454,29 @@ class EtaSync(models.Model):
                 delay = int(retry_after) if retry_after.isdigit() else 2 ** attempt
                 time.sleep(max(delay, 1))
                 continue
-            if response.status_code == 400 and allow_package_limit:
+            if response.status_code == 400 and (allow_package_limit or allow_search_limit):
                 try:
                     error = response.json()
                 except ValueError:
                     error = {}
-                if isinstance(error, dict) and (
-                    error.get('error') == 'OperationExceedsLimit' or
-                    error.get('code') == 'OperationExceedsLimit'
-                ):
-                    return {'__limit__': True}
+                if isinstance(error, dict):
+                    detail = error.get('error')
+                    code = detail.get('code') if isinstance(detail, dict) else detail
+                    if (error.get('code') or code) == 'OperationExceedsLimit':
+                        if allow_search_limit:
+                            raise EtaSearchLimit()
+                        return {'__limit__': True}
             if response.status_code == 404 and allow_no_result:
                 try:
                     error = response.json()
                 except ValueError:
                     error = {}
-                if (isinstance(error, dict) and error.get('code') == 'NotFound'
-                        and error.get('target') == 'NoResult'):
-                    raise EtaSearchNoResult()
+                if isinstance(error, dict):
+                    detail = error.get('error')
+                    if isinstance(detail, dict):
+                        error = detail
+                    if error.get('code') == 'NotFound' and error.get('target') == 'NoResult':
+                        raise EtaSearchNoResult()
             try:
                 response.raise_for_status()
                 payload = response.json()
