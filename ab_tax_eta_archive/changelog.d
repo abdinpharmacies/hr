@@ -242,3 +242,14 @@ fix: align ETA receipt cron with issued-time search
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+
+287f1011 — yahyazakaria22 — 2026-11-02
+fix: prevent overlapping ETA receipt imports
+
+- Search receipts in five-minute windows so each cron step and manual retry handles less data.
+- Lock each daily retrieval to prevent overlapping cron and manual runs from importing the same receipts together.
+- Recover from a receipt UUID insert race by retrying the affected batch per receipt and updating records inserted by another run.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
