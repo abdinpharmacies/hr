@@ -6,7 +6,7 @@
         <field name="state">code</field>
         <field name="code">model._cron_sync()</field>
         <field name="interval_number">1</field>
-        <field name="interval_type">hours</field>
+        <field name="interval_type">minutes</field>
     </record>
     <record id="cron_eta_delivery" model="ir.cron">
         <field name="name">ETA: Send Four-Day Files</field>

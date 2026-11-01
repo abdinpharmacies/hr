@@ -18,6 +18,7 @@ ETA_MAX_RECEIPTS_PER_SEARCH = 3000
 ETA_RECEIPT_PAGE_SIZE = 10
 ETA_MAX_RECEIPT_PAGE_NO = ETA_MAX_RECEIPTS_PER_SEARCH // ETA_RECEIPT_PAGE_SIZE
 ETA_MAX_INVOICE_PAGES = 20
+ETA_RECEIPT_WINDOW = timedelta(minutes=10)
 
 
 class EtaSearchNoResult(Exception):
@@ -42,6 +43,8 @@ class EtaSync(models.Model):
     item_count = fields.Integer(readonly=True)
     last_run_at = fields.Datetime(readonly=True)
     error_message = fields.Text(readonly=True)
+    next_receipt_window_at = fields.Datetime(readonly=True)
+    receipt_issue_dates_json = fields.Text(readonly=True)
     package_ids = fields.One2many('ab_tax_eta_archive_package', 'sync_id', readonly=True)
 
     _unique_stream_day = models.Constraint(
@@ -52,11 +55,12 @@ class EtaSync(models.Model):
     def _cron_sync(self):
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
+        error_retry_before = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
         delivery_day = today - timedelta(days=4)
         for config in self.env['ab_tax_eta_archive_config'].search([('active', '=', True)]):
             if not config.start_date:
                 continue
-            for kind in ('invoice', 'receipt'):
+            for kind in ('receipt', 'invoice'):
                 for direction in ('sent', 'received'):
                     attempted = set()
                     for priority_day in (today - timedelta(days=1), delivery_day):
@@ -69,12 +73,17 @@ class EtaSync(models.Model):
                             'config_id': config.id, 'kind': kind,
                             'direction': direction, 'report_date': priority_day,
                         })
-                        if (priority_run.state != 'done' or
-                                (priority_day == delivery_day and
+                        if (priority_run.state == 'pending' or
+                                (priority_run.state == 'error' and
+                                 (not priority_run.last_run_at or
+                                  fields.Datetime.to_datetime(priority_run.last_run_at)
+                                  <= error_retry_before)) or
+                                (priority_run.state == 'done' and priority_day == delivery_day and
                                  (not priority_run.last_run_at or
                                   fields.Datetime.to_datetime(priority_run.last_run_at).replace(
                                       tzinfo=timezone.utc).astimezone(cairo).date() < today))):
-                            priority_run._attempt()
+                            if not self._cron_attempt(priority_run):
+                                return
                             attempted.add(priority_day)
                     stream_domain = [
                         ('config_id', '=', config.id), ('kind', '=', kind),
@@ -90,8 +99,24 @@ class EtaSync(models.Model):
                             key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
                             if run.last_run_at else datetime.min,
                         )
-                        oldest_package._attempt()
+                        if not self._cron_attempt(oldest_package):
+                            return
                         attempted.add(oldest_package.report_date)
+
+                    unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
+                        lambda run: run.report_date not in attempted and
+                        (run.state == 'pending' or not run.last_run_at or
+                         fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
+                    if unfinished:
+                        oldest_unfinished = min(
+                            unfinished,
+                            key=lambda run: (run.state != 'pending',
+                                             fields.Datetime.to_datetime(run.last_run_at)
+                                             if run.last_run_at else datetime.min),
+                        )
+                        if not self._cron_attempt(oldest_unfinished):
+                            return
+                        continue
 
                     attempted_days = set(self.search(stream_domain).mapped('report_date'))
                     day = config.start_date
@@ -102,18 +127,8 @@ class EtaSync(models.Model):
                             'config_id': config.id, 'kind': kind,
                             'direction': direction, 'report_date': day,
                         })
-                        run._attempt()
-                        continue
-
-                    unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
-                        lambda run: run.report_date not in attempted)
-                    if unfinished:
-                        oldest_unfinished = min(
-                            unfinished,
-                            key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
-                            if run.last_run_at else datetime.min,
-                        )
-                        oldest_unfinished._attempt()
+                        if not self._cron_attempt(run):
+                            return
                         continue
 
                     overlap_start = max(config.start_date, today - timedelta(days=14))
@@ -121,14 +136,26 @@ class EtaSync(models.Model):
                         ('state', '=', 'done'),
                         ('report_date', '>=', overlap_start),
                         ('report_date', '<', today - timedelta(days=1)),
-                    ]).filtered(lambda run: run.report_date not in attempted)
+                    ]).filtered(lambda run: run.report_date not in attempted and
+                                (not run.last_run_at or
+                                 fields.Datetime.to_datetime(run.last_run_at).replace(
+                                     tzinfo=timezone.utc).astimezone(cairo).date() < today))
                     if overlap_runs:
                         oldest_check = min(
                             overlap_runs,
                             key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
                             if run.last_run_at else datetime.min,
                         )
-                        oldest_check._attempt()
+                        if not self._cron_attempt(oldest_check):
+                            return
+        if self.env.context.get('cron_id'):
+            self.env['ir.cron']._commit_progress(remaining=0)
+
+    def _cron_attempt(self, run):
+        run._attempt()
+        if self.env.context.get('cron_id'):
+            return self.env['ir.cron']._commit_progress(1, remaining=1) > 0
+        return True
 
     def action_retry(self):
         for run in self:
@@ -200,19 +227,31 @@ class EtaSync(models.Model):
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
+        receipt_search = (self.kind == 'receipt' and
+                          self.report_date >= datetime.now(cairo).date() - timedelta(days=29))
         if self.kind == 'invoice':
             pages = self._invoice_pages(api_url, auth, start, end)
             model = self.env['ab_tax_eta_archive_invoice']
         else:
-            if self.report_date < datetime.now(cairo).date() - timedelta(days=29):
+            if not receipt_search:
                 pages = self._receipt_package_pages(api_url, auth, start, end)
             else:
-                pages = self._receipt_pages(api_url, auth, start, end)
+                window_start = start
+                if self.state != 'done' and self.next_receipt_window_at:
+                    window_start = fields.Datetime.to_datetime(
+                        self.next_receipt_window_at).replace(tzinfo=timezone.utc)
+                if window_start > end:
+                    window_start = start
+                window_end = min(window_start + ETA_RECEIPT_WINDOW -
+                                 timedelta(milliseconds=1), end)
+                pages = self._receipt_pages(api_url, auth, window_start, window_end)
             if pages is None:
                 return None
             model = self.env['ab_tax_eta_archive_receipt']
         seen_uuids = set()
-        issue_dates = set()
+        issue_dates = (set(fields.Date.to_date(value) for value in
+                           json.loads(self.receipt_issue_dates_json or '[]'))
+                       if self.kind == 'receipt' and self.state != 'done' else set())
         for page in pages:
             unique = {}
             for item in page:
@@ -240,6 +279,25 @@ class EtaSync(models.Model):
                     new_values.append(values)
             if new_values:
                 model.create(new_values)
+        if receipt_search:
+            document_count = model.search_count([
+                ('config_id', '=', config.id), ('direction', '=', self.direction),
+                ('received_at', '>=', start.replace(tzinfo=None)),
+                ('received_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
+            ])
+            next_window = window_end + timedelta(milliseconds=1)
+            if next_window <= end:
+                self.write({
+                    'next_receipt_window_at': next_window.replace(tzinfo=None),
+                    'receipt_issue_dates_json': json.dumps(
+                        sorted(fields.Date.to_string(value) for value in issue_dates)),
+                    'item_count': document_count,
+                })
+                return None
+            self.write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
+            return document_count, issue_dates
+        if self.kind == 'receipt' and self.next_receipt_window_at:
+            self.write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
         return len(seen_uuids), issue_dates
 
     def _receipt_package_pages(self, api_url, headers, start, end):
