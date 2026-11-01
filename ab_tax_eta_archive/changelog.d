@@ -206,3 +206,17 @@ fix: split oversized ETA receipt packages
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+
+c287b4ad — yahyazakaria22 — 2026-11-01
+fix: fetch ETA receipts through search
+
+- Fetch receipt days through resumable 10-minute Search Receipts windows instead of creating or downloading ETA receipt packages.
+- Keep existing package records for audit while removing package request and download calls.
+- Report historical receipt days as incomplete when ETA's recent-only search cannot verify full coverage.
+- Translate the historical completeness warning in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
