@@ -168,3 +168,18 @@ Files changed:
 
 - ab_tax_eta_archive/changelog.d
 - ab_tax_eta_archive/models/eta_sync.py
+
+05e5d146 — yahyazakaria22 — 2026-11-01
+fix: handle large ETA archive retrievals
+
+- Fix the dashboard summary query to group archived documents by issue day in Odoo 19.
+- Split oversized receipt and invoice searches into bounded date windows, including ETA limit responses.
+- Import verified pages in batches to avoid holding a full day of documents in memory.
+- Generate daily Excel files with streaming worksheets and a stable streaming digest.
+- Recognize nested ETA limit and no-result responses while preserving count and UUID checks.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_dashboard.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
