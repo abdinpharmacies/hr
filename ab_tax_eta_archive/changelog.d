@@ -253,3 +253,14 @@ fix: prevent overlapping ETA receipt imports
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+
+bf45df90 — yahyazakaria22 — 2026-11-02
+fix: list every configured ETA retrieval day
+
+- Create retrieval rows for every configured day and all four streams before processing, including a pending row for the current day.
+- Batch row creation so a long backfill can resume safely across cron calls.
+- Process the oldest eligible unfinished day after the priority dates instead of depending on list order.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
