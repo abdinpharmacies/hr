@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError
+from markupsafe import Markup
 from .ab_supplier_claim_cycle import (
     STATES, DECISIONS, DEPARTMENTS, TAX_CLASSIFICATION, SUPPLIER_SECTION,
 )
@@ -72,7 +73,30 @@ class SupplierClaimHistory(models.Model):
 
     @api.model
     def _append(self, vals_list):
-        return super(SupplierClaimHistory, self.sudo()).create(vals_list)
+        entries = super(SupplierClaimHistory, self.sudo()).create(vals_list)
+        entries._sync_claim_chatter()
+        return entries
+
+    def _sync_claim_chatter(self):
+        messages = self.env['mail.message'].sudo().search(
+            fields.Domain('supplier_claim_history_id', 'in', self.ids))
+        linked_ids = set(messages.mapped('supplier_claim_history_id').ids)
+        names = ('event', 'from_state', 'to_state', 'department', 'decision',
+                 'reason', 'notes', 'followup_date', 'review_round', 'document_revision')
+        for entry in self.filtered(lambda record: record.id not in linked_ids):
+            paragraphs = []
+            for name in names:
+                value = entry[name]
+                if value is False or value is None or value == '':
+                    continue
+                field = entry._fields[name]
+                if field.type == 'selection':
+                    value = dict(field._description_selection(entry.env)).get(value, value)
+                paragraphs.append(Markup('<p><strong>%s</strong>: %s</p>') % (
+                    field.get_description(entry.env)['string'], value))
+            message = entry.claim_id._message_log(
+                body=Markup('').join(paragraphs), author_id=entry.user_id.partner_id.id)
+            message._link_supplier_claim_history(entry)
 
     def write(self, vals):
         raise AccessError(_('Workflow history cannot be modified.'))

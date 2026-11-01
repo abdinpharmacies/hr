@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, ValidationError
+from markupsafe import Markup
 
 
 class SupplierClaimDocument(models.Model):
@@ -24,7 +25,24 @@ class SupplierClaimDocument(models.Model):
 
     @api.model
     def _append(self, vals):
-        return super(SupplierClaimDocument, self.sudo()).create(vals)
+        documents = super(SupplierClaimDocument, self.sudo()).create(vals)
+        documents._sync_claim_chatter()
+        return documents
+
+    def _sync_claim_chatter(self):
+        messages = self.env['mail.message'].sudo().search(
+            fields.Domain('supplier_claim_document_id', 'in', self.ids))
+        linked_ids = set(messages.mapped('supplier_claim_document_id').ids)
+        for document in self.filtered(lambda record: record.id not in linked_ids):
+            kind = dict(document._fields['kind']._description_selection(document.env))[document.kind]
+            reason = _('Document uploaded') if document.reason == 'Document uploaded' else document.reason
+            body = Markup('<p><strong>%s</strong>: %s</p><p>%s: %s</p><p>%s</p><p><a href="%s">%s</a></p>') % (
+                _('Document'), kind, _('Revision'), document.revision, reason,
+                '/web/content/ab_supplier_claim_document/%s/content?download=true' % document.id,
+                document.filename or _('Attachment'))
+            message = document.claim_id._message_log(
+                subject=_('Document recorded'), body=body, author_id=document.user_id.partner_id.id)
+            message._link_supplier_claim_document(document)
 
     def write(self, vals):
         raise AccessError(_('Document history cannot be modified.'))

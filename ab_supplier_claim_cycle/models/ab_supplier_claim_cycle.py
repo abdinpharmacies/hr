@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import math
+from copy import deepcopy
 from decimal import Decimal, ROUND_HALF_UP
 from datetime import timedelta
 
@@ -38,7 +39,7 @@ GROUP_PREFIX = 'ab_supplier_claim_cycle.supplier_claim_group_'
 class SupplierClaimCycle(models.Model):
     _name = 'ab_supplier_claim_cycle'
     _description = 'Supplier Claim'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'supplier_id'
     _rec_names_search = ['claim_reference', 'supplier_id']
     _order = 'id desc'
@@ -129,6 +130,25 @@ class SupplierClaimCycle(models.Model):
             return True
         return (not self.env.user.has_group(GROUP_PREFIX + 'reviewer')
                 and self.env.user.has_group(GROUP_PREFIX + role))
+
+    @api.model
+    def _get_view_cache_key(self, view_id=None, view_type='form', **options):
+        return super()._get_view_cache_key(view_id, view_type, **options) + (
+            tuple(self._role_allowed(department) for department in DEPARTMENTS),)
+
+    @api.model
+    def _get_view(self, view_id=None, view_type='form', **options):
+        arch, view = super()._get_view(view_id, view_type, **options)
+        if view_type == 'form':
+            arch = deepcopy(arch)
+            for department in DEPARTMENTS:
+                if not self._role_allowed(department):
+                    for node in arch.xpath("//group[@name='%s_review']" % department):
+                        node.getparent().remove(node)
+            if not any(self._role_allowed(department) for department in DEPARTMENTS):
+                for node in arch.xpath("//page[@name='claim_reviews']"):
+                    node.getparent().remove(node)
+        return arch, view
 
     def _department_actionable(self, department):
         self.ensure_one()
@@ -477,6 +497,18 @@ class SupplierClaimCycle(models.Model):
                         claim._snapshot_document(kind, reason)
         if 'claim_reference' in vals:
             vals = {**vals, 'claim_reference': self._normalize_claim_reference(vals['claim_reference'])}
+        audited_fields = (self._entry_fields() - {'secretarial_notes'}) | {'tax_discount_decision'} | {
+            f'{department}_{suffix}' for department in DEPARTMENTS for suffix in ('notes', 'followup_date')}
+        audit_names = set(vals) & audited_fields
+        if draft_supplier_changes:
+            audit_names |= set(supplier_defaults.get(vals['supplier_id'], {})) & audited_fields
+        if 'secretarial_notes' in vals and not (vals['secretarial_notes'] or '').strip():
+            audit_names.add('secretarial_notes')
+        if not (self.env.context.get('tracking_disable') or self.env.context.get('mail_notrack')):
+            audit_names = {name for name in audit_names if not getattr(self._fields[name], 'tracking', False)}
+        previous_values = {
+            claim.id: {name: claim.with_context(bin_size=False)[name] for name in audit_names}
+            for claim in self}
         for claim in self:
             if vals.get('payment_request_attachment') and claim.invalidated_payment_request_digest:
                 digest = hashlib.sha256(base64.b64decode(vals['payment_request_attachment'])).hexdigest()
@@ -501,9 +533,36 @@ class SupplierClaimCycle(models.Model):
             if claim.id in review_changes:
                 old_state, reason, digest = review_changes[claim.id]
                 claim._restart_changed_claim_reviews(old_state, reason, digest)
+            claim._log_input_changes(previous_values[claim.id], bool(claim.id in review_changes))
         if 'secretarial_notes' in vals:
             self._record_secretarial_notes()
         return result
+
+    def _log_input_changes(self, previous_values, review_restarted=False):
+        self.ensure_one()
+        changes = []
+        for name in sorted(previous_values):
+            old_value = previous_values[name]
+            if review_restarted and name in {'supplier_id', 'payment_nature', 'type_of_invoice'}:
+                continue
+            field = self._fields[name]
+            new_value = self.with_context(bin_size=False)[name]
+            if field.type == 'binary':
+                if base64.b64decode(old_value or b'') != base64.b64decode(new_value or b''):
+                    changes.append('%s: %s' % (field.get_description(self.env)['string'], _('File updated')))
+                continue
+            if old_value == new_value:
+                continue
+            if field.type == 'many2one':
+                old_value, new_value = old_value.display_name, new_value.display_name
+            elif field.type == 'selection':
+                labels = dict(field._description_selection(self.env))
+                old_value, new_value = labels.get(old_value, old_value), labels.get(new_value, new_value)
+            old_label = _('Not set') if old_value is False or old_value is None or old_value == '' else old_value
+            new_label = _('Not set') if new_value is False or new_value is None or new_value == '' else new_value
+            changes.append('%s: %s → %s' % (field.get_description(self.env)['string'], old_label, new_label))
+        if changes:
+            self._log('claim_updated', reason=_('Claim fields updated: %(changes)s', changes='; '.join(changes)))
 
     def _restart_changed_claim_reviews(self, old_state, reason, invalidated_digest):
         self.ensure_one()

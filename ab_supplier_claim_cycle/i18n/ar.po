@@ -1709,6 +1709,7 @@ msgstr "يُطبق"
 msgid "Archive cost centers instead of deleting them."
 msgstr "يرجى أرشفة مراكز التكلفة بدلاً من حذفها."
 
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__attachment
 msgid "Attachment"
@@ -1880,6 +1881,7 @@ msgstr ""
 msgid "Do Not Apply"
 msgstr "لا يُطبق"
 
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__document_ids
 msgid "Document"
@@ -1908,6 +1910,7 @@ msgstr "لا يمكن تعديل سجل المستندات."
 msgid "Document_Replaced"
 msgstr "استبدال المستند"
 
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_parallel_workflow
 msgid "Documents"
@@ -2110,6 +2113,7 @@ msgstr "المطالبات المعادة"
 msgid "Returned Payment Requests"
 msgstr "طلبات الدفع المعادة"
 
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_document__revision
 msgid "Revision"
@@ -2539,3 +2543,63 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__can_edit_open_claim_fields
 msgid "Can Edit Open Claim Fields"
 msgstr "يمكن تعديل بيانات المطالبة قبل الإغلاق"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+msgid "Upload / Change Reason"
+msgstr "سبب الرفع أو التعديل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+msgid "Uploaded By"
+msgstr "رفعه"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
+msgid "Upload Date"
+msgstr "تاريخ ووقت الرفع"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/claim_chatter.py:0
+msgid "Claim audit messages are managed by the workflow."
+msgstr "تُدار رسائل سجل المطالبة من خلال إجراءات سير العمل."
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_mail_message__supplier_claim_history_unique
+msgid "Each claim history entry can be linked to only one chatter message."
+msgstr "لا يمكن ربط إدخال سجل المطالبة بأكثر من رسالة واحدة في المحادثات."
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/migrations/19.0.5.1.0/post-migrate.py:0
+msgid "Legacy Secretarial Note"
+msgstr "ملاحظة سكرتارية سابقة"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "Document recorded"
+msgstr "تسجيل مستند"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
+msgid "Document uploaded"
+msgstr "تم رفع المستند"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "File updated"
+msgstr "تم تحديث الملف"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Not set"
+msgstr "غير محدد"
+
+#. module: ab_supplier_claim_cycle
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Claim fields updated: %(changes)s"
+msgstr "تم تعديل بيانات المطالبة: %(changes)s"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_mail_message__supplier_claim_document_unique
+msgid "Each claim document can be linked to only one chatter message."
+msgstr "لا يمكن ربط المستند بأكثر من رسالة واحدة في سجل المطالبة."

@@ -227,6 +227,221 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(submitted.tax_decision, 'pending')
         self.assertFalse(submitted.payment_request_attachment)
 
+
+    def test_documents_tab_and_standard_chatter_layout(self):
+        from lxml import etree
+        arch = etree.fromstring(self.Claim.get_view(view_type='form')['arch'])
+        self.assertEqual(len(arch.xpath('//chatter')), 1)
+        self.assertFalse(arch.xpath('//group[@name="claim_document_audit"]'))
+        self.assertFalse(arch.xpath('//page[@name="claim_notes" or @name="claim_history"]'))
+        self.assertFalse(arch.xpath('//field[@name="note_history_ids" or @name="history_ids" or @name="secretarial_notes"]'))
+        self.assertEqual(len(arch.xpath('//field[@name="document_ids"]')), 1)
+        documents = arch.xpath('//page[@name="claim_documents"]/field[@name="document_ids"]')[0]
+        self.assertEqual(documents.get('readonly'), 'True')
+        self.assertEqual({node.get('name') for node in documents.xpath('./list/field')},
+                         {'kind', 'revision', 'filename', 'reason', 'user_id', 'occurred_at', 'content'})
+        self.assertEqual(len(arch.xpath('//field[@name="company_id"]')), 1)
+        for name in ('document_revision', 'payment_request_revision', 'bank_approval_revision',
+                     'migration_gate_exception', 'review_round'):
+            self.assertFalse(arch.xpath('//sheet/field[@name="%s"] | //sheet/group/field[@name="%s"]' % (name, name)))
+        self.assertIn('activity_ids', self.Claim._fields)
+
+    def test_review_view_is_filtered_by_server_role_and_active_stage(self):
+        from lxml import etree
+        departments = ('inventory', 'purchasing', 'tax', 'supplier_accounts', 'bank_accounts')
+        for role in self.roles:
+            model = self.Claim.with_user(self.users[role])
+            arch = etree.fromstring(model.get_view(view_type='form')['arch'])
+            visible_roles = departments if role == 'admin' else (role,) if role in departments else ()
+            groups = arch.xpath('//page[@name="claim_reviews"]//group[@name="department_reviews"]/group')
+            self.assertEqual({node.get('name') for node in groups},
+                             {department + '_review' for department in visible_roles})
+            for node in groups:
+                department = node.get('name').removesuffix('_review')
+                self.assertEqual(node.get('invisible'), 'not can_edit_' + department)
+        claim = self.claim()
+        claim.action_submit()
+        for role in self.roles:
+            record = claim.with_user(self.users[role])
+            for department in departments:
+                expected = role in ('admin', department) and department in ('inventory', 'purchasing')
+                self.assertEqual(record['can_edit_' + department], expected)
+        self.decide(claim, 'inventory')
+        self.assertFalse(claim.with_user(self.users['inventory']).can_edit_current_review)
+        self.decide(claim, 'purchasing')
+        for role in self.roles:
+            record = claim.with_user(self.users[role])
+            for department in departments:
+                expected = role in ('admin', department) and department in ('tax', 'supplier_accounts')
+                self.assertEqual(record['can_edit_' + department], expected)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['reviewer']).write({'tax_notes': 'Unauthorized'})
+
+    def test_workflow_history_is_mirrored_once_without_notifications(self):
+        claim = self.claim(secretarial_notes='<script>old note</script>')
+        history = claim.history_ids
+        message = self.env['mail.message'].search([('supplier_claim_history_id', 'in', history.ids)])
+        self.assertEqual(len(message), 1)
+        self.assertEqual(message.author_id, self.users['user'].partner_id)
+        self.assertEqual(message.date, history.occurred_at)
+        self.assertTrue(message.is_internal)
+        self.assertIn('&lt;script&gt;', message.body)
+        self.assertNotIn('<script>', message.body)
+        mail_count = self.env['mail.mail'].search_count([])
+        notification_count = self.env['mail.notification'].search_count([])
+        claim.action_submit()
+        self.decide(claim, 'inventory', 'deferred', reason='Wait', followup_date=fields.Date.today())
+        histories = claim.history_ids
+        original = histories.read(['event', 'reason', 'followup_date', 'occurred_at', 'user_id'])
+        histories._sync_claim_chatter()
+        histories._sync_claim_chatter()
+        messages = self.env['mail.message'].search([('supplier_claim_history_id', 'in', histories.ids)])
+        self.assertEqual(len(messages), len(histories))
+        self.assertEqual(histories.read(['event', 'reason', 'followup_date', 'occurred_at', 'user_id']), original)
+        self.assertEqual(self.env['mail.mail'].search_count([]), mail_count)
+        self.assertEqual(self.env['mail.notification'].search_count([]), notification_count)
+        for values in ({'body': 'Changed'}, {'supplier_claim_history_id': histories[0].id}):
+            with self.assertRaises(AccessError):
+                message.write(values)
+        with self.assertRaises(AccessError):
+            message.unlink()
+        with self.assertRaises(AccessError):
+            self.env['mail.message'].create({'model': claim._name, 'res_id': claim.id,
+                                           'supplier_claim_history_id': histories[0].id})
+
+    def test_chatter_backfill_preserves_legacy_history_and_is_idempotent(self):
+        claim = self.claim()
+        claim._workflow_write({'secretarial_notes': 'Legacy note without an audit entry'})
+        history_model = self.env['ab_supplier_claim_cycle.history']
+        with patch.object(type(history_model), '_sync_claim_chatter', return_value=None):
+            claim.action_submit()
+            self.decide(claim, 'inventory', 'deferred', reason='Legacy waiting', followup_date=fields.Date.today())
+        history = claim.history_ids
+        original = history.read(['event', 'reason', 'followup_date', 'occurred_at', 'user_id'])
+        self.assertFalse(self.env['mail.message'].search([('supplier_claim_history_id', 'in', history.ids)]))
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.1.0/post-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_chatter_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.migrate(self.env.cr, '19.0.5.0.0')
+        module.migrate(self.env.cr, '19.0.5.0.0')
+        self.assertEqual(history.read(['event', 'reason', 'followup_date', 'occurred_at', 'user_id']), original)
+        messages = self.env['mail.message'].search([('supplier_claim_history_id', 'in', history.ids)])
+        self.assertEqual(len(messages), len(history))
+        for message in messages:
+            self.assertEqual(message.author_id, message.supplier_claim_history_id.user_id.partner_id)
+            self.assertEqual(message.date, message.supplier_claim_history_id.occurred_at)
+        legacy_messages = self.env['mail.message'].search([
+            ('model', '=', claim._name), ('res_id', '=', claim.id), ('subject', '=', 'Legacy Secretarial Note')])
+        self.assertEqual(len(legacy_messages), 1)
+        self.assertIn('Legacy note without an audit entry', legacy_messages.body)
+        self.assertEqual(claim.secretarial_notes, 'Legacy note without an audit entry')
+
+    def test_chatter_respects_existing_claim_permissions(self):
+        claim = self.claim()
+        claim.action_submit()
+        message = claim.message_post(body='Internal discussion', subtype_xmlid='mail.mt_note')
+        self.assertEqual(message.res_id, claim.id)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['reviewer']).message_post(body='Not allowed', subtype_xmlid='mail.mt_note')
+        activity = claim.activity_schedule('mail.mail_activity_data_todo', summary='Follow up', user_id=self.users['user'].id)
+        self.assertEqual(activity.res_id, claim.id)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.users['reviewer']).activity_schedule(
+                'mail.mail_activity_data_todo', summary='Not allowed', user_id=self.users['reviewer'].id)
+
+
+    def test_secretarial_and_admin_field_upload_and_workflow_logs(self):
+        for role in ('user', 'admin'):
+            actor = self.users[role]
+            claim = self.Claim.with_user(actor).with_context(tracking_disable=True, mail_notrack=True).create({
+                'supplier_id': self.supplier.id, 'num_of_invoice': 2, 'area': 'north', 'claim_amount': 100,
+                'type_of_invoice': 'original', 'payment_nature': 'cash', 'tax_classification': 'non_tax_payment'})
+            claim.write({'num_of_invoice': 3, 'area': 'south', 'claim_amount': 150})
+            entry = claim.history_ids[0]
+            self.assertEqual(entry.event, 'claim_updated')
+            self.assertIn('100.0 → 150.0', entry.reason)
+            self.assertIn('North → South', entry.reason)
+            self.assertEqual(entry.user_id, actor)
+            claim.action_submit()
+            self.decide(claim, 'supplier_accounts')
+            filename = role + '-request.pdf'
+            claim.write({'payment_request_attachment': self.document, 'payment_request_filename': filename})
+            document = claim.document_ids[0]
+            message = self.env['mail.message'].search([('supplier_claim_document_id', '=', document.id)])
+            self.assertEqual(len(message), 1)
+            self.assertEqual(message.author_id, actor.partner_id)
+            self.assertEqual(message.date, document.occurred_at)
+            self.assertIn(filename, message.body)
+            self.assertFalse(message.attachment_ids)
+            activity = claim.activity_schedule(
+                'mail.mail_activity_data_todo', summary='Role follow-up', user_id=actor.id)
+            activity.action_feedback(feedback='Role follow-up completed')
+            activity_message = self.env['mail.message'].search([
+                ('model', '=', claim._name), ('res_id', '=', claim.id), ('body', 'ilike', 'Role follow-up completed')])
+            self.assertEqual(len(activity_message), 1)
+            self.assertEqual(activity_message.author_id, actor.partner_id)
+            claim.action_prepare_payment()
+            claim.action_close()
+            expected_ids = self.env['mail.message'].search([
+                ('model', '=', claim._name), ('res_id', '=', claim.id)]).ids
+            for reader in self.roles:
+                readable = self.env['mail.message'].with_user(self.users[reader]).search([
+                    ('model', '=', claim._name), ('res_id', '=', claim.id)])
+                self.assertEqual(set(readable.ids), set(expected_ids))
+            count = len(claim.history_ids)
+            with self.assertRaises(UserError):
+                claim.write({'num_of_invoice': 9})
+            self.assertEqual(len(claim.history_ids), count)
+
+    def test_upload_chatter_covers_all_departments_and_preserves_document_history(self):
+        claim = self.claim('check')
+        self.bank(claim)
+        claim.with_user(self.users['bank_accounts']).write({
+            'bank_cheque_attachment': self.document, 'bank_cheque_filename': 'bank.pdf'})
+        documents = claim.document_ids
+        original = documents.read(['content', 'filename', 'revision', 'user_id', 'occurred_at'])
+        documents._sync_claim_chatter()
+        messages = self.env['mail.message'].search([('supplier_claim_document_id', 'in', documents.ids)])
+        self.assertEqual(len(messages), len(documents))
+        self.assertEqual(documents.read(['content', 'filename', 'revision', 'user_id', 'occurred_at']), original)
+        self.assertEqual(set(messages.mapped('supplier_claim_document_id.kind')),
+                         {'supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque'})
+        for message in messages:
+            document = message.supplier_claim_document_id
+            self.assertEqual(message.author_id, document.user_id.partner_id)
+            self.assertEqual(message.date, document.occurred_at)
+            self.assertTrue(message.is_internal)
+            self.assertFalse(message.attachment_ids)
+            with self.assertRaises(AccessError):
+                message.write({'body': 'Changed'})
+            with self.assertRaises(AccessError):
+                message.unlink()
+        with self.assertRaises(AccessError):
+            self.env['mail.message'].create({'supplier_claim_document_id': documents[0].id})
+
+    def test_upload_chatter_backfill_is_idempotent_and_does_not_notify(self):
+        claim = self.claim()
+        self.prepare(claim)
+        model = self.env['ab_supplier_claim_document']
+        with patch.object(type(model), '_sync_claim_chatter', return_value=None):
+            claim.write({'payment_request_attachment': self.document, 'payment_request_filename': 'legacy.pdf'})
+        document = claim.document_ids.filtered(lambda item: item.kind == 'payment_request')
+        original = document.read(['content', 'filename', 'revision', 'user_id', 'occurred_at'])
+        mail_count = self.env['mail.mail'].search_count([])
+        notifications = self.env['mail.notification'].search_count([])
+        path = Path(__file__).parents[1] / 'migrations/19.0.5.2.0/post-migrate.py'
+        spec = importlib.util.spec_from_file_location('claim_upload_chatter_migration', path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        module.migrate(self.env.cr, '19.0.5.1.0')
+        module.migrate(self.env.cr, '19.0.5.1.0')
+        messages = self.env['mail.message'].search([('supplier_claim_document_id', '=', document.id)])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(document.read(['content', 'filename', 'revision', 'user_id', 'occurred_at']), original)
+        self.assertEqual(self.env['mail.mail'].search_count([]), mail_count)
+        self.assertEqual(self.env['mail.notification'].search_count([]), notifications)
+
     def test_global_reads_and_draft_isolation(self):
         claim = self.claim()
         for role in self.roles:
@@ -517,7 +732,7 @@ class TestSupplierClaimCycle(TransactionCase):
                 model = self.Claim.with_user(self.users[role]).with_context(lang=language)
                 arch = etree.fromstring(model.get_view(view_id=self.env.ref('ab_supplier_claim_cycle.invoice_view_form').id, view_type='form')['arch'])
                 self.assertEqual(arch.xpath('//button[@name="action_prepare_payment"]')[0].get('string'), expected)
-                self.assertTrue(arch.xpath('//field[@name="tax_review_attachment"]'))
+                self.assertEqual(bool(arch.xpath('//field[@name="tax_review_attachment"]')), role in ('tax', 'admin'))
                 self.assertFalse(arch.xpath('//*[@attrs or @states]'))
         selection = self.Claim.with_context(lang='ar_001').fields_get(['tax_decision'])['tax_decision']['selection']
         self.assertEqual(dict(selection)['approved'], 'تمت الموافقة')
@@ -621,7 +836,9 @@ class TestSupplierClaimCycle(TransactionCase):
         for name in ('operational_parallel_timeline', 'financial_parallel_timeline'):
             self.assertTrue(arch.xpath('//div[@name="%s"]' % name))
         self.assertTrue(arch.xpath('//page[@name="claim_exceptions"]/field[@name="exception_history_ids"]'))
-        self.assertTrue(arch.xpath('//field[@name="note_history_ids"]'))
+        self.assertFalse(arch.xpath('//field[@name="note_history_ids"]'))
+        self.assertFalse(arch.xpath('//page[@name="claim_history"]'))
+        self.assertTrue(arch.xpath('//chatter'))
         self.assertTrue(arch.xpath('//group[@name="payment_preparation"]'))
         listing = etree.fromstring(self.Claim.get_view(view_id=self.env.ref(
             'ab_supplier_claim_cycle.invoice_view_tree').id, view_type='list')['arch'])
