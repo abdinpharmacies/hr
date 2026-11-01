@@ -738,3 +738,8 @@ msgstr "سجل"
 #. module: ab_tax_eta_archive
 msgid "The dashboard could not load."
 msgstr "تعذر تحميل لوحة المعلومات."
+
+#. module: ab_tax_eta_archive
+#: model:ab_tax_eta_archive_sync,code:ab_tax_eta_archive.models.eta_sync
+msgid "ETA receipt search cannot verify a complete historical day. Previously fetched receipts were saved, but this day remains incomplete."
+msgstr "لا يمكن لبحث إيصالات مصلحة الضرائب التحقق من اكتمال يوم قديم. تم حفظ الإيصالات التي جُلبت سابقًا، لكن هذا اليوم لا يزال غير مكتمل."
