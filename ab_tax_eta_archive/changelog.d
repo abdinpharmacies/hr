@@ -220,3 +220,12 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
+
+158b6979 — yahyazakaria22 — 2026-11-02
+fix: make ETA dashboard scroll within action
+
+- Constrain the OWL dashboard to the available action height so its existing overflow container scrolls through all sections.
+
+Files changed:
+
+- ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
