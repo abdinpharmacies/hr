@@ -94,11 +94,47 @@ class EtaExport(models.Model):
 
     @api.model
     def _ensure_files(self, config, report_date):
+        if not self._day_complete(config, report_date):
+            return
         for category, _label, kind, direction in CATEGORIES:
             export = self.search([('config_id', '=', config.id),
                                   ('report_date', '=', report_date),
                                   ('category', '=', category)], order='revision desc', limit=1)
             self._prepare(config, report_date, category, kind, direction, export=export)
+
+    @api.model
+    def _day_complete(self, config, report_date):
+        return self.env['ab_tax_eta_archive_sync'].search_count([
+            ('config_id', '=', config.id), ('report_date', '=', report_date),
+            ('state', '=', 'done'),
+        ]) == 4
+
+    def action_send_telegram(self):
+        self.check_access('write')
+        unsent = self.filtered(lambda export: not export.telegram_sent_at)
+        for export in unsent:
+            if not self._day_complete(export.config_id, export.report_date):
+                raise UserError(_(
+                    'All four ETA retrievals for this day must finish before sending its file.'))
+        for export in unsent:
+            export = export.try_lock_for_update().filtered_domain([
+                ('telegram_sent_at', '=', False),
+            ])
+            if not export:
+                continue
+            latest = self.search([
+                ('config_id', '=', export.config_id.id),
+                ('report_date', '=', export.report_date),
+                ('category', '=', export.category),
+            ], order='revision desc', limit=1)
+            if latest != export:
+                continue
+            category, _label, kind, direction = next(
+                row for row in CATEGORIES if row[0] == export.category)
+            current = self._prepare(export.config_id, export.report_date,
+                                    category, kind, direction, export=export)
+            current._send_telegram()
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
     def _prepare(self, config, report_date, category, kind, direction, export=None):
@@ -180,6 +216,10 @@ class EtaExport(models.Model):
 
     def _send_telegram(self, checked_through=None):
         self.ensure_one()
+        locked = self.try_lock_for_update().filtered_domain([('telegram_sent_at', '=', False)])
+        if not locked:
+            return
+        self = locked
         config = self.config_id
         if not config.telegram_bot_token or not config.telegram_chat_id:
             self.telegram_error = _('Configure the Telegram bot token and group chat ID.')
