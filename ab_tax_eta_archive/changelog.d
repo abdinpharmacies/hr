@@ -229,3 +229,16 @@ fix: make ETA dashboard scroll within action
 Files changed:
 
 - ab_tax_eta_archive/static/src/scss/eta_dashboard.scss
+
+ae427ccf — yahyazakaria22 — 2026-11-02
+fix: align ETA receipt cron with issued-time search
+
+- Search receipt issue-time windows as the working VB.NET harvester does, with stable issue-time sorting and daily counts.
+- Restart legacy received-time checkpoints from the start of their day while preserving already imported receipt records.
+- Reuse the ETA token across receipt windows in one cron run and accept documented or nested receipt search response layouts.
+- Keep successful retrievals committed when daily Excel generation fails, and log the export error for repair.
+- Recognize ETA's No data found response without treating unrelated errors as empty results.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
