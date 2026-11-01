@@ -152,10 +152,26 @@ class EtaSync(models.Model):
             self.env['ir.cron']._commit_progress(remaining=0)
 
     def _cron_attempt(self, run):
-        run._attempt()
-        if self.env.context.get('cron_id'):
-            return self.env['ir.cron']._commit_progress(1, remaining=1) > 0
-        return True
+        in_cron = bool(self.env.context.get('cron_id'))
+        while True:
+            previous_window = run.next_receipt_window_at
+            previous_packages = [(part.id, part.state, part.package_id)
+                                 for part in run.package_ids] if run.kind == 'receipt' else []
+            run._attempt()
+            if not in_cron:
+                return True
+            if not self.env['ir.cron']._commit_progress(1, remaining=1):
+                return False
+            if run.kind != 'receipt' or run.state != 'pending':
+                return True
+            if (run.next_receipt_window_at and
+                    run.next_receipt_window_at != previous_window):
+                continue
+            pending = run.package_ids.filtered(lambda part: part.state == 'pending').sorted('start_at')[:1]
+            current_packages = [(part.id, part.state, part.package_id) for part in run.package_ids]
+            if pending and not pending.package_id and current_packages != previous_packages:
+                continue
+            return True
 
     def action_retry(self):
         for run in self:
@@ -518,9 +534,16 @@ class EtaSync(models.Model):
                 except ValueError:
                     error = {}
                 if isinstance(error, dict):
-                    detail = error.get('error')
-                    code = detail.get('code') if isinstance(detail, dict) else detail
-                    if (error.get('code') or code) == 'OperationExceedsLimit':
+                    error_detail = error.get('error')
+                    detail = error_detail if isinstance(error_detail, dict) else {}
+                    code = (error.get('code') or detail.get('code') or
+                            (error_detail if isinstance(error_detail, str) else None))
+                    message = str(error.get('message') or detail.get('message') or '').lower()
+                    oversized_query = (code == 'ValidationError' and
+                                       'query will return approximately' in message and
+                                       'should be under' in message and
+                                       'documents' in message)
+                    if code == 'OperationExceedsLimit' or oversized_query:
                         if allow_search_limit:
                             raise EtaSearchLimit()
                         return {'__limit__': True}
