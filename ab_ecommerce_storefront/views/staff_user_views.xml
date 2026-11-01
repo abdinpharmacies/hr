@@ -1,0 +1,26 @@
+<odoo>
+    <record id="view_staff_user_wizard_form" model="ir.ui.view">
+        <field name="name">ab.ecommerce.staff.user.wizard.form</field>
+        <field name="model">ab_ecommerce_staff_user_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Staff User">
+                <group>
+                    <field name="name"/>
+                    <field name="login"/>
+                    <field name="email"/>
+                </group>
+                <footer>
+                    <button name="action_create_user" type="object" string="Create Staff User" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_staff_user_wizard" model="ir.actions.act_window">
+        <field name="name">Add Staff User</field>
+        <field name="res_model">ab_ecommerce_staff_user_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_staff_user_wizard" name="Add Staff User" parent="website.menu_website_configuration" action="action_staff_user_wizard" sequence="90" groups="website.group_website_designer"/>
+</odoo>
