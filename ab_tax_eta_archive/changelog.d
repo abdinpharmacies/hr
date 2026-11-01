@@ -196,3 +196,13 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/data/cron.xml
+
+0744699d — yahyazakaria22 — 2026-11-01
+fix: split oversized ETA receipt packages
+
+- Split oversized receipt package requests when ETA returns its observed HTTP 400 ValidationError with a document-count limit.
+- Continue fetching the next receipt interval or package window in the same cron run while committing each completed step.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
