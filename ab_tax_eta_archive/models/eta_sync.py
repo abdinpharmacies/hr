@@ -139,9 +139,10 @@ class EtaSync(models.Model):
 
     def _cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
+        auth_cache = {}
         while True:
             previous_window = run.next_receipt_window_at
-            run._attempt()
+            run._attempt(auth_cache=auth_cache)
             if not in_cron:
                 return True
             if not self.env['ir.cron']._commit_progress(1, remaining=1):
@@ -157,11 +158,11 @@ class EtaSync(models.Model):
         for run in self:
             run._attempt()
 
-    def _attempt(self):
+    def _attempt(self, auth_cache=None):
         self.ensure_one()
         try:
             with self.env.cr.savepoint():
-                result = self._retrieve()
+                result = self._retrieve(auth_cache=auth_cache)
         except (requests.RequestException, UserError, ValidationError, ValueError, KeyError) as exc:
             _logger.warning('ETA retrieval failed for %s %s %s: %s',
                             self.report_date, self.kind, self.direction, exc)
@@ -177,15 +178,23 @@ class EtaSync(models.Model):
                     'last_run_at': fields.Datetime.now(), 'error_message': False})
         export_model = self.env['ab_tax_eta_archive_export']
         for issue_date in sorted(issue_dates):
-            export_model._ensure_files(self.config_id, issue_date)
+            try:
+                with self.env.cr.savepoint():
+                    export_model._ensure_files(self.config_id, issue_date)
+            except Exception:
+                _logger.exception('ETA daily file generation failed for issue date %s', issue_date)
         completed = self.search_count([
             ('config_id', '=', self.config_id.id), ('report_date', '=', self.report_date),
             ('state', '=', 'done'),
         ])
         if completed == 4 and self.report_date not in issue_dates:
-            export_model._ensure_files(self.config_id, self.report_date)
+            try:
+                with self.env.cr.savepoint():
+                    export_model._ensure_files(self.config_id, self.report_date)
+            except Exception:
+                _logger.exception('ETA daily file generation failed for issue date %s', self.report_date)
 
-    def _retrieve(self):
+    def _retrieve(self, auth_cache=None):
         self.ensure_one()
         config = self.config_id
         receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
@@ -213,23 +222,31 @@ class EtaSync(models.Model):
             token_options['auth'] = (client_id, client_secret)
         else:
             token_data.update({'client_id': client_id, 'client_secret': client_secret})
-        token_response = self._request('POST', f'{identity_url}/connect/token',
-                                       data=token_data, **token_options)
-        token = token_response.get('access_token')
+        token = auth_cache.get('access_token') if auth_cache is not None else None
+        if not token:
+            token_response = self._request('POST', f'{identity_url}/connect/token',
+                                           data=token_data, **token_options)
+            token = token_response.get('access_token')
         if not token:
             raise ValidationError(_('ETA authentication returned no access token.'))
+        if auth_cache is not None:
+            auth_cache['access_token'] = token
         auth = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
         cairo = pytz.timezone('Africa/Cairo')
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
         receipt_search = self.kind == 'receipt'
+        receipt_checkpoint = (json.loads(self.receipt_issue_dates_json or '[]')
+                              if receipt_search and self.state != 'done' else [])
         if self.kind == 'invoice':
             pages = self._invoice_pages(api_url, auth, start, end)
             model = self.env['ab_tax_eta_archive_invoice']
         else:
             window_start = start
-            if self.state != 'done' and self.next_receipt_window_at:
+            if (self.state != 'done' and self.next_receipt_window_at and
+                    isinstance(receipt_checkpoint, dict) and
+                    receipt_checkpoint.get('basis') == 'issued'):
                 window_start = fields.Datetime.to_datetime(
                     self.next_receipt_window_at).replace(tzinfo=timezone.utc)
             if window_start > end:
@@ -239,14 +256,15 @@ class EtaSync(models.Model):
             pages = self._receipt_pages(api_url, auth, window_start, window_end)
             model = self.env['ab_tax_eta_archive_receipt']
         seen_uuids = set()
-        issue_dates = (set(fields.Date.to_date(value) for value in
-                           json.loads(self.receipt_issue_dates_json or '[]'))
-                       if self.kind == 'receipt' and self.state != 'done' else set())
+        saved_issue_dates = (receipt_checkpoint.get('issue_dates', [])
+                             if isinstance(receipt_checkpoint, dict) else receipt_checkpoint)
+        issue_dates = set(fields.Date.to_date(value) for value in saved_issue_dates)
         for page in pages:
             unique = {}
             for item in page:
                 values = model._eta_values(item, self.direction, config)
-                if eta_report_date(item['dateTimeReceived']) != self.report_date:
+                date_field = 'dateTimeIssued' if self.kind == 'receipt' else 'dateTimeReceived'
+                if eta_report_date(item[date_field]) != self.report_date:
                     raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
                 uuid = values['uuid']
                 if uuid in seen_uuids:
@@ -272,15 +290,17 @@ class EtaSync(models.Model):
         if receipt_search:
             document_count = model.search_count([
                 ('config_id', '=', config.id), ('direction', '=', self.direction),
-                ('received_at', '>=', start.replace(tzinfo=None)),
-                ('received_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
+                ('issued_at', '>=', start.replace(tzinfo=None)),
+                ('issued_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
             ])
             next_window = window_end + timedelta(milliseconds=1)
             if next_window <= end:
                 self.write({
                     'next_receipt_window_at': next_window.replace(tzinfo=None),
-                    'receipt_issue_dates_json': json.dumps(
-                        sorted(fields.Date.to_string(value) for value in issue_dates)),
+                    'receipt_issue_dates_json': json.dumps({
+                        'basis': 'issued',
+                        'issue_dates': sorted(fields.Date.to_string(value) for value in issue_dates),
+                    }),
                     'item_count': document_count,
                 })
                 return None
@@ -343,8 +363,10 @@ class EtaSync(models.Model):
     def _receipt_pages(self, api_url, headers, start, end):
         params = {
             'Direction': 'Submitted' if self.direction == 'sent' else 'Received',
-            'DateTimeReceivedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-            'DateTimeReceivedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'DateTimeIssuedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'DateTimeIssuedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'SortBy': 'DateTimeIssued',
+            'SortDir': 'Asc',
             'PageSize': ETA_RECEIPT_PAGE_SIZE,
         }
         pages = []
@@ -366,8 +388,15 @@ class EtaSync(models.Model):
             except EtaSearchLimit:
                 yield from self._split_receipt_pages(api_url, headers, start, end)
                 return
+            result = payload.get('result')
             page = payload.get('receipts')
+            if page is None:
+                page = result if isinstance(result, list) else payload.get('data')
+            if page is None and isinstance(result, dict):
+                page = result.get('receipts', result.get('data'))
             metadata = payload.get('metadata')
+            if metadata is None and isinstance(result, dict):
+                metadata = result.get('metadata')
             if not isinstance(page, list) or not isinstance(metadata, dict):
                 raise ValidationError(_('ETA receipt search returned an invalid page.'))
             page_total = metadata.get('totalCount')
@@ -434,7 +463,9 @@ class EtaSync(models.Model):
                     detail = error.get('error')
                     if isinstance(detail, dict):
                         error = detail
-                    if error.get('code') == 'NotFound' and error.get('target') == 'NoResult':
+                    message = str(error.get('message') or '').lower()
+                    if (error.get('code') == 'NotFound' and
+                            (error.get('target') == 'NoResult' or 'no data found' in message)):
                         raise EtaSearchNoResult()
             try:
                 response.raise_for_status()
