@@ -68,6 +68,11 @@ class AbEcommerceCustomerTestimonial(models.Model):
     active = fields.Boolean(string="Published", default=True)
     website_id = fields.Many2one("website", ondelete="restrict")
 
+    def _can_return_content(self, field_name=None, access_token=None):
+        if field_name in ("image_1920", "image_1024") and self.sudo().active:
+            return True
+        return super()._can_return_content(field_name, access_token)
+
     @api.depends("source_url")
     def _compute_platform(self):
         for testimonial in self:

@@ -28,3 +28,4 @@ from . import cart_hold
 from . import eplus_sync_guard
 from . import checkout_submission
 from . import staff_account
+from . import website_carousel_slide
