@@ -31,6 +31,7 @@
                         <group>
                             <group string="Lead">
                                 <field name="lead_type"/>
+                                <field name="state"/>
                                 <field name="source"/>
                                 <field name="user_id" readonly="1"/>
                                 <field name="store_id"/>
@@ -54,7 +55,7 @@
                                 <field name="contact_preference"/>
                             </group>
                             <group string="Scenario Details">
-                                <field name="lost_reason" invisible="lead_type != 'lost_sales'"/>
+                                <field name="lost_reason" invisible="lead_type != 'lost_sales' and not lost_reason"/>
                                 <field name="needed_date" invisible="lead_type != 'special_order'"/>
                                 <field name="pos_search_query"/>
                                 <field name="pos_client_token"/>

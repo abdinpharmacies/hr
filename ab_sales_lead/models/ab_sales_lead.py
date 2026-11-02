@@ -12,6 +12,11 @@ class AbSalesLead(models.Model):
     _description = "Sales Lead"
     _order = "create_date desc, id desc"
 
+    _uniq_sync_identity = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Source DB and record ID must be unique per sales lead.",
+    )
+
     lead_type = fields.Char(
         default="lost_sales",
         index=True,
