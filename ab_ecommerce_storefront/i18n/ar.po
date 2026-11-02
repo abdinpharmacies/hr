@@ -7587,11 +7587,12 @@ msgid "Sign in to your account to continue"
 msgstr "سجّل الدخول للمتابعة"
 
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__new_password
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup_fields
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 msgid "Password"
-msgstr "كلمة المرور"
+msgstr "كلمة السر"
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_login
@@ -13432,11 +13433,6 @@ msgstr "إرسال رابط تعيين كلمة السر"
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
 msgid "No invitation email was sent. Check outgoing email, then use Send Password Link."
 msgstr "لم تُرسل رسالة الدعوة. تحقق من البريد الصادر، ثم استخدم «إرسال رابط تعيين كلمة السر»."
-
-#. module: ab_ecommerce_storefront
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__new_password
-msgid "New Password"
-msgstr "كلمة السر الجديدة"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__confirm_password

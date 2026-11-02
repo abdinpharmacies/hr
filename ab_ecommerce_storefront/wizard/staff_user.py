@@ -13,7 +13,7 @@ class StaffUserWizard(models.TransientModel):
     email = fields.Char(required=True)
     account_id = fields.Many2one("ab_ecommerce_staff_account", readonly=True)
     active = fields.Boolean(default=True)
-    new_password = fields.Char(string="New Password", copy=False)
+    new_password = fields.Char(string="Password", copy=False)
     confirm_password = fields.Char(string="Confirm Password", copy=False)
     login_from_anywhere = fields.Boolean(string="Login From Anywhere", readonly=True, default=True)
     group_ids = fields.Many2many(
