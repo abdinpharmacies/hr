@@ -88,5 +88,5 @@
         <field name="view_id" ref="view_staff_accounts_list"/>
         <field name="search_view_id" ref="view_staff_accounts_search"/>
     </record>
-    <menuitem id="menu_staff_user_wizard" name="Add Staff User" parent="website.menu_site" action="action_staff_accounts" sequence="90" groups="website.group_website_designer"/>
+    <menuitem id="menu_staff_user_wizard" name="Add Staff User" parent="menu_abdin_management_root" action="action_staff_accounts" sequence="50" groups="website.group_website_designer"/>
 </odoo>

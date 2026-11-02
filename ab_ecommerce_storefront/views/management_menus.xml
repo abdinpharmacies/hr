@@ -52,7 +52,7 @@
     <menuitem id="menu_abdin_management_products"
               name="Products"
               parent="menu_abdin_management_root"
-              groups="sales_team.group_sale_salesman"
+              groups="sales_team.group_sale_salesman,website.group_website_designer"
               sequence="40"/>
 
     <record id="ab_website_sale_product.menu_catalog_abdin_products" model="ir.ui.menu">
@@ -77,5 +77,10 @@
         <field name="parent_id" ref="menu_abdin_management_products"/>
         <field name="sequence">40</field>
         <field name="group_ids" eval="[Command.link(ref('sales_team.group_sale_salesman'))]"/>
+    </record>
+
+    <record id="website_sale.menu_catalog_categories" model="ir.ui.menu">
+        <field name="parent_id" ref="menu_abdin_management_products"/>
+        <field name="sequence">50</field>
     </record>
 </odoo>
