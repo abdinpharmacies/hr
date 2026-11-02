@@ -337,6 +337,16 @@ class AbOdooSyncApplyProfile(models.Model):
         source_type = source_field.type if source_field else False
         if source_type == target_field.type:
             return "direct"
+        # Passive reporting mirrors retain source keys as open-ended text.
+        if (
+            apply_mode == "mirror_sync"
+            and source_type == "selection"
+            and target_field.type == "char"
+            and target_field.model_name in self.env.registry.descendants(
+                ["ab_odoo_sync_passive_mirror_mixin", "ab_sales_mirror_mixin"], "_inherit"
+            )
+        ):
+            return "direct"
         return False
 
     @api.model
