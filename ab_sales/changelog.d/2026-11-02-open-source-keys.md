@@ -16,7 +16,11 @@ Files changed:
 - `ab_sales/views/sales_mirror_extra_views.xml`
 - `ab_sales/views/sales_mirror_views.xml`
 
-## Current changes before commit:
+## adfce7b511b81521e2c8a6f19b4988610710b836
+
+- Author: hossam elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: 2026-11-02T12:41:40+02:00
+- Subject: ab_sales: accept new source keys
 
 User-facing changes:
 
@@ -27,4 +31,20 @@ Files changed:
 
 - `ab_sales/__manifest__.py`
 - `ab_sales/models/ab_sales_mirror_models.py`
+- `ab_sales/changelog.d/2026-11-02-open-source-keys.md`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Expose raw status keys in sales and return forms, including keys without ribbons.
+
+Validation:
+
+- Isolated fresh installation and pre-conversion upgrade; exact mirror IDs, source identities, values and existing mapping settings preserved.
+- External fixtures and evidence: `/tmp/report_keys_verify/`; no live deployment or source-server writes.
+
+Files changed:
+
+- `ab_sales/views/sales_mirror_views.xml`
 - `ab_sales/changelog.d/2026-11-02-open-source-keys.md`
