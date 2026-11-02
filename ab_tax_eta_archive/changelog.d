@@ -314,3 +314,13 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Retrieve historical sent and received receipts through ETA receipt packages instead of the recent-only search API.
+- Resume package requests, split oversized windows, and download completed JSON packages on Retry or cron.
+- Preserve recent issued-time searches and count historical package results by received time.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
