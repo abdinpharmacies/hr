@@ -12812,3 +12812,361 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
 msgid "The passwords do not match."
 msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import_line__lang_code__ar_001
+msgid "Arabic"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import_line__lang_code__en_US
+msgid "English"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import_line__state__error
+msgid "Error"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__error_count
+msgid "Errors"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Existing SEO record belongs to another company"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Existing SEO record needs manual review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__file
+msgid "Export File"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__filename
+msgid "Filename"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Import Drafts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_product_kanban_legacy_seo_import
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_ab_product_list_legacy_seo_import
+msgid "Import Old SEO"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Import Results"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_legacy_seo_import
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Import SEO from Old Website"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Import legacy product SEO"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Import settings cannot change after preview."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import_line__state__imported
+msgid "Imported"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__processed_count
+msgid "Imported Drafts"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Imported from the old website, product code %s"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__keyword_text
+msgid "Keywords"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__lang_code
+msgid "Language"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Legacy SEO Imports"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Legacy product SEO import"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__ready_count
+msgid "Matched Rows"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__meta_description
+msgid "Meta Description"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__meta_title
+msgid "Meta Title"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Missing product code"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Multiple active SEO records need review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__source_id
+msgid "Old Product ID"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Only SEO Managers can import legacy SEO."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Only a new import can be prepared."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Only a ready or running import can be cancelled."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Prepare an import with matched products first."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Preview Matches"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__product_code
+msgid "Product Code"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product code changed after preview"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product code must match exactly one Abdin product"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product company changed after preview"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product is no longer published"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product must match exactly one published website product"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product website changed after preview"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__source_count
+msgid "Rows with SEO Data"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import__state__running
+msgid "Running"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_line_list
+msgid "SEO Import Results"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__seo_name
+msgid "SEO Slug"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "SEO draft already contains these values"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "SEO draft saved for review"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "SEO import is busy. Try again shortly."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_storefront_legacy_seo_import_line__state__skipped
+msgid "Skipped"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import__skipped_count
+msgid "Skipped Rows"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Stop Import"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export contains an invalid product row."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export contains duplicate product rows."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export file could not be decoded."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export file is not valid JSON."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export file is too large."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export has no product SEO values."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export is missing required SEO fields."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export must contain English and Arabic products."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The website must belong to an allowed company."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "This file was not exported from the expected website."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "Upload the JSON export from the old website. Preview matches products by code. Import saves SEO drafts for review and keeps existing draft values."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Upload the JSON file exported from the old website."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_legacy_seo_import_form
+msgid "View Product Results"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__product_template_id
+msgid "Website Product"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_legacy_seo_import
+msgid "Legacy Product SEO Import"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_storefront_legacy_seo_import_line
+msgid "Legacy Product SEO Import Line"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.ui.menu,name:ab_ecommerce_storefront.menu_legacy_seo_import_history
+msgid "SEO Import History"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_legacy_seo_import_line__source_og_image
+msgid "Old Open Graph Image"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Product codes differ between the exported languages."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export contains duplicate product codes."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "The export has unexpected SEO field types."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/legacy_seo_import.py:0
+msgid "Existing SEO translation needs manual review"
+msgstr ""

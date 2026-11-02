@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_legacy_seo_import_form" model="ir.ui.view">
+        <field name="name">ab.storefront.legacy.seo.import.form</field>
+        <field name="model">ab_storefront_legacy_seo_import</field>
+        <field name="arch" type="xml">
+            <form string="Import SEO from Old Website">
+                <header>
+                    <button name="action_prepare" type="object" string="Preview Matches" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_start" type="object" string="Import Drafts" class="btn-primary" invisible="state != 'ready' or not ready_count"/>
+                    <button name="action_cancel" type="object" string="Stop Import" invisible="state not in ('ready', 'running')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,ready,running,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" readonly="state != 'draft'"/>
+                        <field name="file" filename="filename" widget="binary" readonly="state != 'draft'"/>
+                        <field name="filename" invisible="1"/>
+                        <field name="company_id" readonly="state != 'draft'"/>
+                        <field name="website_id" domain="[('company_id', '=', company_id)]" readonly="state != 'draft'"/>
+                    </group>
+                    <div class="text-muted">Upload the JSON export from the old website. Preview matches products by code. Import saves SEO drafts for review and keeps existing draft values.</div>
+                    <group string="Import Results" invisible="state == 'draft'">
+                        <field name="source_count"/>
+                        <field name="ready_count"/>
+                        <field name="processed_count"/>
+                        <field name="skipped_count"/>
+                        <field name="error_count"/>
+                    </group>
+                    <button name="action_open_lines" type="object" string="View Product Results" invisible="state == 'draft'"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_legacy_seo_import_line_list" model="ir.ui.view">
+        <field name="name">ab.storefront.legacy.seo.import.line.list</field>
+        <field name="model">ab_storefront_legacy_seo_import_line</field>
+        <field name="arch" type="xml">
+            <list string="SEO Import Results" create="0" edit="0" delete="0"
+                  decoration-success="state == 'imported'"
+                  decoration-warning="state == 'skipped'"
+                  decoration-danger="state == 'error'">
+                <field name="product_code"/>
+                <field name="lang_code"/>
+                <field name="product_template_id"/>
+                <field name="state" widget="badge"/>
+                <field name="reason"/>
+                <field name="source_id" optional="hide"/>
+                <field name="source_og_image" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_legacy_seo_import_list" model="ir.ui.view">
+        <field name="name">ab.storefront.legacy.seo.import.list</field>
+        <field name="model">ab_storefront_legacy_seo_import</field>
+        <field name="arch" type="xml">
+            <list string="Legacy SEO Imports" create="0" edit="0" delete="0">
+                <field name="name"/>
+                <field name="website_id"/>
+                <field name="state" widget="badge"/>
+                <field name="source_count"/>
+                <field name="ready_count"/>
+                <field name="processed_count"/>
+                <field name="skipped_count"/>
+                <field name="error_count"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_legacy_seo_import" model="ir.actions.act_window">
+        <field name="name">Import SEO from Old Website</field>
+        <field name="res_model">ab_storefront_legacy_seo_import</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="group_ids" eval="[Command.link(ref('ab_website_seo_optimization.group_ab_website_seo_optimization_manager'))]"/>
+    </record>
+
+    <record id="action_legacy_seo_import_history" model="ir.actions.act_window">
+        <field name="name">Legacy SEO Imports</field>
+        <field name="res_model">ab_storefront_legacy_seo_import</field>
+        <field name="view_mode">list,form</field>
+        <field name="group_ids" eval="[Command.link(ref('ab_website_seo_optimization.group_ab_website_seo_optimization_manager'))]"/>
+    </record>
+
+    <menuitem id="menu_legacy_seo_import_history" name="SEO Import History"
+              parent="menu_abdin_management_products" action="action_legacy_seo_import_history"
+              groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager" sequence="70"/>
+
+    <record id="view_ab_product_list_legacy_seo_import" model="ir.ui.view">
+        <field name="name">ab.product.list.legacy.seo.import</field>
+        <field name="model">ab_product</field>
+        <field name="inherit_id" ref="ab_website_sale_product.ab_product_tree_view_sync_images"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/header/button[@name='action_open_sync_images_wizard']" position="after">
+                <button name="%(action_legacy_seo_import)d" type="action" string="Import Old SEO"
+                        class="btn-secondary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
+                        display="always"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_ab_product_kanban_legacy_seo_import" model="ir.ui.view">
+        <field name="name">ab.product.kanban.legacy.seo.import</field>
+        <field name="model">ab_product</field>
+        <field name="inherit_id" ref="ab_website_sale_product.view_ab_product_kanban_sync_images"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban/header/button[@name='action_open_sync_images_wizard']" position="after">
+                <button name="%(action_legacy_seo_import)d" type="action" string="Import Old SEO"
+                        class="btn-secondary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
+                        display="always"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
