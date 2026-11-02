@@ -7,7 +7,7 @@ class StaffAccount(models.Model):
     _description = "Website Staff Account"
     _rec_name = "name"
 
-    user_id = fields.Many2one("res.users", required=True, readonly=True, ondelete="restrict")
+    user_id = fields.Many2one("res.users", required=True, readonly=True, ondelete="cascade")
     owner_id = fields.Many2one("res.users", required=True, readonly=True, ondelete="restrict")
     company_id = fields.Many2one("res.company", required=True, readonly=True)
     name = fields.Char(related="user_id.name")
