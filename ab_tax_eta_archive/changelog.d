@@ -291,7 +291,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 
-Current changes before commit:
+9d6dd100 — yahyazakaria22 — 2026-11-02
+fix: resume ETA receipt retrieval alongside invoice backfill
 
 - Give received and sent receipt retrievals scheduled time even while invoice backfill remains unfinished.
 - Limit receipt work per cron attempt so one busy day does not occupy the entire run.
@@ -300,3 +301,4 @@ Current changes before commit:
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
