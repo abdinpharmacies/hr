@@ -2210,6 +2210,7 @@ msgstr "تعديل عنوان التوصيل والفاتورة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.portal_my_home_account_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_signup
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__email
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__email
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -2320,6 +2321,7 @@ msgstr "رقم الموبايل"
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_business_partnership__state__new
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_contact_message__state__new
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__sale_order__ab_prescription_stage__new
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
 msgid "New"
 msgstr "جديد"
 
@@ -3529,6 +3531,8 @@ msgstr "إجراء مطلوب"
 #. odoo-javascript
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_business_partnership__active
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__active
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__user_active
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__active
 msgid "Active"
 msgstr "نشط"
 
@@ -3665,6 +3669,7 @@ msgstr "المدينة / المحافظة"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_contact_message__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_cart_hold__company_id
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_submission__company_id
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__company_id
 msgid "Company"
 msgstr "الشركة"
 
@@ -4634,6 +4639,7 @@ msgstr "حالة التوصيل للميل الأخير غير مهيأة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.auth_phone_link
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_storefront_auth_device__name
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__name
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__name
 msgid "Name"
 msgstr "الاسم"
 
@@ -13290,6 +13296,7 @@ msgstr "إنشاء مستخدم موظف للموقع الإلكتروني"
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__login
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__login
 msgid "Login"
 msgstr "اسم المستخدم"
 
@@ -13322,6 +13329,89 @@ msgstr "سيتم إرسال رسالة دعوة إذا كانت خدمة الب�
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
 msgid "Name, login, and email are required."
 msgstr "الاسم واسم المستخدم والبريد الإلكتروني حقول مطلوبة."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model,name:ab_ecommerce_storefront.model_ab_ecommerce_staff_account
+msgid "Website Staff Account"
+msgstr "حساب موظف الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.actions.act_window,name:ab_ecommerce_storefront.action_staff_accounts
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_search
+msgid "Staff Users"
+msgstr "المستخدمون الموظفون"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_form
+msgid "Staff User"
+msgstr "مستخدم موظف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__access_role
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__access_role
+msgid "Access Rights"
+msgstr "الصلاحيات"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__employee
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__employee
+msgid "Employee"
+msgstr "موظف"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__website_editor
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__website_editor
+msgid "Website Editor"
+msgstr "محرر الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__website_designer
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__website_designer
+msgid "Website Editor and Designer"
+msgstr "محرر ومصمم الموقع الإلكتروني"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/staff_account.py:0
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "Only Website editors can manage staff users here."
+msgstr "يمكن لمحرري الموقع الإلكتروني فقط إدارة المستخدمين الموظفين من هنا."
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/staff_account.py:0
+msgid "You can manage only staff users you created in your companies."
+msgstr "يمكنك إدارة المستخدمين الموظفين الذين أضفتهم في شركاتك فقط."
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/staff_account.py:0
+msgid "This account has access outside Website staff management."
+msgstr "يملك هذا الحساب صلاحيات خارج إدارة موظفي الموقع الإلكتروني."
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/models/staff_account.py:0
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_form
+msgid "Edit Staff User"
+msgstr "تعديل مستخدم موظف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_user_wizard_form
+msgid "Save Staff User"
+msgstr "حفظ مستخدم موظف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_search
+msgid "Inactive Users"
+msgstr "المستخدمون غير النشطين"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "Select a permitted access role."
+msgstr "اختر صلاحية مسموحًا بها."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
+msgid "Edit"
+msgstr "تعديل"
 
 #~ msgid ""
 #~ "<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"

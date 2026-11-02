@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="rule_staff_account_owner_company" model="ir.rule">
+        <field name="name">Website staff accounts: creator and company</field>
+        <field name="model_id" ref="model_ab_ecommerce_staff_account"/>
+        <field name="domain_force">[('owner_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+    </record>
     <record id="rule_ab_storefront_offer_company" model="ir.rule">
         <field name="name">Storefront offers: allowed companies</field>
         <field name="model_id" ref="model_ab_storefront_offer"/>

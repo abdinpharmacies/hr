@@ -26,3 +26,4 @@ access_call_center_carousel,Call center homepage carousel,ab_website_admin_conte
 access_call_center_category,Call center category images,website_sale.model_product_public_category,group_call_center,1,1,0,0
 access_call_center_ribbon,Call center product ribbons,website_sale.model_product_ribbon,group_call_center,1,1,1,0
 access_staff_user_wizard,Website staff user creation,model_ab_ecommerce_staff_user_wizard,website.group_website_designer,1,0,1,0
+access_staff_account_designer,Website staff account tracking,model_ab_ecommerce_staff_account,website.group_website_designer,1,0,0,0
