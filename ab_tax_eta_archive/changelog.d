@@ -303,7 +303,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+bc77be91 — yahyazakaria22 — 2026-11-02
+fix: jump to first ETA receipt on manual retry
 
 - Make Retry locate the earliest remaining receipt issue time before fetching its five-minute window.
 - Split oversized ETA searches while locating the first receipt, and finish a past day only after ETA confirms it is empty.
@@ -312,3 +313,4 @@ Current changes before commit:
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
