@@ -1,4 +1,18 @@
 Current changes before commit:
+- Omit the hidden active default from audit form saves so Save and Prepare and Open respect the server create allowlist.
+- Keep Correction Of editable only before the first save, matching its creation-only server contract.
+- Verify browser creation for managers/administrators, English and both Arabic locales, corrective drafts, security and archive restrictions; pass 43 core, 21 regression and six focused tests plus 72 view checks on a disposable database. Document the verified XML developer reload and targeted-update paths.
+
+Files changed:
+- ab_inventory_audit/views/audit.xml
+- ab_inventory_audit/changelog.d
+- ab_inventory_audit/VALIDATION.md
+
+Commit: 2b92422764b458d77ee87d3765466094c89b1a93
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date: 2026-11-02
+Subject: ab_inventory_audit/Fix: complete coverage and counting workflows
+
 - Complete frozen product coverage with explicit absence evidence and independently reviewed stock observations; prevent counter-driven scope extensions.
 - Separate group counting revisions from session approval revisions; add version-2 incremental Excel imports, exact attempt fingerprints and actionable stale/import feedback.
 - Validate cost centers before approval without journal creation; persist blocked allocation quantities and require documented resolution with fresh availability checks.

@@ -1,3 +1,49 @@
+# Audit creation form correction — 2026-11-02
+
+Reproduced Save and Prepare and Open in the browser against the unmodified form. Both failed during `web_save` with `Use the audit workflow actions.` The captured creation payload contained `name`, `store_id`, `scope`, `product_ids`, `manager_id`, `correction_of_id`, `active` and `team_ids`. The hidden `active: true` was the only field outside the server create allowlist.
+
+The form now marks `active` readonly, so the browser omits it from creation while the model still defaults it to true. `correction_of_id` uses `readonly="id"`, allowing selection before creation and preventing edits after the first save. XML comparison confirms that these are the only two architecture changes. Server allowlists, archive rules, permissions, posting logic, identifiers and UI strings are unchanged.
+
+## Verification
+
+All mutations and browser workflows used `codex_audit_creation_20261102`, a new disposable clone of the existing clean validation database. The explicit addons paths were `/opt/odoo19/server/addons,/opt/odoo19/worktrees/rip_bconnect`; HTTP was `127.0.0.1:5069`, gevent `5072`, workers and cron threads zero. Evidence and development-only scripts are in `/tmp/audit-creation-validation`.
+
+| Check | Result / evidence |
+| --- | --- |
+| Before-fix browser reproduction | Captured rejected save payload in `before-save.network-request`; Save and Prepare failures recorded in `server.log` |
+| Manager and administrator browser matrix | Eight passing cases: Save and direct Prepare and Open, each with full and partial scope; `browser-manager.json`, `browser-admin.json`. All creation payloads omit `active`; prepared records reach counting with the expected count group. Administrator has no individual branch assignments. |
+| Corrective audits and draft edits | Both roles create corrections of a posted same-branch audit, edit the draft name, and retain a readonly correction reference after saving; `browser-correction-manager.json`, `browser-correction-admin.json` |
+| Browser locales after targeted upgrade, without XML developer mode | Full and partial corrective audits saved and prepared in each of `en_US`, `ar`, `ar_001`; translated Prepare label and Arabic RTL verified; `browser-en_US.json`, `browser-ar.json`, `browser-ar_001.json` |
+| Counter browser RPC | Creation rejected with `An audit manager is required.`; `browser-counter-denied.json` |
+| Existing core suite | 43 tests, zero failures/errors; `core.txt` |
+| Existing regressions | 21 executions, zero failures/errors; `regressions-final.txt`. Two executions overlap the core suite. The initial run failed one locale case because the clean clone lacked `ar`; activating the test locale and importing the existing catalogs resolved the fixture gap. |
+| Focused regressions | Six tests, zero failures/errors; `focused.py`, `focused.txt`. Covers Odoo Form creation for both roles/scopes, correction creation and immutable reference, rejection of unposted/cross-branch references, protected create/write values and forged workflow context, counter/unassigned-branch/cross-company denial, and allowed/denied archival. |
+| Views and translations | 72 view/action checks in normal/XML developer modes across all three locales; `languages-views.txt`. Focused checks also assert both readonly modifiers and translated labels. Both existing catalogs pass `msgfmt --check-format`; no translation changes required. |
+| Targeted upgrade | `-u ab_inventory_audit --stop-after-init` succeeds on the disposable database; `upgrade.log`, no ERROR/CRITICAL entries |
+| Final checks | XML semantic comparison, `git diff --check`, no final browser console warnings/errors; temporary server stopped and validation ports released |
+
+The 43 core, 21 regression and six focused tests total 70 executions / 68 distinct tests. This correction does not rerun the historical capacity benchmarks or optional integration suite because neither business logic nor dependencies changed.
+
+## Apply to the verified runtime
+
+The existing user process was verified as `/opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin -c /opt/odoo19/conf/rip_bconnect.conf -d rip_bconnect --dev=xml ...`, serving port 4097 from this checkout. A read-only database transaction confirmed `ab_inventory_audit.audit_form` has `arch_fs=ab_inventory_audit/views/audit.xml`, `arch_updated=false` and is active (`runtime-view.json`). Odoo's XML developer loader therefore reads the edited file, and its view architecture cache is disabled in this mode.
+
+For this verified runtime, discard any stale unsaved audit form, reload the browser page, and reopen Inventory Audits → Audit Sessions → New. Select the branch and scope (plus products for partial scope), then Save or Prepare and Open. Select Correction Of before the first save when creating a correction. These XML-only changes require neither a Python restart nor a database upgrade in the current runtime mode. No live module upgrade, live business write, group change or user-process restart was performed.
+
+For a runtime without XML developer mode, the stored view requires a targeted module update. The update path was verified with this exact disposable-database command:
+
+```bash
+/opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin \
+  -c /tmp/audit-creation-validation/odoo.conf \
+  -d codex_audit_creation_20261102 -u ab_inventory_audit --stop-after-init \
+  --http-port=5069 --gevent-port=5072 --workers=0 --max-cron-threads=0 \
+  --logfile=/tmp/audit-creation-validation/upgrade.log
+```
+
+That command targets validation only. A future non-developer deployment must use its own verified config/database and coordinated update procedure; alternate ports alone do not isolate database writes.
+
+---
+
 # Final implementation validation — 2026-11-01
 
 The five implementation phases are complete. All eight review findings have verified corrections. [REQUIREMENTS.md](REQUIREMENTS.md) maps each supplied requirement to implementation and evidence. Earlier baseline evidence is retained below as historical context; the results in this section apply to the completed changes.
