@@ -38,12 +38,7 @@ class AbSalesHeaderMirror(models.Model):
         index=True,
     )
     description = fields.Text(string="Description")
-    status = fields.Selection(
-        selection=[
-            ("prepending", "PrePending"),
-            ("pending", "Pending"),
-            ("saved", "Saved"),
-        ],
+    status = fields.Char(
         string="Status",
         index=True,
     )
@@ -54,12 +49,7 @@ class AbSalesHeaderMirror(models.Model):
         string="Lines",
     )
     eplus_serial = fields.Integer(string="ePlus Serial", index=True)
-    push_state = fields.Selection(
-        selection=[
-            ("none", "None"),
-            ("success", "Success"),
-            ("error", "Error"),
-        ],
+    push_state = fields.Char(
         string="Push State",
         index=True,
     )
@@ -129,15 +119,7 @@ class AbSalesLineMirror(models.Model):
     uom_id = fields.Many2one("ab_product_uom", string="UoM", ondelete="restrict", index=True)
     price_subtotal = fields.Float(string="Subtotal")
     price_tax = fields.Float(string="Tax")
-    unavailable_reason = fields.Selection(
-        selection=[
-            ("not_transferred", "Not transferred yet from main store"),
-            ("wrong_price", "Wrong price in system"),
-            ("stocktaking_error", "Stocktaking error"),
-            ("not_entered", "Not entered by data entry yet"),
-            ("promised_customer", "Already told customer we will deliver product"),
-            ("other", "Other"),
-        ],
+    unavailable_reason = fields.Char(
         string="Unavailable Reason",
     )
     unavailable_reason_other = fields.Char(string="Other Reason")
@@ -163,12 +145,7 @@ class AbSalesReturnHeaderMirror(models.Model):
     origin_header_id = fields.Integer(string="Invoice Number", index=True)
     store_id = fields.Many2one("ab_store", string="Store", ondelete="restrict", index=True)
     sto_eplus_serial = fields.Integer(string="Store ePlus Serial", index=True)
-    status = fields.Selection(
-        selection=[
-            ("prepending", "PrePending"),
-            ("pending", "Pending"),
-            ("saved", "Saved"),
-        ],
+    status = fields.Char(
         string="Status",
         index=True,
     )
@@ -327,13 +304,7 @@ class AbSalesPerDaySyncStateMirror(models.Model):
     _order = "db_serial, sale_date desc, rec_id"
 
     sale_date = fields.Date(string="Sale Date", index=True)
-    state = fields.Selection(
-        selection=[
-            ("pending", "Pending"),
-            ("running", "Running"),
-            ("done", "Done"),
-            ("failed", "Failed"),
-        ],
+    state = fields.Char(
         string="Status",
         index=True,
     )
@@ -359,8 +330,7 @@ class AbProductRankMirror(models.Model):
     product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
     store_id = fields.Many2one("ab_store", string="Store", ondelete="restrict", index=True)
     customer_phone = fields.Char(string="Customer Phone", index=True)
-    rank_scope = fields.Selection(
-        selection=[("branch", "Branch"), ("customer", "Customer")],
+    rank_scope = fields.Char(
         string="Rank Scope",
         index=True,
     )
@@ -445,19 +415,10 @@ class AbPrinterMirror(models.Model):
     port = fields.Integer(string="Port")
     username = fields.Char(string="Username")
     printer_name = fields.Char(string="Printer / Share Name")
-    protocol = fields.Selection(
-        selection=[
-            ("shared", "Shared"),
-            ("connected", "Connected"),
-            ("network", "Network"),
-        ],
+    protocol = fields.Char(
         string="Protocol",
     )
-    paper_size = fields.Selection(
-        selection=[
-            ("pos_80mm", "POS 80mm"),
-            ("a4", "A4"),
-        ],
+    paper_size = fields.Char(
         string="Paper Size",
     )
     notes = fields.Text(string="Notes")
