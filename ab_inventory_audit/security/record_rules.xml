@@ -1,0 +1,200 @@
+<odoo>
+  <record id="ab_inventory_audit_company" model="ir.rule">
+    <field name="name">ab_inventory_audit company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('team_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+  <record id="ab_inventory_audit_line_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_line company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_line"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_line_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_line branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_line"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_line_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit_line counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_line"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('assigned_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_line_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit_line reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_line"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+  <record id="ab_inventory_audit_count_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_count company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_count"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_count_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_count branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_count"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_count_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit_count counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_count"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('line_id.assigned_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_count_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit_count reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_count"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+  <record id="ab_inventory_audit_source_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_source company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_source"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_source_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_source branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_source"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_adjustment_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_adjustment company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_adjustment"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_adjustment_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_adjustment branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_adjustment"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_event_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_event company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_event"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_event_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_event branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_event"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_event_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit_event counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_event"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('audit_id.team_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_event_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit_event reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_event"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+  <record id="ab_inventory_audit_config_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_config company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_config"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_config_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_config branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_config"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_wizard_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_wizard company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_wizard"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_wizard_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_wizard branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_wizard"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="journal_audit_scope" model="ir.rule">
+    <field name="name">Audit financial branch and company scope</field>
+    <field name="model_id" ref="ab_accounting.model_ab_accounting_je_header"/>
+    <field name="domain_force">['|', ('audit_id', '=', False), '&amp;', ('audit_id.company_id', 'in', company_ids), ('audit_id.store_id', 'in', user.inventory_store_ids.ids)] if not user.has_group('base.group_system') else ['|', ('audit_id', '=', False), ('audit_id.company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="journal_line_audit_scope" model="ir.rule">
+    <field name="name">Audit financial branch and company scope</field>
+    <field name="model_id" ref="ab_accounting.model_ab_accounting_je_line"/>
+    <field name="domain_force">['|', ('header_id.audit_id', '=', False), '&amp;', ('header_id.audit_id.company_id', 'in', company_ids), ('header_id.audit_id.store_id', 'in', user.inventory_store_ids.ids)] if not user.has_group('base.group_system') else ['|', ('header_id.audit_id', '=', False), ('header_id.audit_id.company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="journal_query_audit_scope" model="ir.rule">
+    <field name="name">Audit financial branch and company scope</field>
+    <field name="model_id" ref="ab_accounting.model_ab_accounting_je_line_qry"/>
+    <field name="domain_force">['|', ('header_id.audit_id', '=', False), '&amp;', ('header_id.audit_id.company_id', 'in', company_ids), ('header_id.audit_id.store_id', 'in', user.inventory_store_ids.ids)] if not user.has_group('base.group_system') else ['|', ('header_id.audit_id', '=', False), ('header_id.audit_id.company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="source_audit_scope" model="ir.rule">
+    <field name="name">Audit financial branch and company scope</field>
+    <field name="model_id" ref="ab_product_source.model_ab_product_source"/>
+    <field name="domain_force">['|', ('audit_origin_id', '=', False), '&amp;', ('audit_origin_id.company_id', 'in', company_ids), ('audit_origin_id.store_id', 'in', user.inventory_store_ids.ids)] if not user.has_group('base.group_system') else ['|', ('audit_origin_id', '=', False), ('audit_origin_id.company_id', 'in', company_ids)]</field>
+  </record>
+<record id="audit_source_reference_scope" model="ir.rule">
+        <field name="name">Audit source references in assigned branches</field>
+        <field name="model_id" ref="ab_product_source.model_ab_product_source"/>
+        <field name="groups" eval="[(4, ref('group_financial'))]"/>
+        <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else ['|', ('audit_movement_ids.store_id', 'in', user.inventory_store_ids.ids), '|', ('audit_origin_id.store_id', 'in', user.inventory_store_ids.ids), ('integration_store_id', 'in', user.inventory_store_ids.ids)]</field>
+    </record>
+  <record id="ab_inventory_audit_coverage_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_coverage company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_coverage"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_coverage_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_coverage branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_coverage"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_coverage_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit_coverage counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_coverage"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('audit_id.team_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_coverage_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit_coverage reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_coverage"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+  <record id="ab_inventory_audit_observation_company" model="ir.rule">
+    <field name="name">ab_inventory_audit_observation company scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_observation"/>
+    <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_observation_branch" model="ir.rule">
+    <field name="name">ab_inventory_audit_observation branch scope</field>
+    <field name="model_id" ref="model_ab_inventory_audit_observation"/>
+    <field name="domain_force">[(1, '=', 1)] if user.has_group('base.group_system') else [('store_id', 'in', user.inventory_store_ids.ids)]</field>
+  </record>
+  <record id="ab_inventory_audit_observation_counter" model="ir.rule">
+    <field name="name">ab_inventory_audit_observation counter access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_observation"/>
+    <field name="groups" eval="[(4, ref('group_counter'))]"/>
+    <field name="domain_force">[('audit_id.team_ids', 'in', [user.id])]</field>
+  </record>
+  <record id="ab_inventory_audit_observation_reviewer" model="ir.rule">
+    <field name="name">ab_inventory_audit_observation reviewer access</field>
+    <field name="model_id" ref="model_ab_inventory_audit_observation"/>
+    <field name="groups" eval="[(4, ref('group_reviewer'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+</odoo>

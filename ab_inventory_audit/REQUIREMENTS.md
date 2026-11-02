@@ -1,0 +1,48 @@
+# Inventory audit requirement checklist
+
+Status applies to the supplied implementation plan on disposable Odoo 19 databases, not production rollout. Evidence files and tests are in this development validation bundle. The original suite is `run.py`; new regressions are `regressions.py`. Two rollback cases also run in the regression suite.
+
+| Requirement | Implementation | Verification evidence | Status |
+| --- | --- | --- | --- |
+| P1. Protected branch/company product coverage with opening/additional origin and decision reason | `models/coverage.py`, child guards and XML rules | Missing-product, observation, child-company/forged-context regressions | verified |
+| P1. Immutable opening selection includes every partial-selection product without history | `Audit._refresh_coverage`, frozen `product_ids` | `test_missing_product_and_absence`; scope-permission regression | verified |
+| P1. Missing sources never imply zero; absence or discovered count required | Coverage state and `_absence` | Missing-product/absence and observation tests | verified |
+| P1. Absence evidence has assignments, boundaries and independent review | Normal protected count attempts, `physical_absence`, `_accept` | Absence movement, independent review and assignment tests | verified |
+| P1. Preserve original observations, quantity/unit/expiry/counter/notes; manager inclusion/exclusion | `AuditObservation`, `_unidentified`, `_decide_observation` | Observation scope/overlap regression; original evidence remains separate from approved group | verified |
+| P1. Approve grouping details before included stock can be counted | Manager-approved unit/expiry/price group, pending observations have no count group | Observation regression; server-side manager check | verified |
+| P1. Coverage/group completeness shows exclusions and unresolved products | Batched coverage computation, coverage panel/reports | Missing-product regression; original new-coverage exclusion test; multilingual reports | verified |
+| P1. Extended scope uses existing branch lock and overlap checks | `_decide_observation`, `_check_overlap` | Observation-overlap regression and independent-connection preparation race | verified |
+| P2. Separate approval revision from affected counting revision | `counting_revision`, guarded `_edit`, detected boundary changes increment revision | Staggered two-counter, recount and conversion regressions | verified |
+| P2. Bind workbook to session/group/attempt/token/group revision/format | Version-2 identity columns and attempt fields | Foreign/duplicate/version/recount tests | verified |
+| P2. Preserve membership and posted movement identity checks without unrelated review invalidation | Scoped `_boundary`, unchanged accepted evidence | Offsetting/older-pending/new-membership tests; staggered imports | verified |
+| P2. Validate every row identity; blank quantities pending, explicit zero counted | `_load_rows` identity checks precede blank-row skip | Incremental, blank-identity and zero tests | verified |
+| P2. Preview and reject foreign/duplicate IDs, formulas, negative/nonintegral conversions | Row validation and exact preview digest | Original Excel tests; formula/negative/conversion regression | verified |
+| P2. Attempt quantity fingerprints: same retry no-op, conflicts need new attempt; later blanks complete | `quantity_fingerprint`, `_confirm` | Incremental/retry/conflict and posted-retry tests | verified |
+| P2. Actionable stale group feedback, reasoned cancel/recount/export, old formats rejected | Group-specific validation messages; existing reasoned workflows | Recount/version regression; UI workflow and English/Arabic labels | verified |
+| P3. Validate required/active/permitted centers and accounting permissions before approval | `AuditConfig._validate_posting` invokes unsaved accounting line validation | Cost-center preapproval and accounting authorization tests | verified |
+| P3. Validation creates no journals | `ab_accounting_je_line.new(...)._validate_posting_line()` | Cost-center regression compares journal count before/after | verified |
+| P3. Preserve valuation/configuration snapshots and revalidate posting | Existing snapshots/digest retained | Cost/tax/configuration change tests | verified |
+| P3. Stock conflict retains accepted physical count and discrepancy, marks allocation unresolved | `_record_stock_conflict`, `allocation_unresolved` | Stock conflict and changed-allocation regressions | verified |
+| P3. Record affected sources, approved/posted/reserved/available quantities and show Review | Conflict details plus immutable history; post wizard returns session form | Stock-conflict regression; allocation screen/report view checks | verified |
+| P3. Require documented resolution and fresh checks before reapproval | `resolve_allocation`, `_allocation_balances`, approval validation | Failed resolution until stock restored; reason/total/source-limit tests | verified |
+| P3. Never silently redistribute or change counts; revised allocations preserve total and limits | Explicit overrides and `_validate_allocation` | `test_changed_allocation_retains_total_and_source_limits` | verified |
+| P3. Preserve atomicity, new-source rollback, duplicate protection and immutable journals | Existing savepoint/business posting and protection hooks | Core rollback/new-source/duplicate/immutability tests and posting race | verified |
+| P4. Show incomplete coverage, observations, allocation conflicts and actionable errors | Session panels, workbook preview and post return action | 72 view checks, browser flow, report/stock/import regressions | verified |
+| P4. Stable group/attempt/accepted references, expiry and comparison price in traceable results | Report and group/count display identities | Equal-quantity-attempt regression; PDF/XLSX outputs | verified |
+| P4. Opening/additional/excluded/unresolved/absence data in PDF/XLSX | Product Coverage and Stock Observations sections, absence marker; reference PDF coverage table | Coverage/report tests and three-locale rendering | verified |
+| P4. Historical reconciliation uses stored boundaries/links, including late/new sources | `_refresh_coverage` retains late source links; report uses immutable boundaries and allocation links | Late-source and new-source-after-edit report regressions | verified |
+| P4. Count screens show code/barcode/units/stock/reservations/availability/expiry/notes/attachments/attempt | Scoped fast count, normal views and count wizard | Browser snapshots, actual count confirmations, attachment tests | verified |
+| P4. Changes module-scoped; financial information role-restricted | Field groups/rules preserved; read-only financial tax-reference ACL | Financial/branch/company/access tests; report restriction regression; browser permission correction | verified |
+| P4. English and both Arabic catalogs/runtime UI | 462 current extracted terms translated; module-scoped RTL | `msgfmt`; runtime labels; 72 view checks; `ar`/`ar_001` RTL browser evidence; PDFs/XLSX | verified |
+| P5. Aggregate inventory balances; scoped boundary reads; batched Excel/coverage work | Native `_source_balances`, `_read_group`, scoped `search_read`, batched attempts and coverage | Core/regression suites; single-group query-scope test | verified |
+| P5. Preserve offsetting/older-pending movement detection | Stored saved identities and source membership retained | Original dedicated tests | verified |
+| P5. Identical 1,001-group and 1,000,000-history comparisons | Saved original ledger compared with optimized ledger; same fixture shapes | `volume-*-metrics.txt`, `history-benchmark-final.txt`; equal boundaries asserted | verified |
+| P5. Measure queries, rows, memory, elapsed time and branch-lock duration | Query counters, row counts, traced Python peak/RSS; actual lock-to-commit sampling | Volume/history metrics; `final-lock-metrics-batched.txt` | verified |
+| P5. Single-group work avoids unrelated branch history | Product/group scoped source discovery and movements | Million-history fixture: 1,000,001 rows before, 1 after; 1,017 versus 16 queries | verified |
+| P5. Existing 43 tests plus phase regressions, permissions/concurrency/rollback/conversions/reports/UI | Development-only suites and browser execution | Final core/regression/concurrency/runtime/view/report result files | verified |
+| P5. Clean install with connectors absent, disposable upgrade, optional native integrations separate | Required-only staging addon path; separate databases/configurations | `release-clean-install.log`, `final-clean-core.txt`, targeted-upgrade logs, 3 native integration tests | verified |
+| P5. Verify config/addons/DB/ports; preserve user processes | Explicit disposable configs and 5069/5072; only owned HTTP server stopped | Environment checks and final port-cleanup evidence | verified |
+| P5. README/changelog/evidence and runtime-only packaging | Updated addon documents, separate validation archive | Static/catalog checks and package manifest/checksum inspection | verified |
+| Boundary. Mandatory audit accounting; no production, connector development, reposting, deployment or active-session conversion | Existing stock/accounting services and module ownership retained | Diff review, disposable database names, package contents | verified |
+
+No functional requirement remains unresolved in this development validation scope. The benchmark establishes scoped-read behavior on the stated fixtures; it is not a production capacity guarantee. Posting 1,001 adjustments still requires a substantial branch lock. Deployed active sessions, historical coverage migration, production cutover and rollout remain explicitly outside the authorized scope.

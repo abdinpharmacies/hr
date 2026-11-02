@@ -1,0 +1,27 @@
+<odoo>
+    <template id="results">
+        <t t-call="web.html_container"><t t-foreach="docs" t-as="doc"><t t-call="web.external_layout"><div class="page">
+            <h2>Inventory Audit</h2><h3><span t-esc="doc.name"/></h3><p><span t-esc="doc.store_id.display_name"/></p>
+            <p style="font-size: 12px; white-space: normal; text-align: center;"><span>Central ledger movements only. Excluded and uncounted groups are shown explicitly. Expired stock remains included in physical counting.</span></p>
+            <t t-foreach="sections[doc.id]" t-as="section"><h3 t-esc="section[0]"/>
+                <table class="table table-sm" style="table-layout: fixed; width: 100%; font-size: 12px;"><thead><tr><th t-foreach="section[1]" t-as="column" t-esc="column"/></tr></thead><tbody><tr t-foreach="section[2]" t-as="row"><td style="overflow-wrap: break-word; word-wrap: break-word;" t-foreach="row" t-as="value"><span t-esc="value"/></td></tr></tbody></table>
+            </t>
+        </div></t></t></t>
+    </template>
+    <record id="report_pdf" model="ir.actions.report"><field name="name">Audit Results and History (PDF)</field><field name="model">ab_inventory_audit</field><field name="report_type">qweb-pdf</field><field name="report_name">ab_inventory_audit.results</field><field name="binding_model_id" ref="model_ab_inventory_audit"/><field name="binding_type">report</field></record>
+    <record id="report_xlsx" model="ir.actions.report"><field name="name">Audit Results and History (XLSX)</field><field name="model">ab_inventory_audit</field><field name="report_type">xlsx</field><field name="report_name">ab_inventory_audit.results_xlsx</field><field name="binding_model_id" ref="model_ab_inventory_audit"/><field name="binding_type">report</field></record>
+    <template id="count_sheet">
+        <t t-call="web.html_container"><t t-foreach="docs" t-as="doc"><t t-call="web.external_layout"><div class="page">
+            <h2>Audit Count Sheet</h2><h3><span t-esc="doc.name"/></h3><p><span t-esc="doc.store_id.display_name"/></p>
+            <p style="font-size: 12px; white-space: normal; text-align: center;"><span>Reference sheet only. Start Count or export an Excel count sheet before physical counting.</span></p>
+            <table class="table table-sm" style="table-layout: fixed; width: 100%; font-size: 12px;"><thead><tr><th>Code</th><th>Product</th><th>Expiry</th><th>Expired</th><th>Comparison Price</th><th>Posted</th><th>Reserved</th><th>Available</th><th>Physical</th></tr></thead><tbody>
+                <tr t-foreach="groups[doc.id]" t-as="line"><td><span t-field="line.product_code"/></td><td><span t-field="line.product_id"/></td><td><span t-if="line.no_expiry">No Expiry</span><span t-else="" t-field="line.exp_date"/></td><td><span t-if="line.expired">Expired</span></td><td><span t-field="line.comparison_price"/></td><td><span t-field="line.posted_qty"/></td><td><span t-field="line.reserved_qty"/></td><td><span t-field="line.available_qty"/></td><td>____________</td></tr>
+            </tbody></table>
+            <h3>Product Coverage</h3>
+            <table class="table table-sm"><thead><tr><th>Product</th><th>Scope Origin</th><th>Status</th><th>Reason</th></tr></thead><tbody>
+                <tr t-foreach="coverage[doc.id]" t-as="row"><td t-foreach="row" t-as="value"><span t-esc="value"/></td></tr>
+            </tbody></table>
+        </div></t></t></t>
+    </template>
+    <record id="report_count_sheet" model="ir.actions.report"><field name="name">Audit Count Sheet (PDF)</field><field name="model">ab_inventory_audit</field><field name="report_type">qweb-pdf</field><field name="report_name">ab_inventory_audit.count_sheet</field><field name="binding_model_id" ref="model_ab_inventory_audit"/><field name="binding_type">report</field></record>
+</odoo>
