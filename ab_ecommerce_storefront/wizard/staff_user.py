@@ -59,8 +59,6 @@ class StaffUserWizard(models.TransientModel):
         if self.new_password or self.confirm_password:
             if self.new_password != self.confirm_password:
                 raise ValidationError(_("The passwords do not match."))
-            if len(self.new_password) < 12:
-                raise ValidationError(_("Password must be at least 12 characters."))
         group_by_role = {
             "employee": self.env.ref("base.group_user"),
             "website_editor": self.env.ref("website.group_website_restricted_editor"),
@@ -68,18 +66,21 @@ class StaffUserWizard(models.TransientModel):
         }
         if self.access_role not in group_by_role:
             raise ValidationError(_("Select a permitted access role."))
+        login_anywhere = self.env.ref("ab_store.ab_login_from_anywhere")
         groups = self.env.ref("base.group_user") | group_by_role[self.access_role]
         values = {
             "name": name,
             "login": login,
             "email": email,
             "active": self.active,
-            "group_ids": [fields.Command.set(groups.ids)],
         }
         if self.account_id:
             account = self.account_id
             account._check_manage_access()
             target = account.user_id.sudo()
+            if login_anywhere in target.group_ids:
+                groups |= login_anywhere
+            values["group_ids"] = [fields.Command.set(groups.ids)]
             target.write(values)
         else:
             company = self.env.company
@@ -88,6 +89,7 @@ class StaffUserWizard(models.TransientModel):
             values.update({
                 "company_id": company.id,
                 "company_ids": [fields.Command.set(company.ids)],
+                "group_ids": [fields.Command.set((groups | login_anywhere).ids)],
             })
             target = self.env["res.users"].sudo().with_company(company).with_context(
                 no_reset_password=bool(self.new_password)

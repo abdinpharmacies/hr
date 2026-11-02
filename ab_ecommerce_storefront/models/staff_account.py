@@ -42,6 +42,7 @@ class StaffAccount(models.Model):
             self.env.ref("base.group_user")
             | self.env.ref("website.group_website_restricted_editor")
             | self.env.ref("website.group_website_designer")
+            | self.env.ref("ab_store.ab_login_from_anywhere")
         )
         for account in self:
             if account.owner_id != actor or account.company_id not in actor.company_ids:

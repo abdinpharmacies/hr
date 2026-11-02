@@ -12808,8 +12808,3 @@ msgstr ""
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
 msgid "The passwords do not match."
 msgstr ""
-
-#. module: ab_ecommerce_storefront
-#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
-msgid "Password must be at least 12 characters."
-msgstr ""
