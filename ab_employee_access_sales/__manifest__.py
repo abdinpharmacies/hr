@@ -1,6 +1,6 @@
 {
     "name": "Ab Sales HR",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.1",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "summary": "Branch service-user POS with employee PIN, roles, shifts, and audit logs.",

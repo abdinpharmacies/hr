@@ -23,13 +23,7 @@ class AbSalesHrPosSession(models.Model):
     service_user_id = fields.Many2one("ab_users", index=True)
     store_id = fields.Many2one("ab_store", index=True)
 
-    state = fields.Selection(
-        [
-            ("active", "Active"),
-            ("locked", "Locked"),
-            ("closed", "Closed"),
-        ],
-
+    state = fields.Char(
         default="active",
         index=True,
     )

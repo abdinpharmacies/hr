@@ -25,31 +25,10 @@ class AbSalesHrOperationLog(models.Model):
     role_id = fields.Many2one("ab_employee_access_sales_role", index=True, ondelete="set null")
 
     header_id = fields.Many2one("ab_sales_header", index=True, ondelete="set null")
-    operation_type = fields.Selection(
-        [
-            ("login", "Login"),
-            ("unlock", "Unlock"),
-            ("lock", "Lock"),
-            ("logout", "Logout"),
-            ("change_store", "Change Store"),
-            ("return_open", "Return Screen Open"),
-            ("sale_submit", "Sale Submit"),
-            ("price_change", "Price Change"),
-            ("discount", "Discount"),
-            ("cancel", "Cancel"),
-            ("heartbeat", "Heartbeat"),
-        ],
-
+    operation_type = fields.Char(
         index=True,
     )
-    operation_status = fields.Selection(
-        [
-            ("success", "Success"),
-            ("denied", "Denied"),
-            ("error", "Error"),
-            ("pending", "Pending"),
-        ],
-
+    operation_status = fields.Char(
         default="success",
         index=True,
     )

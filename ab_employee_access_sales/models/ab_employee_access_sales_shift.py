@@ -19,13 +19,8 @@ class AbSalesHrShift(models.Model):
     role_id = fields.Many2one("ab_employee_access_sales_role", index=True)
     service_user_id = fields.Many2one("ab_users", index=True)
     store_id = fields.Many2one("ab_store", index=True)
-    state = fields.Selection(
-        [
-            ("open", "Open"),
-            ("closed", "Closed"),
-        ],
+    state = fields.Char(
         default="open",
-
         index=True,
     )
     device_uid = fields.Char(index=True)
