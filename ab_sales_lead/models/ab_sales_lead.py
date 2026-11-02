@@ -12,33 +12,15 @@ class AbSalesLead(models.Model):
     _description = "Sales Lead"
     _order = "create_date desc, id desc"
 
-    lead_type = fields.Selection(
-        selection=[
-            ("lost_sales", "Lost Sale"),
-            ("special_order", "Special Order"),
-        ],
-
+    lead_type = fields.Char(
         default="lost_sales",
         index=True,
     )
-    state = fields.Selection(
-        selection=[
-            ("new", "New"),
-            ("in_review", "In Review"),
-            ("contacted", "Contacted"),
-            ("closed", "Closed"),
-            ("cancelled", "Cancelled"),
-        ],
-
+    state = fields.Char(
         default="new",
         index=True,
     )
-    source = fields.Selection(
-        selection=[
-            ("pos", "POS"),
-            ("manual", "Manual"),
-        ],
-
+    source = fields.Char(
         default="manual",
         index=True,
     )
@@ -66,24 +48,9 @@ class AbSalesLead(models.Model):
     pos_search_query = fields.Char()
     pos_client_token = fields.Char(index=True)
 
-    lost_reason = fields.Selection(
-        selection=[
-            ("not_available", "Product not available"),
-            ("insufficient_quantity", "Insufficient quantity"),
-            ("price_too_high", "Price too high"),
-            ("customer_found_alternative", "Customer found alternative"),
-            ("customer_refused_wait", "Customer refused to wait"),
-            ("missing_product_info", "Missing product information"),
-            ("other", "Other"),
-        ],
-    )
+    lost_reason = fields.Char()
     needed_date = fields.Date()
-    contact_preference = fields.Selection(
-        selection=[
-            ("phone", "Phone"),
-            ("whatsapp", "WhatsApp"),
-            ("in_store", "In Store"),
-        ],
+    contact_preference = fields.Char(
         default="phone",
     )
     notes = fields.Text()
