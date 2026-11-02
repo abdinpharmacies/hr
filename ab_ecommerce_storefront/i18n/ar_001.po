@@ -13413,6 +13413,38 @@ msgstr "اختر صلاحية مسموحًا بها."
 msgid "Edit"
 msgstr "تعديل"
 
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_form
+msgid "Send Password Link"
+msgstr "إرسال رابط تعيين كلمة السر"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "No invitation email was sent. Check outgoing email, then use Send Password Link."
+msgstr "لم تُرسل رسالة الدعوة. تحقق من البريد الصادر، ثم استخدم «إرسال رابط تعيين كلمة السر»."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__new_password
+msgid "New Password"
+msgstr "كلمة السر الجديدة"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__confirm_password
+msgid "Confirm Password"
+msgstr "تأكيد كلمة السر"
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "The passwords do not match."
+msgstr "كلمتا السر غير متطابقتين."
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "Password must be at least 12 characters."
+msgstr "يجب ألا تقل كلمة السر عن 12 حرفًا."
+
 #~ msgid ""
 #~ "<span data-ab-cart-hold-active=\"\">Website hold remaining:</span>\n"
 #~ "                <strong data-ab-cart-hold-countdown=\"\"/>\n"

@@ -67,3 +67,9 @@ class StaffAccount(models.Model):
             "target": "new",
             "context": {"default_account_id": self.id},
         }
+
+    def action_send_password_link(self):
+        self.ensure_one()
+        self._check_manage_access()
+        target = self.user_id.sudo()
+        return target.with_context(create_user=not bool(target.login_date)).action_reset_password()

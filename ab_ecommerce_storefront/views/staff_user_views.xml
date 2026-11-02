@@ -12,6 +12,10 @@
                     <field name="active"/>
                     <field name="access_role"/>
                 </group>
+                <group>
+                    <field name="new_password" password="True"/>
+                    <field name="confirm_password" password="True"/>
+                </group>
                 <footer>
                     <button name="action_save_user" type="object" string="Save Staff User" class="btn-primary"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
@@ -39,6 +43,7 @@
                 <field name="access_role" widget="badge"/>
                 <field name="user_active" widget="boolean_toggle" readonly="1"/>
                 <button name="action_edit_user" type="object" string="Edit" icon="fa-pencil"/>
+                <button name="action_send_password_link" type="object" string="Send Password Link" icon="fa-envelope"/>
             </list>
         </field>
     </record>
@@ -49,6 +54,7 @@
             <form string="Staff User" create="0" edit="0" delete="0" duplicate="0">
                 <header>
                     <button name="action_edit_user" type="object" string="Edit Staff User" class="btn-primary"/>
+                    <button name="action_send_password_link" type="object" string="Send Password Link" class="btn-secondary"/>
                 </header>
                 <sheet>
                     <group>

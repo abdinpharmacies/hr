@@ -12781,3 +12781,35 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
 msgid "Edit"
 msgstr ""
+
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_list
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_accounts_form
+msgid "Send Password Link"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "No invitation email was sent. Check outgoing email, then use Send Password Link."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__new_password
+msgid "New Password"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__confirm_password
+msgid "Confirm Password"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "The passwords do not match."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
+msgid "Password must be at least 12 characters."
+msgstr ""

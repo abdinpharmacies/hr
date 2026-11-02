@@ -11,6 +11,8 @@ class StaffUserWizard(models.TransientModel):
     email = fields.Char(required=True)
     account_id = fields.Many2one("ab_ecommerce_staff_account", readonly=True)
     active = fields.Boolean(default=True)
+    new_password = fields.Char(string="New Password", copy=False)
+    confirm_password = fields.Char(string="Confirm Password", copy=False)
     access_role = fields.Selection(
         [
             ("employee", "Employee"),
@@ -54,6 +56,11 @@ class StaffUserWizard(models.TransientModel):
         email = (self.email or "").strip()
         if not name or not login or not email:
             raise ValidationError(_("Name, login, and email are required."))
+        if self.new_password or self.confirm_password:
+            if self.new_password != self.confirm_password:
+                raise ValidationError(_("The passwords do not match."))
+            if len(self.new_password) < 12:
+                raise ValidationError(_("Password must be at least 12 characters."))
         group_by_role = {
             "employee": self.env.ref("base.group_user"),
             "website_editor": self.env.ref("website.group_website_restricted_editor"),
@@ -72,7 +79,8 @@ class StaffUserWizard(models.TransientModel):
         if self.account_id:
             account = self.account_id
             account._check_manage_access()
-            account.user_id.sudo().write(values)
+            target = account.user_id.sudo()
+            target.write(values)
         else:
             company = self.env.company
             if company not in actor.company_ids:
@@ -81,10 +89,29 @@ class StaffUserWizard(models.TransientModel):
                 "company_id": company.id,
                 "company_ids": [fields.Command.set(company.ids)],
             })
-            target = self.env["res.users"].sudo().with_company(company).create(values)
+            target = self.env["res.users"].sudo().with_company(company).with_context(
+                no_reset_password=bool(self.new_password)
+            ).create(values)
             self.env["ab_ecommerce_staff_account"].sudo().create({
                 "user_id": target.id,
                 "owner_id": actor.id,
                 "company_id": company.id,
             })
-        return self.env.ref("ab_ecommerce_storefront.action_staff_accounts").sudo().read()[0]
+        if self.new_password:
+            target._change_password(self.new_password)
+        invitation_failed = not self.account_id and not self.new_password and not target.partner_id.signup_type
+        action = self.env.ref("ab_ecommerce_storefront.action_staff_accounts").sudo().read()[0]
+        self.sudo().unlink()
+        if invitation_failed:
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Staff user created"),
+                    "message": _("No invitation email was sent. Check outgoing email, then use Send Password Link."),
+                    "type": "warning",
+                    "sticky": True,
+                    "next": action,
+                },
+            }
+        return action
