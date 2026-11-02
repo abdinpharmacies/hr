@@ -10,7 +10,7 @@ from psycopg2.errors import UniqueViolation
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-from .eta_document import eta_report_date
+from .eta_document import eta_datetime, eta_report_date
 
 _logger = logging.getLogger(__name__)
 ETA_MAX_RECEIPTS_PER_SEARCH = 3000
@@ -274,13 +274,20 @@ class EtaSync(models.Model):
                     self.next_receipt_window_at).replace(tzinfo=timezone.utc)
             if window_start > end:
                 window_start = start
-            if (self.direction == 'received' and self.state != 'done' and
-                    not self.receipt_issue_dates_json and window_start == start and
-                    self.report_date >= datetime.now(cairo).date() - timedelta(days=29) and
-                    self._receipt_day_has_no_results(api_url, auth, start, end)):
-                self.write({'next_receipt_window_at': False,
-                            'receipt_issue_dates_json': False})
-                return 0, set()
+            if self.state != 'done' and not self.item_count:
+                first_issued_at = self._first_receipt_issued_at(
+                    api_url, auth, window_start, end)
+                if first_issued_at is None:
+                    if self.report_date >= datetime.now(cairo).date():
+                        return None
+                    if self.report_date < datetime.now(cairo).date() - timedelta(days=29):
+                        raise ValidationError(_(
+                            'ETA receipt search cannot verify a complete historical day. '
+                            'Previously fetched receipts were saved, but this day remains incomplete.'))
+                    self.write({'next_receipt_window_at': False,
+                                'receipt_issue_dates_json': False})
+                    return 0, set()
+                window_start = max(window_start, first_issued_at - timedelta(milliseconds=1))
             window_end = min(window_start + ETA_RECEIPT_WINDOW -
                              timedelta(milliseconds=1), end)
             pages = self._receipt_pages(api_url, auth, window_start, window_end)
@@ -406,11 +413,13 @@ class EtaSync(models.Model):
         yield from self._receipt_pages(api_url, headers, *first)
         yield from self._receipt_pages(api_url, headers, *second)
 
-    def _receipt_day_has_no_results(self, api_url, headers, start, end):
+    def _first_receipt_issued_at(self, api_url, headers, start, end):
         params = {
-            'Direction': 'Received',
+            'Direction': 'Submitted' if self.direction == 'sent' else 'Received',
             'DateTimeIssuedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
             'DateTimeIssuedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'SortBy': 'DateTimeIssued',
+            'SortDir': 'Asc',
             'PageNo': 1,
             'PageSize': 1,
         }
@@ -420,18 +429,35 @@ class EtaSync(models.Model):
                 headers=headers, params=params, allow_no_result=True,
                 allow_search_limit=True)
         except EtaSearchNoResult:
-            return True
+            return None
         except EtaSearchLimit:
-            return False
+            first, second = self._split_search_window(
+                start, end, _('ETA receipt result limit reached for a one-millisecond window.'))
+            return (self._first_receipt_issued_at(api_url, headers, *first) or
+                    self._first_receipt_issued_at(api_url, headers, *second))
         metadata = payload.get('metadata')
         result = payload.get('result')
         page = payload.get('receipts')
         if metadata is None and isinstance(result, dict):
             metadata = result.get('metadata')
         if page is None and isinstance(result, dict):
-            page = result.get('receipts')
-        return (page == [] and isinstance(metadata, dict) and
-                metadata.get('totalCount') == 0)
+            page = result.get('receipts', result.get('data'))
+        if page is None:
+            page = result if isinstance(result, list) else payload.get('data')
+        if not isinstance(page, list) or not isinstance(metadata, dict):
+            raise ValidationError(_('ETA receipt search returned an invalid page.'))
+        if not page:
+            if metadata.get('totalCount') == 0:
+                return None
+            raise ValidationError(_('ETA receipt search returned invalid pagination metadata.'))
+        first = page[0]
+        if not isinstance(first, dict) or not first.get('dateTimeIssued'):
+            raise ValidationError(_('ETA returned a receipt without a UUID, issue timestamp, or received timestamp.'))
+        issued_at = fields.Datetime.to_datetime(
+            eta_datetime(first['dateTimeIssued'])).replace(tzinfo=timezone.utc)
+        if not start <= issued_at <= end:
+            raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
+        return issued_at
 
     def _receipt_pages(self, api_url, headers, start, end):
         params = {

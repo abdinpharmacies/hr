@@ -302,3 +302,13 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Make Retry locate the earliest remaining receipt issue time before fetching its five-minute window.
+- Split oversized ETA searches while locating the first receipt, and finish a past day only after ETA confirms it is empty.
+- Keep the current Cairo day pending when its receipt search is empty.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
