@@ -190,10 +190,7 @@
           <field name="company_id" readonly="True"/>
           <field name="document_ids" readonly="True" nolabel="1" colspan="2" class="o_scc_history_table">
             <list create="false" edit="false" delete="false">
-              <field name="kind"/>
-              <field name="revision"/>
-              <field name="filename"/>
-              <field name="reason"/>
+              <field name="filename" column_invisible="True"/>
               <field name="user_id"/>
               <field name="occurred_at"/>
               <field name="content" filename="filename" widget="binary"/>
@@ -434,9 +431,6 @@
       <xpath expr="//group[@name='claim_secretarial_review']//field[@name='secretarial_notes'][starts-with(@groups, '!')]" position="replace"/>
       <xpath expr="//field[@name='document_ids']" position="attributes">
         <attribute name="colspan"/>
-      </xpath>
-      <xpath expr="//field[@name='document_ids']/list/field[@name='reason']" position="attributes">
-        <attribute name="string">Upload / Change Reason</attribute>
       </xpath>
       <xpath expr="//field[@name='document_ids']/list/field[@name='user_id']" position="attributes">
         <attribute name="string">Uploaded By</attribute>

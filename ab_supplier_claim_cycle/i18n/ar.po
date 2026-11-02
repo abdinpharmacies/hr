@@ -2552,7 +2552,7 @@ msgstr "سبب الرفع أو التعديل"
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
 msgid "Uploaded By"
-msgstr "رفعه"
+msgstr "الموظف"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_form_layout_refinement
