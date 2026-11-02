@@ -4,27 +4,15 @@ from odoo import api, fields, models
 class AbSalesLineContract(models.Model):
     _inherit = "ab_sales_line"
 
-    # NOTE: These are stored fields (not computed) and are updated by the header recompute
-    # hook (see `ab_sales_header_inherit._ab_contract_recompute_lines`).
+    # Passive snapshots populated by branch uploads; reporting views stay read-only.
     discount = fields.Float(string="Contract Discount %", readonly=True)
 
-    ab_contract_discount_source = fields.Selection(
-        selection=[
-            ("rule", "Contract Rule"),
-            ("origin", "Contract Origin Default"),
-            ("none", "No Discount"),
-        ],
+    ab_contract_discount_source = fields.Char(
         string="Discount Source",
-        readonly=True,
     )
 
-    ab_contract_copay_mode = fields.Selection(
-        selection=[
-            ("before_discount", "Copay Before Discount"),
-            ("after_discount", "Copay After Discount"),
-        ],
+    ab_contract_copay_mode = fields.Char(
         string="Copay Mode",
-        readonly=True,
     )
     ab_contract_copay_percent = fields.Float(string="Copay %", readonly=True)
 
