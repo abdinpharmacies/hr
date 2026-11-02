@@ -20,6 +20,7 @@ ETA_MAX_INVOICE_PAGES = 20
 ETA_RECEIPT_WINDOW = timedelta(minutes=5)
 ETA_INVOICE_SEARCH_DELAY = 2.1
 ETA_RECEIPT_SEARCH_DELAY = 0.6
+ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
 
 
 class EtaSearchNoResult(Exception):
@@ -63,82 +64,69 @@ class EtaSync(models.Model):
                 continue
             if not self._ensure_run_days(config, today):
                 return
-            for kind in ('invoice', 'receipt'):
-                for direction in ('sent', 'received'):
-                    attempted = set()
-                    for priority_day in (today - timedelta(days=1), delivery_day):
-                        if priority_day < config.start_date:
-                            continue
-                        priority_run = self.search([
-                            ('config_id', '=', config.id), ('kind', '=', kind),
-                            ('direction', '=', direction), ('report_date', '=', priority_day),
-                        ], limit=1) or self.create({
-                            'config_id': config.id, 'kind': kind,
-                            'direction': direction, 'report_date': priority_day,
-                        })
-                        if (priority_run.state == 'pending' or
-                                (priority_run.state == 'error' and
-                                 (not priority_run.last_run_at or
-                                  fields.Datetime.to_datetime(priority_run.last_run_at)
-                                  <= error_retry_before)) or
-                                (priority_run.state == 'done' and priority_day == delivery_day and
-                                 (not priority_run.last_run_at or
-                                  fields.Datetime.to_datetime(priority_run.last_run_at).replace(
-                                      tzinfo=timezone.utc).astimezone(cairo).date() < today))):
-                            if not self._cron_attempt(priority_run):
-                                return
-                            attempted.add(priority_day)
-                    stream_domain = [
-                        ('config_id', '=', config.id), ('kind', '=', kind),
-                        ('direction', '=', direction),
-                        ('report_date', '>=', config.start_date),
-                        ('report_date', '<', today),
-                    ]
-                    unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
-                        lambda run: run.report_date not in attempted and
-                        (run.state == 'pending' or not run.last_run_at or
-                         fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
-                    if unfinished:
-                        oldest_unfinished = min(
-                            unfinished,
-                            key=lambda run: (run.report_date, run.state != 'pending'),
-                        )
-                        if not self._cron_attempt(oldest_unfinished):
-                            return
+            for kind, direction in (('receipt', 'received'), ('receipt', 'sent'),
+                                    ('invoice', 'sent'), ('invoice', 'received')):
+                attempted = set()
+                for priority_day in (today - timedelta(days=1), delivery_day):
+                    if priority_day < config.start_date:
                         continue
-
-                    overlap_start = max(config.start_date, today - timedelta(days=14))
-                    overlap_runs = self.search(stream_domain + [
-                        ('state', '=', 'done'),
-                        ('report_date', '>=', overlap_start),
-                        ('report_date', '<', today - timedelta(days=1)),
-                    ]).filtered(lambda run: run.report_date not in attempted and
-                                (not run.last_run_at or
-                                 fields.Datetime.to_datetime(run.last_run_at).replace(
-                                     tzinfo=timezone.utc).astimezone(cairo).date() < today))
-                    if overlap_runs:
-                        oldest_check = min(
-                            overlap_runs,
-                            key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
-                            if run.last_run_at else datetime.min,
-                        )
-                        if not self._cron_attempt(oldest_check):
+                    priority_run = self.search([
+                        ('config_id', '=', config.id), ('kind', '=', kind),
+                        ('direction', '=', direction), ('report_date', '=', priority_day),
+                    ], limit=1) or self.create({
+                        'config_id': config.id, 'kind': kind,
+                        'direction': direction, 'report_date': priority_day,
+                    })
+                    if (priority_run.state == 'pending' or
+                            (priority_run.state == 'error' and
+                             (not priority_run.last_run_at or
+                              fields.Datetime.to_datetime(priority_run.last_run_at)
+                              <= error_retry_before)) or
+                            (priority_run.state == 'done' and priority_day == delivery_day and
+                             (not priority_run.last_run_at or
+                              fields.Datetime.to_datetime(priority_run.last_run_at).replace(
+                                  tzinfo=timezone.utc).astimezone(cairo).date() < today))):
+                        if not self._cron_attempt(priority_run):
                             return
-                if kind == 'invoice' and self._invoice_work_remaining(
-                        config, today, error_retry_before):
-                    break
+                        attempted.add(priority_day)
+                stream_domain = [
+                    ('config_id', '=', config.id), ('kind', '=', kind),
+                    ('direction', '=', direction),
+                    ('report_date', '>=', config.start_date),
+                    ('report_date', '<', today),
+                ]
+                unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
+                    lambda run: run.report_date not in attempted and
+                    (run.state == 'pending' or not run.last_run_at or
+                     fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
+                if unfinished:
+                    oldest_unfinished = min(
+                        unfinished,
+                        key=lambda run: (run.report_date, run.state != 'pending'),
+                    )
+                    if not self._cron_attempt(oldest_unfinished):
+                        return
+                    continue
+
+                overlap_start = max(config.start_date, today - timedelta(days=14))
+                overlap_runs = self.search(stream_domain + [
+                    ('state', '=', 'done'),
+                    ('report_date', '>=', overlap_start),
+                    ('report_date', '<', today - timedelta(days=1)),
+                ]).filtered(lambda run: run.report_date not in attempted and
+                            (not run.last_run_at or
+                             fields.Datetime.to_datetime(run.last_run_at).replace(
+                                 tzinfo=timezone.utc).astimezone(cairo).date() < today))
+                if overlap_runs:
+                    oldest_check = min(
+                        overlap_runs,
+                        key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
+                        if run.last_run_at else datetime.min,
+                    )
+                    if not self._cron_attempt(oldest_check):
+                        return
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(remaining=0)
-
-    def _invoice_work_remaining(self, config, today, error_retry_before):
-        runs = self.search([
-            ('config_id', '=', config.id), ('kind', '=', 'invoice'),
-            ('report_date', '>=', config.start_date), ('report_date', '<', today),
-            ('state', 'in', ['pending', 'error']),
-        ])
-        return bool(runs.filtered(
-            lambda run: run.state == 'pending' or not run.last_run_at or
-            fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
 
     def _ensure_run_days(self, config, today):
         existing = self.search([
@@ -170,7 +158,7 @@ class EtaSync(models.Model):
     def _cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
         auth_cache = {}
-        while True:
+        for _ in range(ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT if in_cron else 1):
             previous_window = run.next_receipt_window_at
             run._attempt(auth_cache=auth_cache)
             if not in_cron:
@@ -183,6 +171,7 @@ class EtaSync(models.Model):
                     run.next_receipt_window_at != previous_window):
                 continue
             return True
+        return True
 
     def action_retry(self):
         for run in self:
@@ -285,6 +274,13 @@ class EtaSync(models.Model):
                     self.next_receipt_window_at).replace(tzinfo=timezone.utc)
             if window_start > end:
                 window_start = start
+            if (self.direction == 'received' and self.state != 'done' and
+                    not self.receipt_issue_dates_json and window_start == start and
+                    self.report_date >= datetime.now(cairo).date() - timedelta(days=29) and
+                    self._receipt_day_has_no_results(api_url, auth, start, end)):
+                self.write({'next_receipt_window_at': False,
+                            'receipt_issue_dates_json': False})
+                return 0, set()
             window_end = min(window_start + ETA_RECEIPT_WINDOW -
                              timedelta(milliseconds=1), end)
             pages = self._receipt_pages(api_url, auth, window_start, window_end)
@@ -409,6 +405,33 @@ class EtaSync(models.Model):
             start, end, _('ETA receipt result limit reached for a one-millisecond window.'))
         yield from self._receipt_pages(api_url, headers, *first)
         yield from self._receipt_pages(api_url, headers, *second)
+
+    def _receipt_day_has_no_results(self, api_url, headers, start, end):
+        params = {
+            'Direction': 'Received',
+            'DateTimeIssuedFrom': start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'DateTimeIssuedTo': end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
+            'PageNo': 1,
+            'PageSize': 1,
+        }
+        try:
+            payload = self._request(
+                'GET', f'{api_url}/api/v1/receipts/search',
+                headers=headers, params=params, allow_no_result=True,
+                allow_search_limit=True)
+        except EtaSearchNoResult:
+            return True
+        except EtaSearchLimit:
+            return False
+        metadata = payload.get('metadata')
+        result = payload.get('result')
+        page = payload.get('receipts')
+        if metadata is None and isinstance(result, dict):
+            metadata = result.get('metadata')
+        if page is None and isinstance(result, dict):
+            page = result.get('receipts')
+        return (page == [] and isinstance(metadata, dict) and
+                metadata.get('totalCount') == 0)
 
     def _receipt_pages(self, api_url, headers, start, end):
         params = {

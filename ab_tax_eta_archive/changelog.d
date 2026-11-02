@@ -275,3 +275,28 @@ fix: prioritize ETA invoices and pace search requests
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+
+1fcb6092 — yahyazakaria22 — 2026-11-02
+feat: send completed ETA daily files to Telegram manually
+
+- Create or refresh daily Excel files only after all four retrieval streams for their issue day are complete.
+- Add a manager-only Send to Telegram button for unsent daily files in list and form views.
+- Refresh an unsent file before manual delivery and lock delivery to avoid sending it twice.
+- Translate the incomplete-day warning in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+
+Current changes before commit:
+
+- Give received and sent receipt retrievals scheduled time even while invoice backfill remains unfinished.
+- Limit receipt work per cron attempt so one busy day does not occupy the entire run.
+- Complete a recent received-receipt day with zero items when ETA confirms that the full day has no results.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
