@@ -327,7 +327,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+99dbbde7 — yahyazakaria22 — 2026-11-02
+fix: accept ETA empty receipt package response
 
 - Treat ETA's explicit InvalidInput "criteria does not return any results" package response as an empty historical interval.
 - Keep other HTTP 400 package request errors visible for correction.
@@ -335,3 +336,4 @@ Current changes before commit:
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
