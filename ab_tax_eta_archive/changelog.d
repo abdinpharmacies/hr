@@ -326,3 +326,12 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Treat ETA's explicit InvalidInput "criteria does not return any results" package response as an empty historical interval.
+- Keep other HTTP 400 package request errors visible for correction.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py

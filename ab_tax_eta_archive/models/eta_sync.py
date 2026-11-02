@@ -668,7 +668,7 @@ class EtaSync(models.Model):
                     delay = 2 ** attempt
                 time.sleep(max(delay + 0.5, 1))
                 continue
-            if response.status_code == 400 and allow_search_limit:
+            if response.status_code == 400 and (allow_search_limit or allow_no_result):
                 try:
                     error = response.json()
                 except ValueError:
@@ -679,11 +679,18 @@ class EtaSync(models.Model):
                     code = (error.get('code') or detail.get('code') or
                             (error_detail if isinstance(error_detail, str) else None))
                     message = str(error.get('message') or detail.get('message') or '').lower()
+                    target = error.get('target') or detail.get('target')
+                    if (allow_no_result and method == 'POST' and
+                            urlsplit(url).path == '/api/v1.0/receiptpackages/requests' and
+                            code == 'InvalidInput' and target == 'Request' and
+                            message.strip().rstrip('.') ==
+                            'sorry, your criteria does not return any results'):
+                        raise EtaSearchNoResult()
                     oversized_query = (code == 'ValidationError' and
                                        'query will return approximately' in message and
                                        'should be under' in message and
                                        'documents' in message)
-                    if code == 'OperationExceedsLimit' or oversized_query:
+                    if allow_search_limit and (code == 'OperationExceedsLimit' or oversized_query):
                         raise EtaSearchLimit()
             if response.status_code == 404 and allow_no_result:
                 try:
