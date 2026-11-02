@@ -315,7 +315,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+e686ae65 — yahyazakaria22 — 2026-11-02
+fix: retrieve historical ETA receipts through packages
 
 - Retrieve historical sent and received receipts through ETA receipt packages instead of the recent-only search API.
 - Resume package requests, split oversized windows, and download completed JSON packages on Retry or cron.
@@ -324,3 +325,4 @@ Current changes before commit:
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
