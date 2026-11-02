@@ -12718,25 +12718,28 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_account__access_role
-#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__access_role
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__group_ids
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.view_staff_user_wizard_form
 msgid "Access Rights"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__employee
-#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__employee
 msgid "Employee"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
+#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__administrator
+msgid "Administrator"
+msgstr ""
+
+#. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__website_editor
-#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__website_editor
 msgid "Website Editor"
 msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_account__access_role__website_designer
-#: model:ir.model.fields.selection,name:ab_ecommerce_storefront.selection__ab_ecommerce_staff_user_wizard__access_role__website_designer
 msgid "Website Editor and Designer"
 msgstr ""
 
@@ -12753,7 +12756,7 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: code:addons/ab_ecommerce_storefront/models/staff_account.py:0
-msgid "This account has access outside Website staff management."
+msgid "This account cannot be managed from this screen."
 msgstr ""
 
 #. module: ab_ecommerce_storefront
@@ -12774,7 +12777,12 @@ msgstr ""
 
 #. module: ab_ecommerce_storefront
 #: code:addons/ab_ecommerce_storefront/wizard/staff_user.py:0
-msgid "Select a permitted access role."
+msgid "Only internal employee accounts can be managed here."
+msgstr ""
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_ab_ecommerce_staff_user_wizard__login_from_anywhere
+msgid "Login From Anywhere"
 msgstr ""
 
 #. module: ab_ecommerce_storefront

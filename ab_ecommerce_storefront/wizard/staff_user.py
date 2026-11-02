@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, ValidationError
 
@@ -13,16 +15,32 @@ class StaffUserWizard(models.TransientModel):
     active = fields.Boolean(default=True)
     new_password = fields.Char(string="New Password", copy=False)
     confirm_password = fields.Char(string="Confirm Password", copy=False)
-    access_role = fields.Selection(
-        [
-            ("employee", "Employee"),
-            ("website_editor", "Website Editor"),
-            ("website_designer", "Website Editor and Designer"),
-        ],
+    login_from_anywhere = fields.Boolean(string="Login From Anywhere", readonly=True, default=True)
+    group_ids = fields.Many2many(
+        "res.groups",
         string="Access Rights",
-        required=True,
-        default="employee",
+        default=lambda self: self.env.ref("base.group_user"),
     )
+    view_group_hierarchy = fields.Json(
+        default=lambda self: self._default_staff_group_hierarchy(),
+    )
+
+    @api.model
+    def _default_staff_group_hierarchy(self):
+        hierarchy = deepcopy(self.env["res.groups"].sudo()._get_view_group_hierarchy())
+        protected_id = self.env.ref("ab_store.ab_login_from_anywhere").id
+        hierarchy["groups"].pop(protected_id, None)
+        for group in hierarchy["groups"].values():
+            for key in ("disjoint_ids", "implied_ids", "all_implied_ids", "all_implied_by_ids"):
+                group[key] = [group_id for group_id in group[key] if group_id != protected_id]
+        for privilege in hierarchy["privileges"].values():
+            privilege["group_ids"] = [group_id for group_id in privilege["group_ids"] if group_id != protected_id]
+        for category in hierarchy["categories"]:
+            category["privilege_ids"] = [
+                privilege_id for privilege_id in category["privilege_ids"]
+                if hierarchy["privileges"][privilege_id]["group_ids"]
+            ]
+        return hierarchy
 
     @api.model
     def default_get(self, fields_list):
@@ -32,14 +50,14 @@ class StaffUserWizard(models.TransientModel):
             account = self.env["ab_ecommerce_staff_account"].browse(account_id)
             account._check_manage_access()
             target = account.user_id.sudo()
-            role = account.access_role
             values.update({
                 "account_id": account.id,
                 "name": target.name,
                 "login": target.login,
                 "email": target.email,
                 "active": target.active,
-                "access_role": role,
+                "group_ids": [fields.Command.set(target.group_ids.ids)],
+                "login_from_anywhere": self.env.ref("ab_store.ab_login_from_anywhere") in target.group_ids,
             })
         return values
 
@@ -59,15 +77,14 @@ class StaffUserWizard(models.TransientModel):
         if self.new_password or self.confirm_password:
             if self.new_password != self.confirm_password:
                 raise ValidationError(_("The passwords do not match."))
-        group_by_role = {
-            "employee": self.env.ref("base.group_user"),
-            "website_editor": self.env.ref("website.group_website_restricted_editor"),
-            "website_designer": self.env.ref("website.group_website_designer"),
-        }
-        if self.access_role not in group_by_role:
-            raise ValidationError(_("Select a permitted access role."))
+        internal = self.env.ref("base.group_user")
+        portal = self.env.ref("base.group_portal")
+        public = self.env.ref("base.group_public")
+        groups = self.group_ids.sudo()
+        if portal in groups.all_implied_ids or public in groups.all_implied_ids:
+            raise ValidationError(_("Only internal employee accounts can be managed here."))
+        groups |= internal
         login_anywhere = self.env.ref("ab_store.ab_login_from_anywhere")
-        groups = self.env.ref("base.group_user") | group_by_role[self.access_role]
         values = {
             "name": name,
             "login": login,
@@ -78,6 +95,7 @@ class StaffUserWizard(models.TransientModel):
             account = self.account_id
             account._check_manage_access()
             target = account.user_id.sudo()
+            groups -= login_anywhere
             if login_anywhere in target.group_ids:
                 groups |= login_anywhere
             values["group_ids"] = [fields.Command.set(groups.ids)]
