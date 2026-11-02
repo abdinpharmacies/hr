@@ -1,4 +1,5 @@
 import base64
+import binascii
 import hashlib
 import math
 from copy import deepcopy
@@ -134,7 +135,8 @@ class SupplierClaimCycle(models.Model):
     @api.model
     def _get_view_cache_key(self, view_id=None, view_type='form', **options):
         return super()._get_view_cache_key(view_id, view_type, **options) + (
-            tuple(self._role_allowed(department) for department in DEPARTMENTS),)
+            tuple(self._role_allowed(department) for department in DEPARTMENTS),
+            self._role_allowed('user'))
 
     @api.model
     def _get_view(self, view_id=None, view_type='form', **options):
@@ -145,7 +147,10 @@ class SupplierClaimCycle(models.Model):
                 if not self._role_allowed(department):
                     for node in arch.xpath("//group[@name='%s_review']" % department):
                         node.getparent().remove(node)
-            if not any(self._role_allowed(department) for department in DEPARTMENTS):
+            if not self._role_allowed('user'):
+                for node in arch.xpath("//group[@name='claim_secretarial_review']"):
+                    node.getparent().remove(node)
+            if not self._role_allowed('user') and not any(self._role_allowed(department) for department in DEPARTMENTS):
                 for node in arch.xpath("//page[@name='claim_reviews']"):
                     node.getparent().remove(node)
         return arch, view
@@ -188,6 +193,7 @@ class SupplierClaimCycle(models.Model):
     secretarial_notes = fields.Text()
     # Inline binary storage protects evidence from direct ir.attachment mutations.
     attachment = fields.Binary(string='Attachment', attachment=False, copy=False)
+    attachment_filename = fields.Char(copy=False)
     cheque_attachment = fields.Binary(related='supplier_cheque_attachment', readonly=True)
     cheque_filename = fields.Char(related='supplier_cheque_filename', readonly=True)
     bank_cheque_attachment = fields.Binary(string='Cheque Attachment', attachment=False, copy=False)
@@ -241,6 +247,42 @@ class SupplierClaimCycle(models.Model):
             claim.can_edit_open_claim_fields = open_permitted
 
     can_edit_current_review = fields.Boolean(compute='_compute_can_edit_current_review')
+    def action_upload_documents(self, field_name, files):
+        self.ensure_one()
+        self._prepare_action()
+        kinds = {kind + '_attachment': kind for kind in
+                 ('supplier_cheque', 'tax_review', 'payment_request', 'bank_cheque')}
+        kinds['attachment'] = 'attachment'
+        if not isinstance(field_name, str) or field_name not in kinds:
+            raise AccessError(_('You may only edit the fields assigned to your current stage.'))
+        if not isinstance(files, list) or not files:
+            raise ValidationError(_('Select at least one file to upload.'))
+        for file in files:
+            if (not isinstance(file, dict) or not isinstance(file.get('name'), str)
+                    or not file['name'].strip() or not isinstance(file.get('data'), str)):
+                raise ValidationError(_('Each attachment requires a filename and valid file content.'))
+            try:
+                content = base64.b64decode(file['data'], validate=True)
+            except (ValueError, binascii.Error):
+                raise ValidationError(_('Each attachment requires a filename and valid file content.')) from None
+            if not content:
+                raise ValidationError(_('Empty attachments cannot be uploaded.'))
+            if (field_name == 'payment_request_attachment' and self.invalidated_payment_request_digest
+                    and hashlib.sha256(content).hexdigest() == self.invalidated_payment_request_digest):
+                raise ValidationError(_('Upload a corrected payment request; the invalidated document cannot be reused.'))
+        kind = kinds[field_name]
+        filename_field = 'attachment_filename' if kind == 'attachment' else kind + '_filename'
+        with self.env.cr.savepoint():
+            self.write({field_name: files[-1]['data'], filename_field: files[-1]['name']})
+            remaining = files if kind == 'attachment' else files[:-1]
+            if remaining:
+                self.env['ab_supplier_claim_document']._append([{
+                    'claim_id': self.id, 'kind': kind, 'content': file['data'],
+                    'filename': file['name'], 'revision': self.document_revision,
+                    'reason': 'Document uploaded', 'user_id': self.env.uid,
+                    'occurred_at': fields.Datetime.now(),
+                } for file in remaining])
+        return True
 
     @api.depends('state', 'active', *(f'{d}_decision' for d in DEPARTMENTS))
     @api.depends_context('uid')
@@ -401,7 +443,7 @@ class SupplierClaimCycle(models.Model):
     @api.model
     def _entry_fields(self):
         return {'supplier_id', 'num_of_invoice', 'area', 'claim_amount', 'type_of_invoice',
-                'secretarial_notes', 'attachment', 'delivery_representative_name',
+                'secretarial_notes', 'attachment', 'attachment_filename', 'delivery_representative_name',
                 'delivery_representative_phone', 'claim_reference', 'tax_classification',
                 'section', 'payment_nature'}
 

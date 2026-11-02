@@ -191,6 +191,7 @@
           <field name="document_ids" readonly="True" nolabel="1" colspan="2" class="o_scc_history_table">
             <list create="false" edit="false" delete="false">
               <field name="filename" column_invisible="True"/>
+              <field name="reason" column_invisible="True"/>
               <field name="user_id"/>
               <field name="occurred_at"/>
               <field name="content" filename="filename" widget="binary"/>
@@ -389,8 +390,7 @@
       <xpath expr="//sheet" position="inside">
         <div name="claim_workflow_box" class="o_scc_panel o_scc_workflow_box">
         <notebook name="claim_workflow_details" class="o_scc_workflow_details">
-          <page name="claim_reviews" string="Review Details" invisible="not can_edit_current_review"/>
-          <page name="claim_preparation" string="Secretarial Preparation"/>
+          <page name="claim_reviews" string="Review Details" invisible="not can_edit_current_review and not can_prepare_payment"/>
           <page name="claim_documents" string="Documents"/>
           <page name="claim_exceptions" string="Rejections &amp; Deferrals" invisible="not exception_history_ids"/>
         </notebook>
@@ -398,9 +398,10 @@
       </xpath>
       <xpath expr="//page[@name='claim_reviews']" position="inside">
         <xpath expr="//group[@name='department_reviews']" position="move"/>
-      </xpath>
-      <xpath expr="//page[@name='claim_preparation']" position="inside">
         <xpath expr="//group[@name='claim_secretarial_review']" position="move"/>
+      </xpath>
+      <xpath expr="//group[@name='claim_secretarial_review']" position="attributes">
+        <attribute name="invisible">not can_prepare_payment</attribute>
       </xpath>
       <xpath expr="//div[hasclass('o_scc_history_section')][field[@name='note_history_ids']]" position="attributes">
         <attribute name="name">claim_notes_section</attribute>
@@ -429,9 +430,31 @@
       <xpath expr="//group[@name='claim_document_audit']" position="replace"/>
       <xpath expr="//group[@name='claim_secretarial_review']//field[@name='secretarial_notes'][not(starts-with(@groups, '!'))]" position="replace"/>
       <xpath expr="//group[@name='claim_secretarial_review']//field[@name='secretarial_notes'][starts-with(@groups, '!')]" position="replace"/>
+      <xpath expr="//group[@name='supplier_accounts_review']/field[@name='supplier_cheque_attachment']" position="attributes">
+        <attribute name="widget">supplier_claim_upload</attribute>
+      </xpath>
+      <xpath expr="//field[@name='tax_review_attachment']" position="attributes">
+        <attribute name="widget">supplier_claim_upload</attribute>
+      </xpath>
+      <xpath expr="//field[@name='payment_request_attachment']" position="attributes">
+        <attribute name="widget">supplier_claim_upload</attribute>
+      </xpath>
+      <xpath expr="//field[@name='bank_cheque_attachment']" position="attributes">
+        <attribute name="widget">supplier_claim_upload</attribute>
+      </xpath>
+      <xpath expr="//field[@name='attachment']" position="attributes">
+        <attribute name="widget">supplier_claim_upload</attribute>
+      </xpath>
+      <xpath expr="//field[@name='attachment']" position="attributes">
+        <attribute name="filename">attachment_filename</attribute>
+      </xpath>
+      <xpath expr="//sheet" position="inside">
+        <field name="attachment_filename" invisible="True"/>
+      </xpath>
       <xpath expr="//field[@name='document_ids']" position="attributes">
         <attribute name="colspan"/>
       </xpath>
+      <xpath expr="//field[@name='document_ids']/list/field[@name='reason']" position="replace"/>
       <xpath expr="//field[@name='document_ids']/list/field[@name='user_id']" position="attributes">
         <attribute name="string">Uploaded By</attribute>
       </xpath>

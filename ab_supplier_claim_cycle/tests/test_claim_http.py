@@ -210,3 +210,69 @@ class TestClaimHttp(HttpCase):
                     console.log('test successful');
                 })().catch(error => console.error(error.message));
             """, login=self.users[role].login, timeout=60)
+
+    def _check_multiple_uploads(self, language):
+        if language != 'en_US':
+            self.env['res.lang']._activate_lang(language)
+            self.env['ir.module.module'].search([('name', '=', 'ab_supplier_claim_cycle')])._update_translations(filter_lang=[language])
+        self.users['user'].lang = language
+        claim = self.env['ab_supplier_claim_cycle'].with_user(self.users['user']).create({
+            'supplier_id': self.claim.supplier_id.id, 'num_of_invoice': 1, 'area': 'north',
+            'claim_amount': 100, 'type_of_invoice': 'original', 'payment_nature': 'cash',
+            'tax_classification': 'non_tax_payment'})
+        claim.action_submit()
+        claim.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved')
+        self.browser_js(f'/odoo/action-ab_supplier_claim_cycle.invoice_action/{claim.id}', """
+            (async () => {
+                const waitFor = async (predicate) => {
+                    const deadline = Date.now() + 30000;
+                    while (!predicate()) {
+                        if (Date.now() > deadline) throw new Error('Upload UI timeout');
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    return predicate();
+                };
+                const tab = await waitFor(() => document.querySelector('.nav-link[name="claim_reviews"]'));
+                tab.click();
+                const widget = await waitFor(() => document.querySelector('.o_field_widget[name="payment_request_attachment"]'));
+                if (document.querySelector('.o_field_widget[name="can_upload_documents"]')) throw new Error('Unexpected separate upload button');
+                let selected = false;
+                const originalClick = HTMLInputElement.prototype.click;
+                HTMLInputElement.prototype.click = function () {
+                    if (this.type === 'file') selected = true;
+                    else originalClick.call(this);
+                };
+                widget.querySelector('.o_select_file_button > span').click();
+                await waitFor(() => selected);
+                HTMLInputElement.prototype.click = originalClick;
+                const input = document.querySelector('.o_field_widget[name="payment_request_attachment"] input[type="file"]');
+                if (!input.multiple) throw new Error('Multiple selection unavailable');
+                const transfer = new DataTransfer();
+                transfer.items.add(new File(['first evidence'], 'first-extra.pdf', {type: 'application/pdf'}));
+                transfer.items.add(new File(['second evidence'], 'second-extra.pdf', {type: 'application/pdf'}));
+                input.files = transfer.files;
+                input.dispatchEvent(new Event('change', {bubbles: true}));
+                await waitFor(() => document.querySelector('.o_field_widget[name="payment_request_attachment"] input[type="text"]')?.value === 'second-extra.pdf');
+                const existingInput = document.querySelector('.o_field_widget[name="payment_request_attachment"] input[type="file"]');
+                if (!existingInput.multiple) throw new Error('Existing Edit control lost multiple selection');
+                const extra = new DataTransfer();
+                extra.items.add(new File(['third evidence'], 'third-extra.pdf', {type: 'application/pdf'}));
+                existingInput.files = extra.files;
+                existingInput.dispatchEvent(new Event('change', {bubbles: true}));
+                await waitFor(() => document.querySelector('.o_field_widget[name="payment_request_attachment"] input[type="text"]')?.value === 'third-extra.pdf');
+                document.querySelector('.nav-link[name="claim_documents"]').click();
+                await waitFor(() => {
+                    const table = document.querySelector('.o_field_widget[name="document_ids"]');
+                    return table?.textContent.includes('first-extra.pdf') && table.textContent.includes('second-extra.pdf') && table.textContent.includes('third-extra.pdf');
+                });
+                console.log('test successful');
+            })().catch(error => console.error(error));
+        """, login=self.users['user'].login, timeout=90)
+        claim.invalidate_recordset(['document_ids'])
+        self.assertEqual(set(claim.document_ids.mapped('filename')), {'first-extra.pdf', 'second-extra.pdf', 'third-extra.pdf'})
+
+    def test_multiple_uploads_english(self):
+        self._check_multiple_uploads('en_US')
+
+    def test_multiple_uploads_arabic(self):
+        self._check_multiple_uploads('ar_001')

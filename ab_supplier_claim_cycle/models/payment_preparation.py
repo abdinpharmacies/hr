@@ -11,7 +11,8 @@ class SupplierClaimDocument(models.Model):
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True, ondelete='restrict', index=True)
     kind = fields.Selection([(k, label) for k, label in (
         ('supplier_cheque', 'Supplier Cheque'), ('tax_review', 'Tax Review'),
-        ('payment_request', 'Payment Request'), ('bank_cheque', 'Bank Document'))], required=True)
+        ('payment_request', 'Payment Request'), ('bank_cheque', 'Bank Document'),
+        ('attachment', 'Attachment'))], required=True)
     content = fields.Binary(attachment=False, required=True)
     filename = fields.Char()
     revision = fields.Integer(required=True)

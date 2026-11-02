@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_supplier_claim_cycle.DocumentUpload" t-inherit="web.BinaryField" t-inherit-mode="primary">
+        <xpath expr="//div/FileUploader" position="attributes">
+            <attribute name="multiUpload">true</attribute>
+            <attribute name="onClick.bind">beforeUpload</attribute>
+            <attribute name="onUploaded.bind">onUploaded</attribute>
+            <attribute name="onUploadComplete.bind">onUploadComplete</attribute>
+        </xpath>
+        <xpath expr="//label/FileUploader" position="attributes">
+            <attribute name="multiUpload">true</attribute>
+            <attribute name="onClick.bind">beforeUpload</attribute>
+            <attribute name="onUploaded.bind">onUploaded</attribute>
+            <attribute name="onUploadComplete.bind">onUploadComplete</attribute>
+        </xpath>
+    </t>
+</templates>

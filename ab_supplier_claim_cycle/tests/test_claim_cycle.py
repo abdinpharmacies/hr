@@ -9,6 +9,8 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import TransactionCase, tagged
 from odoo.tests.common import new_test_user
 
+from ..models.ab_supplier_claim_cycle import DEPARTMENTS
+
 
 @tagged('post_install', '-at_install')
 class TestSupplierClaimCycle(TransactionCase):
@@ -239,12 +241,16 @@ class TestSupplierClaimCycle(TransactionCase):
         documents = arch.xpath('//page[@name="claim_documents"]/field[@name="document_ids"]')[0]
         self.assertEqual(documents.get('readonly'), 'True')
         self.assertEqual({node.get('name') for node in documents.xpath('./list/field')},
-                         {'kind', 'revision', 'filename', 'reason', 'user_id', 'occurred_at', 'content'})
+                         {'filename', 'user_id', 'occurred_at', 'content'})
         self.assertEqual(len(arch.xpath('//field[@name="company_id"]')), 1)
         for name in ('document_revision', 'payment_request_revision', 'bank_approval_revision',
                      'migration_gate_exception', 'review_round'):
             self.assertFalse(arch.xpath('//sheet/field[@name="%s"] | //sheet/group/field[@name="%s"]' % (name, name)))
         self.assertIn('activity_ids', self.Claim._fields)
+        for name in ('supplier_cheque_attachment', 'tax_review_attachment',
+                     'payment_request_attachment', 'bank_cheque_attachment', 'attachment'):
+            self.assertTrue(arch.xpath('//field[@name="%s" and @widget="supplier_claim_upload"]' % name))
+        self.assertFalse(arch.xpath('//field[@name="can_upload_documents"]'))
 
     def test_review_view_is_filtered_by_server_role_and_active_stage(self):
         from lxml import etree
@@ -252,6 +258,13 @@ class TestSupplierClaimCycle(TransactionCase):
         for role in self.roles:
             model = self.Claim.with_user(self.users[role])
             arch = etree.fromstring(model.get_view(view_type='form')['arch'])
+            self.assertFalse(arch.xpath('//page[@name="claim_preparation"]'))
+            preparation = arch.xpath('//page[@name="claim_reviews"]//group[@name="claim_secretarial_review"]')
+            self.assertEqual(len(preparation), int(role in ('user', 'admin')))
+            if preparation:
+                self.assertEqual(preparation[0].get('invisible'), 'not can_prepare_payment')
+            for page in arch.xpath('//page[@name="claim_reviews"]'):
+                self.assertEqual(page.get('invisible'), 'not can_edit_current_review and not can_prepare_payment')
             visible_roles = departments if role == 'admin' else (role,) if role in departments else ()
             groups = arch.xpath('//page[@name="claim_reviews"]//group[@name="department_reviews"]/group')
             self.assertEqual({node.get('name') for node in groups},
@@ -649,6 +662,83 @@ class TestSupplierClaimCycle(TransactionCase):
                 history.write({'reason': 'Forged'})
             with self.assertRaises(AccessError):
                 history.unlink()
+
+    def test_multiple_attachments_through_existing_stage_fields(self):
+        files = [{'name': 'first.pdf', 'data': self.document.decode()},
+                 {'name': 'second.pdf', 'data': self.replacement.decode()}]
+        scenarios = [('draft', 'user', 'attachment'), ('returned_secretarial', 'user', 'attachment'),
+                     ('financial_review', 'tax', 'tax_review'),
+                     ('financial_review', 'supplier_accounts', 'supplier_cheque'),
+                     ('secretarial_preparation', 'user', 'payment_request'),
+                     ('bank_accounts', 'bank_accounts', 'bank_cheque')]
+        for state, role, kind in scenarios:
+            claim = self.claim()
+            claim._workflow_write({'state': state, 'secretarial_preparation_status':
+                'prepared' if state == 'bank_accounts' else 'pending',
+                **{department + '_decision': 'pending' for department in DEPARTMENTS}})
+            record = claim.with_user(self.users[role])
+            field = 'attachment' if kind == 'attachment' else kind + '_attachment'
+            self.assertTrue(record.action_upload_documents(field, files))
+            documents = claim.document_ids
+            self.assertEqual(len(documents), 2)
+            self.assertEqual(set(documents.mapped('filename')), {'first.pdf', 'second.pdf'})
+            self.assertEqual(documents.mapped('user_id'), self.users[role])
+            self.assertEqual(set(documents.mapped('kind')), {kind})
+            self.assertEqual(set(documents.mapped('revision')), {claim.document_revision})
+            self.assertEqual(claim[field], self.replacement)
+            self.assertEqual(claim.state, state)
+            if kind == 'payment_request':
+                self.assertEqual(claim.payment_request_revision, claim.document_revision)
+            self.assertEqual(self.env['mail.message'].search_count([
+                ('supplier_claim_document_id', 'in', documents.ids)]), 2)
+            record.action_upload_documents(field, [{'name': 'third.pdf', 'data': self.document.decode()}])
+            self.assertEqual(len(claim.document_ids), 3)
+            with self.assertRaises(AccessError):
+                documents.with_user(self.users[role]).write({'filename': 'changed.pdf'})
+
+    def test_multiple_attachment_access_and_atomic_validation(self):
+        files = [{'name': 'first.pdf', 'data': self.document.decode()}]
+        claim = self.claim(tax='non_tax_payment')
+        self.financial(claim)
+        for role in ('user', 'inventory', 'purchasing', 'tax', 'bank_accounts', 'reviewer'):
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users[role]).action_upload_documents('supplier_cheque_attachment', files)
+        supplier = claim.with_user(self.users['supplier_accounts'])
+        with self.assertRaises(ValidationError):
+            supplier.action_upload_documents('supplier_cheque_attachment', files + [{'name': 'bad.pdf', 'data': 'invalid!'}])
+        self.assertFalse(claim.document_ids)
+        self.assertFalse(claim.supplier_cheque_attachment)
+        with self.assertRaises(AccessError):
+            supplier.action_upload_documents('tax_review_attachment', files)
+        with self.assertRaises(AccessError):
+            supplier.action_upload_documents('state', files)
+        self.decide(claim, 'supplier_accounts')
+        with self.assertRaises(AccessError):
+            supplier.action_upload_documents('supplier_cheque_attachment', files)
+        for values in ({'state': 'closed'}, {'active': False}):
+            claim._workflow_write(values)
+            with self.assertRaises(UserError):
+                claim.with_user(self.users['admin']).action_upload_documents('attachment', files)
+        claim._workflow_write({'state': 'draft', 'active': True,
+            'company_id': self.env['res.company'].create({'name': 'Upload isolated company'}).id})
+        with self.assertRaises(AccessError):
+            claim.action_upload_documents('attachment', files)
+
+    def test_multiple_payment_files_preserve_required_and_invalidated_checks(self):
+        import hashlib
+        claim = self.claim(payment='cash', tax='non_tax_payment')
+        self.prepare(claim)
+        claim._workflow_write({'invalidated_payment_request_digest': hashlib.sha256(base64.b64decode(self.document)).hexdigest()})
+        with self.assertRaises(ValidationError):
+            claim.action_upload_documents('payment_request_attachment', [
+                {'name': 'invalidated.pdf', 'data': self.document.decode()},
+                {'name': 'corrected.pdf', 'data': self.replacement.decode()}])
+        self.assertFalse(claim.payment_request_attachment)
+        claim.action_upload_documents('payment_request_attachment', [
+            {'name': 'corrected.pdf', 'data': self.replacement.decode()},
+            {'name': 'annex.pdf', 'data': base64.b64encode(b'payment annex').decode()}])
+        claim.action_prepare_payment()
+        self.assertEqual(claim.state, 'ready_to_close')
 
     def test_company_and_branch_scope(self):
         company = self.env['res.company'].create({'name': 'Isolated branch'})

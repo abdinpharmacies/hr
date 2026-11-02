@@ -11,7 +11,6 @@
     'data': [
         'security/groups.xml',
         'security/record_rules.xml',
-        'security/costcenter_rules.xml',
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
@@ -22,6 +21,8 @@
     ],
     'assets': {'web.assets_backend': [
         'ab_supplier_claim_cycle/static/src/scss/claim_design.scss',
+        'ab_supplier_claim_cycle/static/src/js/document_upload.js',
+        'ab_supplier_claim_cycle/static/src/xml/document_upload.xml',
     ]},
     'installable': True,
 }

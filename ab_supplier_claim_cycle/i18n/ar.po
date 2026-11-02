@@ -1709,6 +1709,8 @@ msgstr "يُطبق"
 msgid "Archive cost centers instead of deleting them."
 msgstr "يرجى أرشفة مراكز التكلفة بدلاً من حذفها."
 
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_document__kind__attachment
 #: code:addons/ab_supplier_claim_cycle/models/payment_preparation.py:0
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__attachment
@@ -2603,3 +2605,21 @@ msgstr "تم تعديل بيانات المطالبة: %(changes)s"
 #: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_mail_message__supplier_claim_document_unique
 msgid "Each claim document can be linked to only one chatter message."
 msgstr "لا يمكن ربط المستند بأكثر من رسالة واحدة في سجل المطالبة."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Select at least one file to upload."
+msgstr "اختر ملفاً واحداً على الأقل لرفعه."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Each attachment requires a filename and valid file content."
+msgstr "يجب أن يحتوي كل مرفق على اسم ملف ومحتوى صالح."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Empty attachments cannot be uploaded."
+msgstr "لا يمكن رفع مرفقات فارغة."
