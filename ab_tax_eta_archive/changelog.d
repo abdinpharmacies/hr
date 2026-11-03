@@ -438,7 +438,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+bae05edc — yahyazakaria22 — 2026-11-03
+fix: disable ETA receipt package retrieval
 
 - Stop creating and downloading ETA receipt packages; use receipt search with hourly checkpoints for eligible days.
 - Leave older receipt days in Error with an explicit search coverage message instead of treating unverified days as complete.
