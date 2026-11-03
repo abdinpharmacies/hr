@@ -135,6 +135,12 @@ class EtaSync(models.Model):
             ('report_date', '>=', config.start_date),
             ('report_date', '<=', today),
         ])
+        today_runs = existing.filtered(lambda run: run.report_date == today)
+        today_runs.filtered(lambda run: run.state == 'done').write({'state': 'pending'})
+        today_runs.filtered(
+            lambda run: run.kind == 'receipt' and
+            (run.next_receipt_window_at or run.receipt_issue_dates_json)
+        ).write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
         known = {(run.report_date, run.kind, run.direction) for run in existing}
         missing = []
         day = config.start_date
@@ -159,7 +165,13 @@ class EtaSync(models.Model):
     def _cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
         auth_cache = {}
-        for _ in range(ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT):
+        recent_cutoff = (datetime.now(pytz.timezone('Africa/Cairo')).date()
+                         - timedelta(days=29))
+        historical_receipt = (run.kind == 'receipt' and
+                              run.report_date < recent_cutoff)
+        attempts = (ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT
+                    if in_cron or historical_receipt else 1)
+        for _ in range(attempts):
             previous_window = run.next_receipt_window_at
             previous_packages = [(part.id, part.state, part.package_id)
                                  for part in run.package_ids] if run.kind == 'receipt' else []
@@ -225,6 +237,9 @@ class EtaSync(models.Model):
     def _retrieve(self, auth_cache=None):
         self.ensure_one()
         config = self.config_id
+        cairo = pytz.timezone('Africa/Cairo')
+        if self.report_date >= datetime.now(cairo).date():
+            return None
         receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
         if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
             client_id = config.invoice_client_id
@@ -260,7 +275,6 @@ class EtaSync(models.Model):
         if auth_cache is not None:
             auth_cache['access_token'] = token
         auth = {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
-        cairo = pytz.timezone('Africa/Cairo')
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
@@ -278,21 +292,8 @@ class EtaSync(models.Model):
                 if pages is None:
                     return None
             else:
-                pages = self._recent_receipt_pages(api_url, auth, start, end, cairo,
+                pages = self._recent_receipt_pages(api_url, auth, start, end,
                                                    receipt_checkpoint)
-                if pages is False:
-                    prior_dates = (receipt_checkpoint.get('issue_dates', [])
-                                   if isinstance(receipt_checkpoint, dict)
-                                   else receipt_checkpoint)
-                    count = model.search_count([
-                        ('config_id', '=', config.id),
-                        ('direction', '=', self.direction),
-                        ('issued_at', '>=', start.replace(tzinfo=None)),
-                        ('issued_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
-                    ])
-                    return count, set(fields.Date.to_date(value) for value in prior_dates)
-                if pages is None:
-                    return None
                 window_start, window_end, pages = pages
         seen_uuids = set()
         saved_issue_dates = (receipt_checkpoint.get('issue_dates', [])
@@ -369,7 +370,7 @@ class EtaSync(models.Model):
             return document_count, issue_dates
         return len(seen_uuids), issue_dates
 
-    def _recent_receipt_pages(self, api_url, auth, start, end, cairo, receipt_checkpoint):
+    def _recent_receipt_pages(self, api_url, auth, start, end, receipt_checkpoint):
         window_start = start
         if (self.state != 'done' and self.next_receipt_window_at and
                 isinstance(receipt_checkpoint, dict) and
@@ -378,13 +379,12 @@ class EtaSync(models.Model):
                 self.next_receipt_window_at).replace(tzinfo=timezone.utc)
         if window_start > end:
             window_start = start
-        selected = self._select_receipt_window(api_url, auth, window_start, end)
+        hour_end = min(
+            window_start.replace(minute=0, second=0, microsecond=0)
+            + timedelta(hours=1) - timedelta(milliseconds=1), end)
+        selected = self._select_receipt_window(api_url, auth, window_start, hour_end)
         if selected is None:
-            if self.report_date >= datetime.now(cairo).date():
-                return None
-            self.write({'next_receipt_window_at': False,
-                        'receipt_issue_dates_json': False})
-            return False
+            return window_start, hour_end, ()
         window_start, window_end = selected
         return window_start, window_end, self._receipt_pages(
             api_url, auth, window_start, window_end, expected_nonempty=True)

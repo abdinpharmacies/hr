@@ -350,3 +350,14 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Process recent receipt retrievals one Cairo-day hour at a time and split only oversized hours into verified subranges.
+- Save the next UTC receipt checkpoint after each completed hour or subrange so cron resumes from the last complete interval.
+- Keep today's receipt and invoice retrievals pending without calling ETA, and clear today's partial receipt checkpoint for a full scan tomorrow.
+- Limit manual recent-receipt Retry to one committed interval while allowing cron to continue through several intervals.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
