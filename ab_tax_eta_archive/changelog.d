@@ -574,3 +574,14 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/views/eta_views.xml
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Commit each fetched UUID detail so a long ETA export cron run can resume after its time budget instead of losing the batch.
+- Prepare and deliver each completed category independently once its retrievals and UUID details are complete, while leaving unfinished categories pending.
+- Bound each cron pass, persist each created workbook and Telegram result, and avoid sending an older file while its category is being refreshed.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d

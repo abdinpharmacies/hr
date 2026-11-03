@@ -195,6 +195,8 @@ class EtaExport(models.Model):
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
         cutoff = today - timedelta(days=4)
+        deadline = min(time.monotonic() + 25,
+                       self.env.context.get('cron_end_time', float('inf')) - 2)
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
@@ -206,19 +208,29 @@ class EtaExport(models.Model):
             for queued_day in sorted(set(queued_recent.mapped('report_date')), reverse=True):
                 if not self._day_complete(config, queued_day):
                     continue
-                if not self._ensure_files(config, queued_day):
-                    continue
+                prepared = self._ensure_files(config, queued_day, deadline=deadline)
                 latest = self._latest_day_files(config, queued_day)
                 for category, _label, _kind, _direction in CATEGORIES:
-                    export = latest[category]
-                    if export.telegram_send_requested and not export.telegram_sent_at:
+                    export = latest.get(category)
+                    if (category in prepared and export and
+                            export.telegram_send_requested and not export.telegram_sent_at):
+                        if time.monotonic() >= deadline:
+                            return
                         export.telegram_send_requested = False
                         export._send_telegram(checked_through=today - timedelta(days=1))
+                        if (self.env.context.get('cron_id') and
+                                not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                            return
                 if (self.env.context.get('cron_id') and
-                        not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                        not self.env['ir.cron']._commit_progress(
+                            int(len(prepared) == len(CATEGORIES)), remaining=1)):
+                    return
+                if time.monotonic() >= deadline:
                     return
             day = cutoff
             while day >= config.start_date:
+                if time.monotonic() >= deadline:
+                    return
                 if not self._day_complete(config, day):
                     day -= timedelta(days=1)
                     continue
@@ -228,22 +240,24 @@ class EtaExport(models.Model):
                         not self._sent_files_need_revision(config, day, latest)):
                     day -= timedelta(days=1)
                     continue
-                if not self._ensure_files(config, day):
-                    if (self.env.context.get('cron_id') and
-                            not self.env['ir.cron']._commit_progress(
-                                0, remaining=(day - config.start_date).days + 1)):
-                        return
-                    day -= timedelta(days=1)
-                    continue
+                prepared = self._ensure_files(config, day, deadline=deadline)
                 latest = self._latest_day_files(config, day)
                 for category, _label, _kind, _direction in CATEGORIES:
-                    export = latest[category]
-                    if not export.telegram_sent_at:
+                    export = latest.get(category)
+                    if (category in prepared and export and
+                            not export.telegram_sent_at and export.file_data):
+                        if time.monotonic() >= deadline:
+                            return
                         if export.telegram_send_requested:
                             export.telegram_send_requested = False
                         export._send_telegram(checked_through=today - timedelta(days=1))
+                        if (self.env.context.get('cron_id') and
+                                not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                            return
                 if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
-                        1, remaining=(day - config.start_date).days):
+                        int(len(prepared) == len(CATEGORIES)),
+                        remaining=(day - config.start_date).days +
+                        int(len(prepared) != len(CATEGORIES))):
                     return
                 day -= timedelta(days=1)
 
@@ -273,12 +287,13 @@ class EtaExport(models.Model):
         return False
 
     @api.model
-    def _ensure_files(self, config, report_date):
+    def _ensure_files(self, config, report_date, deadline=None):
         if not self._day_complete(config, report_date):
-            return False
+            return set()
         checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
         latest = self._latest_day_files(config, report_date)
         targets = []
+        prepared = set()
         for category, _label, kind, direction in CATEGORIES:
             export = latest.get(category)
             if export and export.telegram_sent_at:
@@ -289,19 +304,26 @@ class EtaExport(models.Model):
                     ('direction', '=', direction),
                 ])
                 if count == export.record_count:
+                    prepared.add(category)
                     continue
             targets.append((category, kind, direction, export))
-        for _category, kind, direction, _export in targets:
-            if not self._enrich_details(config, kind, report_date, direction):
-                return False
         for category, kind, direction, export in targets:
+            if not self._enrich_details(config, kind, report_date, direction,
+                                        deadline=deadline):
+                continue
+            if deadline is not None and time.monotonic() >= deadline:
+                continue
             current = self._prepare(config, report_date, category, kind, direction,
                                     export=export)
             if not current:
-                return False
+                continue
             if current.checked_through != checked_through:
                 current.checked_through = checked_through
-        return True
+            prepared.add(category)
+            if (self.env.context.get('cron_id') and
+                    not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                return prepared
+        return prepared
 
     @api.model
     def _day_complete(self, config, report_date):
@@ -367,7 +389,7 @@ class EtaExport(models.Model):
         return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
 
     @api.model
-    def _enrich_details(self, config, kind, report_date, direction):
+    def _enrich_details(self, config, kind, report_date, direction, deadline=None):
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         base_domain = [
             ('config_id', '=', config.id), ('report_date', '=', report_date),
@@ -380,10 +402,14 @@ class EtaExport(models.Model):
         ], order='detail_attempt_at, issued_at, uuid', limit=81)
         if not missing:
             return not model.search_count(base_domain)
+        if deadline is not None and time.monotonic() >= deadline:
+            return False
         api_url, headers = self._detail_headers(config, kind)
         request = self.env['ab_tax_eta_archive_sync']._request
         for record in self._progress_iter(missing[:80], _('Retrieving ETA export details'),
                                           total=min(len(missing), 80)):
+            if deadline is not None and time.monotonic() >= deadline:
+                break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
             try:
                 time.sleep(0.51)
@@ -399,6 +425,9 @@ class EtaExport(models.Model):
                 record.write({'detail_error': str(exc)[:500],
                               'detail_attempt_at': fields.Datetime.now()})
                 _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
+            if (self.env.context.get('cron_id') and
+                    not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                return False
         return not model.search_count(base_domain)
 
     def _progress_iter(self, data, message, total=None):
