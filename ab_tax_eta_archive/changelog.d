@@ -509,3 +509,15 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Rebuild unsent daily files in descending issue-date order from four days ago through the configured archive start date, only after all required retrievals and UUID details are complete.
+- Avoid creating any of the four files for a day until every unsent category has its detail data, and keep delivered file revisions unchanged.
+- Mark the current workbook format so existing unsent files are regenerated once even when their source digest matches.
+- Continue to older eligible days when one day's detail enrichment is still pending, and keep Telegram delivery subject to its configured start date.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d

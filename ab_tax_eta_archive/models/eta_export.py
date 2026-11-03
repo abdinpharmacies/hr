@@ -27,7 +27,7 @@ CATEGORIES = (
     ('sent_receipt', 'Receipts sent', 'receipt', 'sent'),
     ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
-ETA_RECEIPT_SEARCH_DAYS = 29
+EXPORT_FORMAT_VERSION = 2
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -175,6 +175,7 @@ class EtaExport(models.Model):
     revision = fields.Integer(required=True, default=1, readonly=True)
     supersedes_id = fields.Many2one('ab_tax_eta_archive_export', readonly=True, ondelete='restrict')
     source_digest = fields.Char(readonly=True)
+    export_format_version = fields.Integer(readonly=True)
     filename = fields.Char(required=True, readonly=True)
     file_data = fields.Binary(attachment=True, readonly=True)
     record_count = fields.Integer(readonly=True)
@@ -195,81 +196,67 @@ class EtaExport(models.Model):
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
-            if not self._refresh_completed_days(config, today):
-                continue
-            pending = self.search([('config_id', '=', config.id),
-                                   ('report_date', '<=', cutoff),
-                                   ('report_date', '>=', config.telegram_start_date or cutoff),
-                                   ('telegram_sent_at', '=', False)],
-                                  order='report_date asc, category')
-            for target in sorted(set(pending.mapped('report_date'))):
-                first_submission_day = max(target, config.start_date)
-                runs = self.env['ab_tax_eta_archive_sync'].search([
-                    ('config_id', '=', config.id),
-                    ('report_date', '>=', first_submission_day),
-                    ('report_date', '<', today),
-                    ('state', '=', 'done'),
-                ])
-                if len(runs) != (today - first_submission_day).days * 4:
-                    continue
-                yesterday_runs = runs.filtered(lambda run: run.report_date == today - timedelta(days=1))
-                if any(not run.last_run_at or fields.Datetime.to_datetime(run.last_run_at).replace(
+            yesterday_runs = self.env['ab_tax_eta_archive_sync'].search([
+                ('config_id', '=', config.id),
+                ('report_date', '=', today - timedelta(days=1)),
+                ('state', '=', 'done'),
+            ])
+            if len(yesterday_runs) != 4 or any(
+                    not run.last_run_at or
+                    fields.Datetime.to_datetime(run.last_run_at).replace(
                         tzinfo=timezone.utc).astimezone(cairo).date() < today
-                       for run in yesterday_runs):
+                    for run in yesterday_runs):
+                continue
+            day = cutoff
+            while day >= config.start_date:
+                if not self._day_complete(config, day):
+                    day -= timedelta(days=1)
                     continue
-                for category, _label, kind, direction in CATEGORIES:
-                    export = self.search([
-                        ('config_id', '=', config.id), ('report_date', '=', target),
-                        ('category', '=', category),
-                    ], order='revision desc', limit=1)
-                    if not export or not export.telegram_sent_at:
-                        export = self._prepare(config, target, category, kind, direction, export=export)
-                    if not export:
+                latest = self._latest_day_files(config, day)
+                if all(latest.get(category) and latest[category].telegram_sent_at
+                       for category, _label, _kind, _direction in CATEGORIES):
+                    day -= timedelta(days=1)
+                    continue
+                if not self._ensure_files(config, day):
+                    if (self.env.context.get('cron_id') and
+                            not self.env['ir.cron']._commit_progress(
+                                0, remaining=(day - config.start_date).days + 1)):
                         return
-                    if not export.telegram_sent_at:
-                        export._send_telegram(checked_through=today - timedelta(days=1))
+                    day -= timedelta(days=1)
+                    continue
+                if day >= (config.telegram_start_date or cutoff):
+                    latest = self._latest_day_files(config, day)
+                    for category, _label, _kind, _direction in CATEGORIES:
+                        export = latest[category]
+                        if not export.telegram_sent_at:
+                            export._send_telegram(checked_through=today - timedelta(days=1))
+                if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
+                        1, remaining=(day - config.start_date).days):
+                    return
+                day -= timedelta(days=1)
 
     @api.model
-    def _refresh_completed_days(self, config, today):
-        first_searchable_day = max(
-            config.start_date, today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS))
-        checked_through = today - timedelta(days=1)
-        days = [today - timedelta(days=4), today - timedelta(days=1)]
-        days += [first_searchable_day + timedelta(days=offset)
-                 for offset in range((today - first_searchable_day).days)]
-        for day in dict.fromkeys(days):
-            if day < first_searchable_day or day >= today:
-                continue
-            if not self._day_complete(config, day):
-                continue
-            exports = self.search([
-                ('config_id', '=', config.id), ('report_date', '=', day),
-            ], order='revision desc')
-            latest = {}
-            for export in exports:
-                latest.setdefault(export.category, export)
-            refreshed = False
-            if (len(latest) < len(CATEGORIES) or
-                    any(not export.checked_through or
-                        export.checked_through < checked_through
-                        for export in latest.values())):
-                if not self._ensure_files(config, day):
-                    return False
-                refreshed = True
-            if (refreshed and self.env.context.get('cron_id') and
-                    not self.env['ir.cron']._commit_progress(1, remaining=1)):
-                return False
-        return True
+    def _latest_day_files(self, config, day):
+        exports = self.search([('config_id', '=', config.id),
+                               ('report_date', '=', day)], order='revision desc')
+        latest = {}
+        for export in exports:
+            latest.setdefault(export.category, export)
+        return latest
 
     @api.model
     def _ensure_files(self, config, report_date):
         if not self._day_complete(config, report_date):
             return False
         checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
-        for category, _label, kind, direction in CATEGORIES:
-            export = self.search([('config_id', '=', config.id),
-                                  ('report_date', '=', report_date),
-                                  ('category', '=', category)], order='revision desc', limit=1)
+        latest = self._latest_day_files(config, report_date)
+        targets = [(category, kind, direction, latest.get(category))
+                   for category, _label, kind, direction in CATEGORIES
+                   if not latest.get(category) or not latest[category].telegram_sent_at]
+        for _category, kind, direction, _export in targets:
+            if not self._enrich_details(config, kind, report_date, direction):
+                return False
+        for category, kind, direction, export in targets:
             current = self._prepare(config, report_date, category, kind, direction,
                                     export=export)
             if not current:
@@ -465,7 +452,8 @@ class EtaExport(models.Model):
                                      default=str).encode('utf-8'))
             digest.update(b'\n')
         source_digest = digest.hexdigest()
-        if export and export.source_digest == source_digest and export.file_data:
+        if (export and export.source_digest == source_digest and export.file_data and
+                export.export_format_version == EXPORT_FORMAT_VERSION):
             return export
 
         workbook = Workbook(write_only=True)
@@ -524,6 +512,7 @@ class EtaExport(models.Model):
             'category': category, 'revision': revision, 'filename': filename,
             'file_data': base64.b64encode(output.getbuffer()),
             'record_count': len(records), 'source_digest': source_digest,
+            'export_format_version': EXPORT_FORMAT_VERSION,
         }
         if export and not export.telegram_sent_at:
             export.write(values)
