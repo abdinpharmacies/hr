@@ -351,7 +351,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+0b24a4ff — yahyazakaria22 — 2026-11-03
+fix: checkpoint ETA receipts by hour and skip today
 
 - Process recent receipt retrievals one Cairo-day hour at a time and split only oversized hours into verified subranges.
 - Save the next UTC receipt checkpoint after each completed hour or subrange so cron resumes from the last complete interval.
@@ -361,3 +362,15 @@ Current changes before commit:
 Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Create or refresh daily Excel files only after all configured retrieval days from their issue day through yesterday are complete.
+- Reconcile existing early-created files and create missing completed-day files before Telegram delivery.
+- Track the submission-day coverage checked for each file without clearing it during manual Telegram sends.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d

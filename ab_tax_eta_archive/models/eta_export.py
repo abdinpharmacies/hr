@@ -60,8 +60,10 @@ class EtaExport(models.Model):
         today = datetime.now(cairo).date()
         cutoff = today - timedelta(days=4)
         for config in self.env['ab_tax_eta_archive_config'].search([
-            ('active', '=', True), ('start_date', '<=', cutoff),
+            ('active', '=', True), ('start_date', '<', today),
         ]):
+            if not self._refresh_completed_days(config, today):
+                continue
             pending = self.search([('config_id', '=', config.id),
                                    ('report_date', '<=', cutoff),
                                    ('report_date', '>=', config.telegram_start_date or cutoff),
@@ -93,21 +95,57 @@ class EtaExport(models.Model):
                         export._send_telegram(checked_through=today - timedelta(days=1))
 
     @api.model
+    def _refresh_completed_days(self, config, today):
+        if not self._day_complete(config, config.start_date):
+            return False
+        checked_through = today - timedelta(days=1)
+        day = config.start_date
+        while day < today:
+            exports = self.search([
+                ('config_id', '=', config.id), ('report_date', '=', day),
+            ], order='revision desc')
+            latest = {}
+            for export in exports:
+                latest.setdefault(export.category, export)
+            refreshed = False
+            if (len(latest) < len(CATEGORIES) or
+                    any(not export.checked_through or
+                        export.checked_through < checked_through
+                        for export in latest.values())):
+                self._ensure_files(config, day)
+                refreshed = True
+            day += timedelta(days=1)
+            if (refreshed and self.env.context.get('cron_id') and
+                    not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                return False
+        return True
+
+    @api.model
     def _ensure_files(self, config, report_date):
         if not self._day_complete(config, report_date):
             return
+        checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
         for category, _label, kind, direction in CATEGORIES:
             export = self.search([('config_id', '=', config.id),
                                   ('report_date', '=', report_date),
                                   ('category', '=', category)], order='revision desc', limit=1)
-            self._prepare(config, report_date, category, kind, direction, export=export)
+            current = self._prepare(config, report_date, category, kind, direction,
+                                    export=export)
+            if current.checked_through != checked_through:
+                current.checked_through = checked_through
 
     @api.model
     def _day_complete(self, config, report_date):
+        today = datetime.now(pytz.timezone('Africa/Cairo')).date()
+        first_day = max(config.start_date, report_date)
+        if first_day >= today:
+            return False
+        complete_days = (today - first_day).days
         return self.env['ab_tax_eta_archive_sync'].search_count([
-            ('config_id', '=', config.id), ('report_date', '=', report_date),
+            ('config_id', '=', config.id),
+            ('report_date', '>=', first_day), ('report_date', '<', today),
             ('state', '=', 'done'),
-        ]) == 4
+        ]) == complete_days * 4
 
     def action_send_telegram(self):
         self.check_access('write')
@@ -245,7 +283,9 @@ class EtaExport(models.Model):
             _logger.warning('ETA Telegram delivery failed for %s', self.filename)
             self.telegram_error = _('Telegram delivery failed; this file will be retried.')
             return
-        self.write({'telegram_sent_at': fields.Datetime.now(),
-                    'checked_through': checked_through,
-                    'telegram_message_id': str(payload.get('result', {}).get('message_id', '')),
-                    'telegram_error': False})
+        values = {'telegram_sent_at': fields.Datetime.now(),
+                  'telegram_message_id': str(payload.get('result', {}).get('message_id', '')),
+                  'telegram_error': False}
+        if checked_through:
+            values['checked_through'] = checked_through
+        self.write(values)
