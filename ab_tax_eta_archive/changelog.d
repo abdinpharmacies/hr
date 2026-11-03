@@ -453,7 +453,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+6d067c0d — yahyazakaria22 — 2026-11-03
+fix: expose Telegram delivery errors and find group chat IDs
 
 - Show Telegram's HTTP error detail and safely retry short rate limits during daily file delivery.
 - Reject invite links, positive IDs, empty files, invalid files, and files above Telegram's 50 MB upload limit with specific messages.
