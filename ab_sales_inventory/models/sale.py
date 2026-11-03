@@ -162,6 +162,10 @@ class NativeSale(models.Model):
             raise ValidationError(_('The pending native invoice predates local stock approval and must use the legacy resolution process.'))
         if self._native_request_digest() != self.native_content_fingerprint:
             raise ValidationError(_('The approved native invoice content no longer matches its approval snapshot.'))
+        return self._validate_native_stock_evidence()
+
+    def _validate_native_stock_evidence(self):
+        self.ensure_one()
         line_context = self.native_totals.get('line_context') or {}
         Allocation = self.env['ab_sales_stock_allocation'].sudo()
         Shortage = self.env['ab_sales_stock_shortage'].sudo()

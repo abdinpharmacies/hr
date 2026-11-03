@@ -1,6 +1,6 @@
 {
     'name': 'Abdin Native Sales Inventory',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.1.1',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'author': 'Abdin Pharmacies',
