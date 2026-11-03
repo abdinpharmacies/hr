@@ -376,7 +376,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+6ef17c30 — yahyazakaria22 — 2026-11-03
+fix: show ETA receipt retrieval segments and continue cron
 
 - Report eligible unfinished ETA retrievals to Odoo after each cron pass so the scheduler continues while time remains.
 - Count only actual state, count, checkpoint, or package progress; pause until the next scheduled run when ETA has no new package data.
