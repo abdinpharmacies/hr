@@ -69,6 +69,7 @@
                 <field name="total"/>
                 <field name="currency"/>
                 <field name="status"/>
+                <field name="detail_error" optional="hide"/>
             </list>
         </field>
     </record>
@@ -89,6 +90,7 @@
                 <field name="total"/>
                 <field name="currency"/>
                 <field name="status"/>
+                <field name="detail_error" optional="hide"/>
             </list>
         </field>
     </record>

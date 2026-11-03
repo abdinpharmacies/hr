@@ -240,23 +240,7 @@ class EtaSync(models.Model):
         count, issue_dates = result
         self.write({'state': 'done', 'item_count': count,
                     'last_run_at': fields.Datetime.now(), 'error_message': False})
-        export_model = self.env['ab_tax_eta_archive_export']
-        for issue_date in sorted(issue_dates):
-            try:
-                with self.env.cr.savepoint():
-                    export_model._ensure_files(self.config_id, issue_date)
-            except Exception:
-                _logger.exception('ETA daily file generation failed for issue date %s', issue_date)
-        completed = self.search_count([
-            ('config_id', '=', self.config_id.id), ('report_date', '=', self.report_date),
-            ('state', '=', 'done'),
-        ])
-        if completed == 4 and self.report_date not in issue_dates:
-            try:
-                with self.env.cr.savepoint():
-                    export_model._ensure_files(self.config_id, self.report_date)
-            except Exception:
-                _logger.exception('ETA daily file generation failed for issue date %s', self.report_date)
+        # The export cron enriches UUID details only after all four streams are complete.
 
     def _retrieve(self, auth_cache=None):
         self.ensure_one()

@@ -468,3 +468,20 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+Current changes before commit:
+
+- Match the ETA sample workbook sheet names, Arabic headers, column order, widths, borders, dates, and invoice share links for four daily export categories.
+- Retrieve and cache the UUID details required for tax, discount, address, POS, buyer, and signature columns in rate-limited, resumable batches.
+- Keep each file pending until its transaction details are complete, show per-document detail errors, and run export enrichment every minute without delaying retrieval.
+- Add Arabic translations for the new detail status and export messages.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

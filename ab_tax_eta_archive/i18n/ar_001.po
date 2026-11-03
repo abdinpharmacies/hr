@@ -899,3 +899,22 @@ msgstr "لم يتم العثور على تحديثات لمجموعة تيليج
 #: code:ab_tax_eta_archive.models.eta_config
 msgid "Telegram Group Chat IDs"
 msgstr "معرّفات مجموعات تيليجرام"
+#. module: ab_tax_eta_archive
+msgid "Detail Error"
+msgstr "خطأ تفاصيل المستند"
+
+#. module: ab_tax_eta_archive
+msgid "Configure ETA credentials before retrieving export details."
+msgstr "اضبط بيانات اعتماد مصلحة الضرائب قبل استرجاع تفاصيل التصدير."
+
+#. module: ab_tax_eta_archive
+msgid "Retrieving ETA export details"
+msgstr "جارٍ استرجاع تفاصيل التصدير من مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA document details are still being retrieved. Retry after the next export run."
+msgstr "لا يزال استرجاع تفاصيل المستندات جاريًا. أعد المحاولة بعد تشغيل التصدير التالي."
+
+#. module: ab_tax_eta_archive
+msgid "ETA export"
+msgstr "تصدير مصلحة الضرائب"

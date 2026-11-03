@@ -14,6 +14,6 @@
         <field name="state">code</field>
         <field name="code">model._cron_export_and_send()</field>
         <field name="interval_number">1</field>
-        <field name="interval_type">hours</field>
+        <field name="interval_type">minutes</field>
     </record>
 </odoo>

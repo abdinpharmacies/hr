@@ -46,6 +46,9 @@ class EtaInvoice(models.Model):
     total = fields.Float(digits=(16, 3), readonly=True)
     currency = fields.Char(readonly=True)
     raw_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
+    detail_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
+    detail_error = fields.Char(readonly=True)
+    detail_attempt_at = fields.Datetime(readonly=True)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
 
@@ -92,6 +95,9 @@ class EtaReceipt(models.Model):
     total = fields.Float(digits=(16, 3), readonly=True)
     currency = fields.Char(readonly=True)
     raw_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
+    detail_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
+    detail_error = fields.Char(readonly=True)
+    detail_attempt_at = fields.Datetime(readonly=True)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
 

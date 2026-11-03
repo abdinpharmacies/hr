@@ -6,13 +6,14 @@ import json
 import logging
 import time
 from datetime import datetime, timedelta, timezone
+from urllib.parse import quote
 
 import pytz
 
 import requests
 from openpyxl import Workbook
 from openpyxl.cell import WriteOnlyCell
-from openpyxl.styles import Font, PatternFill
+from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl.utils import get_column_letter
 
 from odoo import api, fields, models, _
@@ -26,6 +27,135 @@ CATEGORIES = (
     ('sent_receipt', 'Receipts sent', 'receipt', 'sent'),
     ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
+
+INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
+                   'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
+                   'قيمة الفاتورة', 'ضريبة القيمة المضافة', 'T1%', 'خصم الفاتورة',
+                   'إجمالى الفاتورة', 'الرقم الداخلى', 'الرقم الإلكترونى',
+                   'الرقم الضريبى للبائع', 'إسم البائع', 'عنوان البائع',
+                   'الرقم الضريبى للمشترى', 'إسم المشترى', 'عنوان المشترى',
+                   'مرجع طلب الشراء', 'وصف طلب الشراء', 'مرجع طلب المبيعات',
+                   'وصف طلب المبيعات', 'التوقيع الإلكترونى', 'الرابط الخارجى')
+PURCHASE_HEADERS = INVOICE_HEADERS[:11] + (
+    'T1%', 'ضريبة الجدول النسبية', 'T2%', 'الخصم تحت حساب الضريبة', 'T4%',
+    'رسوم أخرى', 'T12%', 'خصم الفاتورة', 'خصم إضافى', 'إجمالى الفاتورة',
+    'الرقم الداخلى', 'الرقم الإلكترونى', 'الرقم الضريبى للبائع', 'إسم البائع',
+    'عنوان البائع', 'الرقم الضريبى للمشترى', 'إسم المشترى', 'عنوان المشترى',
+    'مرجع طلب الشراء', 'وصف طلب الشراء', 'مرجع طلب المبيعات',
+    'وصف طلب المبيعات', 'التوقيع الإلكترونى', 'الرابط الخارجى', 'خدمة التوصيل')
+RECEIPT_HEADERS = ('مسلسل', 'تفاصيل', 'نوع الإيصال', 'الحالة', 'تاريخ الإصدار',
+                   'تاريخ الإستلام', 'عملة الإيصال', 'سعر الصرف', 'المبيعات',
+                   'خصم تجارى', 'قيمة الإيصال', 'ضريبة القيمة المضافة',
+                   'خصم الأصناف', 'إجمالى الإيصال', 'رقم الإيصال',
+                   'الرقم الإلكترونى', 'سيريال نقطة البيع', 'إسم نقطة البيع',
+                   'الرقم الضريبى للبائع', 'إسم البائع', 'عنوان البائع',
+                   'الرقم الضريبى للمشترى', 'إسم المشترى', 'رقم المشترى')
+
+
+def _address(value):
+    if not isinstance(value, dict):
+        return ''
+    return ' '.join(str(value[key]).strip() for key in (
+        'buildingNumber', 'street', 'regionCity', 'governate', 'country') if value.get(key))
+
+
+def _taxes(value):
+    totals = value if isinstance(value, list) else []
+    return {code: sum(float(item.get('amount') or 0) for item in totals
+                      if isinstance(item, dict) and item.get('taxType') == code)
+            for code in ('T1', 'T2', 'T4', 'T12')}
+
+
+def _tax_rates(lines):
+    result = {}
+    for line in lines if isinstance(lines, list) else []:
+        for tax in line.get('taxableItems', []) if isinstance(line, dict) else []:
+            if isinstance(tax, dict) and tax.get('taxType') in ('T1', 'T2', 'T4', 'T12'):
+                result.setdefault(tax['taxType'], tax.get('rate'))
+    return result
+
+
+def _signature_name(signatures, fallback):
+    for item in signatures if isinstance(signatures, list) else []:
+        if not isinstance(item, dict):
+            continue
+        if item.get('signerName') or item.get('name'):
+            return item.get('signerName') or item.get('name')
+        if not item.get('value'):
+            continue
+        try:
+            from cryptography.hazmat.primitives.serialization import pkcs7
+            from cryptography.x509.oid import NameOID
+            certificates = pkcs7.load_der_pkcs7_certificates(
+                base64.b64decode(item['value']))
+            for certificate in certificates:
+                names = certificate.subject.get_attributes_for_oid(NameOID.COMMON_NAME)
+                if names and certificate.subject != certificate.issuer:
+                    return names[0].value
+        except (ImportError, ValueError, TypeError, binascii.Error):
+            continue
+    return fallback
+
+
+def _detail_values(payload, kind):
+    body = payload.get('document' if kind == 'invoice' else 'receipt') or {}
+    if not isinstance(body, dict) or not body:
+        raise ValueError('ETA detail response has no document object')
+    issuer = body.get('issuer' if kind == 'invoice' else 'seller') or {}
+    receiver = body.get('receiver' if kind == 'invoice' else 'buyer') or {}
+    if not isinstance(issuer, dict) or not isinstance(receiver, dict):
+        raise ValueError('ETA detail response has invalid parties')
+    if kind == 'invoice':
+        lines = body.get('invoiceLines') or []
+        first_unit = next((line.get('unitValue') for line in lines
+                           if isinstance(line, dict) and isinstance(line.get('unitValue'), dict)), {})
+        signatures = body.get('signatures') or []
+        signature = _signature_name(signatures, payload.get('issuerName') or issuer.get('name'))
+        return {
+            'version': payload.get('typeVersionName') or body.get('documentTypeVersion'),
+            'currency': first_unit.get('currencySold') or 'EGP',
+            'sales': body.get('totalSalesAmount', payload.get('totalSales')),
+            'net': body.get('netAmount', payload.get('netAmount')),
+            'taxes': _taxes(body.get('taxTotals')),
+            'rates': _tax_rates(lines),
+            'discount': body.get('totalDiscountAmount', payload.get('totalDiscount')),
+            'extra_discount': body.get('extraDiscountAmount'),
+            'total': body.get('totalAmount', payload.get('total')),
+            'issuer_address': _address(issuer.get('address')),
+            'receiver_address': _address(receiver.get('address')),
+            'purchase_ref': body.get('purchaseOrderReference'),
+            'purchase_description': body.get('purchaseOrderDescription'),
+            'sales_ref': body.get('salesOrderReference'),
+            'sales_description': body.get('salesOrderDescription'),
+            'signature': signature,
+            'long_id': payload.get('longId'),
+            'delivery': (body.get('delivery') or {}).get('approach')
+                        if isinstance(body.get('delivery'), dict) else None,
+        }
+    document_type = body.get('documentType') or {}
+    seller_address = issuer.get('branchAddress') or {}
+    return {
+        'type': document_type.get('receiptTypeNameAr') or document_type.get('receiptTypeName')
+                if isinstance(document_type, dict) else None,
+        'type_code': document_type.get('receiptType') if isinstance(document_type, dict) else None,
+        'currency': body.get('currency'),
+        'exchange_rate': body.get('exchangeRate'),
+        'sales': body.get('totalSales'),
+        'commercial_discount': body.get('totalCommercialDiscount'),
+        'net': body.get('netAmount'),
+        'taxes': _taxes(body.get('taxTotals')),
+        'items_discount': body.get('totalItemsDiscount'),
+        'total': body.get('totalAmount'),
+        'seller_name': issuer.get('sellerName'),
+        'seller_id': issuer.get('sellerId'),
+        'seller_address': _address(seller_address),
+        'pos_name': payload.get('submitterName') or issuer.get('branchNameAr') or issuer.get('branchName'),
+        'pos_serial': issuer.get('deviceSerialNumber'),
+        'buyer_name': receiver.get('buyerName'),
+        'buyer_id': receiver.get('buyerId'),
+        'buyer_number': receiver.get('mobileNumber'),
+        'long_id': body.get('longId') or payload.get('longId'),
+    }
 
 
 def _excel_cell(value):
@@ -93,6 +223,8 @@ class EtaExport(models.Model):
                     ], order='revision desc', limit=1)
                     if not export or not export.telegram_sent_at:
                         export = self._prepare(config, target, category, kind, direction, export=export)
+                    if not export:
+                        return
                     if not export.telegram_sent_at:
                         export._send_telegram(checked_through=today - timedelta(days=1))
 
@@ -114,7 +246,8 @@ class EtaExport(models.Model):
                     any(not export.checked_through or
                         export.checked_through < checked_through
                         for export in latest.values())):
-                self._ensure_files(config, day)
+                if not self._ensure_files(config, day):
+                    return False
                 refreshed = True
             day += timedelta(days=1)
             if (refreshed and self.env.context.get('cron_id') and
@@ -125,7 +258,7 @@ class EtaExport(models.Model):
     @api.model
     def _ensure_files(self, config, report_date):
         if not self._day_complete(config, report_date):
-            return
+            return False
         checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
         for category, _label, kind, direction in CATEGORIES:
             export = self.search([('config_id', '=', config.id),
@@ -133,8 +266,11 @@ class EtaExport(models.Model):
                                   ('category', '=', category)], order='revision desc', limit=1)
             current = self._prepare(config, report_date, category, kind, direction,
                                     export=export)
+            if not current:
+                return False
             if current.checked_through != checked_through:
                 current.checked_through = checked_through
+        return True
 
     @api.model
     def _day_complete(self, config, report_date):
@@ -173,70 +309,206 @@ class EtaExport(models.Model):
                 row for row in CATEGORIES if row[0] == export.category)
             current = self._prepare(export.config_id, export.report_date,
                                     category, kind, direction, export=export)
+            if not current:
+                return {
+                    'type': 'ir.actions.client', 'tag': 'display_notification',
+                    'params': {
+                        'title': _('ETA export'),
+                        'message': _('ETA document details are still being retrieved. Retry after the next export run.'),
+                        'type': 'info', 'sticky': False,
+                    },
+                }
             current._send_telegram()
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
+    def _detail_headers(self, config, kind):
+        receipt_pos = kind == 'receipt' and config.receipt_auth_mode == 'pos'
+        client_id = config.receipt_client_id if receipt_pos else config.invoice_client_id
+        client_secret = config.receipt_client_secret if receipt_pos else config.invoice_client_secret
+        if not client_id or not client_secret:
+            raise UserError(_('Configure ETA credentials before retrieving export details.'))
+        identity_url, api_url = config._base_urls()
+        request = self.env['ab_tax_eta_archive_sync']._request
+        options = {}
+        data = {'grant_type': 'client_credentials'}
+        if receipt_pos:
+            required = (config.pos_serial, config.pos_os_version,
+                        config.pos_model_framework, config.pos_preshared_key)
+            if not all(required):
+                raise UserError(_('Configure all ETA POS authentication headers.'))
+            options['headers'] = dict(zip(
+                ('posserial', 'pososversion', 'posmodelframework', 'presharedkey'), required))
+            data.update({'client_id': client_id, 'client_secret': client_secret})
+        else:
+            options['auth'] = (client_id, client_secret)
+        token = request('POST', f'{identity_url}/connect/token', data=data,
+                        **options).get('access_token')
+        if not token:
+            raise UserError(_('ETA authentication returned no access token.'))
+        return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+
+    @api.model
+    def _enrich_details(self, config, kind, report_date, direction):
+        model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
+        base_domain = [
+            ('config_id', '=', config.id), ('report_date', '=', report_date),
+            ('direction', '=', direction), ('detail_json', '=', False),
+        ]
+        retry_before = fields.Datetime.now() - timedelta(hours=1)
+        missing = model.search(base_domain + [
+            '|', ('detail_attempt_at', '=', False),
+            ('detail_attempt_at', '<', retry_before),
+        ], order='detail_attempt_at, issued_at, uuid', limit=81)
+        if not missing:
+            return not model.search_count(base_domain)
+        api_url, headers = self._detail_headers(config, kind)
+        request = self.env['ab_tax_eta_archive_sync']._request
+        for record in self._progress_iter(missing[:80], _('Retrieving ETA export details'),
+                                          total=min(len(missing), 80)):
+            path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
+            try:
+                time.sleep(0.51)
+                payload = request('GET', f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
+                                  headers=headers)
+                if not isinstance(payload, dict):
+                    raise ValueError('ETA detail response is not an object')
+                values = _detail_values(payload, kind)
+                record.write({'detail_json': json.dumps(values, ensure_ascii=False,
+                                                        sort_keys=True), 'detail_error': False,
+                              'detail_attempt_at': fields.Datetime.now()})
+            except (UserError, ValueError, requests.RequestException) as exc:
+                record.write({'detail_error': str(exc)[:500],
+                              'detail_attempt_at': fields.Datetime.now()})
+                _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
+        return not model.search_count(base_domain)
+
+    def _progress_iter(self, data, message, total=None):
+        progress_iter = getattr(self, 'web_progress_iter', None)
+        if progress_iter:
+            return progress_iter(data, msg=message, total=total, cancellable=False)
+        return data
+
+    @api.model
     def _prepare(self, config, report_date, category, kind, direction, export=None):
+        if not self._enrich_details(config, kind, report_date, direction):
+            return False
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         records = model.search([('config_id', '=', config.id), ('report_date', '=', report_date),
                                 ('direction', '=', direction)],
-                               order='issued_at, uuid')
-        identifier = 'Internal ID' if kind == 'invoice' else 'Receipt Number'
-        headers = ['UUID', identifier, 'Submission UUID', 'Type', 'Status',
-                   'Issuer ID', 'Issuer Name', 'Receiver ID', 'Receiver Name',
-                   'Issued At (UTC)', 'Received At (UTC)', 'Total', 'Currency']
-        if kind == 'receipt':
-            headers.append(_('POS Serial'))
+                               order=('issued_at desc, uuid' if direction == 'sent' else
+                                      'issued_at, uuid'))
+        headers = (RECEIPT_HEADERS if kind == 'receipt' else
+                   PURCHASE_HEADERS if direction == 'received' else INVOICE_HEADERS)
+        cairo = pytz.timezone('Africa/Cairo')
 
-        def export_cells(record):
-            row = [
-                record.uuid,
-                record.internal_id if kind == 'invoice' else record.receipt_number,
-                record.submission_uuid, record.document_type, record.status,
-                record.issuer_id, record.issuer_name, record.receiver_id,
-                record.receiver_name,
-            ]
-            cells = ([_excel_cell(value) for value in row] +
-                     [record.issued_at or None, record.received_at,
-                      record.total, _excel_cell(record.currency)])
+        def local_time(value):
+            parsed = fields.Datetime.to_datetime(value) if value else None
+            return (pytz.utc.localize(parsed).astimezone(cairo).replace(tzinfo=None)
+                    if parsed else None)
+
+        def export_cells(record, serial):
+            summary = json.loads(record.raw_json or '{}')
+            detail = json.loads(record.detail_json)
+            long_id = detail.get('long_id')
+            link = (f'https://invoicing.eta.gov.eg/documents/{quote(record.uuid, safe="")}/share/{quote(str(long_id), safe="")}'
+                    if long_id and kind == 'invoice' else '')
             if kind == 'receipt':
-                cells.append(_excel_cell(record.pos_serial_number))
-            return cells
+                receipt_type = {'s': 'ايصال بيع', 'r': 'ايصال مرتجع'}.get(
+                    (detail.get('type_code') or '').lower(),
+                    detail.get('type') or record.document_type)
+                return [serial, 'عرض', receipt_type,
+                        record.status, local_time(record.issued_at), local_time(record.received_at),
+                        detail.get('currency') or record.currency, detail.get('exchange_rate'),
+                        detail.get('sales'), detail.get('commercial_discount'),
+                        detail.get('net'), detail['taxes'].get('T1'),
+                        detail.get('items_discount'), detail.get('total'),
+                        record.receipt_number, record.uuid,
+                        detail.get('pos_serial') or record.pos_serial_number,
+                        detail.get('pos_name') or summary.get('submitterName'),
+                        detail.get('seller_id') or record.issuer_id,
+                        detail.get('seller_name') or record.issuer_name,
+                        detail.get('seller_address'), detail.get('buyer_id') or record.receiver_id,
+                        detail.get('buyer_name') or record.receiver_name,
+                        detail.get('buyer_number')]
+            document_type = {'i': 'فاتورة', 'c': 'اشعار دائن',
+                             'd': 'اشعار مدين'}.get(record.document_type,
+                                                    summary.get('documentTypeNamePrimaryLanguage') or
+                                                    record.document_type)
+            common = [serial, 'عرض', document_type, detail.get('version'), record.status,
+                      local_time(record.issued_at), local_time(record.received_at),
+                      detail.get('currency') or record.currency,
+                      detail.get('sales'), detail.get('net'), detail['taxes'].get('T1'),
+                      detail['rates'].get('T1')]
+            suffix = [detail.get('total'), record.internal_id, record.uuid,
+                      record.issuer_id, record.issuer_name, detail.get('issuer_address'),
+                      record.receiver_id, record.receiver_name, detail.get('receiver_address'),
+                      detail.get('purchase_ref'), detail.get('purchase_description'),
+                      detail.get('sales_ref'), detail.get('sales_description'),
+                      detail.get('signature'), link]
+            if direction == 'received':
+                return common + [detail['taxes'].get('T2'), detail['rates'].get('T2'),
+                                 detail['taxes'].get('T4'), detail['rates'].get('T4'),
+                                 detail['taxes'].get('T12'), detail['rates'].get('T12'),
+                                 detail.get('discount'), detail.get('extra_discount')] + suffix + [detail.get('delivery')]
+            return common + [detail.get('discount')] + suffix
 
         digest = hashlib.sha256()
-        digest.update(b'[')
-        for index, record in enumerate(records):
-            if index:
-                digest.update(b', ')
-            digest.update(json.dumps(export_cells(record), ensure_ascii=False,
+        for serial, record in enumerate(records, start=1):
+            digest.update(json.dumps(export_cells(record, serial), ensure_ascii=False,
                                      default=str).encode('utf-8'))
-        digest.update(b']')
+            digest.update(b'\n')
         source_digest = digest.hexdigest()
-        if export and export.source_digest == source_digest:
+        if export and export.source_digest == source_digest and export.file_data:
             return export
 
         workbook = Workbook(write_only=True)
-        sheet = workbook.create_sheet(title='Invoices' if kind == 'invoice' else 'Receipts')
-        sheet.freeze_panes = 'A2'
-        widths = (67, 25, 35, 18, 18, 22, 36, 22, 36, 23, 23, 18, 12)
-        if kind == 'receipt':
-            widths += (24,)
-        for column, width in enumerate(widths, start=1):
+        sheet = workbook.create_sheet(title='الايصالات' if kind == 'receipt' else
+                                     'المشتريات' if direction == 'received' else 'الفواتير')
+        sheet.sheet_view.rightToLeft = True
+        widths = ([6.55, 6.44, 9.33, 5.55, 11, 11.11, 10.44, 9.44,
+                   7.33, 10.11, 10.11, 16.33, 11.66, 11.55, 9.33, 67.89,
+                   13.55, 15.33, 14.44, 16.66, 38.11, 16.55, 10.11, 9.66]
+                  if kind == 'receipt' else
+                  [6.55, 6.44, 9.33, 11.33, 5.55, 11, 10.66, 10,
+                   12.44, 11, 16.33, 4.55, 16.44, 4.55, 21.89, 4.55,
+                   8.89, 5.55, 10.55, 9.55, 11.11, 17, 31.66, 14.44,
+                   26.89, 64.66, 16.55, 21, 57.33, 18, 14.11, 16,
+                   16.33, 25.89, 125, 11.33] if direction == 'received' else
+                  [6.55, 6.44, 9.33, 11.33, 5.55, 11, 10.66, 10,
+                   14, 11.11, 17.89, 6, 12, 12.55, 10, 32.66,
+                   14.44, 16.66, 50.55, 16.55, 17.33, 42.89,
+                   13.89, 14.11, 16, 16.33, 50, 125.89])
+        for column, width in enumerate(widths[:len(headers)], start=1):
             sheet.column_dimensions[get_column_letter(column)].width = width
-        sheet.auto_filter.ref = f'A1:{get_column_letter(len(headers))}{len(records) + 1}'
+        thin = Side(style='thin', color='000000')
+        border = Border(left=thin, right=thin, top=thin, bottom=thin)
         header_cells = [WriteOnlyCell(sheet, value=value) for value in headers]
         for cell in header_cells:
-            cell.font = Font(bold=True, color='FFFFFF')
-            cell.fill = PatternFill('solid', fgColor='17426B')
+            cell.font = Font(name='Calibri', size=11)
+            cell.border = border
+            cell.alignment = Alignment(horizontal='center')
         sheet.append(header_cells)
-        for record in records:
-            cells = export_cells(record)
-            for index in (9, 10):
-                cell = WriteOnlyCell(sheet, value=cells[index])
-                cell.number_format = 'yyyy-mm-dd hh:mm:ss'
-                cells[index] = cell
-            sheet.append(cells)
+        for serial, record in enumerate(records, start=1):
+            cells = export_cells(record, serial)
+            cells = [_excel_cell(value) if isinstance(value, str) else value for value in cells]
+            row = []
+            for index, value in enumerate(cells):
+                cell = WriteOnlyCell(sheet, value=value)
+                cell.font = Font(name='Calibri', size=11)
+                cell.border = border
+                cell.alignment = Alignment(horizontal='center')
+                if index in ((4, 5) if kind == 'receipt' else (5, 6)):
+                    cell.number_format = 'mm-dd-yy'
+                if index == 1:
+                    cell.font = Font(name='Comic Sans MS', size=12, bold=True,
+                                     underline='single')
+                    if kind == 'invoice' and cells[-1 if direction == 'sent' else -2]:
+                        cell.hyperlink = cells[-1 if direction == 'sent' else -2]
+                if kind == 'invoice' and index == len(cells) - (1 if direction == 'sent' else 2) and value:
+                    cell.hyperlink = value
+                row.append(cell)
+            sheet.append(row)
         output = io.BytesIO()
         workbook.save(output)
         revision = export.revision + 1 if export and export.telegram_sent_at else (export.revision if export else 1)
