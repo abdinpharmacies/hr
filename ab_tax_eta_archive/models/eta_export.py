@@ -209,6 +209,25 @@ class EtaExport(models.Model):
                         tzinfo=timezone.utc).astimezone(cairo).date() < today
                     for run in yesterday_runs):
                 continue
+            queued_recent = self.search([
+                ('config_id', '=', config.id), ('report_date', '>', cutoff),
+                ('report_date', '<', today), ('telegram_send_requested', '=', True),
+                ('telegram_sent_at', '=', False),
+            ])
+            for queued_day in sorted(set(queued_recent.mapped('report_date')), reverse=True):
+                if not self._day_complete(config, queued_day):
+                    continue
+                if not self._ensure_files(config, queued_day):
+                    continue
+                latest = self._latest_day_files(config, queued_day)
+                for category, _label, _kind, _direction in CATEGORIES:
+                    export = latest[category]
+                    if export.telegram_send_requested and not export.telegram_sent_at:
+                        export.telegram_send_requested = False
+                        export._send_telegram(checked_through=today - timedelta(days=1))
+                if (self.env.context.get('cron_id') and
+                        not self.env['ir.cron']._commit_progress(1, remaining=1)):
+                    return
             day = cutoff
             while day >= config.start_date:
                 if not self._day_complete(config, day):
@@ -313,11 +332,8 @@ class EtaExport(models.Model):
 
     def action_send_telegram(self):
         self.check_access('write')
-        today = datetime.now(pytz.timezone('Africa/Cairo')).date()
         unsent = self.filtered(lambda export: not export.telegram_sent_at)
         for export in unsent:
-            if export.report_date > today - timedelta(days=4):
-                raise UserError(_('Wait until the fourth day after issuance before sending this ETA file.'))
             if not self._day_complete(export.config_id, export.report_date):
                 raise UserError(_(
                     'All four ETA retrievals for this day must finish before sending its file.'))
