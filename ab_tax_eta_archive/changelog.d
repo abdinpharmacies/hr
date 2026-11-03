@@ -468,7 +468,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
-Current changes before commit:
+4b0843b1 — yahyazakaria22 — 2026-11-03
+feat: match ETA daily exports to sample workbooks
 
 - Match the ETA sample workbook sheet names, Arabic headers, column order, widths, borders, dates, and invoice share links for four daily export categories.
 - Retrieve and cache the UUID details required for tax, discount, address, POS, buyer, and signature columns in rate-limited, resumable batches.
