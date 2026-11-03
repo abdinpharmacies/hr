@@ -523,7 +523,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+f8d84d7d — yahyazakaria22 — 2026-11-03
+fix: queue ETA Telegram sends outside browser requests
 
 - Queue the Send to Telegram action for cron delivery instead of rebuilding large workbooks and uploading them inside an Odoo browser request.
 - Enforce the four-day delivery delay for manual sends and show whether a file is queued.
