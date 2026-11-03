@@ -1,9 +1,21 @@
 # Current changes before commit
 
-Author: hossam elsheikh
-Date: 2026-11-03
-Commit: uncommitted — this is a new module with no previous module commits.
-Original commit subject: not applicable.
+- Preserve the existing administrator-only cancellation path without requiring an employee POS session.
+- Fix outgoing operation identity: keep the generated UUID separate from the employee POS session token.
+- Prevent session credentials entering journal payloads and prevent token reuse across operations in one employee session.
+- Verified an actual native sale and settlement produce distinct UUIDs, consecutive serials and credential-free JSON in a rollback-only disposable database test.
+
+Files changed:
+- `ab_central_sync/controllers/main.py`
+- `ab_central_sync/models/operation.py`
+- `ab_central_sync/changelog.d/2026-11-03-central-sync.md`
+
+# Commit fea611003da445de99457385e38689a92379cfab
+
+Author: Hossam Elsheikh
+Date: 2026-11-03T14:14:27+02:00
+Commit: fea611003da445de99457385e38689a92379cfab
+Original commit subject: ab_central_sync/Centralize sales and returns
 
 - Add independent central synchronization with the approved JSON operation journal.
 - Capture native sale, return, settlement and cancellation events atomically with local completion.

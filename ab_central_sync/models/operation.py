@@ -99,9 +99,9 @@ class CentralOperation(models.Model):
             sequence = Sequence.create({'name': code, 'code': code, 'implementation': 'no_gap', 'company_id': False})
         serial = int(sequence.next_by_id())
         token = str(uuid.uuid4())
-        if 'ab_employee_access_sales_pos_api' in self.env.registry:
-            token = next((self.env.context.get(key) for key in ('native_pos_hr_token', 'ab_return_session_token', 'native_cashier_session_token') if self.env.context.get(key)), False)
-            session = self.env['ab_employee_access_sales_pos_api']._get_session(token, states=['active'])
+        if kind != 'sale_cancel' and 'ab_employee_access_sales_pos_api' in self.env.registry:
+            session_token = next((self.env.context.get(key) for key in ('native_pos_hr_token', 'ab_return_session_token', 'native_cashier_session_token') if self.env.context.get(key)), False)
+            session = self.env['ab_employee_access_sales_pos_api']._get_session(session_token, states=['active'])
             from .sales import reference
             payload['actor_employee'] = reference(session.employee_id)
         payload.update(version=1, origin=origin, token=token, serial=serial, kind=kind,
