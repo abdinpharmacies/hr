@@ -796,3 +796,23 @@ msgstr "جارٍ قراءة حزم إيصالات الضرائب"
 #. module: ab_tax_eta_archive
 msgid "Saving ETA receipt pages"
 msgstr "جارٍ حفظ صفحات إيصالات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Invoices received"
+msgstr "الفواتير المستلمة"
+
+#. module: ab_tax_eta_archive
+msgid "Invoices sent"
+msgstr "الفواتير المرسلة"
+
+#. module: ab_tax_eta_archive
+msgid "Receipts sent"
+msgstr "الإيصالات المرسلة"
+
+#. module: ab_tax_eta_archive
+msgid "Receipts received"
+msgstr "الإيصالات المستلمة"
+
+#. module: ab_tax_eta_archive
+msgid "Group by Day"
+msgstr "تجميع حسب اليوم"

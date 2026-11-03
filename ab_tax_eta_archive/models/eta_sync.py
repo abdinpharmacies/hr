@@ -70,78 +70,60 @@ class EtaSync(models.Model):
         delivery_day = today - timedelta(days=4)
         made_progress = False
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
+        streams = (('invoice', 'received'), ('invoice', 'sent'),
+                   ('receipt', 'sent'), ('receipt', 'received'))
+        yesterday = today - timedelta(days=1)
         for config in configs:
             if not config.start_date:
                 continue
             if not self._ensure_run_days(config, today):
                 return
-            for kind, direction in (('receipt', 'received'), ('receipt', 'sent'),
-                                    ('invoice', 'sent'), ('invoice', 'received')):
-                attempted = set()
-                for priority_day in (today - timedelta(days=1), delivery_day):
-                    if priority_day < config.start_date:
+            runs = self.search([
+                ('config_id', '=', config.id),
+                ('report_date', '>=', config.start_date),
+                ('report_date', '<', today),
+            ])
+            by_day_stream = {(run.report_date, run.kind, run.direction): run for run in runs}
+            unfinished_days = {
+                run.report_date for run in runs
+                if run.state == 'pending' or
+                (run.state == 'error' and
+                 (not run.last_run_at or
+                  fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
+            }
+            overlap_days = {
+                run.report_date for run in runs
+                if run.state == 'done' and
+                max(config.start_date, today - timedelta(days=14)) <= run.report_date < yesterday and
+                (not run.last_run_at or
+                 fields.Datetime.to_datetime(run.last_run_at).replace(
+                     tzinfo=timezone.utc).astimezone(cairo).date() < today)
+            }
+            priority_days = [day for day in (yesterday, delivery_day)
+                             if config.start_date <= day < today]
+            ordered_days = list(dict.fromkeys(
+                priority_days + sorted(unfinished_days) + sorted(overlap_days)))
+            for day in ordered_days:
+                for kind, direction in streams:
+                    run = by_day_stream.get((day, kind, direction))
+                    if not run:
                         continue
-                    priority_run = self.search([
-                        ('config_id', '=', config.id), ('kind', '=', kind),
-                        ('direction', '=', direction), ('report_date', '=', priority_day),
-                    ], limit=1) or self.create({
-                        'config_id': config.id, 'kind': kind,
-                        'direction': direction, 'report_date': priority_day,
-                    })
-                    if (priority_run.state == 'pending' or
-                            (priority_run.state == 'error' and
-                             (not priority_run.last_run_at or
-                              fields.Datetime.to_datetime(priority_run.last_run_at)
-                              <= error_retry_before)) or
-                            (priority_run.state == 'done' and priority_day == delivery_day and
-                             (not priority_run.last_run_at or
-                              fields.Datetime.to_datetime(priority_run.last_run_at).replace(
-                                  tzinfo=timezone.utc).astimezone(cairo).date() < today))):
-                        keep_running, progressed = self._cron_attempt(priority_run)
-                        made_progress |= progressed
-                        if not keep_running:
-                            return
-                        attempted.add(priority_day)
-                stream_domain = [
-                    ('config_id', '=', config.id), ('kind', '=', kind),
-                    ('direction', '=', direction),
-                    ('report_date', '>=', config.start_date),
-                    ('report_date', '<', today),
-                ]
-                unfinished = self.search(stream_domain + [('state', 'in', ['pending', 'error'])]).filtered(
-                    lambda run: run.report_date not in attempted and
-                    (run.state == 'pending' or not run.last_run_at or
-                     fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
-                if unfinished:
-                    oldest_unfinished = min(
-                        unfinished,
-                        key=lambda run: (run.report_date, run.state != 'pending'),
-                    )
-                    keep_running, progressed = self._cron_attempt(oldest_unfinished)
-                    made_progress |= progressed
-                    if not keep_running:
-                        return
-                    continue
-
-                overlap_start = max(config.start_date, today - timedelta(days=14))
-                overlap_runs = self.search(stream_domain + [
-                    ('state', '=', 'done'),
-                    ('report_date', '>=', overlap_start),
-                    ('report_date', '<', today - timedelta(days=1)),
-                ]).filtered(lambda run: run.report_date not in attempted and
+                    due = (run.state == 'pending' or
+                           (run.state == 'error' and
+                            (not run.last_run_at or
+                             fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)) or
+                           (run.state == 'done' and day in overlap_days and
                             (not run.last_run_at or
                              fields.Datetime.to_datetime(run.last_run_at).replace(
-                                 tzinfo=timezone.utc).astimezone(cairo).date() < today))
-                if overlap_runs:
-                    oldest_check = min(
-                        overlap_runs,
-                        key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
-                        if run.last_run_at else datetime.min,
-                    )
-                    keep_running, progressed = self._cron_attempt(oldest_check)
+                                 tzinfo=timezone.utc).astimezone(cairo).date() < today)))
+                    if not due:
+                        continue
+                    keep_running, progressed = self._cron_attempt(run)
                     made_progress |= progressed
                     if not keep_running:
                         return
+                if day in unfinished_days:
+                    break
         if self.env.context.get('cron_id'):
             remaining = (sum(self._eligible_remaining(config, today, error_retry_before)
                              for config in configs if config.start_date)

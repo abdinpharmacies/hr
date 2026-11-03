@@ -418,3 +418,21 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Process each eligible ETA day across received invoices, sent invoices, sent receipts, and received receipts before moving to another backlog day.
+- Add four transaction menus filtered by direction and grouped by issue date, with Retrievals grouped by day.
+- Show the same category order and names in the dashboard and daily file labels.
+- Sort invoice and receipt lists by issue day.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/static/src/js/eta_dashboard.js
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

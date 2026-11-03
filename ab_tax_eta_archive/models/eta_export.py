@@ -19,10 +19,10 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 CATEGORIES = (
-    ('sent_invoice', 'Sent invoices', 'invoice', 'sent'),
-    ('sent_receipt', 'Sent receipts', 'receipt', 'sent'),
-    ('received_invoice', 'Purchase invoices', 'invoice', 'received'),
-    ('received_receipt', 'Purchase receipts', 'receipt', 'received'),
+    ('received_invoice', 'Invoices received', 'invoice', 'received'),
+    ('sent_invoice', 'Invoices sent', 'invoice', 'sent'),
+    ('sent_receipt', 'Receipts sent', 'receipt', 'sent'),
+    ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
 
 

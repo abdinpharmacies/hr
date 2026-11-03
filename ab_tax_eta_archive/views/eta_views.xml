@@ -87,6 +87,28 @@
             </list>
         </field>
     </record>
+    <record id="view_eta_invoice_search" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_invoice.search</field>
+        <field name="model">ab_tax_eta_archive_invoice</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="report_date"/>
+                <field name="uuid"/>
+                <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
+            </search>
+        </field>
+    </record>
+    <record id="view_eta_receipt_search" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_receipt.search</field>
+        <field name="model">ab_tax_eta_archive_receipt</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="report_date"/>
+                <field name="uuid"/>
+                <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
+            </search>
+        </field>
+    </record>
     <record id="view_eta_export_list" model="ir.ui.view">
         <field name="name">ab_tax_eta_archive_export.list</field>
         <field name="model">ab_tax_eta_archive_export</field>
@@ -134,6 +156,16 @@
                     </group>
                 </sheet>
             </form>
+        </field>
+    </record>
+    <record id="view_eta_export_search" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_export.search</field>
+        <field name="model">ab_tax_eta_archive_export</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="report_date"/>
+                <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
+            </search>
         </field>
     </record>
     <record id="view_eta_sync_list" model="ir.ui.view">
@@ -199,30 +231,66 @@
             </form>
         </field>
     </record>
+    <record id="view_eta_sync_search" model="ir.ui.view">
+        <field name="name">ab_tax_eta_archive_sync.search</field>
+        <field name="model">ab_tax_eta_archive_sync</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="report_date"/>
+                <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
+            </search>
+        </field>
+    </record>
     <record id="action_eta_config" model="ir.actions.act_window">
         <field name="name">ETA Connections</field>
         <field name="res_model">ab_tax_eta_archive_config</field>
         <field name="view_mode">list,form</field>
     </record>
     <record id="action_eta_invoice" model="ir.actions.act_window">
-        <field name="name">ETA Invoices</field>
+        <field name="name">Invoices received</field>
         <field name="res_model">ab_tax_eta_archive_invoice</field>
         <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_eta_invoice_search"/>
+        <field name="domain">[('direction', '=', 'received')]</field>
+        <field name="context">{'search_default_group_by_day': 1}</field>
+    </record>
+    <record id="action_eta_invoice_sent" model="ir.actions.act_window">
+        <field name="name">Invoices sent</field>
+        <field name="res_model">ab_tax_eta_archive_invoice</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_eta_invoice_search"/>
+        <field name="domain">[('direction', '=', 'sent')]</field>
+        <field name="context">{'search_default_group_by_day': 1}</field>
     </record>
     <record id="action_eta_receipt" model="ir.actions.act_window">
-        <field name="name">ETA Receipts</field>
+        <field name="name">Receipts sent</field>
         <field name="res_model">ab_tax_eta_archive_receipt</field>
         <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_eta_receipt_search"/>
+        <field name="domain">[('direction', '=', 'sent')]</field>
+        <field name="context">{'search_default_group_by_day': 1}</field>
+    </record>
+    <record id="action_eta_receipt_received" model="ir.actions.act_window">
+        <field name="name">Receipts received</field>
+        <field name="res_model">ab_tax_eta_archive_receipt</field>
+        <field name="view_mode">list</field>
+        <field name="search_view_id" ref="view_eta_receipt_search"/>
+        <field name="domain">[('direction', '=', 'received')]</field>
+        <field name="context">{'search_default_group_by_day': 1}</field>
     </record>
     <record id="action_eta_export" model="ir.actions.act_window">
         <field name="name">ETA Daily Files</field>
         <field name="res_model">ab_tax_eta_archive_export</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_eta_export_search"/>
+        <field name="context">{'search_default_group_by_day': 1}</field>
     </record>
     <record id="action_eta_sync" model="ir.actions.act_window">
         <field name="name">ETA Retrievals</field>
         <field name="res_model">ab_tax_eta_archive_sync</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_eta_sync_search"/>
+        <field name="context">{'search_default_group_by_day': 1}</field>
     </record>
     <record id="action_eta_dashboard" model="ir.actions.client">
         <field name="name">ETA Dashboard</field>
@@ -231,8 +299,10 @@
     <menuitem id="menu_eta_root" name="ETA Archive" sequence="60" groups="ab_tax_eta_archive.group_eta_user"/>
     <menuitem id="menu_eta_dashboard" name="Dashboard" parent="menu_eta_root" action="action_eta_dashboard" sequence="1"/>
     <menuitem id="menu_eta_files" name="Daily Files" parent="menu_eta_root" action="action_eta_export" sequence="10"/>
-    <menuitem id="menu_eta_invoices" name="Invoices" parent="menu_eta_root" action="action_eta_invoice" sequence="20"/>
-    <menuitem id="menu_eta_receipts" name="Receipts" parent="menu_eta_root" action="action_eta_receipt" sequence="30"/>
-    <menuitem id="menu_eta_sync" name="Retrievals" parent="menu_eta_root" action="action_eta_sync" sequence="40"/>
-    <menuitem id="menu_eta_config" name="Connections" parent="menu_eta_root" action="action_eta_config" sequence="50" groups="ab_tax_eta_archive.group_eta_manager"/>
+    <menuitem id="menu_eta_invoices" name="Invoices received" parent="menu_eta_root" action="action_eta_invoice" sequence="20"/>
+    <menuitem id="menu_eta_invoices_sent" name="Invoices sent" parent="menu_eta_root" action="action_eta_invoice_sent" sequence="30"/>
+    <menuitem id="menu_eta_receipts" name="Receipts sent" parent="menu_eta_root" action="action_eta_receipt" sequence="40"/>
+    <menuitem id="menu_eta_receipts_received" name="Receipts received" parent="menu_eta_root" action="action_eta_receipt_received" sequence="50"/>
+    <menuitem id="menu_eta_sync" name="Retrievals" parent="menu_eta_root" action="action_eta_sync" sequence="60"/>
+    <menuitem id="menu_eta_config" name="Connections" parent="menu_eta_root" action="action_eta_config" sequence="70" groups="ab_tax_eta_archive.group_eta_manager"/>
 </odoo>

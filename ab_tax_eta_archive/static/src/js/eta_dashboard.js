@@ -73,10 +73,10 @@ class EtaDashboard extends Component {
     get cards() {
         const categories = this.state.data?.categories || {};
         return [
-            { key: "sent_invoice", label: _t("Sent invoices"), tone: "blue" },
-            { key: "received_invoice", label: _t("Purchase invoices"), tone: "violet" },
-            { key: "sent_receipt", label: _t("Sent receipts"), tone: "teal" },
-            { key: "received_receipt", label: _t("Purchase receipts"), tone: "amber" },
+            { key: "received_invoice", label: _t("Invoices received"), tone: "violet" },
+            { key: "sent_invoice", label: _t("Invoices sent"), tone: "blue" },
+            { key: "sent_receipt", label: _t("Receipts sent"), tone: "teal" },
+            { key: "received_receipt", label: _t("Receipts received"), tone: "amber" },
         ].map((card) => ({ ...card, ...(categories[card.key] || { count: 0 }) }));
     }
 
@@ -169,6 +169,7 @@ class EtaDashboard extends Component {
             views: model === "ab_tax_eta_archive_invoice" || model === "ab_tax_eta_archive_receipt"
                 ? [[false, "list"]] : [[false, "list"], [false, "form"]],
             domain,
+            context: { search_default_group_by_day: 1 },
             target: "current",
         });
     }

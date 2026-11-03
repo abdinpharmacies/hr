@@ -26,7 +26,7 @@ def eta_report_date(value):
 class EtaInvoice(models.Model):
     _name = 'ab_tax_eta_archive_invoice'
     _description = 'ETA Invoice'
-    _order = 'received_at desc, id desc'
+    _order = 'report_date desc, received_at desc, id desc'
     _rec_name = 'internal_id'
 
     config_id = fields.Many2one('ab_tax_eta_archive_config', required=True, ondelete='restrict', readonly=True)
@@ -71,7 +71,7 @@ class EtaInvoice(models.Model):
 class EtaReceipt(models.Model):
     _name = 'ab_tax_eta_archive_receipt'
     _description = 'ETA Receipt'
-    _order = 'received_at desc, id desc'
+    _order = 'report_date desc, received_at desc, id desc'
     _rec_name = 'receipt_number'
 
     config_id = fields.Many2one('ab_tax_eta_archive_config', required=True, ondelete='restrict', readonly=True)
