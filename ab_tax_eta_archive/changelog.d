@@ -419,7 +419,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+910ff863 — yahyazakaria22 — 2026-11-03
+feat: organize ETA streams and transactions by day
 
 - Process each eligible ETA day across received invoices, sent invoices, sent receipts, and received receipts before moving to another backlog day.
 - Add four transaction menus filtered by direction and grouped by issue date, with Retrievals grouped by day.
