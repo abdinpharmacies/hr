@@ -1,8 +1,9 @@
 from datetime import date, datetime, timedelta
 import pytz
+import requests
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 
 
 class EtaConfig(models.Model):
@@ -29,7 +30,9 @@ class EtaConfig(models.Model):
     pos_os_version = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     pos_model_framework = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
     pos_preshared_key = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
-    telegram_chat_id = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
+    telegram_chat_id = fields.Char(
+        groups='ab_tax_eta_archive.group_eta_manager',
+        help='Enter a negative numeric group chat ID or a public @username. Invite links and bot IDs cannot receive group files.')
     telegram_bot_token = fields.Char(groups='ab_tax_eta_archive.group_eta_manager')
 
     @api.constrains('start_date')
@@ -43,3 +46,49 @@ class EtaConfig(models.Model):
         prefix = 'preprod.' if self.environment == 'preproduction' else ''
         return (f'https://id.{prefix}eta.gov.eg',
                 f'https://api.{prefix}invoicing.eta.gov.eg')
+
+    def action_find_telegram_group_ids(self):
+        self.ensure_one()
+        self.check_access('write')
+        token = (self.telegram_bot_token or '').strip()
+        if not token:
+            raise UserError(_('Configure the Telegram bot token first.'))
+        try:
+            response = requests.get(
+                f'https://api.telegram.org/bot{token}/getUpdates',
+                params={'limit': 100}, timeout=15)
+        except requests.RequestException as exc:
+            raise UserError(_(
+                'Could not read Telegram group updates (%(reason)s).',
+                reason=type(exc).__name__)) from exc
+        try:
+            payload = response.json()
+        except ValueError as exc:
+            raise UserError(_('Telegram returned an invalid group update response.')) from exc
+        if not isinstance(payload, dict) or not payload.get('ok'):
+            detail = payload.get('description') if isinstance(payload, dict) else None
+            detail = ' '.join(str(detail or response.reason or response.status_code).split())[:300]
+            detail = detail.replace(token, '***')
+            raise UserError(_(
+                'Telegram could not list group updates: %(detail)s', detail=detail))
+        groups = {}
+        for update in payload.get('result', []):
+            if not isinstance(update, dict):
+                continue
+            for key in ('message', 'my_chat_member', 'chat_member', 'channel_post'):
+                event = update.get(key)
+                chat = event.get('chat') if isinstance(event, dict) else None
+                if (isinstance(chat, dict) and
+                        chat.get('type') in ('group', 'supergroup') and
+                        isinstance(chat.get('id'), int)):
+                    groups[chat['id']] = chat.get('title') or str(chat['id'])
+        if not groups:
+            raise UserError(_(
+                'No Telegram group updates found. Add this bot to the intended group and send it a command there, then try again.'))
+        message = '\n'.join(f'{title}: {chat_id}'
+                            for chat_id, title in sorted(groups.items(), key=lambda item: item[1]))
+        return {
+            'type': 'ir.actions.client', 'tag': 'display_notification',
+            'params': {'title': _('Telegram Group Chat IDs'), 'message': message,
+                       'type': 'info', 'sticky': True},
+        }

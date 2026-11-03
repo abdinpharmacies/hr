@@ -17,6 +17,11 @@
         <field name="model">ab_tax_eta_archive_config</field>
         <field name="arch" type="xml">
             <form string="ETA Connection">
+                <header>
+                    <button name="action_find_telegram_group_ids" type="object"
+                            string="Find Group Chat ID"
+                            groups="ab_tax_eta_archive.group_eta_manager"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="name"/>

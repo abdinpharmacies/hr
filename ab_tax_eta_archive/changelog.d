@@ -452,3 +452,18 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Show Telegram's HTTP error detail and safely retry short rate limits during daily file delivery.
+- Reject invite links, positive IDs, empty files, invalid files, and files above Telegram's 50 MB upload limit with specific messages.
+- Add a manager-only action to read candidate group chat IDs from the configured bot's recent updates without exposing its token.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

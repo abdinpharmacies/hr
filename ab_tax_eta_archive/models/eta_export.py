@@ -1,8 +1,10 @@
 import base64
+import binascii
 import hashlib
 import io
 import json
 import logging
+import time
 from datetime import datetime, timedelta, timezone
 
 import pytz
@@ -259,29 +261,80 @@ class EtaExport(models.Model):
             return
         self = locked
         config = self.config_id
-        if not config.telegram_bot_token or not config.telegram_chat_id:
+        if not (config.telegram_bot_token or '').strip() or not (config.telegram_chat_id or '').strip():
             self.telegram_error = _('Configure the Telegram bot token and group chat ID.')
+            return
+        chat_id = config.telegram_chat_id.strip()
+        if (chat_id.startswith(('+', 't.me/', 'http://t.me/', 'https://t.me/',
+                                'telegram.me/', 'https://telegram.me/'))):
+            self.telegram_error = _(
+                'Use the numeric Telegram group chat ID or public @username, not an invite link.')
+            return
+        if not (chat_id.startswith('@') or
+                (chat_id.startswith('-') and chat_id[1:].isdigit())):
+            self.telegram_error = _(
+                'Use a negative Telegram group chat ID or public @username for delivery.')
             return
         label = next(row[1] for row in CATEGORIES if row[0] == self.category)
         caption = f'{_(label)} - {self.report_date}'
         if self.revision > 1:
             caption += ' - ' + _('Revision %(number)s', number=self.revision)
+        if not self.file_data:
+            self.telegram_error = _('The ETA file has no content to send.')
+            return
         try:
-            response = requests.post(
-                f'https://api.telegram.org/bot{config.telegram_bot_token}/sendDocument',
-                data={'chat_id': config.telegram_chat_id,
-                      'caption': caption},
-                files={'document': (self.filename, base64.b64decode(self.file_data),
-                                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')},
-                timeout=60,
-            )
-            response.raise_for_status()
-            payload = response.json()
-            if not payload.get('ok'):
-                raise UserError(_('Telegram rejected the ETA file.'))
-        except (requests.RequestException, ValueError, UserError):
-            _logger.warning('ETA Telegram delivery failed for %s', self.filename)
-            self.telegram_error = _('Telegram delivery failed; this file will be retried.')
+            document = base64.b64decode(self.file_data)
+        except (binascii.Error, ValueError):
+            self.telegram_error = _('The ETA file content is invalid.')
+            return
+        if len(document) > 50 * 1024 * 1024:
+            self.telegram_error = _(
+                'The ETA file exceeds Telegram Bot API upload limit of 50 MB.')
+            return
+        try:
+            for attempt in range(3):
+                response = requests.post(
+                    f'https://api.telegram.org/bot{config.telegram_bot_token.strip()}/sendDocument',
+                    data={'chat_id': chat_id, 'caption': caption},
+                    files={'document': (
+                        self.filename, document,
+                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')},
+                    timeout=60,
+                )
+                try:
+                    payload = response.json()
+                except ValueError:
+                    payload = {}
+                if response.ok and isinstance(payload, dict) and payload.get('ok'):
+                    break
+                detail = payload.get('description') if isinstance(payload, dict) else None
+                detail = ' '.join(str(detail or response.reason or response.status_code).split())[:300]
+                detail = detail.replace(config.telegram_bot_token.strip(), '***')
+                parameters = payload.get('parameters') if isinstance(payload, dict) else None
+                retry_after = parameters.get('retry_after') if isinstance(parameters, dict) else None
+                if response.status_code == 429 and attempt < 2:
+                    try:
+                        delay = int(retry_after)
+                    except (TypeError, ValueError):
+                        delay = 2 ** attempt
+                    if delay <= 5:
+                        time.sleep(max(delay, 1))
+                        continue
+                self.telegram_error = _(
+                    'Telegram HTTP %(status)s: %(detail)s',
+                    status=response.status_code, detail=detail)
+                _logger.warning('ETA Telegram delivery failed for %s: HTTP %s: %s',
+                                self.filename, response.status_code, detail)
+                return
+        except requests.Timeout:
+            self.telegram_error = _('Telegram request timed out; check the chat before retrying.')
+            _logger.warning('ETA Telegram delivery timed out for %s', self.filename)
+            return
+        except requests.RequestException as exc:
+            self.telegram_error = _(
+                'Telegram connection failed: %(reason)s', reason=type(exc).__name__)
+            _logger.warning('ETA Telegram connection failed for %s: %s',
+                            self.filename, type(exc).__name__)
             return
         values = {'telegram_sent_at': fields.Datetime.now(),
                   'telegram_message_id': str(payload.get('result', {}).get('message_id', '')),
