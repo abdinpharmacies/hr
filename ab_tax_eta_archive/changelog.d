@@ -337,3 +337,14 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Replace fixed five-minute recent receipt windows with count-based time splitting, following the Visual Basic harvester.
+- Request up to 1,000 receipts per page with fallback for ETA page-size rejections and retain a 300-page safety limit.
+- Preserve receipt checkpoints and existing daily counts when the remaining period is empty.
+- Reject a changed-to-empty result after a nonempty probe so incomplete receipt ranges can be retried.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
