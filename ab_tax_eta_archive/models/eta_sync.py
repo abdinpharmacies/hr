@@ -56,6 +56,12 @@ class EtaSync(models.Model):
         'UNIQUE(config_id, report_date, kind, direction)',
         'Only one ETA retrieval is allowed for each day and stream.')
 
+    def _progress_iter(self, data, message, total=None):
+        progress_iter = getattr(self, 'web_progress_iter', None)
+        if progress_iter:
+            return progress_iter(data, msg=message, total=total, cancellable=False)
+        return data
+
     @api.model
     def _cron_sync(self):
         cairo = pytz.timezone('Africa/Cairo')
@@ -196,13 +202,24 @@ class EtaSync(models.Model):
         attempts = (ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT
                     if in_cron or historical_receipt else 1)
         progressed = False
-        for _ in range(attempts):
+        windows = (self._progress_iter(
+            range(attempts), _('Retrieving ETA receipt windows'), total=attempts)
+            if run.kind == 'receipt' else range(attempts))
+        for _ in windows:
             previous_state = run.state
             previous_count = run.item_count
             previous_window = run.next_receipt_window_at
             previous_packages = [(part.id, part.state, part.package_id)
                                  for part in run.package_ids] if run.kind == 'receipt' else []
+            manual_progress = (run.kind == 'receipt' and not in_cron and
+                               getattr(run, 'web_progress_percent', None))
+            if manual_progress:
+                run.web_progress_percent(0, _('Retrieving ETA receipt window'),
+                                         cancellable=False)
             run._attempt(auth_cache=auth_cache)
+            if manual_progress:
+                run.web_progress_percent(100, _('ETA receipt retry finished'),
+                                         cancellable=False)
             current_packages = [(part.id, part.state, part.package_id)
                                 for part in run.package_ids] if run.kind == 'receipt' else []
             step_progressed = (run.state != previous_state or
@@ -557,7 +574,8 @@ class EtaSync(models.Model):
         if not completed:
             raise ValidationError(_(
                 'ETA receipt package retrieval completed without data or a valid empty package.'))
-        return (json.loads(part.payload_json) for part in completed)
+        return (json.loads(part.payload_json) for part in self._progress_iter(
+            completed, _('Reading ETA receipt packages'), total=len(completed)))
 
     def _download_receipt_package(self, api_url, headers, package_id):
         for attempt in range(4):
@@ -753,7 +771,8 @@ class EtaSync(models.Model):
             raise ValidationError(_('ETA receipt count changed while reading the result pages.'))
         if count != total:
             raise ValidationError(_('ETA receipt page count does not match the reported total.'))
-        yield from pages
+        yield from self._progress_iter(
+            pages, _('Saving ETA receipt pages'), total=len(pages))
 
     def _request_receipt_page(self, api_url, headers, params, page_no, page_size):
         sizes = (page_size, 200, 100, 50, 10) if page_no == 1 else (page_size,)

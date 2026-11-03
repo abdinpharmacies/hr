@@ -776,3 +776,23 @@ msgstr "يُسمح بمقطع واحد فقط لاسترجاع إيصالات ا
 #. module: ab_tax_eta_archive
 msgid "Resolved"
 msgstr "تم الحل"
+
+#. module: ab_tax_eta_archive
+msgid "Retrieving ETA receipt windows"
+msgstr "جارٍ استرجاع نوافذ إيصالات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Retrieving ETA receipt window"
+msgstr "جارٍ استرجاع نافذة إيصالات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "ETA receipt retry finished"
+msgstr "اكتملت محاولة إعادة استرجاع الإيصالات"
+
+#. module: ab_tax_eta_archive
+msgid "Reading ETA receipt packages"
+msgstr "جارٍ قراءة حزم إيصالات الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Saving ETA receipt pages"
+msgstr "جارٍ حفظ صفحات إيصالات الضرائب"

@@ -394,3 +394,16 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Report ETA receipt window, page, and package loop progress through web_progress when that addon is installed.
+- Show start and completion of a manual receipt Retry through web_progress.
+- Preserve the existing retrieval and checkpoint behavior when web_progress is unavailable.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
