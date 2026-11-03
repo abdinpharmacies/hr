@@ -47,7 +47,7 @@ class Sale(models.Model):
     def _promotion_eligibility_replica(self, program):
         origin = REPLAY_ORIGIN.get()
         if origin:
-            replica = self.env['ab_replica_db'].sudo().search(fields.Domain([('db_serial', '=', origin['replica_serial']), ('active', '=', True)]), limit=2)
+            replica = self.env['ab_replica_db'].sudo().search(fields.Domain([('db_serial', '=', origin.get('promotion_replica_serial') or origin['replica_serial']), ('active', '=', True)]), limit=2)
             if len(replica) != 1:
                 raise ValidationError(_('The originating replica must be configured on central.'))
             return replica
@@ -94,6 +94,15 @@ class Return(models.Model):
     def _validate_invoice_return_window(self, sth_id, sec_insert_date=None):
         origin = REPLAY_ORIGIN.get()
         if not origin:
+            journal = self.env['ab_central_sync_operation']
+            if journal._param('role') == 'branch' and self.native_origin_id:
+                parent = journal.sudo().with_context(active_test=False).search(
+                    fields.Domain('direction', '=', 'out') & fields.Domain('kind', '=', 'sale')
+                    & fields.Domain('store_id', '=', self.store_id.id)
+                    & fields.Domain('document_id', '=', self.native_origin_id.id)
+                    & fields.Domain('origin', '=', self.env['ir.config_parameter'].sudo().get_param('database.uuid')), limit=1)
+                if not parent:
+                    raise ValidationError(_('Historical returns require a reviewed original transaction import.'))
             return super()._validate_invoice_return_window(sth_id, sec_insert_date)
         self.ensure_one()
         parent = self.env['ab_central_sync_operation'].sudo().with_context(active_test=False).search(fields.Domain([
@@ -206,9 +215,12 @@ class Replay(models.Model):
                 if set(sale.applied_program_ids.ids) != set(programs):
                     raise ValidationError(_('The agreed promotion is no longer eligible.'))
             sale.action_submit(request_token=central_token)
-            expected = sorted((mapping[a['line']], self.with_env(env)._resolve('ab_product_source', a['source']), a['quantity'], round(a['price'], 6), round(a['cost'], 6)) for a in payload['allocations'])
+            expected = sorted((mapping[item['source_line']], batch['source_id'], batch['qty'],
+                               round(batch['price'], 6), round(batch['cost'], 6))
+                              for item in payload['cache_reservations'] for batch in item['batches'])
             actual = env['ab_sales_stock_allocation'].sudo().search(fields.Domain([('sale_line_id.header_id', '=', sale.id), ('return_line_id', '=', False)]))
-            observed = sorted((a.sale_line_id.id, a.source_id.id, a.qty_smallest, round(a.unit_price, 6), round(a.unit_cost, 6)) for a in actual)
+            observed = sorted((a.sale_line_id.id, a.source_id.id, a.qty_smallest,
+                               round(a.source_unit_price, 6), round(a.unit_cost, 6)) for a in actual)
             if expected != observed:
                 raise ValidationError(_('Central allocations differ from the original branch allocations.'))
             for item in payload['lines']:
