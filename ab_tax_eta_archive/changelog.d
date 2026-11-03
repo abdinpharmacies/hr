@@ -551,7 +551,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+84e699fd — yahyazakaria22 — 2026-11-03
+fix: allow manual ETA sends before auto cutoff
 
 - Allow the manual Send to Telegram action for any previous day whose required retrievals are complete, while automatic delivery retains its four-day delay.
 - Process manually queued recent files through the export cron after their UUID details and workbook are ready.
