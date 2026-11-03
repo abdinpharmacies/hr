@@ -27,6 +27,7 @@ CATEGORIES = (
     ('sent_receipt', 'Receipts sent', 'receipt', 'sent'),
     ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
+ETA_RECEIPT_SEARCH_DAYS = 29
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -230,11 +231,17 @@ class EtaExport(models.Model):
 
     @api.model
     def _refresh_completed_days(self, config, today):
-        if not self._day_complete(config, config.start_date):
-            return False
+        first_searchable_day = max(
+            config.start_date, today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS))
         checked_through = today - timedelta(days=1)
-        day = config.start_date
-        while day < today:
+        days = [today - timedelta(days=4), today - timedelta(days=1)]
+        days += [first_searchable_day + timedelta(days=offset)
+                 for offset in range((today - first_searchable_day).days)]
+        for day in dict.fromkeys(days):
+            if day < first_searchable_day or day >= today:
+                continue
+            if not self._day_complete(config, day):
+                continue
             exports = self.search([
                 ('config_id', '=', config.id), ('report_date', '=', day),
             ], order='revision desc')
@@ -249,7 +256,6 @@ class EtaExport(models.Model):
                 if not self._ensure_files(config, day):
                     return False
                 refreshed = True
-            day += timedelta(days=1)
             if (refreshed and self.env.context.get('cron_id') and
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 return False

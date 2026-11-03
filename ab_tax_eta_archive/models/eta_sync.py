@@ -20,6 +20,7 @@ ETA_MAX_INVOICE_PAGES = 20
 ETA_INVOICE_SEARCH_DELAY = 2.1
 ETA_RECEIPT_SEARCH_DELAY = 0.6
 ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT = 4
+ETA_RECEIPT_SEARCH_DAYS = 29
 
 
 class EtaSearchNoResult(Exception):
@@ -67,6 +68,7 @@ class EtaSync(models.Model):
         today = datetime.now(cairo).date()
         error_retry_before = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
         delivery_day = today - timedelta(days=4)
+        oldest_searchable_day = today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)
         made_progress = False
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
         streams = (('invoice', 'received'), ('invoice', 'sent'),
@@ -82,13 +84,24 @@ class EtaSync(models.Model):
                 ('report_date', '>=', config.start_date),
                 ('report_date', '<', today),
             ])
+            old_receipts = runs.filtered(
+                lambda run: run.kind == 'receipt' and run.state != 'done' and
+                run.report_date < oldest_searchable_day)
+            old_day_message = _(
+                'ETA receipt search cannot verify this older day. Receipt package retrieval is disabled.')
+            old_receipts.filtered(
+                lambda run: run.state != 'pending' or run.error_message != old_day_message
+            ).write({'state': 'pending', 'error_message': old_day_message,
+                     'last_run_at': fields.Datetime.now()})
             by_day_stream = {(run.report_date, run.kind, run.direction): run for run in runs}
             unfinished_days = {
                 run.report_date for run in runs
-                if run.state == 'pending' or
-                (run.state == 'error' and
-                 (not run.last_run_at or
-                  fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
+                if (run.kind != 'receipt' or
+                    run.report_date >= oldest_searchable_day) and
+                (run.state == 'pending' or
+                 (run.state == 'error' and
+                  (not run.last_run_at or
+                   fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
             }
             overlap_days = {
                 run.report_date for run in runs
@@ -107,14 +120,16 @@ class EtaSync(models.Model):
                     run = by_day_stream.get((day, kind, direction))
                     if not run:
                         continue
-                    due = (run.state == 'pending' or
-                           (run.state == 'error' and
-                            (not run.last_run_at or
-                             fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)) or
-                           (run.state == 'done' and day in overlap_days and
-                            (not run.last_run_at or
-                             fields.Datetime.to_datetime(run.last_run_at).replace(
-                                 tzinfo=timezone.utc).astimezone(cairo).date() < today)))
+                    due = ((run.kind != 'receipt' or
+                            day >= oldest_searchable_day) and
+                           (run.state == 'pending' or
+                            (run.state == 'error' and
+                             (not run.last_run_at or
+                              fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)) or
+                            (run.state == 'done' and day in overlap_days and
+                             (not run.last_run_at or
+                              fields.Datetime.to_datetime(run.last_run_at).replace(
+                                  tzinfo=timezone.utc).astimezone(cairo).date() < today))))
                     if not due:
                         continue
                     keep_running, progressed = self._cron_attempt(run)
@@ -137,8 +152,10 @@ class EtaSync(models.Model):
             ('state', 'in', ['pending', 'error']),
         ])
         return len(runs.filtered(
-            lambda run: run.state == 'pending' or not run.last_run_at or
-            fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
+            lambda run: (run.kind != 'receipt' or
+                         run.report_date >= today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)) and
+            (run.state == 'pending' or not run.last_run_at or
+             fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before)))
 
     def _ensure_run_days(self, config, today):
         existing = self.search([
@@ -215,6 +232,14 @@ class EtaSync(models.Model):
 
     def _attempt(self, auth_cache=None):
         self.ensure_one()
+        if (self.kind == 'receipt' and
+                self.report_date < datetime.now(pytz.timezone('Africa/Cairo')).date()
+                - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)):
+            if self.state != 'done':
+                self.write({'state': 'pending', 'error_message': _(
+                    'ETA receipt search cannot verify this older day. Receipt package retrieval is disabled.'),
+                    'last_run_at': fields.Datetime.now()})
+            return
         try:
             with self.env.cr.savepoint():
                 if not self.try_lock_for_update():
@@ -249,7 +274,8 @@ class EtaSync(models.Model):
         if self.report_date >= datetime.now(cairo).date():
             return None
         if (self.kind == 'receipt' and
-                self.report_date < datetime.now(cairo).date() - timedelta(days=29)):
+                self.report_date < datetime.now(cairo).date()
+                - timedelta(days=ETA_RECEIPT_SEARCH_DAYS)):
             raise ValidationError(_(
                 'ETA receipt search cannot verify this older day. Receipt package retrieval is disabled.'))
         receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
@@ -408,7 +434,7 @@ class EtaSync(models.Model):
             return
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
-        if self.report_date >= today or self.report_date < today - timedelta(days=29):
+        if self.report_date >= today or self.report_date < today - timedelta(days=ETA_RECEIPT_SEARCH_DAYS):
             return
         start = cairo.localize(datetime.combine(self.report_date, day_time.min))
         start = start.astimezone(timezone.utc)

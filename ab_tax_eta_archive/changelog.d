@@ -496,3 +496,15 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Keep receipt retrievals older than the conservative ETA search window Pending with a clear reason, and stop cron from retrying those unsearchable days every hour.
+- Preserve previously archived receipt rows and completed retrievals without claiming that an older day is complete.
+- Let completed searchable days prepare their Excel files independently of older incomplete days, prioritizing the delivery day and yesterday.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
