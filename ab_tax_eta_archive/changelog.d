@@ -497,7 +497,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+c7bee30f — yahyazakaria22 — 2026-11-03
+fix: keep expired ETA receipt days pending
 
 - Keep receipt retrievals older than the conservative ETA search window Pending with a clear reason, and stop cron from retrying those unsearchable days every hour.
 - Preserve previously archived receipt rows and completed retrievals without claiming that an older day is complete.
