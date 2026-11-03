@@ -215,8 +215,9 @@ class EtaExport(models.Model):
                     day -= timedelta(days=1)
                     continue
                 latest = self._latest_day_files(config, day)
-                if all(latest.get(category) and latest[category].telegram_sent_at
-                       for category, _label, _kind, _direction in CATEGORIES):
+                if (all(latest.get(category) and latest[category].telegram_sent_at
+                        for category, _label, _kind, _direction in CATEGORIES) and
+                        not self._sent_files_need_revision(config, day, latest)):
                     day -= timedelta(days=1)
                     continue
                 if not self._ensure_files(config, day):
@@ -231,7 +232,8 @@ class EtaExport(models.Model):
                     export = latest[category]
                     if (not export.telegram_sent_at and
                             (day >= (config.telegram_start_date or cutoff) or
-                             export.telegram_send_requested)):
+                             export.telegram_send_requested or
+                             (export.supersedes_id and export.supersedes_id.telegram_sent_at))):
                         if export.telegram_send_requested:
                             export.telegram_send_requested = False
                         export._send_telegram(checked_through=today - timedelta(days=1))
@@ -250,14 +252,40 @@ class EtaExport(models.Model):
         return latest
 
     @api.model
+    def _sent_files_need_revision(self, config, day, latest):
+        for category, _label, kind, direction in CATEGORIES:
+            export = latest.get(category)
+            if not export or not export.telegram_sent_at:
+                continue
+            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                             else 'ab_tax_eta_archive_receipt']
+            count = model.search_count([
+                ('config_id', '=', config.id), ('report_date', '=', day),
+                ('direction', '=', direction),
+            ])
+            if count != export.record_count:
+                return True
+        return False
+
+    @api.model
     def _ensure_files(self, config, report_date):
         if not self._day_complete(config, report_date):
             return False
         checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
         latest = self._latest_day_files(config, report_date)
-        targets = [(category, kind, direction, latest.get(category))
-                   for category, _label, kind, direction in CATEGORIES
-                   if not latest.get(category) or not latest[category].telegram_sent_at]
+        targets = []
+        for category, _label, kind, direction in CATEGORIES:
+            export = latest.get(category)
+            if export and export.telegram_sent_at:
+                model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                                 else 'ab_tax_eta_archive_receipt']
+                count = model.search_count([
+                    ('config_id', '=', config.id), ('report_date', '=', report_date),
+                    ('direction', '=', direction),
+                ])
+                if count == export.record_count:
+                    continue
+            targets.append((category, kind, direction, export))
         for _category, kind, direction, _export in targets:
             if not self._enrich_details(config, kind, report_date, direction):
                 return False
