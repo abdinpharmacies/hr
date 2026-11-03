@@ -562,7 +562,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+d2cfabcc — yahyazakaria22 — 2026-11-03
+fix: deliver all eligible unsent ETA daily files
 
 - Let the export cron scan every eligible day even when yesterday's completed retrievals have not rerun today.
 - Automatically create and send every unsent file dated at least four days before today, including days before the former Telegram start date, once required retrievals and document details are complete.
