@@ -47,7 +47,6 @@
                     <group string="Telegram Delivery" groups="ab_tax_eta_archive.group_eta_manager">
                         <field name="telegram_chat_id"/>
                         <field name="telegram_bot_token" password="True"/>
-                        <field name="telegram_start_date"/>
                     </group>
                 </sheet>
             </form>

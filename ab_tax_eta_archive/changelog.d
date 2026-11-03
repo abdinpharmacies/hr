@@ -561,3 +561,15 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Let the export cron scan every eligible day even when yesterday's completed retrievals have not rerun today.
+- Automatically create and send every unsent file dated at least four days before today, including days before the former Telegram start date, once required retrievals and document details are complete.
+- Remove the unused Telegram start date from the connection form.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/changelog.d

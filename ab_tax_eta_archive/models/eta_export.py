@@ -5,7 +5,7 @@ import io
 import json
 import logging
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from urllib.parse import quote
 
 import pytz
@@ -198,17 +198,6 @@ class EtaExport(models.Model):
         for config in self.env['ab_tax_eta_archive_config'].search([
             ('active', '=', True), ('start_date', '<', today),
         ]):
-            yesterday_runs = self.env['ab_tax_eta_archive_sync'].search([
-                ('config_id', '=', config.id),
-                ('report_date', '=', today - timedelta(days=1)),
-                ('state', '=', 'done'),
-            ])
-            if len(yesterday_runs) != 4 or any(
-                    not run.last_run_at or
-                    fields.Datetime.to_datetime(run.last_run_at).replace(
-                        tzinfo=timezone.utc).astimezone(cairo).date() < today
-                    for run in yesterday_runs):
-                continue
             queued_recent = self.search([
                 ('config_id', '=', config.id), ('report_date', '>', cutoff),
                 ('report_date', '<', today), ('telegram_send_requested', '=', True),
@@ -249,10 +238,7 @@ class EtaExport(models.Model):
                 latest = self._latest_day_files(config, day)
                 for category, _label, _kind, _direction in CATEGORIES:
                     export = latest[category]
-                    if (not export.telegram_sent_at and
-                            (day >= (config.telegram_start_date or cutoff) or
-                             export.telegram_send_requested or
-                             (export.supersedes_id and export.supersedes_id.telegram_sent_at))):
+                    if not export.telegram_sent_at:
                         if export.telegram_send_requested:
                             export.telegram_send_requested = False
                         export._send_telegram(checked_through=today - timedelta(days=1))
