@@ -91,7 +91,7 @@ class CentralSync(http.Controller):
                                 raise AccessError('Actor mapping required')
                             actor_env = api.Environment(cr, user.id, {})
                             replay_session = False
-                            if 'ab_employee_access_sales_pos_session' in env.registry:
+                            if payload['kind'] != 'sale_cancel' and 'ab_employee_access_sales_pos_session' in env.registry:
                                 employee_ref = payload.get('actor_employee')
                                 if not employee_ref or employee_ref not in mapping.get('employees', []):
                                     raise AccessError('Employee is not delegated to this origin and actor')
