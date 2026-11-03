@@ -55,6 +55,22 @@ class TestSupplierClaimCycle(TransactionCase):
         claim.write({'payment_request_attachment': self.document, 'payment_request_filename': 'request.pdf'})
         claim.action_prepare_payment()
 
+    def test_new_secretarial_form_is_editable(self):
+        from odoo.tests import Form
+        for role in ('user', 'admin'):
+            with Form(self.Claim.with_user(self.users[role])) as form:
+                self.assertTrue(form.can_edit_open_claim_fields)
+                self.assertTrue(form.can_edit_correction_fields)
+                form.supplier_id = self.supplier
+                form.num_of_invoice = 1
+                form.claim_amount = 100
+                form.area = 'north'
+                form.type_of_invoice = 'original'
+                form.payment_nature = 'cash'
+                form.tax_classification = 'non_tax_payment'
+                form.secretarial_notes = 'New claim note'
+            self.assertEqual(form.record.state, 'draft')
+
 
     def test_followup_dates_survive_saving_and_department_decisions(self):
         from odoo.tests import Form
@@ -236,13 +252,23 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(len(arch.xpath('//chatter')), 1)
         self.assertFalse(arch.xpath('//group[@name="claim_document_audit"]'))
         self.assertFalse(arch.xpath('//page[@name="claim_notes" or @name="claim_history"]'))
-        self.assertFalse(arch.xpath('//field[@name="note_history_ids" or @name="history_ids" or @name="secretarial_notes"]'))
+        self.assertFalse(arch.xpath('//field[@name="note_history_ids" or @name="history_ids"]'))
         self.assertEqual(len(arch.xpath('//field[@name="document_ids"]')), 1)
         documents = arch.xpath('//page[@name="claim_documents"]/field[@name="document_ids"]')[0]
         self.assertEqual(documents.get('readonly'), 'True')
         self.assertEqual({node.get('name') for node in documents.xpath('./list/field')},
                          {'filename', 'user_id', 'occurred_at', 'content'})
-        self.assertEqual(len(arch.xpath('//field[@name="company_id"]')), 1)
+        self.assertFalse(arch.xpath('//field[@name="company_id"]'))
+        page = documents.getparent()
+        self.assertFalse(page.get('invisible'))
+        self.assertFalse(page.xpath('.//field[@name="attachment"]'))
+        uploads = arch.xpath('//page[@name="claim_reviews"]//field[@name="attachment"]')
+        self.assertTrue(arch.xpath('//page[@name="claim_reviews"]//field[@name="secretarial_notes"]'))
+        self.assertTrue(uploads)
+        self.assertEqual(len(uploads), len(arch.xpath('//field[@name="attachment"]')))
+        self.assertTrue(all(node.get('widget') == 'supplier_claim_upload' for node in uploads))
+        self.assertTrue(all(node.get('readonly') in (
+            'True', 'not can_edit_correction_fields') for node in uploads))
         for name in ('document_revision', 'payment_request_revision', 'bank_approval_revision',
                      'migration_gate_exception', 'review_round'):
             self.assertFalse(arch.xpath('//sheet/field[@name="%s"] | //sheet/group/field[@name="%s"]' % (name, name)))
@@ -262,9 +288,9 @@ class TestSupplierClaimCycle(TransactionCase):
             preparation = arch.xpath('//page[@name="claim_reviews"]//group[@name="claim_secretarial_review"]')
             self.assertEqual(len(preparation), int(role in ('user', 'admin')))
             if preparation:
-                self.assertEqual(preparation[0].get('invisible'), 'not can_prepare_payment')
+                self.assertEqual(preparation[0].get('invisible'), 'not can_prepare_payment and not can_edit_correction_fields')
             for page in arch.xpath('//page[@name="claim_reviews"]'):
-                self.assertEqual(page.get('invisible'), 'not can_edit_current_review and not can_prepare_payment')
+                self.assertEqual(page.get('invisible'), 'not can_edit_current_review and not can_prepare_payment and not can_edit_correction_fields')
             visible_roles = departments if role == 'admin' else (role,) if role in departments else ()
             groups = arch.xpath('//page[@name="claim_reviews"]//group[@name="department_reviews"]/group')
             self.assertEqual({node.get('name') for node in groups},
@@ -695,6 +721,16 @@ class TestSupplierClaimCycle(TransactionCase):
             self.assertEqual(len(claim.document_ids), 3)
             with self.assertRaises(AccessError):
                 documents.with_user(self.users[role]).write({'filename': 'changed.pdf'})
+            if state == 'draft':
+                record.write({'secretarial_notes': 'Draft supporting documents'})
+                self.assertTrue(claim.history_ids.filtered(
+                    lambda entry: entry.event == 'secretarial_note' and entry.reason == 'Draft supporting documents'))
+                record.action_submit()
+                self.assertEqual(len(claim.document_ids), 3)
+                self.assertEqual(set(claim.document_ids.mapped('filename')),
+                                 {'first.pdf', 'second.pdf', 'third.pdf'})
+                with self.assertRaises(AccessError):
+                    record.write({'secretarial_notes': 'Change after submission'})
 
     def test_multiple_attachment_access_and_atomic_validation(self):
         files = [{'name': 'first.pdf', 'data': self.document.decode()}]

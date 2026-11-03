@@ -211,7 +211,7 @@ class TestClaimHttp(HttpCase):
                 })().catch(error => console.error(error.message));
             """, login=self.users[role].login, timeout=60)
 
-    def _check_multiple_uploads(self, language):
+    def _check_multiple_uploads(self, language, draft=False):
         if language != 'en_US':
             self.env['res.lang']._activate_lang(language)
             self.env['ir.module.module'].search([('name', '=', 'ab_supplier_claim_cycle')])._update_translations(filter_lang=[language])
@@ -220,8 +220,9 @@ class TestClaimHttp(HttpCase):
             'supplier_id': self.claim.supplier_id.id, 'num_of_invoice': 1, 'area': 'north',
             'claim_amount': 100, 'type_of_invoice': 'original', 'payment_nature': 'cash',
             'tax_classification': 'non_tax_payment'})
-        claim.action_submit()
-        claim.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved')
+        if not draft:
+            claim.action_submit()
+            claim.with_user(self.users['supplier_accounts']).action_decide('supplier_accounts', 'approved')
         self.browser_js(f'/odoo/action-ab_supplier_claim_cycle.invoice_action/{claim.id}', """
             (async () => {
                 const waitFor = async (predicate) => {
@@ -234,7 +235,15 @@ class TestClaimHttp(HttpCase):
                 };
                 const tab = await waitFor(() => document.querySelector('.nav-link[name="claim_reviews"]'));
                 tab.click();
+                if (document.querySelector('.o_field_widget[name="company_id"]')) throw new Error('Company field is still present');
                 const widget = await waitFor(() => document.querySelector('.o_field_widget[name="payment_request_attachment"]'));
+                if (widget.getAttribute('name') === 'attachment') {
+                    const note = document.querySelector('.o_field_widget[name="secretarial_notes"] textarea');
+                    if (!note || note.disabled || note.readOnly) throw new Error('Draft secretary note is not editable');
+                    note.value = 'Draft supporting documents';
+                    note.dispatchEvent(new Event('input', {bubbles: true}));
+                    note.dispatchEvent(new Event('change', {bubbles: true}));
+                }
                 if (document.querySelector('.o_field_widget[name="can_upload_documents"]')) throw new Error('Unexpected separate upload button');
                 let selected = false;
                 const originalClick = HTMLInputElement.prototype.click;
@@ -267,12 +276,22 @@ class TestClaimHttp(HttpCase):
                 });
                 console.log('test successful');
             })().catch(error => console.error(error));
-        """, login=self.users['user'].login, timeout=90)
+        """.replace('payment_request_attachment', 'attachment' if draft else 'payment_request_attachment'),
+            login=self.users['user'].login, timeout=90)
         claim.invalidate_recordset(['document_ids'])
         self.assertEqual(set(claim.document_ids.mapped('filename')), {'first-extra.pdf', 'second-extra.pdf', 'third-extra.pdf'})
+        if draft:
+            claim.invalidate_recordset(['secretarial_notes'])
+            self.assertEqual(claim.secretarial_notes, 'Draft supporting documents')
 
     def test_multiple_uploads_english(self):
         self._check_multiple_uploads('en_US')
 
     def test_multiple_uploads_arabic(self):
         self._check_multiple_uploads('ar_001')
+
+    def test_draft_uploads_english(self):
+        self._check_multiple_uploads('en_US', draft=True)
+
+    def test_draft_uploads_arabic(self):
+        self._check_multiple_uploads('ar_001', draft=True)
