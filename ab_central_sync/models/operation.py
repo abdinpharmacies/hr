@@ -85,6 +85,7 @@ class CentralOperation(models.Model):
     def _enqueue(self, document, kind, payload):
         if self._param('role') != 'branch':
             return
+        self._check_enrolled_store(document.store_id)
         document.check_access('read')
         store = document.store_id
         store.lock_for_update(allow_referencing=True)
@@ -104,8 +105,8 @@ class CentralOperation(models.Model):
             session = self.env['ab_employee_access_sales_pos_api']._get_session(session_token, states=['active'])
             from .sales import reference
             payload['actor_employee'] = reference(session.employee_id)
-        payload.update(version=1, origin=origin, token=token, serial=serial, kind=kind,
-                       store=store.eplus_serial, actor=self.env.user.login,
+        payload.update(version=2, origin=origin, token=token, serial=serial, kind=kind,
+                       store=store.code, actor=self.env.user.login,
                        occurred_at=fields.Datetime.to_string(fields.Datetime.now()))
         operation = self.sudo().create(dict(token=token, origin=origin, serial=serial, kind=kind,
             store_id=store.id, direction='out', payload=payload, payload_hash=digest(payload),
@@ -123,12 +124,12 @@ class CentralOperation(models.Model):
         self.env.cr.postcommit.add(deliver)
         return operation
 
-    def _request(self, action, body):
+    def _request(self, action, body, credential=None):
         url = str(self._param('url', '')).rstrip('/')
-        key, database = self._param('api_key'), self._param('database')
+        key, database = credential or self._param('api_key'), self._param('database')
         if not url.startswith('https://') or not key or not database:
             raise ValidationError(_('Configure the central HTTPS URL, database, and API key.'))
-        response = requests.post(url + '/ab_central_sync/v1/' + action,
+        response = requests.post(url + '/ab_central_sync/v2/' + action,
             headers={'Authorization': 'Bearer ' + key, 'X-Odoo-Database': database},
             json=body, timeout=(5, 20), allow_redirects=False)
         response.raise_for_status()
@@ -163,11 +164,17 @@ class CentralOperation(models.Model):
         values.update(attempts=self.attempts + 1, next_retry=now + timedelta(minutes=15),
                       history=((self.history or []) + [{'at': str(now), 'state': values['state']}])[-50:])
         self.sudo().write(values)
+        if values['state'] == 'accepted' and self.kind in ('sale', 'return', 'sale_cancel'):
+            document = self.env[self.document_model].sudo().browse(self.document_id).exists()
+            codes = document.line_ids.product_id.mapped('code') if document else []
+            if codes:
+                self._try_refresh_snapshots(store_ids=self.store_id.ids, product_codes=codes)
 
     @api.model
     def _cron_retry(self):
         if self._param('role') != 'branch':
             return
+        self._try_refresh_snapshots()
         operations = self.sudo().search(fields.Domain([('direction', '=', 'out'), ('state', 'in', ['queued', 'uncertain', 'retryable']),
             '|', ('next_retry', '=', False), ('next_retry', '<=', fields.Datetime.now())]), order='serial,id', limit=20)
         for operation in operations:
@@ -192,3 +199,101 @@ class CentralOperation(models.Model):
             if operation.state != 'accepted':
                 operation.sudo().write({'state': 'retryable', 'next_retry': False, 'error': False})
         return True
+
+    @api.model
+    def _check_enrolled_store(self, store):
+        codes = json.loads(self._param('stores', '[]'))
+        origin = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+        if not self._param('enrolled') or not self._param('ready') or self._param('origin') != origin or store.code not in codes:
+            raise ValidationError(_('Connect this branch and download its stock snapshot before selling.'))
+
+    @api.model
+    def _save_connection(self, info):
+        if info.get('version') != 2 or info.get('origin') != self.env['ir.config_parameter'].sudo().get_param('database.uuid'):
+            raise ValidationError(_('Invalid enrollment response.'))
+        codes = info.get('stores', [])
+        if (not isinstance(codes, list) or not codes or any(not isinstance(code, str) or not code for code in codes)
+                or len(set(codes)) != len(codes) or type(info.get('replica_serial')) is not int
+                or info['replica_serial'] <= 0):
+            raise ValidationError(_('Invalid enrollment response.'))
+        stores = self.env['ab_store'].sudo().search(fields.Domain('code', 'in', codes))
+        if not codes or len(stores) != len(codes) or info.get('default_store') not in codes:
+            raise ValidationError(_('Synchronize assigned stores before connecting.'))
+        replica = self.env['ab_replica_db'].get_current_from_config()
+        if not replica or replica.db_serial != info['replica_serial'] or set(replica.allowed_sales_store_ids.ids) != set(stores.ids):
+            raise ValidationError(_('Replicate the branch identity and store assignments before connecting.'))
+        for model in ('ab_sales_header', 'ab_sales_return_header'):
+            if not self._param('enrolled') and self.env[model].sudo().search_count(
+                    fields.Domain('store_id', 'in', stores.ids) & fields.Domain('status', 'in', ['prepending', 'pending'])):
+                raise ValidationError(_('Complete open sales and returns before connecting.'))
+        params = self.env['ir.config_parameter'].sudo()
+        if not self._param('enrolled'):
+            params.set_param('ab_central_sync.ready', False)
+        params.set_param('ab_central_sync.stores', json.dumps(codes))
+        params.set_param('ab_central_sync.origin', info['origin'])
+        params.set_param('ab_central_sync.enrolled', True)
+
+    @api.model
+    def _refresh_snapshots(self, store_ids=None, product_codes=None):
+        if self._param('role') != 'branch' or not self._param('enrolled'):
+            return
+        origin = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
+        codes = json.loads(self._param('stores', '[]'))
+        stores = self.env['ab_store'].sudo().search(fields.Domain('code', 'in', codes))
+        if store_ids is not None:
+            stores = stores.filtered(lambda store: store.id in store_ids)
+        for store in stores:
+            after = 0
+            while True:
+                snapshot = self._request('snapshot', {'origin': origin, 'store': store.code, 'after': after, 'codes': product_codes})
+                self.env['ab_sales_inventory'].sudo()._accept_central_snapshot(store, snapshot)
+                next_after = snapshot.get('next')
+                if next_after is None:
+                    break
+                if type(next_after) is not int or next_after <= after:
+                    raise ValidationError(_('Invalid snapshot continuation.'))
+                after = next_after
+        if product_codes is None and store_ids is None:
+            self.env['ir.config_parameter'].sudo().set_param('ab_central_sync.ready', True)
+
+    @api.model
+    def _try_refresh_snapshots(self, **kwargs):
+        try:
+            with self.env.cr.savepoint():
+                self._refresh_snapshots(**kwargs)
+        except (requests.RequestException, ValueError, ValidationError):
+            self.env['ir.config_parameter'].sudo().set_param('ab_central_sync.connection_status', 'stock_error')
+
+    @api.model
+    def _sync_now(self):
+        self._try_refresh_snapshots()
+        operations = self.sudo().search(fields.Domain('direction', '=', 'out') & fields.Domain('state', 'in', ['queued', 'uncertain', 'retryable']), order='serial,id', limit=100)
+        for operation in operations:
+            operation._deliver()
+
+    @api.model
+    def _central_stock_snapshot(self, store, origin, after, codes=None):
+        if not self.env.su or self._param('role') != 'central' or type(after) is not int or after < 0:
+            raise AccessError(_('Invalid stock snapshot request.'))
+        # Caller holds the same store lock as posting. Balance and accepted watermark
+        # therefore describe a single ledger state, even if acknowledgment was lost.
+        lock = self.env['ab_stock_integration_lock'].search(fields.Domain('store_id', '=', store.id), limit=1)
+        operations = self.with_context(active_test=False).search(fields.Domain('direction', '=', 'in')
+            & fields.Domain('origin', '=', origin) & fields.Domain('store_id', '=', store.id)
+            & fields.Domain('state', '=', 'accepted'), order='serial desc', limit=1)
+        domain = fields.Domain('id', '>', after)
+        if codes is not None:
+            if not isinstance(codes, list) or len(codes) > 200 or any(not isinstance(code, str) for code in codes):
+                raise ValidationError(_('Invalid product snapshot request.'))
+            domain &= fields.Domain('code', 'in', codes)
+        products = self.env['ab_product'].with_context(active_test=False).search(domain, order='id', limit=501)
+        rows = []
+        for product in products[:500]:
+            batches = self.env['ab_sales_stock_allocation']._source_rows(store, product) if not product.is_service and product.active else []
+            for batch in batches:
+                batch['expiry'] = fields.Date.to_string(batch['expiry']) if batch['expiry'] else False
+            rows.append({'code': product.code, 'balance': sum(row['qty'] for row in batches) / (float(product._stock_unit_factor(product.uom_id)) if batches else 1),
+                         'default_price': product.default_price, 'batches': batches})
+        return {'version': 2, 'origin': origin, 'store': store.code, 'revision': lock.revision,
+                'watermark': operations.serial or 0, 'at': fields.Datetime.to_string(fields.Datetime.now()),
+                'products': rows, 'next': products[499].id if len(products) > 500 else None}
