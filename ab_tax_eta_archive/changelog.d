@@ -364,7 +364,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+5d64455c — yahyazakaria22 — 2026-11-03
+fix: refresh ETA Excel files after retrieval coverage completes
 
 - Create or refresh daily Excel files only after all configured retrieval days from their issue day through yesterday are complete.
 - Reconcile existing early-created files and create missing completed-day files before Telegram delivery.
