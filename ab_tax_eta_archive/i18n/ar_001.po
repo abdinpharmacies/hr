@@ -934,3 +934,27 @@ msgstr "حجم الملف (ميجابايت)"
 #. module: ab_tax_eta_archive
 msgid "The ETA file is %(size)s MB and exceeds the Telegram upload limit of 50 MB."
 msgstr "حجم ملف مصلحة الضرائب %(size)s ميجابايت، وهو يتجاوز حد رفع تيليجرام البالغ 50 ميجابايت."
+
+#. module: ab_tax_eta_archive
+msgid "ETA: Fetch UUID Details"
+msgstr "مصلحة الضرائب: استرجاع تفاصيل UUID"
+
+#. module: ab_tax_eta_archive
+msgid "UUID Detail"
+msgstr "تفاصيل UUID"
+
+#. module: ab_tax_eta_archive
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_tax_eta_archive
+msgid "Missing UUID Detail"
+msgstr "تفاصيل UUID غير مسترجعة"
+
+#. module: ab_tax_eta_archive
+msgid "UUID Detail Error"
+msgstr "خطأ في تفاصيل UUID"
+
+#. module: ab_tax_eta_archive
+msgid "UUID Detail Last Attempt"
+msgstr "آخر محاولة لاسترجاع تفاصيل UUID"

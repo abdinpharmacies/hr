@@ -191,6 +191,42 @@ class EtaExport(models.Model):
         'Only one ETA file revision is allowed per day and category.')
 
     @api.model
+    def _cron_fetch_details(self):
+        today = datetime.now(pytz.timezone('Africa/Cairo')).date()
+        cutoff = today - timedelta(days=4)
+        deadline = min(time.monotonic() + 25,
+                       self.env.context.get('cron_end_time', float('inf')) - 2)
+        categories = list(CATEGORIES)
+        offset = datetime.now().minute % len(categories)
+        categories = categories[offset:] + categories[:offset]
+        configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
+        found_work = False
+        for config in configs:
+            for upper_bound, lower_bound in ((cutoff, config.start_date),
+                                             (today - timedelta(days=1), cutoff + timedelta(days=1))):
+                if upper_bound < lower_bound:
+                    continue
+                for _category, _label, kind, direction in categories:
+                    if time.monotonic() >= deadline:
+                        return
+                    model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                                     else 'ab_tax_eta_archive_receipt']
+                    retry_before = fields.Datetime.now() - timedelta(hours=1)
+                    record = model.search([
+                        ('config_id', '=', config.id), ('direction', '=', direction),
+                        ('report_date', '>=', lower_bound),
+                        ('report_date', '<=', upper_bound), ('detail_json', '=', False),
+                        '|', ('detail_attempt_at', '=', False),
+                        ('detail_attempt_at', '<', retry_before),
+                    ], order='report_date desc, issued_at, uuid', limit=1)
+                    if record:
+                        found_work = True
+                        self._enrich_details(config, kind, record.report_date, direction,
+                                             deadline=deadline, batch_size=6)
+        if self.env.context.get('cron_id'):
+            self.env['ir.cron']._commit_progress(remaining=int(found_work))
+
+    @api.model
     def _cron_export_and_send(self):
         cairo = pytz.timezone('Africa/Cairo')
         today = datetime.now(cairo).date()
@@ -308,8 +344,11 @@ class EtaExport(models.Model):
                     continue
             targets.append((category, kind, direction, export))
         for category, kind, direction, export in targets:
-            if not self._enrich_details(config, kind, report_date, direction,
-                                        deadline=deadline):
+            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                             else 'ab_tax_eta_archive_receipt']
+            if model.search_count([
+                    ('config_id', '=', config.id), ('report_date', '=', report_date),
+                    ('direction', '=', direction), ('detail_json', '=', False)]):
                 continue
             if deadline is not None and time.monotonic() >= deadline:
                 continue
@@ -389,7 +428,8 @@ class EtaExport(models.Model):
         return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
 
     @api.model
-    def _enrich_details(self, config, kind, report_date, direction, deadline=None):
+    def _enrich_details(self, config, kind, report_date, direction, deadline=None,
+                        batch_size=80):
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         base_domain = [
             ('config_id', '=', config.id), ('report_date', '=', report_date),
@@ -399,16 +439,15 @@ class EtaExport(models.Model):
         missing = model.search(base_domain + [
             '|', ('detail_attempt_at', '=', False),
             ('detail_attempt_at', '<', retry_before),
-        ], order='detail_attempt_at, issued_at, uuid', limit=81)
+        ], order='detail_attempt_at, issued_at, uuid', limit=batch_size + 1)
         if not missing:
             return not model.search_count(base_domain)
-        if deadline is not None and time.monotonic() >= deadline:
-            return False
         api_url, headers = self._detail_headers(config, kind)
         request = self.env['ab_tax_eta_archive_sync']._request
-        for record in self._progress_iter(missing[:80], _('Retrieving ETA export details'),
-                                          total=min(len(missing), 80)):
-            if deadline is not None and time.monotonic() >= deadline:
+        processed = 0
+        for record in self._progress_iter(missing[:batch_size], _('Retrieving ETA export details'),
+                                          total=min(len(missing), batch_size)):
+            if processed and deadline is not None and time.monotonic() >= deadline:
                 break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
             try:
@@ -425,6 +464,7 @@ class EtaExport(models.Model):
                 record.write({'detail_error': str(exc)[:500],
                               'detail_attempt_at': fields.Datetime.now()})
                 _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
+            processed += 1
             if (self.env.context.get('cron_id') and
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 return False
@@ -438,9 +478,11 @@ class EtaExport(models.Model):
 
     @api.model
     def _prepare(self, config, report_date, category, kind, direction, export=None):
-        if not self._enrich_details(config, kind, report_date, direction):
-            return False
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
+        if model.search_count([
+                ('config_id', '=', config.id), ('report_date', '=', report_date),
+                ('direction', '=', direction), ('detail_json', '=', False)]):
+            return False
         records = model.search([('config_id', '=', config.id), ('report_date', '=', report_date),
                                 ('direction', '=', direction)],
                                order=('issued_at desc, uuid' if direction == 'sent' else

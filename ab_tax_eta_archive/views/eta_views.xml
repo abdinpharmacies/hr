@@ -68,6 +68,8 @@
                 <field name="total"/>
                 <field name="currency"/>
                 <field name="status"/>
+                <field name="detail_state" optional="show"/>
+                <field name="detail_attempt_at" optional="hide"/>
                 <field name="detail_error" optional="hide"/>
             </list>
         </field>
@@ -89,6 +91,8 @@
                 <field name="total"/>
                 <field name="currency"/>
                 <field name="status"/>
+                <field name="detail_state" optional="show"/>
+                <field name="detail_attempt_at" optional="hide"/>
                 <field name="detail_error" optional="hide"/>
             </list>
         </field>
@@ -100,6 +104,12 @@
             <search>
                 <field name="report_date"/>
                 <field name="uuid"/>
+                <filter name="missing_uuid_detail" string="Missing UUID Detail"
+                        groups="ab_tax_eta_archive.group_eta_manager"
+                        domain="[('detail_json', '=', False)]"/>
+                <filter name="uuid_detail_error" string="UUID Detail Error"
+                        groups="ab_tax_eta_archive.group_eta_manager"
+                        domain="[('detail_error', '!=', False)]"/>
                 <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
             </search>
         </field>
@@ -111,6 +121,12 @@
             <search>
                 <field name="report_date"/>
                 <field name="uuid"/>
+                <filter name="missing_uuid_detail" string="Missing UUID Detail"
+                        groups="ab_tax_eta_archive.group_eta_manager"
+                        domain="[('detail_json', '=', False)]"/>
+                <filter name="uuid_detail_error" string="UUID Detail Error"
+                        groups="ab_tax_eta_archive.group_eta_manager"
+                        domain="[('detail_error', '!=', False)]"/>
                 <filter name="group_by_day" string="Group by Day" context="{'group_by': 'report_date:day'}"/>
             </search>
         </field>

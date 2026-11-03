@@ -16,4 +16,12 @@
         <field name="interval_number">1</field>
         <field name="interval_type">minutes</field>
     </record>
+    <record id="cron_eta_uuid_details" model="ir.cron">
+        <field name="name">ETA: Fetch UUID Details</field>
+        <field name="model_id" ref="model_ab_tax_eta_archive_export"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_fetch_details()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+    </record>
 </odoo>

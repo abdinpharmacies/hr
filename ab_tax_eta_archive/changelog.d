@@ -586,3 +586,20 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Add a dedicated minute-by-minute ETA UUID detail cron that fetches saved invoice and receipt details for past issue dates, committing each request so it resumes safely.
+- Make file generation read saved UUID details only; the delivery cron no longer makes ETA detail HTTP requests.
+- Show UUID detail readiness, last attempt, and error on invoice and receipt lists, with manager filters for missing details and errors.
+- Translate the new scheduled job and status labels in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

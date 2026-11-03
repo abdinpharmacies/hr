@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timezone
 import pytz
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -48,7 +48,16 @@ class EtaInvoice(models.Model):
     raw_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
     detail_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
     detail_error = fields.Char(readonly=True)
-    detail_attempt_at = fields.Datetime(readonly=True)
+    detail_attempt_at = fields.Datetime(string='UUID Detail Last Attempt', readonly=True)
+    detail_state = fields.Selection(
+        [('pending', 'Pending'), ('ready', 'Ready'), ('error', 'Error')],
+        string='UUID Detail', compute='_compute_detail_state', compute_sudo=True)
+
+    @api.depends('detail_json', 'detail_error')
+    def _compute_detail_state(self):
+        for record in self:
+            record.detail_state = ('ready' if record.detail_json else
+                                   'error' if record.detail_error else 'pending')
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
 
@@ -97,7 +106,16 @@ class EtaReceipt(models.Model):
     raw_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
     detail_json = fields.Text(readonly=True, groups='ab_tax_eta_archive.group_eta_manager')
     detail_error = fields.Char(readonly=True)
-    detail_attempt_at = fields.Datetime(readonly=True)
+    detail_attempt_at = fields.Datetime(string='UUID Detail Last Attempt', readonly=True)
+    detail_state = fields.Selection(
+        [('pending', 'Pending'), ('ready', 'Ready'), ('error', 'Error')],
+        string='UUID Detail', compute='_compute_detail_state', compute_sudo=True)
+
+    @api.depends('detail_json', 'detail_error')
+    def _compute_detail_state(self):
+        for record in self:
+            record.detail_state = ('ready' if record.detail_json else
+                                   'error' if record.detail_error else 'pending')
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
 
