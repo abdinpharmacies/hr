@@ -575,7 +575,8 @@ Files changed:
 - ab_tax_eta_archive/views/eta_views.xml
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+4b9e00a5 — yahyazakaria22 — 2026-11-03
+fix: resume ETA export details and deliver ready files
 
 - Commit each fetched UUID detail so a long ETA export cron run can resume after its time budget instead of losing the batch.
 - Prepare and deliver each completed category independently once its retrievals and UUID details are complete, while leaving unfinished categories pending.
