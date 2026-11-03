@@ -522,3 +522,18 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Queue the Send to Telegram action for cron delivery instead of rebuilding large workbooks and uploading them inside an Odoo browser request.
+- Enforce the four-day delivery delay for manual sends and show whether a file is queued.
+- Record the generated workbook size and show a specific error when it exceeds Telegram's upload limit.
+- Add Arabic translations for the new delivery status, size, and delay messages.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

@@ -178,11 +178,13 @@ class EtaExport(models.Model):
     export_format_version = fields.Integer(readonly=True)
     filename = fields.Char(required=True, readonly=True)
     file_data = fields.Binary(attachment=True, readonly=True)
+    file_size_mb = fields.Float(string='File Size (MB)', digits=(16, 2), readonly=True)
     record_count = fields.Integer(readonly=True)
     checked_through = fields.Date(string='Submission Days Checked Through', readonly=True)
     telegram_sent_at = fields.Datetime(readonly=True)
     telegram_message_id = fields.Char(readonly=True)
     telegram_error = fields.Char(readonly=True)
+    telegram_send_requested = fields.Boolean(string='Telegram Delivery Queued', readonly=True)
 
     _unique_file = models.Constraint(
         'UNIQUE(config_id, report_date, category, revision)',
@@ -224,12 +226,15 @@ class EtaExport(models.Model):
                         return
                     day -= timedelta(days=1)
                     continue
-                if day >= (config.telegram_start_date or cutoff):
-                    latest = self._latest_day_files(config, day)
-                    for category, _label, _kind, _direction in CATEGORIES:
-                        export = latest[category]
-                        if not export.telegram_sent_at:
-                            export._send_telegram(checked_through=today - timedelta(days=1))
+                latest = self._latest_day_files(config, day)
+                for category, _label, _kind, _direction in CATEGORIES:
+                    export = latest[category]
+                    if (not export.telegram_sent_at and
+                            (day >= (config.telegram_start_date or cutoff) or
+                             export.telegram_send_requested)):
+                        if export.telegram_send_requested:
+                            export.telegram_send_requested = False
+                        export._send_telegram(checked_through=today - timedelta(days=1))
                 if self.env.context.get('cron_id') and not self.env['ir.cron']._commit_progress(
                         1, remaining=(day - config.start_date).days):
                     return
@@ -280,8 +285,11 @@ class EtaExport(models.Model):
 
     def action_send_telegram(self):
         self.check_access('write')
+        today = datetime.now(pytz.timezone('Africa/Cairo')).date()
         unsent = self.filtered(lambda export: not export.telegram_sent_at)
         for export in unsent:
+            if export.report_date > today - timedelta(days=4):
+                raise UserError(_('Wait until the fourth day after issuance before sending this ETA file.'))
             if not self._day_complete(export.config_id, export.report_date):
                 raise UserError(_(
                     'All four ETA retrievals for this day must finish before sending its file.'))
@@ -298,20 +306,7 @@ class EtaExport(models.Model):
             ], order='revision desc', limit=1)
             if latest != export:
                 continue
-            category, _label, kind, direction = next(
-                row for row in CATEGORIES if row[0] == export.category)
-            current = self._prepare(export.config_id, export.report_date,
-                                    category, kind, direction, export=export)
-            if not current:
-                return {
-                    'type': 'ir.actions.client', 'tag': 'display_notification',
-                    'params': {
-                        'title': _('ETA export'),
-                        'message': _('ETA document details are still being retrieved. Retry after the next export run.'),
-                        'type': 'info', 'sticky': False,
-                    },
-                }
-            current._send_telegram()
+            export.write({'telegram_send_requested': True, 'telegram_error': False})
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     @api.model
@@ -511,6 +506,7 @@ class EtaExport(models.Model):
             'config_id': config.id, 'report_date': report_date,
             'category': category, 'revision': revision, 'filename': filename,
             'file_data': base64.b64encode(output.getbuffer()),
+            'file_size_mb': round(output.tell() / (1024 * 1024), 2),
             'record_count': len(records), 'source_digest': source_digest,
             'export_format_version': EXPORT_FORMAT_VERSION,
         }
@@ -556,7 +552,8 @@ class EtaExport(models.Model):
             return
         if len(document) > 50 * 1024 * 1024:
             self.telegram_error = _(
-                'The ETA file exceeds Telegram Bot API upload limit of 50 MB.')
+                'The ETA file is %(size)s MB and exceeds the Telegram upload limit of 50 MB.',
+                size=f'{len(document) / (1024 * 1024):.1f}')
             return
         try:
             for attempt in range(3):

@@ -918,3 +918,19 @@ msgstr "لا يزال استرجاع تفاصيل المستندات جاريً�
 #. module: ab_tax_eta_archive
 msgid "ETA export"
 msgstr "تصدير مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Telegram Delivery Queued"
+msgstr "إرسال تيليجرام في قائمة الانتظار"
+
+#. module: ab_tax_eta_archive
+msgid "Wait until the fourth day after issuance before sending this ETA file."
+msgstr "انتظر حتى اليوم الرابع بعد تاريخ الإصدار قبل إرسال ملف مصلحة الضرائب."
+
+#. module: ab_tax_eta_archive
+msgid "File Size (MB)"
+msgstr "حجم الملف (ميجابايت)"
+
+#. module: ab_tax_eta_archive
+msgid "The ETA file is %(size)s MB and exceeds the Telegram upload limit of 50 MB."
+msgstr "حجم ملف مصلحة الضرائب %(size)s ميجابايت، وهو يتجاوز حد رفع تيليجرام البالغ 50 ميجابايت."

@@ -128,12 +128,14 @@
                 <field name="record_count"/>
                 <field name="checked_through"/>
                 <field name="filename"/>
+                <field name="file_size_mb" optional="show"/>
                 <field name="file_data" filename="filename" widget="binary"/>
                 <field name="telegram_sent_at"/>
                 <field name="telegram_error"/>
+                <field name="telegram_send_requested" optional="show"/>
                 <button name="action_send_telegram" type="object" string="Send to Telegram"
                         groups="ab_tax_eta_archive.group_eta_manager"
-                        invisible="telegram_sent_at or not file_data"/>
+                        invisible="telegram_sent_at or not file_data or telegram_send_requested"/>
             </list>
         </field>
     </record>
@@ -145,7 +147,7 @@
                 <header>
                     <button name="action_send_telegram" type="object" string="Send to Telegram"
                             class="btn-primary" groups="ab_tax_eta_archive.group_eta_manager"
-                            invisible="telegram_sent_at or not file_data"/>
+                            invisible="telegram_sent_at or not file_data or telegram_send_requested"/>
                 </header>
                 <sheet>
                     <group>
@@ -156,10 +158,12 @@
                         <field name="record_count"/>
                         <field name="checked_through"/>
                         <field name="filename"/>
+                        <field name="file_size_mb"/>
                         <field name="file_data" filename="filename" widget="binary"/>
                         <field name="telegram_sent_at"/>
                         <field name="telegram_message_id"/>
                         <field name="telegram_error"/>
+                        <field name="telegram_send_requested"/>
                     </group>
                 </sheet>
             </form>
