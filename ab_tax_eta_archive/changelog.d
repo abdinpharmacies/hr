@@ -486,3 +486,13 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+a8347b5f — yahyazakaria22 — 2026-11-03
+fix: handle empty ETA invoice tax items
+
+- Allow invoices with no taxable items on a line to finish UUID enrichment and export.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
