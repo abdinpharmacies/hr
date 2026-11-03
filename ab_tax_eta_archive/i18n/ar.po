@@ -816,3 +816,8 @@ msgstr "الإيصالات المستلمة"
 #. module: ab_tax_eta_archive
 msgid "Group by Day"
 msgstr "تجميع حسب اليوم"
+
+#. module: ab_tax_eta_archive
+#: code:ab_tax_eta_archive.models.eta_sync
+msgid "ETA receipt search cannot verify this older day. Receipt package retrieval is disabled."
+msgstr "لا يمكن لبحث إيصالات مصلحة الضرائب التحقق من اكتمال هذا اليوم القديم. استرجاع حزم الإيصالات معطّل."

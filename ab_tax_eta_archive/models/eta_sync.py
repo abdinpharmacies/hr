@@ -1,8 +1,6 @@
 import logging
-import io
 import json
 import time
-import zipfile
 from datetime import datetime, time as day_time, timedelta, timezone
 from urllib.parse import urlsplit
 import pytz
@@ -48,6 +46,7 @@ class EtaSync(models.Model):
     error_message = fields.Text(readonly=True)
     next_receipt_window_at = fields.Datetime(readonly=True)
     receipt_issue_dates_json = fields.Text(readonly=True)
+    # Preserve records from earlier deployments without issuing new package requests.
     package_ids = fields.One2many('ab_tax_eta_archive_package', 'sync_id', readonly=True)
     segment_ids = fields.One2many('ab_tax_eta_archive_segment', 'sync_id',
                                   string='Receipt Segments', readonly=True)
@@ -177,12 +176,7 @@ class EtaSync(models.Model):
     def _cron_attempt(self, run):
         in_cron = bool(self.env.context.get('cron_id'))
         auth_cache = {}
-        recent_cutoff = (datetime.now(pytz.timezone('Africa/Cairo')).date()
-                         - timedelta(days=29))
-        historical_receipt = (run.kind == 'receipt' and
-                              run.report_date < recent_cutoff)
-        attempts = (ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT
-                    if in_cron or historical_receipt else 1)
+        attempts = ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT if in_cron else 1
         progressed = False
         windows = (self._progress_iter(
             range(attempts), _('Retrieving ETA receipt windows'), total=attempts)
@@ -191,8 +185,6 @@ class EtaSync(models.Model):
             previous_state = run.state
             previous_count = run.item_count
             previous_window = run.next_receipt_window_at
-            previous_packages = [(part.id, part.state, part.package_id)
-                                 for part in run.package_ids] if run.kind == 'receipt' else []
             manual_progress = (run.kind == 'receipt' and not in_cron and
                                getattr(run, 'web_progress_percent', None))
             if manual_progress:
@@ -202,12 +194,9 @@ class EtaSync(models.Model):
             if manual_progress:
                 run.web_progress_percent(100, _('ETA receipt retry finished'),
                                          cancellable=False)
-            current_packages = [(part.id, part.state, part.package_id)
-                                for part in run.package_ids] if run.kind == 'receipt' else []
             step_progressed = (run.state != previous_state or
                                run.item_count != previous_count or
-                               run.next_receipt_window_at != previous_window or
-                               current_packages != previous_packages)
+                               run.next_receipt_window_at != previous_window)
             progressed |= step_progressed
             if in_cron and not self.env['ir.cron']._commit_progress(
                     int(step_progressed), remaining=1):
@@ -216,8 +205,6 @@ class EtaSync(models.Model):
                 return True, progressed
             if (run.next_receipt_window_at and
                     run.next_receipt_window_at != previous_window):
-                continue
-            if current_packages != previous_packages:
                 continue
             return True, progressed
         return True, progressed
@@ -277,6 +264,10 @@ class EtaSync(models.Model):
         cairo = pytz.timezone('Africa/Cairo')
         if self.report_date >= datetime.now(cairo).date():
             return None
+        if (self.kind == 'receipt' and
+                self.report_date < datetime.now(cairo).date() - timedelta(days=29)):
+            raise ValidationError(_(
+                'ETA receipt search cannot verify this older day. Receipt package retrieval is disabled.'))
         receipt_auth_mode = config.receipt_auth_mode or 'taxpayer'
         if self.kind == 'invoice' or receipt_auth_mode == 'taxpayer':
             client_id = config.invoice_client_id
@@ -315,8 +306,6 @@ class EtaSync(models.Model):
         start = cairo.localize(datetime.combine(self.report_date, day_time.min)).astimezone(timezone.utc)
         end = cairo.localize(datetime.combine(self.report_date + timedelta(days=1),
                                               day_time.min)).astimezone(timezone.utc) - timedelta(milliseconds=1)
-        receipt_search = (self.kind == 'receipt' and
-                          self.report_date >= datetime.now(cairo).date() - timedelta(days=29))
         receipt_checkpoint = (json.loads(self.receipt_issue_dates_json or '[]')
                               if self.kind == 'receipt' and self.state != 'done' else [])
         if self.kind == 'invoice':
@@ -324,14 +313,8 @@ class EtaSync(models.Model):
             model = self.env['ab_tax_eta_archive_invoice']
         else:
             model = self.env['ab_tax_eta_archive_receipt']
-            if not receipt_search:
-                pages = self._receipt_package_pages(api_url, auth, start, end)
-                if pages is None:
-                    return None
-            else:
-                pages = self._recent_receipt_pages(api_url, auth, start, end,
-                                                   receipt_checkpoint)
-                window_start, window_end, pages = pages
+            window_start, window_end, pages = self._recent_receipt_pages(
+                api_url, auth, start, end, receipt_checkpoint)
         seen_uuids = set()
         last_receipt_uuid = False
         last_receipt_at = False
@@ -342,11 +325,11 @@ class EtaSync(models.Model):
             unique = {}
             for item in page:
                 values = model._eta_values(item, self.direction, config)
-                date_field = ('dateTimeIssued' if receipt_search else 'dateTimeReceived')
+                date_field = 'dateTimeIssued' if self.kind == 'receipt' else 'dateTimeReceived'
                 if eta_report_date(item[date_field]) != self.report_date:
                     raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
                 uuid = values['uuid']
-                if receipt_search:
+                if self.kind == 'receipt':
                     last_receipt_uuid = uuid
                     last_receipt_at = values['issued_at']
                 if uuid in seen_uuids:
@@ -387,16 +370,11 @@ class EtaSync(models.Model):
                             issue_dates.add(existing.report_date)
                             existing.write(values)
         if self.kind == 'receipt':
-            date_field = 'issued_at' if receipt_search else 'received_at'
             document_count = model.search_count([
                 ('config_id', '=', config.id), ('direction', '=', self.direction),
-                (date_field, '>=', start.replace(tzinfo=None)),
-                (date_field, '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
+                ('issued_at', '>=', start.replace(tzinfo=None)),
+                ('issued_at', '<', (end + timedelta(milliseconds=1)).replace(tzinfo=None)),
             ])
-            if not receipt_search:
-                self.write({'next_receipt_window_at': False,
-                            'receipt_issue_dates_json': False})
-                return document_count, issue_dates
             self._record_receipt_segment_done(
                 window_start, window_end, len(seen_uuids),
                 last_receipt_uuid, last_receipt_at)
@@ -498,113 +476,6 @@ class EtaSync(models.Model):
         selected_start, window_end = selected
         return window_start, window_end, self._receipt_pages(
             api_url, auth, selected_start, window_end, expected_nonempty=True)
-
-    def _receipt_package_pages(self, api_url, headers, start, end):
-        packages = self.package_ids
-        if not packages:
-            self.env['ab_tax_eta_archive_package'].create({
-                'sync_id': self.id, 'start_at': start.replace(tzinfo=None),
-                'end_at': end.replace(tzinfo=None),
-            })
-            return None
-        pending = packages.filtered(lambda part: part.state == 'pending').sorted('start_at')[:1]
-        if pending:
-            part = pending[0]
-            part_start = fields.Datetime.to_datetime(part.start_at).replace(tzinfo=timezone.utc)
-            part_end = fields.Datetime.to_datetime(part.end_at).replace(tzinfo=timezone.utc)
-            if not part.package_id:
-                query = {
-                    'represntedTaxpayerTypeId': 'Issuer' if self.direction == 'sent' else 'Receiver',
-                    'dateFrom': part_start.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-                    'dateTo': part_end.isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-                }
-                try:
-                    payload = self._request(
-                        'POST', f'{api_url}/api/v1.0/receiptpackages/requests',
-                        headers={**headers, 'Content-Type': 'application/json'},
-                        json={'type': 'Summary', 'format': 'JSON', 'queryParameters': query},
-                        allow_no_result=True, allow_search_limit=True)
-                except EtaSearchLimit:
-                    first, second = self._split_search_window(
-                        part_start, part_end,
-                        _('ETA receipt package limit reached for a one-millisecond window.'))
-                    part.state = 'split'
-                    self.env['ab_tax_eta_archive_package'].create([
-                        {'sync_id': self.id, 'start_at': first[0].replace(tzinfo=None),
-                         'end_at': first[1].replace(tzinfo=None)},
-                        {'sync_id': self.id, 'start_at': second[0].replace(tzinfo=None),
-                         'end_at': second[1].replace(tzinfo=None)},
-                    ])
-                except EtaSearchNoResult:
-                    part.write({'state': 'done', 'item_count': 0, 'payload_json': '[]'})
-                else:
-                    result = payload.get('result') if isinstance(payload.get('result'), dict) else payload
-                    package_id = result.get('packageId') or result.get('requestId') or result.get('id')
-                    if not package_id:
-                        raise ValidationError(_('ETA receipt package request returned no package ID.'))
-                    part.package_id = package_id
-                return None
-            items = self._download_receipt_package(api_url, headers, part.package_id)
-            if items is None:
-                return None
-            part.write({'state': 'done', 'item_count': len(items),
-                        'payload_json': json.dumps(items, ensure_ascii=False)})
-            packages = self.package_ids
-        if packages.filtered(lambda part: part.state == 'pending'):
-            return None
-        completed = packages.filtered(lambda part: part.state == 'done')
-        if not completed:
-            raise ValidationError(_(
-                'ETA receipt package retrieval completed without data or a valid empty package.'))
-        return (json.loads(part.payload_json) for part in self._progress_iter(
-            completed, _('Reading ETA receipt packages'), total=len(completed)))
-
-    def _download_receipt_package(self, api_url, headers, package_id):
-        for attempt in range(4):
-            try:
-                response = requests.get(f'{api_url}/api/v1.0/receiptpackages/{package_id}',
-                                        headers=headers, timeout=120)
-            except requests.RequestException:
-                if attempt == 3:
-                    raise
-                time.sleep(2 ** attempt)
-                continue
-            if response.status_code in (429, 503) and attempt < 3:
-                retry_after = response.headers.get('Retry-After', '')
-                try:
-                    delay = float(retry_after)
-                except (TypeError, ValueError):
-                    delay = 2 ** attempt
-                time.sleep(max(delay + 0.5, 1))
-                continue
-            break
-        if response.status_code == 204:
-            return None
-        try:
-            response.raise_for_status()
-            with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
-                names = [name for name in archive.namelist() if name.lower().endswith('.json')]
-                if not names:
-                    raise ValueError('No JSON content')
-                items = []
-                for name in names:
-                    if name.startswith('/') or '..' in name.split('/'):
-                        raise ValueError('Invalid ZIP member')
-                    payload = json.loads(archive.read(name).decode('utf-8-sig'))
-                    if isinstance(payload, list):
-                        page = payload
-                    elif isinstance(payload, dict) and 'uuid' in payload:
-                        page = [payload]
-                    elif isinstance(payload, dict):
-                        page = payload.get('receipts', payload.get('result'))
-                    else:
-                        page = None
-                    if not isinstance(page, list) or any(not isinstance(item, dict) for item in page):
-                        raise ValueError('Unexpected receipt package JSON structure')
-                    items.extend(page)
-                return items
-        except (requests.RequestException, zipfile.BadZipFile, ValueError, UnicodeError) as exc:
-            raise ValidationError(_('ETA receipt package download is invalid or incomplete.')) from exc
 
     def _invoice_pages(self, api_url, headers, start, end):
         params = {
@@ -808,13 +679,6 @@ class EtaSync(models.Model):
                     code = (error.get('code') or detail.get('code') or
                             (error_detail if isinstance(error_detail, str) else None))
                     message = str(error.get('message') or detail.get('message') or '').lower()
-                    target = error.get('target') or detail.get('target')
-                    if (allow_no_result and method == 'POST' and
-                            urlsplit(url).path == '/api/v1.0/receiptpackages/requests' and
-                            code == 'InvalidInput' and target == 'Request' and
-                            message.strip().rstrip('.') ==
-                            'sorry, your criteria does not return any results'):
-                        raise EtaSearchNoResult()
                     oversized_query = (code == 'ValidationError' and
                                        'query will return approximately' in message and
                                        'should be under' in message and

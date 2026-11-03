@@ -218,15 +218,6 @@
                             <field name="error_message"/>
                         </list>
                     </field>
-                    <field name="package_ids" readonly="1">
-                        <list string="Receipt Packages" create="0" delete="0" edit="0">
-                            <field name="start_at"/>
-                            <field name="end_at"/>
-                            <field name="package_id"/>
-                            <field name="state"/>
-                            <field name="item_count"/>
-                        </list>
-                    </field>
                 </sheet>
             </form>
         </field>

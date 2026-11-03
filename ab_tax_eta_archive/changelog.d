@@ -437,3 +437,17 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Stop creating and downloading ETA receipt packages; use receipt search with hourly checkpoints for eligible days.
+- Leave older receipt days in Error with an explicit search coverage message instead of treating unverified days as complete.
+- Hide the old package list while preserving package records already stored in production.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
