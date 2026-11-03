@@ -205,7 +205,7 @@ class EtaSync(models.Model):
         windows = (self._progress_iter(
             range(attempts), _('Retrieving ETA receipt windows'), total=attempts)
             if run.kind == 'receipt' else range(attempts))
-        for _ in windows:
+        for window_number in windows:
             previous_state = run.state
             previous_count = run.item_count
             previous_window = run.next_receipt_window_at
