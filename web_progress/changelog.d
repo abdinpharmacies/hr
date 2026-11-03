@@ -1,4 +1,5 @@
-Current changes before commit:
+58703b03 — yahyazakaria22 — 2026-11-03
+feat: add Odoo web_progress addon
 
 - Add the Odoo 19 Dynamic Progress Bar addon for visible progress in ETA retrieval loops.
 - Keep the upstream author and LGPL-3 declaration, and record the current repository developer.
