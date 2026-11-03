@@ -409,7 +409,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+27be06f3 — yahyazakaria22 — 2026-11-03
+fix: avoid shadowing ETA translation in receipt loop
 
 - Fix the cron and Retry crash caused by a receipt loop variable shadowing Odoo's translation function.
 
