@@ -395,7 +395,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+c5e5d1c6 — yahyazakaria22 — 2026-11-03
+feat: report ETA receipt loop progress
 
 - Report ETA receipt window, page, and package loop progress through web_progress when that addon is installed.
 - Show start and completion of a manual receipt Retry through web_progress.
