@@ -510,7 +510,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+76513fba — yahyazakaria22 — 2026-11-03
+fix: rebuild unsent ETA files from four-day cutoff
 
 - Rebuild unsent daily files in descending issue-date order from four days ago through the configured archive start date, only after all required retrievals and UUID details are complete.
 - Avoid creating any of the four files for a day until every unsent category has its detail data, and keep delivered file revisions unchanged.
