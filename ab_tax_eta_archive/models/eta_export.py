@@ -69,7 +69,7 @@ def _taxes(value):
 def _tax_rates(lines):
     result = {}
     for line in lines if isinstance(lines, list) else []:
-        for tax in line.get('taxableItems', []) if isinstance(line, dict) else []:
+        for tax in (line.get('taxableItems') or []) if isinstance(line, dict) else []:
             if isinstance(tax, dict) and tax.get('taxType') in ('T1', 'T2', 'T4', 'T12'):
                 result.setdefault(tax['taxType'], tax.get('rate'))
     return result
