@@ -1,5 +1,28 @@
 Current changes before commit:
 
+- Extract native approval evidence and POS balance/stock lookup methods so central synchronization can reuse approval and pricing logic with JSON cache evidence.
+- Keep the default native allocation and inventory behavior in the existing implementation.
+
+Validation: Targeted upgrade and central-sync lifecycle/freshness checks on disposable databases.
+
+Files changed:
+
+- ab_sales_inventory/__manifest__.py
+- ab_sales_inventory/changelog.d
+- ab_sales_inventory/models/pos.py
+- ab_sales_inventory/models/sale.py
+
+Recent relevant commit:
+
+- Commit: c98e1e1b
+- Author: Alhassan Hossny
+- Date: 2026-10-28
+- Original subject: ab_sales_inventory/fix: post stock exactly once at sale and return approval
+
+Historical notes recorded in that commit:
+
+Recorded change summary:
+
 - Attribute every new local payment or refund to the employee authenticated by the PIN session while retaining the service user only for compatibility.
 - Restore stock exactly once when an approved local return is sent to Cashier and reject refund settlement when that restoration is incomplete.
 - Keep cashier settlement payment-only so sale approval is the sole sale deduction and refund collection never creates an additional stock movement.
@@ -20,7 +43,7 @@ Files changed:
 - ab_sales_inventory/models/returns.py
 - ab_sales_inventory/views/native_sales.xml
 
-Earlier uncommitted changes:
+Earlier recorded changes:
 
 - Deduct local stock during sale approval, using exact unit conversion, matching-price FEFO source allocation and one atomic pending transition.
 - Record immutable allocations, sold-without-stock shortages and one-time cancellation reversals without company-based sales scope.
