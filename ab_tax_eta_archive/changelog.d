@@ -587,7 +587,8 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+297403d0 — yahyazakaria22 — 2026-11-04
+feat: fetch ETA UUID details in separate cron
 
 - Add a dedicated minute-by-minute ETA UUID detail cron that fetches saved invoice and receipt details for past issue dates, committing each request so it resumes safely.
 - Make file generation read saved UUID details only; the delivery cron no longer makes ETA detail HTTP requests.
