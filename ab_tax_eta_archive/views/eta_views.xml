@@ -147,6 +147,7 @@
                 <field name="direction"/>
                 <field name="state"/>
                 <field name="item_count"/>
+                <field name="next_receipt_window_at" optional="show"/>
                 <field name="last_run_at"/>
                 <field name="error_message"/>
                 <button name="action_retry" type="object" string="Retry" groups="ab_tax_eta_archive.group_eta_manager"/>
@@ -169,9 +170,22 @@
                         <field name="direction"/>
                         <field name="state"/>
                         <field name="item_count"/>
+                        <field name="next_receipt_window_at" invisible="kind != 'receipt'"/>
                         <field name="last_run_at"/>
                         <field name="error_message"/>
                     </group>
+                    <field name="segment_ids" readonly="1" invisible="kind != 'receipt'">
+                        <list string="Receipt Segments" create="0" delete="0" edit="0">
+                            <field name="start_at"/>
+                            <field name="end_at"/>
+                            <field name="state"/>
+                            <field name="item_count"/>
+                            <field name="last_receipt_at"/>
+                            <field name="last_receipt_uuid"/>
+                            <field name="last_run_at"/>
+                            <field name="error_message"/>
+                        </list>
+                    </field>
                     <field name="package_ids" readonly="1">
                         <list string="Receipt Packages" create="0" delete="0" edit="0">
                             <field name="start_at"/>

@@ -49,6 +49,8 @@ class EtaSync(models.Model):
     next_receipt_window_at = fields.Datetime(readonly=True)
     receipt_issue_dates_json = fields.Text(readonly=True)
     package_ids = fields.One2many('ab_tax_eta_archive_package', 'sync_id', readonly=True)
+    segment_ids = fields.One2many('ab_tax_eta_archive_segment', 'sync_id',
+                                  string='Receipt Segments', readonly=True)
 
     _unique_stream_day = models.Constraint(
         'UNIQUE(config_id, report_date, kind, direction)',
@@ -60,7 +62,9 @@ class EtaSync(models.Model):
         today = datetime.now(cairo).date()
         error_retry_before = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
         delivery_day = today - timedelta(days=4)
-        for config in self.env['ab_tax_eta_archive_config'].search([('active', '=', True)]):
+        made_progress = False
+        configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
+        for config in configs:
             if not config.start_date:
                 continue
             if not self._ensure_run_days(config, today):
@@ -87,7 +91,9 @@ class EtaSync(models.Model):
                              (not priority_run.last_run_at or
                               fields.Datetime.to_datetime(priority_run.last_run_at).replace(
                                   tzinfo=timezone.utc).astimezone(cairo).date() < today))):
-                        if not self._cron_attempt(priority_run):
+                        keep_running, progressed = self._cron_attempt(priority_run)
+                        made_progress |= progressed
+                        if not keep_running:
                             return
                         attempted.add(priority_day)
                 stream_domain = [
@@ -105,7 +111,9 @@ class EtaSync(models.Model):
                         unfinished,
                         key=lambda run: (run.report_date, run.state != 'pending'),
                     )
-                    if not self._cron_attempt(oldest_unfinished):
+                    keep_running, progressed = self._cron_attempt(oldest_unfinished)
+                    made_progress |= progressed
+                    if not keep_running:
                         return
                     continue
 
@@ -124,10 +132,26 @@ class EtaSync(models.Model):
                         key=lambda run: fields.Datetime.to_datetime(run.last_run_at)
                         if run.last_run_at else datetime.min,
                     )
-                    if not self._cron_attempt(oldest_check):
+                    keep_running, progressed = self._cron_attempt(oldest_check)
+                    made_progress |= progressed
+                    if not keep_running:
                         return
         if self.env.context.get('cron_id'):
-            self.env['ir.cron']._commit_progress(remaining=0)
+            remaining = (sum(self._eligible_remaining(config, today, error_retry_before)
+                             for config in configs if config.start_date)
+                         if made_progress else 0)
+            self.env['ir.cron']._commit_progress(remaining=remaining)
+
+    def _eligible_remaining(self, config, today, error_retry_before):
+        runs = self.search([
+            ('config_id', '=', config.id),
+            ('report_date', '>=', config.start_date),
+            ('report_date', '<', today),
+            ('state', 'in', ['pending', 'error']),
+        ])
+        return len(runs.filtered(
+            lambda run: run.state == 'pending' or not run.last_run_at or
+            fields.Datetime.to_datetime(run.last_run_at) <= error_retry_before))
 
     def _ensure_run_days(self, config, today):
         existing = self.search([
@@ -171,24 +195,33 @@ class EtaSync(models.Model):
                               run.report_date < recent_cutoff)
         attempts = (ETA_RECEIPT_WINDOWS_PER_CRON_ATTEMPT
                     if in_cron or historical_receipt else 1)
+        progressed = False
         for _ in range(attempts):
+            previous_state = run.state
+            previous_count = run.item_count
             previous_window = run.next_receipt_window_at
             previous_packages = [(part.id, part.state, part.package_id)
                                  for part in run.package_ids] if run.kind == 'receipt' else []
             run._attempt(auth_cache=auth_cache)
-            if in_cron and not self.env['ir.cron']._commit_progress(1, remaining=1):
-                return False
+            current_packages = [(part.id, part.state, part.package_id)
+                                for part in run.package_ids] if run.kind == 'receipt' else []
+            step_progressed = (run.state != previous_state or
+                               run.item_count != previous_count or
+                               run.next_receipt_window_at != previous_window or
+                               current_packages != previous_packages)
+            progressed |= step_progressed
+            if in_cron and not self.env['ir.cron']._commit_progress(
+                    int(step_progressed), remaining=1):
+                return False, progressed
             if run.kind != 'receipt' or run.state != 'pending':
-                return True
+                return True, progressed
             if (run.next_receipt_window_at and
                     run.next_receipt_window_at != previous_window):
                 continue
-            current_packages = [(part.id, part.state, part.package_id)
-                                for part in run.package_ids]
             if current_packages != previous_packages:
                 continue
-            return True
-        return True
+            return True, progressed
+        return True, progressed
 
     def action_retry(self):
         for run in self:
@@ -208,6 +241,11 @@ class EtaSync(models.Model):
                             self.report_date, self.kind, self.direction, exc)
             self.write({'state': 'error', 'last_run_at': fields.Datetime.now(),
                         'error_message': str(exc)[:2000]})
+            try:
+                with self.env.cr.savepoint():
+                    self._record_receipt_segment_error(exc)
+            except Exception:
+                _logger.exception('ETA receipt segment error could not be recorded')
             return
         if result is None:
             self.write({'state': 'pending', 'last_run_at': fields.Datetime.now(),
@@ -296,6 +334,8 @@ class EtaSync(models.Model):
                                                    receipt_checkpoint)
                 window_start, window_end, pages = pages
         seen_uuids = set()
+        last_receipt_uuid = False
+        last_receipt_at = False
         saved_issue_dates = (receipt_checkpoint.get('issue_dates', [])
                              if isinstance(receipt_checkpoint, dict) else receipt_checkpoint)
         issue_dates = set(fields.Date.to_date(value) for value in saved_issue_dates)
@@ -307,6 +347,9 @@ class EtaSync(models.Model):
                 if eta_report_date(item[date_field]) != self.report_date:
                     raise ValidationError(_('ETA returned a document outside the requested Cairo date.'))
                 uuid = values['uuid']
+                if receipt_search:
+                    last_receipt_uuid = uuid
+                    last_receipt_at = values['issued_at']
                 if uuid in seen_uuids:
                     raise ValidationError(_('ETA returned duplicate document UUIDs for one retrieval.'))
                 seen_uuids.add(uuid)
@@ -355,7 +398,14 @@ class EtaSync(models.Model):
                 self.write({'next_receipt_window_at': False,
                             'receipt_issue_dates_json': False})
                 return document_count, issue_dates
+            self._record_receipt_segment_done(
+                window_start, window_end, len(seen_uuids),
+                last_receipt_uuid, last_receipt_at)
             next_window = window_end + timedelta(milliseconds=1)
+            self.env['ab_tax_eta_archive_segment'].search([
+                ('sync_id', '=', self.id), ('state', '=', 'error'),
+                ('end_at', '<', next_window.replace(tzinfo=None)),
+            ]).write({'state': 'resolved'})
             if next_window <= end:
                 self.write({
                     'next_receipt_window_at': next_window.replace(tzinfo=None),
@@ -369,6 +419,67 @@ class EtaSync(models.Model):
             self.write({'next_receipt_window_at': False, 'receipt_issue_dates_json': False})
             return document_count, issue_dates
         return len(seen_uuids), issue_dates
+
+    def _record_receipt_segment_done(self, start, end, count, last_uuid, last_at):
+        values = {
+            'sync_id': self.id,
+            'start_at': start.replace(tzinfo=None),
+            'end_at': end.replace(tzinfo=None),
+            'state': 'done', 'item_count': count,
+            'last_receipt_uuid': last_uuid,
+            'last_receipt_at': last_at,
+            'error_message': False,
+            'last_run_at': fields.Datetime.now(),
+        }
+        segments = self.env['ab_tax_eta_archive_segment']
+        existing = segments.search([
+            ('sync_id', '=', self.id),
+            ('start_at', '=', values['start_at']),
+            ('end_at', '=', values['end_at']),
+        ], limit=1)
+        if existing:
+            existing.write(values)
+        else:
+            segments.create(values)
+
+    def _record_receipt_segment_error(self, exc):
+        if self.kind != 'receipt':
+            return
+        cairo = pytz.timezone('Africa/Cairo')
+        today = datetime.now(cairo).date()
+        if self.report_date >= today or self.report_date < today - timedelta(days=29):
+            return
+        start = cairo.localize(datetime.combine(self.report_date, day_time.min))
+        start = start.astimezone(timezone.utc)
+        checkpoint = json.loads(self.receipt_issue_dates_json or '[]')
+        if (self.next_receipt_window_at and isinstance(checkpoint, dict) and
+                checkpoint.get('basis') == 'issued'):
+            start = fields.Datetime.to_datetime(
+                self.next_receipt_window_at).replace(tzinfo=timezone.utc)
+        end = min(
+            start.replace(minute=0, second=0, microsecond=0)
+            + timedelta(hours=1) - timedelta(milliseconds=1),
+            cairo.localize(datetime.combine(
+                self.report_date + timedelta(days=1), day_time.min)
+            ).astimezone(timezone.utc) - timedelta(milliseconds=1))
+        values = {
+            'sync_id': self.id,
+            'start_at': start.replace(tzinfo=None),
+            'end_at': end.replace(tzinfo=None),
+            'state': 'error',
+            'error_message': str(exc)[:2000],
+            'last_run_at': fields.Datetime.now(),
+        }
+        segments = self.env['ab_tax_eta_archive_segment']
+        existing = segments.search([
+            ('sync_id', '=', self.id),
+            ('start_at', '=', values['start_at']),
+            ('end_at', '=', values['end_at']),
+        ], limit=1)
+        if existing:
+            existing.write(values)
+        else:
+            segments.create(values)
 
     def _recent_receipt_pages(self, api_url, auth, start, end, receipt_checkpoint):
         window_start = start
@@ -385,9 +496,9 @@ class EtaSync(models.Model):
         selected = self._select_receipt_window(api_url, auth, window_start, hour_end)
         if selected is None:
             return window_start, hour_end, ()
-        window_start, window_end = selected
+        selected_start, window_end = selected
         return window_start, window_end, self._receipt_pages(
-            api_url, auth, window_start, window_end, expected_nonempty=True)
+            api_url, auth, selected_start, window_end, expected_nonempty=True)
 
     def _receipt_package_pages(self, api_url, headers, start, end):
         packages = self.package_ids
@@ -776,3 +887,25 @@ class EtaReceiptPackage(models.Model):
     _unique_window = models.Constraint(
         'UNIQUE(sync_id, start_at, end_at)',
         'Only one ETA package request is allowed per time window.')
+
+
+class EtaReceiptSegment(models.Model):
+    _name = 'ab_tax_eta_archive_segment'
+    _description = 'ETA Receipt Segment'
+    _order = 'start_at, id'
+
+    sync_id = fields.Many2one('ab_tax_eta_archive_sync', required=True, ondelete='restrict')
+    start_at = fields.Datetime(required=True, readonly=True)
+    end_at = fields.Datetime(required=True, readonly=True)
+    state = fields.Selection([('done', 'Done'), ('error', 'Error'),
+                              ('resolved', 'Resolved')], required=True,
+                             default='error', readonly=True)
+    item_count = fields.Integer(readonly=True)
+    last_receipt_uuid = fields.Char(string='Last Receipt UUID', readonly=True)
+    last_receipt_at = fields.Datetime(string='Last Receipt At', readonly=True)
+    error_message = fields.Text(readonly=True)
+    last_run_at = fields.Datetime(readonly=True)
+
+    _unique_segment = models.Constraint(
+        'UNIQUE(sync_id, start_at, end_at)',
+        'Only one ETA receipt segment is allowed per time window.')

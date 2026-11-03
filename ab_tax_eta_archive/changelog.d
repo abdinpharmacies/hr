@@ -375,3 +375,21 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Report eligible unfinished ETA retrievals to Odoo after each cron pass so the scheduler continues while time remains.
+- Count only actual state, count, checkpoint, or package progress; pause until the next scheduled run when ETA has no new package data.
+- Show completed and failed receipt time segments on each Retrieval, including counts, last receipt, and failure reason.
+- Show the next receipt checkpoint so Retry resumes the remaining part of the day.
+- Preserve verified empty subranges in each completed segment's displayed coverage.
+- Retain completed receipt intervals and the existing one-hour error retry delay.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/security/ir.model.access.csv
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
