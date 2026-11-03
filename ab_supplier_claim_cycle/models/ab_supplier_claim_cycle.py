@@ -719,8 +719,8 @@ class SupplierClaimCycle(models.Model):
         self.ensure_one()
         if self.supplier_accounts_decision != 'approved' or self.tax_decision not in ('approved', 'not_required'):
             raise ValidationError(_('Financial approvals are required before payment preparation.'))
-        if self.tax_decision == 'approved' and not self.tax_review_attachment:
-            raise ValidationError(_('A tax review attachment is required.'))
+        # if self.tax_decision == 'approved' and not self.tax_review_attachment:
+        #     raise ValidationError(_('A tax review attachment is required.'))
         if self.payment_nature == 'check' and not self.supplier_cheque_attachment:
             raise ValidationError(_('A supplier cheque attachment is required.'))
         if not self.payment_request_attachment or self.payment_request_revision != self.document_revision:
@@ -758,7 +758,7 @@ class SupplierClaimCycle(models.Model):
             old_state = claim.state
             vals = {f'{department}_decision': decision, f'{department}_followup_date': followup}
             if decision == 'approved':
-                if department == 'tax' and (not claim.tax_discount_decision or not claim.tax_review_attachment):
+                if department == 'tax' and (not claim.tax_discount_decision):
                     raise ValidationError(_('Select the tax discount decision and upload the tax review attachment.'))
                 if department == 'supplier_accounts':
                     if claim.tax_decision not in ('approved', 'not_required'):
