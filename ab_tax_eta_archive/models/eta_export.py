@@ -200,29 +200,36 @@ class EtaExport(models.Model):
         offset = datetime.now().minute % len(categories)
         categories = categories[offset:] + categories[:offset]
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
+        if configs:
+            config_offset = datetime.now().minute % len(configs)
+            configs = configs[config_offset:] + configs[:config_offset]
         found_work = False
-        for config in configs:
-            for upper_bound, lower_bound in ((cutoff, config.start_date),
-                                             (today - timedelta(days=1), cutoff + timedelta(days=1))):
-                if upper_bound < lower_bound:
-                    continue
-                for _category, _label, kind, direction in categories:
+        for lower_bound, upper_bound in ((False, cutoff),
+                                         (cutoff + timedelta(days=1),
+                                          today - timedelta(days=1))):
+            for _category, _label, kind, direction in categories:
+                model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                                 else 'ab_tax_eta_archive_receipt']
+                for config in configs:
                     if time.monotonic() >= deadline:
                         return
-                    model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
-                                     else 'ab_tax_eta_archive_receipt']
                     retry_before = fields.Datetime.now() - timedelta(hours=1)
-                    record = model.search([
+                    domain = [
                         ('config_id', '=', config.id), ('direction', '=', direction),
-                        ('report_date', '>=', lower_bound),
-                        ('report_date', '<=', upper_bound), ('detail_json', '=', False),
-                        '|', ('detail_attempt_at', '=', False),
+                        ('report_date', '<=', upper_bound),
+                        '|', ('detail_json', '=', False), ('detail_json', '=', ''),
+                        '|', '|', ('detail_attempt_at', '=', False),
+                        ('detail_error', '=', False),
                         ('detail_attempt_at', '<', retry_before),
-                    ], order='report_date desc, issued_at, uuid', limit=1)
+                    ]
+                    if lower_bound:
+                        domain.append(('report_date', '>=', lower_bound))
+                    record = model.search(domain, order='report_date desc, issued_at, uuid',
+                                          limit=1)
                     if record:
                         found_work = True
-                        self._enrich_details(config, kind, record.report_date, direction,
-                                             deadline=deadline, batch_size=6)
+                        self._enrich_details(config, kind, record.report_date,
+                                             direction, deadline=deadline, batch_size=6)
         if self.env.context.get('cron_id'):
             self.env['ir.cron']._commit_progress(remaining=int(found_work))
 
@@ -364,7 +371,8 @@ class EtaExport(models.Model):
                              else 'ab_tax_eta_archive_receipt']
             if model.search_count([
                     ('config_id', '=', config.id), ('report_date', '=', report_date),
-                    ('direction', '=', direction), ('detail_json', '=', False)]):
+                    ('direction', '=', direction),
+                    '|', ('detail_json', '=', False), ('detail_json', '=', '')]):
                 continue
             if deadline is not None and time.monotonic() >= deadline:
                 continue
@@ -449,11 +457,13 @@ class EtaExport(models.Model):
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         base_domain = [
             ('config_id', '=', config.id), ('report_date', '=', report_date),
-            ('direction', '=', direction), ('detail_json', '=', False),
+            ('direction', '=', direction),
+            '|', ('detail_json', '=', False), ('detail_json', '=', ''),
         ]
         retry_before = fields.Datetime.now() - timedelta(hours=1)
         missing = model.search(base_domain + [
-            '|', ('detail_attempt_at', '=', False),
+            '|', '|', ('detail_attempt_at', '=', False),
+            ('detail_error', '=', False),
             ('detail_attempt_at', '<', retry_before),
         ], order='detail_attempt_at, issued_at, uuid', limit=batch_size + 1)
         if not missing:
@@ -508,7 +518,8 @@ class EtaExport(models.Model):
         model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice' else 'ab_tax_eta_archive_receipt']
         if model.search_count([
                 ('config_id', '=', config.id), ('report_date', '=', report_date),
-                ('direction', '=', direction), ('detail_json', '=', False)]):
+                ('direction', '=', direction),
+                '|', ('detail_json', '=', False), ('detail_json', '=', '')]):
             return False
         records = model.search([('config_id', '=', config.id), ('report_date', '=', report_date),
                                 ('direction', '=', direction)],

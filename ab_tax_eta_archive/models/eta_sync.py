@@ -84,7 +84,8 @@ class EtaSync(models.Model):
             for config, day, direction, count in model._read_group(domain, groupby, ['__count']):
                 for run in by_key.get((config.id, day, direction), []):
                     run.issue_day_rows = count
-            ready_domain = domain & fields.Domain('detail_json', '!=', False)
+            ready_domain = (domain & fields.Domain('detail_json', '!=', False) &
+                            fields.Domain('detail_json', '!=', ''))
             for config, day, direction, count in model._read_group(
                     ready_domain, groupby, ['__count']):
                 for run in by_key.get((config.id, day, direction), []):
