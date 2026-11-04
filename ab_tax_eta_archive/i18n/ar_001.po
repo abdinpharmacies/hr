@@ -740,12 +740,12 @@ msgid "The dashboard could not load."
 msgstr "تعذر تحميل لوحة المعلومات."
 
 #. module: ab_tax_eta_archive
-#: model:ab_tax_eta_archive_sync,code:ab_tax_eta_archive.models.eta_sync
+#: code:addons/ab_tax_eta_archive/models/eta_sync.py:0
 msgid "ETA receipt search cannot verify a complete historical day. Previously fetched receipts were saved, but this day remains incomplete."
 msgstr "لا يمكن لبحث إيصالات مصلحة الضرائب التحقق من اكتمال يوم قديم. تم حفظ الإيصالات التي جُلبت سابقًا، لكن هذا اليوم لا يزال غير مكتمل."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "All four ETA retrievals for this day must finish before sending its file."
 msgstr "يجب اكتمال عمليات الاسترجاع الأربع لهذا اليوم قبل إرسال ملفه."
 
@@ -818,47 +818,47 @@ msgid "Group by Day"
 msgstr "تجميع حسب اليوم"
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_sync
+#: code:addons/ab_tax_eta_archive/models/eta_sync.py:0
 msgid "ETA receipt search cannot verify this older day. Receipt package retrieval is disabled."
 msgstr "لا يمكن لبحث إيصالات مصلحة الضرائب التحقق من اكتمال هذا اليوم القديم. استرجاع حزم الإيصالات معطّل."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "Use the numeric Telegram group chat ID or public @username, not an invite link."
 msgstr "استخدم المعرّف الرقمي لمجموعة تيليجرام أو اسمها العام الذي يبدأ بـ @، وليس رابط دعوة."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "The ETA file has no content to send."
 msgstr "ملف مصلحة الضرائب بلا محتوى لإرساله."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "The ETA file content is invalid."
 msgstr "محتوى ملف مصلحة الضرائب غير صالح."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "The ETA file exceeds Telegram Bot API upload limit of 50 MB."
 msgstr "يتجاوز ملف مصلحة الضرائب حد رفع الملفات عبر واجهة بوت تيليجرام البالغ 50 ميجابايت."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "Telegram HTTP %(status)s: %(detail)s"
 msgstr "خطأ تيليجرام HTTP %(status)s: %(detail)s"
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "Telegram request timed out; check the chat before retrying."
 msgstr "انتهت مهلة طلب تيليجرام؛ تحقق من المحادثة قبل إعادة المحاولة."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "Telegram connection failed: %(reason)s"
 msgstr "فشل الاتصال بتيليجرام: %(reason)s"
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_export
+#: code:addons/ab_tax_eta_archive/models/eta_export.py:0
 msgid "Use a negative Telegram group chat ID or public @username for delivery."
 msgstr "استخدم معرّف مجموعة تيليجرام الرقمي السالب أو اسمها العام الذي يبدأ بـ @ للإرسال."
 
@@ -871,32 +871,32 @@ msgid "Find Group Chat ID"
 msgstr "البحث عن معرّف المجموعة"
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "Configure the Telegram bot token first."
 msgstr "اضبط رمز بوت تيليجرام أولاً."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "Could not read Telegram group updates (%(reason)s)."
 msgstr "تعذرت قراءة تحديثات مجموعة تيليجرام (%(reason)s)."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "Telegram returned an invalid group update response."
 msgstr "أعاد تيليجرام استجابة غير صالحة لتحديثات المجموعة."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "Telegram could not list group updates: %(detail)s"
 msgstr "تعذر على تيليجرام عرض تحديثات المجموعة: %(detail)s"
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "No Telegram group updates found. Add this bot to the intended group and send it a command there, then try again."
 msgstr "لم يتم العثور على تحديثات لمجموعة تيليجرام. أضف هذا البوت إلى المجموعة المطلوبة وأرسل إليه أمراً فيها، ثم حاول مرة أخرى."
 
 #. module: ab_tax_eta_archive
-#: code:ab_tax_eta_archive.models.eta_config
+#: code:addons/ab_tax_eta_archive/models/eta_config.py:0
 msgid "Telegram Group Chat IDs"
 msgstr "معرّفات مجموعات تيليجرام"
 #. module: ab_tax_eta_archive

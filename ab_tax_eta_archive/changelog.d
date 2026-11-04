@@ -788,3 +788,14 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Fix 17 malformed PO code references in each Arabic catalog that crashed Odoo language installation.
+- Preserve translation sources and values; validate both catalogs with Odoo 19 translation_file_reader.
+
+Files changed:
+
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
