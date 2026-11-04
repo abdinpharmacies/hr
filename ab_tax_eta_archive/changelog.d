@@ -799,3 +799,17 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Reuse one HTTP session per UUID detail batch and select 100 rows to reduce overhead.
+- Limit detail and token calls to one attempt with bounded connect/read timeouts so a single UUID does not retry for several minutes.
+- Retry failed details after five minutes while eligible rows continue through the existing scheduler.
+- Restore optional web_progress display for actual detail attempts.
+- Validation: Python syntax passed; server throughput requires live ETA validation.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d

@@ -727,22 +727,25 @@ class EtaSync(models.Model):
             return payload, candidate
         raise ValidationError(_('ETA receipt search returned an invalid page.'))
 
-    def _request(self, method, url, allow_no_result=False, allow_search_limit=False, **kwargs):
+    def _request(self, method, url, allow_no_result=False, allow_search_limit=False,
+                 request_session=None, request_attempts=4, **kwargs):
         search_delay = {
             '/api/v1.0/documents/search': ETA_INVOICE_SEARCH_DELAY,
             '/api/v1/receipts/search': ETA_RECEIPT_SEARCH_DELAY,
         }.get(urlsplit(url).path, 0)
-        for attempt in range(4):
+        timeout = kwargs.pop('timeout', 40)
+        send = request_session.request if request_session else requests.request
+        for attempt in range(request_attempts):
             if search_delay:
                 time.sleep(search_delay)
             try:
-                response = requests.request(method, url, timeout=40, **kwargs)
+                response = send(method, url, timeout=timeout, **kwargs)
             except requests.RequestException:
-                if attempt == 3:
+                if attempt == request_attempts - 1:
                     raise
                 time.sleep(2 ** attempt)
                 continue
-            if response.status_code in (429, 503) and attempt < 3:
+            if response.status_code in (429, 503) and attempt < request_attempts - 1:
                 retry_after = response.headers.get('Retry-After', '')
                 try:
                     delay = float(retry_after)
