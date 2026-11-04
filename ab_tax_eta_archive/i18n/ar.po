@@ -958,3 +958,7 @@ msgstr "خطأ في تفاصيل UUID"
 #. module: ab_tax_eta_archive
 msgid "UUID Detail Last Attempt"
 msgstr "آخر محاولة لاسترجاع تفاصيل UUID"
+
+#. module: ab_tax_eta_archive
+msgid "ETA: Create and Send Daily Files"
+msgstr "مصلحة الضرائب: إنشاء وإرسال الملفات اليومية"

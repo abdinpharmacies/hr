@@ -253,7 +253,7 @@ class EtaExport(models.Model):
                         if time.monotonic() >= deadline:
                             return
                         export.telegram_send_requested = False
-                        export._send_telegram(checked_through=today - timedelta(days=1))
+                        export._send_telegram(checked_through=queued_day)
                         if (self.env.context.get('cron_id') and
                                 not self.env['ir.cron']._commit_progress(1, remaining=1)):
                             return
@@ -286,7 +286,7 @@ class EtaExport(models.Model):
                             return
                         if export.telegram_send_requested:
                             export.telegram_send_requested = False
-                        export._send_telegram(checked_through=today - timedelta(days=1))
+                        export._send_telegram(checked_through=day)
                         if (self.env.context.get('cron_id') and
                                 not self.env['ir.cron']._commit_progress(1, remaining=1)):
                             return
@@ -294,6 +294,20 @@ class EtaExport(models.Model):
                         int(len(prepared) == len(CATEGORIES)),
                         remaining=(day - config.start_date).days +
                         int(len(prepared) != len(CATEGORIES))):
+                    return
+                day -= timedelta(days=1)
+            day = today - timedelta(days=1)
+            while day > cutoff and day >= config.start_date:
+                if time.monotonic() >= deadline:
+                    return
+                if self._day_complete(config, day):
+                    prepared = self._ensure_files(config, day, deadline=deadline)
+                else:
+                    prepared = set()
+                if (self.env.context.get('cron_id') and
+                        not self.env['ir.cron']._commit_progress(
+                            int(len(prepared) == len(CATEGORIES)),
+                            remaining=(day - cutoff).days - 1)):
                     return
                 day -= timedelta(days=1)
 
@@ -326,7 +340,7 @@ class EtaExport(models.Model):
     def _ensure_files(self, config, report_date, deadline=None):
         if not self._day_complete(config, report_date):
             return set()
-        checked_through = datetime.now(pytz.timezone('Africa/Cairo')).date() - timedelta(days=1)
+        checked_through = report_date
         latest = self._latest_day_files(config, report_date)
         targets = []
         prepared = set()
@@ -367,15 +381,13 @@ class EtaExport(models.Model):
     @api.model
     def _day_complete(self, config, report_date):
         today = datetime.now(pytz.timezone('Africa/Cairo')).date()
-        first_day = max(config.start_date, report_date)
-        if first_day >= today:
+        if report_date < config.start_date or report_date >= today:
             return False
-        complete_days = (today - first_day).days
         return self.env['ab_tax_eta_archive_sync'].search_count([
             ('config_id', '=', config.id),
-            ('report_date', '>=', first_day), ('report_date', '<', today),
+            ('report_date', '=', report_date),
             ('state', '=', 'done'),
-        ]) == complete_days * 4
+        ]) == 4
 
     def action_send_telegram(self):
         self.check_access('write')

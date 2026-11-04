@@ -604,3 +604,18 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Treat each issue day independently: its four retrieval streams must be Done before building its daily XLSX files.
+- Create files for completed recent days without automatic Telegram delivery; automatically send every ready unsent day on or before the Cairo four-day cutoff.
+- Record the verified day on the file and rename the delivery scheduled action to clarify that the delay applies only to automatic sending.
+- Translate the new scheduled action name in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/data/cron.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d
