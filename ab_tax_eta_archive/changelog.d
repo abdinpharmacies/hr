@@ -727,3 +727,14 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+27c11ebd — yahyazakaria22 — 2026-11-04
+fix: pace ETA UUID detail requests by elapsed time
+
+- Pace ETA detail requests by their start times so response latency counts toward the two-per-second limit and the cron uses more of its available time.
+- Include elapsed batch time in the UUID detail log to distinguish slow ETA responses from cron scheduling delays.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
