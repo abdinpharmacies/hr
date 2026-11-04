@@ -108,13 +108,20 @@ def _detail_values(payload, kind):
         try:
             body = json.loads(body)
         except ValueError as exc:
-            raise ValueError('ETA detail response has no document object') from exc
+            raise ValueError(f'ETA {kind}: {key} contains invalid JSON text') from exc
     markers = (('issuer', 'receiver', 'invoiceLines') if kind == 'invoice'
                else ('seller', 'documentType', 'itemData'))
     if not body and all(marker in payload for marker in markers):
         body = payload
-    if not isinstance(body, dict) or not all(marker in body for marker in markers):
-        raise ValueError('ETA detail response has no document object')
+    if not isinstance(body, dict):
+        raise ValueError(
+            f'ETA {kind}: {key} object missing; body_type={type(body).__name__}; '
+            f'response_keys={",".join(sorted(str(name) for name in payload)[:20])}')
+    missing_fields = [marker for marker in markers if marker not in body]
+    if missing_fields:
+        raise ValueError(
+            f'ETA {kind}: {key} missing fields={",".join(missing_fields)}; '
+            f'body_keys={",".join(sorted(str(name) for name in body)[:20])}')
     issuer = body.get('issuer' if kind == 'invoice' else 'seller') or {}
     receiver = body.get('receiver' if kind == 'invoice' else 'buyer') or {}
     if not isinstance(issuer, dict) or not isinstance(receiver, dict):
@@ -470,7 +477,10 @@ class EtaExport(models.Model):
                         **options).get('access_token')
         if not token:
             raise UserError(_('ETA authentication returned no access token.'))
-        return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json'}
+        _logger.info('ETA UUID detail authentication succeeded: connection=%s kind=%s mode=%s',
+                     config.id, kind, 'pos' if receipt_pos else 'taxpayer')
+        return api_url, {'Authorization': f'Bearer {token}', 'Accept': 'application/json',
+                         'Content-Type': 'application/json'}
 
     @api.model
     def _enrich_details(self, config, kind, report_date, direction, deadline=None,
@@ -494,6 +504,8 @@ class EtaExport(models.Model):
                             'before fetching details for %s', report_date)
             return 0
         batch_started_at = time.monotonic()
+        _logger.info('ETA UUID detail batch starting: connection=%s kind=%s direction=%s '
+                     'day=%s selected=%s', config.id, kind, direction, report_date, len(missing))
         try:
             api_url, headers = self._detail_headers(config, kind)
         except (UserError, ValueError, requests.RequestException) as exc:
@@ -510,7 +522,9 @@ class EtaExport(models.Model):
         ready = 0
         shape_logged = False
         next_request_at = time.monotonic()
-        for record in missing:
+        for record_id in missing.ids:
+            # Keep each request's field prefetch bounded after progress commits.
+            record = model.browse(record_id)
             if processed and deadline is not None and time.monotonic() >= deadline:
                 break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
@@ -529,18 +543,26 @@ class EtaExport(models.Model):
                     raise ValueError('ETA detail response is not an object')
                 try:
                     values = _detail_values(payload, kind)
-                except ValueError:
+                except ValueError as details_error:
                     if kind != 'invoice':
                         raise
-                    # ETA exposes separate invoice details and raw endpoints. Some
-                    # registered documents lack the details wrapper, while raw
-                    # still returns the full DocumentExtended object.
+                    # Try the other documented invoice representation and retain
+                    # both parser diagnostics if neither contains a valid body.
+                    _logger.warning('ETA invoice details rejected for %s: %s; trying raw',
+                                    record.uuid, details_error)
+                    wait = max(0, next_request_at - time.monotonic())
+                    if wait:
+                        time.sleep(wait)
+                    next_request_at = time.monotonic() + 0.51
                     payload = request('GET',
                                       f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
                                       headers=headers)
                     if not isinstance(payload, dict):
                         raise ValueError('ETA invoice raw response is not an object')
-                    values = _detail_values(payload, kind)
+                    try:
+                        values = _detail_values(payload, kind)
+                    except ValueError as raw_error:
+                        raise ValueError(f'details: {details_error}; raw: {raw_error}') from raw_error
                 record.write({'detail_json': json.dumps(values, ensure_ascii=False,
                                                         sort_keys=True), 'detail_error': False,
                               'detail_attempt_at': fields.Datetime.now()})
