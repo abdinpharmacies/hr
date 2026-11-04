@@ -68,7 +68,7 @@ class Sale(models.Model):
         was_submitted = self.native_submitted if len(self) == 1 else False
         result = super().action_submit(request_token=request_token)
         journal = self.env['ab_central_sync_operation']
-        if journal._param('role') == 'branch' and self.native_backend and not was_submitted and self.native_submitted:
+        if journal._uses_central(self.store_id, 'branch') and self.native_backend and not was_submitted and self.native_submitted:
             journal._enqueue(self, 'sale', self._central_snapshot())
         return result
 
@@ -95,7 +95,7 @@ class Return(models.Model):
         origin = REPLAY_ORIGIN.get()
         if not origin:
             journal = self.env['ab_central_sync_operation']
-            if journal._param('role') == 'branch' and self.native_origin_id:
+            if journal._uses_central(self.store_id, 'branch') and self.native_origin_id:
                 parent = journal.sudo().with_context(active_test=False).search(
                     fields.Domain('direction', '=', 'out') & fields.Domain('kind', '=', 'sale')
                     & fields.Domain('store_id', '=', self.store_id.id)

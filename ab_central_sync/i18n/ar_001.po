@@ -949,3 +949,46 @@ msgstr "تتطلب المرتجعات التاريخية استيراد المع
 #: model:ir.model,name:ab_central_sync.model_ab_sales_per_day
 msgid "Sales Per Store/Product/Day"
 msgstr "المبيعات حسب المخزن والصنف واليوم"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_store_ids
+msgid "Synchronization Stores"
+msgstr "مخازن المزامنة"
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_ab_replica_db__central_default_store_id
+msgid "Synchronization Default Store"
+msgstr "المخزن الافتراضي للمزامنة"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Synchronization stores must belong to the replica."
+msgstr "يجب أن تكون مخازن المزامنة ضمن مخازن النسخة."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/enrollment.py:0
+msgid "Select a default store within the synchronization scope."
+msgstr "اختر مخزنًا افتراضيًا ضمن نطاق المزامنة."
+
+#. module: ab_central_sync
+#: model:ir.model.fields,field_description:ab_central_sync.field_res_config_settings__central_ca_bundle
+msgid "Central CA Bundle"
+msgstr "ملف شهادات الخادم المركزي"
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid ""
+"Reconcile existing local native stock movements before enabling central "
+"synchronization."
+msgstr "يجب تسوية حركات المخزون المحلية الأصلية قبل تفعيل المزامنة المركزية."
+
+#. module: ab_central_sync
+#. odoo-python
+#: code:addons/ab_central_sync/models/operation.py:0
+msgid ""
+"Confirmed native transactions require reconciliation before enabling central"
+" synchronization."
+msgstr "تتطلب المعاملات الأصلية المؤكدة تسوية قبل تفعيل المزامنة المركزية."

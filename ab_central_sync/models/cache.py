@@ -18,6 +18,8 @@ class SalesCache(models.Model):
     def _central_rows(self, store, product):
         self.env['ab_sales_backend']._check_store(store.id)
         cache = self.sudo().search(fields.Domain('store_id', '=', store.id) & fields.Domain('product_id', '=', product.id), limit=1)
+        if not cache and self.env['ab_central_sync_operation']._param('ready'):
+            return []
         if not cache or not cache.central_initialized:
             raise ValidationError(_('Download the central stock snapshot before selling this product.'))
         rows = [dict(row) for row in cache.central_batches or []]
@@ -92,7 +94,7 @@ class SalesCache(models.Model):
         return super().write(vals)
 
     def _backend_inventory_snapshot(self, store, product_serials=None):
-        if self.env['ab_central_sync_operation']._param('role') not in ('branch', 'central'):
+        if not self.env['ab_central_sync_operation']._uses_central(store):
             return super()._backend_inventory_snapshot(store, product_serials=product_serials)
         self.env['ab_sales_backend']._check_store(store.id)
         domain = fields.Domain('active', '=', True)
@@ -104,18 +106,24 @@ class SalesCache(models.Model):
                  'balance': balances[p.id], 'default_price': p.default_price} for p in products]
 
     def btn_update_balance_total(self):
-        if self.env['ab_central_sync_operation']._param('role') in ('branch', 'central'):
-            return self.env['ab_central_sync_operation']._refresh_snapshots()
-        return super().btn_update_balance_total()
+        result = super().btn_update_balance_total()
+        self.env['ab_central_sync_operation']._refresh_snapshots()
+        return result
+
+    def _get_working_balance_store_pairs(self, exclude_default=False, default_store=None):
+        pairs = super()._get_working_balance_store_pairs(exclude_default=exclude_default, default_store=default_store)
+        journal = self.env['ab_central_sync_operation']
+        return [(store, serial) for store, serial in pairs if not journal._uses_central(store)]
 
     def btn_update_balance_per_pos(self):
-        if self.env['ab_central_sync_operation']._param('role') in ('branch', 'central'):
-            return self.env['ab_central_sync_operation']._refresh_snapshots()
-        return super().btn_update_balance_per_pos()
+        result = super().btn_update_balance_per_pos()
+        self.env['ab_central_sync_operation']._refresh_snapshots()
+        return result
 
     def btn_update_balance_default_sales_store(self):
-        if self.env['ab_central_sync_operation']._param('role') in ('branch', 'central'):
-            return self.env['ab_central_sync_operation']._refresh_snapshots()
+        store = self._get_default_sales_store()
+        if self.env['ab_central_sync_operation']._uses_central(store):
+            return self.env['ab_central_sync_operation']._refresh_snapshots(store_ids=store.ids)
         return super().btn_update_balance_default_sales_store()
 
 
@@ -124,8 +132,8 @@ class Backend(models.Model):
 
     @api.model
     def _is_native(self, store_id):
-        role = self.env['ab_central_sync_operation']._param('role')
-        if role in ('branch', 'central'):
+        store = self.env['ab_store'].sudo().browse(int(store_id or 0))
+        if self.env['ab_central_sync_operation']._uses_central(store):
             return True
         return super()._is_native(store_id)
 
@@ -133,7 +141,7 @@ class Backend(models.Model):
     def _check_store(self, store_id, cashier=False):
         store = super()._check_store(store_id, cashier=cashier)
         journal = self.env['ab_central_sync_operation']
-        if journal._param('role') == 'branch':
+        if journal._uses_central(store, 'branch'):
             journal._check_enrolled_store(store)
         return store
 
@@ -143,13 +151,13 @@ class Allocation(models.Model):
 
     @api.model
     def _source_rows(self, store, product):
-        if self.env['ab_central_sync_operation']._param('role') == 'branch':
+        if self.env['ab_central_sync_operation']._uses_central(store, 'branch'):
             return self.env['ab_sales_inventory']._central_rows(store, product)
         return super()._source_rows(store, product)
 
     @api.model
     def _post_sale_plan(self, sale, plans):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(sale.store_id, 'branch'):
             return super()._post_sale_plan(sale, plans)
         for plan in plans:
             allocations = [{'source_id': row['source_id'], 'qty': row['take'],
@@ -159,7 +167,7 @@ class Allocation(models.Model):
 
     @api.model
     def _post_return(self, line, qty):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(line.header_id.store_id, 'branch'):
             return super()._post_return(line, qty)
         previous = self.env['ab_sales_return_line'].search(
             fields.Domain('native_origin_line_id', '=', line.native_origin_line_id.id)
@@ -173,7 +181,7 @@ class Sale(models.Model):
     _inherit = 'ab_sales_header'
 
     def _validate_native_stock_evidence(self):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(self.store_id, 'branch'):
             return super()._validate_native_stock_evidence()
         for line in self.line_ids:
             data = self.native_totals['line_context'].get(str(line.id), {})
@@ -187,7 +195,7 @@ class Sale(models.Model):
 
     def _central_snapshot(self):
         result = super()._central_snapshot()
-        if self.env['ab_central_sync_operation']._param('role') == 'branch':
+        if self.env['ab_central_sync_operation']._uses_central(self.store_id, 'branch'):
             result.pop('allocations', None)
             if 'metadata' in self._fields and isinstance(self.sudo().metadata, dict):
                 replica_serial = self.sudo().metadata.get('source_db_serial')
@@ -203,14 +211,14 @@ class POS(models.TransientModel):
 
     @api.model
     def _native_product_balances(self, store, products):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(store, 'branch'):
             return super()._native_product_balances(store, products)
         return {p.id: sum(row['qty'] for row in self.env['ab_sales_inventory']._central_rows(store, p))
                 for p in products if not p.is_service}
 
     @api.model
     def _native_stocked_products(self, store_id):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(self.env['ab_store'].browse(store_id), 'branch'):
             return super()._native_stocked_products(store_id)
         cache = self.env['ab_sales_inventory'].search(fields.Domain('store_id', '=', store_id)
                                                      & fields.Domain('central_initialized', '=', True))
@@ -301,7 +309,7 @@ class SnapshotFreshness(models.TransientModel):
     def pos_refresh_pos_balances(self, store_id=None, product_ids=None, include_sync_metadata=False):
         result = super().pos_refresh_pos_balances(store_id=store_id, product_ids=product_ids,
                                                  include_sync_metadata=include_sync_metadata)
-        if include_sync_metadata and self.env['ab_central_sync_operation']._param('role') == 'branch':
+        if include_sync_metadata and self.env['ab_central_sync_operation']._uses_central(self.env['ab_store'].browse(store_id), 'branch'):
             caches = self.env['ab_sales_inventory'].search(fields.Domain('store_id', '=', store_id)
                 & fields.Domain('product_id', 'in', list(result)))
             timestamps = {cache.product_id.id: fields.Datetime.to_string(cache.last_sync_at) for cache in caches}
@@ -315,7 +323,7 @@ class SnapshotFreshnessUI(models.TransientModel):
 
     @api.model
     def _attach_pos_sync_metadata(self, rows, store_id):
-        if self.env['ab_central_sync_operation']._param('role') != 'branch':
+        if not self.env['ab_central_sync_operation']._uses_central(self.env['ab_store'].browse(store_id), 'branch'):
             return super()._attach_pos_sync_metadata(rows, store_id)
         self.env['ab_sales_backend']._check_store(store_id)
         caches = self.env['ab_sales_inventory'].search(fields.Domain('store_id', '=', store_id)

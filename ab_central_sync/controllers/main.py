@@ -48,7 +48,7 @@ class CentralSync(http.Controller):
                     return request.make_json_response(result)
                 if not isinstance(payload.get('store'), str):
                     raise AccessError('Store forbidden')
-                store = replica.allowed_sales_store_ids.filtered(lambda store: store.active and store.code == payload['store'])
+                store = replica._sync_stores().filtered(lambda store: store.active and store.code == payload['store'])
                 if len(store) != 1:
                     raise AccessError('Store unavailable')
                 env['ab_inventory_process']._lock_stores([store.id])
