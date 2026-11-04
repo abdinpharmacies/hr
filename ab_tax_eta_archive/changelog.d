@@ -621,7 +621,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+22ae74fc — yahyazakaria22 — 2026-11-04
+fix: block empty ETA files and show UUID coverage
 
 - Prevent creation and Telegram delivery of headers-only daily XLSX files when the issue-day category has zero saved transactions.
 - Show issue-day saved row counts and UUID detail ready/pending counts beside each retrieval stream, so an idle detail cron can be distinguished from missing source rows.
