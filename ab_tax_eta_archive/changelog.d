@@ -738,3 +738,27 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+6b39c819 — yahyazakaria22 — 2026-11-04
+fix: fall back to ETA invoice raw details
+
+- Retry invoice parsing failures using the invoice raw endpoint.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+
+b63c1c5c — yahyazakaria22 — 2026-11-04
+fix: request ETA JSON details and expose fetch diagnostics
+
+- Explicitly request JSON through both ETA detail request format headers.
+- Distinguish missing response objects, invalid JSON document text, and missing document fields; retain diagnostics from both invoice endpoints.
+- Log successful token acquisition and batch startup without exposing token or document values.
+- Load each UUID independently to avoid prefetching a large selected recordset during per-record processing.
+- Pace invoice fallback requests as well as primary requests.
+- Validation: isolated Python checks passed for four invoice shapes, receipt parsing, invoice tax totals, and rejection of three incomplete response shapes. Live ETA and Odoo database validation still requires server execution.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
