@@ -99,8 +99,21 @@ def _signature_name(signatures, fallback):
 
 
 def _detail_values(payload, kind):
-    body = payload.get('document' if kind == 'invoice' else 'receipt') or {}
-    if not isinstance(body, dict) or not body:
+    key = 'document' if kind == 'invoice' else 'receipt'
+    body = payload.get(key)
+    if not body and isinstance(payload.get('result'), dict):
+        payload = payload['result']
+        body = payload.get(key)
+    if isinstance(body, str):
+        try:
+            body = json.loads(body)
+        except ValueError as exc:
+            raise ValueError('ETA detail response has no document object') from exc
+    markers = (('issuer', 'receiver', 'invoiceLines') if kind == 'invoice'
+               else ('seller', 'documentType', 'itemData'))
+    if not body and all(marker in payload for marker in markers):
+        body = payload
+    if not isinstance(body, dict) or not all(marker in body for marker in markers):
         raise ValueError('ETA detail response has no document object')
     issuer = body.get('issuer' if kind == 'invoice' else 'seller') or {}
     receiver = body.get('receiver' if kind == 'invoice' else 'buyer') or {}
@@ -196,6 +209,8 @@ class EtaExport(models.Model):
         today = now.date()
         deadline = min(time.monotonic() + 25,
                        self.env.context.get('cron_end_time', float('inf')) - 2)
+        if time.monotonic() >= deadline:
+            return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
         models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
                   ('receipt', self.env['ab_tax_eta_archive_receipt'])]
@@ -220,8 +235,8 @@ class EtaExport(models.Model):
                 self._enrich_details(config, kind, report_date, direction,
                                      deadline=deadline, batch_size=10000)
             else:
-                _logger.warning('ETA UUID detail selection used the cron time budget '
-                                'before fetching a batch for %s', report_date)
+                _logger.info('ETA UUID detail cron time budget exhausted before '
+                             'fetching a batch for %s', report_date)
         else:
             pending = any(model.search([
                 ('config_id', 'in', configs.ids),
@@ -490,10 +505,12 @@ class EtaExport(models.Model):
         request = self.env['ab_tax_eta_archive_sync']._request
         processed = 0
         ready = 0
+        shape_logged = False
         for record in missing:
             if processed and deadline is not None and time.monotonic() >= deadline:
                 break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
+            payload = None
             try:
                 time.sleep(0.51)
                 payload = request('GET', f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
@@ -508,6 +525,16 @@ class EtaExport(models.Model):
             except (UserError, ValueError, requests.RequestException) as exc:
                 record.write({'detail_error': str(exc)[:500],
                               'detail_attempt_at': fields.Datetime.now()})
+                if isinstance(payload, dict) and isinstance(exc, ValueError) and not shape_logged:
+                    result = payload.get('result')
+                    _logger.warning('ETA UUID detail response shape: kind=%s keys=%s '
+                                    'result_keys=%s body_type=%s', kind,
+                                    sorted(str(key) for key in payload)[:30],
+                                    sorted(str(key) for key in result)[:30]
+                                    if isinstance(result, dict) else [],
+                                    type(payload.get('document' if kind == 'invoice'
+                                                     else 'receipt')).__name__)
+                    shape_logged = True
                 _logger.warning('ETA export detail failed for %s: %s', record.uuid, exc)
             processed += 1
             if (self.env.context.get('cron_id') and
