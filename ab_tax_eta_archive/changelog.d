@@ -664,3 +664,16 @@ Files changed:
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/changelog.d
+
+57fd26c4 — yahyazakaria22 — 2026-11-04
+fix: fetch ETA UUID details in newest-first batches
+
+- Start UUID detail retrieval with today's newest eligible issue day, then move backward through older days.
+- Rotate ETA connection and transaction streams when they share the newest day, and select up to 10,000 pending UUIDs for the chosen stream.
+- Continue the selected batch across scheduled runs within the cron time limit, while retaining the one-hour cooldown for failed UUID requests.
+- Log selected, attempted, ready, and failed detail counts for each batch instead of reporting a misleading small progress bar.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
