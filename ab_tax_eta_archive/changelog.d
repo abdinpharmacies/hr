@@ -639,7 +639,8 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
 
-Current changes before commit:
+9926e630 — yahyazakaria22 — 2026-11-04
+fix: show ETA UUID coverage and auth failures
 
 - Fix the Odoo 19 Retrievals coverage view by grouping the report date at day granularity.
 - Record UUID detail authentication failures on affected transactions with attempt time, so the detail job shows Error instead of silently leaving every row Pending.
