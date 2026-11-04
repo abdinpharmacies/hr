@@ -650,3 +650,17 @@ Files changed:
 - ab_tax_eta_archive/models/eta_sync.py
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+e1991eaa — yahyazakaria22 — 2026-11-04
+fix: rotate ETA UUID detail retrieval across connections
+
+- Select pending UUID details directly from saved invoice and receipt rows, including rows older than a connection's current start date, and rotate active connections each minute so later connections get a turn.
+- Keep automatic delivery days first, rotate the four transaction categories, and fetch no current-day details.
+- Include empty detail text and pending rows with no recorded error in retries; keep file creation blocked until every row in its category has usable detail data.
+- Align Retrievals ready counts with the same nonempty detail rule.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
