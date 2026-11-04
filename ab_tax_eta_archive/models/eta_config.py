@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+import secrets
 import pytz
 import requests
 
@@ -12,6 +13,17 @@ class EtaConfig(models.Model):
 
     name = fields.Char(required=True, default='ETA Archive')
     active = fields.Boolean(default=True)
+    taxpayer_rin = fields.Char(string='Taxpayer RIN', groups='ab_tax_eta_archive.group_eta_manager')
+    callback_key = fields.Char(string='Callback Pre-shared Key', copy=False,
+                               default=lambda self: secrets.token_urlsafe(32),
+                               groups='ab_tax_eta_archive.group_eta_manager')
+    callback_url = fields.Char(string='Callback Base URL', compute='_compute_callback_url',
+                               groups='ab_tax_eta_archive.group_eta_manager')
+
+    def _compute_callback_url(self):
+        for config in self:
+            config.callback_url = (f'{config.get_base_url().rstrip("/")}/ab_tax_eta_archive/callback/{config.id}'
+                                   if isinstance(config.id, int) else False)
     environment = fields.Selection([('production', 'Production'), ('preproduction', 'Preproduction')],
                                    required=True, default='production')
     start_date = fields.Date(required=True, default='2026-10-01')

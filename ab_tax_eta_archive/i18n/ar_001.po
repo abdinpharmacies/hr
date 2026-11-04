@@ -982,3 +982,75 @@ msgstr "تفاصيل UUID الجاهزة ليوم الإصدار"
 #. module: ab_tax_eta_archive
 msgid "Issue-Day UUID Details Pending"
 msgstr "تفاصيل UUID المعلقة ليوم الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Taxpayer RIN"
+msgstr "رقم التسجيل الضريبي"
+
+#. module: ab_tax_eta_archive
+msgid "Callback Pre-shared Key"
+msgstr "المفتاح المشترك للإشعارات"
+
+#. module: ab_tax_eta_archive
+msgid "Callback Base URL"
+msgstr "الرابط الأساسي لاستقبال الإشعارات"
+
+#. module: ab_tax_eta_archive
+msgid "ETA Callback Registration"
+msgstr "تسجيل إشعارات مصلحة الضرائب"
+
+#. module: ab_tax_eta_archive
+msgid "Register the HTTPS callback base URL and pre-shared key in the ETA portal. Enable receipt package notifications. Package polling works without a callback."
+msgstr "سجل رابط استقبال الإشعارات عبر HTTPS والمفتاح المشترك في بوابة الضرائب. فعّل إشعارات حزم الإيصالات. يعمل الاستعلام عن الحزم دون إشعارات."
+
+#. module: ab_tax_eta_archive
+msgid "Document Amount"
+msgstr "قيمة المستند"
+
+#. module: ab_tax_eta_archive
+msgid "Document Currency"
+msgstr "عملة المستند"
+
+#. module: ab_tax_eta_archive
+msgid "Import Offset"
+msgstr "عدد الصفوف المستوردة"
+
+#. module: ab_tax_eta_archive
+msgid "Imported"
+msgstr "تم الاستيراد"
+
+#. module: ab_tax_eta_archive
+msgid "Full Details"
+msgstr "التفاصيل الكاملة"
+
+#. module: ab_tax_eta_archive
+msgid "Notified At"
+msgstr "وقت الإشعار"
+
+#. module: ab_tax_eta_archive
+msgid "Historical Receipt Packages"
+msgstr "حزم الإيصالات السابقة"
+
+#. module: ab_tax_eta_archive
+msgid "ETA package exceeds the limit within one second."
+msgstr "تتجاوز حزمة الضرائب الحد المسموح خلال ثانية واحدة."
+
+#. module: ab_tax_eta_archive
+msgid "Document amounts and VAT"
+msgstr "قيم المستندات وضريبة القيمة المضافة"
+
+#. module: ab_tax_eta_archive
+msgid "Amounts are grouped by currency. VAT includes downloaded details only. Totals are gross document values, not a net tax liability."
+msgstr "القيم مجمعة حسب العملة. تشمل الضريبة التفاصيل المحملة فقط. الإجماليات هي قيم المستندات وليست صافي الضريبة المستحقة."
+
+#. module: ab_tax_eta_archive
+msgid "Stream"
+msgstr "نوع المستند واتجاهه"
+
+#. module: ab_tax_eta_archive
+msgid "Total amount"
+msgstr "إجمالي القيمة"
+
+#. module: ab_tax_eta_archive
+msgid "Details ready / documents"
+msgstr "التفاصيل الجاهزة / المستندات"

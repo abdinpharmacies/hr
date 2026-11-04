@@ -33,6 +33,15 @@ def eta_vat_amount(detail_json):
         return 0.0
 
 
+def eta_dashboard_amounts(detail_json, total, currency):
+    try:
+        detail = json.loads(detail_json) if detail_json else {}
+        return (detail.get('total') if detail.get('total') is not None else total,
+                detail.get('currency') or currency or 'EGP')
+    except (TypeError, ValueError, AttributeError):
+        return total, currency or 'EGP'
+
+
 class EtaInvoice(models.Model):
     _name = 'ab_tax_eta_archive_invoice'
     _description = 'ETA Invoice'
@@ -63,7 +72,11 @@ class EtaInvoice(models.Model):
         [('pending', 'Pending'), ('ready', 'Ready'), ('error', 'Error')],
         string='UUID Detail', compute='_compute_detail_state', compute_sudo=True)
     vat_amount = fields.Float(string='VAT (T1)', digits=(16, 3),
-                              compute='_compute_vat_amount', compute_sudo=True)
+                              compute='_compute_vat_amount', compute_sudo=True, store=True)
+    detail_total = fields.Float(string='Document Amount', digits=(16, 3),
+                                compute='_compute_vat_amount', compute_sudo=True, store=True)
+    detail_currency = fields.Char(string='Document Currency',
+                                   compute='_compute_vat_amount', compute_sudo=True, store=True)
 
     @api.depends('detail_json', 'detail_error')
     def _compute_detail_state(self):
@@ -71,10 +84,12 @@ class EtaInvoice(models.Model):
             record.detail_state = ('ready' if record.detail_json else
                                    'error' if record.detail_error else 'pending')
 
-    @api.depends('detail_json')
+    @api.depends('detail_json', 'total', 'currency')
     def _compute_vat_amount(self):
         for record in self:
             record.vat_amount = eta_vat_amount(record.detail_json)
+            record.detail_total, record.detail_currency = eta_dashboard_amounts(
+                record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA invoice UUID must be unique per connection and direction.')
 
@@ -128,7 +143,11 @@ class EtaReceipt(models.Model):
         [('pending', 'Pending'), ('ready', 'Ready'), ('error', 'Error')],
         string='UUID Detail', compute='_compute_detail_state', compute_sudo=True)
     vat_amount = fields.Float(string='VAT (T1)', digits=(16, 3),
-                              compute='_compute_vat_amount', compute_sudo=True)
+                              compute='_compute_vat_amount', compute_sudo=True, store=True)
+    detail_total = fields.Float(string='Document Amount', digits=(16, 3),
+                                compute='_compute_vat_amount', compute_sudo=True, store=True)
+    detail_currency = fields.Char(string='Document Currency',
+                                   compute='_compute_vat_amount', compute_sudo=True, store=True)
 
     @api.depends('detail_json', 'detail_error')
     def _compute_detail_state(self):
@@ -136,10 +155,12 @@ class EtaReceipt(models.Model):
             record.detail_state = ('ready' if record.detail_json else
                                    'error' if record.detail_error else 'pending')
 
-    @api.depends('detail_json')
+    @api.depends('detail_json', 'total', 'currency')
     def _compute_vat_amount(self):
         for record in self:
             record.vat_amount = eta_vat_amount(record.detail_json)
+            record.detail_total, record.detail_currency = eta_dashboard_amounts(
+                record.detail_json, record.total, record.currency)
 
     _unique_uuid = models.Constraint('UNIQUE(config_id, uuid, direction)', 'ETA receipt UUID must be unique per connection and direction.')
 

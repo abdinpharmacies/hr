@@ -762,3 +762,29 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Retrieve historical receipts through resumable full JSON packages and split oversized intervals.
+- Add connection-scoped authenticated callback ping and receipt package notifications.
+- Add dashboard document amounts and VAT by currency with detail coverage.
+- Maintain Arabic translations for the new configuration and dashboard text.
+- Validation: synthetic package, callback authorization, amount, Python/XML syntax and Arabic catalog checks passed. Live Odoo upgrade and ETA calls require server validation; POT export could not run without a configured local database.
+
+Files changed:
+
+- ab_tax_eta_archive/__init__.py
+- ab_tax_eta_archive/controllers/__init__.py
+- ab_tax_eta_archive/controllers/callback.py
+- ab_tax_eta_archive/models/__init__.py
+- ab_tax_eta_archive/models/eta_config.py
+- ab_tax_eta_archive/models/eta_dashboard.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_package.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/static/src/js/eta_dashboard.js
+- ab_tax_eta_archive/static/src/xml/eta_dashboard.xml
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

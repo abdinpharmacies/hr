@@ -67,6 +67,13 @@ class EtaDashboard extends Component {
             viewFiles: _t("View daily files"),
             empty: _t("No archived documents in this period."),
             records: _t("records"),
+            amounts: _t("Document amounts and VAT"),
+            amountsNote: _t("Amounts are grouped by currency. VAT includes downloaded details only. Totals are gross document values, not a net tax liability."),
+            stream: _t("Stream"),
+            currency: _t("Currency"),
+            totalAmount: _t("Total amount"),
+            vat: _t("VAT (T1)"),
+            coverage: _t("Details ready / documents"),
         };
     }
 
@@ -107,6 +114,10 @@ class EtaDashboard extends Component {
 
     formatCount(value) {
         return new Intl.NumberFormat().format(value || 0);
+    }
+
+    formatAmount(value) {
+        return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 3 }).format(value || 0);
     }
 
     formatServerDateTime(value) {

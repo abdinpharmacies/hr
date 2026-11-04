@@ -33,6 +33,12 @@
                         <field name="invoice_client_id"/>
                         <field name="invoice_client_secret" password="True"/>
                     </group>
+                    <group string="ETA Callback Registration" groups="ab_tax_eta_archive.group_eta_manager">
+                        <field name="taxpayer_rin"/>
+                        <field name="callback_url" widget="url"/>
+                        <field name="callback_key" password="True"/>
+                        <div class="text-muted" colspan="2">Register the HTTPS callback base URL and pre-shared key in the ETA portal. Enable receipt package notifications. Package polling works without a callback.</div>
+                    </group>
                     <group string="Receipt API" groups="ab_tax_eta_archive.group_eta_manager">
                         <field name="receipt_auth_mode"/>
                         <field name="receipt_client_id" invisible="receipt_auth_mode != 'pos'"/>
@@ -250,6 +256,15 @@
                             <field name="last_receipt_uuid"/>
                             <field name="last_run_at"/>
                             <field name="error_message"/>
+                        </list>
+                    </field>
+                    <field name="package_ids" readonly="1" invisible="kind != 'receipt'">
+                        <list string="Historical Receipt Packages" create="0" delete="0" edit="0">
+                            <field name="start_at"/><field name="end_at"/>
+                            <field name="package_id"/><field name="state"/>
+                            <field name="item_count"/><field name="import_offset"/>
+                            <field name="imported"/><field name="full_details"/>
+                            <field name="notified_at"/>
                         </list>
                     </field>
                 </sheet>

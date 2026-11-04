@@ -48,10 +48,22 @@ class EtaDashboard(models.Model):
 
         issue_domain = config_domain + [('report_date', '>=', start),
                                         ('report_date', '<=', end)]
+        amounts = []
         for kind, model_name in (
             ('invoice', 'ab_tax_eta_archive_invoice'),
             ('receipt', 'ab_tax_eta_archive_receipt'),
         ):
+            model = self.env[model_name]
+            ready_domain = issue_domain + [('detail_json', '!=', False), ('detail_json', '!=', '')]
+            ready = {(direction, currency): count for direction, currency, count in model._read_group(
+                ready_domain, ['direction', 'detail_currency'], ['__count'])}
+            for direction, currency, count, total, vat in model._read_group(
+                    issue_domain, ['direction', 'detail_currency'],
+                    ['__count', 'detail_total:sum', 'vat_amount:sum']):
+                amounts.append({'key': f'{kind}:{direction}:{currency}', 'kind': kind,
+                                'direction': direction, 'currency': currency or 'EGP',
+                                'count': count, 'ready': ready.get((direction, currency), 0),
+                                'total': total, 'vat': vat})
             groups = self.env[model_name]._read_group(
                 issue_domain, ['report_date:day', 'direction'], ['__count'])
             for issue_date, direction, count in groups:
@@ -75,7 +87,7 @@ class EtaDashboard(models.Model):
             retrievals[state] = count
 
         connections = self.env['ab_tax_eta_archive_config'].search([], order='name')
-        scheduled_until = min(end, today - timedelta(days=1))
+        scheduled_until = min(end, today)
         not_started = 0
         for config in connections.filtered(lambda item: item.active and (not config_id or item.id == selected_id)):
             scheduled_from = max(start, config.start_date)
@@ -105,6 +117,7 @@ class EtaDashboard(models.Model):
             'period': {'from': fields.Date.to_string(start), 'to': fields.Date.to_string(end)},
             'connections': [{'id': config.id, 'name': config.name} for config in connections],
             'categories': categories,
+            'amounts': amounts,
             'daily': list(daily.values()),
             'pos_devices': pos_devices,
             'retrievals': retrievals,

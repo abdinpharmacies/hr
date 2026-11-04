@@ -72,6 +72,29 @@
                         </div>
                     </section>
 
+                    <section class="ab_eta_panel">
+                        <div class="ab_eta_panel__head"><div>
+                            <h2 t-esc="labels.amounts"/>
+                            <p t-esc="labels.amountsNote"/>
+                        </div></div>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead><tr>
+                                    <th t-esc="labels.stream"/><th t-esc="labels.currency"/>
+                                    <th t-esc="labels.totalAmount"/><th t-esc="labels.vat"/>
+                                    <th t-esc="labels.coverage"/>
+                                </tr></thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.amounts || []" t-as="amount" t-key="amount.key">
+                                        <td t-esc="streamLabel(amount)"/><td t-esc="amount.currency"/>
+                                        <td t-esc="formatAmount(amount.total)"/>
+                                        <td><span t-if="amount.ready" t-esc="formatAmount(amount.vat)"/><span t-else="">—</span></td>
+                                        <td t-esc="formatCount(amount.ready) + ' / ' + formatCount(amount.count)"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
                     <div class="ab_eta_grid">
                         <section class="ab_eta_panel ab_eta_panel--chart">
                             <div class="ab_eta_panel__head">

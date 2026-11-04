@@ -2,4 +2,5 @@ from . import eta_document
 from . import eta_config
 from . import eta_sync
 from . import eta_export
+from . import eta_package
 from . import eta_dashboard
