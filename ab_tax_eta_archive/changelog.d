@@ -867,3 +867,13 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Pause invoice UUID detail fetching and process pending receipt details only.
+- Select up to 10,000 eligible receipt UUIDs per batch, newest dates first, and resume unfinished work through the cron scheduler.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d

@@ -222,13 +222,11 @@ class EtaExport(models.Model):
                 self.env['ir.cron']._commit_progress(remaining=1)
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
-        # Drain invoice details first. Receipts become the active stream only
-        # after no invoice UUID is currently eligible for another attempt.
-        models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
-                  ('receipt', self.env['ab_tax_eta_archive_receipt'])]
+        # Invoice detail fetching is paused while the receipt backlog drains.
+        models = [('receipt', self.env['ab_tax_eta_archive_receipt'])]
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
         selected_kind = None
-        selected_batch = self.env['ab_tax_eta_archive_invoice']
+        selected_batch = self.env['ab_tax_eta_archive_receipt']
         for kind, model in models:
             batch = model.search([
                 ('config_id', 'in', configs.ids),
@@ -237,7 +235,7 @@ class EtaExport(models.Model):
                 '|', '|', ('detail_attempt_at', '=', False),
                 ('detail_error', '=', False),
                 ('detail_attempt_at', '<', retry_before),
-            ], order='report_date desc, id desc', limit=1000)
+            ], order='report_date desc, id desc', limit=10000)
             if batch:
                 selected_kind, selected_batch = kind, batch
                 break
