@@ -29,6 +29,7 @@ CATEGORIES = (
     ('received_receipt', 'Receipts received', 'receipt', 'received'),
 )
 EXPORT_FORMAT_VERSION = 2
+ETA_DETAIL_REQUEST_INTERVAL = 0.6  # ETA Get Receipt limit: 2 requests per second.
 
 INVOICE_HEADERS = ('مسلسل', 'تفاصيل', 'نوع المستند', 'نسخة المستند', 'الحالة',
                    'تاريخ الإصدار', 'تاريخ التقديم', 'عملة الفاتورة', 'إجمالى المبيعات',
@@ -544,7 +545,8 @@ class EtaExport(models.Model):
             progress(0, msg=progress_message, cancellable=False)
         last_request_at = fields.Datetime.to_datetime(config.detail_last_request_at) \
             if config.detail_last_request_at else None
-        request_wait = (max(0, 4 - (fields.Datetime.now() - last_request_at).total_seconds())
+        request_wait = (max(0, ETA_DETAIL_REQUEST_INTERVAL -
+                            (datetime.utcnow() - last_request_at).total_seconds())
                         if last_request_at else 0)
         next_request_at = time.monotonic() + request_wait
         for record_id in missing.ids:
@@ -560,9 +562,9 @@ class EtaExport(models.Model):
                     break
                 if wait:
                     time.sleep(wait)
-                config.write({'detail_last_request_at': fields.Datetime.now()})
+                config.write({'detail_last_request_at': datetime.utcnow()})
                 self.env['ir.cron']._commit_progress(0, remaining=1)
-                next_request_at = time.monotonic() + 4.0
+                next_request_at = time.monotonic() + ETA_DETAIL_REQUEST_INTERVAL
                 detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw'
                 payload = request('GET', detail_url, headers=headers)
                 if not isinstance(payload, dict):

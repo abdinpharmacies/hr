@@ -877,3 +877,14 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Pace receipt raw UUID requests at 0.6 seconds between starts, below the ETA SDK limit of two requests per second.
+- Keep the pacing checkpoint precise across cron callbacks.
+- Source: https://sdk.invoicing.eta.gov.eg/apigovernance/
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d
