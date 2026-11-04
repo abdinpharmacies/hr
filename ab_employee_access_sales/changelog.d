@@ -1,5 +1,19 @@
 Current changes before commit:
 
+- Preserve the original employee/session audit fields when retrying an already submitted native POS invoice.
+- Validate branch-to-central duplicate submission, offline recovery, returns, cancellation and payment reconciliation using isolated test databases.
+- No user-facing strings changed.
+
+Files changed:
+
+- ab_employee_access_sales/models/ab_sales_pos_api.py
+- ab_employee_access_sales/changelog.d
+
+commit bab6e6b04287a713493bbe8e3875de0852aecbc1
+Author: Alhassan Hossny
+Date: 2026-10-28
+Subject: ab_employee_access_sales/refactor: extract cashier integration into optional bridge
+
 - Move cashier-specific employee PIN/session integration and assets to the optional `ab_employee_access_sales_cashier` bridge.
 - Keep employee POS and return access installable without the cashier addon.
 
