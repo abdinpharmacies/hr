@@ -66,11 +66,12 @@
                 <field name="receiver_name"/>
                 <field name="received_at"/>
                 <field name="total"/>
+                <field name="vat_amount"/>
                 <field name="currency"/>
                 <field name="status"/>
-                <field name="detail_state" optional="show"/>
-                <field name="detail_attempt_at" optional="hide"/>
-                <field name="detail_error" optional="hide"/>
+                <field name="detail_state"/>
+                <field name="detail_attempt_at"/>
+                <field name="detail_error"/>
             </list>
         </field>
     </record>
@@ -89,11 +90,12 @@
                 <field name="receiver_name"/>
                 <field name="received_at"/>
                 <field name="total"/>
+                <field name="vat_amount"/>
                 <field name="currency"/>
                 <field name="status"/>
-                <field name="detail_state" optional="show"/>
-                <field name="detail_attempt_at" optional="hide"/>
-                <field name="detail_error" optional="hide"/>
+                <field name="detail_state"/>
+                <field name="detail_attempt_at"/>
+                <field name="detail_error"/>
             </list>
         </field>
     </record>
@@ -150,7 +152,7 @@
                 <field name="telegram_send_requested" optional="show"/>
                 <button name="action_send_telegram" type="object" string="Send to Telegram"
                         groups="ab_tax_eta_archive.group_eta_manager"
-                        invisible="telegram_sent_at or not file_data or telegram_send_requested"/>
+                        invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
             </list>
         </field>
     </record>
@@ -162,7 +164,7 @@
                 <header>
                     <button name="action_send_telegram" type="object" string="Send to Telegram"
                             class="btn-primary" groups="ab_tax_eta_archive.group_eta_manager"
-                            invisible="telegram_sent_at or not file_data or telegram_send_requested"/>
+                            invisible="telegram_sent_at or not file_data or not record_count or telegram_send_requested"/>
                 </header>
                 <sheet>
                     <group>
@@ -205,6 +207,9 @@
                 <field name="direction"/>
                 <field name="state"/>
                 <field name="item_count"/>
+                <field name="issue_day_rows"/>
+                <field name="issue_day_uuid_ready"/>
+                <field name="issue_day_uuid_pending"/>
                 <field name="next_receipt_window_at" optional="show"/>
                 <field name="last_run_at"/>
                 <field name="error_message"/>
@@ -228,6 +233,9 @@
                         <field name="direction"/>
                         <field name="state"/>
                         <field name="item_count"/>
+                        <field name="issue_day_rows"/>
+                        <field name="issue_day_uuid_ready"/>
+                        <field name="issue_day_uuid_pending"/>
                         <field name="next_receipt_window_at" invisible="kind != 'receipt'"/>
                         <field name="last_run_at"/>
                         <field name="error_message"/>

@@ -962,3 +962,23 @@ msgstr "آخر محاولة لاسترجاع تفاصيل UUID"
 #. module: ab_tax_eta_archive
 msgid "ETA: Create and Send Daily Files"
 msgstr "مصلحة الضرائب: إنشاء وإرسال الملفات اليومية"
+
+#. module: ab_tax_eta_archive
+msgid "An empty ETA file cannot be sent. Wait for saved transactions."
+msgstr "لا يمكن إرسال ملف مصلحة ضرائب فارغ. انتظر حتى يتم حفظ المعاملات."
+
+#. module: ab_tax_eta_archive
+msgid "VAT (T1)"
+msgstr "ضريبة القيمة المضافة (T1)"
+
+#. module: ab_tax_eta_archive
+msgid "Issue-Day Saved Rows"
+msgstr "الصفوف المحفوظة ليوم الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Issue-Day UUID Details Ready"
+msgstr "تفاصيل UUID الجاهزة ليوم الإصدار"
+
+#. module: ab_tax_eta_archive
+msgid "Issue-Day UUID Details Pending"
+msgstr "تفاصيل UUID المعلقة ليوم الإصدار"

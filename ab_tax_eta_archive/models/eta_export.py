@@ -346,13 +346,15 @@ class EtaExport(models.Model):
         prepared = set()
         for category, _label, kind, direction in CATEGORIES:
             export = latest.get(category)
+            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                             else 'ab_tax_eta_archive_receipt']
+            count = model.search_count([
+                ('config_id', '=', config.id), ('report_date', '=', report_date),
+                ('direction', '=', direction),
+            ])
+            if not count:
+                continue
             if export and export.telegram_sent_at:
-                model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
-                                 else 'ab_tax_eta_archive_receipt']
-                count = model.search_count([
-                    ('config_id', '=', config.id), ('report_date', '=', report_date),
-                    ('direction', '=', direction),
-                ])
                 if count == export.record_count:
                     prepared.add(category)
                     continue
@@ -393,6 +395,8 @@ class EtaExport(models.Model):
         self.check_access('write')
         unsent = self.filtered(lambda export: not export.telegram_sent_at)
         for export in unsent:
+            if not export.record_count:
+                raise UserError(_('An empty ETA file cannot be sent. Wait for saved transactions.'))
             if not self._day_complete(export.config_id, export.report_date):
                 raise UserError(_(
                     'All four ETA retrievals for this day must finish before sending its file.'))
@@ -499,6 +503,8 @@ class EtaExport(models.Model):
                                 ('direction', '=', direction)],
                                order=('issued_at desc, uuid' if direction == 'sent' else
                                       'issued_at, uuid'))
+        if not records:
+            return False
         headers = (RECEIPT_HEADERS if kind == 'receipt' else
                    PURCHASE_HEADERS if direction == 'received' else INVOICE_HEADERS)
         cairo = pytz.timezone('Africa/Cairo')

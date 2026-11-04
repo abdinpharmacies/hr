@@ -620,3 +620,20 @@ Files changed:
 - ab_tax_eta_archive/i18n/ar.po
 - ab_tax_eta_archive/i18n/ar_001.po
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Prevent creation and Telegram delivery of headers-only daily XLSX files when the issue-day category has zero saved transactions.
+- Show issue-day saved row counts and UUID detail ready/pending counts beside each retrieval stream, so an idle detail cron can be distinguished from missing source rows.
+- Show VAT (T1), UUID detail state, last attempt, and error directly in invoice and receipt lists.
+- Hide Send on existing empty files and translate the new diagnostics in both Arabic catalogs.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/models/eta_document.py
+- ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/views/eta_views.xml
+- ab_tax_eta_archive/i18n/ar.po
+- ab_tax_eta_archive/i18n/ar_001.po
+- ab_tax_eta_archive/changelog.d

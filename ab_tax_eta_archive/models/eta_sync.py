@@ -43,6 +43,12 @@ class EtaSync(models.Model):
     state = fields.Selection([('pending', 'Pending'), ('done', 'Done'), ('error', 'Error')],
                              required=True, default='pending')
     item_count = fields.Integer(readonly=True)
+    issue_day_rows = fields.Integer(string='Issue-Day Saved Rows',
+                                    compute='_compute_issue_day_coverage', compute_sudo=True)
+    issue_day_uuid_ready = fields.Integer(string='Issue-Day UUID Details Ready',
+                                          compute='_compute_issue_day_coverage', compute_sudo=True)
+    issue_day_uuid_pending = fields.Integer(string='Issue-Day UUID Details Pending',
+                                            compute='_compute_issue_day_coverage', compute_sudo=True)
     last_run_at = fields.Datetime(readonly=True)
     error_message = fields.Text(readonly=True)
     next_receipt_window_at = fields.Datetime(readonly=True)
@@ -55,6 +61,36 @@ class EtaSync(models.Model):
     _unique_stream_day = models.Constraint(
         'UNIQUE(config_id, report_date, kind, direction)',
         'Only one ETA retrieval is allowed for each day and stream.')
+
+    @api.depends('config_id', 'report_date', 'kind', 'direction')
+    def _compute_issue_day_coverage(self):
+        for run in self:
+            run.issue_day_rows = 0
+            run.issue_day_uuid_ready = 0
+            run.issue_day_uuid_pending = 0
+        for kind in ('invoice', 'receipt'):
+            runs = self.filtered(lambda run: run.kind == kind)
+            if not runs:
+                continue
+            by_key = {}
+            for run in runs:
+                by_key.setdefault((run.config_id.id, run.report_date, run.direction), []).append(run)
+            model = self.env['ab_tax_eta_archive_invoice' if kind == 'invoice'
+                             else 'ab_tax_eta_archive_receipt']
+            domain = (fields.Domain('config_id', 'in', runs.mapped('config_id').ids) &
+                      fields.Domain('report_date', 'in', runs.mapped('report_date')) &
+                      fields.Domain('direction', 'in', runs.mapped('direction')))
+            groupby = ['config_id', 'report_date', 'direction']
+            for config, day, direction, count in model._read_group(domain, groupby, ['__count']):
+                for run in by_key.get((config.id, day, direction), []):
+                    run.issue_day_rows = count
+            ready_domain = domain & fields.Domain('detail_json', '!=', False)
+            for config, day, direction, count in model._read_group(
+                    ready_domain, groupby, ['__count']):
+                for run in by_key.get((config.id, day, direction), []):
+                    run.issue_day_uuid_ready = count
+        for run in self:
+            run.issue_day_uuid_pending = run.issue_day_rows - run.issue_day_uuid_ready
 
     def _progress_iter(self, data, message, total=None):
         progress_iter = getattr(self, 'web_progress_iter', None)
