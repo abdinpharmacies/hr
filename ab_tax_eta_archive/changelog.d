@@ -857,3 +857,13 @@ Files changed:
 - ab_tax_eta_archive/models/eta_dashboard.py
 - ab_tax_eta_archive/data/cron.xml
 - ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Fetch invoice UUID details directly from the raw endpoint, matching the existing raw receipt workflow.
+- Remove the invoice details request and parsing fallback round trip.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
+- ab_tax_eta_archive/changelog.d

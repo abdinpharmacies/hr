@@ -555,7 +555,6 @@ class EtaExport(models.Model):
             if processed and deadline is not None and time.monotonic() >= deadline:
                 break
             path = ('api/v1.0/documents' if kind == 'invoice' else 'api/v1/receipts')
-            detail_endpoint = 'details' if kind == 'invoice' else 'raw'
             payload = None
             try:
                 wait = max(0, next_request_at - time.monotonic())
@@ -566,34 +565,11 @@ class EtaExport(models.Model):
                 config.write({'detail_last_request_at': fields.Datetime.now()})
                 self.env['ir.cron']._commit_progress(0, remaining=1)
                 next_request_at = time.monotonic() + 4.0
-                detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}'
+                detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw'
                 payload = request('GET', detail_url, headers=headers)
                 if not isinstance(payload, dict):
                     raise ValueError('ETA detail response is not an object')
-                try:
-                    values = _detail_values(payload, kind)
-                except ValueError as details_error:
-                    if kind != 'invoice':
-                        raise
-                    # Try the other documented invoice representation and retain
-                    # both parser diagnostics if neither contains a valid body.
-                    _logger.warning('ETA invoice details rejected for %s: %s; trying raw',
-                                    record.uuid, details_error)
-                    wait = max(0, next_request_at - time.monotonic())
-                    if wait:
-                        time.sleep(wait)
-                    config.write({'detail_last_request_at': fields.Datetime.now()})
-                    self.env['ir.cron']._commit_progress(0, remaining=1)
-                    next_request_at = time.monotonic() + 4.0
-                    payload = request('GET',
-                                      f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
-                                      headers=headers)
-                    if not isinstance(payload, dict):
-                        raise ValueError('ETA invoice raw response is not an object')
-                    try:
-                        values = _detail_values(payload, kind)
-                    except ValueError as raw_error:
-                        raise ValueError(f'details: {details_error}; raw: {raw_error}') from raw_error
+                values = _detail_values(payload, kind)
                 record.write({'detail_json': json.dumps(values, ensure_ascii=False,
                                                         sort_keys=True), 'detail_error': False,
                               'detail_attempt_at': fields.Datetime.now()})
