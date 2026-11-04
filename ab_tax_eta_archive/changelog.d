@@ -802,7 +802,7 @@ Files changed:
 
 Current changes before commit:
 
-- Reuse one HTTP session per UUID detail batch and select 100 rows to reduce overhead.
+- Reuse one HTTP session per UUID detail batch and select bounded batches to reduce overhead.
 - Limit detail and token calls to one attempt with bounded connect/read timeouts so a single UUID does not retry for several minutes.
 - Retry failed details after five minutes while eligible rows continue through the existing scheduler.
 - Restore optional web_progress display for actual detail attempts.
@@ -812,4 +812,16 @@ Files changed:
 
 - ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/models/eta_sync.py
+- ab_tax_eta_archive/changelog.d
+
+Current changes before commit:
+
+- Process eligible invoice UUIDs before receipt UUIDs, then switch to receipts when no invoice is currently eligible.
+- Select up to 1,000 UUIDs per batch and keep progress reporting through web_progress when installed.
+- Wait at least four seconds between ETA detail requests, including invoice raw fallback requests.
+- Validation: git diff --check passed; live ETA throughput requires server execution.
+
+Files changed:
+
+- ab_tax_eta_archive/models/eta_export.py
 - ab_tax_eta_archive/changelog.d

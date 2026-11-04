@@ -222,10 +222,10 @@ class EtaExport(models.Model):
                 self.env['ir.cron']._commit_progress(remaining=1)
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
+        # Drain invoice details first. Receipts become the active stream only
+        # after no invoice UUID is currently eligible for another attempt.
         models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
                   ('receipt', self.env['ab_tax_eta_archive_receipt'])]
-        if int(now.timestamp() // 60) % 2:
-            models.reverse()
         retry_before = fields.Datetime.now() - timedelta(minutes=5)
         selected = None
         for kind, model in models:
@@ -237,13 +237,14 @@ class EtaExport(models.Model):
                 ('detail_error', '=', False),
                 ('detail_attempt_at', '<', retry_before),
             ], order='report_date desc', limit=1)
-            if record and (selected is None or record.report_date > selected[3]):
+            if record:
                 selected = (record.config_id, kind, record.direction, record.report_date)
+                break
         if selected:
             config, kind, direction, report_date = selected
             if time.monotonic() < deadline:
                 self._enrich_details(config, kind, report_date, direction,
-                                     deadline=deadline, batch_size=100)
+                                     deadline=deadline, batch_size=1000)
             else:
                 _logger.info('ETA UUID detail cron time budget exhausted before '
                              'fetching a batch for %s', report_date)
@@ -540,7 +541,7 @@ class EtaExport(models.Model):
                     break
                 if wait:
                     time.sleep(wait)
-                next_request_at = time.monotonic() + 0.51
+                next_request_at = time.monotonic() + 4.0
                 detail_url = f'{api_url}/{path}/{quote(record.uuid, safe="")}/{detail_endpoint}'
                 payload = request('GET', detail_url, headers=headers)
                 if not isinstance(payload, dict):
@@ -557,7 +558,7 @@ class EtaExport(models.Model):
                     wait = max(0, next_request_at - time.monotonic())
                     if wait:
                         time.sleep(wait)
-                    next_request_at = time.monotonic() + 0.51
+                    next_request_at = time.monotonic() + 4.0
                     payload = request('GET',
                                       f'{api_url}/{path}/{quote(record.uuid, safe="")}/raw',
                                       headers=headers)
