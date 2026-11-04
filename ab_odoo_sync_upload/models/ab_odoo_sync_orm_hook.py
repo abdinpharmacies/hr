@@ -24,6 +24,9 @@ def _is_sync_model(model_name):
 
 
 def _should_capture_upload(model):
+    # ORM patches also run in registries where this addon is not loaded yet.
+    if "ab_odoo_sync_upload_source" not in model.env:
+        return False
     if model.env.context.get("skip_ab_odoo_sync_upload"):
         return False
     if _is_sync_model(model._name):
@@ -214,6 +217,8 @@ def _get_unlink_dependency_index(env):
 
 
 def _get_upload_capture_models(records):
+    if "ab_odoo_sync_upload_source" not in records.env:
+        return set()
     if records.env.context.get("skip_ab_odoo_sync_upload"):
         return set()
 
