@@ -210,6 +210,8 @@ class EtaExport(models.Model):
         deadline = min(time.monotonic() + 25,
                        self.env.context.get('cron_end_time', float('inf')) - 2)
         if time.monotonic() >= deadline:
+            if self.env.context.get('cron_id'):
+                self.env['ir.cron']._commit_progress(remaining=1)
             return
         configs = self.env['ab_tax_eta_archive_config'].search([('active', '=', True)])
         models = [('invoice', self.env['ab_tax_eta_archive_invoice']),
@@ -541,9 +543,9 @@ class EtaExport(models.Model):
                     not self.env['ir.cron']._commit_progress(1, remaining=1)):
                 break
         _logger.info('ETA UUID detail batch: connection=%s kind=%s direction=%s day=%s '
-                     'selected=%s attempted=%s ready=%s errors=%s',
+                     'selected=%s attempted=%s ready=%s errors=%s unattempted=%s',
                      config.id, kind, direction, report_date, len(missing), processed,
-                     ready, processed - ready)
+                     ready, processed - ready, len(missing) - processed)
         return processed
 
     def _progress_iter(self, data, message, total=None):
