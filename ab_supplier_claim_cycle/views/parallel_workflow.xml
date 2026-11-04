@@ -85,7 +85,7 @@
         <attribute name="statusbar_visible">draft,financial_review,secretarial_preparation,ready_to_close,closed</attribute>
       </xpath>
       <xpath expr="//group[@name='supplier_classification']/field[@name='tax_classification'][not(starts-with(@groups, '!'))]" position="attributes">
-        <attribute name="readonly">not can_edit_correction_fields</attribute>
+        <attribute name="readonly">not can_edit_tax_classification</attribute>
       </xpath>
       <xpath expr="//group[@name='claim_details']/field[@name='delivery_representative_name'][not(starts-with(@groups, '!'))]" position="attributes">
         <attribute name="readonly">not can_edit_correction_fields</attribute>
@@ -390,7 +390,7 @@
       <xpath expr="//sheet" position="inside">
         <div name="claim_workflow_box" class="o_scc_panel o_scc_workflow_box">
         <notebook name="claim_workflow_details" class="o_scc_workflow_details">
-          <page name="claim_reviews" string="Review Details" invisible="not can_edit_current_review and not can_prepare_payment and not can_edit_correction_fields"/>
+          <page name="claim_reviews" string="Review Details" invisible="not can_edit_current_review and not can_prepare_payment and not can_edit_open_claim_fields"/>
           <page name="claim_documents" string="Documents"/>
           <page name="claim_exceptions" string="Rejections &amp; Deferrals" invisible="not exception_history_ids"/>
         </notebook>
@@ -404,7 +404,7 @@
         <attribute name="invisible">not can_prepare_payment</attribute>
       </xpath>
       <xpath expr="//group[@name='claim_secretarial_review']" position="attributes">
-        <attribute name="invisible">not can_prepare_payment and not can_edit_correction_fields</attribute>
+        <attribute name="invisible">not can_prepare_payment and not can_edit_open_claim_fields</attribute>
       </xpath>
       <xpath expr="//div[hasclass('o_scc_history_section')][field[@name='note_history_ids']]" position="attributes">
         <attribute name="name">claim_notes_section</attribute>

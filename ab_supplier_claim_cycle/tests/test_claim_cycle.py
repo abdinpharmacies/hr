@@ -72,6 +72,145 @@ class TestSupplierClaimCycle(TransactionCase):
             self.assertEqual(form.record.state, 'draft')
 
 
+    def test_secretary_open_claim_section_and_main_attachment(self):
+        from odoo.tests import Form
+        claim = self.claim()
+        claim.action_submit()
+        for stage in ('operational_review', 'financial_review', 'secretarial_preparation',
+                      'bank_accounts', 'ready_to_close', 'returned_secretarial'):
+            claim._workflow_write({'state': stage})
+            for role in ('user', 'admin'):
+                record = claim.with_user(self.users[role])
+                with Form(record) as form:
+                    form.section = 'cosmo'
+                    form.attachment = self.replacement
+                record.action_upload_documents('attachment', [{'name': 'main.pdf', 'data': self.document.decode()}])
+                self.assertEqual(record.attachment, self.document)
+                self.assertEqual(record.attachment_filename, 'main.pdf')
+                self.assertEqual(record.section, 'cosmo')
+            for field_name, value in (('section', 'medical'), ('attachment', self.replacement),
+                                      ('attachment_filename', 'forbidden.pdf')):
+                with self.assertRaises(AccessError):
+                    claim.with_user(self.users['tax']).write({field_name: value})
+        claim._workflow_write({'state': 'closed'})
+        for role in ('user', 'admin'):
+            with self.assertRaises(UserError):
+                claim.with_user(self.users[role]).write({'section': 'other'})
+            with self.assertRaises(UserError):
+                claim.with_user(self.users[role]).action_upload_documents(
+                    'attachment', [{'name': 'main.pdf', 'data': self.document.decode()}])
+
+    def test_tax_type_before_and_after_both_approvals(self):
+        from odoo.tests import Form
+        for role in ('user', 'admin'):
+            claim = self.claim(payment='cash')
+            self.financial(claim)
+            record = claim.with_user(self.users[role])
+            with Form(record) as form:
+                form.tax_classification = 'withholding_tax'
+            with self.assertRaises(AccessError):
+                claim.with_user(self.users['tax']).write({'tax_classification': 'through_supplier'})
+            claim.with_user(self.users['tax']).write({'tax_discount_decision': 'apply'})
+            self.decide(claim, 'tax')
+            self.assertTrue(record.can_edit_tax_classification)
+            record.write({'tax_classification': 'tax_payment'})
+            self.assertEqual(record.tax_decision, 'approved')
+            self.assertEqual(record.state, 'financial_review')
+            self.decide(claim, 'supplier_accounts')
+            self.assertFalse(record.can_edit_tax_classification)
+            wizard = self.env['ab_supplier_claim_document_replacement'].with_user(self.users['admin'])
+            with Form(wizard.with_context(default_claim_id=claim.id)) as replacement_form:
+                self.assertFalse(replacement_form.can_edit_tax_classification)
+                with self.assertRaises(AssertionError):
+                    replacement_form.change_tax_type = True
+                replacement_form.content = self.replacement
+                replacement_form.filename = 'replacement.pdf'
+                replacement_form.reason = 'Correction'
+            with Form(record) as form:
+                with self.assertRaises(AssertionError):
+                    form.tax_classification = 'through_supplier'
+                form.section = 'other'
+                form.attachment = self.replacement
+            for actor in self.roles:
+                with self.assertRaises(UserError if actor in ('user', 'admin') else AccessError):
+                    claim.with_user(self.users[actor]).write({'tax_classification': 'through_supplier'})
+            with self.assertRaises(UserError):
+                claim.sudo().write({'tax_classification': 'through_supplier'})
+            with self.assertRaises(UserError), self.env.cr.savepoint():
+                claim.with_user(self.users['admin']).action_replace_supplier_document(
+                    self.replacement, 'replacement.pdf', 'Correction', tax_classification='through_supplier')
+            self.assertEqual(claim.tax_classification, 'tax_payment')
+            self.assertEqual(claim.tax_decision, 'approved')
+            self.assertEqual(claim.supplier_accounts_decision, 'approved')
+            claim.write({'payment_request_attachment': self.document, 'payment_request_filename': 'request.pdf'})
+            claim.action_prepare_payment()
+            claim.action_close()
+            with self.assertRaises(UserError):
+                record.write({'tax_classification': 'through_supplier'})
+
+    def test_tax_type_lock_is_atomic_and_requires_both_approvals(self):
+        unlocked = self.claim()
+        locked = self.claim()
+        self.prepare(locked)
+        with self.assertRaises(UserError):
+            (unlocked | locked).write({'tax_classification': 'through_supplier'})
+        self.assertEqual(unlocked.tax_classification, 'tax_payment')
+        unlocked._workflow_write({'state': 'financial_review', 'supplier_accounts_decision': 'approved'})
+        self.assertTrue(unlocked.can_edit_tax_classification)
+        unlocked.write({'tax_classification': 'non_tax_payment'})
+        self.assertEqual(unlocked.tax_decision, 'not_required')
+        self.assertEqual(unlocked.supplier_accounts_decision, 'approved')
+        self.assertEqual(unlocked.state, 'financial_review')
+        unlocked.with_user(self.users['admin']).write({'active': False})
+        self.assertFalse(unlocked.can_edit_tax_classification)
+        self.assertFalse(unlocked.can_edit_supplier_section)
+        with self.assertRaises(UserError):
+            unlocked.write({'section': 'other'})
+
+    def test_tax_type_changes_preserve_workflow_and_documents(self):
+        preserved_fields = ['state', 'resume_stage', 'review_round', 'document_revision',
+                            'payment_request_revision', 'bank_approval_revision',
+                            'secretarial_preparation_status', 'tax_discount_decision',
+                            'tax_review_attachment', 'payment_request_attachment',
+                            'supplier_cheque_attachment', 'bank_cheque_attachment']
+        preserved_fields += [department + '_decision' for department in DEPARTMENTS]
+        for role in ('user', 'admin'):
+            for stage in ('draft', 'operational_review', 'financial_review',
+                          'returned_secretarial', 'secretarial_preparation',
+                          'bank_accounts', 'ready_to_close'):
+                for tax_approved in (False, True):
+                    with self.subTest(role=role, stage=stage, tax_approved=tax_approved):
+                        claim = self.claim()
+                        claim._workflow_write({
+                            'state': stage, 'resume_stage': 'financial_review',
+                            'inventory_decision': 'approved', 'purchasing_decision': 'approved',
+                            'tax_decision': 'approved' if tax_approved else 'pending',
+                            'supplier_accounts_decision': 'pending' if tax_approved else 'approved',
+                            'bank_accounts_decision': 'approved', 'tax_discount_decision': 'apply',
+                            'tax_review_attachment': self.document,
+                            'payment_request_attachment': self.document,
+                            'supplier_cheque_attachment': self.document,
+                            'bank_cheque_attachment': self.document,
+                        })
+                        before = claim.read(preserved_fields)[0]
+                        record = claim.with_user(self.users[role])
+                        for classification in ('withholding_tax', 'non_tax_payment', 'tax_payment'):
+                            record.write({'tax_classification': classification})
+                            self.assertEqual(record.tax_classification, classification)
+                            self.assertEqual(claim.read(preserved_fields)[0], before)
+
+    def test_replacement_tax_type_does_not_reset_financial_reviews(self):
+        claim = self.claim()
+        self.financial(claim)
+        claim.with_user(self.users['tax']).write({'tax_discount_decision': 'apply'})
+        self.decide(claim, 'tax')
+        decision_fields = [department + '_decision' for department in DEPARTMENTS]
+        before = claim.read(['state'] + decision_fields)[0]
+        claim.with_user(self.users['admin']).action_replace_supplier_document(
+            self.replacement, 'replacement.pdf', 'Correction', tax_classification='withholding_tax')
+        self.assertEqual(claim.tax_classification, 'withholding_tax')
+        self.assertEqual(claim.read(['state'] + decision_fields)[0], before)
+
     def test_followup_dates_survive_saving_and_department_decisions(self):
         from odoo.tests import Form
         claim = self.claim()
@@ -268,7 +407,7 @@ class TestSupplierClaimCycle(TransactionCase):
         self.assertEqual(len(uploads), len(arch.xpath('//field[@name="attachment"]')))
         self.assertTrue(all(node.get('widget') == 'supplier_claim_upload' for node in uploads))
         self.assertTrue(all(node.get('readonly') in (
-            'True', 'not can_edit_correction_fields') for node in uploads))
+            'True', 'not can_edit_open_claim_fields') for node in uploads))
         for name in ('document_revision', 'payment_request_revision', 'bank_approval_revision',
                      'migration_gate_exception', 'review_round'):
             self.assertFalse(arch.xpath('//sheet/field[@name="%s"] | //sheet/group/field[@name="%s"]' % (name, name)))
@@ -288,9 +427,9 @@ class TestSupplierClaimCycle(TransactionCase):
             preparation = arch.xpath('//page[@name="claim_reviews"]//group[@name="claim_secretarial_review"]')
             self.assertEqual(len(preparation), int(role in ('user', 'admin')))
             if preparation:
-                self.assertEqual(preparation[0].get('invisible'), 'not can_prepare_payment and not can_edit_correction_fields')
+                self.assertEqual(preparation[0].get('invisible'), 'not can_prepare_payment and not can_edit_open_claim_fields')
             for page in arch.xpath('//page[@name="claim_reviews"]'):
-                self.assertEqual(page.get('invisible'), 'not can_edit_current_review and not can_prepare_payment and not can_edit_correction_fields')
+                self.assertEqual(page.get('invisible'), 'not can_edit_current_review and not can_prepare_payment and not can_edit_open_claim_fields')
             visible_roles = departments if role == 'admin' else (role,) if role in departments else ()
             groups = arch.xpath('//page[@name="claim_reviews"]//group[@name="department_reviews"]/group')
             self.assertEqual({node.get('name') for node in groups},

@@ -47,6 +47,7 @@ class SupplierDocumentReplacement(models.TransientModel):
     reason = fields.Text(required=True)
     change_amount = fields.Boolean()
     claim_amount = fields.Float(digits=(16, 2))
+    can_edit_tax_classification = fields.Boolean(related='claim_id.can_edit_tax_classification', compute_sudo=False)
     change_tax_type = fields.Boolean()
     tax_classification = fields.Selection(related='claim_id.tax_classification', readonly=True)
     new_tax_classification = fields.Selection([

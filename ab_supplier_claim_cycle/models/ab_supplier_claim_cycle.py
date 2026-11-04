@@ -179,10 +179,10 @@ class SupplierClaimCycle(models.Model):
     payment_nature = fields.Selection(PAYMENT_NATURE, copy=False, tracking=True)
     tax_classification = fields.Selection(
         TAX_CLASSIFICATION, string='Tax Type', copy=False, tracking=True,
-        help='Defaults from the latest claim for this cost center and remains editable in Draft.')
+        help='Defaults from the latest claim for this cost center.')
     section = fields.Selection(
         SUPPLIER_SECTION, copy=False, tracking=True,
-        help='Defaults from the latest claim for this cost center and remains editable in Draft.')
+        help='Defaults from the latest claim for this cost center.')
     review_round = fields.Integer(default=0, readonly=True, copy=False)
     resume_stage = fields.Selection(STATES, readonly=True, copy=False)
     rejection_department = fields.Selection([(d, d.replace('_', ' ').title()) for d in DEPARTMENTS], readonly=True,
@@ -213,6 +213,7 @@ class SupplierClaimCycle(models.Model):
     supplier_accounts_followup_date = fields.Date(copy=False)
     bank_accounts_followup_date = fields.Date(copy=False)
 
+    can_edit_tax_classification = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_supplier_section = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_correction_fields = fields.Boolean(compute='_compute_can_edit_claim_inputs')
     can_edit_payment_nature = fields.Boolean(compute='_compute_can_edit_claim_inputs')
@@ -235,13 +236,15 @@ class SupplierClaimCycle(models.Model):
     def _normalize_claim_reference(self, value):
         return (value or '').strip().upper() or False
 
-    @api.depends('state', 'active', 'resume_stage')
+    @api.depends('state', 'active', 'resume_stage', 'tax_decision', 'supplier_accounts_decision')
     @api.depends_context('uid')
     def _compute_can_edit_claim_inputs(self):
         for claim in self:
             open_permitted = bool(self._role_allowed('user') and claim.active and claim.state != 'closed')
             permitted = open_permitted and claim.state in ('draft', 'returned_secretarial')
-            claim.can_edit_supplier_section = permitted and claim.state == 'draft'
+            claim.can_edit_supplier_section = open_permitted
+            claim.can_edit_tax_classification = open_permitted and not (
+                claim.tax_decision == 'approved' and claim.supplier_accounts_decision == 'approved')
             claim.can_edit_correction_fields = permitted
             claim.can_edit_payment_nature = open_permitted
             claim.can_edit_open_claim_fields = open_permitted
@@ -482,6 +485,7 @@ class SupplierClaimCycle(models.Model):
             self._log('archived' if not vals['active'] else 'restored')
             return result
         self._prepare_action()
+        self._check_tax_classification_edit(vals)
         for claim in self:
             allowed = set()
             if claim.can_edit_correction_fields:
@@ -489,7 +493,10 @@ class SupplierClaimCycle(models.Model):
                 if claim.state == 'draft':
                     allowed = self._entry_fields()
             if claim.can_edit_open_claim_fields:
-                allowed |= {'supplier_id', 'payment_nature', 'type_of_invoice'}
+                allowed |= {'supplier_id', 'payment_nature', 'type_of_invoice',
+                            'section', 'attachment', 'attachment_filename'}
+            if claim.can_edit_tax_classification:
+                allowed.add('tax_classification')
             for department in DEPARTMENTS:
                 if self._role_allowed(department) and claim._department_actionable(department):
                     allowed |= {f'{department}_notes', f'{department}_followup_date'}
@@ -570,7 +577,7 @@ class SupplierClaimCycle(models.Model):
                     claim._snapshot_document(kind, 'Document uploaded')
             if 'payment_request_attachment' in vals:
                 claim._workflow_write({'payment_request_revision': claim.document_revision if vals['payment_request_attachment'] else 0})
-            if claim.state == 'returned_secretarial' and set(vals) & {'claim_amount', 'tax_classification'}:
+            if claim.state == 'returned_secretarial' and 'claim_amount' in vals:
                 claim._workflow_write(claim._financial_reset_values())
             if claim.id in review_changes:
                 old_state, reason, digest = review_changes[claim.id]
@@ -641,8 +648,15 @@ class SupplierClaimCycle(models.Model):
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
                 raise ValidationError(_('The claim amount must be a positive finite number.'))
 
+    def _check_tax_classification_edit(self, vals):
+        if 'tax_classification' in vals and any(
+                claim.tax_decision == 'approved' and claim.supplier_accounts_decision == 'approved'
+                for claim in self):
+            raise UserError(_('Tax Type cannot be changed after both Taxes and Suppliers have approved the claim.'))
+
     def _workflow_write(self, vals):
         self._validate_amount_value(vals)
+        self._check_tax_classification_edit(vals)
         # Private RPC-inaccessible bypass, never controlled by a context flag.
         return super(SupplierClaimCycle, self.sudo()).write(vals)
 
@@ -822,11 +836,10 @@ class SupplierClaimCycle(models.Model):
                     payment_request_attachment=False, payment_request_filename=False,
                     payment_request_revision=0, bank_approval_revision=0,
                     bank_accounts_decision='not_required' if self.payment_nature == 'cash' else 'pending')
-        if claim_amount is not None or tax_classification is not None:
-            if claim_amount is not None:
-                vals['claim_amount'] = claim_amount
-            if tax_classification is not None:
-                vals['tax_classification'] = tax_classification
+        if tax_classification is not None:
+            vals['tax_classification'] = tax_classification
+        if claim_amount is not None:
+            vals['claim_amount'] = claim_amount
             self._workflow_write(vals)
             vals = self._financial_reset_values()
             vals.update(state='financial_review', secretarial_preparation_status='suspended')
